@@ -1410,8 +1410,6 @@ apply_initial_values(void)
 {
 	int i;
 
-	conf_game_width = 
-
 	/*
 	 * Set global volumes.
 	 *  - These values will changed in load_global_data() if global save data exist.

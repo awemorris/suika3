@@ -215,6 +215,8 @@ init(void)
 	int fade_method;
 	int i;
 
+	memset(desc, 0, sizeof(desc));
+
 	/* Load the parameters for each layer. */
 	for (i = 0; i < S3_FADE_DESC_COUNT; i++) {
 		const int LAYER_INDEX = params[i].layer;
@@ -230,6 +232,22 @@ init(void)
 		const char *DIM_ARG = params[i].dim_arg;
 		bool is_file_specified;
 
+		/* If no arguments specified for this layer. */
+		if (!s3_check_tag_arg(FILE_ARG) &&
+		    !s3_check_tag_arg(X_ARG) &&
+		    !s3_check_tag_arg(Y_ARG) &&
+		    !s3_check_tag_arg(ALPHA_ARG) &&
+		    !s3_check_tag_arg(SCALE_X_ARG) &&
+		    !s3_check_tag_arg(SCALE_Y_ARG) &&
+		    !s3_check_tag_arg(CENTER_X_ARG) &&
+		    !s3_check_tag_arg(CENTER_Y_ARG) &&
+		    !s3_check_tag_arg(ROTATE_ARG) &&
+		    !s3_check_tag_arg(DIM_ARG)) {
+			desc[i].stay = true;
+			continue;
+		}
+
+		/* There is a chage for this layer. */
 		desc[i].stay = false;
 
 		/* Has a file argument? */

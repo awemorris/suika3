@@ -1,5 +1,7 @@
 [bg file="bg/roof.png" time="3.0"]
 
+[ch center="ch/midori-normal.png" time="1.0" fade="normal"]
+
 [text text="Hello, Suika3!"]
 
 [bg file="bg/coast.png" time="3.0"]

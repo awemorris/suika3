@@ -171,6 +171,9 @@ pf_init_hook(
 	int width,
 	int height)
 {
+	conf_game_width = width;
+	conf_game_height = height;
+
 	/* Install the default API. */
 	if (!s3i_install_default_api())
 		return false;
