@@ -47,6 +47,10 @@ static bool is_fulscreen_start;
 /* Game start time. */
 static uint64_t lap_origin;
 
+/* Screen size. */
+static int screen_width;
+static int screen_height;
+
 /* Input states. */
 int pf_mouse_pos_x;
 int pf_mouse_pos_y;
@@ -181,7 +185,10 @@ hal_callback_on_event_boot(
 		*width = width_ret;
 	if (height != NULL)
 		*height = height_ret;
+
 	is_fulscreen_start = fullscreen_ret;
+	screen_width = width_ret;
+	screen_height = height_ret;
 
 	return true;
 }
@@ -381,8 +388,7 @@ hal_callback_on_event_start(void)
 
 	/* Initialize the upper layer. */
 #ifdef PF_USE_INITHOOK
-	bool pf_init_hook(void);
-	pf_init_hook();
+	pf_init_hook(screen_width, screen_height);
 #endif
 
 	/* Call start(). */
