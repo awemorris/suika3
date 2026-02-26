@@ -464,6 +464,7 @@ jobs:
           cp game/start.novel dist/
           cp game/config.ini dist/
           cp -R game/bg dist/
+          cp -R game/ch dist/
           cp -R game/system dist/
 
       - name: Download mingw artifacts
