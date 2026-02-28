@@ -129,12 +129,15 @@ hal_create_wave_from_file(
 	if ((*w)->file == NULL) {
 		hal_log_out_of_memory();
 		free(*w);
+		*w = NULL;
 		return false;
 	}
 
 	/* Open a file. */
-	if (!reopen(*w, false))
+	if (!reopen(*w, false)) {
+		*w = NULL;
 		return false;
+	}
 
 	/* TODO: Check sampling rate and channel count by using ov_info(). */
 	vi = ov_info(&(*w)->ovf, -1);
@@ -274,8 +277,11 @@ hal_destroy_wave(
 {
 	ov_clear(&w->ovf);
 	free(w->file);
-	if (w->rf != NULL)
+	w->file = NULL;
+	if (w->rf != NULL) {
 		hal_close_rfile(w->rf);
+		w->rf = NULL;
+	}
 	free(w);
 }
 

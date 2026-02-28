@@ -107,6 +107,10 @@ bool
 s3_move_to_label(
 	const char *label)
 {
+	int i;
+
+	for (i = 0; i <
+
 	/* TODO */
 	return false;
 }

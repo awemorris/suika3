@@ -157,7 +157,8 @@ s3i_command_choose(
 }
 
 /* Initialization. */
-bool init(void)
+static bool
+init(void)
 {
 	int i;
 	int actual_option_count;
@@ -169,8 +170,16 @@ bool init(void)
 	is_first_frame = true;
 	is_timed = false;
 	is_timer_fired = false;
-	is_centered = false;
+	is_centered = true;
 	s3_reset_lap_timer(&timer_sw);
+
+	/* Check for leftification. */
+	if (s3_check_tag_arg("leftify") &&
+	    strcmp(s3_get_tag_arg_string("leftify"), "true") == 0) {
+		is_centered = false;
+	} else {
+		is_centered = true;
+	}
 
 	/* Collect the option infromation. */
 	actual_option_count = 0;
@@ -229,14 +238,6 @@ bool init(void)
 	if (actual_option_count == 0) {
 		ignore_as_no_option = true;
 		return true;
-	}
-
-	/* Check for leftification. */
-	if (s3_check_tag_arg("leftify") &&
-	    strcmp(s3_get_tag_arg_string("leftify"), "true") == 0) {
-		is_centered = false;
-	} else {
-		is_centered = true;
 	}
 
 	/* Start a multi-frame execution. */
@@ -322,7 +323,7 @@ draw_text(
 			int vw = s3_get_string_width(conf_choose_font_select,
 						     conf_choose_font_size,
 						     button[index].text);
-				x = x + (button[index].w - vw) / 2;
+			x = x + (button[index].w - vw) / 2;
 			y += conf_choose_margin_top[index];
 		} else {
 			int vh = s3_get_string_height(conf_choose_font_select,
