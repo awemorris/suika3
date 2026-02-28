@@ -1885,24 +1885,21 @@ s3_get_fade_method(
 
 	if (strcmp(method, "normal") == 0 ||
 	    strcmp(method, "n") == 0 ||
-	    strcmp(method, "") == 0 ||
-	    strcmp(method, "mask") == 0 ||
-	    strcmp(method, "m") == 0 ||
-	    strcmp(method, U8("標準")) == 0)
+	    strcmp(method, "") == 0)
 		return S3_FADE_NORMAL;
 
 	/*
 	 * Rule fading. (1-bit universal transition)
 	 */
 
-	if (strncmp(method, "rule:", 5) == 0)
+	if (strcmp(method, "rule") == 0)
 		return S3_FADE_RULE;
 
 	/*
 	 * Melt fading. (1-bit universal transition)
 	 */
 
-	if (strncmp(method, "melt:", 5) == 0)
+	if (strcmp(method, "melt") == 0)
 		return S3_FADE_MELT;
 
 	/* Invalid. */

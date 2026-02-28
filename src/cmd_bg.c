@@ -100,17 +100,18 @@ init(void)
 	/* If we use a rule file. */
 	if (fade_method == S3_FADE_RULE ||
 	    fade_method == S3_FADE_MELT) {
+		const char *rule;
+
 		/* If the rule file is not specified. */
-		if (strcmp(&method[5], "") == 0) {
-			s3_log_error(
-				S3_TR("Rule file is missing at file %s line %d."),
-				s3_get_tag_file(),
-				s3_get_tag_line());
+		if (!s3_check_tag_arg("rule")) {
+			s3_log_error(S3_TR("Rule file is missing."));
+			s3_log_script_exec_footer();
 			return false;
 		}
 
 		/* Load a rule image. */
-		rule_img = s3_create_image_from_file(&method[5]);
+		rule = s3_get_tag_arg_string("rule");
+		rule_img = s3_create_image_from_file(rule);
 		if (rule_img == NULL) {
 			s3_log_script_exec_footer();
 			return false;
