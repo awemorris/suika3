@@ -2,7 +2,7 @@
 
 /*
  * Suika3
- * "click" command implementation
+ * The "click" tag implementation
  */
 
 /*-

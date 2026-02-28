@@ -2,7 +2,7 @@
 
 /*
  * Suika3
- * "bg" command implementation
+ * The "bg" tag implementation
  */
 
 /*-

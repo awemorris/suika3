@@ -2,7 +2,7 @@
 
 /*
  * Suika3
- * "text" command implementation
+ * The "text" tag implementation
  */
 
 /*-

@@ -1578,8 +1578,9 @@ s3_fill_choosebox_hover_image(
  */
 void
 s3_show_choosebox(
-	bool show,
-	int index);
+	int index,
+	bool show_idle,
+	bool show_hover);
 
 /*
  * Show or hides the auto mode banner.

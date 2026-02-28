@@ -2,7 +2,7 @@
 
 /*
  * Suika3
- * "ch" command implementation
+ * The "ch" tag implementation
  */
 
 /*-
