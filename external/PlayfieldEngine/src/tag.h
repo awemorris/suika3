@@ -73,6 +73,12 @@ pfi_load_tag_file(
 const char *
 pfi_get_tag_file_name(void);
 
+/*
+ * Get the tag count.
+ */
+int
+pfi_get_tag_count(void);
+
 /* Get the command index of the current tag. */
 int
 pfi_get_tag_index(void);

@@ -45,7 +45,7 @@
 #define TAG_NAME_MAX		128
 #define PROP_NAME_MAX		128
 #define PROP_VALUE_MAX		4096
-#define COMMAND_MAX		65536
+#define TAG_MAX			65536
 
 /* Current tag file. */
 static char cur_file[1024];
@@ -54,7 +54,7 @@ static char cur_file[1024];
 static int cur_index;
 
 /* Tag table. */
-static struct pfi_tag tag[COMMAND_MAX];
+static struct pfi_tag tag[TAG_MAX];
 
 /* Tag size. */
 static int tag_size;
@@ -145,7 +145,16 @@ pfi_get_tag_file_name(void)
 }
 
 /*
- * Get the command index of the current tag.
+ * Get the tag count.
+ */
+int
+pfi_get_tag_count(void)
+{
+	return tag_size;
+}
+
+/*
+ * Get the index of the current tag.
  */
 int
 pfi_get_tag_index(void)
@@ -429,7 +438,7 @@ parse_tag_callback(
 	int i;
 
 	/* If command table is full. */
-	if (tag_size >= COMMAND_MAX) {
+	if (tag_size >= TAG_MAX) {
 		hal_log_error("Too many tags.");
 		return false;
 	}

@@ -812,6 +812,12 @@ pf_set_return_dictionary(
  */
 
 /*
+ * Get the tag count.
+ */
+int
+pf_get_tag_count(void);
+
+/*
  * Load a tag file and move to it.
  */
 bool

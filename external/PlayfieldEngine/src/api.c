@@ -2043,6 +2043,15 @@ pf_set_return_dictionary(
  */
 
 /*
+ * Get the tag count.
+ */
+int
+pf_get_tag_count(void)
+{
+	return pfi_get_tag_count();
+}
+
+/*
  * Load a tag file and move to it.
  */
 bool
