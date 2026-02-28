@@ -79,23 +79,40 @@ pfi_get_tag_file_name(void);
 int
 pfi_get_tag_count(void);
 
-/* Get the command index of the current tag. */
+/*
+ * Get the command index of the current tag.
+ */
 int
 pfi_get_tag_index(void);
 
-/* Get the tag line. */
+/*
+ * Get the tag line.
+ */
 int
 pfi_get_tag_line(void);
 
-/* Get the current tag. */
+/*
+ * Get the current tag.
+ */
 struct pfi_tag *
 pfi_get_current_tag(void);
 
-/* Move to the next tag. */
+/*
+ * Move to the next tag.
+ */
 bool
 pfi_move_to_next_tag(void);
 
-/* Move to a tag by index. */
+/*
+ * Move to a label tag.
+ */
+bool
+pfi_move_to_label_tag(
+	const char *label);
+
+/*
+ * Move to a tag by index.
+ */
 bool
 pfi_move_to_tag_index(
 	int index);

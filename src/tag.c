@@ -209,6 +209,38 @@ pfi_move_to_next_tag(void)
 }
 
 /*
+ * Move to a label tag.
+ */
+bool
+pfi_move_to_label_tag(
+	const char *label)
+{
+	int tag_count, prop_count;
+	int i, j;
+
+	/* Search tags. */
+	for (i = 0; i < tag_count; i++) {
+		if (strcmp(tag[i].tag_name, "label") != 0)
+			continue;
+
+		/* Check the "name" propery. */
+		for (j = 0; j < tag[i].prop_count; j++) {
+			if (strcmp(tag[i].prop_name[j], "name") != 0)
+				continue;
+			if (strcmp(tag[i].prop_value[j], label) != 0)
+				continue;
+
+			/* Found. */
+			cur_index = i;
+			return true;
+		}
+	}
+
+	/* Not found. */
+	return false;
+}
+
+/*
  * Move to a tag by index.
  */
 bool

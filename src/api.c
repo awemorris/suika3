@@ -2071,6 +2071,16 @@ pf_move_to_next_tag(void)
 }
 
 /*
+ * Move to a label tag.
+ */
+bool
+pf_move_to_label_tag(
+	const char *label)
+{
+	return pfi_move_to_label_tag(label);
+}
+
+/*
  * Move to a tag by index.
  */
 bool
