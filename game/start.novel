@@ -1,13 +1,23 @@
-[bg file="bg/roof.png" time="3.0"]
+[bg file="bg/roof.png" time="1.0"]
+
+[choose
+    text1="テスト〜選択肢１" label1="label1"
+    text2="テスト〜選択肢２" label2="label2"
+    text3="テスト〜選択肢３" label3="label3"
+]
+
+[label name="label1"]
+[text text="選択肢１が選ばれました。"]
+
+[label name="label2"]
+[text text="選択肢２が選ばれました。"]
+
+[label name="label3"]
+[text text="選択肢３が選ばれました。"]
 
 [ch center="ch/midori-normal.png" time="1.0" fade="normal"]
-
 [text text="Hello, Suika3!"]
-
 [bg file="bg/coast.png" time="3.0"]
-
 [text text="Suika3 started working!"]
-
 [bg file="bg/roof.png" time="3.0"]
-
 [text text="Click to exit."]
