@@ -46,6 +46,12 @@
 #define PROP_NAME_MAX		128
 #define PROP_VALUE_MAX		4096
 #define TAG_MAX			65536
+#define STACK_MAX		128
+
+/* Stack element type. */
+#define TYPE_IF			1
+#define TYPE_FOR		2
+#define TYPE_WHILE		3
 
 /* Current tag file. */
 static char cur_file[1024];
@@ -58,6 +64,10 @@ static struct pfi_tag tag[TAG_MAX];
 
 /* Tag size. */
 static int tag_size;
+
+/* Tag execution stack. */
+static struct pfi_tag_stack tag_stack[STACK_MAX];
+static int stack_pointer;
 
 /* Forward declaration. */
 static bool parse_tag_document(const char *doc, bool (*callback)(const char *, int, const char **, const char **, int), char **error_msg, int *error_line);
@@ -99,6 +109,8 @@ pfi_cleanup_tag(void)
 			}
 		}
 	}
+
+	stack_pointer = 0;
 }
 
 /*
@@ -252,6 +264,102 @@ pfi_move_to_tag_index(
 
 	cur_index = index;
 
+	return true;
+}
+
+/*
+ * Push an "if" to the tag stack.
+ */
+bool
+pfi_push_tag_stack_if(void)
+{
+	if (stack_pointer >= STACK_MAX) {
+		pf_log_error(PF_TR("Too many nests."));
+		return false;
+	}
+
+	tag_stack[stack_pointer].type = TYPE_IF;
+	tag_stack[stack_pointer].start = cur_index;
+	return true;
+}
+
+/*
+ * Pop an "if" from the tag stack.
+ */
+bool
+pfi_pop_tag_stack_if(void)
+{
+	if (stack_pointer == 0 ||
+	    tag_stack[stack_pointer].type != TYPE_IF) {
+		pf_log_error(PF_TR("No correspoinding \"if\" detected."));
+		return false;
+	}
+
+	stack_pointer--;
+	return true;
+}
+
+/*
+ * Push a "while loop" to the tag stack.
+ */
+bool
+pfi_push_tag_stack_while(void)
+{
+	if (stack_pointer >= STACK_MAX) {
+		pf_log_error(PF_TR("Too many nests."));
+		return false;
+	}
+
+	tag_stack[stack_pointer].type = TYPE_WHILE;
+	tag_stack[stack_pointer].start = cur_index;
+	return true;
+}
+
+/*
+ * Pop a "while loop" from the tag stack.
+ */
+bool
+pfi_pop_tag_stack_while(void)
+{
+	if (stack_pointer == 0 ||
+	    tag_stack[stack_pointer].type != TYPE_WHILE) {
+		pf_log_error(PF_TR("No correspoinding \"while\" detected."));
+		return false;
+	}
+
+	stack_pointer--;
+	return true;
+}
+
+/*
+ * Push a "for loop" to the tag stack.
+ */
+bool
+pfi_push_tag_stack_for(void)
+{
+	if (stack_pointer >= STACK_MAX) {
+		pf_log_error(PF_TR("Too many nests."));
+		return false;
+	}
+
+	tag_stack[stack_pointer].type = TYPE_FOR;
+	tag_stack[stack_pointer].start = cur_index;
+	return true;
+}
+
+/*
+ * Pop a "for loop" from the tag stack.
+ */
+bool
+pfi_pop_tag_stack_for(void)
+{
+	if (stack_pointer == 0 ||
+	    tag_stack[stack_pointer].type != TYPE_FOR) {
+		pf_log_error(PF_TR("No correspoinding \"for\" detected."));
+		return false;
+	}
+
+	stack_pointer--;
 	return true;
 }
 

@@ -52,6 +52,14 @@ struct pfi_tag {
 	int line;
 };
 
+/*
+ * Tag execution stack element.
+ */
+struct pfi_tag_stack {
+	int type;
+	int start;
+};
+
 /* Initialize the tag system. */
 void
 pfi_init_tag(void);

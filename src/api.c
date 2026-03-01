@@ -2180,6 +2180,60 @@ pf_get_tag_property_value(
 }
 
 /*
+ * Push an "if" to the tag stack.
+ */
+bool
+pf_push_tag_stack_if(void)
+{
+	return pfi_push_tag_stack_if();
+}
+
+/*
+ * Pop an "if" from the tag stack.
+ */
+bool
+pf_pop_tag_stack_if(void)
+{
+	return pfi_pop_tag_stack_if();
+}
+
+/*
+ * Push a "while loop" to the tag stack.
+ */
+bool
+pf_push_tag_stack_while(void)
+{
+	return pfi_push_tag_stack_while();
+}
+
+/*
+ * Pop a "while loop" from the tag stack.
+ */
+bool
+pf_pop_tag_stack_while(void)
+{
+	return pfi_pop_tag_stack_while();
+}
+
+/*
+ * Push a "for loop" to the tag stack.
+ */
+bool
+pf_push_tag_stack_for(void)
+{
+	return pfi_push_tag_stack_for();
+}
+
+/*
+ * Pop a "for loop" from the tag stack.
+ */
+bool
+pf_pop_tag_stack_for(void)
+{
+	return pfi_pop_tag_stack_for();
+}
+
+/*
  * Misc
  */
 
