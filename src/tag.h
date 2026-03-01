@@ -125,4 +125,40 @@ bool
 pfi_move_to_tag_index(
 	int index);
 
+/*
+ * Push an "if" to the tag stack.
+ */
+bool
+pfi_push_tag_stack_if(void);
+
+/*
+ * Pop an "if" from the tag stack.
+ */
+bool
+pfi_pop_tag_stack_if(void);
+
+/*
+ * Push a "while loop" to the tag stack.
+ */
+bool
+pfi_push_tag_stack_while(void);
+
+/*
+ * Pop a "while loop" from the tag stack.
+ */
+bool
+pfi_pop_tag_stack_while(void);
+
+/*
+ * Push a "for loop" to the tag stack.
+ */
+bool
+pfi_push_tag_stack_for(void);
+
+/*
+ * Pop a "for loop" from the tag stack.
+ */
+bool
+pfi_pop_tag_stack_for(void);
+
 #endif
