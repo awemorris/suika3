@@ -198,7 +198,7 @@ s3_get_tag_arg_int(
 	}
 
 	prop_value = pf_get_tag_property_value(i);
-	val = atoi(prop_value);
+	val = atoi(expand_value(prop_value));
 
 	return val;
 }
@@ -228,7 +228,7 @@ s3_get_tag_arg_float(
 	}
 
 	prop_value = pf_get_tag_property_value(i);
-	val = (float)atof(prop_value);
+	val = (float)atof(expand_value(prop_value));
 
 	return val;
 }
