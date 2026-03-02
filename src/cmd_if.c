@@ -43,6 +43,8 @@
 #include <string.h>
 #include <assert.h>
 
+static const char *get_var_value(const char *var_name);
+
 /*
  * The "if" tag implementation.
  */
@@ -54,6 +56,9 @@ s3i_tag_if(
 	const char *op;
 	const char *rhs;
 	bool do_jump;
+
+	/* Update the tag values by variable values. */
+	pf_evaluate_tag_property_values(get_var_value);
 
 	/* Get the condition. */
 	lhs = s_get_tag_arg_string("lhs");
@@ -73,4 +78,11 @@ s3i_tag_if(
 
 	/* Move to the next tag. */
 	return s3_move_to_next_tag();
+}
+
+static const char *
+get_var_value(
+	const char *var_name)
+{
+	return NULL;
 }
