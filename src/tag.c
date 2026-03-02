@@ -154,6 +154,7 @@ s3i_cleanup_tag(void)
 		}
 	}
 
+	tag_size = 0;
 	stack_pointer = 0;
 
 	memset(tag, 0, sizeof(tag));
@@ -819,6 +820,7 @@ parse_tag_document(
 		ST_PROPNAME,
 		ST_PROPVALUE_QUOTE,
 		ST_PROPVALUE_BODY,
+		ST_COMMENT,
 	};
 
 	const char *top;
@@ -856,6 +858,10 @@ parse_tag_document(
 			}
 			if (c == ' ' || c == '\r' || c == '\t')
 				continue;
+			if (c == '#') {
+				state = ST_COMMENT;
+				continue;
+			}
 
 			*error_msg = strdup(S3_TR("Invalid character."));
 			*error_line = line;
@@ -987,6 +993,13 @@ parse_tag_document(
 				return false;
 			}
 			prop_val[prop_count][len++] = c;
+			continue;
+		case ST_COMMENT:
+			if (c == '\n') {
+				state = ST_INIT;
+				line++;
+				continue;
+			}
 			continue;
 		default:
 			assert(NEVER_COME_HERE);

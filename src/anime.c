@@ -598,11 +598,11 @@ static bool update_layer_params(int layer)
 		scale_y = s->from_scale_y + (s->to_scale_y - s->from_scale_y) * progress;
 		rotate = s->from_rotate + (s->to_rotate - s->from_rotate) * progress;
 		if (s->accel == S3_ANIME_ACCEL_SMOOTHSTEP) {
-			alpha = (int)(s->from_a + (s->to_a - s->from_a) * sinf((float)M_PI / 2.0f * progress));
+			alpha = (int)(s->from_a + (s->to_a - s->from_a) * sinf((float)M_PI / 2.1f * progress));
 			if (alpha > 255)
 				alpha = 255;
 		} else if (s->accel == S3_ANIME_ACCEL_INVSMOOTHSTEP) {
-			alpha = (int)(s->from_a + (s->to_a - s->from_a) * cosf((float)M_PI / 2.0f * progress));
+			alpha = (int)(s->from_a + (s->to_a - s->from_a) * cosf((float)M_PI / 2.1f * progress));
 			if (alpha > 255)
 				alpha = 255;
 		} else {

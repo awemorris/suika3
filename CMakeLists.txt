@@ -281,6 +281,7 @@ set(SUIKA_BASE_SOURCES
   src/cmd_gui.c
   src/cmd_if.c
   src/cmd_label.c
+  src/cmd_load.c
   src/cmd_set.c
   src/cmd_text.c
 )

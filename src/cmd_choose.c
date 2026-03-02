@@ -53,7 +53,6 @@
 struct choose_button {
 	bool is_enabled;
 	const char *text;
-	const char *label;
 	int x;
 	int y;
 	int w;
@@ -111,6 +110,11 @@ static float timer_span;
 
 /* Stopwatch for the timer. */
 static uint64_t timer_sw;
+
+/*
+ * Result
+ */
+static const char *result_var_name;
 
 /*
  * Forward Declaration
@@ -172,23 +176,20 @@ init(void)
 	is_centered = true;
 	s3_reset_lap_timer(&timer_sw);
 
+	/* Get the result variable name. */
+	result_var_name = s3_get_tag_arg_string("name", false, NULL);
+
 	/* Check for leftification. */
-	if (s3_check_tag_arg("leftify") &&
-	    strcmp(s3_get_tag_arg_string("leftify", true, false), "true") == 0) {
+	if (strcmp(s3_get_tag_arg_string("leftify", true, "false"), "true") == 0)
 		is_centered = false;
-	} else {
+	else
 		is_centered = true;
-	}
 
 	/* Collect the option infromation. */
 	actual_option_count = 0;
 	for (i = 0; i < S3_CHOOSEBOX_COUNT; i++) {
-		bool has_label;
-		bool has_text;
-		char label[128];
 		char text[128];
 
-		snprintf(label, sizeof(label), "label%d", i + 1);
 		snprintf(text, sizeof(text), "text%d", i + 1);
 
 		/* Get the N-th options. */
@@ -198,7 +199,6 @@ init(void)
 			s3_show_choosebox(i, false, false);
 			continue;
 		} else {
-			button[i].label = s3_get_tag_arg_string(label, false, NULL);
 			button[i].is_enabled = true;
 		}
 
@@ -212,7 +212,7 @@ init(void)
 		/* Fill the choose box layers. */
 		s3_fill_choosebox_idle_image(i);
 		s3_fill_choosebox_hover_image(i);
-		
+
 		/* Draw the text for the choose box layers. */
 		draw_text(i, true);
 		draw_text(i, false);
@@ -629,16 +629,22 @@ cleanup(void)
 
 	/* If the timer bombed. */
 	if (is_timer_fired) {
+		/* Set the result empty. */
+		s3_set_variable_string(result_var_name, "");
+
 		/* Move to the next tag. */
 		if (!s3_move_to_next_tag())
 			return false;
 		return true;
 	}
 
+	/* Set the result. */
+	s3_set_variable_string(result_var_name, button[pointed_index].text);
+
 	/*
 	 * Now an option is chosen.
 	 * Move to the label of the chosen item.
 	 */
 	assert(pointed_index != -1);
-	return s3_move_to_label_tag(button[pointed_index].label);
+	return s3_move_to_next_tag();
 }

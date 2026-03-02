@@ -1,5 +1,5 @@
-Tag Specification
-=================
+Suika3 Tag Specification
+========================
 
 ## bg
 
@@ -82,4 +82,173 @@ This tag shows a GUI.
 
 ## text
 
+This tag shows a text in the message box.
 
+Basic Usage:
+```
+[text text="This is a message."]
+[text name="Name Here" text="This is a character's line."]
+```
+
+### `name` argument
+
+This argument specifies a character name to show.
+
+### `text` argument
+
+This argument specifies a text name to show.
+
+
+## choose
+
+This tag shows a options. The text of the chosen option will be
+assigned to the variable specified by `name`.
+
+Basic Usage:
+```
+[choose
+  name="variable_name"
+  text1="Option Text 1"
+  text2="Option Text 2"
+  text3="Option Text 3"]
+```
+
+### `name` argument
+
+This argument specifies a variable name to store the result.
+
+### `text1` to `text8` arguments
+
+These arguments specified texts of options.
+
+
+## gui
+
+This tag shows a GUI.
+
+Basic Usage:
+```
+[gui file="my_gui.txt"]
+```
+
+### `file` argument
+
+This argument specifies the file name of the GUI to load.
+
+
+## set
+
+This tag sets a variable.
+Note that all variables are text.
+
+Basic Usage:
+```
+[set name="var1" value="my-value"]
+```
+
+### `name` argument
+
+This argument specifies the variable name.
+
+### `value` argument
+
+This argument specifies the variable value.
+
+## goto
+
+This tag jumps to a label tag.
+
+Basic Usage:
+```
+[goto name="LabelName"]
+```
+
+### `name` argument
+
+This argument specifies the name of the destination label.
+
+
+## label
+
+This tag makes a label with a name.
+
+Basic Usage:
+```
+[label name="LabelName"]
+```
+
+### `name` argument
+
+This argument specifies the name of the label.
+
+
+## if/elseif/endif
+
+This tag branches by a condition.
+
+Basic Usage:
+```
+[if lhs="${variable}" op="==" rhs="100"]
+   # Do something. (variable == 100)
+[elseif lhs="${variable}" op="==" rhs="101"]
+   # Do something. (variable == 101)
+[else]
+   # Do something. (other)
+[endif]
+```
+
+### `lhs` argument
+
+This argument specified the lhs of the condition.
+
+### `op` argument
+
+This argument specified the operator of the condition.
+
+|Operator  |Description         |
+|----------|--------------------|
+|==        |Equal               |
+|>         |Greater Than        |
+|>=        |Greater Or Equal    |
+|<         |Less                |
+|<=        |Less Or Equal       |
+
+### `rhs` argument
+
+This argument specified the rhs of the condition.
+
+
+## load
+
+This tag loads a NovelML file.
+
+Basic Usage:
+```
+[load file="scene01.novel"]
+[load file="scene02.novel" label="chapter1"]
+```
+
+### `file` argument
+
+This argument specifies the file name to load.
+
+### `label` argument (optional)
+
+This argument specifies the label to jump.
+
+
+## wait
+## bgm
+## se
+## volume
+## chapter
+## skip
+## config
+## layer
+## move
+## anime
+## script
+## video
+## gosub
+## return
+## shake
