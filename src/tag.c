@@ -472,6 +472,43 @@ s3_check_tag_arg(
 }
 
 /*
+ * Get a boolean tag argument.
+ */
+bool
+s3_get_tag_arg_bool(
+	const char *name,
+	bool omissible,
+	bool def_val)
+{
+	int i, count;
+	const char *prop_name;
+	const char *prop_value;
+	int val;
+
+	count = s3_get_tag_property_count();
+
+	for (i = 0; i < count; i++) {
+		prop_name = s3_get_tag_property_name(i);
+		if (strcmp(name, prop_name) == 0)
+			break;
+	}
+	if (i == count) {
+		/* Not found. */
+		if (omissible)
+			return def_val;
+		s3_log_error(S3_TR("Argument \"%s\" not specified."), name);
+		return def_val;
+	}
+
+	prop_value = s3_get_tag_property_value(i);
+	if (strcmp(prop_value, "true") == 0 ||
+	    strcmp(prop_value, "yes") == 0)
+		return true;
+
+	return false;
+}
+
+/*
  * Get an integer tag argument.
  */
 int

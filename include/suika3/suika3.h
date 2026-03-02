@@ -2078,6 +2078,15 @@ s3_check_tag_arg(
 	const char *name);
 
 /*
+ * Get a boolean tag argument.
+ */
+bool
+s3_get_tag_arg_bool(
+	const char *name,
+	bool omissible,
+	bool def_val);
+
+/*
  * Get an integer tag argument.
  */
 int

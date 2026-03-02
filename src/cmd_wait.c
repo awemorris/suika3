@@ -2,7 +2,7 @@
 
 /*
  * Suika3
- * Tag Commands
+ * The "wait" tag implementation
  */
 
 /*-
@@ -36,66 +36,54 @@
  */
 
 #include <suika3/suika3.h>
-#include "cmd.h"
+#include "conf.h"
 
-/* Tag function entry. */
-struct tag_func {
-	const char *name;
-	bool (*func)(void *);
-};
-
-/* Forward declaration for tag functions. */
-bool s3i_tag_bg(void *p);
-bool s3i_tag_ch(void *p);
-bool s3i_tag_choose(void *p);
-bool s3i_tag_click(void *p);
-bool s3i_tag_choose(void *p);
-bool s3i_tag_else(void *p);
-bool s3i_tag_elseif(void *p);
-bool s3i_tag_endif(void *p);
-bool s3i_tag_goto(void *p);
-bool s3i_tag_gui(void *p);
-bool s3i_tag_if(void *p);
-bool s3i_tag_label(void *p);
-bool s3i_tag_load(void *p);
-bool s3i_tag_set(void *p);
-bool s3i_tag_text(void *p);
-bool s3i_tag_wait(void *p);
-
-/* Tag function table. */
-static struct tag_func tag_func[] = {
-	{"Tag_bg",		s3i_tag_bg},
-	{"Tag_ch",		s3i_tag_ch},
-	{"Tag_choose",		s3i_tag_choose},
-	{"Tag_click",		s3i_tag_click},
-	{"Tag_else",		s3i_tag_else},
-	{"Tag_elseif",		s3i_tag_elseif},
-	{"Tag_endif",		s3i_tag_endif},
-	{"Tag_goto",		s3i_tag_goto},
-	{"Tag_gui",		s3i_tag_gui},
-	{"Tag_if",		s3i_tag_if},
-	{"Tag_label",		s3i_tag_label},
-	{"Tag_load",		s3i_tag_load},
-	{"Tag_set",		s3i_tag_set},
-	{"Tag_text",		s3i_tag_text},
-	{"Tag_wait",		s3i_tag_wait},
-};
+static float span;
+static uint64_t sw;
+static bool show_sysbtn;
+static bool show_msgbox;
+static bool show_namebox;
 
 /*
- * Install the tag functions.
+ * The "click" tag implementation.
  */
 bool
-s3i_install_tag_funcs(void)
+s3i_tag_wait(
+	void *p)
 {
-	const char *params[] = {"param"};
-	int i;
+	/* Perform initialization on the first invocation. */
+	if (!s3_is_in_command_repetition()) {
+		/* Get the arguments. */
+		span = s3_get_tag_arg_float("time", false, 0);
+		show_sysbtn = s3_get_tag_arg_bool("showsysbtn", true, false);
+		show_msgbox = s3_get_tag_arg_bool("showmsgbox", true, false);
+		show_namebox = s3_get_tag_arg_bool("shownamebox", true, false);
 
-	/* Register functions. */
-	for (i = 0; i < sizeof(tag_func) / sizeof(struct tag_func); i++) {
-		if (!s3_install_tag(tag_func[i].name,
-				    tag_func[i].func))
-			return false;
+		/* Hide the message and name boxes. */
+		s3_show_sysbtn(show_sysbtn);
+		s3_show_msgbox(show_msgbox);
+		s3_show_namebox(show_namebox);
+
+		/* Start measuring elapsed time */
+		s3_reset_lap_timer(&sw);
+
+		/* Enter command repetition state */
+		s3_start_command_repetition();
 	}
 
+	/*
+	 * End the repetition when user input is detected,
+	 * or when a certain amount of time has elapsed in auto mode.
+	 */
+	if ((float)s3_get_lap_timer_millisec(&sw) / 1000.0f >= span ||
+	    (s3_is_skip_mode() && !s3_is_non_interruptible()) ||
+	    (!s3_is_auto_mode() && !s3_is_non_interruptible() &&
+	     (s3_is_control_key_pressed() || s3_is_return_key_pressed() ||
+	      s3_is_down_key_pressed() || s3_is_mouse_left_clicked()))) {
+		s3_stop_command_repetition();
+		return s3_move_to_next_tag();
+	}
+
+	/* Continue executing this command. */
 	return true;
 }

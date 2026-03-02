@@ -284,6 +284,7 @@ set(SUIKA_BASE_SOURCES
   src/cmd_load.c
   src/cmd_set.c
   src/cmd_text.c
+  src/cmd_wait.c
 )
 
 # I18N Source

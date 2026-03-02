@@ -2,7 +2,7 @@
 
 /*
  * Suika3
- * Tag Commands
+ * The "load" tag implementation
  */
 
 /*-
@@ -36,66 +36,70 @@
  */
 
 #include <suika3/suika3.h>
-#include "cmd.h"
+#include "conf.h"
 
-/* Tag function entry. */
-struct tag_func {
-	const char *name;
-	bool (*func)(void *);
-};
-
-/* Forward declaration for tag functions. */
-bool s3i_tag_bg(void *p);
-bool s3i_tag_ch(void *p);
-bool s3i_tag_choose(void *p);
-bool s3i_tag_click(void *p);
-bool s3i_tag_choose(void *p);
-bool s3i_tag_else(void *p);
-bool s3i_tag_elseif(void *p);
-bool s3i_tag_endif(void *p);
-bool s3i_tag_goto(void *p);
-bool s3i_tag_gui(void *p);
-bool s3i_tag_if(void *p);
-bool s3i_tag_label(void *p);
-bool s3i_tag_load(void *p);
-bool s3i_tag_set(void *p);
-bool s3i_tag_text(void *p);
-bool s3i_tag_wait(void *p);
-
-/* Tag function table. */
-static struct tag_func tag_func[] = {
-	{"Tag_bg",		s3i_tag_bg},
-	{"Tag_ch",		s3i_tag_ch},
-	{"Tag_choose",		s3i_tag_choose},
-	{"Tag_click",		s3i_tag_click},
-	{"Tag_else",		s3i_tag_else},
-	{"Tag_elseif",		s3i_tag_elseif},
-	{"Tag_endif",		s3i_tag_endif},
-	{"Tag_goto",		s3i_tag_goto},
-	{"Tag_gui",		s3i_tag_gui},
-	{"Tag_if",		s3i_tag_if},
-	{"Tag_label",		s3i_tag_label},
-	{"Tag_load",		s3i_tag_load},
-	{"Tag_set",		s3i_tag_set},
-	{"Tag_text",		s3i_tag_text},
-	{"Tag_wait",		s3i_tag_wait},
-};
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
 
 /*
- * Install the tag functions.
+ * The "load" tag implementation.
  */
 bool
-s3i_install_tag_funcs(void)
+s3i_tag_load(
+	void *p)
 {
-	const char *params[] = {"param"};
-	int i;
+	const char *file;
+	const char *label;
+	char *file_save;
+	char *label_save;
 
-	/* Register functions. */
-	for (i = 0; i < sizeof(tag_func) / sizeof(struct tag_func); i++) {
-		if (!s3_install_tag(tag_func[i].name,
-				    tag_func[i].func))
-			return false;
+	/* Update the tag values by variable values. */
+	s3_evaluate_tag();
+
+	/* Get the file and label. */
+	file = s3_get_tag_arg_string("file", false, NULL);
+	label = s3_get_tag_arg_string("label", true, NULL);
+
+	/* Save the strings. (due to destruction) */
+	file_save = strdup(file);
+	if (file_save == NULL) {
+		s3_log_out_of_memory();
+		return false;
 	}
+	if (label != NULL) {
+		label_save = strdup(label);
+		if (label_save == NULL) {
+			free(file_save);
+			s3_log_out_of_memory();
+			return false;
+		}
+	} else {
+		label_save = NULL;
+	}
+
+	/* Set the continue flag to run also the next tag. */
+	s3_set_vm_int("s3Continue", 0);
+
+	/* Jump to the file. */
+	if (!s3_move_to_tag_file(file_save)) {
+		free(file_save);
+		if (label_save != NULL)
+			free(label_save);
+		return false;
+	}
+
+	/* Jump to the label. */
+	if (label_save != NULL) {
+		if (!s3_move_to_label_tag(label_save)) {
+			free(file_save);
+			free(label_save);
+			return false;
+		}
+	}
+
+	free(file_save);
+	free(label_save);
 
 	return true;
 }
