@@ -159,6 +159,11 @@ s3_set_mixer_input_file(
 {
 	assert(track < S3_MIXER_TRACKS);
 
+	if (!s3_check_file_exists(file)) {
+		s3_log_tag_error(S3_TR("File \"%s\" not exist."), file);
+		return false;
+	}
+
 	if (is_playing[track]) {
 		pf_stop_sound(track);
 		is_playing[track] = false;
@@ -170,7 +175,11 @@ s3_set_mixer_input_file(
 	}
 
 	if (file != NULL && strcmp(file, "") != 0) {
-		pf_play_sound(track, file);
+		if (!pf_play_sound(track, file)) {
+			s3_log_tag_error(S3_TR("Cannot play sound file \"%s\"."), file);
+			return false;
+		}
+
 		is_playing[track] = true;
 
 		if (is_looped) {
