@@ -1977,31 +1977,42 @@ s3_apply_character_volume(
  */
 
 /*
- * Move to a tag file.
+ * Get the tag count.
+ */
+int
+s3_get_tag_count(void);
+
+/*
+ * Load a tag file and move to it.
  */
 bool
 s3_move_to_tag_file(
 	const char *file);
 
 /*
- * Move to a next tag.
+ * Move to a tag by index.
+ */
+bool
+s3_move_to_tag_index(int index);
+
+/*
+ * Move to the next tag.
  */
 bool
 s3_move_to_next_tag(void);
 
 /*
- * Move to a label.
+ * Move to a label tag.
  */
 bool
-s3_move_to_label(
+s3_move_to_label_tag(
 	const char *label);
 
 /*
- * Move to the tag by index.
+ * Move to the endif tag.
  */
 bool
-s3_move_to_tag_index(
-	int index);
+s3_move_to_endif_tag(void);
 
 /*
  * Get the current tag file name.
@@ -2022,36 +2033,100 @@ int
 s3_get_tag_line(void);
 
 /*
+ * Get the name of the current tag.
+ */
+const char*
+s3_get_tag_name(void);
+
+/*
+ * Get the property count of the current tag.
+ */
+int
+s3_get_tag_property_count(void);
+
+/*
+ * Get the property name of the current tag.
+ */
+const char *
+s3_get_tag_property_name(
+	int index);
+
+/*
+ * Get the property value of the current tag.
+ */
+const char *
+s3_get_tag_property_value(
+	int index);
+
+/*
+ * Check if a tag argument exists.
+ */
+bool
+s3_check_tag_arg(
+	const char *name);
+
+/*
+ * Get an integer tag argument.
+ */
+int
+s3_get_tag_arg_int(
+	const char *name);
+
+/*
+ * Get a float tag argument.
+ */
+float
+s3_get_tag_arg_float(
+	const char *name);
+
+/*
+ * Get a string tag argument.
+ */
+const char *
+s3_get_tag_arg_string(
+	const char *name);
+
+/*
  * Evaluate property values of the current tag.
  */
 bool
 s3_evaluate_tag(void);
 
 /*
- * Check if a tag argument exists.
- */
-bool s3_check_tag_arg(const char *name);
-
-/*
- * Get an integer tag argument.
- */
-int s3_get_tag_arg_int(const char *name);
-
-/*
- * Get a float tag argument.
- */
-float s3_get_tag_arg_float(const char *name);
-
-/*
- * Get a string tag argument.
- */
-const char *s3_get_tag_arg_string(const char *name);
-
-/*
- * Evaluate property values of the current tag.
+ * Push an "if" to the tag stack.
  */
 bool
-s3_evaluate_tag_property_values(void);
+s3_push_tag_stack_if(void);
+
+/*
+ * Pop an "if" from the tag stack.
+ */
+bool
+s3_pop_tag_stack_if(void);
+
+/*
+ * Push a "while loop" to the tag stack.
+ */
+bool
+s3_push_tag_stack_while(void);
+
+/*
+ * Pop a "while loop" from the tag stack.
+ */
+bool
+s3_pop_tag_stack_while(void);
+
+/*
+ * Push a "for loop" to the tag stack.
+ */
+bool
+s3_push_tag_stack_for(void);
+
+/*
+ * Pop a "for loop" from the tag stack.
+ */
+bool
+s3_pop_tag_stack_for(void);
 
 
 /*

@@ -42,9 +42,71 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
-/* Forward Declaration */
-static const char *get_var_value(const char *var_name);
+/* False assertion */
+#define NEVER_COME_HERE		0
+
+/* Sizes. */
+#define TAG_NAME_MAX		128
+#define PROP_NAME_MAX		128
+#define PROP_VALUE_MAX		4096
+#define TAG_MAX			65536
+#define STACK_MAX		128
+
+/* Stack element type. */
+#define TYPE_IF			1
+#define TYPE_FOR		2
+#define TYPE_WHILE		3
+
+/*
+ * Maximum properties in a tag.
+ */
+#define PROP_MAX	128
+
+/*
+ * Command struct.
+ */
+struct s3i_tag {
+	char *tag_name;
+	int prop_count;
+	char *prop_name[PROP_MAX];
+	char *prop_value[PROP_MAX];
+	char *prop_value_eval[PROP_MAX];
+	int line;
+};
+
+/*
+ * Tag execution stack element.
+ */
+struct s3i_tag_stack {
+	int type;
+	int start;
+};
+
+/* Current tag file. */
+static char cur_file[1024];
+
+/* Current tag index. */
+static int cur_index;
+
+/* Tag table. */
+static struct s3i_tag tag[TAG_MAX];
+
+/* Tag size. */
+static int tag_size;
+
+/* Tag execution stack. */
+static struct s3i_tag_stack tag_stack[STACK_MAX];
+static int stack_pointer;
+
+/* Evaluation buffer. */
+static char eval_buf[65536];
+
+/* Forward declaration. */
+static const char *evaluate_prop_value(const char *prop_value);
+static bool parse_tag_document(const char *doc, bool (*callback)(const char *, int, const char **, const char **, int), char **error_msg, int *error_line);
+static bool parse_tag_callback(const char *name, int props, const char **prop_name, const char **prop_value, int line);
 
 /*
  * Initialize the tag subsystem.
@@ -52,7 +114,9 @@ static const char *get_var_value(const char *var_name);
 bool
 s3i_init_tag(void)
 {
-	if (!pf_move_to_tag_file(S3_PATH_START_TAG))
+	s3i_cleanup_tag();
+
+	if (!s3_move_to_tag_file(S3_PATH_START_TAG))
 		return false;
 
 	return true;
@@ -64,6 +128,35 @@ s3i_init_tag(void)
 void
 s3i_cleanup_tag(void)
 {
+	struct s3i_tag *t;
+	int i, j;
+
+	cur_index = 0;
+
+	strcpy(cur_file, "");
+
+	for (i = 0; i < tag_size; i++) {
+		t = &tag[i];
+		free(t->tag_name);
+		for (j = 0; j < PROP_MAX; j++) {
+			if (t->prop_name[i] != NULL) {
+				free(t->prop_name[i]);
+				t->prop_name[i] = NULL;
+			}
+			if (t->prop_value[i] != NULL) {
+				free(t->prop_value[i]);
+				t->prop_value[i] = NULL;
+			}
+			if (t->prop_value_eval[i] != NULL) {
+				free(t->prop_value_eval[i]);
+				t->prop_value_eval[i] = NULL;
+			}
+		}
+	}
+
+	stack_pointer = 0;
+
+	memset(tag, 0, sizeof(tag));
 }
 
 /*
@@ -72,84 +165,53 @@ s3i_cleanup_tag(void)
 bool
 s3_move_to_tag_file(const char *file)
 {
-	if (pf_move_to_tag_file(S3_PATH_START_TAG))
+	char *buf;
+	char *error_message;
+	int error_line;
+
+	/* Get the file content. */
+	if (!s3_read_file_content(file, &buf, NULL))
 		return false;
 
-	return true;
-}
+	/* Destroy the existing commands. */
+	s3i_cleanup_tag();
 
-/*
- * Move to a next tag.
- */
-bool
-s3_move_to_next_tag(void)
-{
-	if (!pf_move_to_next_tag())
-		return true;
+	/* Save the file name. */
+	strncpy(cur_file, file, sizeof(cur_file) - 1);
 
-	return true;
-}
-
-/*
- * Move to a matched endif tag.
- */
-bool
-s3_move_to_matched_endif(void)
-{
-	/* TODO */
-	return false;
-}
-
-/*
- * Move to a tag.
- */
-bool
-s3_move_to_tag_index(
-	int index)
-{
-	if (pf_move_to_tag_index(index))
-		return false;
-
-	return true;
-}
-
-/*
- * Move to a label.
- */
-bool
-s3_move_to_label(
-	const char *label)
-{
-	if (!pf_move_to_label_tag(label)) {
-		/* Not found. */
-		s3_log_error(S3_TR("Label \"%s\" not found."), label);
+	/* Parse the file content. */
+	if (!parse_tag_document(buf, parse_tag_callback, &error_message, &error_line)) {
+		s3_log_error(S3_TR("%s:%d: %s\n"),  file, error_line, error_message);
+		free(buf);
 		return false;
 	}
 
-	if (!pf_move_to_next_tag()) {
-		s3_log_error(S3_TR("Label \"%s\" is at the end of file."), label);
-		return false;
-	}
+	/* Free the file content. */
+	free(buf);
 
 	return true;
 }
 
 /*
- * Get the current tag file name.
+ * Get the file name of the current tag.
  */
 const char *
 s3_get_tag_file(void)
 {
-	return pf_get_tag_file();
+	return &cur_file[0];
 }
 
 /*
- * Get the command index of the current tag.
+ * Get the index of the current tag.
  */
 int
 s3_get_tag_index(void)
 {
-	return pf_get_tag_index();
+	assert(cur_index < tag_size);
+	if (cur_index >= tag_size)
+		return -1;
+	
+	return cur_index;
 }
 
 /*
@@ -158,12 +220,171 @@ s3_get_tag_index(void)
 int
 s3_get_tag_line(void)
 {
-	return pf_get_tag_line();
+	assert(cur_index < tag_size);
+	if (cur_index >= tag_size)
+		return -1;
+	
+	return tag[cur_index].line;
 }
 
 /*
- * Tag Argument Access
+ * Get the tag count.
  */
+int
+s3_get_tag_count(void)
+{
+	return tag_size;
+}
+
+/*
+ * Move to the next tag.
+ */
+bool
+s3_move_to_next_tag(void)
+{
+	assert(cur_index < tag_size);
+	if (cur_index >= tag_size)
+		return false;
+
+	if (cur_index + 1 >= tag_size) {
+		cur_index = tag_size;
+		return true;
+	}
+
+	cur_index++;
+
+	return true;
+}
+
+/*
+ * Move to a tag index.
+ */
+bool
+s3_move_to_tag_index(
+	int index)
+{
+	assert(index < tag_size);
+	if (index >= tag_size)
+		return false;
+
+	cur_index = index;
+
+	return true;
+}
+
+/*
+ * Move to a label.
+ */
+bool
+s3_move_to_label_tag(
+	const char *label)
+{
+	int tag_count, prop_count;
+	int i, j;
+
+	/* Search tags. */
+	for (i = 0; i < tag_count; i++) {
+		if (strcmp(tag[i].tag_name, "label") != 0)
+			continue;
+
+		/* Check the "name" propery. */
+		for (j = 0; j < tag[i].prop_count; j++) {
+			if (strcmp(tag[i].prop_name[j], "name") != 0)
+				continue;
+			if (strcmp(tag[i].prop_value[j], label) != 0)
+				continue;
+
+			/* Found. */
+			cur_index = i + 1;
+			return true;
+		}
+	}
+
+	/* Not found. */
+	return false;
+}
+
+/*
+ * Move to a matched endif tag.
+ */
+bool
+s3_move_to_endif_tag(void)
+{
+	/* TODO */
+	return false;
+}
+
+/*
+ * Arguments
+ */
+
+/*
+ * Get the name of the current tag.
+ */
+const char *
+s3_get_tag_name(void)
+{
+	assert(cur_index < tag_size);
+	if (cur_index >= tag_size)
+		return NULL;
+
+	assert(tag[cur_index].tag_name != NULL);
+	return tag[cur_index].tag_name;
+}
+
+/*
+ * Get the property count of the current tag.
+ */
+int
+s3_get_tag_property_count(void)
+{
+	assert(cur_index < tag_size);
+	if (cur_index >= tag_size)
+		return 0;
+
+	assert(tag[cur_index].prop_count >= 0);
+	return tag[cur_index].prop_count;
+}
+
+/*
+ * Get the property name of the current tag.
+ */
+const char *
+s3_get_tag_property_name(
+	int index)
+{
+	assert(cur_index < tag_size);
+	if (cur_index >= tag_size)
+		return NULL;
+
+	assert(index < tag[cur_index].prop_count);
+	if (index >= tag[cur_index].prop_count)
+		return NULL;
+
+	return tag[cur_index].prop_name[index];
+}
+
+/*
+ * Get the property value of the current tag.
+ */
+const char *
+s3_get_tag_property_value(
+	int index)
+{
+	assert(cur_index < tag_size);
+	if (cur_index >= tag_size)
+		return NULL;
+
+	assert(index < tag[cur_index].prop_count);
+	if (index >= tag[cur_index].prop_count)
+		return false;
+
+	/* If there is an evaluated value. */
+	if (tag[cur_index].prop_value_eval[index] != NULL)
+		return tag[cur_index].prop_value_eval[index];
+
+	return tag[cur_index].prop_value[index];
+}
 
 /*
  * Check if a tag argument exists.
@@ -175,10 +396,10 @@ s3_check_tag_arg(
 	int i, count;
 	const char *prop_name;
 
-	count = pf_get_tag_property_count();
+	count = s3_get_tag_property_count();
 
 	for (i = 0; i < count; i++) {
-		prop_name = pf_get_tag_property_name(i);
+		prop_name = s3_get_tag_property_name(i);
 		if (strcmp(name, prop_name) == 0)
 			return true;
 	}
@@ -198,10 +419,10 @@ s3_get_tag_arg_int(
 	const char *prop_value;
 	int val;
 
-	count = pf_get_tag_property_count();
+	count = s3_get_tag_property_count();
 
 	for (i = 0; i < count; i++) {
-		prop_name = pf_get_tag_property_name(i);
+		prop_name = s3_get_tag_property_name(i);
 		if (strcmp(name, prop_name) == 0)
 			break;
 	}
@@ -210,7 +431,7 @@ s3_get_tag_arg_int(
 		return 0;
 	}
 
-	prop_value = pf_get_tag_property_value(i);
+	prop_value = s3_get_tag_property_value(i);
 	val = atoi(prop_value);
 
 	return val;
@@ -228,10 +449,10 @@ s3_get_tag_arg_float(
 	const char *prop_value;
 	float val;
 
-	count = pf_get_tag_property_count();
+	count = s3_get_tag_property_count();
 
 	for (i = 0; i < count; i++) {
-		prop_name = pf_get_tag_property_name(i);
+		prop_name = s3_get_tag_property_name(i);
 		if (strcmp(name, prop_name) == 0)
 			break;
 	}
@@ -240,7 +461,7 @@ s3_get_tag_arg_float(
 		return 0;
 	}
 
-	prop_value = pf_get_tag_property_value(i);
+	prop_value = s3_get_tag_property_value(i);
 	val = (float)atof(prop_value);
 
 	return val;
@@ -257,10 +478,10 @@ s3_get_tag_arg_string(
 	const char *prop_name;
 	const char *prop_value;
 
-	count = pf_get_tag_property_count();
+	count = s3_get_tag_property_count();
 
 	for (i = 0; i < count; i++) {
-		prop_name = pf_get_tag_property_name(i);
+		prop_name = s3_get_tag_property_name(i);
 		if (strcmp(name, prop_name) == 0)
 			break;
 	}
@@ -269,7 +490,7 @@ s3_get_tag_arg_string(
 		return NULL;
 	}
 
-	prop_value = pf_get_tag_property_value(i);
+	prop_value = s3_get_tag_property_value(i);
 
 	return prop_value;
 }
@@ -280,17 +501,473 @@ s3_get_tag_arg_string(
 bool
 s3_evaluate_tag(void)
 {
-	if (!pf_evaluate_tag_property_values(get_var_value))
-		return false;
+	int i;
+	const char *e;
+
+	for (i = 0; i < tag[cur_index].prop_count; i++) {
+		if (tag[cur_index].prop_value_eval[i] != NULL) {
+			free(tag[cur_index].prop_value_eval[i]);
+			tag[cur_index].prop_value_eval[i] = NULL;
+		}
+
+		e = evaluate_prop_value(tag[cur_index].prop_value[i]);
+		if (e == NULL)
+			return false;
+
+		if (strcmp(e, tag[cur_index].prop_value[i]) != 0) {
+			tag[cur_index].prop_value_eval[i] = strdup(e);
+			if (tag[cur_index].prop_value_eval[i] == NULL) {
+				s3_log_out_of_memory();
+				return false;
+			}
+		}
+	}
 
 	return true;
 }
 
-/* Get a variable value. */
+/* Parser for inline variables. (`${var}` format) */
 static const char *
-get_var_value(
-	const char *var_name)
+evaluate_prop_value(
+	const char *prop_value)
 {
-	return s3_get_variable_string(var_name);
+	const char *src;
+	char *dst;
+	bool is_escape1;
+	bool is_escape2;
+	int empty;
+
+	memset(eval_buf, 0, sizeof(eval_buf));
+
+	src = prop_value;
+	dst = eval_buf;
+	is_escape1 = false;
+	is_escape2 = false;
+	empty = sizeof(eval_buf) - 1;
+
+	while (*src != '\0') {
+		/* '$' */
+		if (!is_escape1 && !is_escape2) {
+			if (*src == '$') {
+				is_escape1 = true;
+				src++;
+				continue;
+			} else {
+				*dst++ = *src++;
+				if (--empty == 0)
+					return eval_buf;
+				continue;
+			}
+		}
+
+		/* '{' */
+		if (is_escape1 && !is_escape2) {
+			if (*src == '{') {
+				is_escape1 = false;
+				is_escape2 = true;
+				src++;
+				continue;
+			} else {
+				is_escape1 = false;
+				is_escape2 = false;
+				*dst++ = '$';
+				if (--empty == 0)
+					return eval_buf;
+				*dst++ = *src++;
+				if (--empty == 0)
+					return eval_buf;
+			}
+		}
+
+		/* var */
+		if (!is_escape1 && is_escape2) {
+			char *v;
+			int vempty;
+			char var_name[1024];
+			const char *var_value;
+
+			memset(var_name, 0, sizeof(var_name));
+
+			v = var_name;
+			vempty = sizeof(var_name) - 1;
+
+			while (*src != '\0') {
+				if (*src == '}')
+					break;
+				*v++ = *src++;
+				if (--vempty == 0)
+					return eval_buf;
+			}
+			if (*src == '\0')
+				return eval_buf;
+
+			var_value = s3_get_variable_string(var_name);
+			if (var_value != NULL) {
+				while(*var_value != '\0') {
+					*dst++ = *var_value++;
+					if (--empty == 0) {
+						*dst = '\0';
+						return eval_buf;
+					}
+				}
+			}
+
+			is_escape1 = false;
+			is_escape2 = false;
+			src++;
+			continue;
+		}
+
+		*dst++ = *src++;
+		if (--empty == 0)
+			return eval_buf;
+	}
+
+	return eval_buf;
 }
 
+/*
+ * Push an "if" to the tag stack.
+ */
+bool
+s3_push_tag_stack_if(void)
+{
+	if (stack_pointer >= STACK_MAX) {
+		s3_log_error(S3_TR("Too many nests."));
+		return false;
+	}
+
+	tag_stack[stack_pointer].type = TYPE_IF;
+	tag_stack[stack_pointer].start = cur_index;
+	return true;
+}
+
+/*
+ * Pop an "if" from the tag stack.
+ */
+bool
+s3_pop_tag_stack_if(void)
+{
+	if (stack_pointer == 0 ||
+	    tag_stack[stack_pointer].type != TYPE_IF) {
+		s3_log_error(S3_TR("No correspoinding \"if\" detected."));
+		return false;
+	}
+
+	stack_pointer--;
+	return true;
+}
+
+/*
+ * Push a "while loop" to the tag stack.
+ */
+bool
+s3_push_tag_stack_while(void)
+{
+	if (stack_pointer >= STACK_MAX) {
+		s3_log_error(S3_TR("Too many nests."));
+		return false;
+	}
+
+	tag_stack[stack_pointer].type = TYPE_WHILE;
+	tag_stack[stack_pointer].start = cur_index;
+	return true;
+}
+
+/*
+ * Pop a "while loop" from the tag stack.
+ */
+bool
+s3_pop_tag_stack_while(void)
+{
+	if (stack_pointer == 0 ||
+	    tag_stack[stack_pointer].type != TYPE_WHILE) {
+		s3_log_error(S3_TR("No correspoinding \"while\" detected."));
+		return false;
+	}
+
+	stack_pointer--;
+	return true;
+}
+
+/*
+ * Push a "for loop" to the tag stack.
+ */
+bool
+s3_push_tag_stack_for(void)
+{
+	if (stack_pointer >= STACK_MAX) {
+		s3_log_error(S3_TR("Too many nests."));
+		return false;
+	}
+
+	tag_stack[stack_pointer].type = TYPE_FOR;
+	tag_stack[stack_pointer].start = cur_index;
+	return true;
+}
+
+/*
+ * Pop a "for loop" from the tag stack.
+ */
+bool
+s3_pop_tag_stack_for(void)
+{
+	if (stack_pointer == 0 ||
+	    tag_stack[stack_pointer].type != TYPE_FOR) {
+		s3_log_error(S3_TR("No correspoinding \"for\" detected."));
+		return false;
+	}
+
+	stack_pointer--;
+	return true;
+}
+
+/* Parse a tag document. */
+static bool
+parse_tag_document(
+	const char *doc,
+	bool (*callback)(const char *, int, const char **, const char **, int),
+	char **error_msg,
+	int *error_line)
+{
+	static char tag_name[TAG_NAME_MAX];
+	static char prop_name[PROP_MAX][PROP_NAME_MAX];
+	static char prop_val[PROP_MAX][PROP_VALUE_MAX];
+
+	/* State machine */
+	enum state {
+		ST_INIT,
+		ST_TAGNAME,
+		ST_PROPNAME,
+		ST_PROPVALUE_QUOTE,
+		ST_PROPVALUE_BODY,
+	};
+
+	const char *top;
+	char c;
+	int state;
+	int line;
+	int len;
+	int prop_count;
+	char *prop_name_tbl[PROP_MAX];
+	char *prop_val_tbl[PROP_MAX];
+	int i;
+
+	for (i = 0; i < PROP_MAX; i++) {
+		prop_name_tbl[i] = &prop_name[i][0];
+		prop_val_tbl[i] = &prop_val[i][0];
+	}
+
+	state = ST_INIT;
+	top = doc;
+	line = 1;
+	len = 0;
+	prop_count = 0;
+	while (*top != '\0') {
+		c = *top++;
+		switch (state) {
+		case ST_INIT:
+			if (c == '[') {
+				state = ST_TAGNAME;
+				len = 0;
+				continue;
+			}
+			if (c == '\n') {
+				line++;
+				continue;
+			}
+			if (c == ' ' || c == '\r' || c == '\t')
+				continue;
+
+			*error_msg = strdup(S3_TR("Invalid character."));
+			*error_line = line;
+			return false;
+		case ST_TAGNAME:
+			if (len == 0 && (c == ' ' || c == '\r' || c == '\t' || c == '\n'))
+				continue;
+			if (c == '\n')
+				line++;
+			if (c == ' ' || c == '\r' || c == '\t' || c == '\n') {
+				assert(len > 0);
+				tag_name[len] = '\0';
+				state = ST_PROPNAME;
+				len = 0;
+				continue;
+			}
+			if (c == ']') {
+				tag_name[len] = '\0';
+				if (!callback(tag_name, 0, NULL, NULL, line)) {
+					*error_msg = strdup(S3_TR("Too many properties."));
+					*error_line = line;
+					return false;
+				}
+				state = ST_INIT;
+				prop_count = 0;
+				continue;
+			}
+			if (len >= TAG_NAME_MAX) {
+				*error_msg = strdup(S3_TR("Tag name too long."));
+				*error_line = line;
+				return false;
+			}
+			tag_name[len++] = c;
+			continue;
+		case ST_PROPNAME:
+			if (prop_count == PROP_MAX) {
+				*error_msg = strdup(S3_TR("Too many properties."));
+				*error_line = line;
+				return false;
+			}
+			if (len == 0 && c == ' ')
+				continue;
+			if (len == 0 && c == ']') {
+				if (!callback(tag_name, prop_count, (const char **)prop_name_tbl, (const char **)prop_val_tbl, line)) {
+					*error_msg = strdup(S3_TR("Internal error."));
+					*error_line = line;
+					return false;
+				}
+				state = ST_INIT;
+				prop_count = 0;
+				continue;
+			}
+			if (len == 0 && c == '\n')
+				line++;
+			if (len == 0 && (c == ' ' || c == '\r' || c == '\t' || c == '\n'))
+				continue;
+			if (len > 0 && c == '=') {
+				assert(len > 0);
+
+				/* Terminate the property name. */
+				prop_name[prop_count][len] = '\0';
+
+				state = ST_PROPVALUE_QUOTE;
+				len = 0;
+				continue;
+			}
+			if (len >= PROP_NAME_MAX) {
+				*error_msg = strdup(S3_TR("Property name too long."));
+				*error_line = line;
+				return false;
+			}
+			if ((c >= 'a' && c <= 'z') ||
+			    (c >= 'A' && c <= 'Z') ||
+			    (c >= '0' && c <= '9') ||
+			    c == '-' ||
+			    c == '_') {
+				prop_name[prop_count][len++] = c;
+				continue;
+			}
+			*error_msg = strdup(S3_TR("Invalid character."));
+			*error_line = line;
+			continue;
+		case ST_PROPVALUE_QUOTE:
+			if (c == '\n')
+				line++;
+			if (c == ' ' || c == '\r' || c == '\t' || c == '\n')
+				continue;
+			if (c == '\"') {
+				state = ST_PROPVALUE_BODY;
+				len = 0;
+				continue;
+			}
+			continue;
+		case ST_PROPVALUE_BODY:
+			if (c == '\\') {
+				switch (*top) {
+				case '\"':
+					prop_val[prop_count][len] = '\"';
+					len++;
+					top++;
+					continue;
+				case 'n':
+					prop_val[prop_count][len] = '\n';
+					len++;
+					top++;
+					continue;
+				case '\\':
+					prop_val[prop_count][len] = '\\';
+					len++;
+					top++;
+					continue;
+				default:
+					prop_val[prop_count][len] = '\\';
+					len++;
+					continue;
+				}
+			}
+			if (c == '\"') {
+				prop_val[prop_count][len] = '\0';
+				prop_count++;
+
+				state = ST_PROPNAME;
+				len = 0;
+				continue;
+			}
+			if (len >= PROP_VALUE_MAX) {
+				*error_msg = strdup(S3_TR("Property value too long."));
+				*error_line = line;
+				return false;
+			}
+			prop_val[prop_count][len++] = c;
+			continue;
+		default:
+			assert(NEVER_COME_HERE);
+			break;
+		}
+	}
+
+	if (state == ST_INIT)
+		return true;
+
+	*error_msg = strdup(S3_TR("Unexpected EOF"));
+	*error_line = line;
+	return false;
+}
+
+/* Callback for when a tag is read. */
+static bool
+parse_tag_callback(
+	const char *name,
+	int props,
+	const char **prop_name,
+	const char **prop_value,
+	int line)
+{
+	struct s3i_tag *t;
+	int i;
+
+	/* If command table is full. */
+	if (tag_size >= TAG_MAX) {
+		hal_log_error("Too many tags.");
+		return false;
+	}
+
+	t = &tag[tag_size++];
+	t->prop_count = props;
+
+	/* Copy a tag name. */
+	t->tag_name = strdup(name);
+	if (t->tag_name == NULL) {
+		hal_log_out_of_memory();
+		return false;
+	}
+
+	/* Copy properties. */
+	for (i = 0; i < props; i++) {
+		t->prop_name[i] = strdup(prop_name[i]);
+		if (t->prop_name[i] == NULL) {
+			hal_log_out_of_memory();
+			return false;
+		}
+
+		t->prop_value[i] = strdup(prop_value[i]);
+		if (t->prop_value[i] == NULL) {
+			hal_log_out_of_memory();
+			return false;
+		}
+	}
+
+	t->line = line;
+
+	return true;
+}

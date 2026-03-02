@@ -77,19 +77,20 @@ s3i_tag_if(
 	rhs = s3_get_tag_arg_string("rhs");
 
 	/* Compare. */
-	cond = false;
-	if (strcmp("op", "==") == 0) {
+	if (strcmp(op, "==") == 0) {
 		cond = strcmp(lhs, rhs) == 0 ? true : false;
-	} else if (strcmp("op", "!=") == 0) {
+	} else if (strcmp(op, "!=") == 0) {
 		cond = strcmp(lhs, rhs) != 0 ? true : false;
-	} else if (strcmp("op", ">") == 0) {
+	} else if (strcmp(op, ">") == 0) {
 		cond = atof(lhs) > atof(rhs) ? true : false;
-	} else if (strcmp("op", ">=") == 0) {
+	} else if (strcmp(op, ">=") == 0) {
 		cond = atof(lhs) >= atof(rhs) ? true : false;
-	} else if (strcmp("op", "<") == 0) {
+	} else if (strcmp(op, "<") == 0) {
 		cond = atof(lhs) < atof(rhs) ? true : false;
-	} else if (strcmp("op", "<=") == 0) {
+	} else if (strcmp(op, "<=") == 0) {
 		cond = atof(lhs) <= atof(rhs) ? true : false;
+	} else {
+		cond = false;
 	}
 
 	/* Set the continue flag to run also the next tag. */
@@ -97,7 +98,7 @@ s3i_tag_if(
 
 	/* If condition doesn't meet.  */
 	if (!cond) {
-		if (!s3_move_to_matched_endif()) {
+		if (!s3_move_to_endif_tag()) {
 			s3_log_script_exec_footer();
 			return false;
 		}

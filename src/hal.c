@@ -327,7 +327,99 @@ bool
 s3_call_vm_tag_function(
 	bool *tag_end)
 {
-	return pf_call_vm_tag_function(tag_end);
+	NoctEnv *env;
+	struct pfi_tag *t;
+	NoctValue dict;
+	int i;
+	int prop_count;
+	char func_name[256];
+	const char *tag_name;
+	NoctValue func_val;
+	NoctFunc *func;
+	NoctValue ret;
+
+	env = pf_get_vm_env();
+
+	*tag_end = false;
+
+	/* Get a current command. */
+	if (s3_get_tag_index() == s3_get_tag_count()) {
+		/* Reached to the end. Finish the game loop. */
+		*tag_end = true;
+		return true;
+	}
+
+	/* Make a parameter dictionary. */
+	if (!noct_make_empty_dict(env, &dict)) {
+		s3_log_error(S3_TR("In tag %s:%d: runtime error."),
+			     s3_get_tag_file(),
+			     s3_get_tag_line());
+		return false;
+	}
+
+	/* Setup properties as dictionary items. */
+	prop_count = s3_get_tag_property_count();
+	for (i = 0; i < prop_count; i++) {
+		NoctValue str;
+		const char *prop_name;
+		const char *prop_value;
+
+		prop_name = s3_get_tag_property_name(i);
+		prop_value = s3_get_tag_property_value(i);
+
+		if (!noct_make_string(env, &str, prop_value)) {
+			s3_log_error(S3_TR("In tag %s:%d: runtime error."),
+				     s3_get_tag_file(),
+				     s3_get_tag_line());
+			return false;
+		}
+		if (!noct_set_dict_elem(env, &dict, prop_name, &str)) {
+			s3_log_error(S3_TR("In tag %s:%d: runtime error."),
+				     s3_get_tag_file(),
+				     s3_get_tag_line());
+			return false;
+		}
+	}
+
+	/* Make a tag function name. */
+	tag_name = s3_get_tag_name();
+	snprintf(func_name, sizeof(func_name), "Tag_%s", tag_name);
+
+	/* Get a corresponding function.  */
+	if (!noct_get_global(env, func_name, &func_val)) {
+		s3_log_error(PF_TR("%s:%d: Tag \"%s\" not found."),
+			     s3_get_tag_file(),
+			     s3_get_tag_line(),
+			     tag_name);
+		return false;
+	}
+	if (!noct_get_func(env, &func_val, &func)) {
+		s3_log_error(S3_TR("%s:%d: \"tag_%s\" is not a function."),
+			     s3_get_tag_file(),
+			     s3_get_tag_line(),
+			     tag_name);
+		return false;
+	}
+
+	/* Call the function. */
+	if (!noct_enter_vm(env, func_name, 1, &dict, &ret)) {
+		const char *file;
+		int line;
+		const char *msg;
+
+		s3_log_error(S3_TR("In tag %s:%d: Tag \"%s\" execution error."),
+			     s3_get_tag_file(),
+			     s3_get_tag_line(),
+			     tag_name);
+
+		noct_get_error_file(env, &file);
+		noct_get_error_line(env, &line);
+		noct_get_error_message(env, &msg);
+		s3_log_error(S3_TR("Error: %s: %d: %s"), file, line, msg);
+		return false;
+	}
+
+	return true;
 }
 
 /*

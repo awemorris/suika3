@@ -640,5 +640,5 @@ cleanup(void)
 	 * Move to the label of the chosen item.
 	 */
 	assert(pointed_index != -1);
-	return s3_move_to_label(button[pointed_index].label);
+	return s3_move_to_label_tag(button[pointed_index].label);
 }

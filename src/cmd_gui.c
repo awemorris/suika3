@@ -124,7 +124,7 @@ cleanup(void)
 	/* If a button with a label was selected. */
 	label = s3_get_gui_result_label();
 	if (label != NULL) {
-		ret = s3_move_to_label(label);
+		ret = s3_move_to_label_tag(label);
 		s3_stop_gui();
 		return ret;
 	}
