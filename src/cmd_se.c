@@ -2,7 +2,7 @@
 
 /*
  * Suika3
- * The "bgm" tag implementation
+ * The "se" tag implementation
  */
 
 /*-
@@ -43,22 +43,21 @@
 #include <assert.h>
 
 /*
- * The "bgm" tag implementation.
+ * The "se" tag implementation.
  */
 bool
-s3i_tag_bgm(
+s3i_tag_se(
 	void *p)
 {
 	const char *file;
-	bool once;
-	bool loop, stop;
+	bool stop, loop;
 
 	/* Update the tag values by variable values. */
 	s3_evaluate_tag();
 
 	/* Get the arguments. */
 	file = s3_get_tag_arg_string("file", false, NULL);
-	once = s3_get_tag_arg_bool("once", true, false);
+	loop = s3_get_tag_arg_bool("loop", true, false);
 
 	/* Check if stop. */
 	if (strcmp(file, "stop") == 0 ||
@@ -69,11 +68,11 @@ s3i_tag_bgm(
 
 	if (!stop) {
 		/* Play a sound file. */
-		if (!s3_set_mixer_input_file(S3_TRACK_BGM, file, once ? false : true))
+		if (!s3_set_mixer_input_file(S3_TRACK_SE, file, loop))
 			return false;
 	} else {
 		/* Stop the sound. */
-		if (!s3_set_mixer_input_file(S3_TRACK_BGM, NULL, false))
+		if (!s3_set_mixer_input_file(S3_TRACK_SE, NULL, false))
 			return false;
 	}
 

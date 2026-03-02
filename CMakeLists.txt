@@ -273,6 +273,7 @@ set(SUIKA_BASE_SOURCES
   src/cmd_bg.c
   src/cmd_bgm.c
   src/cmd_ch.c
+  src/cmd_chapter.c
   src/cmd_choose.c
   src/cmd_click.c
   src/cmd_else.c
@@ -283,6 +284,7 @@ set(SUIKA_BASE_SOURCES
   src/cmd_if.c
   src/cmd_label.c
   src/cmd_load.c
+  src/cmd_se.c
   src/cmd_set.c
   src/cmd_text.c
   src/cmd_volume.c

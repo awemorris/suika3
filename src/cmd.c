@@ -48,6 +48,7 @@ struct tag_func {
 bool s3i_tag_bg(void *p);
 bool s3i_tag_bgm(void *p);
 bool s3i_tag_ch(void *p);
+bool s3i_tag_chapter(void *p);
 bool s3i_tag_choose(void *p);
 bool s3i_tag_click(void *p);
 bool s3i_tag_choose(void *p);
@@ -69,6 +70,7 @@ static struct tag_func tag_func[] = {
 	{"Tag_bg",		s3i_tag_bg},
 	{"Tag_bgm",		s3i_tag_bgm},
 	{"Tag_ch",		s3i_tag_ch},
+	{"Tag_chapter",		s3i_tag_chapter},
 	{"Tag_choose",		s3i_tag_choose},
 	{"Tag_click",		s3i_tag_click},
 	{"Tag_else",		s3i_tag_else},

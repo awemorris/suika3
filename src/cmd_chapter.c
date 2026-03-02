@@ -2,7 +2,7 @@
 
 /*
  * Suika3
- * The "bgm" tag implementation
+ * The "chapter" tag implementation
  */
 
 /*-
@@ -43,39 +43,23 @@
 #include <assert.h>
 
 /*
- * The "bgm" tag implementation.
+ * The "chapter" tag implementation.
  */
 bool
-s3i_tag_bgm(
+s3i_tag_chapter(
 	void *p)
 {
-	const char *file;
-	bool once;
-	bool loop, stop;
+	const char *name;
 
 	/* Update the tag values by variable values. */
 	s3_evaluate_tag();
 
-	/* Get the arguments. */
-	file = s3_get_tag_arg_string("file", false, NULL);
-	once = s3_get_tag_arg_bool("once", true, false);
+	/* Get the argument. */
+	name = s3_get_tag_arg_string("name", false, NULL);
 
-	/* Check if stop. */
-	if (strcmp(file, "stop") == 0 ||
-	    strcmp(file, "none") == 0)
-		stop = true;
-	else
-		stop = false;
-
-	if (!stop) {
-		/* Play a sound file. */
-		if (!s3_set_mixer_input_file(S3_TRACK_BGM, file, once ? false : true))
-			return false;
-	} else {
-		/* Stop the sound. */
-		if (!s3_set_mixer_input_file(S3_TRACK_BGM, NULL, false))
-			return false;
-	}
+	/* Set the chapter title. */
+	if (!s3_set_chapter_name(name))
+		return false;
 
 	/* Set the continue flag to run also the next tag. */
 	s3_set_vm_int("s3Continue", 0);
