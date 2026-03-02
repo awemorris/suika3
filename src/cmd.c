@@ -61,6 +61,7 @@ bool s3i_tag_label(void *p);
 bool s3i_tag_load(void *p);
 bool s3i_tag_set(void *p);
 bool s3i_tag_text(void *p);
+bool s3i_tag_volume(void *p);
 bool s3i_tag_wait(void *p);
 
 /* Tag function table. */
@@ -80,6 +81,7 @@ static struct tag_func tag_func[] = {
 	{"Tag_load",		s3i_tag_load},
 	{"Tag_set",		s3i_tag_set},
 	{"Tag_text",		s3i_tag_text},
+	{"Tag_volume",		s3i_tag_volume},
 	{"Tag_wait",		s3i_tag_wait},
 };
 
