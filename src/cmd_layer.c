@@ -48,7 +48,6 @@ struct layer_name_map {
 };
 static struct layer_name_map layer_name_map[] = {
 	{"bg",		S3_LAYER_BG},
-	{"bg-fo",	S3_LAYER_BG_FO},
 	{"bg2",		S3_LAYER_BG2},
 	{"efb1",	S3_LAYER_EFB1},
 	{"efb2",	S3_LAYER_EFB2},
@@ -58,69 +57,135 @@ static struct layer_name_map layer_name_map[] = {
 	{"chb-eye",	S3_LAYER_CHB_EYE},
 	{"chb-lip",	S3_LAYER_CHB_LIP},
 	{"chb-fo",	S3_LAYER_CHB_FO},
-
 	{"chl",		S3_LAYER_CHL},
 	{"chl-eye",	S3_LAYER_CHL_EYE},
 	{"chl-lip",	S3_LAYER_CHL_LIP},
 	{"chl-fo",	S3_LAYER_CHL_FO},
-
-	{"chl", LAYER_CHL},
-	{"chlc", LAYER_CHL},
-	{"chr", LAYER_CHR},
-	{"chrc", LAYER_CHRC},
-	{"chc", LAYER_CHC},
-	{"effect1", LAYER_EFFECT1},
-	{"effect2", LAYER_EFFECT2},
-	{"effect3", LAYER_EFFECT3},
-	{"effect4", LAYER_EFFECT4},
-	{"text1", LAYER_TEXT1},
-	{"text2", LAYER_TEXT2},
-	{"text3", LAYER_TEXT3},
-	{"text4", LAYER_TEXT4},
-	{"text5", LAYER_TEXT5},
-	{"text6", LAYER_TEXT6},
-	{"text7", LAYER_TEXT7},
-	{"text8", LAYER_TEXT8},
+	{"chlc",	S3_LAYER_CHLC},
+	{"chlc-eye",	S3_LAYER_CHLC_EYE},
+	{"chlc-lip",	S3_LAYER_CHLC_LIP},
+	{"chlc-fo",	S3_LAYER_CHLC_FO},
+	{"chr",		S3_LAYER_CHR},
+	{"chr-eye",	S3_LAYER_CHR_EYE},
+	{"chr-lip",	S3_LAYER_CHR_LIP},
+	{"chr-fo",	S3_LAYER_CHR_FO},
+	{"chrc",	S3_LAYER_CHRC},
+	{"chrc-eye",	S3_LAYER_CHRC_EYE},
+	{"chrc-lip",	S3_LAYER_CHRC_LIP},
+	{"chrc-fo",	S3_LAYER_CHRC_FO},
+	{"chc",		S3_LAYER_CHC},
+	{"chc-eye",	S3_LAYER_CHC_EYE},
+	{"chc-lip",	S3_LAYER_CHC_LIP},
+	{"chc-fo",	S3_LAYER_CHC_FO},
+	{"eff1",	S3_LAYER_EFF1},
+	{"eff2",	S3_LAYER_EFF2},
+	{"eff3",	S3_LAYER_EFF3},
+	{"eff4",	S3_LAYER_EFF4},
+	/* msgbox is not accessible. */
+	/* namebox is not accessible. */
+	/* choose1-idle is not accessible. */
+	/* choose1-hover is not accessible. */
+	/* ... */
+	/* choose8-idle is not accessible. */
+	/* choose8-hover is not accessible. */
+	{"chf",		S3_LAYER_CHF},
+	{"chf-eye",	S3_LAYER_CHF_EYE},
+	{"chf-lip",	S3_LAYER_CHF_LIP},
+	{"chf-fo",	S3_LAYER_CHF_FO},
+	/* click is not accessible. */
+	/* auto is not accessible. */
+	/* skip is not accessible. */
+	{"text1",	S3_LAYER_TEXT1},
+	{"text2",	S3_LAYER_TEXT2},
+	{"text3",	S3_LAYER_TEXT3},
+	{"text4",	S3_LAYER_TEXT4},
+	{"text5",	S3_LAYER_TEXT5},
+	{"text6",	S3_LAYER_TEXT6},
+	{"text7",	S3_LAYER_TEXT7},
+	{"text8",	S3_LAYER_TEXT8},
+	/* gui1 is not accessible. */
+	/* ... */
+	/* gui32 is not accessible. */
 };
+
+static int name_to_layer(const char *name);
 
 /*
  * The "layer" tag implementation.
  */
 bool
-s3i_tag_bgm(
+s3i_tag_layer(
 	void *p)
 {
+	const char *name;
 	const char *file;
-	bool once;
-	bool loop, stop;
+	int x, y, alpha;
+	float scale_x, scale_y, center_x, center_y, rotate;
+	int layer;
+	struct s3_image *img;
 
 	/* Update the tag values by variable values. */
 	s3_evaluate_tag();
 
 	/* Get the arguments. */
+	name = s3_get_tag_arg_string("name", false, NULL);
 	file = s3_get_tag_arg_string("file", false, NULL);
-	once = s3_get_tag_arg_bool("once", true, false);
+	x = s3_get_tag_arg_int("x", true, 0);
+	y = s3_get_tag_arg_int("y", true, 0);
+	alpha = s3_get_tag_arg_int("alpha", true, 255);
+	scale_x = s3_get_tag_arg_float("scale-x", true, 1.0f);
+	scale_y = s3_get_tag_arg_float("scale-y", true, 1.0f);
+	center_x = s3_get_tag_arg_int("center-x", true, 0);
+	center_y = s3_get_tag_arg_int("center-y", true, 0);
+	rotate = s3_get_tag_arg_float("rotate", true, 0);
 
-	/* Check if stop. */
-	if (strcmp(file, "stop") == 0 ||
-	    strcmp(file, "none") == 0)
-		stop = true;
-	else
-		stop = false;
+	/* Get the layer index from the layer name. */
+	layer = name_to_layer(name);
+	if (layer == -1)
+		return false;
 
-	if (!stop) {
-		/* Play a sound file. */
-		if (!s3_set_mixer_input_file(S3_TRACK_BGM, file, once ? false : true))
-			return false;
-	} else {
-		/* Stop the sound. */
-		if (!s3_set_mixer_input_file(S3_TRACK_BGM, NULL, false))
+	/* For when erase a layer. */
+	if (strcmp(file, "none") == 0)
+		file = NULL;
+
+	/* If an image is specified. */
+	img = NULL;
+	if (file != NULL) {
+		/* Load the image. */
+		img = s3_create_image_from_file(file);
+		if (img == NULL)
 			return false;
 	}
+
+	/* Set the layer parameters. */
+	if (!s3_set_layer_file_name(layer, file))
+		return false;
+	s3_set_layer_image(layer, img);
+	s3_set_layer_position(layer, x, y);
+	s3_set_layer_alpha(layer, alpha);
+	s3_set_layer_scale(layer, scale_x, scale_y);
+	s3_set_layer_center(layer, center_x, center_y);
+	s3_set_layer_rotate(layer, rotate);
 
 	/* Set the continue flag to run also the next tag. */
 	s3_set_vm_int("s3Continue", 0);
 
 	/* Move to the next tag. */
 	return s3_move_to_next_tag();
+}
+
+static int
+name_to_layer(const char *name)
+{
+	int i;
+
+	for (i = 0;
+	     i < (int)(sizeof(layer_name_map) / sizeof(struct layer_name_map));
+	     i++) {
+		if (strcmp(layer_name_map[i].name, name) == 0)
+			return layer_name_map[i].index;
+	}
+
+	s3_log_tag_error(S3_TR("Invalid layer name \"%s\"."), name);
+	return -1;
 }

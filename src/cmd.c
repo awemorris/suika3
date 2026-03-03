@@ -60,6 +60,7 @@ bool s3i_tag_goto(void *p);
 bool s3i_tag_gui(void *p);
 bool s3i_tag_if(void *p);
 bool s3i_tag_label(void *p);
+bool s3i_tag_layer(void *p);
 bool s3i_tag_load(void *p);
 bool s3i_tag_set(void *p);
 bool s3i_tag_text(void *p);
@@ -82,6 +83,7 @@ static struct tag_func tag_func[] = {
 	{"Tag_gui",		s3i_tag_gui},
 	{"Tag_if",		s3i_tag_if},
 	{"Tag_label",		s3i_tag_label},
+	{"Tag_layer",		s3i_tag_layer},
 	{"Tag_load",		s3i_tag_load},
 	{"Tag_set",		s3i_tag_set},
 	{"Tag_text",		s3i_tag_text},
