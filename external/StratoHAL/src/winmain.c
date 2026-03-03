@@ -32,6 +32,7 @@
 #include "stratohal/platform.h"
 #include "d3drender.h"
 #include "dsound.h"
+#include "dsvideo.h"
 #include "mfvideo.h"
 #include "digamepad.h"
 #include "xigamepad.h"
