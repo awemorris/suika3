@@ -1903,7 +1903,33 @@ s3_get_fade_method(
 		return S3_FADE_MELT;
 
 	/* Invalid. */
+	s3_log_tag_error(S3_TR("Invalid fade type \"%s\"."), method);
 	return S3_FADE_INVALID;
+}
+
+/*
+ * Get a acceleration method from a string.
+ */
+int
+s3_get_accel_method(
+	const char *method)
+{
+	if (method == NULL ||
+	    strcmp(method, "") == 0 ||
+	    strcmp(method, "uniform") == 0)
+		return S3_ANIME_ACCEL_UNIFORM;
+	if (strcmp(method, "accel") == 0)
+		return S3_ANIME_ACCEL_ACCEL;
+	if (strcmp(method, "deaccel") == 0)
+		return S3_ANIME_ACCEL_DEACCEL;
+	if (strcmp(method, "smoothstep") == 0)
+		return S3_ANIME_ACCEL_SMOOTHSTEP;
+	if (strcmp(method, "invsmoothstep") == 0)
+		return S3_ANIME_ACCEL_INVSMOOTHSTEP;
+
+	/* Invalid. */
+	s3_log_tag_error(S3_TR("Invalid accel type \"%s\"."), method);
+	return S3_ANIME_ACCEL_INVALID;
 }
 
 /*

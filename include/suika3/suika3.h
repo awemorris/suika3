@@ -302,6 +302,7 @@
 /*
  * Acceleration types.
  */
+#define S3_ANIME_ACCEL_INVALID		(-1)
 #define S3_ANIME_ACCEL_UNIFORM		(0)
 #define S3_ANIME_ACCEL_ACCEL		(1)
 #define S3_ANIME_ACCEL_DEACCEL		(2)
@@ -1444,6 +1445,13 @@ s3_get_thumb_image(void);
  */
 int
 s3_get_fade_method(
+	const char *method);
+
+/*
+ * Get a acceleration method from a string.
+ */
+int
+s3_get_accel_method(
 	const char *method);
 
 /*

@@ -286,6 +286,7 @@ set(SUIKA_BASE_SOURCES
   src/cmd_label.c
   src/cmd_layer.c
   src/cmd_load.c
+  src/cmd_move.c
   src/cmd_se.c
   src/cmd_set.c
   src/cmd_skip.c
