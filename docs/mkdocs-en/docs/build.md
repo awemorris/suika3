@@ -58,13 +58,13 @@ The target file `build-mingw-x86_64/playfield` will be created.
 
 On Debian, Ubuntu, or Raspberry Pi OS:
 ```
-sudo apt-get install git cmake ninja-build build-essential libx11-dev libxpm-dev libasound2-dev mesa-common-dev
+sudo apt-get install git cmake ninja-build build-essential libx11-dev libxpm-dev libasound2-dev mesa-common-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
 ```
 
 On RedHat, Rocky Linux, Fedora, etc.:
 ```
 sudo dnf groupinstall "Development Tools" "Development Libraries"
-sudo dnf install patch git cmake ninja-build libX11-devel libXpm-devel alsa-lib-devel mesa-libGL-devel
+sudo dnf install patch git cmake ninja-build libX11-devel libXpm-devel alsa-lib-devel mesa-libGL-devel gstreamer1.0-devel gstreamer1.0-plugins-base-devel
 ```
 
 ### Steps

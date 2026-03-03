@@ -28,7 +28,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#if defined(USE_X11_GST)
+#if defined(HAL_USE_GSTREAMER)
 
 #include "gstplay.h"
 
@@ -203,4 +203,4 @@ gstplay_loop_iteration (void)
 {
 }
 
-#endif /* defined(USE_X11_GST) */
+#endif /* defined(HAL_USE_GSTREAMER) */

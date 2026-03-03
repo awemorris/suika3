@@ -25,14 +25,15 @@ option(PLAYFIELD_TARGET_GDK_XBOX_XS      "Build for GDK for Xbox Series X|S"    
 option(PLAYFIELD_TARGET_UWP              "Build for UWP"                         OFF)
 
 # Options
-option(PLAYFIELD_ENABLE_JIT           "Enable JIT"              OFF)
-option(PLAYFIELD_ENABLE_I18N          "Enable translation"      OFF)
-option(PLAYFIELD_ENABLE_BUNDLE        "Enable macOS bundle"     OFF)
-option(PLAYFIELD_ENABLE_PACK          "Enable packager"         OFF)
-option(PLAYFIELD_ENABLE_STATIC        "Build a static library"  OFF)
-option(PLAYFIELD_ENABLE_SHARED        "Build a dynamic library" OFF)
-option(PLAYFIELD_ENABLE_DIST          "Build for packages"      OFF)
-option(PLAYFIELD_ENABLE_ROT90         "Rotate screen for GBM"   OFF)
+option(PLAYFIELD_ENABLE_JIT           "Enable JIT"                 OFF)
+option(PLAYFIELD_ENABLE_I18N          "Enable translation"         OFF)
+option(PLAYFIELD_ENABLE_BUNDLE        "Enable macOS bundle"        OFF)
+option(PLAYFIELD_ENABLE_PACK          "Enable packager"            OFF)
+option(PLAYFIELD_ENABLE_STATIC        "Build a static library"     OFF)
+option(PLAYFIELD_ENABLE_SHARED        "Build a dynamic library"    OFF)
+option(PLAYFIELD_ENABLE_DIST          "Build for packages"         OFF)
+option(PLAYFIELD_ENABLE_ROT90         "Rotate screen for GBM"      OFF)
+option(PLAYFIELD_ENABLE_GST           "Enable GStreamer support"   OFF)
 
 # For derived projects
 option(PLAYFIELD_ENABLE_INITHOOK    "Enable the inithook function"  OFF)
@@ -245,6 +246,10 @@ endif()
 # Screen rotate
 if(PLAYFIELD_ENABLE_ROT90)
   set(STRATO_ENABLE_ROT90 ON)
+endif()
+
+if(PLAYFIELD_ENABLE_GST)
+  set(STRATO_ENABLE_GST ON)
 endif()
 
 #

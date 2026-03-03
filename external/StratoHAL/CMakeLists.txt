@@ -29,6 +29,7 @@ option(STRATO_ENABLE_I18N          "Enable translation"                 OFF)
 option(STRATO_ENABLE_OBJECT        "Build an object library"            OFF)
 option(STRATO_ENABLE_SHARED        "Use shared libraries"               OFF)
 option(STRATO_ENABLE_ROT90         "Rotate screen"                      OFF)
+option(STRATO_ENABLE_GST           "Enable GStreamer support"           OFF)
 
 #
 # Automatic Target Detection
@@ -149,6 +150,11 @@ if(   STRATO_TARGET_LINUX
   find_library(GL_LIBRARY GL REQUIRED)
   if(STRATO_TARGET_LINUX OR STRATO_TARGET_FREEBSD)
     find_library(GLX_LIBRARY GLX)
+  endif()
+
+  if(STRATO_ENABLE_GST)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(GST REQUIRED IMPORTED_TARGET gstreamer-1.0 gstreamer-video-1.0)
   endif()
 endif()
 
@@ -523,10 +529,20 @@ if(STRATO_TARGET_WINDOWS)
   )
 endif()
 
+# Linux X11: Add -DHAS_USE_GL -DHAL_USE_X11 -DHAL_GSTREAMER
+if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_FREEBSD)
+  target_compile_definitions(strato PRIVATE HAL_USE_GL HAL_USE_X11)
+
+  if(STRATO_ENABLE_GST)
+    target_compile_definitions(strato PRIVATE HAL_USE_GSTREAMER)
+  endif()
+endif()
+
 # Linux Wayland: Add -DHAS_USE_GLES -DHAL_USE_WAYLAND
 if(   STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_FREEBSD_WAYLAND)
-  target_compile_definitions(strato PRIVATE HAL_USE_GLES HAL_USE_WAYLAND)
+  target_compile_definitions(strato PRIVATE HAL_USE_GLES HAL_USE_WAYLAND HAL_USE_GSTREAMER)
 endif()
 
 # Linux Framebuffer: Add -DHAL_USE_GLES
@@ -662,6 +678,11 @@ if(   STRATO_TARGET_LINUX
     GL
     ${GLX_LIBRARY}  # We need this on systems with older Mesa.
   )
+
+  # GStreamer
+  if(STRATO_ENABLE_GST)
+    target_link_libraries(strato PUBLIC PkgConfig::GST)
+  endif()
 endif()
 
 # Linux Wayland.
