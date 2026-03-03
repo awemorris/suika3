@@ -761,7 +761,7 @@ WndProc(
 	case WM_GRAPHNOTIFY:
 #if !defined(HAL_USE_MFVIDEO)
 		if(!DShowProcessEvents())
-			bDShowMode = FALSE;
+			bVideoMode = FALSE;
 #endif
 		break;
 	case WM_SIZING:
