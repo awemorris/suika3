@@ -276,6 +276,7 @@ set(SUIKA_BASE_SOURCES
   src/cmd_chapter.c
   src/cmd_choose.c
   src/cmd_click.c
+  src/cmd_config.c
   src/cmd_else.c
   src/cmd_elseif.c
   src/cmd_endif.c
@@ -286,6 +287,7 @@ set(SUIKA_BASE_SOURCES
   src/cmd_load.c
   src/cmd_se.c
   src/cmd_set.c
+  src/cmd_skip.c
   src/cmd_text.c
   src/cmd_volume.c
   src/cmd_wait.c

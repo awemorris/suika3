@@ -1,43 +1,28 @@
-[bg file="bg/roof.png" time="1.0"]
+# Show a background image.
+[bg file="bg/coast.png" time="0.5"]
 
-[text name="AAA" text="名前を選択してください。"]
-
-[choose text1="March" label1="label1"
-        text2="April" label2="label2"
-        text3="May"   label3="label3"]
-
-[label name="label1"]
-  [set name="name" value="March"]
-[goto name="common"]
-
-[label name="label2"]
-  [set name="name" value="April"]
-[goto name="common"]
-
-[label name="label3"]
-  [set name="name" value="May"]
-[goto name="common"]
-
-[label name="common"]
-
-[if lhs="${name}" op="==" rhs="March"]
-    [text text="March is selected."]
-[elseif lhs="${name}" op="==" rhs="April"]
-    [text text="April is selected."]
-[else]
-    [text text="May is selected."]
-[endif]
-
+# Show a character image.
 [ch center="ch/midori-normal.png" time="0.5" fade="normal"]
 
-[text name="${name}" text="Hello!"]
+# Show a question text.
+[text text="Choose a name."]
 
-[bg file="bg/coast.png" time="3.0"]
+# Show options.
+[choose
+  name="choose_result"
+  text1="March"
+  text2="April"
+  text3="May"
+]
 
-[text text="Suika3 started working!"]
+# Branch by the choose's result.
+[if lhs="${choose_result}" op="==" rhs="March"]
+    [set name="name" value="March"]
+[elseif lhs="${choose_result}" op="==" rhs="April"]
+    [set name="name" value="April"]
+[else]
+    [set name="name" value="May"]
+[endif]
 
-[bg file="bg/roof.png" time="3.0"]
-
-[text text="Click to exit."]
-
-[gui file="system/config/config.txt"]
+# Show a text.
+[text name="${name}" text="Hello! My name is ${name}."]
