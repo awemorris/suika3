@@ -597,11 +597,11 @@ run_anime(
 {
 	/* Anime for a choose box to be unfocused. */
 	if (unfocus_index != -1 && conf_choose_unfocus_anime[unfocus_index] != NULL)
-		s3_load_anime_from_file(conf_choose_unfocus_anime[unfocus_index], -1, NULL);
+		s3_load_anime_from_file(conf_choose_unfocus_anime[unfocus_index], NULL, NULL);
 
 	/* Anime for a choose box to be focused. */
 	if (focus_index != -1 && conf_choose_focus_anime[focus_index] != NULL)
-		s3_load_anime_from_file(conf_choose_focus_anime[focus_index], -1, NULL);
+		s3_load_anime_from_file(conf_choose_focus_anime[focus_index], NULL, NULL);
 }
 
 /* Cleanup. */

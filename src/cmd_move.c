@@ -162,7 +162,6 @@ static bool is_async;
 static bool has_layer_anime[sizeof(params) / sizeof(struct params)];
 
 static bool init(void);
-static void update_ch_mapping(const char *fname, int layer);
 static void process_frame(void);
 static bool cleanup(void);
 

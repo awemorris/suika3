@@ -471,6 +471,39 @@ s3_leave_full_screen_mode(void)
 }
 
 /*
+ * Video
+ */
+
+/*
+ * Play a video.
+ */
+bool
+s3_play_video(
+	const char *file,
+	bool is_skippable)
+{
+	return pf_play_video(file, is_skippable);
+}
+
+/*
+ * Stop the video.
+ */
+void
+s3_stop_video(void)
+{
+	pf_stop_video();
+}
+
+/*
+ * Check if a video is playing back.
+ */
+bool
+s3_is_video_playing(void)
+{
+	return pf_is_video_playing();
+}
+
+/*
  * Locale
  */
 

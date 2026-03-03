@@ -187,7 +187,9 @@ static struct layer_name_map layer_name_map[] = {
 /*
  * Registered anime file.
  */
+static char *reg_anime_name[S3_REG_ANIME_COUNT];
 static char *reg_anime_file[S3_REG_ANIME_COUNT];
+static bool reg_anime_layers[S3_REG_ANIME_COUNT][S3_STAGE_LAYERS];
 
 /*
  * Information during anime file loading.
@@ -242,6 +244,10 @@ s3i_cleanup_anime(void)
 	memset(context, 0, sizeof(context));
 
 	for (i = 0; i < S3_REG_ANIME_COUNT; i++) {
+		if (reg_anime_name[i] != NULL) {
+			free(reg_anime_name[i]);
+			reg_anime_name[i] = NULL;
+		}
 		if (reg_anime_file[i] != NULL) {
 			free(reg_anime_file[i]);
 			reg_anime_file[i] = NULL;
@@ -255,30 +261,50 @@ s3i_cleanup_anime(void)
 bool
 s3_load_anime_from_file(
 	const char *fname,
-	int reg_index,
+	const char *reg_name,
 	bool *used_layer)
 {
+	bool used_tbl[S3_STAGE_LAYERS];
+	int reg_index;
+
+	/* Allocate a reg_index. */
+	reg_index = -1;
+	if (reg_name != NULL) {
+		for (reg_index = 0; reg_index < S3_REG_ANIME_COUNT; reg_index++) {
+			if (reg_anime_name[reg_index] == NULL)
+				break;
+		}
+		if (reg_index == S3_REG_ANIME_COUNT) {
+			s3_log_tag_error(S3_TR("Too many registered animes."));
+			return false;
+		}
+	}
+
 	/* Load the anime file. */
 	cur_seq_layer = -1;
 	s3_reset_lap_timer(&cur_sw);
-	used_layer_tbl = used_layer;
-	if (used_layer_tbl != NULL)
-		memset(used_layer_tbl, 0, sizeof(bool) * S3_STAGE_LAYERS);
+	memset(used_tbl, 0, sizeof(bool) * S3_STAGE_LAYERS);
+	used_layer_tbl = used_tbl;
 	if (!load_anime_file(fname))
 		return false;
 
 	/* Register an anime file for looping. */
 	if (reg_index != -1) {
-		if (reg_anime_file[reg_index] != NULL) {
-			free(reg_anime_file[reg_index]);
-			reg_anime_file[reg_index] = NULL;
+		reg_anime_name[reg_index] = strdup(reg_name);
+		if (reg_anime_name[reg_index] == NULL) {
+			s3_log_out_of_memory();
+			return false;
 		}
 		reg_anime_file[reg_index] = strdup(fname);
 		if (reg_anime_file[reg_index] == NULL) {
 			s3_log_out_of_memory();
 			return false;
 		}
+		memcpy(reg_anime_layers[reg_index], used_layer_tbl, sizeof(used_tbl));
 	}
+
+	if (used_layer != NULL)
+		memcpy(used_layer, used_tbl, sizeof(used_tbl));
 
 	return true;
 }
@@ -873,12 +899,43 @@ calc_pos_y_to(
 /*
  * Unregister a looped anime.
  */
-void
+bool
 s3_unregister_anime(
+	const char *reg_name)
+{
+	int reg_index, i;
+
+	for (reg_index = 0; reg_index < S3_REG_ANIME_COUNT; i++) {
+		if (reg_anime_name[reg_index] == NULL)
+			continue;
+		if (strcmp(reg_anime_name[reg_index], reg_name) == 0)
+			break;
+	}
+	if (reg_index == S3_REG_ANIME_COUNT) {
+		s3_log_tag_error(S3_TR("Invalid registered anime \"%s\"."), reg_name);
+		return false;
+	}
+
+	for (i = 0; i < S3_STAGE_LAYERS; i++) {
+		if (reg_anime_layers[reg_index][i])
+			s3_clear_layer_anime_sequence(i);
+	}
+
+	free(reg_anime_name[reg_index]);
+	free(reg_anime_file[reg_index]);
+	reg_anime_name[reg_index] = NULL;
+	reg_anime_file[reg_index] = NULL;
+	memset(reg_anime_file, 0, sizeof(reg_anime_layers[0]));
+}
+
+/*
+ * Get a looped anime name.
+ */
+const char *
+s3_get_reg_anime_name(
 	int reg_index)
 {
-	free(reg_anime_file[reg_index]);
-	reg_anime_file[reg_index] = NULL;
+	return reg_anime_name[reg_index];
 }
 
 /*

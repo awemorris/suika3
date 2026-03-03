@@ -270,16 +270,20 @@ set(SUIKA_BASE_SOURCES
   src/translation.c
   src/vars.c
   src/cmd.c
+  src/cmd_anime.c
   src/cmd_bg.c
   src/cmd_bgm.c
+  src/cmd_callmacro.c
   src/cmd_ch.c
   src/cmd_chapter.c
   src/cmd_choose.c
   src/cmd_click.c
   src/cmd_config.c
+  src/cmd_defmacro.c
   src/cmd_else.c
   src/cmd_elseif.c
   src/cmd_endif.c
+  src/cmd_endmacro.c
   src/cmd_goto.c
   src/cmd_gui.c
   src/cmd_if.c
@@ -287,10 +291,12 @@ set(SUIKA_BASE_SOURCES
   src/cmd_layer.c
   src/cmd_load.c
   src/cmd_move.c
+  src/cmd_returnmacro.c
   src/cmd_se.c
   src/cmd_set.c
   src/cmd_skip.c
   src/cmd_text.c
+  src/cmd_video.c
   src/cmd_volume.c
   src/cmd_wait.c
 )

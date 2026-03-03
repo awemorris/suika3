@@ -440,8 +440,15 @@ s3_execute_save_local(
 			break;
 
 		/* Write the gosub return index. */
-		if (!write_u32(s3_get_return_index()))
-			break;
+		for (i = 0; i < S3_CALL_STACK_MAX; i++) {
+			const char *file;
+			int index;
+			s3_read_call_stack(i, &file, &index);
+			if (!write_string(file))
+				break;
+			if (!write_u32(index))
+				break;
+		}
 
 		/* Write the stage. */
 		for (i = 0; i < S3_STAGE_LAYERS; i++) {
@@ -485,6 +492,8 @@ s3_execute_save_local(
 
 		/* Serialize the anime. */
 		for (i = 0; i < S3_REG_ANIME_COUNT; i++) {
+			if (!write_string(s3_get_reg_anime_name(i)))
+				break;
 			if (!write_string(s3_get_reg_anime_file_name(i)))
 				break;
 		}
@@ -650,9 +659,14 @@ s3_execute_load_local(
 			break;
 
 		/* Read the gosub return index. */
-		if (!read_u32(&u))
-			break;
-		s3_set_return_index(u);
+		for (i = 0; i < S3_CALL_STACK_MAX; i++) {
+			if (!read_string(sbuf, sizeof(sbuf)))
+				break;
+			if (!read_u32(&u))
+				break;
+			if (!s3_write_call_stack(i, sbuf, u))
+				break;
+		}
 
 		/* Read the stage. */
 		for (i = 0; i < S3_STAGE_LAYERS; i++) {
@@ -737,10 +751,12 @@ s3_execute_load_local(
 
 		/* Read the anime. */
 		for (i = 0; i < S3_REG_ANIME_COUNT; i++) {
+			if (!read_string(key, sizeof(key)))
+				break;
 			if (!read_string(sbuf, sizeof(sbuf)))
 				break;
-			if (strcmp(sbuf, "") != 0) {
-				if (!s3_load_anime_from_file(sbuf, i, NULL))
+			if (strcmp(key, "") != 0) {
+				if (!s3_load_anime_from_file(sbuf, key, NULL))
 					break;
 			}
 		}

@@ -305,6 +305,38 @@ s3_move_to_label_tag(
 }
 
 /*
+ * Move to a macro.
+ */
+bool
+s3_move_to_macro_tag(
+	const char *name)
+{
+	int i, j;
+
+	/* Search tags. */
+	for (i = 0; i < tag_size; i++) {
+		if (strcmp(tag[i].tag_name, "defmacro") != 0)
+			continue;
+
+		/* Check the "name" propery. */
+		for (j = 0; j < tag[i].prop_count; j++) {
+			if (strcmp(tag[i].prop_name[j], "name") != 0)
+				continue;
+			if (strcmp(tag[i].prop_value[j], name) != 0)
+				continue;
+
+			/* Found. */
+			cur_index = i + 1;
+			return true;
+		}
+	}
+
+	/* Not found. */
+	s3_log_tag_error(S3_TR("Macro \"%s\" not found."), name);
+	return false;
+}
+
+/*
  * Move to a matched else (or elseif or endif) tag.
  */
 bool
@@ -375,6 +407,28 @@ s3_move_to_endif_tag(void)
 	}
 
 	s3_log_error(S3_TR("No matching endif found."));
+	return false;
+}
+
+/*
+ * Move to a matched endif tag.
+ */
+bool
+s3_move_to_endmacro_tag(void)
+{
+	int depth;
+	int i;
+
+	depth = 0;
+
+	for (i = cur_index + 1; i < tag_size; i++) {
+		if (strcmp(tag[i].tag_name, "endmacro") == 0) {
+			cur_index = i + 1;
+			return true;
+		}
+	}
+
+	s3_log_error(S3_TR("No matching endmacro found."));
 	return false;
 }
 

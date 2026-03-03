@@ -157,8 +157,10 @@ static float msg_auto_speed;
 /* Index of the last English tag. */
 static int last_en_index;
 
-/* Return destination of gosub. */
-static int return_index;
+/* Tag call stack. */
+static int stack_pointer;
+static char *stack_file[S3_CALL_STACK_MAX];
+static int stack_index[S3_CALL_STACK_MAX];
 
 /* Last tag name. */
 static const char *last_tag_name;
@@ -799,22 +801,88 @@ s3_get_pen_position_y(void)
 }
 
 /*
- * Set the tag index for return destination.
+ * Push the return point.
  */
-void
-s3_set_return_index(
+bool
+s3_push_for_call(
+	const char *file,
 	int index)
 {
-	return_index = index;
+	if (stack_pointer == S3_CALL_STACK_MAX) {
+		s3_log_tag_error(S3_TR("Too many macro calls."));
+		return false;
+	}
+
+	stack_file[stack_pointer] = strdup(file);
+	if (stack_file[stack_pointer] == NULL) {
+		s3_log_out_of_memory();
+		return false;
+	}
+	stack_index[stack_pointer] = index;
+	stack_pointer++;
+
+	return true;
 }
 
 /*
- * Get the tag index for return destination.
+ * Pop the return point.
  */
-int
-s3_get_return_index(void)
+bool
+s3_pop_for_return(
+	char **file,
+	int *index)
 {
-	return return_index;
+	if (stack_pointer == 0) {
+		s3_log_tag_error(S3_TR("Too many macro calls."));
+		return false;
+	}
+	stack_pointer--;
+
+	*file = strdup(stack_file[stack_pointer]);
+	if (file == NULL) {
+		s3_log_out_of_memory();
+		return false;
+	}
+	free(stack_file[stack_pointer]);
+	*index = stack_index[stack_pointer];
+
+	return true;
+}
+
+/*
+ * Read the call stack.
+ */
+void
+s3_read_call_stack(
+	int sp,
+	const char **file,
+	int *index)
+{
+	*file = stack_file[stack_pointer];
+	*index = stack_index[stack_pointer];
+}
+
+/*
+ * Write the call stack.
+ */
+bool
+s3_write_call_stack(
+	int sp,
+	const char *file,
+	int index)
+{
+	assert(sp < S3_CALL_STACK_MAX);
+
+	if (stack_file[stack_pointer] != NULL)
+		free(stack_file[stack_pointer]);
+	stack_file[stack_pointer] = strdup(file);
+	if (stack_file[stack_pointer] == NULL) {
+		s3_log_out_of_memory();
+		return false;
+	}
+	stack_index[stack_pointer] = index;
+
+	return true;
 }
 
 /*

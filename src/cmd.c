@@ -45,17 +45,21 @@ struct tag_func {
 };
 
 /* Forward declaration for tag functions. */
+bool s3i_tag_anime(void *p);
 bool s3i_tag_bg(void *p);
 bool s3i_tag_bgm(void *p);
+bool s3i_tag_callmacro(void *p);
 bool s3i_tag_ch(void *p);
 bool s3i_tag_chapter(void *p);
 bool s3i_tag_choose(void *p);
 bool s3i_tag_click(void *p);
 bool s3i_tag_config(void *p);
 bool s3i_tag_choose(void *p);
+bool s3i_tag_defmacro(void *p);
 bool s3i_tag_else(void *p);
 bool s3i_tag_elseif(void *p);
 bool s3i_tag_endif(void *p);
+bool s3i_tag_endmacro(void *p);
 bool s3i_tag_goto(void *p);
 bool s3i_tag_gui(void *p);
 bool s3i_tag_if(void *p);
@@ -63,23 +67,29 @@ bool s3i_tag_label(void *p);
 bool s3i_tag_layer(void *p);
 bool s3i_tag_load(void *p);
 bool s3i_tag_move(void *p);
+bool s3i_tag_returnmacro(void *p);
 bool s3i_tag_set(void *p);
 bool s3i_tag_text(void *p);
+bool s3i_tag_video(void *p);
 bool s3i_tag_volume(void *p);
 bool s3i_tag_wait(void *p);
 
 /* Tag function table. */
 static struct tag_func tag_func[] = {
+	{"Tag_anime",		s3i_tag_anime},
 	{"Tag_bg",		s3i_tag_bg},
 	{"Tag_bgm",		s3i_tag_bgm},
+	{"Tag_callmacro",	s3i_tag_callmacro},
 	{"Tag_ch",		s3i_tag_ch},
 	{"Tag_chapter",		s3i_tag_chapter},
 	{"Tag_choose",		s3i_tag_choose},
 	{"Tag_config",		s3i_tag_config},
 	{"Tag_click",		s3i_tag_click},
+	{"Tag_defmacro",	s3i_tag_defmacro},
 	{"Tag_else",		s3i_tag_else},
 	{"Tag_elseif",		s3i_tag_elseif},
 	{"Tag_endif",		s3i_tag_endif},
+	{"Tag_endmacro",	s3i_tag_endmacro},
 	{"Tag_goto",		s3i_tag_goto},
 	{"Tag_gui",		s3i_tag_gui},
 	{"Tag_if",		s3i_tag_if},
@@ -87,8 +97,10 @@ static struct tag_func tag_func[] = {
 	{"Tag_layer",		s3i_tag_layer},
 	{"Tag_load",		s3i_tag_load},
 	{"Tag_move",		s3i_tag_move},
+	{"Tag_returnmacro",	s3i_tag_returnmacro},
 	{"Tag_set",		s3i_tag_set},
 	{"Tag_text",		s3i_tag_text},
+	{"Tag_video",		s3i_tag_video},
 	{"Tag_volume",		s3i_tag_volume},
 	{"Tag_wait",		s3i_tag_wait},
 };

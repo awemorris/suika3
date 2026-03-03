@@ -334,6 +334,11 @@
  */
 
 /*
+ * Call Stack Depth
+ */
+#define S3_CALL_STACK_MAX	(32)
+
+/*
  * Call Arguments (For GUI and anime)
  */
 #define S3_CALL_ARGS		(32)
@@ -768,17 +773,38 @@ int
 s3_get_pen_position_y(void);
 
 /*
- * Set the tag index for return destination.
+ * Push the return point.
  */
-void
-s3_set_return_index(
+bool
+s3_push_for_call(
+	const char *file,
 	int index);
 
 /*
- * Get the tag index for return destination.
+ * Pop the return point.
  */
-int
-s3_get_return_index(void);
+bool
+s3_pop_for_return(
+	char **file,
+	int *index);
+
+/*
+ * Read the call stack.
+ */
+void
+s3_read_call_stack(
+	int sp,
+	const char **file,
+	int *index);
+
+/*
+ * Write the call stack.
+ */
+bool
+s3_write_call_stack(
+	int sp,
+	const char *file,
+	int index);
 
 /*
  * Set a calling argument.
@@ -2023,6 +2049,13 @@ s3_move_to_label_tag(
 	const char *label);
 
 /*
+ * Move to a macro.
+ */
+bool
+s3_move_to_macro_tag(
+	const char *name);
+
+/*
  * Move to the else/elseif/endif tag.
  */
 bool
@@ -2033,6 +2066,12 @@ s3_move_to_else_tag(void);
  */
 bool
 s3_move_to_endif_tag(void);
+
+/*
+ * Move to the endmacro tag.
+ */
+bool
+s3_move_to_endmacro_tag(void);
 
 /*
  * Get the current tag file name.
@@ -2174,7 +2213,7 @@ s3_pop_tag_stack_for(void);
 bool
 s3_load_anime_from_file(
 	const char *fname,
-	int reg_index,
+	const char *reg_name,
 	bool *used_layer);
 
 /*
@@ -2249,8 +2288,15 @@ s3_update_anime_frame(void);
 /*
  * Unregister a looped anime.
  */
-void
+bool
 s3_unregister_anime(
+	const char *reg_name);
+
+/*
+ * Get a looped anime name.
+ */
+const char *
+s3_get_reg_anime_name(
 	int reg_index);
 
 /*
@@ -2799,6 +2845,26 @@ s3_enter_full_screen_mode(void);
  */
 void
 s3_leave_full_screen_mode(void);
+
+/*
+ * Play a video.
+ */
+bool
+s3_play_video(
+	const char *file,
+	bool is_skippable);
+
+/*
+ * Stop the video.
+ */
+void
+s3_stop_video(void);
+
+/*
+ * Check if a video is playing back.
+ */
+bool
+s3_is_video_playing(void);
 
 /*
  * Get the system language.
