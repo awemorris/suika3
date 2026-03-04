@@ -1,5 +1,41 @@
-Suika3 Tag Specification
-========================
+Suika3 Tag Reference
+====================
+
+## Index
+
+| Tag Name          | Description                                                        |
+| :---              | :---                                                               |
+| **[anime]**       | Loads and runs an animation file.                                  |
+| **[bg]**          | Changes the background image with a fading effect.                 |
+| **[bgm]**         | Plays a background music file (Ogg Vorbis format).                 |
+| **[callmacro]**   | Calls a defined macro.                                             |
+| **[ch]**          | Shows or hides characters with detailed layer parameters.          |
+| **[chapter]**     | Sets a chapter name.                                               |
+| **[choose]**      | Displays options and stores the selection or jumps to a label.     |
+| **[click]**       | Waits for a user click.                                            |
+| **[config]**      | Sets a configuration value for the game system.                    |
+| **[defmacro]**    | Starts a macro definition.                                         |
+| **[else]**        | Part of the if/elseif branch for when no conditions are met.       |
+| **[elseif]**      | Specifies an additional condition in a branch.                     |
+| **[endif]**       | Ends a conditional branch.                                         |
+| **[endmacro]**    | Ends a macro definition.                                           |
+| **[goto]**        | Jumps to a specified label tag.                                    |
+| **[gui]**         | Shows a GUI from a specified file.                                 |
+| **[if]**          | Branches the process based on a specified condition.               |
+| **[label]**       | Defines a label for jump targets.                                  |
+| **[layer]**       | Loads/unloads images or sets parameters for specific layers.       |
+| **[load]**        | Loads a NovelML file and can jump to a specific label.             |
+| **[move]**        | Animates character layers over a specified time.                   |
+| **[returnmacro]** | Returns from a macro execution.                                    |
+| **[se]**          | Plays a sound effect file (Ogg Vorbis format).                     |
+| **[set]**         | Sets a variable value (all variables are treated as text).         |
+| **[skip]**        | Enables or disables the skip status.                               |
+| **[text]**        | Displays text in the message box, optionally with a name.          |
+| **[video]**       | Plays a video file (supports skippable settings).                  |
+| **[volume]**      | Sets the sound volume for BGM, SE, or Voice tracks.                |
+| **[wait]**        | Waits for a specified number of seconds.                           |
+
+---
 
 ## bg
 

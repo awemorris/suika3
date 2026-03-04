@@ -1,14 +1,14 @@
-How To Build Suika3
-===================
+Suika3 Build Instruction
+========================
 
 Suika3 fully utilizes the CMake build system.
 
 * Notes
     * Requires CMake 3.22 or later
     * Windows: Visual Studio 2022 or 2026
-    * macOS: Tested on macOS 15 (Xcode required)
+    * macOS: Tested on macOS 26 (Xcode required)
     * Linux: Tested on Ubuntu 24.04 (X11 or Wayland required)
-    * A full build takes 10 seconds using 10 cores.
+    * A full build takes 5 seconds using Intel Core Ultra 5 228V
 
 ## Windows (Visual Studio)
 

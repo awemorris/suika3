@@ -1,5 +1,5 @@
-Suika3 API
-==========
+Suika3 API Reference
+====================
 
 ## Index
 
