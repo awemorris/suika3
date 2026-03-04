@@ -1,37 +1,72 @@
 Suika3
 ======
 
-The next-generation visual novel engine for the 2030s and beyond.
+A next-generation cross-platform visual novel engine designed for the 2030s and beyond.
 
-`Suika3` is a high-performance visual novel engine developed by the
-`Suika3 Community`. Built to be fast, native, and truly universal,
-Suika3 aims to empower creators across the globe for the decades to
-come.
+Suika3 is a high-performance, rock-solid visual novel engine developed by the `Suika3 Community`.
 
-Games made with Suika3 run on the `Suika3 JIT Virtual Machine` (VM).
-The VM executes `NovelML 3.0` along with `SuikaScript 3.0`.
+Engineered with state-of-the-art techniques in computer science,
+Suika3 delivers blazing speed, native performance, and true portability
+empowering creators worldwide to build timeless experiences that endure for decades.
 
-`NovelML 3.0` is a tag-based, human-readable markup for visual novels.
-Familiar to developers from other engines, it uses concise, declarative tags
-for dialogue and scenes, so scripts are readable at a glance.
+Games made with Suika3 are powered by `NovelML 3.0` and `SuikaScript 3.0`.
 
-`SuikaScript 3.0` is our original scripting language that runs at true native
-speed within the VM. Inspired by JavaScript, SuikaScript offers a
-streamlined syntax that is more intuitive for beginners yet powerful
-enough for seasoned developers. Because both the language and VM are
-developed in-house, you never have to worry about being left behind by
-upstream language updates or breaking changes. Your scripts will remain
-stable and compatible for the long term.
+* **NovelML 3.0**: A tag-based, human-readable markup language
+  designed specifically for visual novels. It features concise,
+  declarative tags for seamless dialogue and scene
+  control. Developers can also extend its capabilities by defining
+  custom tags using SuikaScript.
 
-## Status: Implementing for 1.0.0
+* **SuikaScript 3.0**: The robust extension language for Suika3. It
+  utilizes a high-speed JIT compiler on desktop platforms and can be
+  compiled into native binaries for production or mobile
+  environments.
+
+---
+
+## Why SuikaScript?
+
+It's OUR language ;-)
+
+* **True Native Performance:** Run extensions at full speed on iOS,
+  Android, and consoles—even where JIT execution is restricted.
+* **Seamless Platform Review:** Since final builds consist of native
+  code, you'll never face script-related hurdles during App Store or
+  console reviews.
+* **Developer-Friendly:** Inspired by JavaScript, the syntax is
+  intuitive for beginners yet powerful for veterans.
+* **Long-term Stability:** Because we develop both the language and
+  the VM in-house, you're safe from breaking upstream changes. Your
+  scripts stay compatible for the long haul.
+
+---
+
+## Key Features
+
+* **High Performance**: Powered by the Suika JIT VM, it delivers
+  unparalleled execution speed.
+* **Lightweight**: Engineered to run smoothly even on low-spec
+  hardware and in developing regions.
+* **Universal Platform**: Designed with a "port anywhere" strategy,
+  ensuring compatibility with almost every modern platform.
+* **Extensible**: NovelML can be seamlessly expanded by developers
+  using SuikaScript.
+* **Reliable**: Built on the proven codebase of Suika2 and integrated
+  with the modern Playfield Engine.
+* **Jot-and-Run**: A powerful markup language designed to bring your
+  stories to life in an instant.
+
+---
+
+## Status: Working Hard for 1.0.0!
 
 We are planning the 1.0.0 release at the end of March 2026.
-Currently, We are working hard to implement this software.
+Currently we are working very hard to complete Suika3.
 
 **Our current status is:**
 * ✅ We have implemented all APIs in C.
 * ✅ We have implemented all tags in C.
-* ❌ We are implementing API warppers for the scripting language.
+* We are implementing API warppers for the scripting language. (Around 300 APIs)
     * Config
     * Input
     * Game
@@ -49,14 +84,7 @@ Currently, We are working hard to implement this software.
     * GUI
     * HAL
 
-## Key Features
-
-* **High Performance**: Powered by the Suika JIT VM, it delivers unparalleled execution speed.
-* **Lightweight**: Engineered to run smoothly even on low-spec hardware and in developing regions.
-* **Universal Platform**: Designed with a "port anywhere" strategy, ensuring compatibility with almost every modern platform.
-* **Extensible**: NovelML can be seamlessly expanded by developers using SuikaScript.
-* **Reliable**: Built on the proven codebase of Suika2 and integrated with the modern Playfield Engine.
-* **Jot-and-Run**: A powerful markup language designed to bring your stories to life in an instant.
+---
 
 ## Getting Started
 
@@ -68,8 +96,9 @@ Please download from [Releases](releases).
 
 ### Building locally
 
-Refer to [build.md](docs/mkdocs-en/build.md) (when available) for platform-specific instructions.
+Refer to [build.md](docs/mkdocs-en/build.md) for platform-specific instructions.
 
+**Generic instruction:**
 ```
 git clone https://github.com/suika3-community/suika3.git
 cd suika3
@@ -81,9 +110,14 @@ cp -R ../game/* .
 ./suika3
 ```
 
+---
+
 ## Quick Start
 
+### NovelML
+
 `start.novel` file looks like:
+
 ```
 # Show a background image.
 [bg file="bg/coast.png" time="0.5"]
@@ -115,7 +149,10 @@ cp -R ../game/* .
 [text name="${name}" text="Hello! My name is ${name}."]
 ```
 
+### SuikaScript
+
 `main.pf` file looks like:
+
 ```
 // Called when the window is opened.
 func setup() {
@@ -147,25 +184,31 @@ func render() {
 }
 ```
 
+---
+
 ## Examples
+
+Sorry we are currently preparing examples.
 
 See the `game/` directory for:
 * Minimal demo project
 * Sample assets and NovelML snippets
 * SuikaScript usage patterns
 
-## Building
-
-For contributors who want to build from source, see (docs/mkdocs-en/docs/build.md).
+---
 
 ## Documentation
 
-Documents are also available at the [Website](https://suika3.vn/docs/)
+Documentation is also available at [the Website](https://suika3.vn/docs/)
+and it is synchronized to the latest.
 
-* [NovelML 3.0 reference](docs/mkdocs-en/docs/tags.md)
-* [SuikaScript 3.0 reference](docs/mkdocs-en/docs/syntax.md)
-* [API docs](docs/mkdocs-en/docs/api.md)
-* [How to build](docs/mkdocs-en/docs/build.md)
+* [NovelML 3.0 Syntax Reference](docs/mkdocs-en/docs/tags.md) (In-Progress)
+* [NovelML 3.0 Tag Reference](docs/mkdocs-en/docs/tags.md)
+* [SuikaScript 3.0 Syntax Reference](docs/mkdocs-en/docs/syntax.md)
+* [SuikaScript 3.0 API Reference](docs/mkdocs-en/docs/syntax.md)
+* [Built Instruction](docs/mkdocs-en/docs/build.md)
+
+---
 
 ## Supported Platforms
 
@@ -177,7 +220,7 @@ with a clear migration path for mobile and embedded targets via Playfield Engine
 |Type       |OS         |Status       |Check Date       |Version                             |
 |-----------|-----------|-------------|-----------------|------------------------------------|
 |Desktop    |Windows    |✅ Works     |3rd March 2026   |Windows 11 x64                      |
-|           |macOS      |✅ Works     |1st March 2026   ||macOS 15 Sequoia Arm64             |
+|           |macOS      |✅ Works     |1st March 2026   |macOS 15 Sequoia Arm64              |
 |           |Linux      |✅ Works     |3rd March 2026   |Ubuntu 24.04 LTS x86_64             |
 |Mobile     |iOS        |✅ Works     |                 |iPhone iOS 18                       |
 |           |Android    |✅ Works     |                 |Android 16                          |
@@ -282,17 +325,7 @@ with a clear migration path for mobile and embedded targets via Playfield Engine
 | Android 15 | ✅     |
 | Android 16 | ✅     |
 
-## Lineage: The Grand Journey
-
-Suika3 represents the culmination of over two decades of relentless innovation and development:
-
-* **Suika Studio (2001–2004)**: The origin of our codebase, featuring our first GUI-based editors. 
-* **Unfruitiful (2005–2015)**: A decade of R&D focused on establishing a robust portability layer for cross-platform support.
-* **Suika2 (2016–2024)**: The cornerstone of our current architecture and the fruit of a decade of dedicated R&D.
-  It delivers a full visual novel experience with extensive platform compatibility.
-* **Playfield Engine (2025–)**: A versatile 2D engine derived from the core portability layer of the Suika series.
-* **Suika3 (2026–)**: By synthesizing these legacies and introducing **NovelML 3.0 / SuikaScript 3.0**,
-  Suika3 delivers the rock-solid stability of its predecessors alongside the cutting-edge flexibility of modern technology.
+---
 
 ## Localization / Internationalization
 
@@ -319,6 +352,8 @@ To switch languages, set your system locale.
 Translation files are located under the three `i18n/` directories. (main, HAL and NoctLang)
 To propose a new translation or update an existing one, please open an Issue or submit a Pull Request.
 
+---
+
 ## Third-party Libraries
 
 Playfield Engine uses the following libraries.
@@ -333,6 +368,8 @@ The source code tarballs for the libraries are included in this repository.
 - brotli
 - bzip2
 - FreeType2
+
+---
 
 ## CMake Presets
 
@@ -384,6 +421,8 @@ Suika3 ships with CMake presets covering various platforms and build configurati
 
 ## Technical Overview
 
+If you were shocked after reading this section, you're a real engineer ;-)
+
 Suika3 is not merely a wrapper around SDL combined with a scripting language.
 It features its own rendering and audio backends, and its own scripting language,
 positioning it as a fully independent game engine.
@@ -392,18 +431,26 @@ positioning it as a fully independent game engine.
 
 Suika3 is based on `PlayField Engine`, a comprehensive 2D game engine.
 This means that Suika3 is fully extensible using the Playfield API.
-(Did you know that Playfield Engine was actually developed for Suika3?)
+(Can you believe that Playfield Engine was actually developed just for Suika3?)
 
 ```
-+-----------------------+
-|        Suika3         |
-+-----------------------+
-|    Playfield Engine   |
-+-----------+-----------+
-| StratoHAL | NoctLang  |
-+-----------+-----------+
-|   Operating System    |
-+-----------------------+
++------------------------------+
+|        NovelML (Tags)        |
++------------------------------+
+| Plugin Tags (by SuikaScript) | --> SuikaScript can be compiled into a native binary!
++------------------------------+
+|       Base Tags (by C)       |
++------------------------------+
+|    SuikaScript Wrapper API   |
++------------------------------+
+|         Suika3 C API         |
++------------------------------+
+|       Playfield C API        |
++---------------+--------------+
+|   StratoHAL   |   NoctLang   |
++---------------+--------------+
+|       Operating System       |
++------------------------------+
 ```
 
 * **Scripting**:
@@ -461,8 +508,14 @@ SuikaScript = NoctLang + Suika3 API
 **NoctLang** is a lightweight scripting language designed for in-app scripting.
 With a game-oriented syntax, it emphasizes clarity, instant startup, and tight integration with the engine.
 
-The built-in JIT compiler supports a wide range of CPU architectures,
-including both 32-bit and 64-bit of: **Intel, Arm, RISC-V, PowerPC, MIPS.**
+The built-in JIT compiler supports a wide range of CPU architectures, including:
+* Intel x86 (32-bit)
+* AMD64/x86_64 (64-bit)
+* ARMv7 (32-bit)
+* Arm64 (64-bit)
+* RISC-V (32-bit/64-bit)
+* PowerPC/POWER (32-bit/64-bit)
+* MIPS (32-bit/64-bit)
 
 For platforms where JIT is restricted (such as mobile or consoles),
 NoctLang can fall back to interpreter mode, and AOT (ahead-of-time)
@@ -482,12 +535,15 @@ even in tightly controlled environments.
 |Linux x86_64   |JIT                |
 |Linux armv7    |JIT                |
 |Linux arm64    |JIT                |
-|FreeBSD x86_64 |JIT                |
 |iOS            |Interpreter or AOT |
-|Android        |Interpreter or AOT |
+|Android ARMv7  |Interpreter or AOT |
+|Android Arm64  |Interpreter or AOT |
 |WebAssembly    |Interpreter or AOT |
 |Unity Plugin   |Interpreter or AOT |
 |Xbox           |Interpreter or AOT |
+|FreeBSD        |JIT                |
+|NetBSD         |JIT                |
+|OpebBSD        |Interpreter or AOT |
 
 ### Runtime Footprint
 
@@ -496,36 +552,65 @@ even in tightly controlled environments.
 |All targets    |~2 MB          |Allocates 256 MB at startup for GC; does not exceed that limit |
 
 The garbage collector allocates 256 MB at startup because currently 256 MB is the maximum heap size.
+So the required system memory size is 256 MB by default.
+(However, this can be adjusted to a smaller value.)
 
 ### Garbage Collection
 
 Suika3 implements a high-performance garbage collector similar to the
-HotSpot VM in Java, so you generally don’t need to worry much about
+HotSpot VM in Java, so you generally don't need to worry much about
 delays caused by garbage collection.
 
 * The garbage collector uses a generational GC, managing objects in young and old generations.
 * Young-generation GC runs extremely fast using a copying algorithm (semi-space copy GC).
 * Old-generation GC uses a mark-and-sweep algorithm and performs compaction when necessary (mark-sweep-compact GC).
 
+---
+
 ## License
 
-This software is released under the `zlib License`.
+This software is released under the `ZLib License`.
 
 ```
 Suika3
 Copyright (c) 2026 The Suika3 Community
 ```
 
+---
+
 ## Support & Contact
 
 For issues, open an issue on GitHub. For larger discussions and design
 proposals, check the community channels (Discord coming soon).
 
+---
+
 ## Community
 
-Our official Discord server is coming soon! We are hard at work
-creating a space for creators to connect, share, and grow. Stay tuned
-for updates.
+Our official Discord server is coming soon! Stay tuned for updates.
+
+### Our Commitment to Inclusivity
+
+We are committed to providing a welcoming and safe environment for
+everyone. Any form of discrimination is strictly prohibited.
+
+Our community warmly welcomes developers of all backgrounds, including
+but not limited to:
+
+* **Identity & Expression:** Race, ethnicity, nationality, language,
+    gender identity and expression, sexual orientation, and sex
+    characteristics.
+* **Personal Attributes:** Age, body size, personal appearance, ilness,
+    and neurodiversity.
+* **Life Context:** Faiths, beliefs, disability (visible or
+    invisible), level of experience, education, and socio-economic
+    status.
+* **Justice & Inclusion:** We explicitly welcome individuals with past
+    criminal records, firmly believing in the power of second chances
+    and the inherent value of every contributor who participates
+    respectfully.
+
+---
 
 ## Contribution
 
@@ -537,3 +622,17 @@ Please see [CONTRIBUTING.md](CONTRIBUTING.md) for our contribution
 guidelines and code of conduct.
 
 Please also see [MANIFESTO.md](MANIFESTO.md) for our manifesto.
+
+---
+
+## Lineage: The Grand Journey
+
+Suika3 represents the culmination of over two decades of relentless innovation and development:
+
+* **Suika Studio (2001–2004)**: The origin of our codebase, featuring our first GUI-based editors. 
+* **Unfruitiful (2005–2015)**: A decade of R&D focused on establishing a robust portability layer for cross-platform support.
+* **Suika2 (2016–2024)**: The cornerstone of our current architecture and the fruit of a decade of dedicated R&D.
+  It delivers a full visual novel experience with extensive platform compatibility.
+* **Playfield Engine (2025–)**: A versatile 2D engine derived from the core portability layer of the Suika series.
+* **Suika3 (2026–)**: By synthesizing these legacies and introducing **NovelML 3.0 / SuikaScript 3.0**,
+  Suika3 delivers the rock-solid stability of its predecessors alongside the cutting-edge flexibility of modern technology.

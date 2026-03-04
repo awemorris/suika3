@@ -3,558 +3,848 @@ Suika3 Tag Reference
 
 ## Index
 
-| Tag Name          | Description                                                        |
-| :---              | :---                                                               |
-| **[anime]**       | Loads and runs an animation file.                                  |
-| **[bg]**          | Changes the background image with a fading effect.                 |
-| **[bgm]**         | Plays a background music file (Ogg Vorbis format).                 |
-| **[callmacro]**   | Calls a defined macro.                                             |
-| **[ch]**          | Shows or hides characters with detailed layer parameters.          |
-| **[chapter]**     | Sets a chapter name.                                               |
-| **[choose]**      | Displays options and stores the selection or jumps to a label.     |
-| **[click]**       | Waits for a user click.                                            |
-| **[config]**      | Sets a configuration value for the game system.                    |
-| **[defmacro]**    | Starts a macro definition.                                         |
-| **[else]**        | Part of the if/elseif branch for when no conditions are met.       |
-| **[elseif]**      | Specifies an additional condition in a branch.                     |
-| **[endif]**       | Ends a conditional branch.                                         |
-| **[endmacro]**    | Ends a macro definition.                                           |
-| **[goto]**        | Jumps to a specified label tag.                                    |
-| **[gui]**         | Shows a GUI from a specified file.                                 |
-| **[if]**          | Branches the process based on a specified condition.               |
-| **[label]**       | Defines a label for jump targets.                                  |
-| **[layer]**       | Loads/unloads images or sets parameters for specific layers.       |
-| **[load]**        | Loads a NovelML file and can jump to a specific label.             |
-| **[move]**        | Animates character layers over a specified time.                   |
-| **[returnmacro]** | Returns from a macro execution.                                    |
-| **[se]**          | Plays a sound effect file (Ogg Vorbis format).                     |
-| **[set]**         | Sets a variable value (all variables are treated as text).         |
-| **[skip]**        | Enables or disables the skip status.                               |
-| **[text]**        | Displays text in the message box, optionally with a name.          |
-| **[video]**       | Plays a video file (supports skippable settings).                  |
-| **[volume]**      | Sets the sound volume for BGM, SE, or Voice tracks.                |
-| **[wait]**        | Waits for a specified number of seconds.                           |
+| Tag Name                    | Description                                                        |
+|-----------------------------|--------------------------------------------------------------------|
+| [anime](#anime)             | Loads and runs an animation file.                                  |
+| [bg](bg)                    | Changes the background image with a fading effect.                 |
+| [bgm](bgm)                  | Plays a background music file (Ogg Vorbis format).                 |
+| [callmacro](#callmacro)     | Calls a defined macro.                                             |
+| [ch](#ch)                   | Shows or hides characters with detailed layer parameters.          |
+| [chapter](#chapter)         | Sets a chapter name.                                               |
+| [choose](#choose)           | Displays options and stores the selection or jumps to a label.     |
+| [click](#click)             | Waits for a user click.                                            |
+| [config](#config)           | Sets a configuration value for the game system.                    |
+| [defmacro](#defmacro)       | Starts a macro definition.                                         |
+| [else](#else)               | Part of the if/elseif branch for when no conditions are met.       |
+| [elseif](#elseif)           | Specifies an additional condition in a branch.                     |
+| [endif](#endif)             | Ends a conditional branch.                                         |
+| [endmacro](#endmacro)       | Ends a macro definition.                                           |
+| [goto](#goto)               | Jumps to a specified label tag.                                    |
+| [gui](#gui)                 | Shows a GUI from a specified file.                                 |
+| [if](#if)                   | Branches the process based on a specified condition.               |
+| [label](#label)             | Defines a label for jump targets.                                  |
+| [layer](#layer)             | Loads/unloads images or sets parameters for specific layers.       |
+| [load](#load)               | Loads a NovelML file and can jump to a specific label.             |
+| [move](#move)               | Animates character layers over a specified time.                   |
+| [returnmacro](#returnmacro) | Returns from a macro execution.                                    |
+| [se](#se)                   | Plays a sound effect file (Ogg Vorbis format).                     |
+| [set](#set)                 | Sets a variable value (all variables are treated as text).         |
+| [skip](#skip)               | Enables or disables the skip status.                               |
+| [text](#text)               | Displays text in the message box, optionally with a name.          |
+| [video](#video)             | Plays a video file (supports skippable settings).                  |
+| [volume](#volume)           | Sets the sound volume for BGM, SE, or Voice tracks.                |
+| [wait](#wait)               | Waits for a specified number of seconds.                           |
 
 ---
 
-## bg
+## `anime`
 
-This tag changes the background image with a fading.
+Run Animation
 
-Basic Usage:
+The `anime` tag loads and executes an animation definition from a file. 
+It allows for complex visual effects, character movements, or looping environmental animations beyond simple transitions.
+
+### Basic Usage
+
 ```
+# Run a synchronous animation (waits for completion)
+[anime file="opening_effect.txt"]
+
+# Run an asynchronous looping animation
+[anime file="sparkle.txt" async="true" register="my_loop"]
+
+# Stop a registered asynchronous animation
+[anime stop="true" register="my_loop"]
+```
+
+### Arguments
+
+| Argument      | Omissible      | Description                                        | Notes                                                             |
+|---------------|----------------|----------------------------------------------------|-------------------------------------------------------------------|
+| `file`        | Yes            | The filename of the animation definition.          | *Required unless `stop="true"` is used.                           |
+| `async`       | Yes (`false`)  | Whether to run the animation asynchronously.       | If `false`, the script waits until the animation finishes.        |
+| `register`    | Yes            | A unique name to identify this animation instance. | Required for controlling or stopping async animations later.      |
+| `stop`        | Yes (`false`)  | Stops a registered animation if set to `true`.     | Requires the `register` argument.                                 |
+| `showsysbtn`  | Yes (`true`)   | Whether to show system buttons during playback.    | Only valid for synchronous animations.                            |
+| `showmsgbox`  | Yes (`true`)   | Whether to show the message box during playback.   | Only valid for synchronous animations.                            |
+| `shownamebox` | Yes (`true`)   | Whether to show the name box during playback.      | Only valid for synchronous animations.                            |
+
+### Tips
+
+**Synchronous vs. Asynchronous**:
+* **Synchronous (`async="false"`)**: Great for cutscenes where you want the player to watch the animation before any text or choices appear.
+* **Asynchronous (`async="true"`)**: Perfect for background effects (like falling snow or a flickering light) that should continue while the story progresses.
+
+**Managing Instances**:
+* By using the `register` argument, you can label a specific animation.
+* This is how you tell the engine exactly which animation to stop when you use `stop="true"`.
+
+**UI Control**:
+* Use `showmsgbox="false"` if your animation is meant to take up the full screen and you want the dialogue window to disappear temporarily for a cleaner look.
+
+---
+
+## `bg`
+
+Change Background
+
+The `bg` tag changes the background image with a smooth fading effect.
+It's the primary way to set the scene in your visual novel.
+
+### Basic Usage
+
+```
+# Transition to background.png over 1.0 second
 [bg file="background.png" time="1.0"]
+
+# Fade to a black screen (removes the background)
+[bg file="none" time="1.0"]
 ```
 
-### `file` argument
+### Arguments
 
-This argument specifies the file name of the new background image.
-Specifying `none` removes the background image.
+| Argument   | Omissible      | Description                                   | Notes                                                                        |
+|------------|----------------|-----------------------------------------------|------------------------------------------------------------------------------|
+| `file`     | No             | The filename of the new background image.     | Set to `none` to remove the background.                                      |
+| `time`     | Yes (`0`)      | The duration of the fading effect in seconds. | Default is `0.0` (instant change).                                           |
+| `method`   | Yes (`normal`) | The fading method/style.                      | Choose from `normal`, `rule`, or `melt`.                                     |
+| `rule`     | Yes            | The rule image file for specific transitions. | Required when `method` is set to `rule` or `melt`.                           |
+| `x`        | Yes (`0`)      | The X-axis offset for the background image.   | Supports absolute values (e.g., `100`) or relative values (e.g., `r100`).    |
+| `y`        | Yes (`0`)      | The Y-axis offset for the background image.   | Supports absolute values (e.g., `100`) or relative values (e.g., `r-100`).   |
+| `alpha`    | Yes (`255`)    | The alpha value of the background image.      | `0` to `255`.                                                                |
+| `clear`    | Yes (`false`)  | Whether to vanish the characters or not.      | If `true`, all characters will be vanished.                                  |
 
-### `time` argument
+### Transition Methods (`method`)
 
-This argument specifies the time of the fading in seconds.
+You can create different atmospheres by choosing the right transition style:
 
-### `method` argument
+| Type     | Description                                                                                                                          |
+|----------|--------------------------------------------------------------------------------------------------------------------------------------|
+| `normal` | Alpha Blending. The default method. Performs a smooth cross-fade between the old and new images.                                     |
+| `rule`   | 1-bit Universal Transition. Uses a grayscale "rule" image to determine the switching order.                                          |
+| `melt`   | 8-bit Universal Transition. Similar to `rule`, but with soft, blurred edges at the transition boundary, creating a "melting" effect. |
 
-This argument specifies the fading method.
+For `rule` and `melt`, the image switches pixel-by-pixel from the darkest to the lightest areas of the rule map.
 
-|Name    |Description                 |
-|--------|----------------------------|
-|`normal`|Alpha blending. (default)   |
-|`rule`  |1-bit universal transition. |
-|`melt`  |8-bit universal transition. |
+### Tips
 
-### `rule` argument
+**Relative Positioning**: 
+* If you want to nudge the background from its current position, use the `r` prefix.
+* For example, `x="r50"` moves the image 50 pixels to the right of its current X coordinate.
 
-This argument specifies the rule image file for the `rule` and `melt` fadings.
-
-### `x` argument
-
-This argument specifies the X offset to show the background image.
-
-### `y` argument
-
-This argument specifies the Y offset to show the background image.
+**What is a Rule Image?**:
+* It's a grayscale image where black areas transition first and white areas transition last.
+* By creating custom rule images, you can achieve effects like horizontal wipes, circular reveals, or even more artistic patterns!
 
 ---
 
-## ch
+## `bgm`
 
-This tag shows or hides characters.
-All arguments are omissible.
+Play Background Music
 
-Basic Usage:
+The `bgm` tag plays a background music track. 
+Music is an essential tool for setting the mood of your scene, and it will continue to loop automatically until stopped or changed.
+
+### Basic Usage
+
 ```
+# Start playing a BGM track
+[bgm file="field_theme.ogg"]
+
+# Stop the current BGM (use "none")
+[bgm file="none"]
+```
+
+### Arguments
+
+| Argument | Omissible     | Description                        | Notes                                  |
+|----------|---------------|------------------------------------|----------------------------------------|
+| `file`   | No            | The filename of the music to play. | Set to `none` to stop the current BGM. |
+| `once`   | Yes (`false`) | Don't loop.                        |                                        |
+
+### Tips
+
+**Required Format**:
+* For compatibility and performance, Suika3 requires BGM files to be in **Ogg Vorbis** format.
+* The sampling rate MUST be **44,100Hz**.
+
+**Looping**:
+* Background music is designed to loop by default, so you don't need to worry about the music ending abruptly during a long dialogue scene.
+
+**Smooth Transitions**:
+* If you call `[bgm]` while another track is already playing, the engine will typically handle the transition. 
+* To adjust the loudness of the music, you'll want to use the `[volume]` tag.
+
+**Stopping Music**:
+* When a scene ends or the mood changes to silence, remember to use `[bgm file="none"]` to give the player's ears a rest!
+
+---
+
+## `ch`
+
+Character Display
+
+The `ch` tag shows, hides, or updates character images on various layers.
+It allows for detailed control over positioning, scaling, and rotations for multiple characters and background at once.
+
+### Basic Usage
+
+```
+# Show a character at the center
 [ch center="chara001.png" time="1.0"]
-[ch right="chara002.png" time="1.0"]
-[ch left="chara003.png" time="1.0"]
-[ch
-  time="1.0"
-  bg="bg-file.png"
-  bg-x="0"
-  bg-y="0"
-  bg-a="255"
-  bg-sx="1.0"
-  bg-sy="1.0"
-  bg-cx="0"
-  bg-cy="0"
-  bg-rotate="0.0"
-  back="back-file.png"
-  back-x="0"
-  back-y="0"
-  back-a="255"
-  back-sx="1.0"
-  back-sy="1.0"
-  back-cx="0"
-  back-cy="0"
-  back-rotate="0.0"
-  back-dim="false"
-  left="left-file.png"
-  left-x="0"
-  left-y="0"
-  left-a="255"
-  left-sx="1.0"
-  left-sy="1.0"
-  left-cx="0"
-  left-cy="0"
-  left-rotate="0.0"
-  left-dim="false"
-  left-center="left-center-file.png"
-  left-center-x="0"
-  left-center-y="0"
-  left-center-a="255"
-  left-center-sx="1.0"
-  left-center-sy="1.0"
-  left-center-cx="0"
-  left-center-cy="0"
-  left-center-rotate="0.0"
-  left-center-dim="false"
-  right="right-file.png"
-  right-x="0"
-  right-y="0"
-  right-a="255"
-  right-sx="1.0"
-  right-sy="1.0"
-  right-cx="0"
-  right-cy="0"
-  right-rotate="0.0"
-  right-dim="false"
-  right-center="right-center-file.png"
-  right-center-x="0"
-  right-center-y="0"
-  right-center-a="255"
-  right-center-sx="1.0"
-  right-center-sy="1.0"
-  right-center-cx="0"
-  right-center-cy="0"
-  right-center-rotate="0.0"
-  right-center-dim="false"
-  center="center-file.png"
-  center-x="0"
-  center-y="0"
-  center-a="255"
-  center-sx="1.0"
-  center-sy="1.0"
-  center-cx="0"
-  center-cy="0"
-  center-rotate="0.0"
-  center-dim="false"
-  face="face-file.png"
-  face-x="0"
-  face-y="0"
-  face-a="255"
-  face-sx="1.0"
-  face-sy="1.0"
-  face-cx="0"
-  face-cy="0"
-  face-rotate="0.0"
-  face-dim="false"
-]
+
+# Show multiple characters with specific positions
+[ch left="chara002.png" right="chara003.png" time="0.5"]
+
+# Hide a specific character
+[ch center="none" time="1.0"]
 ```
 
-### Layer Name Arguments
+### Arguments
 
-The following arguments specify file names to load.
-`none` will unload the image.
+| Argument  | Omissible      | Description                            | Notes                                                 |
+|-----------|----------------|----------------------------------------|-------------------------------------------------------|
+| `time`    | Yes (`0`)      | Duration of the transition in seconds. | Affects all layer changes within this tag.            |
+| `method`  | Yes (`normal`) | The fading method/style.               | `normal`, `rule`, or `melt`.                          |
+| `rule`    | Yes            | The rule image file for transitions.   | Required when `method` is `rule` or `melt`.           |
 
-* `bg`
-* `back`
-* `left`
-* `left-center`
-* `right`
-* `right-center`
-* `center`
-* `face`
+#### Layer File Arguments
 
-### `*-x` arguments
+Specify a filename to load an image onto a layer. Set to `none` to unload (hide) the image.
 
-The following arguments specify X positions.
+| Argument       | Description                               |
+|----------------|-------------------------------------------|
+| `bg`           | Background and Background-overlay layers. |
+| `back          | Back-Center character.                    |
+| `left`         | Left character.                           |
+| `right`        | Right character.                          |
+| `center`       | Center character.                         |
+| `left-center`  | Left-Center character.                    |
+| `right-center` | Intermediate character.                   |
+| `face`         | Face character.                           |
 
-* `bg-x`
-* `back-x`
-* `left-x`
-* `left-center-x`
-* `right-x`
-* `right-center-x`
-* `center-x`
-* `face-x`
+#### Layer Parameter Arguments
 
-Values such as `r100` or `r-100` means `+100` or `-100` to the current value.
+Each layer above (e.g., `center`) can be customized using the following suffixes (e.g., `center-x`, `center-rotate`).
 
-### `*-y` arguments
+| Suffix    | Omissible     | Description                | Notes                                                         |
+|-----------|---------------|----------------------------|---------------------------------------------------------------|
+| `-x`      | Yes (`0`)     | X position.                | Supports absolute (e.g., `100`) or relative (e.g., `r50`).    |
+| `-y`      | Yes (`0`)     | Y position.                | Supports absolute (e.g., `100`) or relative (e.g., `r-50`).   |
+| `-a`      | Yes (`255`)   | Alpha value. (opacity)     | `0` (transparent) to `255` (opaque).                          |
+| `-sx`     | Yes (`1.0`)   | X scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
+| `-sy`     | Yes (`1.0`)   | Y scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
+| `-cx`     | Yes (`0`)     | X center for rotation.     | Pivot point for the rotation effect.                          |
+| `-cy`     | Yes (`0`)     | Y center for rotation.     | Pivot point for the rotation effect.                          |
+| `-rotate` | Yes (`0`)     | Rotation in degrees.       | Positive for clockwise. Supports `r` prefix.                  |
+| `-dim`    | Yes (`false`) | Dimming status.            | If `true`, the layer is rendered 50% darker.                  |
 
-The following arguments specify Y positions.
+### Tips
 
-* `bg-y`
-* `back-y`
-* `left-y`
-* `left-center-y`
-* `right-y`
-* `right-center-y`
-* `center-y`
-* `face-y`
+**Batch Updates**:
+* You can update multiple characters and the background simultaneously in a single `[ch]` tag to ensure they animate together perfectly.
 
-Values such as `r100` or `r-100` means `+100` or `-100` to the current value.
-
-### `*-a` arguments
-
-The following arguments specify Y positions.
-
-* `bg-a`
-* `back-a`
-* `left-a`
-* `left-center-a`
-* `right-a`
-* `right-center-a`
-* `center-a`
-* `face-a`
-
-Values such as `r100` or `r-100` means `+100` or `-100` to the current value.
-
-### `*-sx` arguments
-
-The following arguments specify X scaling factor.
-
-* `bg-sx`
-* `back-sx`
-* `left-sx`
-* `left-center-sx`
-* `right-sx`
-* `right-center-sx`
-* `center-sx`
-* `face-sx`
-
-Values such as `r1.0` or `r-1.0` means `+1.0` or `-1.0` to the current value.
-
-### `*-sy` arguments
-
-The following arguments specify Y scaling factor.
-
-* `bg-sy`
-* `back-sy`
-* `left-sy`
-* `left-center-sy`
-* `right-sy`
-* `right-center-sy`
-* `center-sy`
-* `face-sy`
-
-Values such as `r1.0` or `r-1.0` means `+1.0` or `-1.0` to the current value.
-
-### `*-cx` arguments
-
-The following arguments specify X center for rotation.
-
-* `bg-cx`
-* `back-cx`
-* `left-cx`
-* `left-center-cx`
-* `right-cx`
-* `right-center-cx`
-* `center-cx`
-* `face-cx`
-
-Values such as `r100` or `r-100` means `+100` or `-100` to the current value.
-
-### `*-cy` arguments
-
-The following arguments specify Y center for rotation.
-
-* `bg-cy`
-* `back-cy`
-* `left-cy`
-* `left-center-cy`
-* `right-cy`
-* `right-center-cy`
-* `center-cy`
-* `face-cy`
-
-Values such as `r100` or `r-100` means `+100` or `-100` to the current value.
-
-### `*-rotate` arguments
-
-The following arguments specify rotations.
-
-* `bg-rotate`
-* `back-rotate`
-* `left-rotate`
-* `left-center-rotate`
-* `right-rotate`
-* `right-center-rotate`
-* `center-rotate`
-* `face-rotate`
-
-Values such as `r30` or `r-30` means `+30` or `-30` to the current value.
+**Relative Transformation**:
+* Like the `bg` tag, all numeric parameters support the `r` prefix.
+* For example, `center-y="r-50"` will hop the center character 50 pixels upward from its current position.
 
 ---
 
-## choose
+## `choose`
 
-This tag shows the options and let user choose one.
+Display Selection Options
 
-Basic Usage:
+The `choose` tag displays up to 8 interactive buttons for the player. 
+It stores the text of the chosen item in a variable.
+
+### Basic Usage
+
 ```
+# Store selection in a variable
 [choose
-    text1="This is option1" label1="Label1"
-    text2="This is option2" label2="Label2"
-    text3="This is option4" label3="Label3"
-]
+    name="user_choice"
+    text1="Red Pill"
+    text2="Blue Pill"]
 ```
 
-### `text1` to `text8` arguments
+### Arguments
 
-These arguments specify the texts of the options.
+| Argument | Omissible | Description                                 | Notes                                              |
+|----------|-----------|---------------------------------------------|--------------------------------------------------- |
+| `name`   | No        | The variable name to store the result.      | Stores the text of the selected option.            |
+| `text1`  | Yes       | The text displayed on each button.          | At least one option are typically required.        |
+| `text2`  | Yes       | The text displayed on each button.          | At least one option are typically required.        |
+| `text3`  | Yes       | The text displayed on each button.          | At least one option are typically required.        |
+| `text4`  | Yes       | The text displayed on each button.          | At least one option are typically required.        |
+| `text5`  | Yes       | The text displayed on each button.          | At least one option are typically required.        |
+| `text6`  | Yes       | The text displayed on each button.          | At least one option are typically required.        |
+| `text7`  | Yes       | The text displayed on each button.          | At least one option are typically required.        |
+| `text8`  | Yes       | The text displayed on each button.          | At least one option are typically required.        |
+| `time`   | Yes (`0`) | Timer in seconds.                           | If `0`, no timer is enabled.                       |
 
-### `label1` to `label8` arguments
+### Tips
 
-These arguments specify the label to jump to when an option is chosen.
+**Branching Logic**:
+* You can use the `[if]` tag to check the stored value and create complex branches.
+
+**Variable Persistence**:
+* Since everything is a string, remember that even numbers like "100" are stored as text.
+* Suika3's logic tags (like `if`) can handle these strings for comparisons.
 
 ---
 
-## click
+## `set`
 
-This tag waits for a click
+Set Variable
 
+The `set` tag assigns a value to a variable name. 
+In Suika3, **all variables are treated as text strings**, but they can be compared numerically in other tags like `[if]`.
+
+### Basic Usage
+
+```
+# Assign a simple string to a variable
+[set name="player_name" value="Kaito"]
+
+# Set a numeric-like value (stored as a string)
+[set name="health" value="100"]
+
+# Clear a variable by setting it to an empty string
+[set name="flag_event_01" value=""]
+```
+
+### Arguments
+
+| Argument | Omissible     | Description                              | Notes                                                               |
+|----------|---------------|------------------------------------------|---------------------------------------------------------------------|
+| `name`   | No            | The unique name of the variable.         | Use alphanumeric characters and underscores for best compatibility. |
+| `value`  | No            | The content to store in the variable.    | Remember: everything is stored as a string!                         |
+| `global` | Yes (`false`) | Make the flag global.                    | Global variables are for achievement flags e.g., "Saw ED1".         |
+
+### Tips
+
+**String Handling**:
+* Since Suika3 treats everything as text, `value="100"` and `value="May"` are handled the same way internally.
+* You can reference these variables in other tags (like `text` or `if`) using the `${variable_name}` syntax.
+
+**Flag Management**:
+* For game flags (like "has met the hero"), it's a common practice to use `"true"` and `"false"` or `"1"` and `"0"`. 
+* Consistency is key! If you start using `"1"`, stick with it so your `[if]` checks don't get confused.
+
+**Variable Naming**:
+* Avoid using spaces or special symbols in your variable names. `my_variable` is much safer than `my variable!`.
 
 ---
 
-## gui
+## `click`
 
-This tag shows a GUI.
+Wait for Click
 
-Basic Usage:
+The `click` tag pauses the script execution and waits for the player to click the mouse or press a key.
+It is commonly used to create pauses between visual changes or before a major transition.
+
+### Basic Usage
+
 ```
-[gui file="mygui.txt"]
+# Change the background, then wait for the player to click
+[bg file="sunset.png" time="1.0"]
+[click]
+
+# After the click, show the character
+[ch center="chara01.png" time="1.0"]
 ```
 
-### `file` argument
+### Arguments
 
-This argument specifies a file name to load.
+This tag does not take any arguments.
+
+| Argument | Omissible | Description | Notes           |
+|----------|-----------|-------------|-----------------|
+| -        | -         | -           | -               |
+
+### Tips
+
+**Timing and Pacing**:
+* Use `[click]` when you want to give the player a moment to look at a new background or a specific character expression before the dialogue continues.
+* Unlike the `[text]` tag, which waits for a click automatically after displaying a message, `[click]` is used for manual flow control during non-dialogue sequences.
+
+**Visual Feedback**:
+* When the script hits a `[click]` tag, the game will remain still. Ensure that any preceding animations (like `[bg]` or `[ch]`) have a `time` set, or the screen might feel static too abruptly.
+
+**For timed waits:**
+* Use `[wait]` for timed waits.
 
 ---
 
-## label
+## `goto`
 
-This tag defines a label for jump targets.
+Jump to Label
 
-Basic Usage:
+The `goto` tag immediately moves the NovelML execution to a specified label. 
+It is useful tool for controlling the flow of your story, allowing you to skip sections or loop back to previous parts.
+
+Please note that small branches should be realized by `[if]`.
+
+### Basic Usage
+
 ```
-[label name="MyLabel"]
+# Jump to the beginning of the morning scene
+[goto name="morning_start"]
+
+# ... this part of the script will be skipped ...
+
+[label name="morning_start"]
+[text text="The sun rises over the horizon."]
 ```
 
-### `name` argument
+### Arguments
 
-This argument specifies the label name.
+| Argument | Omissible | Description                       | Notes                                         |
+|----------|-----------|-----------------------------------|-----------------------------------------------|
+| `name`   | No        | The target label name to jump to. | Must match a name defined by a `[label]` tag. |
+
+### Tips
+
+**Unconditional Jump**:
+* Unlike `[if]`, `[goto]` always jumps to the target label as soon as the engine hits the tag.
+
+**Flow Management**:
+* Use `[goto]` at the end of a branching path to bring the story back to a "common" route. 
+* It's also great for creating loops (like a "Return to Title" sequence) when combined with other logic.
+
+**Across Files?**:
+* Remember that `[goto]` typically works within the current script file.
+* If you want to jump to a different file entirely, you'll want to look at the `[load]` tag!
 
 ---
 
-## text
+## `gui`
 
-This tag shows a text in the message box.
+Show GUI
 
-Basic Usage:
+The `gui` tag loads and displays a Graphical User Interface (GUI) definition from a specified file. 
+It is used to display menus, title screens, or custom interaction panels.
+
+### Basic Usage
+
 ```
-[text text="This is a message."]
-[text name="Name Here" text="This is a character's line."]
+# Display the main menu GUI
+[gui file="main_menu.txt"]
+
+# Show a custom save/load screen
+[gui file="save_screen.txt"]
 ```
 
-### `name` argument
+### Arguments
 
-This argument specifies a character name to show.
+| Argument | Omissible | Description                                 | Notes                                               |
+|----------|-----------|---------------------------------------------|-----------------------------------------------------|
+| `file`   | No        | The filename of the GUI definition to load. | The file must exist in the project's GUI directory. |
 
-### `text` argument
+### Tips
 
-This argument specifies a text name to show.
+**GUI Definitions**:
+* The `file` argument points to a text file that defines the layout, buttons, and actions of your interface.
+* These files specify where images are placed and what happens (like jumping to a label or quitting) when a user interacts with them.
+
+**Usage in Flow**:
+* Typically, a `[gui]` tag is used for a graphical menu such as title screen.
+
+**Customization**:
+* Since the GUI is defined in an external file, you can create multiple looks for your game and switch between them just by calling different files with this tag.
 
 ---
 
-## choose
+## `label`
 
-This tag shows a options. The text of the chosen option will be
-assigned to the variable specified by `name`.
+Define Label
 
-Basic Usage:
+The `label` tag defines a specific point in the script that can be targeted by jump commands like `[goto]` or `[load]`.
+It acts as a bookmark for navigation within your story.
+
+### Basic Usage
+
 ```
-[choose
-  name="variable_name"
-  text1="Option Text 1"
-  text2="Option Text 2"
-  text3="Option Text 3"]
-```
+# Define a label for the start of a new chapter
+[label name="chapter_01_start"]
 
-### `name` argument
-
-This argument specifies a variable name to store the result.
-
-### `text1` to `text8` arguments
-
-These arguments specified texts of options.
-
---
-
-## set
-
-This tag sets a variable.
-Note that all variables are text.
-
-Basic Usage:
-```
-[set name="var1" value="my-value"]
+# Use a jump command to reach this label
+[goto name="chapter_01_start"]
 ```
 
-### `name` argument
+### Arguments
 
-This argument specifies the variable name.
+| Argument | Omissible | Description                     | Notes                                                  |
+|----------|-----------|---------------------------------|--------------------------------------------------------|
+| `name`   | No        | The unique name for this label. | Case-sensitive. Avoid using spaces or special symbols. |
 
-### `value` argument
+### Tips
 
-This argument specifies the variable value.
+**Navigation Control**:
+* Labels are useful for creating branching paths.
+* For example, you can put a `label` at the begining of the section of your story for a long jump.
+
+**Unique Naming**:
+* Every label name within a single script file must be unique.
+* If you have two labels with the same name, the engine might not know where to jump, and that's no fun for anyone!
+
+**Organization**:
+* It's a good habit to use descriptive names like `label_evening_park` instead of `label1`.
+* It makes it much easier for you (and me!) to read the script later and understand what's happening.
 
 ---
 
-## goto
+## `text`
 
-This tag jumps to a label tag.
+Display Text
 
-Basic Usage:
+The `text` tag displays a message in the message box. 
+It can show the main dialogue or narration, and optionally display a character's name in the name box.
+
+### Basic Usage
+
 ```
-[goto name="LabelName"]
+# Narration style (no name displayed)
+[text text="The wind was howling through the trees."]
+
+# Character dialogue
+[text name="Keith" text="I've been waiting for you here in the small room."]
 ```
 
-### `name` argument
+### Arguments
 
-This argument specifies the name of the destination label.
+| Argument   | Omissible | Description                                      | Notes                                            |
+|------------|-----------|--------------------------------------------------|--------------------------------------------------|
+| `text`     | No        | The message content to be displayed.             |                                                  |
+| `name`     | Yes       | The character's name to display in the name box. | If omitted, the name box will usually be hidden. |
+
+### Tips
+
+**Automatic Waiting**:
+* Unlike other tags, the `text` tag automatically waits for a player's click after the message is fully displayed.
+* You don't need to add a `[click]` tag after every line of dialogue!
+
+**Using Variables**:
+* You can include variables within your text by using the `${variable_name}` syntax. 
+* Example: `[text text="Hello, ${player_name}!"]` will greet the player using whatever name is stored in that variable.
+
+**Line Breaks**:
+* Check your project's configuration for how long a single line can be.
+* If your text is too long, it might overflow the message box, so keep an eye on the length of your `text` argument!
 
 ---
 
-## if/elseif/endif
+## `if`
 
-This tag branches by a condition.
+Conditional Branching
 
-Basic Usage:
+The `if` tag allows the NovelML to branch based on a specific condition. 
+By comparing variables or values, you can create unique story paths or react to previous player choices.
+
+### Basic Usage
+
 ```
-[if lhs="${variable}" op="==" rhs="100"]
-   # Do something. (variable == 100)
-[elseif lhs="${variable}" op="==" rhs="101"]
-   # Do something. (variable == 101)
+# Check if a variable equals a certain value
+[if lhs="${points}" op="==" rhs="100"]
+    [text text="Perfect score! You're amazing."]
+[elseif lhs="${points}" op=">=" rhs="80"]
+    [text text="Great job! You passed."]
 [else]
-   # Do something. (other)
+    [text text="Better luck next time."]
 [endif]
 ```
 
-### `lhs` argument
+### Arguments
 
-This argument specified the lhs of the condition.
+| Argument | Omissible | Description                            | Notes                                          |
+|----------|-----------|----------------------------------------|------------------------------------------------|
+| `lhs`    | No        | The Left-Hand Side of the condition.   | Usually a variable like `${var_name}`.         |
+| `op`     | No        | The operator used for comparison.      | See the "Operators" table below.               |
+| `rhs`    | No        | The Right-Hand Side of the condition.  | The value or variable to compare against.      |
 
-### `op` argument
+### Comparison Operators (`op`)
 
-This argument specified the operator of the condition.
+You can use these operators to define how the two sides are compared:
 
-|Operator  |Description         |
-|----------|--------------------|
-|==        |Equal               |
-|>         |Greater Than        |
-|>=        |Greater Or Equal    |
-|<         |Less                |
-|<=        |Less Or Equal       |
+| Operator   | Description                |
+|------------|----------------------------|
+| `===`      | Equal (String)             |
+| `==`       | Equal (Numeric)            |
+| `>`        | Greater Than (Numeric)     |
+| `>=`       | Greater Or Equal (Numeric) |
+| `<`        | Less Than (Numeric)        |
+| `<=`       | Less Or Equal (Numeric)    |
 
-### `rhs` argument
+### Tips
 
-This argument specified the rhs of the condition.
+**Closing the Block**:
+* Every `[if]` block MUST end with an `[endif]` tag.
+* If you forget it, the engine might get confused about where the condition ends!
 
----
+**Variable Syntax**:
+* When using a variable as the `lhs`, always wrap it in `${}`.
+* For example, use `lhs="${flag_01}"` instead of just `lhs="flag_01"`.
 
-## load
+**Handling Strings vs. Numbers**:
+* Suika3 treats variable values as strings, but these operators allow you to perform numeric-style comparisons.
+* Just be consistent with your values (e.g., using "1" for true and "0" for false).
 
-This tag loads a NovelML file.
-
-Basic Usage:
-```
-[load file="scene01.novel"]
-[load file="scene02.novel" label="chapter1"]
-```
-
-### `file` argument
-
-This argument specifies the file name to load.
-
-### `label` argument (optional)
-
-This argument specifies the label to jump.
+**Multiple Branches**:
+* You can use as many `[elseif]` tags as you need between `[if]` and `[endif]` to check for multiple specific conditions.
 
 ---
 
-## wait
+## `elseif`
 
-This tag waits for specified seconds.
+Additional Conditional Branching
 
-Basic Usage:
+The `elseif` tag specifies an additional condition within an `[if]` block. 
+It is only evaluated if the preceding `[if]` and any previous `[elseif]` conditions were false.
+
+### Basic Usage
+
 ```
+[if lhs="${rank}" op="==" rhs="A"]
+    [text text="Excellent! You're a pro."]
+[elseif lhs="${rank}" op="==" rhs="B"]
+    [text text="Good job! Keep it up."]
+[elseif lhs="${rank}" op="==" rhs="C"]
+    [text text="Not bad, but you can do better."]
+[else]
+    [text text="Don't give up! Try again."]
+[endif]
+```
+
+### Arguments
+
+Same as `[if]`. See also [if](#if).
+
+### Tips
+
+**Sequential Evaluation**:
+* The engine checks conditions from top to bottom.
+* As soon as one `[if]` or `[elseif]` condition is met, its block is executed, and the rest of the branch (including other `[elseif]`s and the `[else]`) is skipped.
+
+**Placement**:
+* `[elseif]` must always be placed between an `[if]` tag and an `[else]` or `[endif]` tag.
+* You can use as many `[elseif]` tags as you need to cover all your bases!
+
+**Efficiency**:
+* If you have a lot of conditions that check the same variable, using multiple `[elseif]` tags is much cleaner and more efficient than nesting multiple `[if]` blocks inside each other.
+
+---
+
+## `else`
+
+Default Conditional Branch
+
+The `else` tag defines a block of code to be executed if none of the preceding `[if]` or `[elseif]` conditions were met. 
+It acts as the "default" path for your branching logic.
+
+### Basic Usage
+
+```
+[if lhs="${weather}" op="==" rhs="sunny"]
+    [text text="It's a beautiful day!"]
+[elseif lhs="${weather}" op="==" rhs="rainy"]
+    [text text="I should bring an umbrella."]
+[else]
+    # This runs if it's not sunny OR rainy (e.g., cloudy or snowy)
+    [text text="The sky looks interesting today."]
+[endif]
+```
+
+### Arguments
+
+This tag does not take any arguments.
+
+| Argument | Omissible | Description | Notes |
+|----------|-----------|-------------|-------|
+| -        | -         | -           | -     |
+
+### Tips
+
+**Final Catch-all**:
+* Use `[else]` to handle any scenarios you didn't explicitly cover in your `[if]` or `[elseif]` checks.
+* It ensures the game always has a valid path to follow.
+
+**Placement**:
+* `[else]` must be placed after all `[elseif]` tags (if any) and immediately before the `[endif]` tag.
+* You can only have one `[else]` per `[if]` block.
+
+**Optional Nature**:
+* You don't *have* to include an `[else]` block.
+* If no conditions are met and there is no `[else]`, the engine will simply skip everything and continue after the `[endif]`.
+
+---
+
+## `endif`
+
+End Conditional Branch
+
+The `endif` tag marks the end of a conditional block started by an `[if]` tag. 
+It tells the engine to resume normal script execution after the branching logic is complete.
+
+### Basic Usage
+
+```
+[if lhs="${love_points}" op=">=" rhs="50"]
+    [text text="She gives you a warm smile."]
+[else]
+    [text text="She greets you politely."]
+[endif]
+
+# Script execution continues here regardless of the outcome above
+[text text="The day continues..."]
+```
+
+### Arguments
+
+This tag does not take any arguments.
+
+| Argument | Omissible | Description | Notes |
+|----------|-----------|-------------|-------|
+| -        | -         | -           | -     |
+
+### Tips
+
+**Mandatory Closing**:
+* Every single `[if]` tag must have a corresponding `[endif]`.
+* Think of them like a pair of brackets that keep your story's logic organized.
+
+**Placement**:
+* Always place `[endif]` at the very end of your conditional sequence, following any `[elseif]` or `[else]` blocks. 
+
+**Nesting**:
+* If you put an `[if]` inside another `[if]`, make sure each one has its own `[endif]`.
+* Proper nesting is the secret to complex, bug-free story flags!
+
+---
+
+## `load`
+
+Load Script File
+
+The `load` tag switches the current script to a different NovelML file.
+It is primarily used to organize large stories into multiple chapters or to transition between different game parts like a title screen and the main story.
+
+### Basic Usage
+
+```
+# Load and start from the beginning of scene02.novel
+[load file="scene02.novel"]
+
+# Load scene02.novel and jump directly to a specific label
+[load file="scene02.novel" label="chapter2_start"]
+```
+
+### Arguments
+
+| Argument | Omissible | Description                                      | Notes                                                   |
+|----------|-----------|--------------------------------------------------|---------------------------------------------------------|
+| `file`   | No        | The filename of the NovelML script to load.      | Must be a valid file in the project's script directory. |
+| `label`  | Yes       | The target label to jump to within the new file. | If omitted, the script starts from the very first line. |
+
+### Tips
+
+**Project Organization**:
+* Instead of writing your entire game in one giant file, use `[load]` to break it down into manageable chunks like `chapter1.novel`, `chapter2.novel`, and so on.
+
+**Immediate Transition**:
+* When the engine hits a `[load]` tag, it stops executing the current NovelML file immediately and switches to the new one.
+* Any commands placed after `[load]` in the original file will not be executed.
+
+**Global Flags**:
+* Don't worry about your variables — any values you've set with the `[set]` tag will persist even after you load a new script file!
+
+---
+
+## `wait`
+
+Wait for Time
+
+The `wait` tag pauses the NovelML execution for a specified duration.
+It is essential for controlling the pacing of visual transitions, creating dramatic pauses, or timing effects without requiring player input.
+
+### Basic Usage
+
+```
+# Pause for 1.5 seconds before the next command
+[wait time="1.5"]
+
+# Create a brief pause between character changes
+[ch center="chara01_surprised.png" time="0.5"]
 [wait time="1.0"]
+[text text="She couldn't believe her eyes."]
 ```
 
-### `time` argument
+### Arguments
 
-This argument specifies seconds to wait.
+| Argument | Omissible | Description                    | Notes                                  |
+|----------|-----------|--------------------------------|----------------------------------------|
+| `time`   | No        | The number of seconds to wait. | Supports decimal values (e.g., `0.5`). |
+
+### Tips
+
+**Non-interactive Pause**:
+* Unlike `[click]`, which waits for the player to act, `[wait]` continues automatically once the time is up. 
+* This is perfect for "auto-playing" segments or timed visual sequences.
+
+**Combining with Animations**:
+* If you use a `[ch]` or `[bg]` tag with a `time` argument, the engine moves to the next command immediately while the animation plays. 
+* Use `[wait]` after an animation if you want the script to stop until the animation is finished (or even longer for dramatic effect).
+
+**User Experience**:
+* Be careful not to make `[wait]` times too long (like more than 3 seconds) without a visual reason, or the player might think the game has frozen!
 
 ---
 
-## bgm
+## `se`
 
-This tag plays a background music file.
+Play Sound Effect
 
-Basic Usage:
+The `se` tag plays a sound effect (SE). 
+Sound effects are used for short audio cues like door knocks, footsteps, or UI feedback, adding a layer of immersion and realism to your scenes.
+
+### Basic Usage
+
 ```
-[bgm file="bgm01.ogg"]
+# Play a sound effect once
+[se file="door_open.ogg"]
+
+# Stop all currently playing sound effects
+[se file="none"]
 ```
 
-### `file` argument
+### Arguments
 
-This argument specifies the file name to play.
-The file must be `Ogg Vorbis` format with 44100Hz sampling rate.
+| Argument | Omissible     | Description                               | Notes                                        |
+|----------|---------------|-------------------------------------------|----------------------------------------------|
+| `file`   | No            | The filename of the sound effect to play. | Set to `none` to stop sound effect playback. |
+| `loop`   | Yes (`false`) | Whether to loop the sound effect or not.  |                                              |
+
+### Tips
+
+**Required Format**:
+* Like BGM, Suika3 requires SE files to be in **Ogg Vorbis** format.
+* The sampling rate MUST be **44,100Hz** to ensure high fidelity and compatibility.
+
+**Layering Sounds**:
+* Sound effects can usually be played while BGM is running.
+* They occupy their own audio track so they won't interrupt your music.
+
+**Volume Control**:
+* To adjust the loudness of your sound effects without changing the BGM volume, use the `[volume]` tag with `track="se"`.
+
+**Usage for Ambience**:
+* While SE is often used for short sounds, you can also use it for looping ambient sounds (like wind or rain).
+* A looped SE is restored when a save data file is loaded.
 
 ---
 
-## se
+## `volume`
 
-This tag plays a sound effecf file.
-
-Basic Usage:
-```
-[se file="se01.ogg"]
-```
-
-### `file` argument
-
-This argument specifies the file name to play.
-The file must be `Ogg Vorbis` format with 44100Hz sampling rate.
-
----
-
-## volume
-
-This tag sets a sound volume for a track with a fading.
+The `volume` tag sets a sound volume for a track with a fading.
 
 Basic Usage:
 ```
@@ -575,9 +865,9 @@ This argument specifies the track to set volume.
 
 ---
 
-## chapter
+## `chapter`
 
-This tag sets a chapter name.
+The `chapter` tag sets a chapter name.
 
 Basic Usage:
 ```
@@ -590,9 +880,9 @@ This argument specifies the chapter name.
 
 ---
 
-## skip
+## `skip`
 
-This tag sets a skip enable status.
+The `skip` tag sets a skip enable status.
 
 Basic Usage:
 ```
@@ -606,9 +896,9 @@ This argument specifies whether skip is enabled or not.
 
 ---
 
-## config
+## `config`
 
-This tag sets a config value.
+The `config` tag sets a config value.
 
 Basic Usage:
 ```
@@ -625,9 +915,9 @@ This argument specifies the config value.
 
 ---
 
-## layer
+## `layer`
 
-This tag loads an image, unload an image, or sets parameters for a layer.
+The `layer` tag loads an image, unload an image, or sets parameters for a layer.
 
 Basic Usage:
 ```
@@ -731,9 +1021,9 @@ This argument specifies the layer's rotation in degrees.
 
 ---
 
-## move
+## `move`
 
-This tag animates a character.
+The `move` tag animates a character.
 
 Basic Usage:
 ```
@@ -838,68 +1128,9 @@ This argument specifies the layer's rotation in degrees.
 
 ---
 
-## anime
+## `defmacro`
 
-This tag loads an anime file and run it.
-
-Basic Usage:
-```
-[anime
-  file="anime-file.txt"
-  async="false"
-  showsysbtn="false"
-  showmsgbox="false"
-  shownamebox="false"
-]
-[anime
-  file="anime-file.txt"
-  async="true"
-  register="LoopAnime1"
-]
-[anime
-  stop="true"
-  register="LoopAnime1"
-]
-```
-
-### `file` argument
-
-This argument specifies a file name to load.
-
-### `async` argument
-
-This argument specifies whether anime asynchronous or not.
-For synchronous animes, this tag waits for completion of the anime.
-For asynchronous animes, this tag doesn't wait for its completion.
-
-### `showsysbtn` argument
-
-This argument specifies whether to show the system button or not.
-This argument is only valid for synchronous animes.
-
-### `showmsgbox` argument
-
-This argument specifies whether to show the message box or not.
-This argument is only valid for synchronous animes.
-
-### `shownamebox` argument
-
-This argument specifies whether to show the name box or not.
-This argument is only valid for synchronous animes.
-
-### `register` argument
-
-This arguments specified the anime instance name to control it later.
-
-### `stop` arguments
-
-This arguments specifies the stop of an anime specified by a registered name.
-
----
-
-## defmacro
-
-This tag starts a macro definition.
+The `defmacro` tag starts a macro definition.
 
 Basic Usage:
 ```
@@ -910,9 +1141,9 @@ Basic Usage:
 
 ---
 
-## callmacro
+## `callmacro`
 
-This tag calls a macro.
+The `callmacro` tag calls a macro.
 
 Basic Usage:
 ```
@@ -921,9 +1152,9 @@ Basic Usage:
 
 ---
 
-## returnmacro
+## `returnmacro`
 
-This tag returns from a macro.
+The `returnmacro` tag returns from a macro.
 
 Basic Usage:
 ```
@@ -936,9 +1167,9 @@ Basic Usage:
 ```
 ---
 
-## video
+## `video`
 
-This tag plays a video.
+The `video` tag plays a video.
 
 Basic Usage:
 ```
@@ -952,3 +1183,36 @@ This arguments specifies a file name to play.
 ### `skippable` arguments
 
 This arguments specifies whether the video is skippable by a click or not.
+
+## `goto`
+
+Jump to Label
+
+The `goto` tag immediately moves the script execution to a specified label.
+
+### Basic Usage
+
+Jump to a label named "next_day"
+[goto name="next_day"]
+
+
+### Arguments
+
+| Argument | Omissible | Description | Notes |
+| :--- | :--- | :--- | :--- |
+| `name` | No | The target label name. | Must match a `[label]` defined in the script. |
+
+---
+
+### Tips
+
+**Branching Logic**:
+* If you use `choose` with `label1`, the game jumps immediately to that section.
+* If you use `name`, the chosen text is stored, and the script continues to the next line.
+* You can then use the `[if]` tag to check the stored value and create complex branches.
+
+**Variable Persistence**:
+* Since everything is a string, remember that even numbers like "100" are stored as text.
+* Suika3's logic tags (like `if`) can handle these strings for comparisons.
+
+---
