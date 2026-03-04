@@ -32,22 +32,22 @@ Currently, We are working hard to implement this software.
 * ✅ We have implemented all APIs in C.
 * ✅ We have implemented all tags in C.
 * ❌ We are implementing API warppers for the scripting language.
-    * ❌ Config
-    * ❌ Input
-    * ❌ Game
-    * ❌ Image
-    * ❌ Stage
-    * ❌ Mixer
-    * ❌ System Button
-    * ❌ Text
-    * ❌ Tag
-    * ❌ Anime
-    * ❌ Variable
-    * ❌ Save
-    * ❌ History
-    * ❌ Seen
-    * ❌ GUI
-    * ❌ HAL
+    * Config
+    * Input
+    * Game
+    * Image
+    * Stage
+    * Mixer
+    * System Button
+    * Text
+    * Tag
+    * Anime
+    * Variable
+    * Save
+    * History
+    * Seen
+    * GUI
+    * HAL
 
 ## Key Features
 
