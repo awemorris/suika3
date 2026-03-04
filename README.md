@@ -9,37 +9,52 @@ Suika3 aims to empower creators across the globe for the decades to
 come.
 
 Games made with Suika3 run on the `Suika3 JIT Virtual Machine` (VM).
-The VM executes `NovelML 3.0` along with `SeedScript 3.0`.
+The VM executes `NovelML 3.0` along with `SuikaScript 3.0`.
 
 `NovelML 3.0` is a tag-based, human-readable markup for visual novels.
 Familiar to developers from other engines, it uses concise, declarative tags
 for dialogue and scenes, so scripts are readable at a glance.
 
-`SeedScript 3.0` is our original scripting language that runs at true native
-speed within the VM. Inspired by JavaScript, SeedScript offers a
+`SuikaScript 3.0` is our original scripting language that runs at true native
+speed within the VM. Inspired by JavaScript, SuikaScript offers a
 streamlined syntax that is more intuitive for beginners yet powerful
 enough for seasoned developers. Because both the language and VM are
 developed in-house, you never have to worry about being left behind by
 upstream language updates or breaking changes. Your scripts will remain
 stable and compatible for the long term.
 
-## Status: Work in Progress
+## Status: Implementing for 1.0.0
 
-This repository is currently under active development.
-Features and APIs are subject to change.
+We are planning the 1.0.0 release at the end of March 2026.
+Currently, We are working hard to implement this software.
 
-Currently, we have implemented all basic tags in C.
-We are implementing the plugin system and the API bridge.
-
-Note that our 1.0.0 release will be planned in March 2026.
-Plese wait for it.
+**Our current status is:**
+* ✅ We have implemented all APIs in C.
+* ✅ We have implemented all tags in C.
+* ❌ We are implementing API warppers for the scripting language.
+    * ❌ Config
+    * ❌ Input
+    * ❌ Game
+    * ❌ Image
+    * ❌ Stage
+    * ❌ Mixer
+    * ❌ System Button
+    * ❌ Text
+    * ❌ Tag
+    * ❌ Anime
+    * ❌ Variable
+    * ❌ Save
+    * ❌ History
+    * ❌ Seen
+    * ❌ GUI
+    * ❌ HAL
 
 ## Key Features
 
 * **High Performance**: Powered by the Suika JIT VM, it delivers unparalleled execution speed.
 * **Lightweight**: Engineered to run smoothly even on low-spec hardware and in developing regions.
 * **Universal Platform**: Designed with a "port anywhere" strategy, ensuring compatibility with almost every modern platform.
-* **Extensible**: NovelML can be seamlessly expanded by developers using SeedScript.
+* **Extensible**: NovelML can be seamlessly expanded by developers using SuikaScript.
 * **Reliable**: Built on the proven codebase of Suika2 and integrated with the modern Playfield Engine.
 * **Jot-and-Run**: A powerful markup language designed to bring your stories to life in an instant.
 
@@ -134,10 +149,10 @@ func render() {
 
 ## Examples
 
-See the /game directory for:
-* minimal demo projects
-* sample assets and NovelML snippets
-* SeedScript usage patterns
+See the `game/` directory for:
+* Minimal demo project
+* Sample assets and NovelML snippets
+* SuikaScript usage patterns
 
 ## Building
 
@@ -145,16 +160,12 @@ For contributors who want to build from source, see (docs/mkdocs-en/docs/build.m
 
 ## Documentation
 
-Documents are also available at [https://suika3.vn/docs/](https://suika3.vn/docs/)
+Documents are also available at the [Website](https://suika3.vn/docs/)
 
-Primary docs will include:
 * [NovelML 3.0 reference](docs/mkdocs-en/docs/tags.md)
-* [SeedScript 3.0 reference](docs/mkdocs-en/docs/syntax.md)
+* [SuikaScript 3.0 reference](docs/mkdocs-en/docs/syntax.md)
 * [API docs](docs/mkdocs-en/docs/api.md)
-
-## Roadmap
-
-Version 3.0.0 is schedules in April 2026.
+* [How to build](docs/mkdocs-en/docs/build.md)
 
 ## Supported Platforms
 
@@ -280,7 +291,7 @@ Suika3 represents the culmination of over two decades of relentless innovation a
 * **Suika2 (2016–2024)**: The cornerstone of our current architecture and the fruit of a decade of dedicated R&D.
   It delivers a full visual novel experience with extensive platform compatibility.
 * **Playfield Engine (2025–)**: A versatile 2D engine derived from the core portability layer of the Suika series.
-* **Suika3 (2026–)**: By synthesizing these legacies and introducing **NovelML 3.0 / SeedScript 3.0**,
+* **Suika3 (2026–)**: By synthesizing these legacies and introducing **NovelML 3.0 / SuikaScript 3.0**,
   Suika3 delivers the rock-solid stability of its predecessors alongside the cutting-edge flexibility of modern technology.
 
 ## Localization / Internationalization
@@ -444,7 +455,7 @@ For Xbox series, you can use the native Microsoft GDK port directly, not via Uni
 ### NoctLang
 
 ```
-SeedScript = NoctLang + Suika3 API
+SuikaScript = NoctLang + Suika3 API
 ```
 
 **NoctLang** is a lightweight scripting language designed for in-app scripting.
