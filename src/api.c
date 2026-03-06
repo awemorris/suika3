@@ -137,10 +137,10 @@ static bool Suika_clearBufferedMessage(void *p);
 static bool Suika_resetPageLine(void *p);
 static bool Suika_incPageLine(void *p);
 static bool Suika_isPageTop(void *p);
-static bool Suika_registerBgvoice(void *p);
-static bool Suika_getBgvoice(void *p);
-static bool Suika_setBgvoicePlaying(void *p);
-static bool Suika_isBgvoicePlaying(void *p);
+static bool Suika_registerBGVoice(void *p);
+static bool Suika_getBGVoice(void *p);
+static bool Suika_setBGVoicePlaying(void *p);
+static bool Suika_isBGVoicePlaying(void *p);
 static bool Suika_setChapterName(void *p);
 static bool Suika_getChapterName(void *p);
 static bool Suika_setLastMessage(void *p);
@@ -197,8 +197,8 @@ static bool Suika_getLayerHeight(void *p);
 static bool Suika_getLayerAlpha(void *p);
 static bool Suika_setLayerAlpha(void *p);
 static bool Suika_setLayerBlend(void *p);
-static bool Suika_getLayerFileName(void *p);
-static bool Suika_setLayerFileName(void *p);
+static bool Suika_getLayerFile(void *p);
+static bool Suika_setLayerFile(void *p);
 static bool Suika_getLayerImage(void *p);
 static bool Suika_setLayerImage(void *p);
 static bool Suika_setLayerFrame(void *p);
@@ -228,8 +228,8 @@ static bool Suika_getTalkingChpos(void *p);
 static bool Suika_updateChDimByTalkingCh(void *p);
 static bool Suika_forceChDim(void *p);
 static bool Suika_getChDim(void *p);
-static bool Suika_fillNamebox(void *p);
-static bool Suika_getNameboxRect(void *p);
+static bool Suika_fillNameBox(void *p);
+static bool Suika_getNameBoxRect(void *p);
 static bool Suika_showNameBox(void *p);
 static bool Suika_fillMessageBox(void *p);
 static bool Suika_showMessageBox(void *p);
@@ -258,7 +258,7 @@ static bool Suika_getMixerGlobalVolume(void *p);
 static bool Suika_setCharacterVolume(void *p);
 static bool Suika_getCharacterVolume(void *p);
 static bool Suika_isMixerSoundFinished(void *p);
-static bool Suika_getTrackFileName(void *p);
+static bool Suika_getTrackFile(void *p);
 static bool Suika_applyCharacterVolume(void *p);
 
 /* System */
@@ -269,8 +269,6 @@ static bool Suika_isSysbtnPointed(void *p);
 static bool Suika_isSysbtnClicked(void *p);
 
 /* Text */
-static bool Suika_utf8ToUtf32(void *p);
-static bool Suika_countUtf8Chars(void *p);
 static bool Suika_getStringWidth(void *p);
 static bool Suika_getStringHeight(void *p);
 static bool Suika_drawGlyph(void *p);
@@ -326,7 +324,7 @@ static bool Suika_isAnimeFinishedForLayer(void *p);
 static bool Suika_updateAnimeFrame(void *p);
 static bool Suika_unregisterAnime(void *p);
 static bool Suika_getRegAnimeName(void *p);
-static bool Suika_getRegAnimeFileName(void *p);
+static bool Suika_getRegAnimeFile(void *p);
 static bool Suika_loadEyeImageIfExists(void *p);
 static bool Suika_reloadEyeAnime(void *p);
 static bool Suika_loadLipImageIfExists(void *p);
@@ -472,10 +470,35 @@ static struct api_func api_func[] = {
 	{"getPenPositionY",		Suika_getPenPositionY,		0, NULL},
 	{"pushForCall",			Suika_pushForCall,		1, single_param},
 	{"popForReturn",		Suika_popForReturn,		0, NULL},
-	//{"readCallStack",		Suika_readCallStack,		1, single_param},
-	//{"writeCallStack",		Suika_writeCallStack,		1, single_param},
+	{"readCallStack",		Suika_readCallStack,		1, single_param},
+	{"writeCallStack",		Suika_writeCallStack,		1, single_param},
 	{"setCallArgument",		Suika_setCallArgument,		1, single_param},
 	{"getCallArgument",		Suika_getCallArgument,		1, single_param},
+	{"isPageMode",			Suika_isPageMode,		0, NULL},
+	{"appendBufferedMessage",	Suika_appendBufferedMessage,	1, single_param},
+	{"getBufferedMessage",		Suika_getBufferedMessage,	0, NULL},
+	{"clearBufferedMessage",	Suika_clearBufferedMessage,	0, NULL},
+	{"resetPageLine",		Suika_resetPageLine,		0, NULL},
+	{"incPageLine",			Suika_incPageLine,		0, NULL},
+	{"isPageTop",			Suika_isPageTop,		0, NULL},
+	{"registerBGVoice",		Suika_registerBGVoice,		1, single_param},
+	{"getBGVoice",			Suika_getBGVoice,		0, NULL},
+	{"setBGVoicePlaying",		Suika_setBGVoicePlaying,	1, single_param},
+	{"isBGVoicePlaying",		Suika_isBGVoicePlaying,		0, NULL},
+	{"setChapterName",		Suika_setChapterName,		1, single_param},
+	{"getChapterName",		Suika_getChapterName,		0, NULL},
+	{"setLastMessage",		Suika_setLastMessage,		1, single_param},
+	{"setPrevLastMessage",		Suika_setPrevLastMessage,	1, single_param},
+	{"getLastMessage",		Suika_getLastMessage,		0, NULL},
+	{"getPrevLastMessage",		Suika_getPrevLastMessage,	0, NULL},
+	{"setTextSpeed",		Suika_setTextSpeed,		1, single_param},
+	{"getTextSpeed",		Suika_getTextSpeed,		0, NULL},
+	{"setAutoSpeed",		Suika_setAutoSpeed,		1, single_param},
+	{"getAutoSpeed",		Suika_getAutoSpeed,		0, NULL},
+	{"markLastEnglishTagIndex",	Suika_markLastEnglishTagIndex,	0, NULL},
+	{"getLastEnglishTagIndex",	Suika_getLastEnglishTagIndex,	0, NULL},
+	{"clearLastEnglishTagIndex",	Suika_clearLastEnglishTagIndex,	0, NULL},
+	{"getLastTagName",		Suika_getLastTagName,		0, NULL},
 
 	/* Image */
 	{"createImageFromFile",		Suika_createImageFromFile,	1, single_param},
@@ -507,17 +530,40 @@ static struct api_func api_func[] = {
 	{"getLayerAlpha",		Suika_getLayerAlpha,		1, single_param},
 	{"setLayerAlpha",		Suika_setLayerAlpha,		1, single_param},
 	{"setLayerBlend",		Suika_setLayerBlend,		1, single_param},
-	{"setLayerFileName",		Suika_setLayerFileName,		1, single_param},
+	{"setLayerFile",		Suika_setLayerFile,		1, single_param},
 	{"setLayerFrame",		Suika_setLayerFrame,		1, single_param},
 	{"getLayerText",		Suika_getLayerText,		1, single_param},
 	{"setLayerText",		Suika_setLayerText,		1, single_param},
 	{"renderStage",			Suika_renderStage,		0, NULL},
 	{"startFade",			Suika_startFade,		1, single_param},
+	{"setShakeOffset",		Suika_setShakeOffset,		1, single_param},
 	{"isFadeRunning",		Suika_isFadeRunning,		0, NULL},
 	{"finishFade",			Suika_finishFade,		0, NULL},
+	{"setChNameMapping",		Suika_setChNameMapping,		1, single_param},
+	{"getChTalking",		Suika_getChTalking,		0, NULL},
+	{"setChTalking",		Suika_setChTalking,		1, single_param},
+	{"getTalkingChpos",		Suika_getTalkingChpos,		0, NULL},
+	{"updateChDimByTalkingCh",	Suika_updateChDimByTalkingCh,	0, NULL},
+	{"forceChDim",			Suika_forceChDim,		1, single_param},
+	{"getChDim",			Suika_getChDim,			1, single_param},
+	{"Suika_fillNameBox",		Suika_fillNameBox,		0, NULL},
+	{"getNameboxRect",		Suika_getNameboxRect,		0, NULL},
+	{"showNameBox",			Suika_showNameBox,		1, NULL},
+	{"fillMessageBox",		Suika_fillMessageBox,		0, NULL},
 	{"showMessageBox",		Suika_showMessageBox,		1, single_param},
-	{"showNameBox",			Suika_showNameBox,		1, single_param},
+	{"getMessageBoxRect",		Suika_getMessageBoxRect,	0, NULL},
+	{"setClickPosition",		Suika_setClickPosition,		1, single_param},
+	{"showClick",			Suika_showClick,		1, single_param},
+	{"setClickIndex",		Suika_setClickIndex,		1, single_param},
+	{"getClickRect",		Suika_getClickRect,		0, NULL},
+	{"fillChooseBoxIdleImage",	Suika_fillChooseBoxIdleImage,	0, NULL},
+	{"fillChooseBoxHoverImage",	Suika_fillChooseBoxHoverImage,	0, NULL},
 	{"showChooseBox",		Suika_showChooseBox,		1, single_param},
+	{"getChooseBoxRect",		Suika_getChooseBoxRect,		0, NULL},
+	{"showAutoModeBanner",		Suika_showAutoModeBanner,	1, single_param},
+	{"showSkipModeBanner",		Suika_showSkipModeBanner,	1, single_param},
+	{"renderImage",			Suika_renderImage,		1, single_param},
+	{"renderImage3d",		Suika_renderImage3d,		1, single_param},
 
 	/* Mixer */
 	{"setMixerInputFile",		Suika_setMixerInputFile,	1, single_param},
@@ -530,8 +576,15 @@ static struct api_func api_func[] = {
 	{"setCharacterVolume",		Suika_setCharacterVolume,	1, single_param},
 	{"getCharacterVolume",		Suika_getCharacterVolume,	1, single_param},
 	{"isMixerSoundFinished",	Suika_isMixerSoundFinished,	1, single_param},
-	{"getTrackFileName",		Suika_getTrackFileName,		1, single_param},
+	{"getTrackFile",		Suika_getTrackFile,		1, single_param},
 	{"applyCharacterVolume",	Suika_applyCharacterVolume,	1, single_param},
+
+	/* System */
+	{"showSysBtn",			Suika_showSysBtn,		1, single_param},
+	{"isSysBtnVisible",		Suika_isSysBtnVisible,		0, NULL},
+	{"updateSysBtnState",		Suika_updateSysBtnState,	1, single_param},
+	{"isSysBtnPointed",		Suika_isSysBtnPointed,		0, NULL},
+	{"isSysBtnClicked",		Suika_isSysBtnClicked,		0, NULL},
 
 	/* Text */
 	{"getStringWidth",		Suika_getStringWidth,		1, single_param},
@@ -540,6 +593,8 @@ static struct api_func api_func[] = {
 	{"createDrawMsg",		Suika_createDrawMsg,		1, single_param}, 
 	{"drawMessage",			Suika_drawMessage,		1, single_param},
 	{"getDrawMsgPenPosition",	Suika_getDrawMsgPenPosition,	1, single_param},
+	{"setDrawMsgIgnoreInlineWait",	Suika_setDrawMsgIgnoreInlineWait, 1, single_param},
+	{"isQuotedSerif",		Suika_isQuotedSerif,		1, single_param},
 	{"isEscapeSequenceChar",	Suika_isEscapeSequenceChar,	1, single_param},
 
 	/* Tag */
@@ -549,6 +604,9 @@ static struct api_func api_func[] = {
 	{"moveToNextTag",		Suika_moveToNextTag,		0, NULL},
 	{"moveToLabelTag",		Suika_moveToLabelTag,		1, single_param},
 	{"moveToMacroTag",		Suika_moveToMacroTag,		1, single_param},
+	{"moveToElseTag",		Suika_moveToElseTag,		0, NULL},
+	{"moveToEndIfTag",		Suika_moveToEndIfTag,		0, NULL},
+	{"moveToEndMacroTag",		Suika_moveToEndMacroTag,	0, NULL},
 	{"getTagFile",			Suika_getTagFile,		0, NULL},
 	{"getTagName",			Suika_getTagName,		0, NULL},
 	{"getTagPropertyCount",		Suika_getTagPropertyCount,	0, NULL},
@@ -562,7 +620,9 @@ static struct api_func api_func[] = {
 	{"pushTagStackIf",		Suika_pushTagStackIf,		0, NULL},
 	{"popTagStackIf",		Suika_popTagStackIf,		0, NULL},
 	{"pushTagStackWhile",		Suika_pushTagStackWhile,	0, NULL},
+	{"popTagStackWhile",		Suika_popTagStackWhile,		0, NULL},
 	{"pushTagStackFor",		Suika_pushTagStackFor,		0, NULL},
+	{"popTagStackFor",		Suika_popTagStackFor,		0, NULL},
 
 	/* Anime */
 	{"loadAnimeFromFile",		Suika_loadAnimeFromFile,		1, single_param},
@@ -573,10 +633,15 @@ static struct api_func api_func[] = {
 	{"addAnimeSequencePropertyI",	Suika_addAnimeSequencePropertyI,	1, single_param},
 	{"startLayerAnime",		Suika_startLayerAnime,			1, single_param},
 	{"isAnimeRunning",		Suika_isAnimeRunning,			0, NULL},
+	{"isAnimeRunningWithLayerMask",	Suika_isAnimeRunningWithLayerMask,	1, single_param},
 	{"isAnimeFinishedForLayer",	Suika_isAnimeFinishedForLayer,		1, single_param},
 	{"updateAnimeFrame",		Suika_updateAnimeFrame,			0, NULL},
+	{"unregisterAnime",		Suika_unregisterAnime,			1, single_param},
+	{"getRegAnimeName",		Suika_getRegAnimeName,			1, single_param},
+	{"getRegAnimeFile",		Suika_getRegAnimeFile,			1, single_param},
 	{"loadEyeImageIfExists",	Suika_loadEyeImageIfExists,		1, single_param},
 	{"reloadEyeAnime",		Suika_reloadEyeAnime,			1, single_param},
+	{"loadLipImageIfExists",	Suika_loadLipImageIfExists,		1, single_param},
 	{"runLipAnime",			Suika_runLipAnime,			1, single_param},
 	{"stopLipAnime",		Suika_stopLipAnime,			1, single_param},
 
@@ -584,13 +649,15 @@ static struct api_func api_func[] = {
 	{"setVariableInt",		Suika_setVariableInt,		1, single_param},
 	{"setVariableFloat",		Suika_setVariableFloat,		1, single_param},
 	{"setVariableString",		Suika_setVariableString,	1, single_param},
+	{"unsetVariable",		Suika_unsetVariable,		1, single_param},
+	{"makeVariableGlobal",		Suika_makeVariableGlobal,	1, single_param},
 	{"getVariableInt",		Suika_getVariableInt,		1, single_param},
 	{"getVariableFloat",		Suika_getVariableFloat,		1, single_param},
 	{"getVariableString",		Suika_getVariableString,	1, single_param},
 	{"getVariableCount",		Suika_getVariableCount,		0, NULL},
 	{"getVariableName",		Suika_getVariableName,		1, single_param},
 	{"checkVariableExists",		Suika_checkVariableExists,	1, single_param},
-	{"makeVariableGlobal",		Suika_makeVariableGlobal,	1, single_param},
+	{"isGlobalVariable",		Suika_isGlobalVariable,		1, single_param},
 	{"unsetLocalVariables",		Suika_unsetLocalVariables,	0, NULL},
 
 	/* Save */
@@ -615,6 +682,8 @@ static struct api_func api_func[] = {
 	{"getHistoryName",		Suika_getHistoryName,		1, single_param},
 	{"getHistoryMessage",		Suika_getHistoryMessage,	1, single_param},
 	{"getHistoryVoice",		Suika_getHistoryVoice,		1, single_param},
+
+	/* Seen */
 	{"loadSeen",			Suika_loadSeen,			0, NULL},
 	{"saveSeen",			Suika_saveSeen,			0, NULL},
 	{"getSeenFlags",		Suika_getSeenFlags,		0, NULL},
@@ -2240,7 +2309,7 @@ Suika_setBGVoicePlaying(void *p)
 }
 
 static bool
-Suika_isBgvoicePlaying(void *p)
+Suika_isBGVoicePlaying(void *p)
 {
 	bool val;
 
@@ -3123,7 +3192,7 @@ Suika_setLayerBlend(void *p)
 }
 
 static bool
-Suika_getLayerFileName(void *p)
+Suika_getLayerFile(void *p)
 {
 	int layer;
 	const char *val;
@@ -3150,7 +3219,7 @@ Suika_getLayerFileName(void *p)
 }
 
 static bool
-Suika_setLayerFileName(void *p)
+Suika_setLayerFile(void *p)
 {
 	int layer;
 	char *file;
@@ -3803,7 +3872,7 @@ Suika_showMessageBox(void *p)
 }
 
 static bool
-Suika_getMsgboxRect(void *p)
+Suika_getMessageBoxRect(void *p)
 {
 	/* TODO */
         s3_log_error(S3_TR("This API is not implemented yet."));
@@ -4414,7 +4483,7 @@ Suika_isMixerSoundFinished(void *p)
 }
 
 static bool
-Suika_getTrackFileName(void *p)
+Suika_getTrackFile(void *p)
 {
 	int track;
 	const char *file;
@@ -5960,7 +6029,7 @@ Suika_getRegAnimeName(void *p)
 }
 
 static bool
-Suika_getRegAnimeFileName(void *p)
+Suika_getRegAnimeFile(void *p)
 {
 	int index;
 	const char *file;
