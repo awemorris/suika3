@@ -2614,7 +2614,7 @@ s3_render_image_3d(
  * Starts the Kirakira effect.
  */
 void
-start_kirakira(
+s3_start_kirakira(
 	int x,
 	int y)
 {
@@ -2637,7 +2637,7 @@ start_kirakira(
  * Renders a Kirakira effect frame.
  */
 void
-render_kirakira(void)
+s3_render_kirakira(void)
 {
 	float lap, frame_time;
 	int index;

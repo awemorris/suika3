@@ -2069,6 +2069,23 @@ No return.
 
 ---
 
+## Suika.setChNameMapping()
+
+Specify a character name index for a character position.
+
+### Parameters
+
+| Parameter   | Type    | Description                |
+|-------------|---------|----------------------------|
+| chpos       | Integer | Character position.        |
+| chNameIndex | Integer | Character name inex.       |
+
+### Return
+
+No return.
+
+---
+
 ## Suika.setChTalking()
 
 Set the talking character.
@@ -2100,6 +2117,10 @@ Set returns No return; Get returns Integer.
 
 Get the position of the character currently speaking.
 
+### Parameters
+
+No parameters.
+
 ### Return
 
 Returns a string.
@@ -2129,6 +2150,102 @@ No return.
 
 ---
 
+## Suika.forceChDim()
+
+Update the character dimming manually.
+
+### Parameters
+
+| Parameter | Type    | Description                |
+|-----------|---------|----------------------------|
+| chpos     | String  | Character position.        |
+| dim       | Boolean | Dim or not.                |
+
+### Return
+
+No return.
+
+---
+
+## Suika.getChDim()
+
+Get the dimming state.
+
+### Parameters
+
+| Parameter | Type    | Description                |
+|-----------|---------|----------------------------|
+| chpos     | String  | Character position.        |
+
+### Return
+
+Returns a boolean.
+
+---
+
+## Suika.fillNameBox()
+
+Fill the name box by the name box image.
+
+### Parameters
+
+No parameters.
+
+### Return
+
+No return.
+
+---
+
+## Suika.getNameBoxRect()
+
+Get the name box position and size.
+
+### Parameters
+
+No parameters.
+
+### Return
+
+Object.
+
+* x
+* y
+* w
+* h
+
+---
+
+## Suika.showNameBox()
+
+Show or hides the name box.
+
+### Parameters
+
+| Parameter | Type    | Description                |
+|-----------|---------|----------------------------|
+| show      | Boolean | Show or hide.              |
+
+### Return
+
+No return.
+
+---
+
+## Suika.fillMessageBox()
+
+Fill the message box by the message box image.
+
+### Parameters
+
+No parameters.
+
+### Return
+
+No return.
+
+---
+
 ## Suika.showMsgbox()
 
 Show or hide the message box.
@@ -2145,19 +2262,31 @@ No return.
 
 ---
 
-## Suika.showNamebox()
+## Suika.getMessageBoxRect()
 
-Show or hide the name box.
+---
 
-### Parameters
+## Suika.setClickPosition()
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| show      | Boolean | Whether to show the box.   |
+---
 
-### Return
+## Suika.showClick()
 
-No return.
+---
+
+## Suika.setClickIndex()
+
+---
+
+## Suika.getClickRect()
+
+---
+
+## Suika.fillChooseBoxIdleImage()
+
+---
+
+## Suika.fillChooseBoxHoverImage()
 
 ---
 
@@ -2176,6 +2305,18 @@ Show or hide a choice box.
 ### Return
 
 No return.
+
+---
+
+## Suika.getChooseBoxRect()
+
+---
+
+## Suika.showAutoModeBanner()
+
+---
+
+## Suika.showSkipModeBanner()
 
 ---
 
@@ -2228,6 +2369,14 @@ Perform direct rendering of an image to the screen with 3D transformation.
 ### Return
 
 No return.
+
+---
+
+## Suika.startKirakira()
+
+---
+
+## Suika.renderKirakira()
 
 ---
 

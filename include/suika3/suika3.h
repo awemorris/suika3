@@ -1511,7 +1511,7 @@ void
 s3_finish_fade(void);
 
 /*
- * Specify a character index for a character position.
+ * Specify a character name index for a character position.
  */
 void
 s3_set_ch_name_mapping(
