@@ -6,7 +6,7 @@ Suika3
 </div>
 
 A next-generation cross-platform visual novel engine designed for the 2030s and beyond,
-empowering creators to build a sustainable future for the visual novel industry.
+empowering creators to build a sustainable future for visual novels.
 
 ---
 
@@ -14,7 +14,7 @@ empowering creators to build a sustainable future for the visual novel industry.
 
 * Native performance visual novel engine
 * JIT VM scripting + AOT mobile support
-* Runs on Windows, macOS, Linux, iOS, Android, Web, consoles
+* Runs on Windows, macOS, Linux, iOS, Android, Web, and gaming consoles
 
 ---
 
@@ -25,7 +25,7 @@ specifically engineered for commercial app development, maintained by
 the `Suika3 Community` and led by Awe Morris.
 
 Engineered with state-of-the-art techniques in computer science,
-Suika3 delivers native performance and true portability empowering
+Suika3 delivers native performance and true portability, empowering
 creators worldwide to build timeless experiences that endure for
 decades.
 
@@ -245,8 +245,6 @@ See the `game/` directory for:
     you're shielded from breaking changes in upstream projects. We own
     and control the full stack, so your scripts stay compatible forever.
 
-Yes, it's OUR language, built just for devs like you ;-)
-
 ---
 
 ## Why Suika3?: Our Philosophy
@@ -269,9 +267,9 @@ platforms, many creators have been restricted to limited distribution
 channels. As a result, the medium has struggled to reach a global,
 mobile-first audience, slowing its overall expansion.
 
-While free and hobbyist projects are culturally indispensable, they
-alone cannot sustain an entire creative industry. We believe a truly
-healthy ecosystem requires:
+While free and hobbyist projects are culturally indispensable, we
+believe they may not be sufficient on their own to sustain an entire
+creative industry. A truly healthy ecosystem may require:
 
 * **Commercially Viable Games** — Titles that reach players on their
     primary devices and generate the economic activity necessary for
@@ -285,9 +283,8 @@ healthy ecosystem requires:
     interest into a sustainable market where creativity can lead to
     self-reliance.
 
-...Is this overly assertive? As professional developers, we consider
-it basic professional ethics to develop products with the expectation
-of commercial success.
+...Is this overly assertive? In our view, it is a natural professional
+expectation for commercial success.
 
 ### Our Vision: Catalyst for Growth
 
@@ -321,14 +318,13 @@ journeys in overcoming adversity. We simply believe that talent, when
 equipped with the right tools, inevitably leads to self-reliance.
 
 Creators with different goals may also find excellent resources in
-other engines like Unity and Godot.
+other engines like Unity, Godot, or Ren'Py.
 
 ---
 
 ## Technical Overview
 
-If these rock-solid specifications give you chills, welcome to the
-club. You're a real engineer ;-)
+If these specifications excite you, you're probably in the right place.
 
 Suika3 is not merely a wrapper around SDL combined with a scripting language.
 It features its own rendering and audio backends, and its own scripting language,
@@ -626,8 +622,8 @@ and it is synchronized to the latest.
 * [NovelML 3.0 Syntax Reference](docs/mkdocs-en/docs/tags.md) (In-Progress)
 * [NovelML 3.0 Tag Reference](docs/mkdocs-en/docs/tags.md)
 * [SuikaScript 3.0 Syntax Reference](docs/mkdocs-en/docs/syntax.md)
-* [SuikaScript 3.0 API Reference](docs/mkdocs-en/docs/syntax.md)
-* [Built Instruction](docs/mkdocs-en/docs/build.md)
+* [SuikaScript 3.0 API Reference](docs/mkdocs-en/docs/api.md)
+* [Build Instruction](docs/mkdocs-en/docs/build.md)
 
 ---
 
@@ -810,11 +806,11 @@ Suika3
 Copyright (c) 2026 The Suika3 Community
 ```
 
-While Suika3 represents more than just an "OSS" component — it is a
-free/libre software movement aimed at helping build a sustainable
-market for visual novels, guided by a clear philosophy — we are
-equally pleased if you choose to integrate it simply as a
-high-performance "OSS" component within your own projects.
+We see Suika3 as part of a broader effort to help build a sustainable
+creative ecosystem for visual novels, guided by a clear mission,
+vision, and values. At the same time, you are absolutely welcome to
+use Suika3 simply as a useful open-source component within your own
+projects.
 
 ---
 
@@ -907,6 +903,7 @@ Suika3 represents the culmination of over two decades of relentless innovation a
 * **Suika2 (2016–2024)**: The cornerstone of our current architecture
   and the fruit of a decade of dedicated R&D. It delivers a full
   visual novel experience with extensive platform compatibility.
+  Several games with Suika3 were sold on App Store.
 
 * **Playfield Engine (2025–)**: A versatile 2D engine derived from the
   core portability layer of the Suika series.
