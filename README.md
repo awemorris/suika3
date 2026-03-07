@@ -5,7 +5,8 @@ Suika3
    <img src="https://raw.githubusercontent.com/suika3-community/suika3/refs/heads/main/docs/img/logo-small.png">
 </div>
 
-A next-generation cross-platform visual novel engine designed for the 2030s and beyond.
+A next-generation cross-platform visual novel engine designed for the 2030s and beyond,
+empowering creators to build a sustainable future for the visual novel industry.
 
 Suika3 is a high-performance, production-grade visual novel engine
 specifically engineered for commercial app development, maintained by
@@ -80,23 +81,26 @@ Currently we are working very hard to complete Suika3.
 ## Key Features
 
 * **High Performance**: Powered by the Suika JIT VM, it delivers
-  unparalleled execution speed.
-* **Lightweight**: Engineered to run smoothly even on low-spec
-  hardware and in developing regions.
+    ~10x execution speed compared to interpreter.
+
+* **Lightweight**: Engineered to run smoothly at 60 fps even on low-spec
+    hardware such as Raspberry Pi in developing regions.
+
 * **Universal Platform**: Designed with a "port anywhere" strategy,
-  ensuring compatibility with almost every modern platform.
+    ensuring compatibility with almost every modern platform.
+
 * **Extensible**: NovelML can be seamlessly expanded by developers
-  using SuikaScript.
+    using SuikaScript.
+
 * **Reliable**: Built on the proven codebase of Suika2 and integrated
-  with the modern Playfield Engine.
+    with the modern Playfield Engine.
+
 * **Jot-and-Run**: A powerful markup language designed to bring your
-  stories to life in an instant.
+    stories to life in an instant.
 
 ---
 
 ## Getting Started
-
-Sorry we are currently preparing the `Getting Started` document.
 
 A quick path to try Suika3 locally.
 
@@ -212,15 +216,19 @@ See the `game/` directory for:
 * **Instant Iteration:** No compile cycles, no waiting. The built-in
     JIT compiler runs your scripts immediately after editing, so you
     can tweak gameplay and see results in real-time.
+
 * **True Native Performance:** Run extensions at full speed on iOS,
     Android, and consoles. Even on platforms where JIT is restricted,
-    you never have to sacrifice performance.
+    you never have to sacrifice performance thanks to AOT.
+
 * **Smooth Store Approval:** Dramatically lower the risk of
     rejection. Since final builds consist of native code via AOT,
     you'll breeze through App Store and console certifications.
+
 * **Easy to Learn, Powerful to Use:** The JavaScript-inspired syntax
     is friendly for beginners, yet offers the deep flexibility
-    seasoned developers expect for complex systems.
+    experienced developers expect for complex systems.
+
 * **Long-term Stability:** Because we develop the language in-house,
     you're shielded from breaking changes in upstream projects. We own
     and control the full stack, so your scripts stay compatible forever.
@@ -250,8 +258,8 @@ channels. As a result, the medium has struggled to reach a global,
 mobile-first audience, slowing its overall expansion.
 
 While free and hobbyist projects are culturally indispensable, they
-alone cannot sustain an entire creative industry. A truly healthy
-ecosystem requires:
+alone cannot sustain an entire creative industry. We believe a truly
+healthy ecosystem requires:
 
 * **Commercially Viable Games** — Titles that reach players on their
     primary devices and generate the economic activity necessary for
@@ -264,6 +272,10 @@ ecosystem requires:
 * **A Living Industry** — Transforming the medium from a niche
     interest into a sustainable market where creativity can lead to
     self-reliance.
+
+...Is this overly assertive? As professional developers, we consider
+it basic professional ethics to develop products with the expectation
+of commercial success.
 
 ### Our Vision: Catalyst for Growth
 
@@ -303,7 +315,7 @@ other engines like Unity and Godot.
 
 ## Technical Overview
 
-If these crazy specifications give you chills, welcome to the
+If these rock-solid specifications give you chills, welcome to the
 club. You're a real engineer ;-)
 
 Suika3 is not merely a wrapper around SDL combined with a scripting language.
@@ -314,7 +326,7 @@ positioning it as a fully independent game engine.
 
 Suika3 is based on `PlayField Engine`, a comprehensive 2D game engine.
 This means that Suika3 is fully extensible using the Playfield API.
-(Can you believe that Playfield Engine was actually developed just for Suika3?)
+(Playfield Engine was actually developed just for Suika3.)
 
 ```
 +------------------------------+
@@ -341,7 +353,8 @@ This means that Suika3 is fully extensible using the Playfield API.
   a tiny yet mighty language designed for game scripting.
 
 * **Rendering**:
-  Supports native DirectX 9/11/12, Metal, OpenGL, OpenGL ES, and WebGL for wide compatibility.
+  Supports native DirectX 9/11/12, Metal, OpenGL, OpenGL ES, and WebGL
+  for wide compatibility.
 
 * **Audio**:
   Provides lightweight audio support through native DirectSound or XAudio2 (Windows),
@@ -390,10 +403,12 @@ For Xbox series, you can use the native Microsoft GDK port directly, not via Uni
 SuikaScript = NoctLang + Suika3 API
 ```
 
-**NoctLang** is a lightweight scripting language designed for in-app scripting.
-With a game-oriented syntax, it emphasizes clarity, instant startup, and tight integration with the engine.
+**NoctLang** is a lightweight scripting language designed for in-app
+scripting.  With a game-oriented syntax, it emphasizes clarity,
+instant startup, and tight integration with the engine.
 
 The built-in JIT compiler supports a wide range of CPU architectures, including:
+
 * Intel x86 (32-bit)
 * AMD64/x86_64 (64-bit)
 * ARMv7 (32-bit)
@@ -436,9 +451,10 @@ even in tightly controlled environments.
 |---------------|---------------|---------------------------------------------------------------|
 |All targets    |~2 MB          |Allocates 256 MB at startup for GC; does not exceed that limit |
 
-The garbage collector allocates 256 MB at startup because currently 256 MB is the maximum heap size.
-So the required system memory size is 256 MB by default.
-(However, this can be adjusted to a smaller value.)
+The garbage collector commits 256 MB at startup because currently 256
+MB is the maximum heap size in the default configuration.  So the
+required system memory size is 256 MB. (However, this can be adjusted
+to a smaller or larger values.)
 
 ---
 
@@ -457,6 +473,7 @@ management:
 * Young Generation: Most objects die young. Suika3 handles these using
   a high-speed Copying Algorithm (Semi-space Copy GC), which clears
   out temporary data in a flash. (typically < 0.1ms)
+
 * Old Generation: Long-lived objects are moved here. This area uses a
   Mark-Sweep-Compact GC algorithm, which periodically reorganizes
   memory to prevent fragmentation. (typically 10-300ms)
@@ -468,7 +485,7 @@ Young-generation Copy GC every single frame, the system effectively
 hides the GC processing time within the natural frame interval.
 
 Thanks to this generational strategy, the heavier Old-generation
-Mark-and-Sweep is rarely triggered, maintaining a silky-smooth
+Mark-and-Sweep is rarely triggered, maintaining a constant 60 fps
 experience for the player.
 
 ---
@@ -481,7 +498,7 @@ systems via the Playfield Engine.
 
 ### Platform Availability at a Glance
 
-`Supported` means Playfield Engine fully supports it.
+`Supported` means the upstream (`Playfield Engine`) fully supports it.
 
 | Category    | OS / Environment   | Status       | Last Checked | Checked On                       |
 | :---        | :---               | :---         | :---         | :---                             |
@@ -619,7 +636,7 @@ Suika3 supports the following languages, and the translation is in progress.
 | Traditional Chinese    | `zh-TW`     | Machine Translation      | UI                               | Not Yet       |
 | Japanese               | `ja-JP`     | Professional Translation | UI / Docs                        | Not Yet       |
 
-## How to switch languages
+### How to switch languages
 
 Playfield Engine uses the system locale.  To switch languages, set
 your system locale.
@@ -650,23 +667,23 @@ Our engine is built upon several free/libre software libraries. To
 ensure build reproducibility and long-term maintainability, all
 necessary source code tarballs and patches are bundled within this
 repository under the
-`external/PlayfieldEngine/external/StratoHAL/lib/archive/` directory.
+`external/PlayfieldEngine/external/StratoHAL/lib/` directory.
 
 ### Core Libraries
 
-| Library              | Purpose             | Key Feature                                            |
-| :---                 | :---                | :---                                                   |
-| **Playfield Engine** | 2D Game Engine      | Our base game engine. (in-house)                       |
-| **NoctLang**         | Scripting Language  | Our scripting language. (in-house)                     |
-| **zlib**             | Compression         | Deflate algorithm for general data compression.        |
-| **libpng**           | Image               | Reference library for supporting PNG images.           |
-| **JPEG9**            | Image               | Industry-standard JPEG image decompression.            |
-| **libwebp**          | Image               | Modern, high-efficiency image format support.          |
-| **FreeType2**        | Font                | High-quality font rendering and glyph processing.      |
-| **libogg**           | Audio Container     | Bitstream handling for Ogg multimedia files.           |
-| **libvorbis**        | Audio Codec         | Lossy audio compression used for BGM and SE.           |
-| **brotli**           | Compression         | High-ratio compression for web and data assets. (WOFF) |
-| **bzip2**            | Compression         | High-quality data compressor for archives.             |
+| Library          | Purpose             | Key Feature                                            |
+| :---             | :---                | :---                                                   |
+| Playfield Engine | 2D Game Engine      | Our base game engine. (in-house)                       |
+| NoctLang         | Scripting Language  | Our scripting language. (in-house)                     |
+| zlib             | Compression         | Deflate algorithm for general data compression.        |
+| libpng           | Image               | Reference library for supporting PNG images.           |
+| JPEG9            | Image               | Industry-standard JPEG image decompression.            |
+| libwebp          | Image               | Modern, high-efficiency image format support.          |
+| FreeType2        | Font                | High-quality font rendering and glyph processing.      |
+| libogg           | Audio Container     | Bitstream handling for Ogg multimedia files.           |
+| libvorbis        | Audio Codec         | Lossy audio compression used for BGM and SE.           |
+| brotli           | Compression         | High-ratio compression for web and data assets. (WOFF) |
+| bzip2            | Compression         | High-quality data compressor for archives.             |
 
 ### License Compliance
 
@@ -678,7 +695,8 @@ full text of each license and copyright notice.
 
 ## CMake Presets
 
-Suika3 ships with CMake presets covering various platforms and build configurations.
+Suika3 ships with CMake presets covering various platforms and build
+configurations.
 
 |Preset                         |Platform       |Compiler   |Directory                              |Target           |Type           |
 |-------------------------------|---------------|-----------|---------------------------------------|-----------------|---------------|
@@ -729,10 +747,12 @@ Suika3 ships with CMake presets covering various platforms and build configurati
 Suika3 is a robust visual novel engine with over 100k lines of code (LoC).
 This is not a weekend project but a mature codebase evolved over 25+ years.
 
-* **Proven Stability:** Includes core logic refined since 2001.
+* **Proven Stability:** Includes core modules refined since 2001.
+
 * **Modern Architecture:** Features a clean HAL (Hardware Abstraction
     Layer) separated in 2016 and high-performance GPU rendering
     implemented in 2022.
+
 * **Native Multi-Platform:** Built mostly with C, and the platform
     native languages, including C++ (DirectX), Swift (macOS/iOS),
     Objective-C (macOS/iOS), C# (Unity) and Shaders (HLSL/GLSL/Metal).
@@ -741,9 +761,10 @@ This is not a weekend project but a mature codebase evolved over 25+ years.
 
 ## Quality Assurance
 
-Reliability is a function of time. As Suika3 is currently in its
-pre-release phase, we define its cumulative operational time as
-zero. Consequently, formal quality metrics are not yet applicable.
+In `Software Engineering`, reliability is a function of time. As
+Suika3 is currently in its pre-release phase, we define its cumulative
+operational time as zero. Consequently, formal quality metrics are not
+yet applicable.
 
 ### Our Path to Stability
 
@@ -865,10 +886,20 @@ Please also see [MANIFESTO.md](MANIFESTO.md) for our manifesto.
 
 Suika3 represents the culmination of over two decades of relentless innovation and development:
 
-* **Suika Studio (2001–2004)**: The origin of our codebase, featuring our first GUI-based editors. 
-* **Unfruitiful (2005–2015)**: A decade of R&D focused on establishing a robust portability layer for cross-platform support.
-* **Suika2 (2016–2024)**: The cornerstone of our current architecture and the fruit of a decade of dedicated R&D.
-  It delivers a full visual novel experience with extensive platform compatibility.
-* **Playfield Engine (2025–)**: A versatile 2D engine derived from the core portability layer of the Suika series.
-* **Suika3 (2026–)**: By synthesizing these legacies and introducing **NovelML 3.0 / SuikaScript 3.0**,
-  Suika3 delivers the rock-solid stability of its predecessors alongside the cutting-edge flexibility of modern technology.
+* **Suika Studio (2001–2004)**: The origin of our codebase, featuring
+  our first GUI-based editors.
+
+* **Unfruitiful (2005–2015)**: A decade of R&D focused on establishing
+  a robust portability layer for cross-platform support.
+
+* **Suika2 (2016–2024)**: The cornerstone of our current architecture
+  and the fruit of a decade of dedicated R&D. It delivers a full
+  visual novel experience with extensive platform compatibility.
+
+* **Playfield Engine (2025–)**: A versatile 2D engine derived from the
+  core portability layer of the Suika series.
+
+* **Suika3 (2026–)**: By synthesizing these legacies and introducing
+  **NovelML 3.0 / SuikaScript 3.0**, Suika3 delivers the rock-solid
+  stability of its predecessors aalongside the cutting-edge flexibility
+  of modern technology.
