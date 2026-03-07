@@ -137,6 +137,8 @@ other open-source projects or commercial engines like Unity.
 
 ## Getting Started
 
+Sorry we are currently preparing the `Getting Started` document.
+
 A quick path to try Suika3 locally.
 
 ### Using prebuilt binary
@@ -161,7 +163,7 @@ cp -R ../game/* .
 
 ---
 
-## Quick Start
+## Quick Look
 
 ### NovelML
 
@@ -261,118 +263,118 @@ and it is synchronized to the latest.
 
 ## Supported Platforms
 
-Suika3 targets desktop platforms (Windows, Linux, macOS) for game development,
-with a clear migration path for mobile and embedded targets via Playfield Engine.
+Suika3 primarily targets desktop environments (Windows, Linux, macOS)
+while providing a robust migration path for mobile and embedded
+systems via the Playfield Engine.
 
-### Test Results
+### Platform Availability at a Glance
 
-|Type       |OS         |Status       |Check Date       |Version                             |
-|-----------|-----------|-------------|-----------------|------------------------------------|
-|Desktop    |Windows    |✅ Works     |3rd March 2026   |Windows 11 x64                      |
-|           |macOS      |✅ Works     |1st March 2026   |macOS 15 Sequoia Arm64              |
-|           |Linux      |✅ Works     |3rd March 2026   |Ubuntu 24.04 LTS x86_64             |
-|Mobile     |iOS        |✅ Works     |                 |iPhone iOS 18                       |
-|           |Android    |✅ Works     |                 |Android 16                          |
-|BSD        |FreeBSD    |✅ Works     |                 |FreeBSD 14.3 amd64                  |
-|           |NetBSD     |✅ Works     |                 |NetBSD 10.1 amd64                   |
-|           |OpenBSD    |✅ Works     |                 |OpenBSD 7.7 amd64                   |
-|Web        |WebAssembly|✅ Works     |                 |Chrome                              |
-|           |Chromebook |✅ Works     |                 |Chrome                              |
-|Other      |Unity      |✅ Works     |                 |Unity 6.2 Windows 11 x86_64         |
+| Category    | OS / Environment   | Status       | Last Checked | Checked On                       |
+| :---        | :---               | :---         | :---         | :---                             |
+| **Desktop** | Windows            | ✅ Supported | 3 Mar 2026   | Windows 11 (x64/Arm64)           |
+|             | macOS              | ✅ Supported | 1 Mar 2026   | macOS 26 Tahoe (Apple Silicon)   |
+|             | Linux              | ✅ Supported | 3 Mar 2026   | Ubuntu 24.04 LTS (x86_64)        |
+| **Mobile**  | iOS                | ✅ Supported | -            | iOS 18                           |
+|             | Android            | ✅ Supported | -            | Android 15                       |
+| **BSD**     | FreeBSD            | ✅ Supported | -            | 14.0-RELEASE amd64               |
+|             | NetBSD             | ✅ Supported | -            | 10.0 amd64, aarch64, armv7       |
+|             | OpenBSD            | ✅ Supported | -            | 10.0 amd64, aarch64, armv7       |
+| **Web**     | WebAssembly (Wasm) | ✅ Supported | -            | Chrome, Edge, Safari             |
+|             | Chromebook         | ✅ Supported | -            | Chrome Browser / Linux Container |
+| **Other**   | Unity Integration  | ✅ Supported | -            | Unity 6.2 (Windows x86_64)       |
+
+
+
 
 ### Windows Compatibility List
 
-| OS      | Version | Patch | CPU    | Runtimes                                                                             | 32-bit Binary | 64-bit Binary | Direct3D |
+Suika3 maintains exceptional backward compatibility, supporting legacy
+systems through specialized runtimes.
+
+| OS      | Version | Patch | CPU    | Required Runtimes                                                                    | 32-bit Binary | 64-bit Binary | Direct3D |
 |---------|---------|-------|--------|--------------------------------------------------------------------------------------|---------------|---------------|----------|
-| Windows | XP      | SP3   | x86    | DirectX End-User Runtimes (June 2010)                                                | ✅            | ❌            | 9.0      |
-| Windows | XP      | SP3   | x64    | DirectX End-User Runtimes (June 2010)                                                | ✅            | ❌            | 9.0      |
+| Windows | 11      |       | x64    |                                                                                      | ✅            | ✅            | 12.0     |
+| Windows | 11      |       | arm64  |                                                                                      | ✅            | ✅            | 12.0     |
+| Windows | 10      |       | x86    |                                                                                      | ✅            | ❌            | 12.0     |
+| Windows | 10      |       | x64    |                                                                                      | ✅            | ✅            | 12.0     |
+| Windows | 10      |       | arm64  |                                                                                      | ✅            | ✅            | 12.0     |
+| Windows | 8.1     |       | x86    |                                                                                      | ✅            | ❌            | 11.0     |
+| Windows | 8.1     |       | x64    |                                                                                      | ✅            | ✅            | 11.0     |
+| Windows | 8       |       | x86    |                                                                                      | ✅            | ❌            | 11.0     |
+| Windows | 8       |       | x64    | Microsoft Visual C++ Redistributable 2015                                            | ✅            | ✅            | 11.0     |
+| Windows | 7       |       | x86    |                                                                                      | ✅            | ❌            | 11.0     |
+| Windows | 7       |       | x64    | Microsoft Visual C++ Redistributable 2015                                            | ✅            | ✅            | 11.0     |
+| Windows | 7       | SP1   | x86    |                                                                                      | ✅            | ❌            | 11.0     |
+| Windows | 7       | SP1   | x64    | Microsoft Visual C++ Redistributable 2015                                            | ✅            | ✅            | 11.0     |
 | Windows | Vista   |       | x86    | DirectX End-User Runtimes (June 2010)                                                | ✅            | ❌            | 9.0      |
 | Windows | Vista   |       | x64    | DirectX End-User Runtimes (June 2010)                                                | ✅            | ❌            | 9.0      |
 | Windows | Vista   | SP1   | x86    | DirectX End-User Runtimes (June 2010)                                                | ✅            | ❌            | 9.0      |
 | Windows | Vista   | SP1   | x64    | DirectX End-User Runtimes (June 2010), Microsoft Visual C++ Redistributable 2015     | ✅            | ✅            | 9.0      |
 | Windows | Vista   | SP2   | x86    | DirectX 11 Platform Update                                                           | ✅            | ❌            | 11.0     |
 | Windows | Vista   | SP2   | x64    | DirectX 11 Platform Update, Microsoft Visual C++ Redistributable 2015                | ✅            | ✅            | 11.0     |
-| Windows | 7       |       | x86    |                                                                                      | ✅            | ❌            | 11.0     |
-| Windows | 7       |       | x64    | Microsoft Visual C++ Redistributable 2015                                            | ✅            | ✅            | 11.0     |
-| Windows | 7       | SP1   | x86    |                                                                                      | ✅            | ❌            | 11.0     |
-| Windows | 7       | SP1   | x64    | Microsoft Visual C++ Redistributable 2015                                            | ✅            | ✅            | 11.0     |
-| Windows | 8       |       | x86    |                                                                                      | ✅            | ❌            | 11.0     |
-| Windows | 8       |       | x64    | Microsoft Visual C++ Redistributable 2015                                            | ✅            | ✅            | 11.0     |
-| Windows | 8.1     |       | x86    |                                                                                      | ✅            | ❌            | 11.0     |
-| Windows | 8.1     |       | x64    |                                                                                      | ✅            | ✅            | 11.0     |
-| Windows | 10      |       | x86    |                                                                                      | ✅            | ❌            | 12.0     |
-| Windows | 10      |       | x64    |                                                                                      | ✅            | ✅            | 12.0     |
-| Windows | 10      |       | arm64  |                                                                                      | ✅            | ✅            | 12.0     |
-| Windows | 11      |       | x64    |                                                                                      | ✅            | ✅            | 12.0     |
-| Windows | 11      |       | arm64  |                                                                                      | ✅            | ✅            | 12.0     |
+| Windows | XP      | SP3   | x86    | DirectX End-User Runtimes (June 2010)                                                | ✅            | ❌            | 9.0      |
+| Windows | XP      | SP3   | x64    | DirectX End-User Runtimes (June 2010)                                                | ✅            | ❌            | 9.0      |
 
 ### macOS Compatibility List
 
-| OS                | Version | CPU    | Status |
-|-------------------|---------|--------|--------|
-| OS X El Capitan   | 10.11   | x86_64 | ✅     |
-| macOS Sierra      | 10.12   | x86_64 | ✅     |
-| macOS High Sierra | 10.13   | x86_64 | ✅     |
-| macOS Mojave      | 10.14   | x86_64 | ✅     |
-| macOS Catalina    | 10.15   | x86_64 | ✅     |
-| macOS Big Sur     | 11.0    | arm64  | ✅     |
-| macOS Big Sur     | 11.0    | x86_64 | ✅     |
-| macOS Monterey    | 12.0    | arm64  | ✅     |
-| macOS Monterey    | 12.0    | x86_64 | ✅     |
-| macOS Ventura     | 13.0    | arm64  | ✅     |
-| macOS Ventura     | 13.0    | x86_64 | ✅     |
-| macOS Sonoma      | 14.0    | arm64  | ✅     |
-| macOS Sonoma      | 14.0    | x86_64 | ✅     |
-| macOS Sequoia     | 15.0    | arm64  | ✅     |
-| macOS Sequoia     | 15.0    | x86_64 | ✅     |
-| macOS Tahoe       | 26.0    | arm64  | ✅     |
-| macOS Tahoe       | 26.0    | x86_64 | ✅     |
+| OS                | Version    | CPU           | Status     |
+|-------------------|------------|---------------|------------|
+| macOS Tahoe       | 26.0       | Apple / Intel | ✅         |
+| macOS Sequoia     | 15.0       | Apple / Intel | ✅         |
+| macOS Sonoma      | 14.0       | Apple / Intel | ✅         |
+| macOS Ventura     | 13.0       | Apple / Intel | ✅         |
+| macOS Monterey    | 12.0       | Apple / Intel | ✅         |
+| macOS Big Sur     | 11.0       | Apple / Intel | ✅         |
+| macOS Catalina    | 10.15      | Intel         | ✅         |
+| macOS Mojave      | 10.14      | Intel         | ✅         |
+| macOS High Sierra | 10.13      | Intel         | ✅         |
+| macOS Sierra      | 10.12      | Intel         | ✅         |
+| OS X El Capitan   | 10.11      | Intel         | ✅         |
+| Legacy Mac OS X   | 10.7-10.10 | Intel         | N/A        |
+| Legacy Mac OS X   | 10.0-10.6  | PowerPC       | N/A        |
 
 ### Linux Compatibility List
 
-| Distribution      | Version   | CPU    | Status |
-|-------------------|-----------|--------|--------|
-| Raspberry Pi OS   | Debian 13 | arm64  | ✅     |
-| Raspberry Pi OS   | Debian 13 | arm7   | ✅     |
-| Ubuntu            | 24.04     | x86_64 | ✅     |
-| Ubuntu            | 24.04     | arm64  | ✅     |
-| Ubuntu            | 22.04     | x86_64 | ✅     |
-| Ubuntu            | 22.04     | arm64  | ✅     |
-| Ubuntu            | 20.04     | x86_64 | ✅     |
-| Ubuntu            | 20.04     | arm64  | ✅     |
-| Kubuntu           | 25.04     | x86_64 | ✅     |
-| Linux Mint        | 22.3      | x86_64 | ✅     |
-| Fedora            | 43        | x86_64 | ✅     |
+| Distribution      | Version               | CPU             | Status |
+|-------------------|-----------------------|-----------------|--------|
+| Raspberry Pi OS   | Debian 13             | arm64, armv7    | ✅     |
+| Ubuntu            | 24.04 / 22.04 / 20.04 | x86_64, arm64   | ✅     |
+| Kubuntu           | 25.04                 | x86_64, arm64   | ✅     |
+| Linux Mint        | 22.3                  | x86_64          | ✅     |
+| Fedora            | 43                    | x86_64          | ✅     |
 
 ### iOS Compatibility List
 
-| OS     | Status |
-|--------|--------|
-| iOS 11 | ✅     |
-| iOS 12 | ✅     |
-| iOS 13 | ✅     |
-| iOS 14 | ✅     |
-| iOS 15 | ✅     |
-| iOS 16 | ✅     |
-| iOS 17 | ✅     |
-| iOS 18 | ✅     |
-| iOS 26 | ✅     |
+| OS      | Status     |
+|---------|------------|
+| iOS 26  | ✅         |
+| iOS 18  | ✅         |
+| iOS 17  | ✅         |
+| iOS 16  | ✅         |
+| iOS 15  | ✅         |
+| iOS 14  | ✅         |
+| iOS 13  | ✅         |
+| iOS 12  | ✅         |
+| iOS 11  | ✅         |
+| iOS -10 | N/A        |
 
 ### Android Compatibility List
 
-| OS         | Status |
-|------------|--------|
-| Android 6  | ✅     |
-| Android 7  | ✅     |
-| Android 8  | ✅     |
-| Android 9  | ✅     |
-| Android 10 | ✅     |
-| Android 11 | ✅     |
-| Android 12 | ✅     |
-| Android 13 | ✅     |
-| Android 14 | ✅     |
-| Android 15 | ✅     |
-| Android 16 | ✅     |
+| OS          | Status |
+|-------------|--------|
+| Android 16  | ✅     |
+| Android 15  | ✅     |
+| Android 14  | ✅     |
+| Android 13  | ✅     |
+| Android 12  | ✅     |
+| Android 11  | ✅     |
+| Android 10  | ✅     |
+| Android 9   | ✅     |
+| Android 8   | ✅     |
+| Android 7   | ✅     |
+| Android 6   | ✅     |
+| Android 5   | N/A    |
+| Android 4.4 | N/A    |
 
 ---
 
@@ -393,30 +395,60 @@ Suika3 supports the following languages, and the translation is in progress.
 | Traditional Chinese    | `zh-TW`     | Machine Translation      | UI                               | Not Yet       |
 | Japanese               | `ja-JP`     | Professional Translation | UI / Docs                        | Not Yet       |
 
-**How to switch languages**  
-Playfield Engine uses the system locale.
-To switch languages, set your system locale.
+## How to switch languages
 
-**Contributing Translations**  
-Translation files are located under the three `i18n/` directories. (main, HAL and NoctLang)
-To propose a new translation or update an existing one, please open an Issue or submit a Pull Request.
+Playfield Engine uses the system locale.  To switch languages, set
+your system locale.
+
+### Contributing Translations
+
+We welcome community contributions to improve our translations!
+If you want to help us reach more developers, here is how you can contribute:
+
+0.  Do `grep -r _TR()` and detect original messages.
+1.  **Locate the Files**: Translation assets are managed across three core directories:
+    * `resources/i18n/message.txt` (Suika3 part, `S3_TR()`)
+    * `external/PlayfieldEngine/resources/i18n/message.txt` (Playfield Engine part, `PF_TR()`)
+    * `external/PlayfieldEngine/external/NoctLang/i18n/message.txt` (NoctLang part, `N_TR()`)
+    * `external/PlayfieldEngine/external/StratoHAL/i18n/message.txt` (StratoHAL part, `HAL_TR()`)
+2.  **Submit Your Changes**: 
+    * Found a typo or a weird machine translation? Feel free to open a **Pull Request**.
+    * Want to add a new language? Please open an **Issue** first so we can coordinate!
+
+> [!TIP]
+> Manual/Professional translations are prioritized over machine-generated content. Your human touch makes a huge difference!
 
 ---
 
 ## Third-party Libraries
 
-Playfield Engine uses the following libraries.
-The source code tarballs for the libraries are included in this repository.
+Our engine is built upon several open-source libraries. To ensure
+build reproducibility and long-term maintainability, all necessary
+source code tarballs and patches are bundled within this repository
+under the `external/PlayfieldEngine/external/StratoHAL/lib/archive/`
+directory.
 
-- zlib
-- libpng
-- libogg
-- libvorbis
-- JPEG9
-- libwebp
-- brotli
-- bzip2
-- FreeType2
+### Core Libraries
+
+| Library              | Purpose             | Key Feature                                            |
+| :---                 | :---                | :---                                                   |
+| **Playfield Engine** | 2D Game Engine      | Our base game engine. (in-house)                       |
+| **NoctLang**         | Scripting Language  | Our scripting language. (in-house)                     |
+| **zlib**             | Compression         | Deflate algorithm for general data compression.        |
+| **libpng**           | Image               | Reference library for supporting PNG images.           |
+| **JPEG9**            | Image               | Industry-standard JPEG image decompression.            |
+| **libwebp**          | Image               | Modern, high-efficiency image format support.          |
+| **FreeType2**        | Font                | High-quality font rendering and glyph processing.      |
+| **libogg**           | Audio Container     | Bitstream handling for Ogg multimedia files.           |
+| **libvorbis**        | Audio Codec         | Lossy audio compression used for BGM and SE.           |
+| **brotli**           | Compression         | High-ratio compression for web and data assets. (WOFF) |
+| **bzip2**            | Compression         | High-quality data compressor for archives.             |
+
+### License Compliance
+
+Each library is used according to its respective open-source
+license. Please refer to the `NOTICE` file in this repository for the
+full text of each license and copyright notice.
 
 ---
 
@@ -604,15 +636,36 @@ The garbage collector allocates 256 MB at startup because currently 256 MB is th
 So the required system memory size is 256 MB by default.
 (However, this can be adjusted to a smaller value.)
 
-### Garbage Collection
+---
 
-Suika3 implements a high-performance garbage collector similar to the
-HotSpot VM in Java, so you generally don't need to worry much about
-delays caused by garbage collection.
+## Garbage Collection (GC) in Suika3
 
-* The garbage collector uses a generational GC, managing objects in young and old generations.
-* Young-generation GC runs extremely fast using a copying algorithm (semi-space copy GC).
-* Old-generation GC uses a mark-and-sweep algorithm and performs compaction when necessary (mark-sweep-compact GC).
+Suika3 features a high-performance generational garbage collector,
+inspired by the architecture of the Java HotSpot VM. This design
+ensures that developers can focus on creation without being
+interrupted by the dreaded "GC spikes" or frame drops.
+
+### Core Mechanism: Generational GC
+
+The system categorizes objects into two groups to optimize memory
+management:
+
+* Young Generation: Most objects die young. Suika3 handles these using
+  a high-speed Copying Algorithm (Semi-space Copy GC), which clears
+  out temporary data in a flash. (< 0.1ms)
+* Old Generation: Long-lived objects are moved here. This area uses a
+  Mark-Sweep-Compact GC algorithm, which periodically reorganizes
+  memory to prevent fragmentation. (10ms)
+
+### Frame-Synchronized Latency Hiding
+
+The real "magic" of Suika3 lies in its timing. By executing the
+Young-generation Copy GC every single frame, the system effectively
+hides the GC processing time within the natural frame interval.
+
+Thanks to this generational strategy, the heavier Old-generation
+Mark-and-Sweep is rarely triggered, maintaining a silky-smooth
+experience for the player.
 
 ---
 
