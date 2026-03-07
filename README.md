@@ -901,5 +901,5 @@ Suika3 represents the culmination of over two decades of relentless innovation a
 
 * **Suika3 (2026–)**: By synthesizing these legacies and introducing
   **NovelML 3.0 / SuikaScript 3.0**, Suika3 delivers the rock-solid
-  stability of its predecessors aalongside the cutting-edge flexibility
+  stability of its predecessors alongside the cutting-edge flexibility
   of modern technology.
