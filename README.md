@@ -1,6 +1,10 @@
 Suika3
 ======
 
+<div align="center">
+   <img src="https://raw.githubusercontent.com/suika3-community/suika3/refs/heads/main/docs/img/logo-small.png">
+</div>
+
 A next-generation cross-platform visual novel engine designed for the 2030s and beyond.
 
 Suika3 is a high-performance, rock-solid visual novel engine developed by the `Suika3 Community`.
@@ -609,6 +613,21 @@ delays caused by garbage collection.
 * The garbage collector uses a generational GC, managing objects in young and old generations.
 * Young-generation GC runs extremely fast using a copying algorithm (semi-space copy GC).
 * Old-generation GC uses a mark-and-sweep algorithm and performs compaction when necessary (mark-sweep-compact GC).
+
+---
+
+## Codebase & Maturity
+
+Suika3 is a robust visual novel engine with over 100k lines of code (LoC).
+This isn't a weekend project, but a "matured" codebase evolved over 25+ years.
+
+* **Proven Stability:** Includes core logic refined since 2001.
+* **Modern Architecture:** Features a clean HAL (Hardware Abstraction
+    Layer) separated in 2016 and high-performance GPU rendering
+    implemented in 2022.
+* **Native Multi-Platform:** Built mostly with C, and the platform
+    native languages, including C++ (DirectX), Swift (macOS/iOS),
+    Objective-C (macOS/iOS), C# (Unity) and Shaders (HLSL/GLSL/Metal).
 
 ---
 
