@@ -49,14 +49,6 @@
 
 #define NEVER_COME_HERE 0
 
-/* API function entry. */
-struct api_func {
-	const char *name;
-	bool (*func)(void *);
-	int param_count;
-	const char **params;
-};
-
 /* Skeleton */
 static bool Suika_start(void *p);
 static bool Suika_update(void *p);
@@ -423,6 +415,12 @@ static const char *name_param[] = {"name"};
  * API table.
  *  - All non-implemented APIs **should** be also listed here.
  */
+struct api_func {
+	const char *name;
+	bool (*func)(void *);
+	int param_count;
+	const char **params;
+};
 static struct api_func api_func[] = {
 	/* Skeleton API */
 	{"start", Suika_start, 0, NULL},
@@ -435,7 +433,7 @@ static struct api_func api_func[] = {
 
 	/* Config */
 	{"setConfig",			Suika_setConfig,		1, dict_param},
-	{"getConfigCount",		Suika_getConfigCount,		1, dict_param},
+	{"getConfigCount",		Suika_getConfigCount,		0, NULL},
 	{"getConfigKey",		Suika_getConfigKey,		1, dict_param},
 	{"isGlobalConfig",		Suika_isGlobalConfig,		1, dict_param},
 	{"getConfigType",		Suika_getConfigType,		1, dict_param},
@@ -587,7 +585,7 @@ static struct api_func api_func[] = {
 	{"getFadeMethod",		Suika_getFadeMethod,		1, dict_param},
 	{"getAccelMethod",		Suika_getAccelMethod,		1, dict_param},
 	{"startFade",			Suika_startFade,		1, dict_param},
-	{"getShakeOffset",		Suika_setShakeOffset,		1, dict_param},
+	{"getShakeOffset",		Suika_getShakeOffset,		1, dict_param},
 	{"setShakeOffset",		Suika_setShakeOffset,		1, dict_param},
 	{"isFadeRunning",		Suika_isFadeRunning,		0, NULL},
 	{"finishFade",			Suika_finishFade,		0, NULL},
@@ -608,10 +606,10 @@ static struct api_func api_func[] = {
 	{"showClick",			Suika_showClick,		1, dict_param},
 	{"setClickIndex",		Suika_setClickIndex,		1, dict_param},
 	{"getClickRect",		Suika_getClickRect,		0, NULL},
-	{"fillChooseBoxIdleImage",	Suika_fillChooseBoxIdleImage,	0, NULL},
-	{"fillChooseBoxHoverImage",	Suika_fillChooseBoxHoverImage,	0, NULL},
+	{"fillChooseBoxIdleImage",	Suika_fillChooseBoxIdleImage,	1, dict_param},
+	{"fillChooseBoxHoverImage",	Suika_fillChooseBoxHoverImage,	1, dict_param},
 	{"showChooseBox",		Suika_showChooseBox,		1, dict_param},
-	{"getChooseBoxRect",		Suika_getChooseBoxRect,		0, NULL},
+	{"getChooseBoxRect",		Suika_getChooseBoxRect,		1, dict_param},
 	{"showAutoModeBanner",		Suika_showAutoModeBanner,	1, dict_param},
 	{"showSkipModeBanner",		Suika_showSkipModeBanner,	1, dict_param},
 	{"renderImage",			Suika_renderImage,		1, dict_param},
@@ -634,7 +632,7 @@ static struct api_func api_func[] = {
 	/* System */
 	{"showSysBtn",			Suika_showSysBtn,		1, dict_param},
 	{"isSysBtnVisible",		Suika_isSysBtnVisible,		0, NULL},
-	{"updateSysBtnState",		Suika_updateSysBtnState,	1, dict_param},
+	{"updateSysBtnState",		Suika_updateSysBtnState,	0, NULL},
 	{"isSysBtnPointed",		Suika_isSysBtnPointed,		0, NULL},
 	{"isSysBtnClicked",		Suika_isSysBtnClicked,		0, NULL},
 
@@ -770,6 +768,214 @@ static struct api_func api_func[] = {
 	{"speakText",			Suika_speakText,		1, dict_param},
 };
 
+/*
+ * Constant Table
+ */
+
+struct const_str_item {
+	const char *name;
+	const char *val;
+};
+struct const_int_item {
+	const char *name;
+	int val;
+};
+static struct const_str_item const_str_item[] = {
+	/* String */
+	{"PATH_START_TAG",	S3_PATH_START_TAG},
+	{"PATH_CONFIG",		S3_PATH_CONFIG},
+	{"PATH_SYSMENU_GUI",	S3_PATH_SYSMENU_GUI},
+	{"PATH_SAVE_GUI",	S3_PATH_SAVE_GUI},
+	{"PATH_LOAD_GUI",	S3_PATH_LOAD_GUI},
+	{"PATH_HISTORY_GUI",	S3_PATH_HISTORY_GUI},
+	{"PATH_CONFIG_GUI",	S3_PATH_CONFIG_GUI},
+};
+static struct const_int_item const_int_item[] = {
+	/* Layer */
+	{"LAYER_BG",			S3_LAYER_BG},
+	{"LAYER_BG_FO",			S3_LAYER_BG_FO},
+	{"LAYER_BG2",			S3_LAYER_BG2},
+	{"LAYER_EFB1",			S3_LAYER_EFB1},
+	{"LAYER_EFB2",			S3_LAYER_EFB2},
+	{"LAYER_EFB3",			S3_LAYER_EFB3},
+	{"LAYER_EFB4",			S3_LAYER_EFB4},
+	{"LAYER_CHB",			S3_LAYER_CHB},
+	{"LAYER_CHB_EYE",		S3_LAYER_CHB_EYE},
+	{"LAYER_CHB_LIP",		S3_LAYER_CHB_LIP},
+	{"LAYER_CHB_FO",		S3_LAYER_CHB_FO},
+	{"LAYER_CHL",			S3_LAYER_CHL},
+	{"LAYER_CHL_EYE",		S3_LAYER_CHL_EYE},
+	{"LAYER_CHL_LIP",		S3_LAYER_CHL_LIP},
+	{"LAYER_CHL_FO",		S3_LAYER_CHL_FO},
+	{"LAYER_CHLC",			S3_LAYER_CHLC},
+	{"LAYER_CHLC_EYE",		S3_LAYER_CHLC_EYE},
+	{"LAYER_CHLC_LIP",		S3_LAYER_CHLC_LIP},
+	{"LAYER_CHLC_FO",		S3_LAYER_CHLC_FO},
+	{"LAYER_CHR",			S3_LAYER_CHR},
+	{"LAYER_CHR_EYE",		S3_LAYER_CHR_EYE},
+	{"LAYER_CHR_LIP",		S3_LAYER_CHR_LIP},
+	{"LAYER_CHR_FO",		S3_LAYER_CHR_FO},
+	{"LAYER_CHRC",			S3_LAYER_CHRC},
+	{"LAYER_CHRC_EYE",		S3_LAYER_CHRC_EYE},
+	{"LAYER_CHRC_LIP",		S3_LAYER_CHRC_LIP},
+	{"LAYER_CHRC_FO",		S3_LAYER_CHRC_FO},
+	{"LAYER_CHC",			S3_LAYER_CHC},
+	{"LAYER_CHC_EYE",		S3_LAYER_CHC_EYE},
+	{"LAYER_CHC_LIP",		S3_LAYER_CHC_LIP},
+	{"LAYER_CHC_FO",		S3_LAYER_CHC_FO},
+	{"LAYER_EFF1",			S3_LAYER_EFF1},
+	{"LAYER_EFF2",			S3_LAYER_EFF2},
+	{"LAYER_EFF3",			S3_LAYER_EFF3},
+	{"LAYER_EFF4",			S3_LAYER_EFF4},
+	{"LAYER_MSGBOX",		S3_LAYER_MSGBOX},
+	{"LAYER_NAMEBOX",		S3_LAYER_NAMEBOX},
+	{"LAYER_CHOOSE1_IDLE",		S3_LAYER_CHOOSE1_IDLE},
+	{"LAYER_CHOOSE1_HOVER",		S3_LAYER_CHOOSE1_HOVER},
+	{"LAYER_CHOOSE2_IDLE",		S3_LAYER_CHOOSE2_IDLE},
+	{"LAYER_CHOOSE2_HOVER",		S3_LAYER_CHOOSE2_HOVER},
+	{"LAYER_CHOOSE3_IDLE",		S3_LAYER_CHOOSE3_IDLE},
+	{"LAYER_CHOOSE3_HOVER",		S3_LAYER_CHOOSE3_HOVER},
+	{"LAYER_CHOOSE4_IDLE",		S3_LAYER_CHOOSE4_IDLE},
+	{"LAYER_CHOOSE4_HOVER",		S3_LAYER_CHOOSE4_HOVER},
+	{"LAYER_CHOOSE5_IDLE",		S3_LAYER_CHOOSE5_IDLE},
+	{"LAYER_CHOOSE5_HOVER",		S3_LAYER_CHOOSE5_HOVER},
+	{"LAYER_CHOOSE6_IDLE",		S3_LAYER_CHOOSE6_IDLE},
+	{"LAYER_CHOOSE6_HOVER",		S3_LAYER_CHOOSE6_HOVER},
+	{"LAYER_CHOOSE7_IDLE",		S3_LAYER_CHOOSE7_IDLE},
+	{"LAYER_CHOOSE7_HOVER",		S3_LAYER_CHOOSE7_HOVER},
+	{"LAYER_CHOOSE8_IDLE",		S3_LAYER_CHOOSE8_IDLE},
+	{"LAYER_CHOOSE8_HOVER",		S3_LAYER_CHOOSE8_HOVER},
+	{"LAYER_CHF",			S3_LAYER_CHF},
+	{"LAYER_CHF_EYE",		S3_LAYER_CHF_EYE},
+	{"LAYER_CHF_LIP",		S3_LAYER_CHF_LIP},
+	{"LAYER_CHF_FO",		S3_LAYER_CHF_FO},
+	{"LAYER_CLICK",			S3_LAYER_CLICK},
+	{"LAYER_AUTO",			S3_LAYER_CLICK},
+	{"LAYER_SKIP",			S3_LAYER_CLICK},
+	{"LAYER_TEXT1",			S3_LAYER_TEXT1},
+	{"LAYER_TEXT2",			S3_LAYER_TEXT2},
+	{"LAYER_TEXT3",			S3_LAYER_TEXT3},
+	{"LAYER_TEXT4",			S3_LAYER_TEXT4},
+	{"LAYER_TEXT5",			S3_LAYER_TEXT5},
+	{"LAYER_TEXT6",			S3_LAYER_TEXT6},
+	{"LAYER_TEXT7",			S3_LAYER_TEXT7},
+	{"LAYER_TEXT8",			S3_LAYER_TEXT8},
+	{"LAYER_GUI_BTN1",		S3_LAYER_GUI_BTN1},
+	{"LAYER_GUI_BTN2",		S3_LAYER_GUI_BTN2},
+	{"LAYER_GUI_BTN3",		S3_LAYER_GUI_BTN3},
+	{"LAYER_GUI_BTN4",		S3_LAYER_GUI_BTN4},
+	{"LAYER_GUI_BTN5",		S3_LAYER_GUI_BTN5},
+	{"LAYER_GUI_BTN6",		S3_LAYER_GUI_BTN6},
+	{"LAYER_GUI_BTN7",		S3_LAYER_GUI_BTN7},
+	{"LAYER_GUI_BTN8",		S3_LAYER_GUI_BTN8},
+	{"LAYER_GUI_BTN9",		S3_LAYER_GUI_BTN9},
+	{"LAYER_GUI_BTN10",		S3_LAYER_GUI_BTN10},
+	{"LAYER_GUI_BTN11",		S3_LAYER_GUI_BTN11},
+	{"LAYER_GUI_BTN12",		S3_LAYER_GUI_BTN12},
+	{"LAYER_GUI_BTN13",		S3_LAYER_GUI_BTN13},
+	{"LAYER_GUI_BTN14",		S3_LAYER_GUI_BTN14},
+	{"LAYER_GUI_BTN15",		S3_LAYER_GUI_BTN15},
+	{"LAYER_GUI_BTN16",		S3_LAYER_GUI_BTN16},
+	{"LAYER_GUI_BTN17",		S3_LAYER_GUI_BTN17},
+	{"LAYER_GUI_BTN18",		S3_LAYER_GUI_BTN18},
+	{"LAYER_GUI_BTN19",		S3_LAYER_GUI_BTN19},
+	{"LAYER_GUI_BTN20",		S3_LAYER_GUI_BTN20},
+	{"LAYER_GUI_BTN21",		S3_LAYER_GUI_BTN21},
+	{"LAYER_GUI_BTN22",		S3_LAYER_GUI_BTN22},
+	{"LAYER_GUI_BTN23",		S3_LAYER_GUI_BTN23},
+	{"LAYER_GUI_BTN24",		S3_LAYER_GUI_BTN24},
+	{"LAYER_GUI_BTN25",		S3_LAYER_GUI_BTN25},
+	{"LAYER_GUI_BTN26",		S3_LAYER_GUI_BTN26},
+	{"LAYER_GUI_BTN27",		S3_LAYER_GUI_BTN27},
+	{"LAYER_GUI_BTN28",		S3_LAYER_GUI_BTN28},
+	{"LAYER_GUI_BTN29",		S3_LAYER_GUI_BTN29},
+	{"LAYER_GUI_BTN30",		S3_LAYER_GUI_BTN30},
+	{"LAYER_GUI_BTN31",		S3_LAYER_GUI_BTN31},
+	{"LAYER_GUI_BTN32",		S3_LAYER_GUI_BTN32},
+	{"STAGE_LAYERS",		S3_STAGE_LAYERS},
+
+	/* Layer Internal & Etc.*/
+	{"TEXT_LAYERS",			S3_TEXT_LAYERS},
+	{"EFFECT_LAYERS",		S3_EFFECT_LAYERS},
+	{"BUTTON_LAYERS",		S3_BUTTON_LAYERS},
+	{"CHOOSEBOX_COUNT",		S3_CHOOSEBOX_COUNT},
+	{"CLICK_FRAMES",		S3_CLICK_FRAMES},
+	{"BASIC_LAYERS",		S3_CH_BASIC_LAYERS},
+	{"ALL_LAYERS",			S3_CH_ALL_LAYERS},
+	{"KIRAKIRA_FRAMES",		S3_KIRAKIRA_FRAMES},
+
+	/* Character Position (chpos) */
+	{"CH_BACK",			S3_CH_BACK},
+	{"CH_LEFT",			S3_CH_LEFT},
+	{"CH_LEFT_CENTER",		S3_CH_LEFT_CENTER},
+	{"CH_RIGHT",			S3_CH_RIGHT},
+	{"CH_RIGHT_CENTER",		S3_CH_RIGHT_CENTER},
+	{"CH_CENTER",			S3_CH_CENTER},
+	{"CH_FACE",			S3_CH_FACE},
+
+	/* Fading Method */
+	{"FADE_INVALID",		S3_FADE_INVALID},
+	{"FADE_NORMAL",			S3_FADE_NORMAL},
+	{"FADE_RULE", 			S3_FADE_RULE},
+	{"FADE_MELT", 			S3_FADE_MELT},
+
+	/* Blend Type */
+	{"BLEND_ALPHA",			S3_BLEND_ALPHA},
+	{"BLEND_ADD", 			S3_BLEND_ADD},
+	{"BLEND_SUB", 			S3_BLEND_SUB},
+
+	/* Fade Descriptor */
+	{"FADE_DESC_BG",		S3_FADE_DESC_BG},
+	{"FADE_DESC_CHB",		S3_FADE_DESC_CHB},
+	{"FADE_DESC_CHL",		S3_FADE_DESC_CHL},
+	{"FADE_DESC_CHLC",		S3_FADE_DESC_CHLC},
+	{"FADE_DESC_CHR",		S3_FADE_DESC_CHR},
+	{"FADE_DESC_CHRC",		S3_FADE_DESC_CHRC},
+	{"FADE_DESC_CHC",		S3_FADE_DESC_CHC},
+	{"FADE_DESC_CHF",		S3_FADE_DESC_CHF},
+	{"FADE_DESC_COUNT",		S3_FADE_DESC_COUNT},
+
+	/* Mixer */
+	{"MIXER_TRACKS",		S3_MIXER_TRACKS},
+	{"TRACK_BGM",			S3_TRACK_BGM},
+	{"TRACK_VOICE",			S3_TRACK_VOICE},
+	{"TRACK_SE",			S3_TRACK_SE},
+	{"TRACK_SYS",			S3_TRACK_SYS},
+	{"CH_VOL_SLOTS",		S3_CH_VOL_SLOTS},
+	{"CH_VOL_SLOT_DEFAULT",		S3_CH_VOL_SLOT_DEFAULT},
+
+	/* Character Map */
+	{"CHARACTER_MAP_COUNT",		S3_CHARACTER_MAP_COUNT},
+
+	/* Anime */
+	{"REG_ANIME_COUNT",		S3_REG_ANIME_COUNT},
+	{"ANIME_ACCEL_INVALID",		S3_ANIME_ACCEL_INVALID},
+	{"ANIME_ACCEL_UNIFORM",		S3_ANIME_ACCEL_UNIFORM},
+	{"ANIME_ACCEL_ACCEL",		S3_ANIME_ACCEL_ACCEL},
+	{"ANIME_ACCEL_DEACCEL",		S3_ANIME_ACCEL_DEACCEL},
+	{"ANIME_ACCEL_SMOOTHSTEP",	S3_ANIME_ACCEL_SMOOTHSTEP},
+	{"ANIME_ACCEL_INVSMOOTHSTEP",	S3_ANIME_ACCEL_INVSMOOTHSTEP},
+
+	/* Font */
+	{"FONT_SELECT1",		S3_FONT_SELECT1},
+	{"FONT_SELECT2",		S3_FONT_SELECT2},
+	{"FONT_SELECT3",		S3_FONT_SELECT3},
+	{"FONT_SELECT4",		S3_FONT_SELECT4},
+	{"FONT_COUNT",			S3_FONT_COUNT},
+	{"EMOJI_COUNT",			S3_EMOJI_COUNT},
+
+	/* Call Stack */
+	{"CALL_STACK_MAX",		S3_CALL_STACK_MAX},
+
+	/* Call Argument */
+	{"CALL_ARGS",			S3_CALL_ARGS},
+
+	/* Save */
+	{"ALL_SAVE_SLOTS",		S3_ALL_SAVE_SLOTS},
+	{"NORMAL_SAVE_SLOTS",		S3_NORMAL_SAVE_SLOTS},
+	{"QUICK_SAVE_INDEX",		S3_QUICK_SAVE_INDEX},
+};
+
 /* Time origin. */
 static uint64_t time_origin;
 
@@ -793,6 +999,20 @@ s3i_install_default_api(void)
 			return false;
 	}
 
+	/* Register string constants. */
+	for (i = 0; i < sizeof(const_str_item) / sizeof(struct const_str_item); i++) {
+		if (!s3_define_const_string(const_str_item[i].name,
+					    const_str_item[i].val))
+			return false;
+	}
+	
+	/* Register integer constants. */
+	for (i = 0; i < sizeof(const_int_item) / sizeof(struct const_int_item); i++) {
+		if (!s3_define_const_int(const_int_item[i].name,
+					 const_int_item[i].val))
+			return false;
+	}
+
 	/* Get the time origin. */
 	s3_reset_lap_timer(&time_origin);
 
@@ -805,7 +1025,7 @@ s3i_install_default_api(void)
 
 static bool
 Suika_start(
-	void *p)
+	    void *p)
 {
 	if (!s3i_on_game_start())
 		return false;
@@ -815,7 +1035,7 @@ Suika_start(
 
 static bool
 Suika_update(
-	void *p)
+	     void *p)
 {
 	if (!s3i_on_game_update())
 		return false;
@@ -825,7 +1045,7 @@ Suika_update(
 
 static bool
 Suika_render(
-	void *p)
+	     void *p)
 {
 	if (!s3i_on_game_render())
 		return false;
@@ -839,7 +1059,7 @@ Suika_render(
 
 static bool
 Suika_print(
-	void *p)
+	    void *p)
 {
 	NoctEnv *env;
 	char buf[8192];
@@ -850,7 +1070,8 @@ Suika_print(
 		return false;
 
 	memset(buf, 0, sizeof(buf));
-	serialize_printer(env, buf, sizeof(buf), &value, false);
+	if (!serialize_printer(env, buf, sizeof(buf), &value, false))
+		return false;
 
 	s3_log_info("%s", buf);
 
@@ -859,11 +1080,11 @@ Suika_print(
 
 static bool
 serialize_printer(
-	NoctEnv *env,
-	char *buf,
-	size_t size,
-	NoctValue *value,
-	bool is_inside_obj)
+		  NoctEnv *env,
+		  char *buf,
+		  size_t size,
+		  NoctValue *value,
+		  bool is_inside_obj)
 {
 	int type;
 	int ival;
@@ -881,27 +1102,27 @@ serialize_printer(
 		if (!noct_get_int(env, value, &ival))
 			return false;
 		snprintf(digits, sizeof(digits), "%d", ival);
-		strncat(buf, digits, size - strlen(buf));
+		strncat(buf, digits, size - strlen(buf) - 1);
 		break;
 	case NOCT_VALUE_FLOAT:
 		if (!noct_get_float(env, value, &fval))
 			return false;
 		snprintf(digits, sizeof(digits), "%f", fval);
-		strncat(buf, digits, size - strlen(buf));
+		strncat(buf, digits, size - strlen(buf) - 1);
 		break;
 	case NOCT_VALUE_STRING:
 		if (!noct_get_string(env, value, &sval))
 			return false;
 		if (is_inside_obj)
-			strncat(buf, "\"", size - strlen(buf));
-		strncat(buf, sval, size - strlen(buf));
+			strncat(buf, "\"", size - strlen(buf) - 1);
+		strncat(buf, sval, size - strlen(buf) - 1);
 		if (is_inside_obj)
-			strncat(buf, "\"", size - strlen(buf));
+			strncat(buf, "\"", size - strlen(buf) - 1);
 		break;
 	case NOCT_VALUE_ARRAY:
 		if (!noct_get_array_size(env, value, &items))
 			return false;
-		strncat(buf, "[", size - strlen(buf));
+		strncat(buf, "[", size - strlen(buf) - 1);
 		for (i = 0; i < items; i++) {
 			NoctValue elem;
 			if (!noct_get_array_elem(env, value, i, &elem))
@@ -909,37 +1130,39 @@ serialize_printer(
 			if (!serialize_printer(env, buf, size, &elem, true))
 				return false;
 			if (i != items - 1)
-				strncat(buf, ", ", size - strlen(buf));
+				strncat(buf, ", ", size - strlen(buf) - 1);
 		}
-		strncat(buf, "]", size - strlen(buf));
+		strncat(buf, "]", size - strlen(buf) - 1);
 		break;
 	case NOCT_VALUE_DICT:
 		if (!noct_get_dict_size(env, value, &items))
 			return false;
-		strncat(buf, "{", size - strlen(buf));
+		strncat(buf, "{", size - strlen(buf) - 1);
 		for (i = 0; i < items; i++) {
 			NoctValue k, v;
 			if (!noct_get_dict_key_by_index(env, value, i, &k))
 				return false;
 			if (!noct_get_string(env, &k, &sval))
 				return false;
-			strncat(buf, sval, size - strlen(buf));
-			strncat(buf, ": ", size - strlen(buf));
+			strncat(buf, "\"", size - strlen(buf) - 1);
+			strncat(buf, sval, size - strlen(buf) - 1);
+			strncat(buf, "\"", size - strlen(buf) - 1);
+			strncat(buf, ": ", size - strlen(buf) - 1);
 			if (!noct_get_dict_value_by_index(env, value, i, &v))
 				return false;
 			if (!serialize_printer(env, buf, size, &v, true))
 				return false;
 			if (i != items - 1)
-				strncat(buf, ", ", size - strlen(buf));
+				strncat(buf, ", ", size - strlen(buf) - 1);
 		}
-		strncat(buf, "}", size - strlen(buf));
+		strncat(buf, "}", size - strlen(buf) - 1);
 		break;
 	case NOCT_VALUE_FUNC:
-		strncat(buf, "<func>", size - strlen(buf));
+		strncat(buf, "<func>", size - strlen(buf) - 1);
 		break;
 	default:
 		assert(0);
-		break;
+		return false;
 	}
 
 	return true;
@@ -947,7 +1170,7 @@ serialize_printer(
 
 static bool
 Suika_loadPlugin(
-	void *p)
+		 void *p)
 {
 	NoctEnv *env;
 	NoctValue name_val;
@@ -961,6 +1184,8 @@ Suika_loadPlugin(
 	env = pf_get_vm_env();
 	if (!noct_get_arg_check_string(env, 0, &name_val, &name))
 		return false;
+
+	/* TODO: Add a path traversal check. */
 
 	/* Load a source file content. */
 	snprintf(path, sizeof(path), "plugins/%s/%s.pf", name, name);
@@ -997,7 +1222,7 @@ Suika_loadPlugin(
 
 static bool
 Suika_setConfig(
-	void *p)
+		void *p)
 {
 	char *key;
 	char *value;
@@ -1029,12 +1254,12 @@ Suika_setConfig(
 	if (value != NULL)
 		free(value);
 
-        return ret;
+	return ret;
 }
 
 static bool
 Suika_getConfigCount(
-	void *p)
+		     void *p)
 {
 	bool ret;
 	int count;
@@ -1051,12 +1276,12 @@ Suika_getConfigCount(
 		ret = true;
 	} while (0);
 
-        return ret;
+	return ret;
 }
 
 static bool
 Suika_getConfigKey(
-	void *p)
+		   void *p)
 {
 	int index;
 	const char *key;
@@ -1070,7 +1295,6 @@ Suika_getConfigKey(
 
 		/* Get the config key. */
 		key = s3_get_config_key(index);
-		assert(key != NULL);
 		if (key == NULL)
 			break;
 
@@ -1081,12 +1305,12 @@ Suika_getConfigKey(
 		ret = true;
 	} while (0);
 
-        return ret;
+	return ret;
 }
 
 static bool
 Suika_isGlobalConfig(
-	void *p)
+		     void *p)
 {
 	char *key;
 	bool is_global;
@@ -1112,12 +1336,12 @@ Suika_isGlobalConfig(
 	if (key != NULL)
 		free(key);
 
-        return ret;
+	return ret;
 }
 
 static bool
 Suika_getConfigType(
-	void *p)
+		    void *p)
 {
 	char *key;
 	char type;
@@ -1148,7 +1372,7 @@ Suika_getConfigType(
 			break;
 		default:
 			assert(NEVER_COME_HERE);
-			break;
+			return false;
 		}
 
 		/* Set the return value. */
@@ -1161,12 +1385,12 @@ Suika_getConfigType(
 	if (key != NULL)
 		free(key);
 
-        return ret;
+	return ret;
 }
 
 static bool
 Suika_getStringConfig(
-	void *p)
+		      void *p)
 {
 	char *key;
 	const char *val;
@@ -1192,12 +1416,12 @@ Suika_getStringConfig(
 	if (key != NULL)
 		free(key);
 
-        return ret;
+	return ret;
 }
 
 static bool
 Suika_getBoolConfig(
-	void *p)
+		    void *p)
 {
 	char *key;
 	bool val;
@@ -1223,12 +1447,12 @@ Suika_getBoolConfig(
 	if (key != NULL)
 		free(key);
 
-        return ret;
+	return ret;
 }
 
 static bool
 Suika_getIntConfig(
-	void *p)
+		   void *p)
 {
 	char *key;
 	int val;
@@ -1254,12 +1478,12 @@ Suika_getIntConfig(
 	if (key != NULL)
 		free(key);
 
-        return ret;
+	return ret;
 }
 
 static bool
 Suika_getFloatConfig(
-	void *p)
+		     void *p)
 {
 	char *key;
 	float val;
@@ -1285,12 +1509,12 @@ Suika_getFloatConfig(
 	if (key != NULL)
 		free(key);
 
-        return ret;
+	return ret;
 }
 
 static bool
 Suika_getConfigAsString(
-	void *p)
+			void *p)
 {
 	char *key;
 	const char *val;
@@ -1316,12 +1540,12 @@ Suika_getConfigAsString(
 	if (key != NULL)
 		free(key);
 
-        return ret;
+	return ret;
 }
 
 static bool
 Suika_compareLocale(
-	void *p)
+		    void *p)
 {
 	char *locale;
 	bool val;
@@ -1347,7 +1571,7 @@ Suika_compareLocale(
 	if (locale != NULL)
 		free(locale);
 
-        return ret;
+	return ret;
 }
 
 /*
@@ -1366,7 +1590,7 @@ Suika_getMousePosX(void *p)
 	if (!pf_set_return_int(val))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1381,7 +1605,7 @@ Suika_getMousePosY(void *p)
 	if (!pf_set_return_int(val))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1396,7 +1620,7 @@ Suika_isMouseLeftPressed(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1411,7 +1635,7 @@ Suika_isMouseRightPressed(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1426,7 +1650,7 @@ Suika_isMouseLeftClicked(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1441,7 +1665,7 @@ Suika_isMouseRightClicked(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1456,7 +1680,7 @@ Suika_isMouseDragging(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1471,7 +1695,7 @@ Suika_isReturnKeyPressed(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1486,7 +1710,7 @@ Suika_isSpaceKeyPressed(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1501,7 +1725,7 @@ Suika_isEscapeKeyPressed(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1516,7 +1740,7 @@ Suika_isUpKeyPressed(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1531,7 +1755,7 @@ Suika_isDownKeyPressed(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1546,7 +1770,7 @@ Suika_isLeftKeyPressed(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1561,7 +1785,7 @@ Suika_isRightKeyPressed(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1576,7 +1800,7 @@ Suika_isPageUpKeyPressed(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1591,7 +1815,7 @@ Suika_isPageDownKeyPressed(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1606,7 +1830,7 @@ Suika_isControlKeyPressed(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1621,7 +1845,7 @@ Suika_isSKeyPressed(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1636,7 +1860,7 @@ Suika_isLKeyPressed(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1651,7 +1875,7 @@ Suika_isHKeyPressed(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1666,7 +1890,7 @@ Suika_isTouchCanceled(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1681,7 +1905,7 @@ Suika_isSwiped(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1694,7 +1918,7 @@ Suika_clearInputState(void *p)
 	if (!pf_set_return_int(1))
 		return false;
 	
-        return true;
+	return true;
 }
 
 /*
@@ -1710,7 +1934,7 @@ Suika_startCommandRepetition(void *p)
 	if (!pf_set_return_int(1))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1722,7 +1946,7 @@ Suika_stopCommandRepetition(void *p)
 	if (!pf_set_return_int(1))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1736,7 +1960,7 @@ Suika_isInCommandRepetition(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1748,7 +1972,7 @@ Suika_setMessageActive(void *p)
 	if (!pf_set_return_int(1))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1760,7 +1984,7 @@ Suika_clearMessageActive(void *p)
 	if (!pf_set_return_int(1))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1774,7 +1998,7 @@ Suika_isMessageActive(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1786,7 +2010,7 @@ Suika_startAutoMode(void *p)
 	if (!pf_set_return_int(1))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1798,7 +2022,7 @@ Suika_stopAutoMode(void *p)
 	if (!pf_set_return_int(1))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1812,7 +2036,7 @@ Suika_isAutoMode(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1824,7 +2048,7 @@ Suika_startSkipMode(void *p)
 	if (!pf_set_return_int(1))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1836,7 +2060,7 @@ Suika_stopSkipMode(void *p)
 	if (!pf_set_return_int(1))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1850,7 +2074,7 @@ Suika_isSkipMode(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1874,7 +2098,7 @@ Suika_setSaveLoad(void *p)
 		ret = true;
 	} while (0);
 
-        return ret;
+	return ret;
 }
 
 static bool
@@ -1888,7 +2112,7 @@ Suika_isSaveLoadEnabled(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1912,7 +2136,7 @@ Suika_setNonInterruptible(void *p)
 		ret = true;
 	} while (0);
 
-        return ret;
+	return ret;
 }
 
 static bool
@@ -1926,7 +2150,7 @@ Suika_isNonInterruptible(void *p)
 	if (!pf_set_return_int(val ? 1 : 0))
 		return false;
 	
-        return true;
+	return true;
 }
 
 static bool
@@ -1953,7 +2177,7 @@ Suika_setPenPosition(void *p)
 		ret = true;
 	} while (0);
 
-        return ret;
+	return ret;
 }
 
 static bool
@@ -2013,7 +2237,7 @@ Suika_pushForCall(void *p)
 	if (file != NULL)
 		free(file);
 
-        return ret;
+	return ret;
 }
 
 static bool
@@ -2031,7 +2255,7 @@ Suika_popForReturn(void *p)
 	ret = false;
 	do {
 		if (!s3_pop_for_return(&file, &index))
-			return false;
+			break;
 
 		/* Set the return value. */
 		if (!noct_make_empty_dict(env, &dic))
@@ -2090,7 +2314,7 @@ Suika_readCallStack(void *p)
 	if (file != NULL)
 		free(file);
 
-        return ret;
+	return ret;
 }
 
 static bool
@@ -2125,7 +2349,7 @@ Suika_writeCallStack(void *p)
 	if (file != NULL)
 		free(file);
 
-        return ret;
+	return ret;
 }
 
 static bool
@@ -2157,7 +2381,7 @@ Suika_setCallArgument(void *p)
 	if (value != NULL)
 		free(value);
 
-        return ret;
+	return ret;
 }
 
 static bool
@@ -2175,9 +2399,8 @@ Suika_getCallArgument(void *p)
 			break;
 
 		value = s3_get_call_argument(index);
-		assert(value != NULL);
 		if (value == NULL)
-			break;
+			value = "";
 
 		/* Set the return value. */
 		if (!pf_set_return_string(value))
@@ -2186,7 +2409,7 @@ Suika_getCallArgument(void *p)
 		ret = true;
 	} while (0);
 
-        return ret;
+	return ret;
 }
 
 static bool
@@ -2229,7 +2452,7 @@ Suika_appendBufferedMessage(void *p)
 	if (message != NULL)
 		free(message);
 
-        return ret;
+	return ret;
 }
 
 static bool
@@ -2324,7 +2547,7 @@ Suika_registerBGVoice(void *p)
 	if (file != NULL)
 		free(file);
 
-        return ret;
+	return ret;
 }
 
 static bool
@@ -2362,7 +2585,7 @@ Suika_setBGVoicePlaying(void *p)
 		ret = true;
 	} while (0);
 
-        return ret;
+	return ret;
 }
 
 static bool
@@ -2405,7 +2628,7 @@ Suika_setChapterName(void *p)
 	if (name != NULL)
 		free(name);
 
-        return ret;
+	return ret;
 }
 
 static bool
@@ -2451,7 +2674,7 @@ Suika_setLastMessage(void *p)
 	if (message != NULL)
 		free(message);
 
-        return ret;
+	return ret;
 }
 
 static bool
@@ -2900,7 +3123,6 @@ Suika_drawImageCopy(void *p)
 	int src_top;
 	struct s3_image *src_img;
 	struct s3_image *dst_img;
-	int val;
 	bool ret;
 
 	ret = false;
@@ -2963,7 +3185,6 @@ Suika_drawImageAlpha(void *p)
 	int alpha;
 	struct s3_image *src_img;
 	struct s3_image *dst_img;
-	int val;
 	bool ret;
 
 	ret = false;
@@ -3029,7 +3250,6 @@ Suika_drawImageAdd(void *p)
 	int alpha;
 	struct s3_image *src_img;
 	struct s3_image *dst_img;
-	int val;
 	bool ret;
 
 	ret = false;
@@ -3095,7 +3315,6 @@ Suika_drawImageSub(void *p)
 	int alpha;
 	struct s3_image *src_img;
 	struct s3_image *dst_img;
-	int val;
 	bool ret;
 
 	ret = false;
@@ -3161,7 +3380,6 @@ Suika_drawImageDim(void *p)
 	int alpha;
 	struct s3_image *src_img;
 	struct s3_image *dst_img;
-	int val;
 	bool ret;
 
 	ret = false;
@@ -3227,7 +3445,6 @@ Suika_drawImageGlyph(void *p)
 	int alpha;
 	struct s3_image *src_img;
 	struct s3_image *dst_img;
-	int val;
 	bool ret;
 
 	ret = false;
@@ -3293,7 +3510,6 @@ Suika_drawImageEmoji(void *p)
 	int alpha;
 	struct s3_image *src_img;
 	struct s3_image *dst_img;
-	int val;
 	bool ret;
 
 	ret = false;
@@ -3356,7 +3572,6 @@ Suika_drawImageScale(void *p)
 	int src_image;
 	struct s3_image *src_img;
 	struct s3_image *dst_img;
-	int val;
 	bool ret;
 
 	ret = false;
@@ -3487,8 +3702,10 @@ static bool
 Suika_getImagePixels(void *p)
 {
 	/*
-	 * Pixel access is not implemented yet because NoctLang does
-	 * not support binary data.
+	 * TODO: Not Implemented
+	 *
+	 * This is intentional. Pixel access is not implemented yet
+	 * because NoctLang does not support binary data.
 	 */
 	s3_log_error(S3_TR("This API is not implemented yet."));
 	return false;
@@ -4410,8 +4627,6 @@ Suika_layerToChpos(void *p)
 static bool
 Suika_renderStage(void *p)
 {
-	int layer;
-
 	s3_render_stage();
 
 	/* Set the return value. */
@@ -4511,10 +4726,13 @@ static bool
 Suika_startFade(void *p)
 {
 	/*
-	 * TODO: Write this function before the 1.0.0 release.
+	 * TODO:
+	 *
+	 * This is intentional.
+	 * Write this function before the 1.0.0 release.
 	 */
-        s3_log_error(S3_TR("This API is not implemented yet."));
-        return false;
+	s3_log_error(S3_TR("This API is not implemented yet."));
+	return false;
 }
 
 static bool
@@ -4529,12 +4747,6 @@ Suika_getShakeOffset(void *p)
 
 	ret = false;
 	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("x", &y))
-			break;
-		if (!pf_get_call_arg_int("y", &y))
-			break;
-
 		s3_get_shake_offset(&x, &y);
 
 		/* Set the return value. */
@@ -4564,7 +4776,7 @@ Suika_setShakeOffset(void *p)
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("x", &y))
+		if (!pf_get_call_arg_int("x", &x))
 			break;
 		if (!pf_get_call_arg_int("y", &y))
 			break;
@@ -4826,13 +5038,13 @@ Suika_showNameBox(void *p)
 static bool
 Suika_fillMessageBox(void *p)
 {
-        s3_fill_msgbox();
+	s3_fill_msgbox();
 
-        /* Set the return value. */
-        if (!pf_set_return_int(1))
-                return false;
+	/* Set the return value. */
+	if (!pf_set_return_int(1))
+		return false;
 
-        return true;
+	return true;
 }
 
 static bool
@@ -4938,7 +5150,7 @@ Suika_showClick(void *p)
 
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
-				return false;
+			return false;
 
 		ret = true;
 	} while (0);
@@ -4962,7 +5174,7 @@ Suika_setClickIndex(void *p)
 
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
-				return false;
+			return false;
 
 		ret = true;
 	} while (0);
@@ -4973,8 +5185,37 @@ Suika_setClickIndex(void *p)
 static bool
 Suika_getClickRect(void *p)
 {
-        s3_log_error(S3_TR("This API is not implemented yet."));
-        return false;
+	NoctEnv *env;
+	NoctValue dic, tmp;
+	int x;
+	int y;
+	int w;
+	int h;
+	bool ret;
+
+	ret = false;
+	do {
+		s3_get_click_rect(&x, &y, &w, &h);
+
+		/* Set the return value. */
+		env = p;
+		if (!noct_make_empty_dict(env, &dic))
+			break;
+		if (!noct_set_dict_elem_make_int(env, &dic, "x", &tmp, x))
+			break;
+		if (!noct_set_dict_elem_make_int(env, &dic, "y", &tmp, y))
+			break;
+		if (!noct_set_dict_elem_make_int(env, &dic, "w", &tmp, w))
+			break;
+		if (!noct_set_dict_elem_make_int(env, &dic, "h", &tmp, h))
+			break;
+		if (!noct_set_return(env, &dic))
+			break;
+
+		ret = true;
+	} while (0);
+
+	return ret;	
 }
 
 static bool
@@ -4993,7 +5234,7 @@ Suika_fillChooseBoxIdleImage(void *p)
 
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
-				return false;
+			return false;
 
 		ret = true;
 	} while (0);
@@ -5049,7 +5290,7 @@ Suika_showChooseBox(void *p)
 
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
-				return false;
+			return false;
 
 		ret = true;
 	} while (0);
@@ -5188,16 +5429,16 @@ Suika_renderImage(void *p)
 
 		img = s3i_int_to_image(image);
 		s3_render_image(
-			dst_left,
-			dst_top,
-			dst_width,
-			dst_height,
-			img,
-			src_left,
-			src_top,
-			src_width,
-			src_height,
-			alpha);
+				dst_left,
+				dst_top,
+				dst_width,
+				dst_height,
+				img,
+				src_left,
+				src_top,
+				src_width,
+				src_height,
+				alpha);
 
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
@@ -5213,7 +5454,7 @@ static bool
 Suika_renderImage3d(void *p)
 {
 	int x1, y1, x2, y2, x3, y3, x4, y4;
-	int srcLeft, srcTop, srcWidth, srcHeight;
+	int src_left, src_top, src_width, src_height;
 	int image;
 	int alpha;
 	struct s3_image *img;
@@ -5240,26 +5481,26 @@ Suika_renderImage3d(void *p)
 			break;
 		if (!pf_get_call_arg_int("image", &image))
 			break;
-		if (!pf_get_call_arg_int("srcLeft", &srcLeft))
+		if (!pf_get_call_arg_int("srcLeft", &src_left))
 			break;
-		if (!pf_get_call_arg_int("srcTop", &srcTop))
+		if (!pf_get_call_arg_int("srcTop", &src_top))
 			break;
-		if (!pf_get_call_arg_int("srcWidth", &srcWidth))
+		if (!pf_get_call_arg_int("srcWidth", &src_width))
 			break;
-		if (!pf_get_call_arg_int("srcHeight", &srcHeight))
+		if (!pf_get_call_arg_int("srcHeight", &src_height))
 			break;
 		if (!pf_get_call_arg_int("alpha", &alpha))
 			break;
 
 		img = s3i_int_to_image(image);
 		s3_render_image_3d(
-			x1, y1, x2, y2, x3, y3, x4, y4,
-			img,
-			srcLeft,
-			srcTop,
-			srcWidth,
-			srcHeight,
-			alpha);
+				   x1, y1, x2, y2, x3, y3, x4, y4,
+				   img,
+				   src_left,
+				   src_top,
+				   src_width,
+				   src_height,
+				   alpha);
 
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
@@ -5696,7 +5937,7 @@ Suika_getStringWidth(void *p)
 
 		val = s3_get_string_width(fontType, fontSize, text);
 
-			/* Set the return value. */
+		/* Set the return value. */
 		if (!pf_set_return_int(val))
 			break;
 
@@ -5731,7 +5972,7 @@ Suika_getStringHeight(void *p)
 
 		val = s3_get_string_height(fontType, fontSize, text);
 
-			/* Set the return value. */
+		/* Set the return value. */
 		if (!pf_set_return_int(val))
 			break;
 
@@ -5791,24 +6032,25 @@ Suika_drawGlyph(void *p)
 			break;
 
 		img = s3i_int_to_image(image);
+		assert(img != NULL);
 
 		if (!s3_utf8_to_utf32(glyph, &wc))
 			break;
 
 		s3_draw_glyph(
-			img,
-			fontType,
-			fontSize,
-			baseFontSize,
-			outlineSize,
-			x,
-			y,
-			color,
-			outlineColor,
-			wc,
-			&ret_w,
-			&ret_h,
-			dim ? true : false);
+			      img,
+			      fontType,
+			      fontSize,
+			      baseFontSize,
+			      outlineSize,
+			      x,
+			      y,
+			      color,
+			      outlineColor,
+			      wc,
+			      &ret_w,
+			      &ret_h,
+			      dim ? true : false);
 
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
@@ -5933,38 +6175,38 @@ Suika_createDrawMsg(void *p)
 		/* TODO: inline hook. */
 
 		context = s3_create_drawmsg(
-			s3i_int_to_image(image),
-			text,
-			fontType,
-			fontSize,
-			baseFontSize,
-			rubySize,
-			outlineSize,
-			penX,
-			penY,
-			areaWidth,
-			areaHeight,
-			leftMargin,
-			rightMargin,
-			topMargin,
-			bottomMargin,
-			lineMargin,
-			charMargin,
-			color,
-			outlineColor,
-			bgColor,
-			fillBg ? true : false,
-			dim ? true : false,
-			ignoreLF ? true : false,
-			ignoreFont ? true : false,
-			ignoreOutline ? true : false,
-			ignoreColor ? true : false,
-			ignoreSize ? true : false,
-			ignorePosition ? true : false,
-			ignoreRuby ? true : false,
-			ignoreWait ? true : false,
-			NULL,
-			tategaki ? true : false);
+					    s3i_int_to_image(image),
+					    text,
+					    fontType,
+					    fontSize,
+					    baseFontSize,
+					    rubySize,
+					    outlineSize,
+					    penX,
+					    penY,
+					    areaWidth,
+					    areaHeight,
+					    leftMargin,
+					    rightMargin,
+					    topMargin,
+					    bottomMargin,
+					    lineMargin,
+					    charMargin,
+					    color,
+					    outlineColor,
+					    bgColor,
+					    fillBg ? true : false,
+					    dim ? true : false,
+					    ignoreLF ? true : false,
+					    ignoreFont ? true : false,
+					    ignoreOutline ? true : false,
+					    ignoreColor ? true : false,
+					    ignoreSize ? true : false,
+					    ignorePosition ? true : false,
+					    ignoreRuby ? true : false,
+					    ignoreWait ? true : false,
+					    NULL,
+					    tategaki ? true : false);
 
 		/* Set the return value. */
 		if (!pf_set_return_int(s3i_drawmsg_to_int(context)))
@@ -6233,11 +6475,11 @@ Suika_moveToTagFile(void *p)
 		if (!s3_move_to_tag_file(file))
 			break;
 
-			/* Set the return value. */
+		/* Set the return value. */
 		if (!pf_set_return_int(1))
 			break;
 
-			ret = true;
+		ret = true;
 	} while (0);
 
 	if (file != NULL)
@@ -6261,11 +6503,11 @@ Suika_moveToTagIndex(void *p)
 		if (!s3_move_to_tag_index(index))
 			break;
 
-			/* Set the return value. */
+		/* Set the return value. */
 		if (!pf_set_return_int(1))
 			break;
 
-			ret = true;
+		ret = true;
 	} while (0);
 
 	return ret;
@@ -6273,7 +6515,7 @@ Suika_moveToTagIndex(void *p)
 
 static bool
 Suika_moveToNextTag(
-	void *p)
+		    void *p)
 {
 	bool ret;
 
@@ -6308,11 +6550,11 @@ Suika_moveToLabelTag(void *p)
 		if (!s3_move_to_label_tag(label))
 			break;
 
-			/* Set the return value. */
+		/* Set the return value. */
 		if (!pf_set_return_int(1))
 			break;
 
-			ret = true;
+		ret = true;
 	} while (0);
 
 	if (label != NULL)
@@ -6337,11 +6579,11 @@ Suika_moveToMacroTag(void *p)
 		if (!s3_move_to_macro_tag(macro))
 			break;
 
-			/* Set the return value. */
+		/* Set the return value. */
 		if (!pf_set_return_int(1))
 			break;
 
-			ret = true;
+		ret = true;
 	} while (0);
 
 	if (macro != NULL)
@@ -6360,7 +6602,7 @@ Suika_moveToElseTag(void *p)
 	if (!pf_set_return_int(1))
 		return false;
 
-		return true;
+	return true;
 }
 
 static bool
@@ -6535,7 +6777,7 @@ Suika_checkTagArg(void *p)
 
 		/* Set the return value. */
 		if (!pf_set_return_int(val))
-				break;
+			break;
 
 		ret = true;
 	} while (0);
@@ -6572,7 +6814,7 @@ Suika_getTagArgBool(void *p)
 
 		/* Set the return value. */
 		if (!pf_set_return_int(val ? 1 : 0))
-				break;
+			break;
 
 		ret = true;
 	} while (0);
@@ -6609,7 +6851,7 @@ Suika_getTagArgInt(void *p)
 
 		/* Set the return value. */
 		if (!pf_set_return_int(val))
-				break;
+			break;
 
 		ret = true;
 	} while (0);
@@ -6646,7 +6888,7 @@ Suika_getTagArgFloat(void *p)
 
 		/* Set the return value. */
 		if (!pf_set_return_float(val))
-				break;
+			break;
 
 		ret = true;
 	} while (0);
@@ -6683,7 +6925,7 @@ Suika_getTagArgString(void *p)
 
 		/* Set the return value. */
 		if (!pf_set_return_string(val))
-				break;
+			break;
 
 		ret = true;
 	} while (0);
@@ -6705,7 +6947,7 @@ Suika_evaluateTag(void *p)
 	if (!pf_set_return_int(1))
 		return false;
 
-		return true;
+	return true;
 }
 
 static bool
@@ -7007,7 +7249,10 @@ static bool
 Suika_isAnimeRunningWithLayerMask(void *p)
 {
 	/*
-	 * TODO: Should be implemented before 1.0.0.
+	 * TODO: Not Implemented
+	 *
+	 * This is intentional.
+	 * Should be implemented before 1.0.0.
 	 */
 	s3_log_error(S3_TR("This API is not implemented yet."));
 	return false;
@@ -7026,7 +7271,7 @@ Suika_isAnimeFinishedForLayer(void *p)
 		if (!pf_get_call_arg_int("layer", &layer))
 			break;
 
-			val = s3_is_anime_finished_for_layer(layer);
+		val = s3_is_anime_finished_for_layer(layer);
 
 		/* Set the return value. */
 		if (!pf_set_return_int(val ? 1 : 0))
@@ -7509,6 +7754,8 @@ Suika_getVariableString(void *p)
 			break;
 
 		val = s3_get_variable_string(name);
+		if (val == NULL)
+			val = "";
 
 		/* Set the return value. */
 		if (!pf_set_return_string(val))
@@ -8033,6 +8280,7 @@ Suika_getHistoryMessage(void *p)
 	int index;
 	const char *message;
 	bool ret;
+
 	ret = false;
 	do {
 		/* Get the argument. */
@@ -8257,6 +8505,8 @@ Suika_getGUIResultLabel(void *p)
 	bool ret;
 
 	val = s3_get_gui_result_label();
+	if (val == NULL)
+		val = "";
 
 	/* Set the return value. */
 	if (!pf_set_return_string(val))
@@ -8314,12 +8564,11 @@ Suika_checkIfLoadedInGUI(void *p)
 static bool
 Suika_getMillisec(void *p)
 {
-	NoctEnv *env;
-	NoctValue val;
 	uint64_t lap;
 
 	lap = pf_get_lap_timer_millisec(&time_origin);
 
+	/* Note: Conversionto to int is intentional. */
 	if (!pf_set_return_int((uint32_t)lap))
 		return false;
 
@@ -8359,35 +8608,39 @@ static bool
 Suika_readFileContent(void *p)
 {
 	/*
-	 * Not Implemented Yet
+	 * TODO: Not Implemented
+	 *
+	 * This is intentional.
 	 * NoctLang does not support binary data yet.
 	 */
-        s3_log_error(S3_TR("This API is not implemented yet."));
-        return false;
+	s3_log_error(S3_TR("This API is not implemented yet."));
+	return false;
 }
 
 static bool
 Suika_writeSaveData(void *p)
 {
 	/*
-	 * Not Implemented Yet
+	 * TODO: Not Implemented
+	 *
+	 * This is intentional.
 	 * NoctLang does not support binary data yet.
-	 * Maybe write serialized data?
 	 */
-        s3_log_error(S3_TR("This API is not implemented yet."));
-        return false;
+	s3_log_error(S3_TR("This API is not implemented yet."));
+	return false;
 }
 
 static bool
 Suika_readSaveData(void *p)
 {
 	/*
-	 * Not Implemented Yet
+	 * TODO: Not Implemented
+	 *
+	 * This is intentional.
 	 * NoctLang does not support binary data yet.
-	 * Maybe write serialized data?
 	 */
-        s3_log_error(S3_TR("This API is not implemented yet."));
-        return false;
+	s3_log_error(S3_TR("This API is not implemented yet."));
+	return false;
 }
 
 static bool
@@ -8406,7 +8659,7 @@ Suika_playVideo(void *p)
 		if (!pf_get_call_arg_int("isSkippable", &is_skippable))
 			break;
 		
-		if (!s3_play_video(file, is_skippable ? 1 : 0))
+		if (!s3_play_video(file, is_skippable ? true : false))
 			break;
 
 		/* Set the return value. */

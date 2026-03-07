@@ -2797,6 +2797,22 @@ s3_install_tag(
 	bool (*func)(void *));
 
 /*
+ * Defint a string constant.
+ */
+bool
+s3_define_const_string(
+	const char *name,
+	const char *val);
+
+/*
+ * Defint an integer constant.
+ */
+bool
+s3_define_const_int(
+	const char *name,
+	int val);
+
+/*
  * Get a VM integer. (Suika.*)
  */
 bool

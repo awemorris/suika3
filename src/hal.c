@@ -215,6 +215,50 @@ s3_install_tag(
 }
 
 /*
+ * Defint a string constant.
+ */
+bool
+s3_define_const_string(
+	const char *name,
+	const char *val)
+{
+	NoctEnv *env;
+	NoctValue dict;
+	NoctValue tmp;
+
+	env = pf_get_vm_env();
+
+	if (!noct_get_global(env, "Suika", &dict))
+		return false;
+	if (!noct_set_dict_elem_make_string(env, &dict, name, &tmp, val))
+		return false;
+
+	return true;
+}
+
+/*
+ * Defint an integer constant.
+ */
+bool
+s3_define_const_int(
+	const char *name,
+	int val)
+{
+	NoctEnv *env;
+	NoctValue dict;
+	NoctValue tmp;
+
+	env = pf_get_vm_env();
+
+	if (!noct_get_global(env, "Suika", &dict))
+		return false;
+	if (!noct_set_dict_elem_make_int(env, &dict, name, &tmp, val))
+		return false;
+
+	return true;
+}
+
+/*
  * Get a VM integer. (Suika.*)
  */
 bool
