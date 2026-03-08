@@ -361,7 +361,7 @@ jobs:
         with:
           name: openharmony-arm64
           path: |
-            build-openharmony-arm64/libplayfield.a
+            build-openharmony-arm64/libsuika3.a
           if-no-files-found: error
           retention-days: 7
 
@@ -370,7 +370,7 @@ jobs:
         with:
           name: openharmony-x86_64
           path: |
-            build-openharmony-x86_64/libplayfield.a
+            build-openharmony-x86_64/libsuika3.a
           if-no-files-found: error
           retention-days: 7
 
