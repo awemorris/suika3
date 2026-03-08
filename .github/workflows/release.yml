@@ -641,7 +641,6 @@ jobs:
           cp -R resources/projects/openharmony/AppScope entry
           cp -R resources/projects/openharmony/AppScope hvigor
           cp -R resources/projects/openharmony/AppScope hvigorfile.ts
-          cp samples/shoot/main.pf dist/misc/openharmony/entry/src/main/resources/rawfile/
           mkdir -p dist/misc/openharmony/entry/libs/arm64-v8a
           mkdir -p dist/misc/openharmony/entry/libs/arm64-x86_64
           cp openharmony-arm64/libsuika3.a dist/misc/openharmony/entry/libs/arm64-v8a
