@@ -550,7 +550,7 @@ The official recommended binary is the 64-bit version.
 | Windows | 7                           | SP1   | x64    | Microsoft Visual C++ Redistributable 2015       | ✅            | 11.0     |
 | Windows | Vista                       |       | x64    | (No UCRT)                                       | ❌            | -        |
 | Windows | Vista                       | SP1   | x64    | DirectX End-User Runtimes (June 2010)           | ✅            | 9.0      |
-| Windows |                             |       |        | Microsoft Visual C++ Redistributable 2015       |               |          |
+|         |                             |       |        | Microsoft Visual C++ Redistributable 2015       |               |          |
 | Windows | Vista                       | SP2   | x64    | Platform Update for Windows Vista               | ✅            | 11.0     |
 |         |                             |       |        | Microsoft Visual C++ Redistributable 2015       |               |          |
 | Windows | XP Professional x64 Edition |       | x64    | (No UCRT)                                       | ❌            | -        |
