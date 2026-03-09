@@ -1,0 +1,12 @@
+func main() {
+    App = {};
+
+    // GC: Promote "App" to graduate when its size is zero.
+    fast_gc();
+
+    // STOREDOT
+    App.key1 = "abc";
+
+    // LOADDOT
+    var t = App.key1;
+}

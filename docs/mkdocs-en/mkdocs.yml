@@ -1,0 +1,20 @@
+site_name: Playfield Docs
+repo_url: https://github.com/awemorris/PlayfieldEngine
+use_directory_urls: false
+
+nav:
+  - Home: index.md
+  - Getting Started: gettingstarted.md
+  - Playfield Script Syntax: syntax.md
+  - Playfield Script API: api.md
+  - How To Build: build.md
+  - Porting: porting.md
+  - Design: design.md
+
+theme:
+  name: material
+  features:
+    - navigation.expand
+    - navigation.tabs
+    - search.suggest
+    - content.code.annotate

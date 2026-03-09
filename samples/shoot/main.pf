@@ -1,0 +1,204 @@
+func setup() {
+    return {
+        title:      "Mini Shoot",   // Window title
+        width:      640,            // Window width
+        height:     480,            // Window height
+        fullscreen: false           // Full screen
+    };
+}
+
+func start() {
+    //////////////////////
+    // Global Variables //
+    //////////////////////
+    playerTex = Engine.createColorTexture({ width:16, height:16, r:255,g:255,b:255,a:255 }); // 16x16 White, Player
+    bulletTex = Engine.createColorTexture({ width:4,  height:8,  r:200,g:255,b:200,a:255 }); // 4x8   White, Bullet
+    enemyTex = Engine.createColorTexture({ width:16, height:16, r:255,g:100,b:100,a:255 });  // 16x16 Red, Enemy
+    scoreTex = null;
+    player = { x: 320, y: 400, speed: 1200 };
+    bullets = [];   // {x,y,vy}
+    enemies = [];   // {x,y,vy,w,h}
+    lastTime = 0;
+    fireCooldown = 0.0;
+    score = 0;
+
+    // Put initial emenies.
+    for (i in 0..7) {
+        var ex = 40 + i*70;
+        enemies->push({ x: ex, y: 40, vy: 40, w:16, h:16 });
+    }
+    lastTime = Engine.millisec;
+}
+
+func update() {
+    var now = Engine.millisec;
+    var dt  = (now - lastTime) * 0.001; // second
+    lastTime = now;
+
+    // Move.
+    var dx = 0;
+    var dy = 0;
+    if (Engine.isLeftKeyPressed || Engine.isGamepadLeftPressed)
+        dx -= 1;
+    if (Engine.isRightKeyPressed || Engine.isGamepadRightPressed)
+        dx += 1;
+    if (Engine.isUpKeyPressed || Engine.isGamepadUpPressed)
+        dy -= 1;
+    if (Engine.isDownKeyPressed || Engine.isGamepadDownPressed)
+        dy += 1;
+    var speed = 5;
+    player.x += dx * speed;
+    player.y += dy * speed;
+    if (Engine.isMouseLeftPressed) {
+        dx = 0;
+        dy = 0;
+        player.x = Engine.mousePosX;
+        player.y = Engine.mousePosY;
+    }
+
+    // Shooting.
+    fireCooldown -= dt;
+    if ((Engine.isSpaceKeyPressed || Engine.isGamepadAPressed || Engine.isMouseLeftPressed) && fireCooldown <= 0.0) {
+        bullets->push({ x: player.x+6, y: player.y-10, vy: -400 });
+        fireCooldown = 0.08;
+        // Engine.playSound({ stream:0, file:"shot.ogg" });
+    }
+
+    // Update bullets.
+    var aliveBullets = [];
+    for (b in bullets) {
+        b.y += b.vy * dt;
+        if (b.y > -10)
+            aliveBullets->push(b);
+    }
+    bullets = aliveBullets;
+
+    // Update enemies.
+    var aliveEnemies = [];
+    for (e in enemies) {
+        e.y += e.vy * dt;
+
+        // Wave.
+        e.x += Math.sin(Engine.millisec * 0.003 + e.y*0.05) * 20 * dt;
+
+        if (e.y > 480)
+            e.y = 0;
+
+        aliveEnemies->push(e);
+    }
+    enemies = aliveEnemies;
+
+    // Collision (AABB)
+    var nextEnemies = [];
+    for (e in enemies) {
+        var hit = false;
+        var keepBullets = [];
+        for (b in bullets) {
+            if (aabb(b.x, b.y, 10, 10, e.x, e.y, e.w, e.h)) {
+                hit = true; // Hide the bullet.
+                score += 10;
+            } else {
+                keepBullets->push(b);
+            }
+        }
+        bullets = keepBullets;
+        if (!hit) {
+            nextEnemies->push(e);
+        } else {
+            // Respawn.
+            nextEnemies->push({ x: randRange(20, 620), y: -randRange(10,80), vy: 60, w:16, h:16 });
+        }
+    }
+    enemies = nextEnemies;
+
+    // Update the score texture.
+    //if (scoreTex != null)
+    //    Engine.destroyTexture({texture: scoreTex});
+    //scoreTex = Engine.createTextTexture({
+    //    slot:0, text:"SCORE: " + score, size:20, r:255, g:255, b:255, a:255
+    //});
+}
+
+func render() {
+    // Player.
+    drawPlayer(player.x, player.y);
+
+    // Bullets.
+    for (b in bullets)
+        Engine.draw({ texture: bulletTex, x: b.x, y: b.y });
+
+    // Enemies.
+    for (e in enemies)
+        drawEnemy(e.x, e.y);
+
+    // Score.
+    //Engine.draw({ texture: scoreTex, x: 10, y: 10 });
+}
+
+func drawPlayer(x, y) {
+    var w  = 32;
+    var h  = 32;
+
+    var topW    = w * 0.55;
+    var bottomW = w * 1.10;
+
+    var x1 = x - topW*0.5;    var y1 = y - h*0.5;    // Left Top
+    var x2 = x + topW*0.5;    var y2 = y - h*0.5;    // Right Top
+    var x3 = x - bottomW*0.5; var y3 = y + h*0.5;    // Left Bottom
+    var x4 = x + bottomW*0.5; var y4 = y + h*0.5;    // Right Bottom
+
+    Engine.renderTexture3D({
+        x1: x1,
+        y1: y1,
+        x2: x2,
+        y2: y2,
+        x3: x3,
+        y3: y3,
+        x4: x4,
+        y4: y4,
+        texture: playerTex,
+        srcLeft: 0, srcTop: 0, srcWidth: 16, srcHeight: 16,
+        alpha: 255
+    });
+}
+
+func drawEnemy(x, y) {
+    var w  = 16;
+    var h  = 16;
+
+    var topW    = w * 1.10;
+    var bottomW = w * 0.55;
+
+    var x1 = x - topW*0.5;  var y1 = y - h*0.5;      // Left Top
+    var x2 = x + topW*0.5;  var y2 = y - h*0.5;      // Right Top
+    var x3 = x - bottomW*0.5; var y3 = y + h*0.5;    // Left Bottom
+    var x4 = x + bottomW*0.5; var y4 = y + h*0.5;    // Right Bottom
+
+    Engine.renderTexture3D({
+        x1: x1,
+        y1: y1,
+        x2: x2,
+        y2: y2,
+        x3: x3,
+        y3: y3,
+        x4: x4,
+        y4: y4,
+        texture: enemyTex,
+        srcLeft: 0, srcTop: 0, srcWidth: 16, srcHeight: 16,
+        alpha: 255
+    });
+}
+
+func aabb(ax, ay, aw, ah, bx, by, bw, bh) {
+    return !(ax+aw < bx || bx+bw < ax || ay+ah < by || by+bh < ay);
+}
+
+func clamp(v, lo, hi) {
+    if (v < lo) return lo;
+    if (v > hi) return hi;
+    return v;
+}
+
+func randRange(a, b) {
+	return a + (b - a) * Math.random();
+}

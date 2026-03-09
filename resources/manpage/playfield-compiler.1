@@ -1,0 +1,45 @@
+.\" playfield-compiler.1 - Playfield compiler manpage
+.TH PLAYFIELD-COMPILER 1 "September 2025" "Playfield 1.0" "User Commands"
+.SH NAME
+playfield-compiler \- compile Playfield scripts into bytecode
+.SH SYNOPSIS
+.B playfield-compiler
+[\fIsourcefiles...\fR]
+
+.SH DESCRIPTION
+The
+.B playfield-compiler
+translates Playfield script files (\fB.pf\fR) into bytecode files
+with the extension \fB.pfc\fR.
+
+Each input file is compiled independently. The output file has the same
+basename as the input, with its extension replaced by \fB.pfc\fR.
+For example, compiling
+.I sample.pf
+produces
+.I sample.pfc
+in the same directory.
+
+.SH EXAMPLES
+Compile a single script:
+.EX
+playfield-compiler sample.pf
+.EE
+
+Compile multiple scripts:
+.EX
+playfield-compiler main.pf enemy.pf level.pf
+.EE
+
+The above command produces:
+.EX
+main.pfc enemy.pfc level.pfc
+.EE
+
+.SH SEE ALSO
+.BR playfield (1),
+.BR playfield-pack (1)
+
+.SH AUTHORS
+Awe Morris <awe@noctvm.io> and contributors.
+Project homepage: <https://github.com/awemorris/PlayfieldEngine>

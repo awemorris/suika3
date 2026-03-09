@@ -1,0 +1,29 @@
+func main() {
+     var a = 123;
+     a += 1;
+     print(a);
+
+     var b = 123;
+     b -= 1;
+     print(b);
+
+     var c = 123;
+     c *= 2;
+     print(c);
+
+     var d = 123;
+     d /= 2;
+     print(d);
+
+     var e = 123;
+     e %= 2;
+     print(e);
+
+     var f = 123;
+     f &= 7;
+     print(f);
+
+     var g = 123;
+     g |= 127;
+     print(g);
+}

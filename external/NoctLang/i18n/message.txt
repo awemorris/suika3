@@ -1,0 +1,912 @@
+ID:syntax error
+en:Syntax error.
+es:Error de sintaxis.
+fr:syntax error
+de:Syntaxfehler.
+it:Errore di sintassi.
+el:Σφάλμα σύνταξης.
+ru:Синтаксическая ошибка.
+zh:语法错误。
+tw:語法錯誤。
+ja:文法エラーです。
+ca:Error de sintaxi.
+---
+ID:%s: Out of memory while parsing.
+es:%s: No hay suficiente memoria.
+fr:%s: Mémoire insuffisante lors de l'analyse.
+de:%s: Nicht genügend Speicher beim Parsen.
+it:%s: Non c'è abbastanza memoria durante il parsing.
+el:%s: Δεν υπάρχει αρκετή μνήμη κατά την ανάλυση.
+ru:%s: Недостаточно памяти при разборе.
+zh:%s：解析时内存不足。
+tw:%s: Out of memory while parsing.
+ja:%s: メモリが足りません。
+ca:%s: No hi ha prou memòria.
+---
+ID:Too many functions.
+es:Hay demasiadas funciones.
+fr:Trop de fonctions.
+de:Zu viele Funktionen.
+it:Ci sono troppe funzioni.
+el:Πάρα πολλές συναρτήσεις.
+ru:Слишком много функций.
+zh:函数过多。
+tw:繁体中国語。
+ja:関数が多すぎます。
+ca:Hi ha massa funcions.
+---
+ID:continue appeared outside loop.
+es:continue es utilizado fuera de un bucle.
+fr:L’instruction continue est apparue en dehors d’une boucle.
+de:continue wurde außerhalb einer Schleife verwendet.
+it:continue è stato utilizzato al di fuori di un ciclo.
+el:Η εντολή continue εμφανίστηκε εκτός βρόχου.
+ru:Оператор continue использован вне цикла.
+zh:continue 语句出现在循环外部。
+tw:continue 敘述出現在迴圈外部。
+ja:continue文がループの外で使用されました。
+ca:continue és utilitzat fora d'un bucle.
+---
+ID:LHS is not a term or an array element.
+es:LHS no es un término ni un elemento de un array.
+fr:La partie gauche n’est ni un terme ni un élément de tableau.
+de:LHS ist weder ein Term noch ein Array-Element.
+it:LHS non è un termine né un elemento di un array.
+el:Η αριστερή πλευρά δεν είναι ούτε όρος ούτε στοιχείο πίνακα.
+ru:Левая часть не является ни выражением, ни элементом массива.
+zh:左侧不是项或数组元素。
+tw:左側不是項或陣列元素。
+ja:左辺が項か配列要素ではありません。
+ca:LHS no és un terme ni un element d'array.
+---
+ID:var is specified without a single symbol.
+es:var es especificado sin un solo símbolo.
+fr:var est spécifié sans symbole unique.
+de:var wird ohne ein einzelnes Symbol angegeben.
+it:var è specificato senza un singolo simbolo.
+el:Το var καθορίστηκε χωρίς ένα μοναδικό σύμβολο.
+ru:var указан без единственного символа.
+zh:var 未指定单个符号。
+tw:var 未指定單一符號。
+ja:varが変数名以外に指定されました。
+ca:var és especificat sense un sol símbol.
+---
+ID:else-if block appeared without if block.
+es:bloque else-if utilizado sin un bloque if.
+fr:Un bloc else-if est apparu sans bloc if.
+de:else-if-Block wurde ohne zugehörigen if-Block verwendet.
+it:blocco else-if è stato utilizzato senza un blocco if.
+el:Το μπλοκ else-if εμφανίστηκε χωρίς μπλοκ if.
+ru:Блок else-if появился без блока if.
+zh:出现了没有 if 块的 else-if 块。
+tw:出現了沒有 if 區塊的 else-if 區塊。
+ja:else if文がifブロックの後ろ以外で使用されました。
+ca:bloc else-if és utilitzat fora el bloc if.
+---
+ID:else-if appeared after else.
+es:else-if utilizado después de else.
+fr:else-if est apparu après else.
+de:else-if wurde nach else verwendet.
+it:else-if è stato utilizzato dopo else.
+el:Το else-if εμφανίστηκε μετά το else.
+ru:else-if появился после else.
+zh:else 之后出现了 else-if。
+tw:else 之後出現了 else-if。
+ja:else if文がelse文の後ろで使用されました。
+ca:else-if és utilitzat després d'else.
+---
+ID:else appeared after else.
+ja:else文がelse文の後ろで使用されました。
+ca:else és utilitzat després d'else.
+es:else utilizado después de else.
+de:else wurde nach else verwendet.
+it:else è stato utilizzato dopo else.
+---
+ID:Exceeded the maximum argument count.
+es:Se ha superado el número máximo de argumentos.
+fr:Nombre maximal d’arguments dépassé.
+de:Die maximale Anzahl von Argumenten wurde überschritten.
+it:È stato superato il numero massimo di argomenti.
+el:Υπέρβαση του μέγιστου αριθμού ορισμάτων.
+ru:Превышено максимальное количество аргументов.
+zh:超过了最大参数数量。
+tw:超過了最大參數數量。
+ja:引数が多すぎます。
+ca:S'ha superat el nombre màxim d'arguments.
+---
+ID:Too many anonymous functions.
+es:Hay demasiadas funciones anónimas.
+fr:Trop de fonctions anonymes.
+de:Zu viele anonyme Funktionen.
+it:Ci sono troppe funzioni anonime.
+el:Πάρα πολλές ανώνυμες συναρτήσεις.
+ru:Слишком много анонимных функций.
+zh:匿名函数过多。
+tw:匿名函式過多。
+ja:無名関数が多すぎます。
+ca:Hi ha massa funcions anònimes.
+---
+ID:Too many local variables.
+es:Hay demasiadas variables locales.
+fr:Trop de variables locales.
+de:Zu viele lokale Variablen.
+it:Ci sono troppe variabili locali.
+el:Πάρα πολλές τοπικές μεταβλητές.
+ru:Слишком много локальных переменных.
+zh:局部变量过多。
+tw:區域變數過多。
+ja:ローカル変数が多すぎます。
+ca:Hi ha massa variables locals.
+---
+ID:Too many jumps.
+es:Hay demasiados saltos.
+fr:Trop de sauts.
+de:Zu viele Sprünge.
+it:Ci sono troppi salti.
+el:Πάρα πολλά άλματα.
+ru:Слишком много переходов.
+zh:跳转过多。
+tw:跳轉過多。
+ja:ジャンプが多すぎます。
+ca:Hi ha massa salts.
+---
+ID:LIR: Out of memory error.
+es:LIR: No hay suficiente memoria.
+fr:LIR: Memoria insuficiente.
+de:LIR: Nicht genügend Speicher.
+it:LIR: Non c'è abbastanza memoria.
+el:LIR: Δεν υπάρχει αρκετή μνήμη.
+ru:LIR: Недостаточно памяти.
+zh:LIR: 内存不足。
+tw:LIR: 記憶體不足。
+ja:LIR: メモリが足りません。
+ca:LIR: No hi ha prou memòria.
+---
+ID:Failed to load bytecode data.
+es:No se pudo cargar los datos de bytecode.
+fr:Échec du chargement des données de bytecode.
+de:Bytecode-Daten konnten nicht geladen werden.
+it:Impossibile caricare i dati del bytecode.
+el:Απέτυχε η φόρτωση των δεδομένων bytecode.
+ru:Не удалось загрузить данные байткода.
+zh:加载字节码数据失败。
+tw:無法載入位元碼資料。
+ja:バイトコードの読み込みに失敗しました。
+ca:No s'han pogut carregar les dades del bytecode.
+---
+ID:Memory mapping failed.
+es:El mapeo de la memoria ha fallado.
+fr:Échec de l’association mémoire.
+de:Speicherabbildung fehlgeschlagen.
+it:Mappatura della memoria fallita.
+el:Αποτυχία αντιστοίχισης μνήμης.
+ru:Ошибка отображения памяти.
+zh:内存映射失败。
+tw:記憶體映射失敗。
+ja:メモリマップに失敗しました。
+ca:El mapatge de la memòria ha fallat.
+---
+ID:Code too big.
+es:El código es demasiado grande.
+fr:Le code est trop volumineux.
+de:Der Code ist zu groß.
+it:Il codice è troppo grande.
+el:Ο κώδικας είναι πολύ μεγάλος.
+ru:Код слишком большой.
+zh:代码过大。
+tw:程式碼過大。
+ja:コードが大きすぎます。
+ca:El codi és massa gran.
+---
+ID:Branch target not found.
+es:El destino de la rama no se ha encontrado.
+fr:Cible de branchement introuvable.
+de:Sprungziel nicht gefunden.
+it:Destinazione del ramo non trovata.
+el:Δεν βρέθηκε ο στόχος διακλάδωσης.
+ru:Цель перехода не найдена.
+zh:未找到分支目标。
+tw:未找到分支目標。
+ja:分岐先がみつかりません。
+ca:El destí de la branca no s'ha trobat.
+---
+ID:Failed to load bytecode.
+ja:バイトコードの読み込みに失敗しました。
+ca:No s'ha pogut carregar el bytecode.
+es:No se ha podido cargar el bytecode.
+de:Bytecode konnte nicht geladen werden.
+it:Impossibile caricare il bytecode.
+---
+ID:Cannot find function %s.
+es:No se ha encontrado la función %s.
+fr:Impossible de trouver la fonction %s.
+de:Funktion %s nicht gefunden.
+it:Funzione %s non trovata.
+el:Δεν βρέθηκε η συνάρτηση %s.
+ru:Функция %s не найдена.
+zh:无法找到函数 %s。
+tw:無法找到函式 %s。
+ja:関数%sがみつかりません。
+ca:No s'ha trobat la funció %s.
+---
+ID:Not an array.
+es:No es un array.
+fr:Ce n’est pas un tableau.
+de:Kein Array.
+it:Non è un array.
+el:Δεν είναι πίνακας.
+ru:Это не массив.
+zh:不是数组。
+tw:不是陣列。
+ja:配列ではありません。
+ca:No és un array.
+---
+ID:Array index %d is out-of-range.
+es:El índice %d del array se encuentra fuera de rango.
+fr:L’index de tableau %d est hors de portée.
+de:Array-Index %d ist außerhalb des gültigen Bereichs.
+it:L'indice %d dell'array è fuori dall'intervallo.
+el:Ο δείκτης πίνακα %d είναι εκτός ορίων.
+ru:Индекс массива %d находится вне допустимого диапазона.
+zh:数组索引 %d 超出范围。
+tw:陣列索引 %d 超出範圍。
+ja:配列の添字 %d は範囲外です。
+ca:L'índex %d de l'array es troba fora del rang.
+---
+ID:Dictionary index %d is out-of-range.
+---
+ID:Dictionary key "%s" not found.
+es:La llave "%s" no se encontró en el diccionario.
+fr:La clé "%s" du dictionnaire est introuvable.
+de:Schlüssel "%s" im Dictionary nicht gefunden.
+it:Chiave "%s" non trovata nel dizionario.
+el:Το κλειδί "%s" δεν βρέθηκε στο λεξικό.
+ru:Ключ "%s" не найден в словаре.
+zh:未找到字典键 "%s"。
+tw:未找到字典鍵 "%s"。
+ja:辞書のキー "%s" がみつかりません。
+ca:La clau "%s" del diccionari no s'ha trobat.
+---
+ID:Local variable "%s" not found.
+es:La variable local "%s" no se ha encontrado.
+fr:La variable locale "%s" est introuvable.
+de:Lokale Variable "%s" nicht gefunden.
+it:Variabile locale "%s" non trovata.
+el:Η τοπική μεταβλητή "%s" δεν βρέθηκε.
+ru:Локальная переменная "%s" не найдена.
+zh:未找到局部变量 "%s"。
+tw:未找到區域變數 "%s"。
+ja:ローカル変数 "%s" がみつかりません。
+ca:La variable local "%s" no s'ha trobat.
+---
+ID:Global variable "%s" not found.
+es:La variable global "%s" no se ha encontrado.
+fr:La variable globale "%s" est introuvable.
+de:Globale Variable "%s" nicht gefunden.
+it:Variabile globale "%s" non trovata.
+el:Η καθολική μεταβλητή "%s" δεν βρέθηκε.
+ru:Глобальная переменная "%s" не найдена.
+zh:未找到全局变量 "%s"。
+tw:未找到全域變數 "%s"。
+ja:グローバル変数 "%s" がみつかりません。
+ca:La variable global "%s" no s'ha trobat.
+---
+ID:Value is not a number.
+es:El valor no es un número.
+fr:La valeur n’est pas un nombre.
+de:Wert ist keine Zahl.
+it:Il valore non è un numero.
+el:Η τιμή δεν είναι αριθμός.
+ru:Значение не является числом.
+zh:值不是数字。
+tw:值不是數字。
+ja:値が数ではありません。
+ca:El valor no és un número.
+---
+ID:Value is not an integer.
+es:El valor no es un entero.
+fr:La valeur n’est pas un entier.
+de:Wert ist keine ganze Zahl.
+it:Il valore non è un intero.
+el:Η τιμή δεν είναι ακέραιος αριθμός.
+ru:Значение не является целым числом.
+zh:值不是整数。
+tw:值不是整數。
+ja:値が整数ではありません。
+ca:El valor no és un enter.
+---
+ID:Value is not a string.
+ja:値が文字列ではありません。
+ca:El valor no és un string.
+es:El valor no es un string.
+de:Wert ist kein String.
+it:Il valore non è un string.
+---
+ID:Value is not a number or a string.
+es:El valor no es un número ni un string.
+fr:La valeur n’est ni un nombre ni une chaîne.
+de:Wert ist weder eine Zahl noch ein String.
+it:Il valore non è né un numero né un string.
+el:Η τιμή δεν είναι ούτε αριθμός ούτε συμβολοσειρά.
+ru:Значение не является ни числом, ни строкой.
+zh:值不是数字或字符串。
+tw:值不是數字或字串。
+ja:値が数か文字列ではありません。
+ca:El valor no és un número ni un string.
+---
+ID:Division by zero.
+es:División por cero.
+fr:Division par zéro.
+de:Division durch Null.
+it:Divisione per zero.
+el:Διαίρεση με το μηδέν.
+ru:Деление на ноль.
+zh:被零除。
+tw:被零除。
+ja:ゼロによる除算です。
+ca:Divisió per zero.
+---
+ID:Subscript not an integer.
+es:El subíndice no es un entero.
+fr:L’indice n’est pas un entier.
+de:Der Index ist keine ganze Zahl.
+it:L'indice non è un intero.
+el:Ο δείκτης δεν είναι ακέραιος αριθμός.
+ru:Индекс не является целым числом.
+zh:下标不是整数
+tw:下標不是整數。
+ja:添字が整数ではありません。
+ca:El subíndex no és un enter.
+---
+ID:Not an array or a dictionary.
+es:No es un array ni un diccionario.
+fr:Ce n’est ni un tableau ni un dictionnaire.
+de:Weder ein Array noch ein Dictionary.
+it:Non è un array né un dizionario.
+el:Δεν είναι ούτε πίνακας ούτε λεξικό.
+ru:Это не массив и не словарь.
+zh:不是数组或字典。
+tw:不是陣列或字典。
+ja:配列か辞書ではありません。
+ca:No és un array ni un diccionari.
+---
+ID:Subscript not a string.
+es:El subíndice no es un string.
+fr:L’indice n’est pas une chaîne.
+de:Der Index ist kein String.
+it:L'indice non è un string.
+el:Ο δείκτης δεν είναι συμβολοσειρά.
+ru:Индекс не является строкой.
+zh:下标不是字符串。
+tw:下標不是字串。
+ja:添字が文字列ではありません。
+ca:El subíndex no és un string.
+---
+ID:Value is not a string, an array, or a dictionary.
+es:El valor no es un string, un array ni un diccionario.
+fr:La valeur n’est ni une chaîne, ni un tableau, ni un dictionnaire.
+de:Wert ist weder ein String, noch ein Array noch ein Dictionary.
+it:Il valore non è né un string, né un array né un dizionario.
+el:Η τιμή δεν είναι ούτε συμβολοσειρά, ούτε πίνακας, ούτε λεξικό.
+ru:Значение не является ни строкой, ни массивом, ни словарем.
+zh:值不是字符串、数组或字典。
+tw:值不是字串、陣列或字典。
+ja:値が文字列、配列、辞書ではありません。
+ca:El valor no és un string, un array ni un diccionari.
+---
+ID:Not a dictionary.
+es:No es un diccionario.
+fr:Ce n’est pas un dictionnaire.
+de:Kein Dictionary.
+it:Non è un dizionario.
+el:Δεν είναι λεξικό.
+ru:Это не словарь.
+zh:不是字典。
+tw:不是字典。
+ja:辞書ではありません。
+ca:No és un diccionari.
+---
+ID:Dictionary index out-of-range.
+es:El índice del diccionario está fuera de rango.
+fr:Indice du dictionnaire hors de portée.
+de:Dictionary-Index außerhalb des gültigen Bereichs.
+it:L'indice del dizionario è fuori dall'intervallo.
+el:Ο δείκτης του λεξικού είναι εκτός ορίων.
+ru:Индекс словаря вне допустимого диапазона.
+zh:字典索引超出范围。
+tw:字典索引超出範圍。
+ja:辞書のインデックスが範囲外です。
+ca:L'índex del diccionari està fora de rang.
+---
+ID:Symbol "%s" not found.
+es:El símbolo "%s" no se ha encontrado.
+fr:Le symbole "%s" est introuvable.
+de:Symbol "%s" nicht gefunden.
+it:Simbolo "%s" non trovato.
+el:Το σύμβολο "%s" δεν βρέθηκε.
+ru:Символ "%s" не найден.
+zh:未找到符号 "%s"。
+tw:未找到符號 "%s"。
+ja:シンボル "%s" がみつかりません。
+ca:El símbol "%s" no s'ha trobat.
+---
+ID:%s(): Function arguments not match.
+es:%s(): Los argumentos de la función no coinciden.
+fr:%s(): Les arguments de la fonction ne correspondent pas.
+de:%s(): Die Funktionsargumente stimmen nicht überein.
+it:%s(): Gli argomenti della funzione non corrispondono.
+el:%s(): Τα ορίσματα της συνάρτησης δεν ταιριάζουν.
+ru:%s(): Аргументы функции не совпадают.
+zh:%s(): 函数参数不匹配。
+tw:%s(): 函式參數不相符。
+ja:%s(): 関数の引数が一致しません。
+ca:%s(): Els arguments de la funció no coincideixen.
+---
+ID:Element %d is not an integer.
+es:El elemento %d no es un número entero.
+fr:L’élément %d n’est pas un entier.
+de:Element %d ist keine ganze Zahl.
+it:L’elemento %d non è un numero intero.
+el:Το στοιχείο %d δεν είναι ακέραιος αριθμός.
+ru:Элемент %d не является целым числом.
+zh:第 %d 个元素不是整数。
+tw:第 %d 個元素不是整數。
+ja:%d 番目の要素が整数ではありません。
+ca:L’element %d no és un nombre enter.
+---
+ID:Element %d is not a float.
+es:El elemento %d no es un número decimal.
+fr:L’élément %d n’est pas un nombre à virgule flottante.
+de:Element %d ist keine Gleitkommazahl.
+it:L’elemento %d non è un numero decimale.
+el:Το στοιχείο %d δεν είναι δεκαδικός αριθμός.
+ru:Элемент %d не является числом с плавающей точкой.
+zh:第 %d 个元素不是浮点数。
+tw:第 %d 個元素不是浮點數。
+ja:%d 番目の要素が浮動小数点数ではありません。
+ca:L’element %d no és un nombre amb coma flotant.
+---
+ID:Element %d is not a string.
+es:El elemento %d no es una cadena.
+fr:L’élément %d n’est pas une chaîne de caractères.
+de:Element %d ist keine Zeichenkette.
+it:L’elemento %d non è una stringa.
+el:Το στοιχείο %d δεν είναι συμβολοσειρά.
+ru:Элемент %d не является строкой.
+zh:第 %d 个元素不是字符串。
+tw:第 %d 個元素不是字串。
+ja:%d 番目の要素が文字列ではありません。
+ca:L’element %d no és una cadena de caràcters.
+---
+ID:Element %d is not an array.
+es:El elemento %d no es una matriz.
+fr:L’élément %d n’est pas un tableau.
+de:Element %d ist kein Array.
+it:L’elemento %d non è un array.
+el:Το στοιχείο %d δεν είναι πίνακας.
+ru:Элемент %d не является массивом.
+zh:第 %d 个元素不是数组。
+tw:第 %d 個元素不是陣列。
+ja:%d 番目の要素が配列ではありません。
+ca:L’element %d no és una matriu.
+---
+ID:Element %d is not a dictionary.
+es:El elemento %d no es un diccionario.
+fr:L’élément %d n’est pas un dictionnaire.
+de:Element %d ist kein Dictionary.
+it:L’elemento %d non è un dizionario.
+el:Το στοιχείο %d δεν είναι λεξικό.
+ru:Элемент %d не является словарем.
+zh:第 %d 个元素不是字典。
+tw:第 %d 個元素不是字典。
+ja:%d 番目の要素が辞書ではありません。
+ca:L’element %d no és un diccionari.
+---
+ID:Element %d is not a function.
+es:El elemento %d no es una función.
+fr:L’élément %d n’est pas une fonction.
+de:Element %d ist keine Funktion.
+it:L’elemento %d non è una funzione.
+el:L’elemento %d non è una funzione.
+ru:Элемент %d не является функцией.
+zh:第 %d 个元素不是函数。
+tw:第 %d 個元素不是函式。
+ja:%d 番目の要素が関数ではありません。
+ca:L’element %d no és una funció.
+---
+ID:Value for key %s is not an integer.
+es:El valor de la clave %s no es un número entero.
+fr:La valeur associée à la clé %s n’est pas un entier.
+de:Der Wert für den Schlüssel %s ist keine ganze Zahl.
+it:Il valore per la chiave %s non è un numero intero.
+el:Η τιμή για το κλειδί %s δεν είναι ακέραιος αριθμός.
+ru:Значение для ключа %s не является целым числом.
+zh:键 %s 对应的值不是整数。
+tw:鍵 %s 對應的值不是整數。
+ja:キー %s に対応する値が整数ではありません。
+ca:El valor per a la clau %s no és un nombre enter.
+---
+ID:Value for key %s is not a float.
+es:El valor de la clave %s no es un número decimal.
+fr:La valeur associée à la clé %s n’est pas un nombre à virgule flottante.
+de:Der Wert für den Schlüssel %s ist keine Gleitkommazahl.
+it:Il valore per la chiave %s non è un numero decimale.
+el:Η τιμή για το κλειδί %s δεν είναι δεκαδικός αριθμός.
+ru:Значение для ключа %s не является числом с плавающей точкой.
+zh:键 %s 对应的值不是浮点数。
+tw:鍵 %s 對應的值不是浮點數。
+ja:キー %s に対応する値が浮動小数点数ではありません。
+ca:El valor per a la clau %s no és un nombre amb coma flotant.
+---
+ID:Value for key %s is not a string.
+es:El valor de la clave %s no es una cadena.
+fr:La valeur associée à la clé %s n’est pas une chaîne de caractères.
+de:Der Wert für den Schlüssel %s ist keine Zeichenkette.
+it:Il valore per la chiave %s non è una stringa.
+el:Η τιμή για το κλειδί %s δεν είναι συμβολοσειρά.
+ru:Значение для ключа %s не является строкой.
+zh:键 %s 对应的值不是字符串。
+tw:鍵 %s 對應的值不是字串。
+ja:キー %s に対応する値が文字列ではありません。
+ca:El valor per a la clau %s no és una cadena de caràcters.
+---
+ID:Value for key %s is not an array.
+es:El valor de la clave %s no es una matriz.
+fr:La valeur associée à la clé %s n’est pas un tableau.
+de:Der Wert für den Schlüssel %s ist kein Array.
+it:Il valore per la chiave %s non è un array.
+el:Η τιμή για το κλειδί %s δεν είναι πίνακας.
+ru:Значение для ключа %s не является массивом.
+zh:键 %s 对应的值不是数组。
+tw:鍵 %s 對應的值不是陣列。
+ja:キー %s に対応する値が配列ではありません。
+ca:El valor per a la clau %s no és una matriu.
+---
+ID:Value for key %s is not a dictionary.
+es:El valor de la clave %s no es un diccionario.
+fr:La valeur associée à la clé %s n’est pas un dictionnaire.
+de:Der Wert für den Schlüssel %s ist kein Dictionary.
+it:Il valore per la chiave %s non è un dizionario.
+el:Η τιμή για το κλειδί %s δεν είναι λεξικό.
+ru:Значение для ключа %s не является словарем.
+zh:键 %s 对应的值不是字典。
+tw:鍵 %s 對應的值不是字典。
+ja:キー %s に対応する値が辞書ではありません。
+ca:El valor per a la clau %s no és un diccionari.
+---
+ID:Value for key %s is not a function.
+es:El valor de la clave %s no es una función.
+fr:La valeur associée à la clé %s n’est pas une fonction.
+de:Der Wert für den Schlüssel %s ist keine Funktion.
+it:Il valore per la chiave %s non è una funzione.
+el:Η τιμή για το κλειδί %s δεν είναι συνάρτηση.
+ru:Значение для ключа %s не является функцией.
+zh:键 %s 对应的值不是函数。
+tw:鍵 %s 對應的值不是函式。
+ja:キー %s に対応する値が関数ではありません。
+ca:El valor per a la clau %s no és una funció.
+---
+ID:Argument (%d: %s) not an integer.
+es:Argumento (%d: %s) no es un número entero.
+fr:L’argument (%d : %s) n’est pas un entier.
+de:Argument (%d: %s) ist keine ganze Zahl.
+it:L’argomento (%d: %s) non è un numero intero.
+el:Το όρισμα (%d: %s) δεν είναι ακέραιος αριθμός.
+ru:Аргумент (%d: %s) не является целым числом.
+zh:参数 (%d: %s) 不是整数。
+tw:參數 (%d: %s) 不是整數。
+ja:引数 (%d: %s) が整数ではありません。
+ca:L’argument (%d: %s) no és un nombre enter.
+---
+ID:Argument (%d: %s) not a float.
+es:Argumento (%d: %s) no es un número decimal.
+fr:L’argument (%d : %s) n’est pas un nombre à virgule flottante.
+de:Argument (%d: %s) ist keine Gleitkommazahl.
+it:L’argomento (%d: %s) non è un numero decimale.
+el:Το όρισμα (%d: %s) δεν είναι δεκαδικός αριθμός.
+ru:Аргумент (%d: %s) не является числом с плавающей точкой.
+zh:参数 (%d: %s) 不是浮点数。
+tw:參數 (%d: %s) 不是浮點數。
+ja:引数 (%d: %s) が浮動小数点数ではありません。
+ca:L’argument (%d: %s) no és un nombre amb coma flotant.
+---
+ID:Argument (%d: %s) not a string.
+es:Argumento (%d: %s) no es una cadena.
+fr:L’argument (%d : %s) n’est pas une chaîne de caractères.
+de:Argument (%d: %s) ist keine Zeichenkette.
+it:L’argomento (%d: %s) non è una stringa.
+el:Το όρισμα (%d: %s) δεν είναι συμβολοσειρά.
+ru:Аргумент (%d: %s) не является строкой.
+zh:参数 (%d: %s) 不是字符串。
+tw:參數 (%d: %s) 不是字串。
+ja:引数 (%d: %s) が文字列ではありません。
+ca:L’argument (%d: %s) no és una cadena de caràcters.
+---
+ID:Argument (%d: %s) is not an array.
+es:Argumento (%d: %s) no es una matriz.
+fr:L’argument (%d : %s) n’est pas un tableau.
+de:Argument (%d: %s) ist kein Array.
+it:L’argomento (%d: %s) non è un array.
+el:Το όρισμα (%d: %s) δεν είναι πίνακας.
+ru:Аргумент (%d: %s) не является массивом.
+zh:参数 (%d: %s) 不是数组。
+tw:參數 (%d: %s) 不是陣列。
+ja:引数 (%d: %s) が配列ではありません。
+ca:	L’argument (%d: %s) no és una matriu.
+---
+ID:Argument (%d: %s) is not a dictionary.
+es:Argumento (%d: %s) no es un diccionario.
+fr:L’argument (%d : %s) n’est pas un dictionnaire.
+de:Argument (%d: %s) ist kein Dictionary.
+it:L’argomento (%d: %s) non è un dizionario.
+el:Το όρισμα (%d: %s) δεν είναι λεξικό.
+ru:Аргумент (%d: %s) не является словарем.
+zh:参数 (%d: %s) 不是字典。
+tw:參數 (%d: %s) 不是字典。
+ja:引数 (%d: %s) が辞書ではありません。
+ca:L’argument (%d: %s) no és un diccionari.
+---
+ID:Not a function.
+es:No es una función.
+fr:Ce n’est pas une fonction.
+de:Keine Funktion.
+it:Non è una funzione.
+el:Δεν είναι συνάρτηση.
+ru:Это не функция.
+zh:不是函数。
+tw:不是函式。
+ja:関数ではありません。
+ca:No és una funció.
+---
+ID:Empty array.
+---
+ID:Out of memory.
+es:Memoria insuficiente.
+fr:Mémoire insuffisante.
+de:Nicht genügend Speicher.
+it:Memoria insufficiente.
+el:Δεν υπάρχει αρκετή μνήμη.
+ru:Недостаточно памяти.
+zh:内存不足。
+tw:記憶體不足。
+ja:メモリが足りません。
+ca:Memòria insuficient.
+---
+ID:Too many pinned global variables.
+---
+ID:Too many pinned local variables.
+---
+ID:Cannot open file %s.\n
+es:No se puede abrir el archivo %s.\n
+fr:Impossible d’ouvrir le fichier %s.\n
+de:Datei %s kann nicht geöffnet werden.\n
+it:Impossibile aprire il file %s.\n
+el:Δεν είναι δυνατή η άνοιγμα του αρχείου %s.\n
+ru:Не удаётся открыть файл %s.\n
+zh:无法打开文件 %s。\n
+tw:無法開啟檔案 %s。\n
+ja:ファイル%sを開けません。\n
+ca:No es pot obrir el fitxer %s.\n
+---
+ID:Cannot read file %s.\n
+es:No se puede leer el archivo %s.\n
+fr:Impossible de lire le fichier %s.\n
+de:Datei %s kann nicht gelesen werden.\n
+it:Impossibile leggere il file %s.\n
+el:Δεν είναι δυνατή η ανάγνωση του αρχείου %s.\n
+ru:Не удалось прочитать файл %s.\n
+zh:无法读取文件 %s。\n
+tw:無法讀取檔案 %s。\n
+ja:ファイル%sを読み込めません。\n
+ca:No es pot llegir el fitxer %s.\n
+---
+ID:Error: %s: %d: %s\n
+fr:Erreur: %s: %d: %s\n
+de:Fehler: %s: %d: %s\n
+it:Errore: %s: %d: %s\n
+el:Σφάλμα: %s: %d: %s\n
+ru:Ошибка: %s: %d: %s\n
+zh:错误: %s: %d: %s\n
+tw:錯誤: %s: %d: %s\n
+ja:エラー: %s: %d: %s\n
+---
+ID:Adding file %s\n
+es:Añadiendo el archivo %s\n
+fr:Ajout du fichier %s\n
+de:Datei %s wird hinzugefügt\n
+it:Aggiunta del file %s\n
+el:Προσθήκη του αρχείου %s\n
+ru:Добавление файла %s\n
+zh:正在添加文件 %s\n
+tw:正在新增檔案 %s\n
+ja:ファイル%sを追加しています。\n
+ca:S’està afegint el fitxer %s\n
+---
+ID:Cannot find %s.\n
+es:No se puede encontrar %s.\n
+fr:Impossible de trouver %s.\n
+de:%s konnte nicht gefunden werden.\n
+it:Impossibile trovare %s.\n
+el:Δεν ήταν δυνατή η εύρεση του %s.\n
+ru:Не удалось найти %s.\n
+zh:无法找到 %s。\n
+tw:無法找到 %s。\n
+ja:%sがみつかりません。\n
+ca:No es pot trobar %s.\n
+---
+ID:Searching directory %s.\n
+es:Buscando en el directorio %s.\n
+fr:Recherche dans le répertoire %s.\n
+de:Durchsuche Verzeichnis %s.\n
+it:Ricerca nella directory %s.\n
+el:Αναζήτηση στον κατάλογο %s.\n
+ru:Поиск в каталоге %s.\n
+zh:正在搜索目录 %s。\n
+tw:正在搜尋目錄 %s。\n
+ja:ディレクトリ%sを検索中です。\n
+ca:S’està cercant el directori %s.\n
+---
+ID:Skipping empty directory %s.\n
+es:Omitiendo el directorio vacío %s.\n
+fr:Répertoire vide ignoré : %s.\n
+de:Leeres Verzeichnis %s wird übersprungen.\n
+it:Directory vuota %s ignorata.\n
+el:Παράλειψη του κενoύ καταλόγου %s.\n
+ru:Пропуск пустого каталога %s.\n
+zh:跳过空目录 %s。\n
+tw:跳過空目錄 %s。\n
+ja:空のディレクトリ%sをスキップしています。\n
+ca:S’està ometent el directori buit %s.\n
+---
+ID:Unknown option %s.\n
+es:Opción desconocida %s.\n
+fr:Option inconnue : %s.\n
+de:Unbekannte Option %s.\n
+it:Opzione sconosciuta: %s.\n
+el:Άγνωστη επιλογή %s.\n
+ru:Неизвестная опция %s.\n
+zh:未知选项 %s。\n
+tw:未知選項 %s。\n
+ja:不明なオプション%s\n
+ca:Opció desconeguda: %s.\n
+---
+ID:Specify a file.\n
+es:Especifique un archivo.\n
+fr:Veuillez spécifier un fichier.\n
+de:Bitte eine Datei angeben.\n
+it:Specificare un file.\n
+el:Καθορίστε ένα αρχείο.\n
+ru:Укажите файл.\n
+zh:请指定一个文件。\n
+tw:請指定一個檔案。\n
+ja:ファイルを指定してください。\n
+ca:Especifiqueu un fitxer.\n
+---
+ID:%s:%d: Error: %s\n
+fr:%s:%d: Erreur: %s\n
+de:%s:%d: Fehler: %s\n
+it:%s:%d: Errore: %s\n
+el:%s:%d: Σφάλμα: %s\n
+ru:%s:%d: Ошибка: %s\n
+zh:%s:%d: 错误: %s\n
+tw:%s:%d: 錯誤: %s\n
+ja:%s:%d: エラー: %s\n
+---
+ID:Out of memory.\n
+es:Memoria insuficiente.\n
+fr:Mémoire insuffisante.\n
+de:Nicht genügend Speicher.\n
+it:Memoria insufficiente.\n
+el:Δεν υπάρχει αρκετή μνήμη.\n
+ru:Недостаточно памяти.\n
+zh:内存不足。\n
+tw:記憶體不足。\n
+ja:メモリが足りません。\n
+ca:Memòria insuficient.\n
+---
+ID:Noct Programming Language 
+es:Lenguaje de programación Noct 
+fr:Langage de programmation Noct 
+de:Programmiersprache Noct 
+it:Linguaggio di programmazione Noct 
+el:Γλώσσα προγραμματισμού Noct 
+ru:Язык программирования Noct 
+zh:Noct 编程语言 
+tw:Noct 程式語言 
+ja:Noct プログラミング言語 
+ca:Llenguatge de programació Noct 
+---
+ID:Version %s\n
+es:Versión %s\n
+it:Versione %s\n
+el:Έκδοση %s\n
+ru:Версия %s\n
+zh:版本 %s\n
+tw:版本 %s\n
+ja:バージョン %s\n
+ca:Versió %s\n
+---
+ID:JIT compilation is enabled. Starting the fast VM...\n
+es:La compilación JIT está activada. Iniciando la máquina virtual rápida...\n
+fr:La compilation JIT est activée. Démarrage de la machine virtuelle rapide...\n
+de:JIT-Kompilierung ist aktiviert. Starte die schnelle VM...\n
+it:La compilazione JIT è attivata. Avvio della VM veloce...\n
+el:Η μεταγλώττιση JIT είναι ενεργοποιημένη. Εκκίνηση της γρήγορης εικονικής μηχανής...\n
+ru:JIT-компиляция включена. Запуск быстрой виртуальной машины...\n
+zh:JIT 编译已启用。正在启动快速虚拟机…\n
+tw:JIT 編譯已啟用。正在啟動快速虛擬機器…\n
+ja:JITコンパイルが有効 ... 高速仮想マシン実行を開始します。\n
+ca:La compilació JIT està activada. S’està iniciant la màquina virtual ràpida...\n
+---
+ID:Entering REPL mode.\n
+es:Entrando en modo REPL.\n
+fr:Entrée en mode REPL.\n
+de:REPL-Modus wird gestartet.\n
+it:Accesso alla modalità REPL.\n
+el:Είσοδος σε λειτουργία REPL.\n
+ru:Переход в режим REPL.\n
+zh:进入 REPL 模式。\n
+tw:進入 REPL 模式。\n
+ja:REPLモードに入ります。\n
+ca:S’està entrant al mode REPL.\n
+---
+ID:Usage\n
+es:Uso\n
+fr:Utilisation\n
+de:Verwendung\n
+it:Utilizzo\n
+el:Χρήση\n
+ru:Использование\n
+zh:用法\n
+tw:用法\n
+ja:使い方\n
+ca:Ús\n
+---
+ID:  noct <file>                        ... run a program\n
+es:  noct <file>                        ... ejecutar un programa\n
+fr:  noct <file>                        ... exécuter un programme\n
+de:  noct <file>                        ... ein Programm ausführen\n
+it:  noct <file>                        ... eseguire un programma\n
+el:  noct <file>                        ... εκτέλεση προγράμματος\n
+ru:  noct <file>                        ... запуск программы\n
+zh:  noct <file>                        ... 运行程序\n
+tw:  noct <file>                        ... 執行程式\n
+ja:  noct <ファイル>                    ... プログラムを実行します\n
+ca:  noct <file>                        ... executar un programa\n
+---
+ID:  noct --compile <files>             ... convert to bytecode files\n
+es:  noct --compile <files>             ... convertir en archivos de bytecode\n
+fr:  noct --compile <files>             ... convertir en fichiers bytecode\n
+de:  noct --compile <files>             ... in Bytecode-Dateien umwandeln\n
+it:  noct --compile <files>             ... convertire in file di bytecode\n
+el:  noct --compile <files>             ... μετατροπή σε αρχεία bytecode\n
+ru:  noct --compile <files>             ... преобразовать в байткод-файлы\n
+zh:  noct --compile <files>             ... 转换为字节码文件\n
+tw:  noct --compile <files>             ... 轉換為位元組碼檔案\n
+ja:  noct --compile <ファイル...>       ... バイトコードに変換します\n
+ca:  noct --compile <files>             ... convertir a fitxers de bytecode\n
+---
+ID:  noct --ansic <out file> <in files> ... convert to a C source file\n
+es:  noct --ansic <out file> <in files> ... convertir en un archivo fuente en C\n
+fr:  noct --ansic <out file> <in files> ... convertir en un fichier source C\n
+de:  noct --ansic <out file> <in files> ... in eine C-Quelldatei umwandeln\n
+it:  noct --ansic <out file> <in files> ... convertire in un file sorgente C\n
+el:  noct --ansic <out file> <in files> ... μετατροπή σε αρχείο πηγαίου κώδικα C\n
+ru:  noct --ansic <out file> <in files> ... преобразовать в исходный файл C\n
+zh:  noct --ansic <out file> <in files> ... 转换为 C 源代码文件\n
+tw:  noct --ansic <out file> <in files> ... 轉換為 C 原始碼檔案\n
+ja:  noct --ansic <出力> <入力...>      ... Cソースに変換します\n
+ca:  noct --ansic <out file> <in files> ... convertir a un fitxer font en C\n
+---
+ID:  noct --elisp <out file> <in files> ... convert to an Emacs Lisp source file\n
+es:  noct --elisp <out file> <in files> ... convertir en un archivo fuente Emacs Lisp\n
+fr:  noct --elisp <out file> <in files> ... convertir en un fichier source Emacs Lisp\n
+de:  noct --elisp <out file> <in files> ... in eine Emacs-Lisp-Quelldatei umwandeln\n
+it:  noct --elisp <out file> <in files> ... convertire in un file sorgente Emacs Lisp\n
+el:  noct --elisp <out file> <in files> ... μετατροπή σε αρχείο πηγαίου κώδικα Emacs Lisp\n
+ru:  noct --elisp <out file> <in files> ... преобразовать в исходный файл Emacs Lisp\n
+zh:  noct --elisp <out file> <in files> ... 转换为 Emacs Lisp 源代码文件\n
+tw:  noct --elisp <out file> <in files> ... 轉換為 Emacs Lisp 原始碼檔案\n
+ja:  noct --elisp <出力> <入力...>      ... Emacs Lispソースに変換します\n
+ca:  noct --elisp <out file> <in files> ... convertir a un fitxer font Emacs Lisp\n
+---

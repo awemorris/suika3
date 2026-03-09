@@ -1,0 +1,22 @@
+func main() {
+    // Base class definition.
+    Animal = class {
+        name: "",
+        cry: (this) => {
+        }
+    };
+
+    Cat = extend Animal {
+        name: "Cat",
+        voice: "meow",
+        cry: (this) => {
+            print(this.name + " cries like " + this.voice);
+        }
+    };
+
+    var myCat = new Cat {
+        voice: "neee"
+    };
+
+    myCat->cry();
+}

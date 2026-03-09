@@ -1,0 +1,45 @@
+(defun foo (a b c)
+  (let ((k 0) (j 0) (v 0) (arr 0))
+    (catch 'early-return
+      (if (= a 0)
+        (progn
+          (setq i 0)
+        )
+        (if (= a 1)
+          (progn
+            (setq i 1)
+          )
+          (progn
+            (setq i 2)
+          )
+        )
+      )
+      (setq arr '(1 2 3))
+      (dolist (v arr)
+        (progn
+          (print v)
+        )
+      )
+      (let ((j 0))
+        (while (< j 10)
+          (progn
+            (setq i j)
+            (setq j (+ 1 j))
+          )
+        )
+      )
+      (dolist (pair '((aaa . "bbb")))
+        (let ((k (car pair))
+              (v (cdr pair)))
+          (setq i k)
+        )
+      )
+      (while (= i 0)
+        (progn
+          (setq j 0)
+        )
+      )
+      0
+    )
+  )
+)

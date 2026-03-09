@@ -1,0 +1,7 @@
+func main() {
+    var i = int("100");
+    print(i);
+
+    var f = float("100.0");
+    print(f);
+}

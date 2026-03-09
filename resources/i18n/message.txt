@@ -1,0 +1,242 @@
+ID:Error: %s: %d: %s
+es:Error: %s: %d: %s
+fr:Erreur : %s : %d : %s
+it:Errore: %s: %d: %s
+de:Fehler: %s: %d: %s
+el:Σφάλμα: %s: %d: %s
+ru:Ошибка: %s: %d: %s
+zh:错误: %s: %d: %s
+tw:錯誤: %s: %d: %s
+ja:エラー: %s: %d: %s
+---
+ID:Cannot open file "%s".
+es:No se puede abrir el archivo "%s".
+fr:Impossible d’ouvrir le fichier "%s".
+it:Impossibile aprire il file "%s".
+de:Datei "%s" kann nicht geöffnet werden.
+el:Δεν είναι δυνατή η ανοίξη του αρχείου "%s".
+ru:Невозможно открыть файл "%s".
+zh:无法打开文件 "%s"。
+tw:無法打開檔案 "%s"。
+ja:ファイル "%s" を開けません。
+---
+ID:Cannot get the size of file "%s".
+es:No se puede obtener el tamaño del archivo "%s".
+fr:Impossible d’obtenir la taille du fichier "%s".
+it:Impossibile ottenere la dimensione del file "%s".
+de:Die Größe der Datei "%s" kann nicht ermittelt werden.
+el:Δεν είναι δυνατή η λήψη του μεγέθους του αρχείου "%s".
+ru:Невозможно получить размер файла "%s".
+zh:无法获取文件 "%s" 的大小。
+tw:無法取得檔案 "%s" 的大小。
+ja:ファイル "%s" のサイズを取得できません。
+---
+ID:Cannot read file "%s".
+es:No se puede leer el archivo "%s".
+fr:Impossible de lire le fichier "%s".
+it:Impossibile leggere il file "%s".
+de:Datei "%s" kann nicht gelesen werden.
+el:Δεν είναι δυνατή η ανάγνωση του αρχείου "%s".
+ru:Невозможно прочитать файл "%s".
+zh:无法读取文件 "%s"。
+tw:無法讀取檔案 "%s"。
+ja:ファイル "%s" を読み込めません。
+---
+ID:In tag %s:%d: runtime error.
+es:En la etiqueta %s:%d: error en tiempo de ejecución.
+fr:Dans la balise %s:%d : erreur d’exécution.
+it:Nel tag %s:%d: errore di runtime.
+de:In Tag %s:%d: Laufzeitfehler.
+el:Στην ετικέτα %s:%d: σφάλμα χρόνου εκτέλεσης.
+ru:В теге %s:%d: ошибка выполнения.
+zh:在标签 %s:%d: 运行时错误。
+tw:在標籤 %s:%d: 執行時錯誤。
+ja:タグ %s:%d: 実行エラー
+---
+ID:%s:%d: Tag "%s" not found.
+es:%s:%d: No se encontró la etiqueta "%s".
+fr:%s:%d : Balise "%s" introuvable.
+it:%s:%d: Tag "%s" non trovato.
+de:%s:%d: Tag "%s" wurde nicht gefunden.
+el:%s:%d: Η ετικέτα "%s" δεν βρέθηκε.
+ru:%s:%d: Тег "%s" не найден.
+zh:%s:%d: 未找到标签 "%s"。
+tw:%s:%d: 找不到標籤 "%s"。
+ja:%s:%d: タグ "%s" がみつかりません。
+---
+ID:%s:%d: "tag_%s" is not a function.
+es:%s:%d: "tag_%s" no es una función.
+fr:%s:%d : "tag_%s" n’est pas une fonction.
+it:%s:%d: "tag_%s" non è una funzione.
+de:%s:%d: "tag_%s" ist keine Funktion.
+el:%s:%d: Το "tag_%s" δεν είναι συνάρτηση.
+ru:%s:%d: "tag_%s" не является функцией.
+zh:%s:%d: "tag_%s" 不是函数。
+tw:%s:%d: "tag_%s" 不是函式。
+ja:%s:%d: "tag_%s" が関数ではありません。
+---
+ID:In tag %s:%d: Tag "%s" execution error.
+es:En la etiqueta %s:%d: Error de ejecución en la etiqueta "%s".
+fr:Dans la balise %s:%d : Erreur d’exécution de la balise "%s".
+it:Nel tag %s:%d: Errore di esecuzione del tag "%s".
+de:In Tag %s:%d: Ausführungsfehler im Tag "%s".
+el:Στην ετικέτα %s:%d: Σφάλμα εκτέλεσης στην ετικέτα "%s".
+ru:В теге %s:%d: Ошибка выполнения тега "%s".
+zh:在标签 %s:%d: 执行标签 "%s" 时出错。
+tw:在標籤 %s:%d: 執行標籤 "%s" 時發生錯誤。
+ja:タグ %s:%d: タグ "%s" の実行エラーです。
+---
+ID:Cannot determine the file type for "%s".
+es:No se puede determinar el tipo de archivo de "%s".
+fr:Impossible de déterminer le type du fichier  "%s".
+it:Impossibile determinare il tipo di file per "%s".
+de:Der Dateityp von "%s" kann nicht bestimmt werden.
+el:Δεν είναι δυνατός ο προσδιορισμός του τύπου αρχείου για το "%s".
+ru:Невозможно определить тип файла "%s".
+zh:无法确定文件 "%s" 的类型。
+tw:無法判斷檔案 "%s" 的類型。
+ja:"%s" のファイルタイプを決定できません。
+---
+ID:Cannot load an image "%s".
+es:No se puede cargar la imagen "%s".
+fr:Impossible de charger l’image "%s".
+it:Impossibile caricare l’immagine "%s".
+de:Das Bild "%s" kann nicht geladen werden.
+el:Δεν είναι δυνατή η φόρτωση της εικόνας "%s".
+ru:Не удаётся загрузить изображение "%s".
+zh:无法加载图像 "%s"。
+tw:無法載入圖片 "%s"。
+ja:画像 "%s" をロードできません。
+---
+ID:Too many textures.
+es:Demasiadas texturas.
+fr:Trop de textures.
+it:Troppe texture.
+de:Zu viele Texturen.
+el:Πάρα πολλές υφές.
+ru:Слишком много текстур.
+zh:纹理过多。
+tw:材質過多。
+ja:テキスチャが多すぎます。
+---
+ID:Invalid font slot index.
+es:Índice de ranura de fuente no válido.
+fr:Indice d’emplacement de police non valide.
+it:Indice di slot del font non valido.
+de:Ungültiger Schriftart-Slot-Index.
+el:Μη έγκυρος δείκτης υποδοχής γραμματοσειράς.
+ru:Недопустимый индекс слота шрифта.
+zh:无效的字体槽索引。
+tw:無效的字體槽索引。
+ja:フォントスロットの番号が不正です。
+---
+ID:Invalid sound stream index.
+es:Índice de flujo de sonido no válido.
+fr:Indice de flux sonore non valide.
+it:Indice di stream audio non valido.
+de:Ungültiger Soundstream-Index.
+el:Μη έγκυρος δείκτης ροής ήχου.
+ru:Недопустимый индекс звукового потока.
+zh:无效的音频流索引。
+tw:無效的音訊串流索引。
+ja:サウンドストリームの番号が不正です。
+---
+ID:Cannot make the save directory.
+es:No se puede crear el directorio de guardado.
+fr:Impossible de créer le répertoire de sauvegarde.
+it:Impossibile creare la directory di salvataggio.
+de:Das Speicherverzeichnis kann nicht erstellt werden.
+el:Δεν είναι δυνατή η δημιουργία του καταλόγου αποθήκευσης.
+ru:Не удалось создать каталог сохранения.
+zh:无法创建存档目录。
+tw:無法建立存檔目錄。
+ja:セーブディレクトリを作成できません。
+---
+ID:Save data key too long.
+es:La clave de los datos guardados es demasiado larga.
+fr:La clé des données de sauvegarde est trop longue.
+it:La chiave dei dati di salvataggio è troppo lunga.
+de:Der Schlüssel der Spieldaten ist zu lang.
+el:Το κλειδί των δεδομένων αποθήκευσης είναι πολύ μεγάλο.
+ru:Ключ сохранённых данных слишком длинный.
+zh:存档数据键太长。
+tw:存檔資料鍵太長。
+ja:セーブデータキーが長すぎます。
+---
+ID:Cannot open a save file.
+es:No se puede abrir un archivo de guardado.
+fr:Impossible d’ouvrir un fichier de sauvegarde.
+it:Impossibile aprire un file di salvataggio.
+de:Eine Speicherdatei kann nicht geöffnet werden.
+el:Δεν είναι δυνατή η ανοίξη ενός αρχείου αποθήκευσης.
+ru:Не удалось открыть файл сохранения.
+zh:无法打开存档文件。
+tw:無法開啟存檔檔案。
+ja:セーブファイルを開けません。
+---
+ID:Cannot write to a save file.
+es:No se puede escribir en un archivo de guardado.
+fr:Impossible d’écrire dans un fichier de sauvegarde.
+it:Impossibile scrivere in un file di salvataggio.
+de:In eine Speicherdatei kann nicht geschrieben werden.
+el:Δεν είναι δυνατή η εγγραφή σε ένα αρχείο αποθήκευσης.
+ru:Не удалось записать в файл сохранения.
+zh:无法写入存档文件。
+tw:無法寫入存檔檔案。
+ja:セーブファイルに書き込めません。
+---
+ID:Cannot get the size of a save file.
+es:No se puede obtener el tamaño de un archivo de guardado.
+fr:Impossible d’obtenir la taille d’un fichier de sauvegarde.
+it:Impossibile ottenere la dimensione di un file di salvataggio.
+de:Die Größe einer Speicherdatei kann nicht ermittelt werden.
+el:Δεν είναι δυνατή η λήψη του μεγέθους ενός αρχείου αποθήκευσης.
+ru:Не удалось получить размер файла сохранения.
+zh:无法获取存档文件的大小。
+tw:無法取得存檔檔案的大小。
+ja:セーブファイルのサイズを取得できません。
+---
+ID:Save file too large.
+es:El archivo de guardado es demasiado grande.
+fr:Le fichier de sauvegarde est trop volumineux.
+it:Il file di salvataggio è troppo grande.
+de:Die Speicherdatei ist zu groß.
+el:Το αρχείο αποθήκευσης είναι πολύ μεγάλο.
+ru:Файл сохранения слишком большой.
+zh:存档文件过大。
+tw:存檔檔案過大。
+ja:セーブファイルが大きすぎます。
+---
+ID:Cannot read a save file.
+es:No se puede leer un archivo de guardado.
+fr:Impossible de lire un fichier de sauvegarde.
+it:Impossibile leggere un file di salvataggio.
+de:Eine Speicherdatei kann nicht gelesen werden.
+el:Δεν είναι δυνατή η ανάγνωση ενός αρχείου αποθήκευσης.
+ru:Не удалось прочитать файл сохранения.
+zh:无法读取存档文件。
+tw:無法讀取存檔檔案。
+ja:セーブファイルを読み込めません。
+---
+ID:String too long.
+es:Cadena demasiado larga.
+fr:Chaîne trop longue.
+it:Stringa troppo lunga.
+de:Zeichenkette zu lang.
+el:Η συμβολοσειρά είναι πολύ μεγάλη.
+ru:Строка слишком длинная.
+zh:字符串太长。
+tw:字串太長。
+ja:文字列が長すぎます。
+---
+ID:Invalid save data.
+es:Datos de guardado no validos.
+fr:Données de sauvegarde non valides.
+it:Dati di salvataggio non validi.
+de:Ungültige Spieldaten.
+el:Μη έγκυρα δεδομένα αποθήκευσης.
+ru:Недопустимые данные сохранения.
+zh:无效的存档数据。
+tw:無效的存檔資料。
+ja:セーブデータが無効です。
+---

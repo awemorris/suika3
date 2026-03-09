@@ -1,0 +1,25 @@
+func main() {
+    var dict = {
+        var001: 0,
+        var002: 0,
+        var003: 0,
+        var004: 0,
+        var005: 0,
+        var006: 0,
+        var007: 0,
+        var008: 0,
+        var009: 0,
+        var010: 0,
+        var011: 0,
+        var012: 0,
+        var013: 0,
+        var014: 0,
+        var015: 0,
+        var016: 0,
+        var017: 0
+    };
+
+    fast_gc();
+
+    print(dict.var001);
+}

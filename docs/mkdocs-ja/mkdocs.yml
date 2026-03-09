@@ -1,0 +1,20 @@
+site_name: Playfield ドキュメント
+repo_url: https://github.com/awemorris/PlayfieldEngine
+use_directory_urls: false
+
+nav:
+  - Home: index.md
+  - クイックガイド: gettingstarted.md
+  - Playfield Script の文法: syntax.md
+  - Playfield Script の API: api.md
+  - ビルド方法: build.md
+  - 移植状況: porting.md
+  - 設計: design.md
+
+theme:
+  name: material
+  features:
+    - navigation.expand
+    - navigation.tabs
+    - search.suggest
+    - content.code.annotate

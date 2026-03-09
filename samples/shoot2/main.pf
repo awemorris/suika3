@@ -1,0 +1,194 @@
+func setup() {
+    return {
+        title:      "Mini Shoot",   // Window title
+        width:      640,            // Window width
+        height:     480,            // Window height
+        fullscreen: false           // Full screen
+    };
+}
+
+func start() {
+    backTex = Engine.loadTexture({ file: "back.png" });
+    playerTex = Engine.loadTexture({ file: "player.png" });
+    enemyTex = Engine.loadTexture({ file: "enemy.png" });
+    bulletTex = Engine.loadTexture({ file: "bullet.png" });
+    scoreTex = null;
+
+    Engine.loadFont({ slot: 0, file: "PixelifySans-VariableFont_wght.ttf" });
+
+    gameoverTex = Engine.createTextTexture({
+        slot: 0, text: "GAME OVER", size: 40, r: 0, g: 255, b: 0, a: 200
+    });
+
+    restart();
+}
+
+func restart() {
+    score =  0;
+    player = { x: 320, y: 400, speed: 1200 };
+    bullets = [];   // {x,y,vy}
+    enemies = [];   // {x,y,vy,w,h}
+    lastTime = Engine.millisec;
+    fireCooldown = 0.0;
+    isGameover = false;
+
+    scoreTex = Engine.createTextTexture({
+        slot: 0, text: "SCORE: 0", size: 20, r: 255, g: 255, b: 255, a: 255
+    });
+
+    // Put initial emenies.
+    for (i in 0..9) {
+        var ex = 25 + i*70;
+        enemies->push({ x: ex, y: 40, vy: 40, w:16, h:16 });
+    }
+}
+
+func update() {
+    var now = Engine.millisec;
+    var dt  = (now - lastTime) * 0.001; // second
+    lastTime = now;
+
+    if (isGameover) {
+        if (Engine.isReturnKeyPressed || Engine.isGamepadBPressed || Engine.isMouseRightPressed) {
+            isGameover = false;
+            restart();
+        } else {
+            return;
+        }
+    }
+
+    var oldScore = score;
+
+    // Move.
+    var dx = 0;
+    var dy = 0;
+    if (Engine.isLeftKeyPressed || Engine.isGamepadLeftPressed)
+        dx -= 1;
+    if (Engine.isRightKeyPressed || Engine.isGamepadRightPressed)
+        dx += 1;
+    if (Engine.isUpKeyPressed || Engine.isGamepadUpPressed)
+        dy -= 1;
+    if (Engine.isDownKeyPressed || Engine.isGamepadDownPressed)
+        dy += 1;
+    var speed = 5;
+    player.x += dx * speed;
+    player.y += dy * speed;
+    if (Engine.isMouseLeftPressed) {
+        dx = 0;
+        dy = 0;
+        player.x = Engine.mousePosX;
+        player.y = Engine.mousePosY;
+    }
+
+    // Shooting.
+    fireCooldown -= dt;
+    if ((Engine.isSpaceKeyPressed || Engine.isGamepadAPressed || Engine.isMouseLeftPressed) && fireCooldown <= 0.0) {
+        bullets->push({ x: player.x+6, y: player.y-10, vy: -400 });
+        fireCooldown = 0.20;
+        // Engine.playSound({ stream:0, file:"shot.ogg" });
+    }
+
+    // Update bullets.
+    var aliveBullets = [];
+    for (b in bullets) {
+        b.y += b.vy * dt;
+        if (b.y > -10)
+            aliveBullets->push(b);
+    }
+    bullets = aliveBullets;
+
+    // Update enemies.
+    var aliveEnemies = [];
+    for (e in enemies) {
+        e.y += e.vy * dt;
+
+        // Wave.
+        e.x += Math.sin(Engine.millisec * 0.003 + e.y*0.05) * 20 * dt;
+
+        if (e.y > 480) {
+            isGameover = true;
+            return;
+        }
+
+        aliveEnemies->push(e);
+    }
+    enemies = aliveEnemies;
+
+    // Collision (AABB)
+    var nextEnemies = [];
+    for (e in enemies) {
+        if (aabb(player.x, player.y, 20, 20, e.x, e.y, e.w, e.h)) {
+            isGameover = true;
+            return;
+        }
+
+        var hit = false;
+        var keepBullets = [];
+        for (b in bullets) {
+            if (aabb(b.x, b.y, 10, 10, e.x, e.y, e.w, e.h)) {
+                hit = true; // Hide the bullet.
+                score += 10;
+            } else {
+                keepBullets->push(b);
+            }
+        }
+        bullets = keepBullets;
+        if (!hit) {
+            nextEnemies->push(e);
+        } else {
+            // Respawn.
+            nextEnemies->push({ x: randRange(20, 620), y: -randRange(10,80), vy: 60, w:16, h:16 });
+        }
+    }
+    enemies = nextEnemies;
+
+    // Update the score texture.
+    if (score != oldScore) {
+        // Destroy the previous texture.
+        if (scoreTex != null)
+            Engine.destroyTexture({texture: scoreTex});
+
+        // Create a texture.
+        scoreTex = Engine.createTextTexture({
+            slot:0, text:"SCORE: " + score, size:20, r:255, g:255, b:255, a:255
+        });
+    }
+}
+
+func render() {
+    // Background.
+    Engine.draw({ x: 0, y: 0, texture: backTex });
+
+    // Player.
+    Engine.draw({ x: player.x, y: player.y, texture: playerTex });
+
+    // Bullets.
+    for (b in bullets)
+        Engine.draw({ texture: bulletTex, x: b.x, y: b.y });
+
+    // Enemies.
+    for (e in enemies)
+        Engine.draw({ x: e.x, y: e.y, texture: enemyTex });
+
+    // Score.
+    Engine.draw({ texture: scoreTex, x: 10, y: 10 });
+
+    if (isGameover) {
+        // Game Over
+        Engine.draw({ x: 225, y: 200, texture: gameoverTex });
+    }
+}
+
+func aabb(ax, ay, aw, ah, bx, by, bw, bh) {
+    return !(ax+aw < bx || bx+bw < ax || ay+ah < by || by+bh < ay);
+}
+
+func clamp(v, lo, hi) {
+    if (v < lo) return lo;
+    if (v > hi) return hi;
+    return v;
+}
+
+func randRange(a, b) {
+	return a + (b - a) * Math.random();
+}

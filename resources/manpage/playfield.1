@@ -1,0 +1,35 @@
+.\" playfield.1 - Playfield manpage
+.TH PLAYFIELD 1 "September 2025" "Playfield 1.0" "User Commands"
+.SH NAME
+playfield \- lightweight 2D game engine and script runtime
+.SH SYNOPSIS
+.B playfield
+
+.SH DESCRIPTION
+The
+.B Playfield
+is a lightweight, cross-platform 2D game engine and scripting runtime
+based on the NoctLang virtual machine. It provides fast JIT compilation
+on desktop platforms and a high-performance interpreter on others.
+
+When invoked,
+.B playfield
+automatically executes the script
+.I main.pf
+from the current working directory.
+No other script files can be specified on the command line.
+
+.SH EXAMPLES
+Run the engine in a project directory containing \fImain.pf\fR:
+.EX
+cd mygame/
+playfield
+.EE
+
+.SH SEE ALSO
+.BR playfield-compiler (1)
+.BR playfield-pack (1)
+
+.SH AUTHORS
+Awe Morris <awe@noctvm.io> and contributors.
+Project homepage: <https://github.com/awemorris/PlayfieldEngine>

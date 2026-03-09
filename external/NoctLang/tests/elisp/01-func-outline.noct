@@ -1,0 +1,26 @@
+func foo(a, b, c) {
+    if (a == 0) {
+        i = 0;
+    } else if (a == 1) {
+        i = 1;
+    } else {
+        i = 2;
+    }
+
+    var arr = [1, 2, 3];
+    for (v in arr) {
+        print(v);
+    }
+
+    for (j in 0..10) {
+        i = j;
+    }
+
+    for (k, v in {aaa: "bbb"}) {
+        i = k;
+    }
+
+    while (i == 0) {
+        j = 0;
+    }
+}

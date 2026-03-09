@@ -1,0 +1,873 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3, "minor": 22, "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name":           "windows-vs2022-x86-debug",
+      "displayName":    "VS2022 MSVC x86 Debug",
+      "generator":      "Visual Studio 17 2022",
+      "architecture":   "Win32",
+      "toolset":        "v143",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Debug",
+        "CMAKE_BUILD_TYPE":          "Debug"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-vs2022-x86-release",
+      "displayName":    "VS2022 MSVC x86 Release",
+      "generator":      "Visual Studio 17 2022",
+      "architecture":   "Win32",
+      "toolset":        "v143",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Release",
+        "CMAKE_BUILD_TYPE":          "Release"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-vs2022-x64-debug",
+      "displayName":    "VS2022 MSVC x64 Debug",
+      "generator":      "Visual Studio 17 2022",
+      "architecture":   "x64",
+      "toolset":        "v143",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Debug",
+        "CMAKE_BUILD_TYPE":          "Debug"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-vs2022-x64-release",
+      "displayName":    "VS2022 MSVC x64 Release",
+      "generator":      "Visual Studio 17 2022",
+      "architecture":   "x64",
+      "toolset":        "v143",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Release",
+        "CMAKE_BUILD_TYPE":          "Release"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-vs2022-arm64-debug",
+      "displayName":    "VS2022 MSVC arm64 Debug",
+      "generator":      "Visual Studio 17 2022",
+      "architecture":   "arm64",
+      "toolset":        "v143",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Debug",
+        "CMAKE_BUILD_TYPE":          "Debug"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-vs2022-arm64-release",
+      "displayName":    "VS2022 MSVC arm64 Release",
+      "generator":      "Visual Studio 17 2022",
+      "architecture":   "arm64",
+      "toolset":        "v143",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Release",
+        "CMAKE_BUILD_TYPE":          "Release"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-vs2022-gdk-desktop",
+      "displayName":    "VS2022 GDK Windows",
+      "generator":      "Visual Studio 17 2022",
+      "architecture":   "Gaming.Desktop.x64",
+      "toolset":        "v143",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "PLAYFIELD_TARGET_GDK_WINDOWS": "ON",
+        "PLAYFIELD_ENABLE_JIT":         "ON",
+        "PLAYFIELD_ENABLE_I18N":        "OFF"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-vs2022-gdk-xbox-xs",
+      "displayName":    "VS2022 GDK Xbox Series X|S",
+      "generator":      "Visual Studio 17 2022",
+      "architecture":   "Gaming.Xbox.Scarlett",
+      "toolset":        "v143",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "PLAYFIELD_TARGET_GDK_XBOX_XS": "ON",
+        "PLAYFIELD_ENABLE_JIT":         "OFF",
+        "PLAYFIELD_ENABLE_I18N":        "OFF"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-vs2022-uwp",
+      "displayName":    "VS2022 UWP x64",
+      "generator":      "Visual Studio 17 2022",
+      "architecture":   "x64",
+      "toolset":        "v143",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_SYSTEM_NAME":                        "WindowsStore",
+        "CMAKE_SYSTEM_VERSION":                     "10.0",
+        "CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION": "10.0",
+        "PLAYFIELD_TARGET_UWP":                     "ON",
+        "PLAYFIELD_ENABLE_JIT":                     "OFF",
+        "PLAYFIELD_ENABLE_I18N":                    "OFF"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-vs2026-x86-debug",
+      "displayName":    "!VS2026 MSVC x86 Debug",
+      "generator":      "Visual Studio 18 2026",
+      "architecture":   "Win32",
+      "toolset":        "v145",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Debug",
+        "CMAKE_BUILD_TYPE":          "Debug"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-vs2026-x86-release",
+      "displayName":    "!VS2026 MSVC x86 Release",
+      "generator":      "Visual Studio 18 2026",
+      "architecture":   "Win32",
+      "toolset":        "v145",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Release",
+        "CMAKE_BUILD_TYPE":          "Release"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-vs2026-x64-debug",
+      "displayName":    "!VS2026 MSVC x64 Debug",
+      "generator":      "Visual Studio 18 2026",
+      "architecture":   "x64",
+      "toolset":        "v145",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Debug",
+        "CMAKE_BUILD_TYPE":          "Debug"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-vs2026-x64-release",
+      "displayName":    "!VS2026 MSVC x64 Release",
+      "generator":      "Visual Studio 18 2026",
+      "architecture":   "x64",
+      "toolset":        "v145",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Release",
+        "CMAKE_BUILD_TYPE":          "Release"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-vs2026-arm64-debug",
+      "displayName":    "!VS2026 MSVC arm64 Debug",
+      "generator":      "Visual Studio 18 2026",
+      "architecture":   "arm64",
+      "toolset":        "v145",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Debug",
+        "CMAKE_BUILD_TYPE":          "Debug"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-vs2026-arm64-release",
+      "displayName":    "!VS2026 MSVC arm64 Release",
+      "generator":      "Visual Studio 18 2026",
+      "architecture":   "arm64",
+      "toolset":        "v145",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "CMAKE_CONFIGURATION_TYPES": "Release",
+        "CMAKE_BUILD_TYPE":          "Release"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-vs2026-gdk-desktop",
+      "displayName":    "VS2026 GDK Windows",
+      "generator":      "Visual Studio 18 2026",
+      "architecture":   "Gaming.Desktop.x64",
+      "toolset":        "v145",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "PLAYFIELD_TARGET_GDK_WINDOWS": "ON",
+        "PLAYFIELD_ENABLE_JIT":         "ON",
+        "PLAYFIELD_ENABLE_I18N":        "OFF"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-vs2026-gdk-xbox-xs",
+      "displayName":    "VS2026 GDK Xbox Series X|S",
+      "generator":      "Visual Studio 18 2026",
+      "architecture":   "Gaming.Xbox.Scarlett",
+      "toolset":        "v145",
+      "binaryDir":      "${sourceDir}/out/build/${presetName}",
+      "cacheVariables": {
+        "PLAYFIELD_TARGET_GDK_XBOX_XS": "ON",
+        "PLAYFIELD_ENABLE_JIT":         "OFF",
+        "PLAYFIELD_ENABLE_I18N":        "OFF"
+      },
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      }
+    },
+    {
+      "name":           "windows-mingw-x86",
+      "displayName":    "MinGW x86",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-mingw-x86",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-x86.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_WINDOWS":    "ON",
+        "PLAYFIELD_ENABLE_JIT":        "ON",
+        "PLAYFIELD_ENABLE_I18N":       "ON",
+        "PLAYFIELD_ENABLE_PACK":       "ON"
+      }
+    },
+    {
+      "name":           "windows-mingw-x86_64",
+      "displayName":    "MinGW x86_64",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-mingw-x86_64",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-x86_64.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_WINDOWS":    "ON",
+        "PLAYFIELD_ENABLE_JIT":        "ON",
+        "PLAYFIELD_ENABLE_I18N":       "ON",
+        "PLAYFIELD_ENABLE_PACK":       "ON"
+      }
+    },
+    {
+      "name":           "windows-mingw-arm64",
+      "displayName":    "MinGW Arm64",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-mingw-arm64",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-arm64.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_WINDOWS":    "ON",
+        "PLAYFIELD_ENABLE_JIT":        "ON",
+        "PLAYFIELD_ENABLE_I18N":       "ON",
+        "PLAYFIELD_ENABLE_PACK":       "ON"
+      }
+    },
+    {
+      "name":           "macos",
+      "displayName":    "macOS",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-macos",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/macos.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_MACOS":      "ON",
+        "PLAYFIELD_ENABLE_JIT":        "ON",
+        "PLAYFIELD_ENABLE_I18N":       "ON",
+        "PLAYFIELD_ENABLE_PACK":       "ON",
+        "PLAYFIELD_ENABLE_BUNDLE":     "ON"
+      }
+    },
+    {
+      "name":           "linux-x11",
+      "displayName":    "Linux X11 OpenGL",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-linux-x11",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_LINUX":      "ON",
+        "PLAYFIELD_ENABLE_JIT":        "ON",
+        "PLAYFIELD_ENABLE_I18N":       "ON",
+        "PLAYFIELD_ENABLE_PACK":       "ON"
+      }
+    },
+    {
+      "name":           "linux-x11-debug",
+      "displayName":    "Linux X11 OpenGL",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-linux-x11-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Debug",
+        "PLAYFIELD_TARGET_LINUX":      "ON",
+        "PLAYFIELD_ENABLE_JIT":        "ON",
+        "PLAYFIELD_ENABLE_I18N":       "ON",
+        "PLAYFIELD_ENABLE_PACK":       "ON"
+      }
+    },
+    {
+      "name":           "linux-wayland",
+      "displayName":    "Linux Wayland OpenGL",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-linux-wayland",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":               "Release",
+        "PLAYFIELD_TARGET_LINUX_WAYLAND": "ON",
+        "PLAYFIELD_ENABLE_JIT":           "ON",
+        "PLAYFIELD_ENABLE_I18N":          "ON",
+        "PLAYFIELD_ENABLE_PACK":          "ON"
+      }
+    },
+    {
+      "name":           "linux-wayland-debug",
+      "displayName":    "Linux Wayland OpenGL",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-linux-wayland-debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":               "Debug",
+        "PLAYFIELD_TARGET_LINUX_WAYLAND": "ON",
+        "PLAYFIELD_ENABLE_JIT":           "ON",
+        "PLAYFIELD_ENABLE_I18N":          "ON",
+        "PLAYFIELD_ENABLE_PACK":          "ON"
+      }
+    },
+    {
+      "name":           "linux-gbm",
+      "displayName":    "Linux Framebuffer OpenGL",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-linux-gbm",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_LINUX_GBM":  "ON",
+        "PLAYFIELD_ENABLE_JIT":        "ON",
+        "PLAYFIELD_ENABLE_I18N":       "ON",
+        "PLAYFIELD_ENABLE_PACK":       "ON"
+      }
+    },
+    {
+      "name":           "linux-gbm-rot90",
+      "displayName":    "Linux Framebuffer OpenGL Rotate",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-linux-gbm-rot90",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_LINUX_GBM":  "ON",
+        "PLAYFIELD_ENABLE_JIT":        "ON",
+        "PLAYFIELD_ENABLE_I18N":       "ON",
+        "PLAYFIELD_ENABLE_PACK":       "ON",
+        "PLAYFIELD_ENABLE_ROT90":      "ON"
+      }
+    },
+    {
+      "name":           "ios",
+      "displayName":    "iOS",
+      "generator":      "Xcode",
+      "binaryDir":      "${sourceDir}/build-ios",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/ios.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Debug",
+        "PLAYFIELD_TARGET_IOS":        "ON"
+      }
+    },
+    {
+      "name":           "ios-device",
+      "displayName":    "iOS Device",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-ios-device",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/ios-device.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_IOS":        "ON",
+        "PLAYFIELD_ENABLE_STATIC":     "ON"
+      }
+    },
+    {
+      "name":           "ios-simulator",
+      "displayName":    "iOS Simulator",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-ios-simulator",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/ios-simulator.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_IOS":        "ON",
+        "PLAYFIELD_ENABLE_STATIC":     "ON"
+      }
+    },
+    {
+      "name":           "android-x86",
+      "displayName":    "Android x86",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-android-x86",
+      "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both",
+        "ANDROID_PLATFORM":            "30",
+        "ANDROID_ABI":                 "x86",
+        "PLAYFIELD_TARGET_ANDROID":    "ON",
+        "PLAYFIELD_ENABLE_SHARED":     "ON"
+      }
+    },
+    {
+      "name":           "android-x86_64",
+      "displayName":    "Android x86_64",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-android-x86_64",
+      "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both",
+        "ANDROID_PLATFORM":            "30",
+        "ANDROID_ABI":                 "x86_64",
+        "PLAYFIELD_TARGET_ANDROID":    "ON",
+        "PLAYFIELD_ENABLE_SHARED":     "ON"
+      }
+    },
+    {
+      "name":           "android-armv7",
+      "displayName":    "Android ARMv7",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-android-armv7",
+      "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both",
+        "ANDROID_PLATFORM":            "30",
+        "ANDROID_ABI":                 "armeabi-v7a",
+        "PLAYFIELD_TARGET_ANDROID":    "ON",
+        "PLAYFIELD_ENABLE_SHARED":     "ON"
+      }
+    },
+    {
+      "name":           "android-arm64",
+      "displayName":    "Android Arm64",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-android-arm64",
+      "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both,-z,max-page-size=16384",
+        "ANDROID_PLATFORM":            "30",
+        "ANDROID_ABI":                 "arm64-v8a",
+        "PLAYFIELD_TARGET_ANDROID":    "ON",
+        "PLAYFIELD_ENABLE_SHARED":     "ON"
+      }
+    },
+    {
+      "name":           "openharmony-x86_64",
+      "displayName":    "OpenHarmony x86_64",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-openharmony-x86_64",
+      "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":             "Debug",
+        "OHOS_PLATFORM_LEVEL":          "12",
+        "OHOS_ARCH":                    "x86_64",
+        "PLAYFIELD_TARGET_OPENHARMONY": "ON",
+        "PLAYFIELD_ENABLE_STATIC":      "ON"
+      }
+    },
+    {
+      "name":           "openharmony-arm64",
+      "displayName":    "OpenHarmony Arm64",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-openharmony-arm64",
+      "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":             "Debug",
+        "OHOS_PLATFORM_LEVEL":          "12",
+        "OHOS_ARCH":                    "arm64-v8a",
+        "PLAYFIELD_TARGET_OPENHARMONY": "ON",
+        "PLAYFIELD_ENABLE_STATIC":      "ON"
+      }
+    },
+    {
+      "name":           "openharmony-armv7",
+      "displayName":    "OpenHarmony ARMv7",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-openharmony-armv7",
+      "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":             "Release",
+        "OHOS_PLATFORM_LEVEL":          "12",
+        "OHOS_ARCH":                    "armeabi-v7a",
+        "PLAYFIELD_TARGET_OPENHARMONY": "ON",
+        "PLAYFIELD_ENABLE_STATIC":      "ON"
+      }
+    },
+    {
+      "name":           "wasm",
+      "displayName":    "Wasm",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-wasm",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/wasm.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_WASM":       "ON"
+      }
+    },
+    {
+      "name":           "wasm-local",
+      "displayName":    "Wasm Local File",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-wasm-local",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/wasm.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_WASM_LOCAL": "ON"
+      }
+    },
+    {
+      "name":           "unity-win64",
+      "displayName":    "Unity Win64",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-unity-win64",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-win64.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_UNITY":      "ON",
+        "PLAYFIELD_ENABLE_SHARED":     "ON"
+      }
+    },
+    {
+      "name":           "unity-winarm64",
+      "displayName":    "Unity Win Arm64",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-unity-winarm64",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-winarm64.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Debug",
+        "PLAYFIELD_TARGET_UNITY":      "ON",
+        "PLAYFIELD_ENABLE_SHARED":     "ON"
+      }
+    },
+    {
+      "name":           "unity-switch",
+      "displayName":    "Unity Switch",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-unity-switch",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-switch.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":                 "Release",
+        "PLAYFIELD_TARGET_UNITY":           "ON",
+        "PLAYFIELD_TARGET_UNITY_SWITCH":    "ON",
+        "PLAYFIELD_ENABLE_STATIC":          "ON"
+      }
+    },
+    {
+      "name":           "unity-ps5",
+      "displayName":    "Unity PS5",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-unity-ps5",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-ps5.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_UNITY":      "ON",
+        "PLAYFIELD_TARGET_UNITY_PS5":  "ON",
+        "PLAYFIELD_ENABLE_STATIC":     "ON"
+      }
+    },
+    {
+      "name":           "unity-xbox",
+      "displayName":    "Unity Xbox X|S",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-unity-xbox",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-xbox.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":                 "Release",
+        "PLAYFIELD_TARGET_UNITY":           "ON",
+        "PLAYFIELD_TARGET_UNITY_XBOX":      "ON",
+        "PLAYFIELD_ENABLE_STATIC":          "ON"
+      }
+    },
+    {
+      "name":           "freebsd",
+      "displayName":    "FreeBSD",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-freebsd",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_FREEBSD":    "ON",
+        "PLAYFIELD_ENABLE_JIT":        "ON",
+        "PLAYFIELD_ENABLE_PACK":       "ON"
+      }
+    },
+    {
+      "name":           "netbsd",
+      "displayName":    "NetBSD",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-netbsd",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_NETBSD":     "ON",
+        "PLAYFIELD_ENABLE_JIT":        "ON",
+        "PLAYFIELD_ENABLE_PACK":       "ON"
+      }
+    },
+    {
+      "name":           "openbsd",
+      "displayName":    "OpenBSD",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-openbsd",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_OPENBSD":    "ON",
+        "PLAYFIELD_ENABLE_PACK":       "ON"
+      }
+    }
+  ],
+
+  "buildPresets": [
+    {
+      "name": "windows-vs2022-x86-debug",
+      "configurePreset": "windows-vs2022-x86-debug"
+    },
+    {
+      "name": "windows-vs2022-x86-release",
+      "configurePreset": "windows-vs2022-x86-release"
+    },
+    {
+      "name": "windows-vs2022-x64-debug",
+      "configurePreset": "windows-vs2022-x64-debug"
+    },
+    {
+      "name": "windows-vs2022-x64-release",
+      "configurePreset": "windows-vs2022-x64-release"
+    },
+    {
+      "name": "windows-vs2022-arm64-debug",
+      "configurePreset": "windows-vs2022-arm64-debug"
+    },
+    {
+      "name": "windows-vs2022-arm64-release",
+      "configurePreset": "windows-vs2022-arm64-release"
+    },
+    {
+      "name": "windows-vs2022-gdk-desktop",
+      "configurePreset": "windows-vs2022-gdk-desktop"
+    },
+    {
+      "name": "windows-vs2022-gdk-xbox-xs",
+      "configurePreset": "windows-vs2022-gdk-xbox-xs"
+    },
+    {
+      "name": "windows-vs2022-uwp",
+      "configurePreset": "windows-vs2022-uwp"
+    },
+    {
+      "name": "windows-vs2026-x86-debug",
+      "configurePreset": "windows-vs2026-x86-debug"
+    },
+    {
+      "name": "windows-vs2026-x86-release",
+      "configurePreset": "windows-vs2026-x86-release"
+    },
+    {
+      "name": "windows-vs2026-x64-debug",
+      "configurePreset": "windows-vs2026-x64-debug"
+    },
+    {
+      "name": "windows-vs2026-x64-release",
+      "configurePreset": "windows-vs2026-x64-release"
+    },
+    {
+      "name": "windows-vs2026-arm64-debug",
+      "configurePreset": "windows-vs2026-arm64-debug"
+    },
+    {
+      "name": "windows-vs2026-arm64-release",
+      "configurePreset": "windows-vs2026-arm64-release"
+    },
+    {
+      "name": "windows-vs2026-gdk-desktop",
+      "configurePreset": "windows-vs2026-gdk-desktop"
+    },
+    {
+      "name": "windows-vs2026-gdk-xbox-xs",
+      "configurePreset": "windows-vs2026-gdk-xbox-xs"
+    },
+    {
+      "name": "windows-mingw-x86",
+      "configurePreset": "windows-mingw-x86"
+    },
+    {
+      "name": "windows-mingw-x86_64",
+      "configurePreset": "windows-mingw-x86_64"
+    },
+    {
+      "name": "windows-mingw-arm64",
+      "configurePreset": "windows-mingw-arm64"
+    },
+    {
+      "name": "macos",
+      "configurePreset": "macos"
+    },
+    {
+      "name": "linux-x11",
+      "configurePreset": "linux-x11"
+    },
+    {
+      "name": "linux-wayland",
+      "configurePreset": "linux-wayland"
+    },
+    {
+      "name": "linux-gbm",
+      "configurePreset": "linux-gbm"
+    },
+    {
+      "name": "linux-gbm-rot90",
+      "configurePreset": "linux-gbm-rot90"
+    },
+    {
+      "name": "ios-device",
+      "configurePreset": "ios-device"
+    },
+    {
+      "name": "ios-simulator",
+      "configurePreset": "ios-simulator"
+    },
+    {
+      "name": "android-x86",
+      "configurePreset": "android-x86"
+    },
+    {
+      "name": "android-x86_64",
+      "configurePreset": "android-x86_64"
+    },
+    {
+      "name": "android-armv7",
+      "configurePreset": "android-armv7"
+    },
+    {
+      "name": "android-arm64",
+      "configurePreset": "android-arm64"
+    },
+    {
+      "name": "openharmony-x86_64",
+      "configurePreset": "openharmony-x86_64"
+    },
+    {
+      "name": "openharmony-arm64",
+      "configurePreset": "openharmony-arm64"
+    },
+    {
+      "name": "openharmony-armv7",
+      "configurePreset": "openharmony-armv7"
+    },
+    {
+      "name": "wasm",
+      "configurePreset": "wasm"
+    },
+    {
+      "name": "wasm-local",
+      "configurePreset": "wasm-local"
+    },
+    {
+      "name": "unity-win64",
+      "configurePreset": "unity-win64"
+    },
+    {
+      "name": "unity-switch",
+      "configurePreset": "unity-switch"
+    },
+    {
+      "name": "unity-ps5",
+      "configurePreset": "unity-ps5"
+    },
+    {
+      "name": "unity-xbox",
+      "configurePreset": "unity-xbox"
+    },
+    {
+      "name": "freebsd",
+      "configurePreset": "freebsd"
+    },
+    {
+      "name": "netbsd",
+      "configurePreset": "netbsd"
+    },
+    {
+      "name": "openbsd",
+      "configurePreset": "openbsd"
+    }
+  ]
+}

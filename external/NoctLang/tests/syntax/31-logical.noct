@@ -1,0 +1,20 @@
+func main() {
+    var a = 0x01;
+    var b = 0x02;
+    print("a = " + a);
+    print("b = " + b);
+    print("a & b = " + (a & b));
+    print("a | b = " + (a | b));
+    print("a ^ b = " + (a ^ b));
+    print("a << b = " + (a << b));
+    print("a >> b = " + (a >> b));
+
+    var c = 0x10;
+    print("c = " + c);
+
+    c >>= 2;
+    print("c >>= 2 : " + c);
+
+    c <<= 3;
+    print("c >>= 3 : " + c);
+}

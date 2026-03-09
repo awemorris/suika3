@@ -1,0 +1,13 @@
+func main() {
+    var a = -123;
+    print(Math.abs(a));
+    
+    var b = 123;
+    print(Math.abs(b));
+
+    var c = -1.23;
+    print(Math.abs(c));
+
+    var d = 1.23;
+    print(Math.abs(d));
+}

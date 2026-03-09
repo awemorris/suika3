@@ -1,0 +1,15 @@
+func main() {
+    var arr1 = [];
+    arr1[63] = 123;
+
+    print(arr1[1]);
+    print(arr1[63]);
+
+    var arr2 = [];
+    arr2->resize(32);
+    print(arr2[1]);  
+    print("size = " + arr2.length);
+
+    var arr3 = newArray(64);
+    print("size = " + arr3.length);
+}

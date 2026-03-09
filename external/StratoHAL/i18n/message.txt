@@ -1,0 +1,77 @@
+ID:Out of memory.
+es:Memoria insuficiente.
+fr:Mémoire insuffisante.
+it:Memoria esaurita.
+de:Nicht genügend Speicher.
+el:Εκτός μνήμης.
+ru:Недостаточно памяти.
+zh:内存不足。
+tw:記憶體不足。
+ja:メモリが不足しています。
+---
+ID:Cannot open file "%s".
+es:No se puede abrir el archivo "%s".
+fr:Impossible douvrir le fichier "%s".
+it:Impossibile aprire il file "%s".
+de:Datei "%s" kann nicht geöffnet werden.
+el:Δεν είναι δυνατή η ανοίξη του αρχείου "%s".
+ru:Невозможно открыть файл "%s".
+zh:无法打开文件 "%s"。
+tw:無法打開檔案 "%s"。
+ja:ファイル "%s" を開けません。
+---
+ID:Cannot read file "%s".
+es:No se puede leer el archivo "%s".
+fr:Impossible de lire le fichier "%s".
+it:Impossibile leggere il file "%s".
+de:Datei "%s" kann nicht gelesen werden.
+el:Δεν είναι δυνατή η ανάγνωση του αρχείου "%s".
+ru:Невозможно прочитать файл "%s".
+zh:无法读取文件 "%s"。
+tw:無法讀取檔案 "%s"。
+ja:ファイル "%s" を読み込めません。
+---
+ID:No startup file.
+es:No hay archivo de inicio.
+fr:Aucun fichier de démarrage.
+it:Nessun file di avvio.
+de:Keine Startdatei vorhanden.
+el:Δεν υπάρχει αρχείο εκκίνησης.
+ru:Файл запуска отсутствует.
+zh:没有启动文件。
+tw:沒有啟動檔案。
+ja:スタートアップファイルがありません。
+---
+ID:The app is crashed.
+es:La aplicación se ha bloqueado.
+fr:L’application a planté.
+it:L’applicazione è andata in crash.
+de:Die App ist abgestürzt.
+el:Η εφαρμογή κατέρρευσε.
+ru:Приложение завершилось с ошибкой.
+zh:应用程序已崩溃。
+tw:應用程式已當機。
+ja:アプリケーションがクラッシュしました。
+---
+ID:Failed to initialize the sound.
+es:Error al inicializar el sonido.
+fr:Echec de linitialisation du son.
+it:Impossibile inizializzare l’audio.
+de:Initialisierung des Sounds fehlgeschlagen.
+el:Αποτυχία αρχικοποίησης του ήχου.
+ru:Не удалось инициализировать звук.
+zh:声音初始化失败。
+tw:聲音初始化失敗。
+ja:サウンドの初期化に失敗しました。
+---
+ID:Failed to initialize the graphics.
+es:Error al inicializar los gráficos.
+fr:Echec de linitialisation des graphiques.
+it:Impossibile inizializzare la grafica.
+de:Initialisierung der Grafik fehlgeschlagen.
+el:Αποτυχία αρχικοποίησης των γραφικών.
+ru:Не удалось инициализировать графику.
+zh:图形初始化失败。
+tw:圖形初始化失敗。
+ja:グラフィックスの初期化に失敗しました。
+---

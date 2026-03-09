@@ -1,0 +1,50 @@
+.\" playfield-compiler.1.mdoc - Playfield compiler manpage
+.Dd September 2025
+.Dt PLAYFIELD-COMPILER 1
+.Os Playfield 1.0
+.Sh NAME
+.Nm playfield-compiler
+.Nd compile Playfield scripts into bytecode
+.Sh SYNOPSIS
+.Nm
+.Op Ar sourcefiles ...
+.Sh DESCRIPTION
+The
+.Nm
+translates Playfield script files
+.Pa .pf
+into bytecode files with the extension
+.Pa .pfc .
+.Pp
+Each input file is compiled independently.
+The output file has the same basename as the input,
+with its extension replaced by
+.Pa .pfc .
+For example, compiling
+.Pa sample.pf
+produces
+.Pa sample.pfc
+in the same directory.
+.Sh EXAMPLES
+Compile a single script:
+.Bd -literal -offset indent
+playfield-compiler sample.pf
+.Ed
+.Pp
+Compile multiple scripts:
+.Bd -literal -offset indent
+playfield-compiler main.pf enemy.pf level.pf
+.Ed
+.Pp
+The above command produces:
+.Bd -literal -offset indent
+main.pfc enemy.pfc level.pfc
+.Ed
+.Sh SEE ALSO
+.Xr playfield 1 ,
+.Xr playfield-pack 1
+.Sh AUTHORS
+.An Awe Morris Aq Mt awe@noctvm.io
+and contributors.
+Project homepage:
+.Lk https://github.com/awemorris/PlayfieldEngine

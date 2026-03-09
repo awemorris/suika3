@@ -1,0 +1,103 @@
+.\" -*- mode: nroff; -*-
+.Dd August 24, 2025
+.Dt NOCT 1
+.Os
+.Sh NAME
+.Nm noct
+.Nd Noct programming language CLI
+.Sh SYNOPSIS
+.Nm
+.Op Ar file
+.br
+.Nm
+.Fl Fl compile
+.Ar files ...
+.br
+.Nm
+.Fl Fl ansic
+.Ar out.c
+.Ar in files ...
+.br
+.Nm
+.Fl Fl elisp
+.Ar out.el
+.Ar in files ...
+.Sh DESCRIPTION
+The
+.Nm
+command is the command-line interface for the Noct programming language.
+It can directly run a program, run REPL, compile sources into Noct bytecode,
+or transpile sources to ANSI C or Emacs Lisp.
+.Pp
+If no arguments are provided, runs the REPL.
+.Pp
+If no option is given and a
+.Ar file
+is provided,
+.Nm
+executes the program.
+.Sh OPTIONS
+The following options are supported:
+.Bl -tag -width 14n
+.It Fl Fl compile
+Compile one or more input source files into Noct bytecode files.
+.It Fl Fl ansic Ar out.c Ar in files ...
+Transpile the specified input source files into a single ANSI C source file
+.Ar out.c .
+The generated C file can be compiled with the Noct runtime.
+.It Fl Fl elisp Ar out.el Ar in files ...
+Transpile the specified input source files into a single Emacs Lisp file
+.Ar out.el .
+The resulting file can be loaded into Emacs to run the program using
+Noct's Emacs integration (if available).
+.El
+.Sh OPERANDS
+.Bl -tag -width 14n
+.It Ar file
+Path to a Noct source file to execute.
+When present without other options,
+.Nm
+runs the program.
+.It Ar files
+One or more input source files.
+.El
+.Sh EXIT STATUS
+.Ex -std
+.Nm
+exits 0 on success and >0 if an error occurs (syntax error, I/O failure,
+code generation error, or runtime failure).
+.Sh EXAMPLES
+Run REPL:
+.Bd -literal -offset indent
+$ noct
+.Ed
+.Pp
+Run a program:
+.Bd -literal -offset indent
+$ noct hello.noct
+.Ed
+.Pp
+Compile multiple sources to bytecode:
+.Bd -literal -offset indent
+$ noct --compile lib.noct main.noct
+.Ed
+.Pp
+Transpile to ANSI C:
+.Bd -literal -offset indent
+$ noct --ansic aot_source.c main.noct lib.noct
+.Ed
+.Pp
+Generate a single Emacs Lisp file:
+.Bd -literal -offset indent
+$ noct --elisp app.el main.noct lib.noct
+.Ed
+.Sh VERSION
+Noct Programming Language
+.Dv 0.1.0
+.Sh AUTHORS
+.An Awe Morris
+and the Noct contributors.
+.Sh BUGS
+Report issues at <awe@noctvm.io> .
+.Pp
+Behavior and options are subject to change while Noct is pre-1.0.

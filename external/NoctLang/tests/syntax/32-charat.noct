@@ -1,0 +1,6 @@
+func main() {
+    var a = "ABCあいう";
+    for (i in 0..7) {
+        print(a->charAt(i));
+    }
+}

@@ -1,0 +1,22 @@
+func main() {
+   array1 = [0, 1, 2];
+   for (v in array1) {
+      print(v);
+   }
+
+   print("Length = " + array1.length);
+
+   array2 = [];
+   array2[0] = 0;
+   array2[1] = 1;
+   array2[2] = 2;
+   array2->push(3);
+   for (v in array2) {
+      print(v);
+   }
+
+   array2->resize(2);
+   for (v in array2) {
+      print(v);
+   }
+}

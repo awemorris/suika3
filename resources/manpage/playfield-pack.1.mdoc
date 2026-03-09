@@ -1,0 +1,47 @@
+.\" playfield-pack.1.mdoc - Playfield packager manpage
+.Dd September 2025
+.Dt PLAYFIELD-PACK 1
+.Os Playfield 1.0
+.Sh NAME
+.Nm playfield-pack
+.Nd package assets into a single archive for Playfield
+.Sh SYNOPSIS
+.Nm
+.Op Ar files ...
+.Sh DESCRIPTION
+The
+.Nm
+tool creates a package archive
+.Pa assets.arc
+from the given list of files and directories.
+The resulting archive can be executed by the
+.Xr playfield 1
+runtime.
+.Pp
+All specified files and directories are recursively included.
+The output file is always written as
+.Pa assets.arc
+in the current working directory.
+.Sh EXAMPLES
+Package individual files:
+.Bd -literal -offset indent
+playfield-pack main.pf sprite.png sound.wav
+.Ed
+.Pp
+Package an entire project directory:
+.Bd -literal -offset indent
+playfield-pack *
+.Ed
+.Pp
+Combine multiple directories and files:
+.Bd -literal -offset indent
+playfield-pack src/ assets/ main.pf
+.Ed
+.Sh SEE ALSO
+.Xr playfield 1 ,
+.Xr playfield-compiler 1
+.Sh AUTHORS
+.An Awe Morris Aq Mt awe@noctvm.io
+and contributors.
+Project homepage:
+.Lk https://github.com/awemorris/PlayfieldEngine

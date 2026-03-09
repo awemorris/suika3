@@ -1,0 +1,1303 @@
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+【ソフト名】Playfield                  【Ver】0.8.8
+【著作権者】Awe Morris                 【制作日】2025-09-30
+【種　　別】OSS (Zlib License)
+【動作環境】Windows XP SP3 以降, DirectX 9.0c以降
+【必要機器】キーボード, マウス
+【配 布 元】GitHub 等
+【連 絡 先】E-mail : awe@noctvm.io
+───────────────────────────────────────
+
+・このファイルを ChatGPT に読み込ませてください
+・「Playfield Script でゲームを作って」と指示すると、ゲームを生成できます！
+
+■ 概要
+
+　Playfield はゲームスクリプトの実行エンジンです。Playfield Script という言語
+で記述されたスクリプトを読み込んで画面表示や音声再生を行うことができるた
+め、ゲームを開発することができます。
+
+　2020年代の最新環境で気軽にゲームを開発できます。かなり本格的な 2D ゲームが作
+れる一方で、キッズにもかんたんに使っていただけると思います。また、昔 HSP や
+N88-BASIC でゲームを作ったことがある方にも、最新のパソコンでゲーム作りを楽しん
+でいただけたらうれしいです。
+
+■ ファイル構成
+
+  playfield.exe           ... ゲームエンジン本体の実行ファイル (64 ビット)
+  main.pf                 ... 動作確認用のスクリプト
+  hajimeni.txt            ... 本書
+  readme.txt              ... 英語版 README
+  misc/
+    samples/              ... サンプルゲーム
+    windows/
+      playfield32.exe     ... 32 ビットの本体実行ファイル
+      playfield-arm64.exe ... Arm64 の本体実行ファイル
+      playfield-pack.exe  ... assets.arc を作成するパッケージャ
+    macos/
+      playfield.dmg       ... macOS 版アプリ (macOS 10.13 以降)
+      playfield-pack.exe  ... パッケージャ
+    wasm/
+      index.html          ... ブラウザ用 WebAssembly ファイル
+      assets.arc          ... 動作確認用のアセット
+      playfield-web.exe   ... 動作確認用のブラウザ立ち上げアプリ
+      readme.txt          ... 説明書
+    ios/                  ... iOS Xcode プロジェクト (iOS 13.0 以降)
+    android/              ... Android Studio プロジェクト (Android 10 以降)
+    unity/                ... 家庭用ゲーム機向け Unity Plugin
+    documents-japanese/   ... 日本語ドキュメント
+    documents-english/    ... 英語ドキュメント
+
+■ インストール
+
+任意のフォルダに展開してください。
+
+■ 使い方 (Windows)
+
+playfield.exe をダブルクリックして実行してください。同じフォルダにある main.pf
+スクリプトが起動します。
+
+スクリプト、画像、音声、フォントなどを１つの assets.arc パッケージファイルにま
+とめることができます。コマンドプロンプトで、次のようにまとめたいファイルを指定
+してください。
+
+ > C:\Playfield\misc\windows\playfield-pack.exe main.pf picture1.png font.ttf
+
+パッケージファイルがある場合、playfield.exe はパッケージ内のファイルを優先しま
+す。
+
+■ 使い方 (macOS)
+
+　playfield.dmg を開き、中身の Playfield アプリを適当な場所にコピーします。
+コピーしたアプリを main.pf や assets.arc のあるフォルダに入れて、アプリを起動
+することで、ゲームを実行できます。
+
+■ 使い方 (Wasm)
+
+　作成した assets.arc と index.html を Web サーバにアップロードすること
+で、ゲームを公開できます。また、試しに手元のパソコンで起動してみるには、
+playfield-web.exe を実行すれば、ブラウザでゲームが表示されます。
+
+■ 使い方 (iOS)
+
+　作成した assets.arc を Resources/ に入れてから、Xcode でプロジェクトを開きま
+す。iPhone や iPad などにアプリを転送することでゲームを起動できます。Mac 上で
+動作確認する場合、シミュレータが利用できます。
+
+■ 使い方 (Android)
+
+  - すべてのアセットを misc/android/app/src/main/assets にコピーします。
+  - misc/android フォルダを Android Studio で開きます
+  - アプリをビルドします
+  - パソコン上で動作確認したり、USB 接続した Android 端末で実行したりできます
+
+■ 使い方 (Unity)
+
+　すべてのアセットを StreamingAssets フォルダにコピーしてから、unity フォルダ
+を Unity Editor で開きます。
+
+■ 免責
+
+本ソフトの使用により生じたいかなる損害に対しても、作者は一切責任を負いません。
+
+■ 利用/配布/改変
+
+・zlibライセンスに従います
+・営利利用を含めて無償で利用できます
+・現状のまま提供されサポートや修正の保証はありません
+・利用した結果どんな問題が起きても責任を取りません
+
+■ その他
+
+・感想等メールで一言いただけるとうれしいです！
+
+■ 改版履歴
+
+2025-09-29 Ver.0.8.6 公開
+2025-09-24 Ver.0.8.5 公開
+2025-09-22 Ver.0.8.4 公開
+2025-09-12 Ver.0.8.0 公開
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Playfield Script の文法
+=======================
+
+`Playfield` はスクリプト言語として `Noct` を使用します。
+
+## 代入
+
+Noct の変数は動的型付けであり、明示的な宣言は不要です。
+代入演算子（`=`）を使って、変数を作成し値を代入します。
+
+以下のように、Noct では整数、浮動小数点数、文字列など、さまざまなデータ型をサポートしています。
+
+また、変数は実行中に異なる型へ再代入することが可能です。
+
+```
+func main() {
+    var a = 123;
+    print(a);
+
+    var b = 1.0;
+    print(b);
+
+    var c = "string";
+    print(c);
+}
+```
+
+## グローバル変数
+
+グローバル変数は関数の中で宣言します。関数の外に書くことはできません。
+
+```
+func main() {
+    globalVariable = 123;
+    print(globalVariable);
+}
+```
+
+## ローカル変数
+
+`var` キーワードを使うと、変数をローカル変数として宣言できます。
+`var` を付けずに代入すると、その変数はグローバル変数として作成されます。
+
+```
+func main() {
+    var a = 123;
+    print(a);
+}
+```
+
+## 配列
+
+配列はインデックスでアクセスできる、順序付きの値のコレクションです。
+配列は `for` ループ構文を使った反復処理をサポートしており、各要素を直接順番に処理できます。
+
+```
+func main() {
+    var array = [0, 1, 2];
+    for (value in array) {
+        print(value);
+    }
+}
+```
+
+Noct は動的型付けシステムであるため、配列は異なる型の値を同時に保持できます。
+
+```
+func main() {
+    var array = [123, "string"];
+}
+```
+
+Noct には配列の末尾に要素を追加するための組み込み関数 `push()` が用意されています。
+また、末尾の要素は `pop()` で削除できます。
+
+```
+func main() {
+    var array = []
+    array->push(0);
+    array->push(1);
+    array->push(2);
+
+    var last = array->pop();
+}
+```
+
+## 辞書
+
+辞書はキーと値のペアを格納するデータ構造で、他の言語におけるハッシュマップやオブジェクトに似ています。
+中括弧 `{}` を使って定義し、キーと値のペアはコロンで区切ります。
+
+辞書は反復処理をサポートしており、キーと値の両方に同時にアクセスできます。
+
+```
+func main() {
+    var dict = {key1: "value1", key2: "value2"};
+    for (key, value in dict) {
+        print("key = " + key);
+        print("value = " + value);
+    }
+
+}
+```
+
+辞書はシングルステップ方式で構築することもできます。
+代入の方法としては、`[]` を使う配列スタイルと、`.` を使うオブジェクトスタイルの両方が利用できます。
+
+```
+func main() {
+    var dict = {};
+    dict["key1"] = "value1";
+    dict.key2 = "value2";
+}
+```
+
+ビルトイン関数 `remove()` はキーを削除できます。
+
+```
+func main() {
+    var dict = {key1: "value1", key2: "value2"};
+    remove(dict, "key1");
+}
+```
+
+## for ループ
+
+`for` ループ構文は、範囲・配列・辞書といったシーケンスを反復処理するための簡潔な記法を提供します。
+
+範囲構文（`..` 演算子を使用）は、開始値から終了値のひとつ前までの値を生成するイテレータを作成します。
+
+```
+func main() {
+    for (i in 0..10) {
+        print(i);
+    }
+}
+```
+
+`for` ループは配列やその他のコレクション型を直接反復処理することもできます。
+
+配列は `for-value` 構文 を使って順に処理できます。
+
+```
+func main() {
+    array = [0, 1, 2];
+    for (value in array) {
+        print(value);
+    }
+}
+```
+
+辞書は `for-key-value` 構文 を使って反復処理できます。
+
+```
+func main() {
+    var dict = {key1: "value1", key2: "value2"};
+    for (key, value in dict) {
+        print(key + "=" + value);
+    }
+}
+```
+
+## while ループ
+
+`while` ループは、指定した条件が真（true）である限り処理を繰り返す、古典的な反復構文です。
+コレクションの反復処理を目的とした `for` ループとは異なり、`while` ループはより柔軟で、事前に反復回数がわからないアルゴリズムを実装するときなどに利用できます。
+
+以下の例では、0 から 9 までカウントアップする基本的なカウンターの実装を示しています。
+
+```
+func main() {
+    var i = 0;
+    while (i < 10) {
+        print(i);
+        i = i + 1;
+    }
+}
+```
+
+## if / else ブロック
+
+条件式を評価してブロックを条件付きで実行することができます。
+`if-else` 構文はおなじみの書式で、条件が順に評価されていきます。
+
+```
+func main() {
+    var a = readint();
+    if (a == 0) {
+        print("0");
+    } else if (a == 1) {
+        print("1");
+    } else {
+        print("other");
+    }
+}
+```
+
+## ラムダ関数
+
+Noct では、関数は第一級オブジェクトとして扱われます。
+匿名関数（lambda 式とも呼ばれる）を使うことで、名前を付けずに関数を作成できます。
+
+```
+func main() {
+    var f = (a, b) => { return a + b; }
+    print(f(1, 2));
+}
+```
+
+ラムダ関数は、コンパイル時に単純に名前付き関数へ変換されます。
+そのため、外側の関数で宣言された変数をキャプチャすることはできません。
+
+## インクリメント / デクリメント (+=, -=, ++, --)
+
+```
+func main() {
+    var a = 123;
+    a += 321;
+    a++;
+
+    var b = 123;
+    b -= 321;
+    b--;
+}
+```
+
+`++` と `--` は、単独の文（`a++;`, `b--;`）としてのみサポートされています。
+式の中で使用することは禁止されており、これは複雑な副作用を避けるための仕様です。
+
+## オブジェクト指向
+
+Noct のオブジェクト指向モデルは、プロトタイプベース OOP の軽量なバリエーションです。
+
+- クラスは単なる辞書のテンプレートです
+- 継承やインスタンス化は、辞書の複製とマージによって実現されます
+- プロトタイプチェーンは存在せず、クラスを変更しても既存のインスタンスには影響しません
+
+辞書は第一級オブジェクトとして扱われ、Dictionary-based OOP（辞書ベースOOP）と呼ばれます。
+
+```
+func main() {
+    // 基底クラスの定義 (クラスの実体はただの辞書です)
+    Animal = class {
+        name: "Animal",
+        cry: (this) => {
+        }
+    };
+
+    // サブクラスの定義 (辞書のマージにすぎません)
+    Cat = extend Animal {
+        name: "Cat",
+        voice: "meow",
+        cry: (this) => {
+            print(this.name + " cries like " + this.voice);
+        }
+    };
+
+    // インスタンス化 (これも辞書のマージです)
+    var myCat = new Cat {
+        voice: "neee"
+    };
+
+    // this渡し呼び出しには -> () 構文を使います (myCat.cry(myCat) と等価です)
+    myCat->cry();
+}
+```
+
+## 組み込み関数
+
+### int()
+
+```
+var i = int(1.23);
+```
+
+### float()
+
+```
+var f = float(123);
+```
+
+### newArray()
+
+```
+var array = newArray(10);
+```
+
+### push()
+
+```
+var array = [1, 2, 3];
+array->push(4);
+```
+
+### pop()
+
+```
+var array = [1, 2, 3];
+var last = array->pop();
+```
+
+### resize()
+
+```
+var array = [1, 2, 3];
+array->resize(2);
+```
+
+### substring()
+
+```
+var s1 = "ABCDEFG";
+var s2 = s1.substring(1, -1); // from the char 1, to the end "BCDEFG"
+}
+```
+
+### charAt()
+
+```
+var s = "ABC";
+for (i in 0 .. s.length) {
+   var c = s->charAt(i);
+   print(c);
+}
+```
+
+### sin(), cos(), tan()
+
+```
+var s = sin(x);
+var c = cos(x);
+var t = tan(x);
+```
+
+### abs()
+
+```
+var a = abs(x);
+```
+
+### random()
+
+```
+var r = random(); // 0 .. 1.0
+```
+
+### fast_gc(), full_gc(), compact_gc()
+
+```
+// Do young GC.
+fast_gc();
+
+// Do young + old GC.
+full_gc();
+
+// Do young + old + compact GC.
+compact_gc();
+```
+
+### unset()
+
+```
+var dic = {key1: "ABC"};
+dic->unset("key1");
+```
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Playfield Script API
+====================
+
+すべての API 関数は 1 つのパラメータを取ります。
+そのパラメータは辞書でなければならず、引数はキーと値のペアとして格納されます。
+
+## 骨組み
+
+```
+func setup() {
+    return {
+        width:  1920,
+        height: 1080,
+        title:  "My Game"
+    };
+}
+
+func start() {
+    playerTex = Engine.loadTexture({
+                    file: "player.png"
+                });
+}
+
+func frame() {
+    Engine.draw({
+        texture: playerTex,
+        x:       Engine.mousePosX,
+        y:       Engine.mousePosY
+    });
+}
+```
+
+## デバッグ
+
+### debug()
+
+この API は文字列を表示するか、オブジェクトをダンプします。
+この API だけは、辞書でない引数を取ります。
+
+```
+func dumpEnemies() {
+    if (Engine.isGamepadXPressed) {
+        debug("[Current emenies]");
+        debug(enemies);
+    }
+}
+```
+
+## 時間
+
+### 絶対的な時間
+
+|変数                        |説明                                       |
+|----------------------------|-------------------------------------------|
+|Engine.millisec             |起動からの時間（ミリ秒）                   |
+
+```
+func frame() {
+    var dt = (Engine.millisec - lastTime) * 0.001;
+
+    update(dt);
+    render();
+}
+```
+
+### Engine.getDate()
+
+日付を表す辞書を返します。
+
+```
+func frame() {
+    var date = Engine.getDate({});
+
+    var year  = date.year;
+    var month = date.month;
+    var day   = date.day;
+    var hour  = date.hour;
+    var min   = date.minute;
+    var sec   = date.second;
+}
+```
+
+## 入力
+
+### マウス状態
+
+これらは変数であり、関数ではありません。
+
+|変数                            |説明                                       |
+|--------------------------------|-------------------------------------------|
+|Engine.mousePosX                |マウスX座標                                |
+|Engine.mousePosY                |マウスY座標                                |
+|Engine.isMouseLeftPressed       |左マウスボタン                             |
+|Engine.isMouseRightPressed      |右マウスボタン                             |
+|Engine.isEscapeKeyPressed       |Escape キーの状態                          |
+|Engine.isReturnKeyPressed       |Return キーの状態                          |
+|Engine.isSpaceKeyPressed        |Space キーの状態                           |
+|Engine.isTabKeyPressed          |Tab キーの状態                             |
+|Engine.isBackspaceKeyPressed    |Backspace キーの状態                       |
+|Engine.isDeleteKeyPressed       |Delete キーの状態                          |
+|Engine.isHomeKeyPressed         |Home キーの状態                            |
+|Engine.isEndKeyPressed          |End キーの状態                             |
+|Engine.isPageupKeyPressed       |PageUp キーの状態                          |
+|Engine.isPagedownKeyPressed     |PageDown キーの状態                        |
+|Engine.isShiftKeyPressed        |Shift キーの状態                           |
+|Engine.isControlKeyPressed      |Control キーの状態                         |
+|Engine.isAltKeyPressed          |Alt キーの状態                             |
+|Engine.isUpKeyPressed           |Up arrow キーの状態                        |
+|Engine.isDownKeyPressed         |Down arrow キーの状態                      |
+|Engine.isRightKeyPressed        |Right arrow キーの状態                     |
+|Engine.isLeftKeyPressed         |Left arrow キーの状態                      |
+|Engine.isAKeyPressed            |'A' キーの状態                             |
+|Engine.isBKeyPressed            |'B' キーの状態                             |
+|Engine.isCKeyPressed            |'C' キーの状態                             |
+|Engine.isDKeyPressed            |'D' キーの状態                             |
+|Engine.isEKeyPressed            |'E' キーの状態                             |
+|Engine.isFKeyPressed            |'F' キーの状態                             |
+|Engine.isGKeyPressed            |'G' キーの状態                             |
+|Engine.isHKeyPressed            |'H' キーの状態                             |
+|Engine.isIKeyPressed            |'I' キーの状態                             |
+|Engine.isJKeyPressed            |'J' キーの状態                             |
+|Engine.isKKeyPressed            |'K' キーの状態                             |
+|Engine.isLKeyPressed            |'L' キーの状態                             |
+|Engine.isMKeyPressed            |'M' キーの状態                             |
+|Engine.isNKeyPressed            |'N' キーの状態                             |
+|Engine.isOKeyPressed            |'O' キーの状態                             |
+|Engine.isPKeyPressed            |'P' キーの状態                             |
+|Engine.isQKeyPressed            |'Q' キーの状態                             |
+|Engine.isRKeyPressed            |'R' キーの状態                             |
+|Engine.isSKeyPressed            |'S' キーの状態                             |
+|Engine.isTKeyPressed            |'T' キーの状態                             |
+|Engine.isUKeyPressed            |'U' キーの状態                             |
+|Engine.isVKeyPressed            |'V' キーの状態                             |
+|Engine.isWKeyPressed            |'W' キーの状態                             |
+|Engine.isXKeyPressed            |'X' キーの状態                             |
+|Engine.isYKeyPressed            |'Y' キーの状態                             |
+|Engine.isZKeyPressed            |'Z' キーの状態                             |
+|Engine.is1KeyPressed            |'1' キーの状態                             |
+|Engine.is2KeyPressed            |'2' キーの状態                             |
+|Engine.is3KeyPressed            |'3' キーの状態                             |
+|Engine.is4KeyPressed            |'4' キーの状態                             |
+|Engine.is5KeyPressed            |'5' キーの状態                             |
+|Engine.is6KeyPressed            |'6' キーの状態                             |
+|Engine.is7KeyPressed            |'7' キーの状態                             |
+|Engine.is8KeyPressed            |'8' キーの状態                             |
+|Engine.is9KeyPressed            |'9' キーの状態                             |
+|Engine.is0KeyPressed            |'0' キーの状態                             |
+|Engine.isF1KeyPressed           |F1 key state.                              |
+|Engine.isF2KeyPressed           |F2 key state.                              |
+|Engine.isF3KeyPressed           |F3 key state.                              |
+|Engine.isF4KeyPressed           |F4 key state.                              |
+|Engine.isF5KeyPressed           |F5 key state.                              |
+|Engine.isF6KeyPressed           |F6 key state.                              |
+|Engine.isF7KeyPressed           |F7 key state.                              |
+|Engine.isF8KeyPressed           |F8 key state.                              |
+|Engine.isF9KeyPressed           |F9 key state.                              |
+|Engine.isF10KeyPressed          |F10 key state.                             |
+|Engine.isF11KeyPressed          |F11 key state.                             |
+|Engine.isF12KeyPressed          |F12 key state.                             |
+|Engine.isGamepadUpPressed       |ゲームパッド上キー                         |
+|Engine.isGamepadDownPressed     |ゲームパッド下キー                         |
+|Engine.isGamepadLeftPressed     |ゲームパッド左キー                         |
+|Engine.isGamepadRightPressed    |ゲームパッド右キー                         |
+|Engine.isGamepadAPressed        |ゲームパッドボタン1                        |
+|Engine.isGamepadBPressed        |ゲームパッドボタン2                        |
+|Engine.isGamepadXPressed        |ゲームパッドボタン3                        |
+|Engine.isGamepadYPressed        |ゲームパッドボタン4                        |
+|Engine.isGamepadLPressed        |ゲームパッドボタン5                        |
+|Engine.isGamepadRPressed        |ゲームパッドボタン6                        |
+|Engine.gamepadAnalogX1          |ゲームパッドアナログ1 X (-32768, 32767)    |
+|Engine.gamepadAnalogY1          |ゲームパッドアナログ1 Y (-32768, 32767)    |
+|Engine.gamepadAnalogX2          |ゲームパッドアナログ1 X (-32768, 32767)    |
+|Engine.gamepadAnalogY2          |ゲームパッドアナログ1 Y (-32768, 32767)    |
+|Engine.gamepadAnalogL           |ゲームパッドアナログL (-32768, 32767)      |
+|Engine.gamepadAnalogR           |ゲームパッドアナログR (-32768, 32767)      |
+
+```
+func update() {
+    if (Engine.isMouseLeftPressed) {
+        player.x = player.x + 100;
+    }
+}
+```
+
+## レンダリング
+
+### Engine.createColorTexture()
+
+この API は指定された色のテクスチャを作成して返します。
+
+|引数名              |説明                                                    |
+|--------------------|--------------------------------------------------------|
+|width               |テクスチャの幅                                          |
+|height              |テクスチャの高さ                                        |
+|r                   |色の R 値 (0-255)                                       |
+|g                   |色の G 値 (0-255)                                       |
+|b                   |色の B 値 (0-255)                                       |
+|a                   |アルファ値 (0-255)                                      |
+
+```
+func createBlockTexture() {
+    blockTex = Engine.createColorTexture({
+                   width:  16,
+                   height: 16,
+                   r:      255,
+                   g:      255,
+                   b:      255,
+                   a:      255
+               });
+}
+```
+
+### Engine.loadTexture()
+
+この API はアセットからテクスチャをロードし、テクスチャを返します。
+
+|引数名              |説明                                                    |
+|--------------------|--------------------------------------------------------|
+|file                |ロードするファイルの名前                                |
+
+```
+func loadPlayerTexture() {
+   playerTex = Engine.loadTexture({
+                   file: "player.png"
+               });
+
+   var width = playerTex.width;
+   var height = playerTex.height;
+}
+```
+
+### Engine.destroyTexture()
+
+この API はテクスチャを破棄します。
+
+|引数名              |説明                                                    |
+|--------------------|--------------------------------------------------------|
+|texture             |テクスチャ                                              |
+
+```
+func destroyPlayerTexture() {
+    Engine.loadTexture({
+        texture: playerTex
+    });
+}
+```
+
+### Engine.renderTexture()
+
+この API はテクスチャをスクリーンに描画します。
+
+|引数名              |説明                                                    |
+|--------------------|--------------------------------------------------------|
+|dstLeft             |スクリーン X 座標                                       |
+|dstTop              |スクリーン Y 座標                                       |
+|dstWidth            |スクリーンでの幅                                        |
+|dstHeight           |スクリーンでの高さ                                      |
+|texture             |テクスチャ                                              |
+|srcLeft             |テクスチャの左上 X 座標                                 |
+|srcTop              |テクスチャの左上 Y 座標                                 |
+|srcWidth            |テクスチャ矩形の幅                                      |
+|srcHeight           |テキスチャ矩形の高さ                                    |
+|alpha               |アルファ値 (0-255)                                      |
+
+```
+func renderPlayer() {
+    Engine.renderTexture({
+        dstLeft:   playerPos.x,
+        dstTop:    playerPos.y,
+        dstWidth:  playerTex.width,
+	dstHeight: playerTex.height,
+        texture:   playerTex,
+        srcLeft:   0,
+        srcTop:    0,
+        srcWidth:  playerTex.width,
+        srcHeight: playerTex.height,
+        alpha:     255
+    });
+}
+```
+
+### Engine.draw()
+
+この API はテキスチャをスクリーンに描画します。
+`Engine.renderTexture()` のシンプル版です。
+
+|引数名              |説明                                                    |
+|--------------------|--------------------------------------------------------|
+|texture             |テクスチャ                                              |
+|x                   |スクリーン X 座標                                       |
+|y                   |スクリーン Y 座標                                       |
+
+```
+func renderPlayer() {
+    Engine.draw({
+        texture: playerTex,
+        x:       playerPos.x,
+        y:       playerPos.y
+    });
+}
+```
+
+### Engine.renderTexture3D()
+
+この API はテクスチャを 3D 変形してスクリーンに描画します。
+
+|引数名              |説明                                                    |
+|--------------------|--------------------------------------------------------|
+|x1                  |スクリーン座標 X1                                       |
+|y1                  |スクリーン座標 Y1                                       |
+|x2                  |スクリーン座標 X2                                       |
+|y2                  |スクリーン座標 Y2                                       |
+|x3                  |スクリーン座標 X3                                       |
+|y3                  |スクリーン座標 Y3                                       |
+|x4                  |スクリーン座標 X4                                       |
+|y4                  |スクリーン座標 Y4                                       |
+|texture             |テクスチャ                                              |
+|srcLeft             |テクスチャ左上 X 座標                                   |
+|srcTop              |テクスチャ左上 Y 座標                                   |
+|srcWidth            |テクスチャ矩形の幅                                      |
+|srcHeight           |テクスチャ矩形の高さ                                    |
+|alpha               |アルファ値 (0-255)                                      |
+
+```
+func renderPlayer() {
+    Engine.renderTexture({
+        dstLeft:   playerPos.x,
+        dstTop:    playerPos.y,
+        dstWidth:  playerTex.width,
+	dstHeight: playerTex.height,
+        texture:   playerTex,
+        srcLeft:   0,
+        srcTop:    0,
+        srcWidth:  playerTex.width,
+        srcHeight: playerTex.height,
+        alpha:     255
+    });
+}
+```
+
+### Engine.loadFont()
+
+この API はフォントファイルをフォントスロットにロードします。
+
+|Argument Name       |Description                                             |
+|--------------------|--------------------------------------------------------|
+|slot                |フォントスロット番号 (0-3)                              |
+|file                |ロードするファイルの名前                                |
+
+```
+func loadNotoSansFont() {
+    Engine.loadFont({ slot: 0, file: "NotoSans.ttf" });
+}
+```
+
+### Engine.createTextTexture()
+
+この API はテキストを描画したテクスチャを描画します。
+     	 	 
+|引数名              |説明                                                    |
+|--------------------|--------------------------------------------------------|
+|slot                |フォントスロット番号 (0-3)                              |
+|text                |描画するテキスト                                        |
+|size                |フォントサイズ                                          |
+|r                   |色の R 値 (0-255)                                       |
+|g                   |色の G 値 (0-255)                                       |
+|b                   |色の B 値 (0-255)                                       |
+|a                   |アルファ値 (0-255)                                      |
+
+```
+func createScoreTexture() {
+    scoreTex = Engine.createTextTexture({
+                   slot: 0,
+                   text: "Score: " + score,
+                   size: 32,
+                   r:    255,
+                   g:    255,
+                   b:    255,
+                   a:    255
+               });
+}
+```
+
+## サウンド
+
+### Engine.playSound()
+
+この API はサウンドをサウンドトラック上で再生します。
+
+|引数名              |説明                                                    |
+|--------------------|--------------------------------------------------------|
+|stream              |トラック番号 (0-3)                                      |
+|file                |再生するファイルの名前                                  |
+
+```
+func playJumpSound() {
+    Engine.playSound({ stream: 0, file: "jump.ogg" });
+}
+```
+
+### Engine.stopSound()
+
+この API はサウンドトラック上のサウンド再生を停止します。
+
+|引数名              |説明                                                    |
+|--------------------|--------------------------------------------------------|
+|stream              |Track index. (0-3)                                      |
+
+```
+func playJumpSound() {
+    Engine.stopSound({ stream: 0 });
+}
+```
+
+### Engine.setSoundVolume()
+
+この API はサウンドトラックのボリュームを設定します。
+
+|引数名              |説明                                                    |
+|--------------------|--------------------------------------------------------|
+|stream              |トラック番号 (0-3, -1 ならマスター)                     |
+|volume              |ボリューム値 (0-1.0)                                    |
+
+```
+func playJumpSound() {
+    Engine.setSoundVolume({
+        stream: 0,
+        volume: 1.0
+    });
+}
+```
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+■ ライセンス全文
+
+Playfield
+
+(C) 2025 Awe Morris
+
+This software is provided 'as-is', without any express or implied
+warranty.  In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required.
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
+
+---
+
+zlib
+
+Copyright (C) 1995-2017 Jean-loup Gailly and Mark Adler
+
+This software is provided 'as-is', without any express or implied
+warranty.  In no event will the authors be held liable for any damages
+arising from the use of this software.
+
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it
+freely, subject to the following restrictions:
+
+1. The origin of this software must not be misrepresented; you must not
+   claim that you wrote the original software. If you use this software
+   in a product, an acknowledgment in the product documentation would be
+   appreciated but is not required.
+2. Altered source versions must be plainly marked as such, and must not be
+   misrepresented as being the original software.
+3. This notice may not be removed or altered from any source distribution.
+
+---
+
+libpng
+
+Copyright (c) 1998-2019 Glenn Randers-Pehrson
+Portions copyright (c) 1996 Guy Eric Schalnat, Group 42, Inc.
+
+This copy of the libpng reference library is supplied for research and 
+personal use only.  Commercial use is permitted only if you make 
+arrangements with the copyright holder.
+
+COPYRIGHT NOTICE, DISCLAIMER, and LICENSE:
+
+Copyright (c) 1995-2019 The PNG Reference Library Authors.
+Copyright (c) 1996-1997 Andreas Dilger.
+Copyright (c) 1995-1996 Guy Eric Schalnat, Group 42, Inc.
+
+The authors and distributors specifically disclaim any warranties, 
+including, but not limited to, the implied warranties of 
+merchantability and fitness for a particular purpose.  
+The library is provided "AS IS", and the authors and distributors 
+have no obligation to provide maintenance, support, updates, 
+enhancements, or modifications.
+
+Permission is hereby granted to use, copy, modify, and distribute 
+this source code, or portions hereof, for any purpose, without fee, 
+subject to the following restrictions:
+
+1. The origin of this source code must not be misrepresented.
+2. Altered versions must be plainly marked as such and must not be 
+   misrepresented as being the original source.
+3. This Copyright notice may not be removed or altered from any 
+   source or altered source distribution.
+
+---
+
+libogg
+
+Copyright (c) 1994-2023 Xiph.Org Foundation
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the Xiph.Org Foundation nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE FOUNDATION
+OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+---
+
+libvorbis
+
+Copyright (c) 2002-2023 Xiph.Org Foundation
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+   notice, this list of conditions and the following disclaimer in the
+   documentation and/or other materials provided with the distribution.
+
+3. Neither the name of the Xiph.Org Foundation nor the names of its
+   contributors may be used to endorse or promote products derived from
+   this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE FOUNDATION
+OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+---
+
+IGJ JPEG 9
+
+This software is copyright (C) 1991-2020, Thomas G. Lane, Guido Vollbeding.
+
+This software is based in part on the work of the Independent JPEG Group.
+
+Permission is hereby granted to use, copy, modify, and distribute this
+software (or portions thereof) for any purpose, without fee, subject to these
+conditions:
+
+(1) If any part of the source code for this software is distributed, then this
+README file must be included, with this copyright and no-warranty notice
+unaltered; and any additions, deletions, or changes to the original files
+must be clearly indicated in accompanying documentation.
+
+(2) If only executable code is distributed, then the accompanying
+documentation must state that "this software is based in part on the work of
+the Independent JPEG Group".
+
+(3) Permission for use of this software is granted only if the user accepts
+full responsibility for any undesirable consequences; the authors accept
+NO LIABILITY for damages of any kind.
+
+These conditions apply to any software derived from or based on the IJG code,
+not just to the unmodified library. If you use our work, you ought to
+acknowledge us.
+
+NOTE: The Independent JPEG Group's name should not be used in advertising or
+otherwise to promote products derived from this software without prior written
+permission.
+
+---
+
+libwebp
+
+Copyright (c) 2010, Google Inc. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+  * Redistributions of source code must retain the above copyright
+    notice, this list of conditions and the following disclaimer.
+
+  * Redistributions in binary form must reproduce the above
+    copyright notice, this list of conditions and the following
+    disclaimer in the documentation and/or other materials provided
+    with the distribution.
+
+  * Neither the name of Google nor the names of its contributors
+    may be used to endorse or promote products derived from this
+    software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
+OF THE POSSIBILITY OF SUCH DAMAGE.
+
+---
+
+brotli
+
+Copyright (c) 2009, Google Inc.
+All rights reserved.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights  
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell  
+copies of the Software, and to permit persons to whom the Software is  
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in  
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR  
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,  
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE  
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER  
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,  
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN  
+THE SOFTWARE.
+
+---
+
+bzip2
+
+This program, "bzip2", the associated library "libbzip2", and all
+documentation, are copyright  1996-2019 Julian R Seward.  
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+   notice, this list of conditions, and the following disclaimer.
+
+2. The origin of this software must not be misrepresented; you must
+   not claim that you wrote the original software. If you use this
+   software in a product, an acknowledgment in the product
+   documentation would be appreciated but is not required.
+
+3. Altered source versions must be plainly marked as such, and must
+   not be misrepresented as being the original software.
+
+4. The name of the author may not be used to endorse or promote
+   products derived from this software without specific prior written
+   permission.
+
+THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
+IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE
+GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+---
+
+FreeType2
+
+                    The FreeType Project LICENSE
+                    ----------------------------
+
+                            2006-Jan-27
+
+                    Copyright 1996-2023
+              by David Turner, Robert Wilhelm, and Werner Lemberg
+
+
+Introduction
+============
+
+The FreeType Project is distributed in several archive packages;
+some of them may contain, in addition to the FreeType font engine,
+various tools and contributions which rely on, or relate to, the
+FreeType Project.
+
+This license applies to all files found in such packages, and which
+do not fall under their own explicit license.  The license affects
+thus the FreeType font engine, the test programs, documentation and
+makefiles, at the very least.
+
+
+Legal Terms
+===========
+
+0. Definitions
+--------------
+
+Throughout this license, the terms `package', `FreeType Project',
+and `FreeType archive' refer to the set of files originally
+distributed by the authors (David Turner, Robert Wilhelm, and
+Werner Lemberg) as the `FreeType Project', be they named as alpha,
+beta or final release.
+
+`You' refers to the licensee, or person using the project, where
+`using' is a generic term including compiling the project's source
+code as well as linking it to form a `program' or `executable'.
+This program is referred to as `a program using the FreeType
+engine'.
+
+This license applies to all files distributed in the original
+FreeType Project, including all source code, binaries and
+documentation, unless otherwise stated in the file itself.
+
+
+1. No Warranty
+--------------
+
+THE FREETYPE PROJECT IS PROVIDED `AS IS' WITHOUT WARRANTY OF ANY
+KIND, EITHER EXPRESS OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+
+
+2. Redistribution
+-----------------
+
+This license grants a worldwide, royalty-free, perpetual and
+irrevocable right and license to use, execute, perform, compile,
+display, copy, create derivative works of, distribute and sublicense
+the FreeType Project (in both source and object code forms) and
+derivative works thereof for any purpose; and to authorize others
+to exercise some or all of the rights granted herein, subject to the
+following conditions:
+
+  o Redistribution of source code must retain this license file
+    (`FTL.TXT') unaltered; any additions, deletions or changes to
+    the original files must be clearly indicated in accompanying
+    documentation.  The copyright notices of the unaltered, original
+    files must be preserved in all copies of source files.
+
+  o Redistribution in binary form must provide a disclaimer that
+    states that the software is based in part on the work of the
+    FreeType Team, in the distribution documentation.  We also
+    encourage you to put an URL to the FreeType web page in your
+    documentation, though this isn't mandatory.
+
+
+3. Advertising
+--------------
+
+Neither the FreeType authors and contributors nor you shall use the
+name of the other in any publicity or advertising without prior
+written consent.
+
+We suggest, but do not require, that you acknowledge the use of
+FreeType in your documentation, for example by saying
+
+   "Portions of this software are copyright © 2019 The FreeType
+    Project (www.freetype.org).  All rights reserved."
+
+Please replace the year with the value from the copyright notice
+found in each file.
+
+Legal Terms -- Final Words
+==========================
+
+The FreeType Project is copyright (C) 1996-2023 by David Turner,
+Robert Wilhelm, and Werner Lemberg.  All rights reserved.

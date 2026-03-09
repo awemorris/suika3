@@ -1,0 +1,43 @@
+func main() {
+    var dict = {
+        var001: 0,
+        var002: 1,
+        var003: 2,
+        var004: 3,
+        var005: 4,
+        var006: 5,
+        var007: 6,
+        var008: 7,
+        var009: 8,
+        var010: 9,
+        var011: 10,
+        var012: 11,
+        var013: 12,
+        var014: 13,
+        var015: 14,
+        var016: 15,
+        var017: 16
+    };
+
+    fast_gc();
+
+    dict.var018 = 17;
+    dict.var019 = 18;
+    dict.var020 = 19;
+    dict.var021 = 20;
+    dict.var022 = 21;
+    dict.var023 = 22;
+    dict.var024 = 23;
+    dict.var025 = 24;
+    dict.var026 = 25;
+    dict.var027 = 26;
+    dict.var028 = 27;
+    dict.var029 = 28;
+    dict.var030 = 29;
+    dict.var031 = 30;
+    dict.var032 = 31;
+    dict.var033 = 32;
+
+    for (k, v in dict)
+        print(k + "=" + v);
+}

@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Playfield</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1, initial-scale=1">
+  <style>
+    html, body {
+        padding 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background: #202020;
+        color: #ffffff;
+        position: fixed;
+    }
+    /* A horizontal 2-column layout */
+    div.grid-col-holder {
+        display: grid;
+        grid-template-rows: 100%;
+        grid-template-columns: auto min(300px, 20%);
+        width: 100%;
+        height: 100%;
+    }
+    div.grid-col1 {
+        grid-row: 1;
+        grid-column: 1;
+        width: 100%;
+        height: 100%;
+    }
+    div.grid-col2 {
+        grid-row: 1;
+        grid-column: 2;
+        width: 100%;
+        height: 100%;
+    }
+    /* A vertical 3-row layout */
+    div.grid-row-holder {
+        display: grid;
+        grid-template-rows: 40px calc(100svh - 40% - 40px) 40%;
+        grid-template-columns: 100%;
+        width: 100%;
+        height: 100%;
+    }
+    div.grid-row1 {
+        grid-row: 1;
+        grid-column: 1;
+        width: 100%;
+        height: 100%;
+    }
+    div.grid-row2 {
+        grid-row: 2;
+        grid-column: 1;
+        width: 100%;
+        height: 100%;
+    }
+    div.grid-row3 {
+        grid-row: 3;
+        grid-column: 1;
+        width: 100%;
+        height: 100%;
+    }
+    /* The control buttons */
+    button.topButton {
+        font-family: sans-serif;
+        width: 100px;
+        height: 40px;
+    }
+    /* The Canvas holder */
+    div.canvasHolder {
+        border: 0px;
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 80%;
+    }
+    /* The Canvas */
+    canvas.emscripten {
+        padding-right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+        display: table-cell;
+        vertical-align: middle;
+        background-color: black;
+        outline: none;
+        max-width: 100svw;
+        max-height: 80svh;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+    }
+    /* The Console holder */
+    div.consoleHolder {
+        border: 0px;
+        margin: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 20%;
+    }
+    /* The Console */
+    console.emscripten {
+        padding-right: 0;
+        margin-left: 0;
+        margin-right: 0;
+        display: block;
+        display: table-cell;
+        vertical-align: top;
+        align: left;
+        background-color: white;
+        outline: none;
+        max-width: 100svw;
+        max-height: 20svh;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/ace-builds@1.31.1/src-min-noconflict/ace.min.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/ace-builds@1.31.1/css/ace.min.css" rel="stylesheet">
+</head>
+<body style="padding: 0; margin: 0;">
+
+  <button id="btnOpenProject" class="topButton">Open Folder</button>
+
+  <div id="canvasHolder" class="canvasHolder">
+    <video id="video" style="width: 100%; display: none;"></video>  
+    <canvas id="canvas" class="emscripten" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+  </div>
+
+  <div id="consoleHolder" class="consoleHolder">
+    <textarea id="console" cols="100" rows="10" class="emscripten">Console</pre>
+  </div>
+
+  <!-- Code for Emscripten Base -->
+  <script type='text/javascript'>
+    var Module = {
+      preRun: [],
+      postRun: [],
+      print: (function(text) {
+          var element = document.getElementById('console');
+          return function(text) {
+            element.textContent += text + "\n";
+            element.scrollTop = element.scrollHeight;
+          };
+      })(),
+      printErr: (function(text) {
+          var element = document.getElementById('console');
+          return function(text) {
+            element.textContent += text + "\n";
+            element.scrollTop = element.scrollHeight;
+          };
+      })(),
+      canvas: (function() {
+        var canvas = document.getElementById('canvas');
+        canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+        return canvas;
+      })(),
+      totalDependencies: 0,
+      monitorRunDependencies: function(left) {
+        this.totalDependencies = Math.max(this.totalDependencies, left);
+      }
+    };
+    window.onerror = function() {
+      window.alert('Exception thrown, see JavaScript console');
+    };
+  </script>
+
+  <!-- Code for Playfield Editor -->
+  <script type="text/javascript">
+    // File System API
+    var dirHandle = null;
+
+    // btnOpenProject handler.
+    document.getElementById('btnOpenProject').onclick = async () => {
+        // Show a directory picker.
+        try {
+            dirHandle = await window.showDirectoryPicker({mode: "readwrite"});
+            if (typeof dirHandle === 'undefined') {
+                alert('Cannot open a directory.');
+                return;
+            }
+        } catch (e) {
+            alert('The operation is not allowed.');
+            return;
+        }
+
+        // Hide the button.
+        document.getElementById('btnOpenProject').style.display = 'none';
+
+        // Start running.
+        Module.ccall('onLoadProject', null, null, null);
+    };
+
+  </script>
+
+  <!-- Placeholder for Emscripten generated code-->
+  {{{ SCRIPT }}}
+
+</body>
+</html>

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en-us">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Game</title>
+  <meta name="viewport" content="width=device-width, user-scalable=no, maximum-scale=1, initial-scale=1">
+  <style>
+    html, body {
+        padding 0;
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        position: fixed;
+    }
+    .emscripten {
+        padding-right: 0;
+        margin-left: auto;
+        margin-right: auto;
+        display: block;
+    }
+    div.emscripten {
+        text-align: center;
+        color: white;
+    }
+    div.emscripten_border {
+        border: 0px;
+        margin: auto;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    canvas.emscripten {
+        border: 0px none;
+        background-color: black;
+        max-width: 100vw;
+        max-height: 100vh;
+        width: 0px;
+        height: 0px;
+        object-fit: contain;
+        display: table-cell;
+        vertical-align: middle;
+        outline: none;
+        -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+    }
+    .loader {
+        position: absolute;
+        top: calc(50% - 32px);
+        left: calc(50% - 32px);
+        width: 64px;
+        height: 64px;
+		}
+		.loader div {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        box-sizing: border-box;
+        opacity: .8;
+		}
+    .one {
+        border-top: 1px solid #8FB259;
+        animation: rotate-left 1s linear infinite;
+    }
+    .two {
+        border-right: 1px solid #CCCC52;
+        animation: rotate-right 1s linear infinite;
+    }
+    .three {
+        border-bottom: 1px solid #FFD933;
+        animation: rotate-right 1s linear infinite;
+    }
+    .four {
+        border-left: 1px solid #FF7F00;
+        animation: rotate-right 1s linear infinite;
+    }
+    @keyframes rotate-left {
+        0% {
+            transform: rotate(360deg);
+        }
+        100% {
+            transform: rotate(0deg);
+        }
+    }
+    @keyframes rotate-right {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+	</style>
+</head>
+<body style="padding: 0; margin: 0;">
+
+  <!-- Loader Anime -->
+  <div class="loader" id="loader">
+    <div class="one"></div>
+    <div class="two"></div>
+    <div class="three"></div>
+    <div class="four"></div>
+  </div>
+
+  <!-- Main Screen -->
+  <div class="emscripten_border" id="canvas_holder">
+    <video id="video" style="width: 100%; display: none;"></video>  
+    <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()" tabindex=-1></canvas>
+  </div>
+
+  <!-- Utility Script -->
+  <script type='text/javascript'>
+    var Module = {
+        preRun: [],
+        postRun: [],
+        print: function(text) {
+            console.log(text);
+        },
+        printErr: function(text) {
+            console.error(text);
+        },
+        canvas: (function() {
+            var canvas = document.getElementById('canvas');
+            canvas.addEventListener("webglcontextlost", function(e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+            return canvas;
+        })(),
+        setStatus: function(text) {
+            if (text == "Running...") {
+                var loaderElement = document.getElementById('loader');
+                loaderElement.hidden = true;
+                loaderElement.style.position = '';
+            }
+        },
+        totalDependencies: 0,
+        monitorRunDependencies: function(left) { }
+    };
+    window.onerror = function() {
+        alert('Error: See JavaScript console (Press F12 on the address bar)');
+    };
+  </script>
+  {{{ SCRIPT }}}
+</body>
+</html>

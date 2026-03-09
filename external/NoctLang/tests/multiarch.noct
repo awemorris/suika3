@@ -1,0 +1,129 @@
+//
+// Unit Test for JIT Porting
+//
+
+func main() {
+    // Define an architecture list.
+    var arch_list = [
+        {name: "i386",    toolchain: "qemu-i386-toolchain.cmake",    qemu: "qemu-i386-static"},
+        {name: "x86_64",  toolchain: "qemu-x86_64-toolchain.cmake",  qemu: "qemu-x86_64-static"},
+        {name: "arm32",   toolchain: "qemu-arm32-toolchain.cmake",   qemu: "qemu-armhf-static"},
+        {name: "arm64",   toolchain: "qemu-arm64-toolchain.cmake",   qemu: "qemu-aarch64-static"},
+        {name: "riscv32", toolchain: "qemu-riscv32-toolchain.cmake", qemu: "qemu-riscv32-static"},
+        {name: "riscv64", toolchain: "qemu-riscv64-toolchain.cmake", qemu: "qemu-riscv64-static"},
+        {name: "ppc32",   toolchain: "qemu-ppc32-toolchain.cmake",   qemu: "qemu-ppc-static"},
+        {name: "ppc64",   toolchain: "qemu-ppc64-toolchain.cmake",   qemu: "qemu-ppc64el-static"},
+        {name: "mips32",  toolchain: "qemu-mips32-toolchain.cmake",  qemu: "qemu-mips-static"},
+        {name: "mips64",  toolchain: "qemu-mips64-toolchain.cmake",  qemu: "qemu-mips64-static"}
+    ];
+
+    // Run arch tests.
+    for (arch in arch_list) {
+        if (arch_test(arch.name, arch.toolchain, arch.qemu) == 0) {
+	    break;
+	}
+    }
+
+    return 0;
+}
+
+func arch_test(name, toolchain, qemu) {
+    // Print a header.
+    print("[" + name + "]");
+
+    // Build a binary for a specified architecture.
+    if (System.shell("cd .. && " +
+                     "cmake -B build-" + name + " .  -DCMAKE_TOOLCHAIN_FILE=cmake/" + toolchain + " && " +
+                     "cmake --build build-" + name + " --parallel") != 0) {
+        print("Build failed.");
+        return 0;
+    }
+
+    // Copy a binary.
+    if (System.shell("cp ../build-" + name + "/noct ./noct-arch") != 0) {
+        print("Copy failed.");
+        return 0;
+    }
+
+    // Testcase list.
+    testcase = [
+        "syntax/01-assign.noct",
+        "syntax/02-call.noct",
+        "syntax/03-string.noct",
+        "syntax/04-array.noct",
+        "syntax/05-dictionary.noct",
+        "syntax/06-for.noct",
+        "syntax/07-lambda.noct",
+        "syntax/08-double-loop.noct",
+        "syntax/09-call-in-loop.noct",
+        "syntax/10-if-elif-else.noct",
+        "syntax/11-if-cond.noct",
+        "syntax/12-elif-chain.noct",
+        "syntax/13-call-args.noct",
+        "syntax/14-ret-val.noct",
+        "syntax/15-while.noct",
+        "syntax/16-unary.noct",
+        "syntax/17-return.noct",
+        "syntax/18-break.noct",
+        "syntax/19-continue.noct",
+        "syntax/20-return-dict.noct",
+        "syntax/21-global-dict-key.noct",
+        "syntax/22-large-dict.noct",
+        "syntax/23-array-resize.noct",
+        "syntax/24-intrin.noct",
+        "syntax/25-new.noct",
+        "syntax/26-empty-class.noct",
+        "syntax/27-plusminusassign.noct",
+        "syntax/28-plusplusminusminus.noct",
+        "syntax/29-charat.noct",
+        "syntax/30-hex.noct",
+        "syntax/31-logical.noct",
+        "syntax/32-charat.noct",
+        "syntax/33-abs.noct",
+        "syntax/34-substring.noct",
+        "syntax/35-forv.noct",
+        "syntax/36-dict-gc.noct",
+        "syntax/37-if-if-else.noct"
+    ];
+
+    // Run tests without JIT.
+    print("Interpreter...");
+    for(file in testcase) {
+        if (!run_testcase(qemu, "--disable-jit", file)) {
+            return 0;
+	}
+    }
+
+    // Run tests with JIT.
+    print("JIT...");
+    for(file in testcase) {
+        if (!run_testcase(qemu, "--force-jit", file)) {
+	    return 0;
+	}
+    }
+
+    return 1;
+}
+
+func run_testcase(qemu, option, file) {
+    print("Running " + file + " ... ");
+
+    // Run a testcase.
+    if (System.shell(qemu + " ./noct-arch " + option + " " + file + " > out") != 0) {
+        print("Run failed.");
+        return 0;
+    }
+
+    // Compare the result and the correct answer.
+    if (System.shell("diff " + file + ".out out") != 0) {
+        print("Diff.");
+        return 0;
+    }
+	
+    // Remove a temporary file.
+    if (System.shell("rm -f out") != 0) {
+        return 0;
+    }
+
+    return 1;
+}

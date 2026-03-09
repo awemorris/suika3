@@ -1,0 +1,279 @@
+//
+// DON'T RUSH IN COMIKET
+//
+
+func setup() {
+    screenW = 640;
+    screenH = 320;
+    return {
+        width: screenW,
+        height: screenH,
+        title: "DON'T RUSH IN COMIKET",
+        fullscreen: false
+    };
+}
+
+func start() {
+    // baseline for the ground
+    groundY = screenH - 20;
+
+    // Globals
+    playerTex = null;
+    obTex = null;
+    fontReady = false;
+    scoreTex = null;
+    msgTex = null;
+
+    player = {
+        x: 120,
+        y: 0,
+        w: 48,
+        h: 48,
+        vy: 0,
+        onGround: true
+    };
+
+    obstacles = [];
+
+    // Tuning
+    gravity = 2000.0;
+    jumpVel = -700.0;
+    scrollSpeed = 380.0;
+    spawnInterval = 1.10; // seconds
+    spawnTimer = 0.0;
+
+    score = 0;
+    lastTime = 0;
+    gameOver = false;
+
+    // Load the textures.
+    playerTex = Engine.loadTexture({
+        file: "player.png"
+    });
+    obTex = Engine.loadTexture({
+        file: "obstacle.png"
+    });
+    floorTex = Engine.createColorTexture({
+        width: 1, height: 1,
+        r: 255, g: 255, b: 0, a: 255
+    });
+
+    // Load the font.
+    Engine.loadFont({
+        slot: 0,
+        file: "PixelifySans-VariableFont_wght.ttf"
+    });
+    fontReady = true;
+
+    // Place player on ground
+    player.y = groundY - player.h;
+    lastTime = Engine.millisec;
+
+    updateScoreTex();
+}
+
+func update() {
+    var now = Engine.millisec;
+    var dt = (now - lastTime) * 0.001;
+
+    // clamp to avoid huge steps
+    if (dt > 0.05)
+        dt = 0.05;
+
+    lastTime = now;
+
+    var pressed = Engine.isMouseLeftPressed ||
+                  Engine.isReturnKeyPressed ||
+                  Engine.isSpaceKeyPressed ||
+                  Engine.isGamepadAPressed;
+
+    if (gameOver) {
+        if (pressed)
+            resetGame();
+        return;
+    }
+
+    // Input: jump on mouse/tap
+    if (pressed && player.onGround) {
+        player.vy = jumpVel;
+        player.onGround = false;
+
+        Engine.playSound({ stream: 0, file: "jump.ogg" });
+    }
+
+    // Physics
+    player.vy += gravity * dt;
+    player.y  += player.vy * dt;
+
+    // Ground clamp
+    var floorY = groundY - player.h;
+    if (player.y >= floorY) {
+        player.y = floorY;
+        player.vy = 0;
+        player.onGround = true;
+    }
+
+    // Spawn obstacles
+    spawnTimer = spawnTimer + dt;
+    if (spawnTimer >= spawnInterval) {
+        spawnTimer -= spawnInterval;
+        spawnObstacle();
+    }
+
+    // Move & prune obstacles, scoring & collisions
+    var newObs = [];
+    for (ob in obstacles) {
+        ob.x = ob.x - scrollSpeed * dt;
+
+        // score when fully passed player
+        if (!ob.counted && (ob.x + ob.w) < player.x) {
+            ob.counted = true;
+            score += 1;
+            updateScoreTex();
+        }
+
+        // AABB collision
+        if (rectOverlap(player.x, player.y, player.w, player.h,
+                        ob.x, ob.y, ob.w, ob.h))
+            onGameOver();
+
+        // keep if on screen
+        if ((ob.x + ob.w) >= -64)
+            newObs->push(ob);
+    }
+    obstacles = newObs;
+}
+
+func render() {
+    // Draw ground as a long rectangle
+    drawRect(0, groundY, screenW, 8, floorTex);
+
+    // Draw obstacles
+    for (ob in obstacles) {
+        Engine.draw({
+            texture: obTex,
+            x: ob.x,
+            y: ob.y
+        });
+    }
+
+    // Draw player
+    Engine.draw({
+        texture: playerTex,
+        x:       player.x,
+        y:       player.y
+    });
+
+    if (fontReady) {
+        if (scoreTex != null)
+            Engine.draw({ texture: scoreTex, x: 12, y: 10 });
+        if (gameOver && msgTex != null)
+            Engine.draw({ texture: msgTex, x: (screenW - msgTex.width) / 2, y: 120 });
+    }
+}
+
+func resetGame() {
+    obstacles = [];
+
+    player.x = 120;
+    player.y = groundY - player.h;
+    player.vy = 0;
+    player.onGround = true;
+
+    score = 0;
+
+    spawnTimer = 0.0;
+    gameOver = false;
+
+    updateScoreTex();
+
+    if (msgTex != null) {
+        Engine.destroyTexture({ texture: msgTex });
+        msgTex = 0;
+    }
+}
+
+func onGameOver() {
+    if (gameOver)
+        return;
+
+    gameOver = true;
+
+    if (fontReady) {
+        msgTex = Engine.createTextTexture({
+            slot: 0,
+            text: "GAME OVER - click to retry",
+            size: 32,
+            r: 255,
+            g: 64,
+            b: 64,
+            a: 255
+        });
+    }
+}
+
+func spawnObstacle() {
+    // Simple single-block obstacle near ground
+    var w = 49;
+    var h = 70;  // jump over this
+    var x = screenW + 20;
+    var y = groundY - h;
+    obstacles->push({
+        x: x,
+        y: y,
+        w: w,
+        h: h,
+        counted: false
+    });
+}
+
+func drawRect(x, y, w, h, tex) {
+    Engine.renderTexture({
+        dstLeft:   x,
+        dstTop:    y,
+        dstWidth:  w,
+        dstHeight: h,
+        texture:   tex,
+        srcLeft:   0,
+        srcTop:    0,
+        srcWidth:  tex.width,
+        srcHeight: tex.height,
+        alpha:     255
+    });
+}
+
+func rectOverlap(ax, ay, aw, ah, bx, by, bw, bh) {
+    var aRight = ax + aw;
+    var bRight = bx + bw;
+    var aBottom = ay + ah;
+    var bBottom = by + bh;
+
+    if (aRight <= bx)
+        return false;
+    if (bRight <= ax)
+        return false;
+    if (aBottom <= by)
+        return false;
+    if (bBottom <= ay)
+        return false;
+
+    return true;
+}
+
+func updateScoreTex() {
+    if (!fontReady)
+        return;
+
+    if (scoreTex != null)
+        Engine.destroyTexture({ texture: scoreTex });
+
+    scoreTex = Engine.createTextTexture({
+        slot: 0,
+        text: "Score: " + score,
+        size: 28,
+        r: 255,
+        g: 255,
+        b: 255,
+        a: 255
+    });
+}

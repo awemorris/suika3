@@ -1,0 +1,94 @@
+.\" -*- mode: nroff; -*-
+.TH NOCT 1 "August 24, 2025" "Noct 0.1.0" "User Commands"
+.SH NAME
+noct \- Noct programming language CLI
+.SH SYNOPSIS
+.B noct
+[\fIfile\fR]
+.br
+.B noct
+\fB--compile\fR \fIfiles...\fR
+.br
+.B noct
+\fB--ansic\fR \fIout.c in_files...\fR
+.br
+.B noct
+\fB--elisp\fR \fIout.el in_files...\fR
+.SH DESCRIPTION
+The
+.B noct
+command is the command-line interface for the Noct programming language.
+It can directly run a program, run a REPL, compile sources into Noct bytecode,
+or transpile sources to ANSI C or Emacs Lisp.
+.PP
+If no arguments are provided,
+.B noct
+runs the REPL.
+.PP
+If no option is given and a file is provided,
+.B noct
+executes the program.
+.SH OPTIONS
+.TP
+.B --compile
+Compile one or more input source files into Noct bytecode files.
+.TP
+.B --ansic \fIout.c in_files...\fR
+Transpile the specified input source files into a single ANSI C source file
+\fIout.c\fR. The generated C file can be compiled with the Noct runtime.
+.TP
+.B --elisp \fIout.el in_files...\fR
+Transpile the specified input source files into a single Emacs Lisp file
+\fIout.el\fR. The resulting file can be loaded into Emacs to run the program
+using Noct's Emacs integration (if available).
+.SH OPERANDS
+.TP
+.I file
+Path to a Noct source file to execute. When present without other options,
+.B noct
+runs the program.
+.TP
+.I files
+One or more input source files.
+.SH EXIT STATUS
+.B noct
+exits 0 on success, and >0 if an error occurs (syntax error, I/O failure,
+code generation error, or runtime failure).
+.SH EXAMPLES
+Run REPL:
+.PP
+.nf
+$ noct
+.fi
+.PP
+Run a program:
+.PP
+.nf
+$ noct hello.noct
+.fi
+.PP
+Compile multiple sources to bytecode:
+.PP
+.nf
+$ noct --compile lib.noct main.noct
+.fi
+.PP
+Transpile to ANSI C:
+.PP
+.nf
+$ noct --ansic aot_source.c main.noct lib.noct
+.fi
+.PP
+Generate a single Emacs Lisp file:
+.PP
+.nf
+$ noct --elisp app.el main.noct lib.noct
+.fi
+.SH VERSION
+Noct Programming Language, version 0.1.0
+.SH AUTHORS
+Awe Morris and the Noct contributors
+.SH BUGS
+Report issues at <awe@noctvm.io>.
+.PP
+Behavior and options are subject to change while Noct is pre-1.0.

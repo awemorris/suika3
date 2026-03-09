@@ -1,0 +1,8 @@
+func main() {
+    var a = 0;
+    if (a == 0) {
+        return 123;
+    }
+    a = 1;
+    return 321;
+}

@@ -1,0 +1,16 @@
+func main() {
+    bullets = [];
+    bullets->push({ x: 100, y: 100, vy: -400 });
+    fast_gc();
+    foo();
+}
+
+func foo() {
+    bullets->push({ x: 100, y: 200, vy: -400 });
+
+    print("bullets.length = " + bullets.length);
+    var aliveBullets = [];
+    for (b in bullets) {
+        print(b);
+    }
+}

@@ -1,0 +1,6 @@
+func main() {
+    var text = "abcdefg";
+    for (i in 0 .. text.length) {
+        print(text->charAt(i));
+    }
+}
