@@ -863,6 +863,28 @@ ensuring a solid foundation for the upcoming QA process.
 
 ---
 
+## Adoption Status
+
+We aim to create a new market for "Mobile Visual Novels" and have not
+yet established a track record.
+
+If you are interested in helping shape this new market as an **Early
+Adopter**, we warmly invite you to join our community.
+
+If you prefer to wait until the project has established a track
+record, you are very welcome to revisit the project in a few years.
+
+```
+                             ---------------
+                   ------------------------------------
+             -------------------------------------------------
+-------------------------------------------------------------------------
+ Innovators | Early Adoptors | Early Majority | Late Majority | Laggards 
+    2.5%          13.5%              34%             34%          16%
+```
+
+---
+
 ## License
 
 Suika3 is
