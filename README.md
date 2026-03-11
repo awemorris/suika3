@@ -75,28 +75,26 @@ Currently we are working very hard to complete the release.
 
 * Remaining Tasks
     * ✅ API Freeze (March 7, 2026)
-    * GUI Animation Implementation (March 10, 2026)
-    * Code Freeze (March 15, 2026)
+    * ✅ GUI Animation Implementation (March 10, 2026)
+    * ✅ Code Freeze (March 12, 2026)
     * Sample Game Creation (March 30, 2026)
+    * Documentation (March 15 - June 30, Simultaneous with Quality Stabilization)
+        * ✅ Website
+        * ✅ `SuikaScript Syntax`
+        * ✅ `SuikaScript API`
+        * ✅ `NovelML Tags`
+        * ✅ `Build Instructions`
+        * `NovelML Syntax`
+        * `Getting Started`
+        * `Plugin Development`
+        * `System Requirement Specification`
+        * `System Design Specification`
 
-* Quality Stabilization Period (March 30 - May 30, 2026)
+* Quality Stabilization Period (March 30 - June 30, 2026)
     * Milestone: `Suika3 26.07.0 RC1` (March 30, 2026)
     * Milestone: `Suika3 26.07.0 RC2` (April 30, 2026)
     * Milestone: `Suika3 26.07.0 RC3` (May 30, 2026)
     * Milestone: `Suika3 26.07.0 RC4/GM` (June 30, 2026)
-
-* Documentation (Simultaneous with Quality Stabilization)
-    * `C API`
-    * ✅ `SuikaScript Syntax`
-    * ✅ `SuikaScript API`
-    * `NovelML Syntax`
-    * ✅ `NovelML Tags`
-    * `Getting Started`
-    * `Plugin Development`
-    * ✅ `Build Instructions`
-    * `System Requirement Specification`
-    * `System Design Specification`
-    * ✅ Website
 
 * `Suika3 26.07.0` Release (July 1, 2026)
 
