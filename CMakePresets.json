@@ -198,7 +198,7 @@
     },
     {
       "name":           "windows-vs2026-x86-debug",
-      "displayName":    "!VS2026 MSVC x86 Debug",
+      "displayName":    "VS2026 x86 Debug",
       "generator":      "Visual Studio 18 2026",
       "architecture":   "Win32",
       "toolset":        "v145",
@@ -220,7 +220,7 @@
     },
     {
       "name":           "windows-vs2026-x86-release",
-      "displayName":    "!VS2026 MSVC x86 Release",
+      "displayName":    "VS2026 x86 Release",
       "generator":      "Visual Studio 18 2026",
       "architecture":   "Win32",
       "toolset":        "v145",
@@ -242,7 +242,7 @@
     },
     {
       "name":           "windows-vs2026-x64-debug",
-      "displayName":    "!VS2026 MSVC x64 Debug",
+      "displayName":    "VS2026 x64 Debug",
       "generator":      "Visual Studio 18 2026",
       "architecture":   "x64",
       "toolset":        "v145",
@@ -264,7 +264,7 @@
     },
     {
       "name":           "windows-vs2026-x64-release",
-      "displayName":    "!VS2026 MSVC x64 Release",
+      "displayName":    "VS2026 x64 Release",
       "generator":      "Visual Studio 18 2026",
       "architecture":   "x64",
       "toolset":        "v145",
@@ -286,7 +286,7 @@
     },
     {
       "name":           "windows-vs2026-arm64-debug",
-      "displayName":    "!VS2026 MSVC arm64 Debug",
+      "displayName":    "VS2026 arm64 Debug",
       "generator":      "Visual Studio 18 2026",
       "architecture":   "arm64",
       "toolset":        "v145",
@@ -308,7 +308,7 @@
     },
     {
       "name":           "windows-vs2026-arm64-release",
-      "displayName":    "!VS2026 MSVC arm64 Release",
+      "displayName":    "VS2026 arm64 Release",
       "generator":      "Visual Studio 18 2026",
       "architecture":   "arm64",
       "toolset":        "v145",

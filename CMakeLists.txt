@@ -198,6 +198,10 @@ if(SUIKA_TARGET_LINUX)
   set(PLAYFIELD_ENABLE_GST ON)
 endif()
 
+if(SUIKA_ENABLE_DIST)
+  set(PLAYFIELD_ENABLE_DIST ON)
+endif()
+
 #
 # Release/Debug
 #
