@@ -458,38 +458,6 @@
       }
     },
     {
-      "name":           "macos-cli",
-      "displayName":    "macOS",
-      "generator":      "Ninja",
-      "binaryDir":      "${sourceDir}/build-macos-cli",
-      "toolchainFile":  "${sourceDir}/cmake/toolchains/macos.cmake",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE":            "Release",
-        "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
-        "PLAYFIELD_TARGET_MACOS":      "ON",
-        "PLAYFIELD_ENABLE_JIT":        "ON",
-        "PLAYFIELD_ENABLE_I18N":       "ON",
-        "PLAYFIELD_ENABLE_PACK":       "ON",
-        "PLAYFIELD_ENABLE_BUNDLE":     "OFF"
-      }
-    },
-    {
-      "name":           "macos-cli-debug",
-      "displayName":    "macOS",
-      "generator":      "Ninja",
-      "binaryDir":      "${sourceDir}/build-macos-cli-debug",
-      "toolchainFile":  "${sourceDir}/cmake/toolchains/macos.cmake",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE":            "Debug",
-        "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
-        "PLAYFIELD_TARGET_MACOS":      "ON",
-        "PLAYFIELD_ENABLE_JIT":        "ON",
-        "PLAYFIELD_ENABLE_I18N":       "ON",
-        "PLAYFIELD_ENABLE_PACK":       "ON",
-        "PLAYFIELD_ENABLE_BUNDLE":     "OFF"
-      }
-    },
-    {
       "name":           "linux-x11",
       "displayName":    "Linux",
       "generator":      "Ninja",
@@ -913,7 +881,7 @@
     },
     {
       "name": "macos-cli",
-      "configurePreset": "macos-cli-debug"
+      "configurePreset": "macos-cli"
     },
     {
       "name": "macos-cli-debug",
