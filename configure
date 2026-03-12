@@ -1,0 +1,58 @@
+#!/bin/sh
+
+PREFIX="/usr/local"
+HOST=""
+JIT="OFF"
+
+for OPT in "${@}"; do
+    case "$OPT" in
+        -h | --help)
+            echo '  --prefix=[/usr/local]'
+            exit 0
+            ;;
+        --prefix=*)
+            PREFIX=${1#--prefix=}
+            ;;
+        --host=windows)
+            HOST=windows
+            ;;
+    esac
+done
+
+case "`uname -m`" in
+  x86*)
+    JIT=ON
+    ;;
+  arm*)
+    JIT=ON
+    ;;
+  aarch64*)
+    JIT=ON
+    ;;
+  riscv*)
+    JIT=ON
+    ;;
+  powerpc*)
+    JIT=ON
+    ;;
+  ppc*)
+    JIT=ON
+    ;;
+  mips*)
+    JIT=ON
+    ;;
+  *)
+    ;;
+esac
+
+if [ "$JIT" = "ON" ]; then
+  echo "JIT-enabled configuration for arch=`uname -m`."
+fi
+
+cmake . \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_PREFIX=$PREFIX \
+      -DPLAYFIELD_ENABLE_JIT=$JIT \
+      -DSUIKA_ENABLE_PACK=ON \
+      -DSUIKA_ENABLE_I18N=ON \
+      -DSUIKA_ENABLE_DIST=ON
