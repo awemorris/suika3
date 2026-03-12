@@ -69,6 +69,9 @@ static bool serialize_save_data(NoctEnv *env, NoctValue *value, void *data, size
 static bool deserialize_save_data(NoctEnv *env, NoctValue *value, void *data, size_t buf_size);
 static bool install_api(NoctEnv *env);
 
+/* External. */
+bool init_aot_code(struct rt_env *env);
+
 /*
  * Create a VM, then call setup().
  */
@@ -83,9 +86,15 @@ pfi_create_vm(
 	if (!noct_create_vm(&vm, &env))
 		return false;
 
-	/* Load the startup file. */
-	if (!load_startup_file())
+	/* Call AOT code registration. */
+	if (!init_aot_code(env))
 		return false;
+
+	/* Load the startup file if there is no native function called "setup()". */
+	if (!noct_check_global(env, "setup")) {
+		if (!load_startup_file())
+			return false;
+	}
 
 	/* Call "setup()" and get a title and window size. */
 	if (!call_setup(title, width, height, fullscreen)) {

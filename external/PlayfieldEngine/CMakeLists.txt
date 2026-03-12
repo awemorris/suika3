@@ -347,6 +347,7 @@ set(PLAYFIELD_BASE_SOURCES
   src/common.c
   src/mainloop.c
   src/vm.c
+  src/library.c
 )
 
 # I18N Source
@@ -422,7 +423,12 @@ target_link_libraries(playfield PUBLIC
 )
 
 # -Iinclude
-target_include_directories(playfield PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+target_include_directories(
+  playfield
+  PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  external/NoctLang/src/core
+)
 
 # -DUSE_JIT
 if(PLAYFIELD_ENABLE_JIT)

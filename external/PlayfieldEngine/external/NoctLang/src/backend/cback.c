@@ -112,15 +112,14 @@ cback_translate_func(
 	/* Put a prologue code. */
 	fprintf(fp, "bool L_%s(struct rt_env *env)\n", func->func_name);
 	fprintf(fp, "{\n");
-	fprintf(fp, "    struct rt_value tmpvar[%d];\n", func->tmpvar_size);
-	fprintf(fp, "    env->frame->tmpvar = &tmpvar[0];\n");
 
 	/* Visit a bytecode array. */
 	if (!cback_visit_bytecode(func))
 		return false;
 
 	/* Put an epilogue code. */
-	fprintf(fp, "    env->frame->tmpvar = NULL;\n");
+	fprintf(fp, "/* epilogue */\n");
+	fprintf(fp, "  L_pc_%d:\n", func->bytecode_size);
 	fprintf(fp, "    return true;\n");
 	fprintf(fp, "}\n\n");
 
@@ -293,15 +292,15 @@ static INLINE bool cback_get_string(
 
 /* Put a label. */
 #define LABEL(pc) \
-	fprintf(fp, "L_pc_%d:\n", (pc));
+	fprintf(fp, "  L_pc_%d:\n", (pc));
 
 /* Unary OP macro. */
 #define UNARY_OP(helper)						\
 	int dst, src;							\
 	GET_TMPVAR(&dst);						\
 	GET_TMPVAR(&src);						\
-	fprintf(fp, "if (!" #helper "(env, %d, %d))", dst, src);	\
-	fprintf(fp, "    return false;\n");
+	fprintf(fp, "    if (!" #helper "(env, %d, %d))", dst, src);	\
+	fprintf(fp, "        return false;\n");
 
 /* Binary OP macro. */
 #define BINARY_OP(helper)							\
@@ -309,8 +308,8 @@ static INLINE bool cback_get_string(
 	GET_TMPVAR(&dst);							\
 	GET_TMPVAR(&src1);							\
 	GET_TMPVAR(&src2);							\
-	fprintf(fp, "if (!" #helper "(env, %d, %d, %d))", dst, src1, src2);	\
-	fprintf(fp, "    return false;\n");
+	fprintf(fp, "    if (!" #helper "(env, %d, %d, %d))", dst, src1, src2);	\
+	fprintf(fp, "        return false;\n");
 
 /* Visit a LOP_LINEINFO instruction. */
 static INLINE bool
@@ -335,12 +334,10 @@ cback_visit_assign_op(
 {
 	int dst, src;
 
-	LABEL(*pc);
-
 	GET_TMPVAR(&dst);
 	GET_TMPVAR(&src);
 
-	fprintf(fp, "env->frame->tmpvar[dst] = tmpvar[src];\n");
+	fprintf(fp, "    env->frame->tmpvar[%d] = env->frame->tmpvar[%d];\n", dst, src);
 
 	return true;
 }
@@ -353,8 +350,6 @@ cback_visit_iconst_op(
 {
 	int dst;
 	uint32_t val;
-
-	LABEL(*pc);
 
 	GET_TMPVAR(&dst);
 	GET_U32(&val);
@@ -374,8 +369,6 @@ cback_visit_fconst_op(
 	int dst;
 	uint32_t raw;
 	float val;
-
-	LABEL(*pc);
 
 	GET_TMPVAR(&dst);
 	GET_U32(&raw);
@@ -398,8 +391,6 @@ cback_visit_sconst_op(
 	const char *s;
 	uint32_t len, hash;
 
-	LABEL(*pc);
-
 	GET_TMPVAR(&dst);
 	GET_STRING(&s, &len, &hash);
 
@@ -417,8 +408,6 @@ cback_visit_aconst_op(
 {
 	int dst;
 
-	LABEL(*pc);
-
 	GET_TMPVAR(&dst);
 
 	fprintf(fp, "    if (!rt_make_empty_array(env, &env->frame->tmpvar[%d]))\n", dst);
@@ -434,8 +423,6 @@ cback_visit_dconst_op(
 	int *pc)
 {
 	int dst;
-
-	LABEL(*pc);
 
 	GET_TMPVAR(&dst);
 
@@ -453,11 +440,7 @@ cback_visit_inc_op(
 {
 	int dst;
 
-	LABEL(*pc);
-
 	GET_TMPVAR(&dst);
-
-	fprintf(fp, "    env->frame->tmpvar[%d].val.i++;\n", dst);
 
 	return true;
 }
@@ -468,8 +451,7 @@ cback_visit_add_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
-	BINARY_OP(rt_add_heler);
+	BINARY_OP(rt_add_helper);
 	return true;
 }
 
@@ -479,7 +461,6 @@ cback_visit_sub_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_sub_helper);
 	return true;
 }
@@ -490,7 +471,6 @@ cback_visit_mul_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_mul_helper);
 	return true;
 }
@@ -501,7 +481,6 @@ cback_visit_div_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_div_helper);
 	return true;
 }
@@ -512,7 +491,6 @@ cback_visit_mod_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_mod_helper);
 	return true;
 }
@@ -523,7 +501,6 @@ cback_visit_and_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_and_helper);
 	return true;
 }
@@ -534,7 +511,6 @@ cback_visit_or_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_or_helper);
 	return true;
 }
@@ -545,7 +521,6 @@ cback_visit_xor_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_xor_helper);
 	return true;
 }
@@ -556,7 +531,6 @@ cback_visit_shl_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_shl_helper);
 	return true;
 }
@@ -567,7 +541,6 @@ cback_visit_shr_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_shr_helper);
 	return true;
 }
@@ -578,7 +551,6 @@ cback_visit_neg_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	UNARY_OP(rt_neg_helper);
 	return true;
 }
@@ -589,7 +561,6 @@ cback_visit_not_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	UNARY_OP(rt_not_helper);
 	return true;
 }
@@ -600,7 +571,6 @@ cback_visit_lt_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_lt_helper);
 	return true;
 }
@@ -611,7 +581,6 @@ cback_visit_lte_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_lte_helper);
 	return true;
 }
@@ -622,7 +591,6 @@ cback_visit_gt_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_gt_helper);
 	return true;
 }
@@ -633,7 +601,6 @@ cback_visit_gte_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_gte_helper);
 	return true;
 }
@@ -644,7 +611,6 @@ cback_visit_eq_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_eq_helper);
 	return true;
 }
@@ -655,7 +621,6 @@ cback_visit_neq_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_neq_helper);
 	return true;
 }
@@ -666,7 +631,6 @@ cback_visit_storearray_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_storearray_helper);
 	return true;
 }
@@ -677,7 +641,6 @@ cback_visit_loadarray_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_loadarray_helper);
 	return true;
 }
@@ -688,7 +651,6 @@ cback_visit_len_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	UNARY_OP(rt_len_helper);
 	return true;
 }
@@ -699,7 +661,6 @@ cback_visit_getdictkeybyindex_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_getdictkeybyindex_helper);
 	return true;
 }
@@ -710,7 +671,6 @@ cback_visit_getdictvalbyindex_op(
 	struct lir_func *func,
 	int *pc)
 {
-	LABEL(*pc);
 	BINARY_OP(rt_getdictvalbyindex_helper);
 	return true;
 }
@@ -725,7 +685,6 @@ cback_visit_loadsymbol_op(
 	const char *symbol;
 	uint32_t len, hash;
 
-	LABEL(*pc);
 
 	GET_TMPVAR(&dst);
 	GET_STRING(&symbol, &len, &hash);
@@ -746,12 +705,11 @@ cback_visit_storesymbol_op(
 	uint32_t len, hash;
 	int src;
 
-	LABEL(*pc);
 
 	GET_STRING(&symbol, &len, &hash);
 	GET_TMPVAR(&src);
 
-	fprintf(fp, "    if (!rt_storesymbol_helper(env, \"%s\", %d))\n", symbol, src);
+	fprintf(fp, "    if (!rt_storesymbol_helper(env, \"%s\", %uu, %uu, %d))\n", symbol, len, hash, src);
 	fprintf(fp, "        return false;\n");
 
 	return true;
@@ -767,7 +725,6 @@ cback_visit_loaddot_op(
 	const char *field;
 	uint32_t len, hash;
 
-	LABEL(*pc);
 
 	GET_TMPVAR(&dst);
 	GET_TMPVAR(&dict);
@@ -789,13 +746,12 @@ cback_visit_storedot_op(
 	const char *field;
 	uint32_t len, hash;
 
-	LABEL(*pc);
 
 	GET_TMPVAR(&dict);
 	GET_STRING(&field, &len, &hash);
 	GET_TMPVAR(&src);
 
-	fprintf(fp, "    if (!rt_storedot_helper(env, %d, \"%s\", %d))\n", dict, field, src);
+	fprintf(fp, "    if (!rt_storedot_helper(env, %d, \"%s\", %uu, %uu, %d))\n", dict, field, len, hash, src);
 	fprintf(fp, "        return false;\n");
 
 	return true;
@@ -814,7 +770,6 @@ cback_visit_call_op(
 	int arg[ARG_MAX];
 	int i;
 
-	LABEL(*pc);
 
 	GET_TMPVAR(&dst_tmpvar);
 	GET_TMPVAR(&func_tmpvar);
@@ -831,7 +786,7 @@ cback_visit_call_op(
 	fprintf(fp, "};\n");
 	fprintf(fp, "        if (!rt_call_helper(env, %d, %d, %d, arg))\n", dst_tmpvar, func_tmpvar, arg_count);
 	fprintf(fp, "            return false;\n");
-	fprintf(fp, "    };\n");
+	fprintf(fp, "    }\n");
 
 	return true;
 }
@@ -851,8 +806,6 @@ cback_visit_thiscall_op(
 	int arg[ARG_MAX];
 	int i;
 
-	LABEL(*pc);
-
 	GET_TMPVAR(&dst_tmpvar);
 	GET_TMPVAR(&obj_tmpvar);
 	GET_STRING(&name, &len, &hash);
@@ -867,9 +820,9 @@ cback_visit_thiscall_op(
 	for (i = 0; i < arg_count; i++)
 		fprintf(fp, "%d,", arg[i]);
 	fprintf(fp, "};\n");
-	fprintf(fp, "        if (!rt_thiscall_helper(env, %d, %d, \"%s\", %d, arg))\n", dst_tmpvar, obj_tmpvar, name, arg_count);
+	fprintf(fp, "        if (!rt_thiscall_helper(env, %d, %d, \"%s\", %uu, %uu, %d, arg))\n", dst_tmpvar, obj_tmpvar, name, len, hash, arg_count);
 	fprintf(fp, "            return false;\n");
-	fprintf(fp, "    };\n");
+	fprintf(fp, "    }\n");
 
 	return true;
 }
@@ -881,8 +834,6 @@ cback_visit_jmp_op(
 	int *pc)
 {
 	uint32_t target;
-
-	LABEL(*pc);
 
 	GET_ADDR(&target);
 
@@ -899,8 +850,6 @@ cback_visit_jmpiftrue_op(
 {
 	int src;
 	uint32_t target;
-
-	LABEL(*pc);
 
 	GET_TMPVAR(&src);
 	GET_ADDR(&target);
@@ -920,8 +869,6 @@ cback_visit_jmpiffalse_op(
 	int src;
 	uint32_t target;
 
-	LABEL(*pc);
-
 	GET_TMPVAR(&src);
 	GET_ADDR(&target);
 
@@ -938,6 +885,8 @@ cback_visit_op(
 	int *pc)
 {
 	int op;
+
+	LABEL(*pc);
 
 	GET_U8(&op);
 
