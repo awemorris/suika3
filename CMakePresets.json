@@ -419,6 +419,7 @@
       "toolchainFile":  "${sourceDir}/cmake/toolchains/macos.cmake",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":            "Release",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "10.5",
         "SUIKA_TARGET_MACOS":          "ON",
         "SUIKA_ENABLE_JIT":            "ON",
         "SUIKA_ENABLE_I18N":           "ON",
@@ -434,6 +435,7 @@
       "toolchainFile":  "${sourceDir}/cmake/toolchains/macos.cmake",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":            "Release",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "10.5",
         "SUIKA_TARGET_MACOS":          "ON",
         "SUIKA_ENABLE_JIT":            "ON",
         "SUIKA_ENABLE_I18N":           "ON",
@@ -448,6 +450,7 @@
       "toolchainFile":  "${sourceDir}/cmake/toolchains/macos.cmake",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":            "Debug",
+        "CMAKE_OSX_DEPLOYMENT_TARGET": "10.5",
         "SUIKA_TARGET_MACOS":          "ON",
         "SUIKA_ENABLE_JIT":            "ON",
         "SUIKA_ENABLE_I18N":           "ON",
