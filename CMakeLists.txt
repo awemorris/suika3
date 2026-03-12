@@ -506,6 +506,7 @@ if(   SUIKA_TARGET_WINDOWS
    OR SUIKA_TARGET_FREEBSD_WAYLAND
    OR SUIKA_TARGET_NETBSD
    OR SUIKA_TARGET_OPENBSD)
+  # Bytecode
   add_executable(
     suika3-compiler
     external/PlayfieldEngine/src/compiler.c
@@ -517,6 +518,21 @@ if(   SUIKA_TARGET_WINDOWS
   target_link_libraries(suika3-compiler noctlang)
   if(UNIX)
     target_link_libraries(suika3-compiler m)
+  endif()
+
+  # AOT
+  add_executable(
+    suika3-aot
+    external/PlayfieldEngine/src/aot.c
+    external/PlayfieldEngine/external/NoctLang/src/backend/cback.c
+  )
+  target_include_directories(suika3-aot PRIVATE
+    external/PlayfieldEngine/external/NoctLang/src/core
+    external/PlayfieldEngine/external/NoctLang/src/backend
+  )
+  target_link_libraries(suika3-aot noctlang)
+  if(UNIX)
+    target_link_libraries(suika3-aot m)
   endif()
 endif()
 
