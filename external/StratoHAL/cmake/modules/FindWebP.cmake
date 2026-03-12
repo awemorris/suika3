@@ -1,4 +1,4 @@
-find_path(WEBP_INCLUDE_DIR brotli/decode.h)
+find_path(WEBP_INCLUDE_DIR webp/decode.h)
 
 find_library(WEBP_LIBRARY NAMES webp webp_static libwebp libwebp_static)
 

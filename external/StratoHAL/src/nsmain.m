@@ -32,7 +32,10 @@
 @import MetalKit;
 
 #import <AVFoundation/AVFoundation.h>
-#import <GameController/GameController.h>
+#if MAC_OS_X_VERSION_MIN_REQUIRED >= MAC_OS_X_VERSION_10_9
+    #import <GameController/GameController.h>
+    #define USE_GAMECONTROLLER 1
+#endif
 
 #import <stratohal/platform.h>
 #import "stdfile.h"
@@ -301,6 +304,7 @@ static void checkBundleResource(int argc, const char *argv[])
 // Initialize the gamepad.
 static void initGamepad(void)
 {
+#if USE_GAMECONTROLLER == 1
     [[NSNotificationCenter defaultCenter] addObserverForName:GCControllerDidConnectNotification
                                                       object:nil
                                                        queue:[NSOperationQueue mainQueue]
@@ -397,6 +401,7 @@ static void initGamepad(void)
     [GCController startWirelessControllerDiscoveryWithCompletionHandler:^{
         NSLog(@"Finished scanning for controllers.");
     }];
+#endif
 }
 
 // Called when the view is layouted.

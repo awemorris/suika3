@@ -374,24 +374,34 @@ if(   PLAYFIELD_TARGET_IOS
   else()
     set(PLAYFIELD_LIB_TYPE STATIC)
   endif()
-  add_library(
-    playfield
-    ${PLAYFIELD_LIB_TYPE}
-    ${PLAYFIELD_BASE_SOURCES}
-    ${PLAYFIELD_I18N_SOURCES}
-    ${PLAYFIELD_RESOURCES}
-    $<TARGET_OBJECTS:png>
-    $<TARGET_OBJECTS:jpeg>
-    $<TARGET_OBJECTS:webp>
-    $<TARGET_OBJECTS:vorbisfile>
-    $<TARGET_OBJECTS:vorbis>
-    $<TARGET_OBJECTS:ogg>
-    $<TARGET_OBJECTS:freetype>
-    $<TARGET_OBJECTS:brotlidec>
-    $<TARGET_OBJECTS:brotlicommon>
-    $<TARGET_OBJECTS:bz2>
-    $<TARGET_OBJECTS:z>
-  )
+  if(PLAYFIELD_ENABLE_DIST)
+    add_library(
+      playfield
+      ${PLAYFIELD_LIB_TYPE}
+      ${PLAYFIELD_BASE_SOURCES}
+      ${PLAYFIELD_I18N_SOURCES}
+      ${PLAYFIELD_RESOURCES}
+    )
+  else()
+    add_library(
+      playfield
+      ${PLAYFIELD_LIB_TYPE}
+      ${PLAYFIELD_BASE_SOURCES}
+      ${PLAYFIELD_I18N_SOURCES}
+      ${PLAYFIELD_RESOURCES}
+      $<TARGET_OBJECTS:png>
+      $<TARGET_OBJECTS:jpeg>
+      $<TARGET_OBJECTS:webp>
+      $<TARGET_OBJECTS:vorbisfile>
+      $<TARGET_OBJECTS:vorbis>
+      $<TARGET_OBJECTS:ogg>
+      $<TARGET_OBJECTS:freetype>
+      $<TARGET_OBJECTS:brotlidec>
+      $<TARGET_OBJECTS:brotlicommon>
+      $<TARGET_OBJECTS:bz2>
+      $<TARGET_OBJECTS:z>
+    )
+  endif()
 else()
   # Make an executable.
   add_executable(
