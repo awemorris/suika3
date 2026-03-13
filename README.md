@@ -570,9 +570,7 @@ The official recommended binary is the 64-bit version.
 ### 32-bit Windows Compatibility List
 
 Suika3 provides the 32-bit binary for backward compatibility,
-supporting legacy systems through older runtimes. If you change the
-source code to remove the XInput support, you can run Suika3 even on
-Windows 2000.
+supporting legacy systems through older runtimes.
 
 | OS      | Version                     | Patch | CPU    | Runtimes                               | 32-bit Binary | Direct3D | Special   |
 |---------|-----------------------------|-------|--------|----------------------------------------|---------------|----------|-----------|
@@ -607,6 +605,15 @@ Windows 2000.
 | Windows | 2000                        | SP2   | x86    | DirectX End-User Runtimes (Dec 2006)   | ❌            | 9.0      | No XInput |
 | Windows | 2000                        | SP3   | x86    | DirectX End-User Runtimes (Dec 2006)   | ❌            | 9.0      | No XInput |
 | Windows | 2000                        | SP4   | x86    | DirectX End-User Runtimes (Dec 2006)   | ❌            | 9.0      | No XInput |
+| Windows | Me                          |       | x86    |                                        | ❌            | soft     | No XInput |
+| Windows | 98                          |       | x86    |                                        | ❌            | soft     | No XInput |
+| Windows | 98                          | SE    | x86    |                                        | ❌            | soft     | No XInput |
+| Windows | 95                          |       | x86    |                                        | ❌            | soft     | No XInput |
+| Windows | 95                          | OSR2  | x86    |                                        | ❌            | soft     | No XInput |
+
+Note:
+* If you change the source code to remove the XInput support, you can run Suika3 on Windows 2000.
+* If you use old toolchain such as MinGW 5.0 (gcc 4.4), you can run Suika3 even on Windows 9x.
 
 ### macOS Compatibility List
 
@@ -1382,11 +1389,19 @@ options.
 Please see the [Compatibility List](#compatibility-list) for detailed
 information on supported platforms and their requirements.
 
-* Display: 320x240
-* CPU: 500MHz
-* RAM: 256MB
-* GPU: DirectX 9 / OpenGL 3.0 / OpenGL ES 2.0 / Metal 1.0
-* Disk: 2MB + assets
+* Official Configuration
+  * Display: 640x480 24bpp
+  * CPU: 1GHz
+  * RAM: 512MB
+  * GPU: DirectX 9 / OpenGL 3.0 / OpenGL ES 2.0 / Metal 1.0
+  * Disk: 2MB + assets
+
+* Minumum Configuration for Embedded Devices
+  * Display: Any size, 24bpp required
+  * CPU: 200MHz
+  * RAM: 32MB
+  * GPU: Not required
+  * Disk: 2MB + assets
 
 ### What does "Supported" mean?
 
