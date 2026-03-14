@@ -56,6 +56,24 @@
 /* A macro to check whether a file exists. */
 #define FILE_EXISTS(fname)	(_access(fname, 0) != -1)
 
+#ifdef _UNICODE
+#define RICHEDIT	L"RICHEDIT50W"
+#define CONSOLAS	L"Consolas"
+#define CONSOLE		L"Console"
+#define _T(s)		L#s
+typedef wchar_t TCHAR;
+#define tstrdup		_wcsdup
+#define tfopen		_wfopen
+#else
+#define RICHEDIT	"RICHEDIT50"
+#define CONSOLAS	"Times New Roman"
+#define CONSOLE		"Console"
+#define _T(s)		s
+typedef char TCHAR;
+#define tstrdup		_strdup
+#define tfopen		fopen
+#endif
+
 /*
  * Constants
  */
@@ -82,8 +100,8 @@
 #define CONV_MESSAGE_SIZE	(65536)
 
 /* Window class names. */
-static const wchar_t wszWindowClassMain[] = L"AppMain";
-static const wchar_t wszWindowClassLog[] = L"AppLog";
+static const TCHAR tszWindowClassMain[] = _T("AppMain");
+static const TCHAR tszWindowClassLog[] = _T("AppLog");
 
 /* i18n messages. */
 enum {
@@ -109,7 +127,7 @@ enum {
  */
 
 /* Window title. (UTF-16) */
-static wchar_t wszTitle[TITLE_BUF_SIZE];
+static TCHAR tszTitle[TITLE_BUF_SIZE];
 
 /* Windows object. */
 static HWND hWndMain;
@@ -163,7 +181,7 @@ static HBRUSH hEditBkBrush;
 
 /* Log file. */
 static FILE *pLogFile;
-static wchar_t *pwszLogFilePath;
+static TCHAR *pwszLogFilePath;
 
 /*
  * Init Info
@@ -213,11 +231,19 @@ void check_cpuid(void);
 /*
  * WinMain
  */
+#ifdef _UNICODE
 int WINAPI wWinMain(
 	HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
 	LPWSTR lpszCmd,
 	int nCmdShow)
+#else
+int WINAPI WinMain(
+	HINSTANCE hInstance,
+	HINSTANCE hPrevInstance,
+	LPSTR lpszCmd,
+	int nCmdShow)
+#endif
 {
 	int nRet = 1;
 
@@ -360,7 +386,7 @@ InitWindow(
 	HINSTANCE hInstance,
 	int nCmdShow)
 {
-	WNDCLASSEXW wcex;
+	WNDCLASSEX wcex;
 	RECT rc;
 	int nVirtualScreenWidth, nVirtualScreenHeight;
 	int nFrameAddWidth, nFrameAddHeight;
@@ -373,15 +399,15 @@ InitWindow(
 
 	/* Register a window class. */
 	ZeroMemory(&wcex, sizeof(wcex));
-	wcex.cbSize			= sizeof(WNDCLASSEXW);
+	wcex.cbSize			= sizeof(wcex);
 	wcex.lpfnWndProc    = WndProc;
 	wcex.hInstance      = hInstance;
 	wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON));
 	wcex.hCursor        = LoadCursor(NULL, MAKEINTRESOURCE((WORD)(intptr_t)IDC_ARROW));
 	wcex.hbrBackground  = (HBRUSH)GetStockObject(BLACK_BRUSH);
-	wcex.lpszClassName  = wszWindowClassMain;
+	wcex.lpszClassName  = tszWindowClassMain;
 	wcex.hIconSm		= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON));
-	if (!RegisterClassExW(&wcex))
+	if (!RegisterClassEx(&wcex))
 		return FALSE;
 
 	/* Select window styles. */
@@ -398,7 +424,11 @@ InitWindow(
 					  GetSystemMetrics(SM_CYFIXEDFRAME) * 2;
 
 	/* Convert a window title from utf-8 to utf-16. */
-	MultiByteToWideChar(CP_UTF8, 0, pszWindowTitle, -1, wszTitle, TITLE_BUF_SIZE - 1);
+#ifdef _UNICODE
+	MultiByteToWideChar(CP_UTF8, 0, pszWindowTitle, -1, tszTitle, TITLE_BUF_SIZE - 1);
+#else
+	WideCharToMultiByte(CP_ACP, 0, win32_utf8_to_utf16(pszWindowTitle), -1, tszTitle, CONV_MESSAGE_SIZE - 1, NULL, NULL);
+#endif
 
 	/* Get a monitor count. */
 	nMonitors = GetSystemMetrics(SM_CMONITORS);
@@ -439,7 +469,7 @@ InitWindow(
 	}
 
 	/* Create the main window. */
-	hWndMain = CreateWindowExW(0, wszWindowClassMain, wszTitle, dwStyle,
+	hWndMain = CreateWindowExA(0, tszWindowClassMain, tszTitle, dwStyle,
 							   nPosX, nPosY, nWinWidth, nWinHeight,
 							   NULL, NULL, hInstance, NULL);
 	if (hWndMain == NULL)
@@ -1117,10 +1147,15 @@ OnSize(void)
 		bNeedWindowed = FALSE;
 		bFullScreen = TRUE;
 
+#ifdef _UNICODE
 		monitor = MonitorFromWindow(hWndMain, MONITOR_DEFAULTTONEAREST);
 		minfo.cbSize = sizeof(MONITORINFOEX);
 		GetMonitorInfo(monitor, (LPMONITORINFO)&minfo);
 		rc = minfo.rcMonitor;
+#else
+		/* For Windows 95. */
+		GetWindowRect(NULL, &rc);
+#endif
 
 		dwStyle = (DWORD)GetWindowLong(hWndMain, GWL_STYLE);
 
@@ -1210,7 +1245,7 @@ UpdateScreenOffsetAndScale(
 static VOID
 InitLogWindow(VOID)
 {
-	WNDCLASSEXW wcex;
+	WNDCLASSEX wcex;
 	HINSTANCE hInstance;
 	HFONT hFont;
 
@@ -1221,22 +1256,22 @@ InitLogWindow(VOID)
 	
 	/* Register a window class. */
 	ZeroMemory(&wcex, sizeof(wcex));
-	wcex.cbSize			= sizeof(WNDCLASSEXW);
+	wcex.cbSize			= sizeof(wcex);
 	wcex.lpfnWndProc    = LogWndProc;
 	wcex.hInstance      = hInstance;
-	wcex.lpszClassName  = wszWindowClassLog;
-	RegisterClassExW(&wcex);
+	wcex.lpszClassName  = tszWindowClassLog;
+	RegisterClassEx(&wcex);
 
 	/* Create the log window. */
-	hWndLog = CreateWindowExW(0, wszWindowClassLog, L"Console",
+	hWndLog = CreateWindowEx(0, tszWindowClassLog, CONSOLE,
 							  WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_OVERLAPPED,
 							  CW_USEDEFAULT, CW_USEDEFAULT,
 							  640, 480,
 							  NULL, NULL, hInstance, NULL);
 
 	/* Create the log text edit. */
-	LoadLibraryW(L"Msftedit.dll");
-	hWndLogText = CreateWindow(L"RICHEDIT50W", NULL,
+	LoadLibraryA("Msftedit.dll");
+	hWndLogText = CreateWindow(RICHEDIT, NULL,
 		ES_MULTILINE | WS_VISIBLE | WS_CHILD | WS_BORDER | WS_TABSTOP | ES_AUTOVSCROLL | WS_VSCROLL,
 		0, 0, 633, 450,
 		hWndLog, 0, hInstance, NULL);
@@ -1249,7 +1284,7 @@ InitLogWindow(VOID)
 					   FW_DONTCARE, FALSE, FALSE, FALSE, DEFAULT_CHARSET,
 					   OUT_TT_PRECIS, CLIP_DEFAULT_PRECIS,
 					   DEFAULT_QUALITY, FIXED_PITCH | FF_DONTCARE,
-					   L"Consolas");
+					   CONSOLAS);
 	SendMessage(hWndLogText, WM_SETFONT, (WPARAM)hFont, (LPARAM)TRUE);
 
 	/* Show the log window. */
@@ -1302,8 +1337,8 @@ OpenLogFile(void)
 		return TRUE;
 
 	/* Create in the game directory. */
-	pwszLogFilePath = _wcsdup(L"log.txt");
-	pLogFile = _wfopen(L"log.txt", L"w");
+	pwszLogFilePath = tstrdup(_T("log.txt"));
+	pLogFile = tfopen(_T("log.txt"), _T("w"));
 	if (pLogFile == NULL)
 		return FALSE;
 
@@ -1332,12 +1367,21 @@ ShowLogFile(void)
 
 	ShellExecute(
 		NULL,				// Parent window.
-		L"open",			// Behavior.
+		_T("open"),			// Behavior.
         pwszLogFilePath,	// 開きたいファイルやURL
         NULL,				// Arguments.
         NULL,               // Working directory.
         SW_SHOWNORMAL);		// ShowWindow() status.
 }
+
+#ifndef _UNICODE
+/* For Windows 9x and 2000 */
+#undef _vscprintf
+int _vscprintf(const char *format, va_list argptr)
+{
+    return _vsnprintf(NULL, 0, format, argptr);
+}
+#endif
 
 /*
  * HAL
@@ -1595,7 +1639,7 @@ hal_make_save_directory(void)
 	} else {
 #endif
 		/* Create in the game directory. */
-		CreateDirectoryW(L"save", NULL);
+		CreateDirectory(_T("save"), NULL);
 #if 0
 	}
 #endif

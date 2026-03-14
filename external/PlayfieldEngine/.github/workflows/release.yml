@@ -75,25 +75,25 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y cmake ninja-build flex bison
 
-      - name: Download mingw-w64-11.0
+      - name: Download mingw-w64-9.0
         run: |
-          echo "Downloaing mingw-w64-11.0 with a MSVCRT/XP configuration."
-          wget -q https://noctvm.io/ci/mingw-w64-11.0.tar.bz2
-          tar xJf mingw-w64-11.0.tar.bz2
-          echo "$PWD/mingw-w64-11.0/bin" >> $GITHUB_PATH
+          echo "Downloaing mingw-w64-9.0 (msvcrt)."
+          wget -q https://noctvm.io/ci/mingw-w64-9.0.tar.bz2
+          tar xJf mingw-w64-9.0.tar.bz2
+          echo "$PWD/mingw-w64-9.0/bin" >> $GITHUB_PATH
 
-      - name: Build for mingw-w64 i686
+      - name: Build for mingw-w64 i586
         run: |
-          cmake --preset windows-mingw-x86
-          cmake --build --preset windows-mingw-x86
-          i686-w64-mingw32-strip build-mingw-x86/playfield.exe
+          cmake --preset windows-mingw-win95
+          cmake --build --preset windows-mingw-win95
+          i586-w64-mingw32-strip build-mingw-win95/playfield.exe
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: mingw
           path: |
-            build-mingw-x86/playfield.exe
+            build-mingw-win95/playfield.exe
           if-no-files-found: error
           retention-days: 7
 

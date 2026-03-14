@@ -559,6 +559,13 @@ static INLINE uint16_t hal_host_to_le_16(uint16_t d) {
 #endif
 
 /*
+ * msvcrt quirk
+ */
+#ifndef _UNICODE
+#define _vscprintf	_vscprintf_dummy
+#endif
+
+/*
  * Message Translation
  */
 #if defined(HAL_USE_TRANSLATION)

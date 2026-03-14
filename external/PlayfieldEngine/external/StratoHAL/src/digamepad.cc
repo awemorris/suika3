@@ -39,7 +39,7 @@ extern "C" {
 #include <dinput.h>
 
 static LPDIRECTINPUT8 pDI;
-static LPDIRECTINPUTDEVICE8W pGamepad;
+static LPDIRECTINPUTDEVICE8 pGamepad;
 static DIDEVCAPS diDevCaps;
 
 static const DIOBJECTDATAFORMAT c_rgodfMyGamepad[] = {
@@ -77,6 +77,11 @@ static BOOL CALLBACK EnumAxesCallback(const DIDEVICEOBJECTINSTANCE* pdidoi, VOID
 BOOL
 DInputInitialize(HINSTANCE hInst, HWND hWnd)
 {
+#ifndef _UNICODE
+    // For some reason, passing IID_IDirectInput8A to DirectInput8Create() crashes.
+    // We just don't use DirectInput on Windows 9x.
+    return FALSE;
+#else
     HRESULT hr;
 
     HMODULE hModule = LoadLibraryA("dinput8.dll");
@@ -133,6 +138,7 @@ DInputInitialize(HINSTANCE hInst, HWND hWnd)
     }
 
     return TRUE;
+#endif
 }
 
 static BOOL CALLBACK

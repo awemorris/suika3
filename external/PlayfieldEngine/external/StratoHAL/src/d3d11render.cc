@@ -269,7 +269,7 @@ CreateDevice()
     UINT numFeatureLevels = ARRAYSIZE(featureLevels);
 
     // Open d3d11.dll dynamically.
-    HMODULE hModule = LoadLibraryW(L"d3d11.dll");
+    HMODULE hModule = LoadLibraryA("d3d11.dll");
     if (hModule == NULL)
         return FALSE;
 
@@ -581,7 +581,7 @@ CompileShaderFromString(
 	LPCSTR szShaderModel,
 	ID3DBlob** ppBlobOut)
 {
-    HMODULE hModule = LoadLibraryW(L"d3dcompiler_47.dll");
+    HMODULE hModule = LoadLibraryA("d3dcompiler_47.dll");
     if (hModule == NULL)
         return E_FAIL;
 

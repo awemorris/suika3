@@ -709,15 +709,15 @@ GetAPIPointers()
 	// PC
 	//
 
-    HMODULE hModuleDXGI = LoadLibraryW(L"dxgi.dll");
+    HMODULE hModuleDXGI = LoadLibraryA("dxgi.dll");
     if (hModuleDXGI == NULL)
         return FALSE;
 
-    HMODULE hModuleD3D12 = LoadLibraryW(L"d3d12.dll");
+    HMODULE hModuleD3D12 = LoadLibraryA("d3d12.dll");
     if (hModuleD3D12 == NULL)
         return FALSE;
 
-    HMODULE hModuleD3DCompiler = LoadLibraryW(L"d3dcompiler_47.dll");
+    HMODULE hModuleD3DCompiler = LoadLibraryA("d3dcompiler_47.dll");
     if (hModuleD3DCompiler == NULL)
         return E_FAIL;
 

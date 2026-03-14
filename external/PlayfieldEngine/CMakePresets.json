@@ -344,6 +344,17 @@
       }
     },
     {
+      "name":           "windows-mingw-win95",
+      "displayName":    "MinGW Windows 95",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-mingw-win95",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-win95.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_WINDOWS95":  "ON"
+      }
+    },
+    {
       "name":           "macos",
       "displayName":    "macOS",
       "generator":      "Ninja",
@@ -835,6 +846,10 @@
     {
       "name": "windows-mingw-arm64",
       "configurePreset": "windows-mingw-arm64"
+    },
+    {
+      "name": "windows-mingw-win95",
+      "configurePreset": "windows-mingw-win95"
     },
     {
       "name": "macos",

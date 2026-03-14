@@ -6,7 +6,8 @@ project(playfield LANGUAGES C CXX)
 #
 
 # Targets
-option(PLAYFIELD_TARGET_WINDOWS          "Build for Windows"                     OFF)
+option(PLAYFIELD_TARGET_WINDOWS          "Build for Windows 2000 or later"       OFF)
+option(PLAYFIELD_TARGET_WINDOWS95        "Build for Windows 95/98/Me"            OFF)
 option(PLAYFIELD_TARGET_MACOS            "Build for macOS"                       OFF)
 option(PLAYFIELD_TARGET_LINUX            "Build for Linux X11"                   OFF)
 option(PLAYFIELD_TARGET_LINUX_WAYLAND    "Build for Linux Wayland"               OFF)
@@ -48,6 +49,7 @@ option(PLAYFIELD_ENABLE_INITHOOK    "Enable the inithook function"  OFF)
 
 # For when a target is manually specified.
 if(   PLAYFIELD_TARGET_WINDOWS
+   OR PLAYFIELD_TARGET_WINDOWS95
    OR PLAYFIELD_TARGET_MACOS
    OR PLAYFIELD_TARGET_LINUX
    OR PLAYFIELD_TARGET_LINUX_WAYLAND
@@ -192,6 +194,8 @@ endif()
 # Set the target and its specific options.
 if(PLAYFIELD_TARGET_WINDOWS)
   set(STRATO_TARGET_WINDOWS ON)
+elseif(PLAYFIELD_TARGET_WINDOWS95)
+  set(STRATO_TARGET_WINDOWS95 ON)
 elseif(PLAYFIELD_TARGET_MACOS)
   set(STRATO_TARGET_MACOS ON)
 elseif(PLAYFIELD_TARGET_LINUX)
@@ -367,10 +371,11 @@ if(PLAYFIELD_ENABLE_I18N)
 endif()
 
 # Resource
-if(PLAYFIELD_TARGET_WINDOWS AND NOT PLAYFIELD_ENABLE_STATIC)
-  set(PLAYFIELD_RESOURCES
-    resources/windows/resource.rc
-  )
+if(   PLAYFIELD_TARGET_WINDOWS
+   OR PLAYFIELD_TARGET_WINDOWS95)
+  if(NOT PLAYFIELD_ENABLE_STATIC)
+    set(PLAYFIELD_RESOURCES resources/windows/resource.rc)
+  endif()
 endif()
 
 # Add Target
@@ -472,6 +477,17 @@ if(PLAYFIELD_TARGET_WINDOWS)
   else()
     target_compile_options(playfield PUBLIC -municode -finput-charset=utf-8 -fexec-charset=utf-8)
     target_link_options(playfield PUBLIC -mwindows -static)
+  endif()
+endif()
+if(PLAYFIELD_TARGET_WINDOWS95)
+  if(MSVC)
+    target_compile_options(playfield PUBLIC /utf-8)
+    target_link_options(playfield PUBLIC /SUBSYSTEM:WINDOWS)
+    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+  else()
+    target_compile_options(playfield PUBLIC -finput-charset=utf-8 -fexec-charset=shift-jis)
+    target_link_options(playfield PUBLIC -mwindows -static -static-libgcc)
+    add_compile_definitions(_WIN32_WINNT=0x0400 __USE_MINGW_ANSI_STDIO=1)
   endif()
 endif()
 

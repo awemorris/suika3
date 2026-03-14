@@ -33,7 +33,7 @@
 
 /* Windows */
 #include <windows.h>
-#define DIRECTSOUND_VERSION 0x0500 /* Windows 98 default */
+#define DIRECTSOUND_VERSION 0x0300
 #include <dsound.h>
 #define INITGUID
 #include <initguid.h>

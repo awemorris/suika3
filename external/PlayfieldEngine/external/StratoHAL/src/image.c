@@ -1077,7 +1077,7 @@ wrap_aligned_malloc(
 	static bool first_time = true;
 
 	if (first_time) {
-		HMODULE hModule = LoadLibraryW(L"msvcrt.dll");
+		HMODULE hModule = LoadLibraryA("msvcrt.dll");
 		if (hModule != NULL)
 			p_aligned_malloc = (void *)GetProcAddress(hModule, "_aligned_malloc");
 		first_time = false;
@@ -1099,7 +1099,7 @@ wrap_aligned_free(
 	static bool first_time = true;
 
 	if (first_time) {
-		HMODULE hModule = LoadLibraryW(L"msvcrt.dll");
+		HMODULE hModule = LoadLibraryA("msvcrt.dll");
 		if (hModule != NULL)
 			p_aligned_free = (void *)GetProcAddress(hModule, "_aligned_free");
 		first_time = false;

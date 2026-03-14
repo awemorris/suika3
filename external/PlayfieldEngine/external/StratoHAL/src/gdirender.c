@@ -40,6 +40,8 @@ static int nWindowHeight;
 
 BOOL GDIInitialize(HWND hWnd, int nWidth, int nHeight)
 {
+	uint32_t *masks;
+
 	hMainWnd = hWnd;
 
 	nWindowWidth = nWidth;
@@ -56,7 +58,11 @@ BOOL GDIInitialize(HWND hWnd, int nWidth, int nHeight)
 	bi.bmiHeader.biHeight = (LONG)-nHeight; /* Top-down */
 	bi.bmiHeader.biPlanes = 1;
 	bi.bmiHeader.biBitCount = 32;
-	bi.bmiHeader.biCompression = BI_RGB;
+	bi.bmiHeader.biCompression = BI_BITFIELDS;
+	masks = (uint32_t *)&bi.bmiColors;
+	masks[0] = 0x000000ff; // Red mask
+	masks[1] = 0x0000ff00; // Green mask
+	masks[2] = 0x00ff0000; // Blue mask
 	hBitmapDC = CreateCompatibleDC(NULL);
 	if(hBitmapDC == NULL)
 		return FALSE;
@@ -89,6 +95,7 @@ BOOL GDIResizeWindow(int nOffsetX, int nOffsetY, float scale)
 
 VOID GDIStartFrame(void)
 {
+	hal_clear_image(pBackImage, 0);
 }
 
 VOID GDIEndFrame(void)

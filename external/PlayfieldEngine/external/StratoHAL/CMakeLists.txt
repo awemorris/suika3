@@ -6,7 +6,8 @@ project(StratoHAL LANGUAGES C CXX)
 #
 
 # Target
-option(STRATO_TARGET_WINDOWS          "Build for Windows"                  OFF)
+option(STRATO_TARGET_WINDOWS          "Build for Windows 2000 or later"    OFF)
+option(STRATO_TARGET_WINDOWS95        "Build for Windows 95/98/Me"         OFF)
 option(STRATO_TARGET_MACOS            "Build for macOS"                    OFF)
 option(STRATO_TARGET_LINUX            "Build for Linux X11"                OFF)
 option(STRATO_TARGET_LINUX_WAYLAND    "Build for Linux Wayland"            OFF)
@@ -41,6 +42,7 @@ option(STRATO_ENABLE_GST              "Enable GStreamer support"           OFF)
 
 # For when a target is manually specified.
 if(   STRATO_TARGET_WINDOWS
+   OR STRATO_TARGET_WINDOWS95
    OR STRATO_TARGET_MACOS
    OR STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_WAYLAND
@@ -211,7 +213,8 @@ endif()
 #
 
 # For Windows.
-if(STRATO_TARGET_WINDOWS)
+if(   STRATO_TARGET_WINDOWS
+   OR STRATO_TARGET_WINDOWS95)
   if(STRATO_ENABLE_MEDIAFOUNDATION)
     set(STRATO_SOURCES
       src/image.c
@@ -491,10 +494,11 @@ endif()
 
 # Windows
 if(   STRATO_TARGET_WINDOWS
+   OR STRATO_TARGET_WINDOWS95
    OR STRATO_TARGET_GDK_WINDOWS
    OR STRATO_TARGET_GDK_XBOX_XS)
   enable_language(RC)
-  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD 98)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
   add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
   file(ARCHIVE_EXTRACT
@@ -625,7 +629,8 @@ target_include_directories(strato PRIVATE ${BZIP2_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${ZLIB_INCLUDE_DIRS})
 
 # Windows: Add -Ires -Idx12headers/include/directx -Idx12headers/include/fxguids
-if(STRATO_TARGET_WINDOWS)
+if(   STRATO_TARGET_WINDOWS
+   OR STRATO_TARGET_WINDOWS95)
   target_include_directories(strato PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/res
     ${CMAKE_BINARY_DIR}/dx12headers/include/directx
@@ -719,6 +724,12 @@ if(   STRATO_TARGET_WINDOWS
     target_compile_definitions(strato PUBLIC UNICODE _UNICODE)
   endif()
 endif()
+if(STRATO_TARGET_WINDOWS95)
+  # /utf-8
+  if(MSVC)
+    target_compile_options(strato PUBLIC /utf-8)
+  endif()
+endif()
 
 #
 # Link
@@ -742,7 +753,8 @@ if(STRATO_ENABLE_SHARED)
 endif()
 
 # Windows link options.
-if(STRATO_TARGET_WINDOWS)
+if(   STRATO_TARGET_WINDOWS
+   OR STRATO_TARGET_WINDOWS95)
   # DLLs.
   target_link_libraries(strato PUBLIC
     gdi32
@@ -760,10 +772,10 @@ if(STRATO_TARGET_WINDOWS)
 
   # -mwindows -municode
   if(MINGW)
-    target_link_options(strato PUBLIC
-      -mwindows
-      -municode
-    )
+    target_link_options(strato PUBLIC -mwindows)
+    if(STRATO_TARGET_WINDOWS)
+      target_link_options(strato PUBLIC -municode)
+    endif()
   endif()
 
   # /SUBSYSTEM:WINDOWS

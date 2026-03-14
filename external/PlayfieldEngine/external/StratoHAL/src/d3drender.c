@@ -49,6 +49,10 @@ D3DInitialize(
 {
 	BOOL bAvoidD3D12, bAvoidD3D11;
 
+	GDIInitialize(hWnd, nWidth, nHeight);
+	nGraphicsMode = MODE_GDI;
+	return TRUE;
+
 	bAvoidD3D12 = bAvoidD3D11 = FALSE;
 	if (bForceD3D9)
 		bAvoidD3D12 = bAvoidD3D11 = TRUE;
