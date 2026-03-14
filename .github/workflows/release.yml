@@ -77,7 +77,7 @@ jobs:
 
       - name: Download mingw-w64-9.0
         run: |
-          echo "Downloaing mingw-w64-9.0 (msvcrt)."
+          echo "Downloaing mingw-w64-9.0 (msvcrt win95)."
           wget -q https://noctvm.io/ci/mingw-w64-9.0.tar.bz2
           tar xJf mingw-w64-9.0.tar.bz2
           echo "$PWD/mingw-w64-9.0/bin" >> $GITHUB_PATH

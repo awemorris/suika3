@@ -565,44 +565,46 @@ The official recommended binary is the 64-bit version.
 
 There is a 32-bit version for backward compatibility.
 
-| OS      | Version                     | Patch | CPU    | Runtimes                               | 32-bit Binary | Direct3D | Special   |
-|---------|-----------------------------|-------|--------|----------------------------------------|---------------|----------|-----------|
-| Windows | 11                          |       | x64    | (None required)                        | ✅            | 12.0     |           |
-| Windows | 11                          |       | arm64  | (None required)                        | ✅            | 12.0     |           |
-| Windows | 10                          |       | x86    | (None required)                        | ✅            | 12.0     |           |
-| Windows | 10                          |       | x64    | (None required)                        | ✅            | 12.0     |           |
-| Windows | 10                          |       | arm64  | (None required)                        | ✅            | 12.0     |           |
-| Windows | 8.1                         |       | x86    | (None required)                        | ✅            | 11.0     |           |
-| Windows | 8.1                         |       | x64    | (None required)                        | ✅            | 11.0     |           |
-| Windows | 8                           |       | x86    | (None required)                        | ✅            | 11.0     |           |
-| Windows | 8                           |       | x64    | (None required)                        | ✅            | 11.0     |           |
-| Windows | 7                           |       | x86    | (None required)                        | ✅            | 11.0     |           |
-| Windows | 7                           |       | x64    | (None required)                        | ✅            | 11.0     |           |
-| Windows | 7                           | SP1   | x86    | (None required)                        | ✅            | 11.0     |           |
-| Windows | 7                           | SP1   | x64    | (None required)                        | ✅            | 11.0     |           |
-| Windows | Vista                       |       | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |           |
-| Windows | Vista                       |       | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |           |
-| Windows | Vista                       | SP1   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |           |
-| Windows | Vista                       | SP1   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |           |
-| Windows | Vista                       | SP2   | x86    | DirectX 11 Platform Update             | ✅            | 11.0     |           |
-| Windows | Vista                       | SP2   | x64    | DirectX 11 Platform Update             | ✅            | 11.0     |           |
-| Windows | XP                          |       | x86    | DirectX 9.0b Runtime                   | ❌            | 9.0      | No XInput |
-| Windows | XP                          | SP1   | x86    | DirectX 9.0b Runtime                   | ✅            | 9.0      |           |
-| Windows | XP                          | SP2   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |           |
-| Windows | XP                          | SP3   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |           |
-| Windows | XP Professional x64 Edition |       | x64    | DirectX End-User Runtimes (June 2010)  | ❌            | 9.0      | No XInput |
-| Windows | XP Professional x64 Edition | SP1   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |           |
-| Windows | XP Professional x64 Edition | SP2   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |           |
-| Windows | 2000                        |       | x86    | DirectX End-User Runtimes (Dec 2006)   | ❌            | 9.0      | No XInput |
-| Windows | 2000                        | SP1   | x86    | DirectX End-User Runtimes (Dec 2006)   | ❌            | 9.0      | No XInput |
-| Windows | 2000                        | SP2   | x86    | DirectX End-User Runtimes (Dec 2006)   | ❌            | 9.0      | No XInput |
-| Windows | 2000                        | SP3   | x86    | DirectX End-User Runtimes (Dec 2006)   | ❌            | 9.0      | No XInput |
-| Windows | 2000                        | SP4   | x86    | DirectX End-User Runtimes (Dec 2006)   | ❌            | 9.0      | No XInput |
-| Windows | Me                          |       | x86    | -                                      | ❌            | -        | No DX9    |
-| Windows | 98                          |       | x86    | -                                      | ❌            | -        | No DX9    |
-| Windows | 98                          | SE    | x86    | -                                      | ❌            | -        | No DX9    |
-| Windows | 95                          |       | x86    | -                                      | ❌            | -        | No DX9    |
-| Windows | 95                          | OSR2  | x86    | -                                      | ❌            | -        | No DX9    |
+| OS      | Version                     | Patch | CPU    | Runtimes                               | 32-bit Binary | Direct3D | Special     |
+|---------|-----------------------------|-------|--------|----------------------------------------|---------------|----------|-------------|
+| Windows | 11                          |       | x64    | (None required)                        | ✅            | 12.0     |             |
+| Windows | 11                          |       | arm64  | (None required)                        | ✅            | 12.0     |             |
+| Windows | 10                          |       | x86    | (None required)                        | ✅            | 12.0     |             |
+| Windows | 10                          |       | x64    | (None required)                        | ✅            | 12.0     |             |
+| Windows | 10                          |       | arm64  | (None required)                        | ✅            | 12.0     |             |
+| Windows | 8.1                         |       | x86    | (None required)                        | ✅            | 11.0     |             |
+| Windows | 8.1                         |       | x64    | (None required)                        | ✅            | 11.0     |             |
+| Windows | 8                           |       | x86    | (None required)                        | ✅            | 11.0     |             |
+| Windows | 8                           |       | x64    | (None required)                        | ✅            | 11.0     |             |
+| Windows | 7                           |       | x86    | (None required)                        | ✅            | 11.0     |             |
+| Windows | 7                           |       | x64    | (None required)                        | ✅            | 11.0     |             |
+| Windows | 7                           | SP1   | x86    | (None required)                        | ✅            | 11.0     |             |
+| Windows | 7                           | SP1   | x64    | (None required)                        | ✅            | 11.0     |             |
+| Windows | Vista                       |       | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | Vista                       |       | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | Vista                       | SP1   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | Vista                       | SP1   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | Vista                       | SP2   | x86    | DirectX 11 Platform Update             | ✅            | 11.0     |             |
+| Windows | Vista                       | SP2   | x64    | DirectX 11 Platform Update             | ✅            | 11.0     |             |
+| Windows | XP                          |       | x86    | DirectX 9.0b Runtime                   | ✅            | 9.0      |             |
+| Windows | XP                          | SP1   | x86    | DirectX 9.0b Runtime                   | ✅            | 9.0      |             |
+| Windows | XP                          | SP2   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | XP                          | SP3   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | XP Professional x64 Edition |       | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | XP Professional x64 Edition | SP1   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | XP Professional x64 Edition | SP2   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | 2000                        |       | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0      |             |
+| Windows | 2000                        | SP1   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0      |             |
+| Windows | 2000                        | SP2   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0      |             |
+| Windows | 2000                        | SP3   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0      |             |
+| Windows | 2000                        | SP4   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0      |             |
+| Windows | Me                          |       | x86    | -                                      | Not Checked   | -        | soft render |
+| Windows | 98                          |       | x86    | -                                      | Not Checked   | -        | soft render |
+| Windows | 98                          | SE    | x86    | -                                      | Not Checked   | -        | soft render |
+| Windows | 95                          |       | x86    | -                                      | Not Checked   | -        | soft render |
+| Windows | 95                          | OSR2  | x86    | -                                      | Not Checked   | -        | soft render |
+| Windows | NT 4.0                      |       | x86    |                                        | Not Checked   | -        | soft render |
+| Windows | NT 3.51                     |       | x86    |                                        | ❌            | -        | Insufficient Win32 APIs |
 
 **macOS:**
 

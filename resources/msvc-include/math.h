@@ -160,6 +160,7 @@ double round(double x);
 #define ceilf(x)       __builtin_ceilf(x)
 #define truncf(x)      __builtin_truncf(x)
 #define roundf(x)      __builtin_roundf(x)
+#define lroundf(x)      __builtin_lroundf(x)
 
 /*
 float  floorf(float x);

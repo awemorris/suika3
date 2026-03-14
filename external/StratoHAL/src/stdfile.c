@@ -175,7 +175,11 @@ init_file(void)
 	/* Try opening a package file. */
 #ifdef HAL_TARGET_WINDOWS
 	_fmode = _O_BINARY;
+#ifdef _UNICODE
 	fp = _wfopen(win32_utf8_to_utf16(package_path), L"rb");
+#else
+	fp = fopen(package_path, "rb");
+#endif
 #else
 	fp = fopen(package_path, "r");
 #endif
@@ -277,7 +281,11 @@ hal_check_file_exist(
 	/* Open a FILE pointer. */
 #ifdef HAL_TARGET_WINDOWS
 	_fmode = _O_BINARY;
+#ifdef _UNICODE
 	fp = _wfopen(win32_utf8_to_utf16(real_path), L"rb");
+#else
+	fp = fopen(real_path, "rb");
+#endif
 #else
 	fp = fopen(real_path, "r");
 #endif
@@ -362,7 +370,11 @@ open_package(
 	/* Open a new FILE pointer to the package file. */
 #ifdef HAL_TARGET_WINDOWS
 	_fmode = _O_BINARY;
+#ifdef _UNICODE
 	f->fp = _wfopen(win32_utf8_to_utf16(package_path), L"rb");
+#else
+	f->fp = fopen(package_path, "rb");
+#endif
 #else
 	f->fp = fopen(package_path, "r");
 #endif
@@ -408,7 +420,11 @@ open_real(
 	/* Open a real file. */
 #ifdef HAL_TARGET_WINDOWS
 	_fmode = _O_BINARY;
+#ifdef _UNICODE
 	f->fp = _wfopen(win32_utf8_to_utf16(real_path), L"rb");
+#else
+	f->fp = fopen(real_path, "rb");
+#endif
 #else
 	f->fp = fopen(real_path, "r");
 #endif
@@ -798,7 +814,11 @@ hal_open_wfile(
 	/* Open a real file. */
 #ifdef HAL_TARGET_WINDOWS
 	_fmode = _O_BINARY;
+#ifdef _UNICODE
 	(*wf)->fp = _wfopen(win32_utf8_to_utf16(path), L"wb");
+#else
+	(*wf)->fp = fopen(path, "wb");
+#endif
 #else
 	(*wf)->fp = fopen(path, "w");
 #endif

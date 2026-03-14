@@ -6,8 +6,8 @@ project(playfield LANGUAGES C CXX)
 #
 
 # Targets
-option(PLAYFIELD_TARGET_WINDOWS          "Build for Windows 2000 or later"       OFF)
-option(PLAYFIELD_TARGET_WINDOWS95        "Build for Windows 95/98/Me"            OFF)
+option(PLAYFIELD_TARGET_WINDOWS          "Build for Windows XP or later"         OFF)
+option(PLAYFIELD_TARGET_WINDOWS95        "Build for Windows 95/98/Me/2000"       OFF)
 option(PLAYFIELD_TARGET_MACOS            "Build for macOS"                       OFF)
 option(PLAYFIELD_TARGET_LINUX            "Build for Linux X11"                   OFF)
 option(PLAYFIELD_TARGET_LINUX_WAYLAND    "Build for Linux Wayland"               OFF)
