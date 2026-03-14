@@ -85,7 +85,7 @@ DInputInitialize(HINSTANCE hInst, HWND hWnd)
     HRESULT hr;
 
     HMODULE hModule = LoadLibraryA("dinput8.dll");
-    HRESULT (*pDirectInput8Create)(HINSTANCE, DWORD, REFIID, LPVOID *, LPUNKNOWN) = (HRESULT (*)(HINSTANCE, DWORD, REFIID, LPVOID *, LPUNKNOWN))GetProcAddress(hModule, "DirectInput8Create");
+    HRESULT (__stdcall *pDirectInput8Create)(HINSTANCE, DWORD, REFIID, LPVOID *, LPUNKNOWN) = (HRESULT (__stdcall *)(HINSTANCE, DWORD, REFIID, LPVOID *, LPUNKNOWN))GetProcAddress(hModule, "DirectInput8Create");
     if (pDirectInput8Create == NULL)
         return FALSE;
 

@@ -8,7 +8,7 @@ const char *noct_gettext(const char *msg)
     if (strcmp(msg, "syntax error") == 0) {
         if (strcmp(lang_code, "en") == 0) return "Syntax error.";
         if (strcmp(lang_code, "es") == 0) return "Error de sintaxis.";
-        if (strcmp(lang_code, "fr") == 0) return "syntax error";
+        if (strcmp(lang_code, "fr") == 0) return "Syntax error";
         if (strcmp(lang_code, "de") == 0) return "Syntaxfehler.";
         if (strcmp(lang_code, "it") == 0) return "Errore di sintassi.";
         if (strcmp(lang_code, "el") == 0) return "Σφάλμα σύνταξης.";
@@ -27,7 +27,7 @@ const char *noct_gettext(const char *msg)
         if (strcmp(lang_code, "el") == 0) return "%s: Δεν υπάρχει αρκετή μνήμη κατά την ανάλυση.";
         if (strcmp(lang_code, "ru") == 0) return "%s: Недостаточно памяти при разборе.";
         if (strcmp(lang_code, "zh") == 0) return "%s：解析时内存不足。";
-        if (strcmp(lang_code, "tw") == 0) return "%s: Out of memory while parsing.";
+        if (strcmp(lang_code, "tw") == 0) return "%s: 解析時記憶體不足。";
         if (strcmp(lang_code, "ja") == 0) return "%s: メモリが足りません。";
         if (strcmp(lang_code, "ca") == 0) return "%s: No hi ha prou memòria.";
         return "%s: Out of memory while parsing.";
@@ -40,14 +40,14 @@ const char *noct_gettext(const char *msg)
         if (strcmp(lang_code, "el") == 0) return "Πάρα πολλές συναρτήσεις.";
         if (strcmp(lang_code, "ru") == 0) return "Слишком много функций.";
         if (strcmp(lang_code, "zh") == 0) return "函数过多。";
-        if (strcmp(lang_code, "tw") == 0) return "繁体中国語。";
+        if (strcmp(lang_code, "tw") == 0) return "函式過多。";
         if (strcmp(lang_code, "ja") == 0) return "関数が多すぎます。";
         if (strcmp(lang_code, "ca") == 0) return "Hi ha massa funcions.";
         return "Too many functions.";
     }
     if (strcmp(msg, "continue appeared outside loop.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "continue es utilizado fuera de un bucle.";
-        if (strcmp(lang_code, "fr") == 0) return "L’instruction continue est apparue en dehors d’une boucle.";
+        if (strcmp(lang_code, "fr") == 0) return "L'instruction continue est apparue en dehors d'une boucle.";
         if (strcmp(lang_code, "de") == 0) return "continue wurde außerhalb einer Schleife verwendet.";
         if (strcmp(lang_code, "it") == 0) return "continue è stato utilizzato al di fuori di un ciclo.";
         if (strcmp(lang_code, "el") == 0) return "Η εντολή continue εμφανίστηκε εκτός βρόχου.";
@@ -60,7 +60,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "LHS is not a term or an array element.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "LHS no es un término ni un elemento de un array.";
-        if (strcmp(lang_code, "fr") == 0) return "La partie gauche n’est ni un terme ni un élément de tableau.";
+        if (strcmp(lang_code, "fr") == 0) return "La partie gauche n'est ni un terme ni un élément de tableau.";
         if (strcmp(lang_code, "de") == 0) return "LHS ist weder ein Term noch ein Array-Element.";
         if (strcmp(lang_code, "it") == 0) return "LHS non è un termine né un elemento di un array.";
         if (strcmp(lang_code, "el") == 0) return "Η αριστερή πλευρά δεν είναι ούτε όρος ούτε στοιχείο πίνακα.";
@@ -120,7 +120,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Exceeded the maximum argument count.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "Se ha superado el número máximo de argumentos.";
-        if (strcmp(lang_code, "fr") == 0) return "Nombre maximal d’arguments dépassé.";
+        if (strcmp(lang_code, "fr") == 0) return "Nombre maximal d'arguments dépassé.";
         if (strcmp(lang_code, "de") == 0) return "Die maximale Anzahl von Argumenten wurde überschritten.";
         if (strcmp(lang_code, "it") == 0) return "È stato superato il numero massimo di argomenti.";
         if (strcmp(lang_code, "el") == 0) return "Υπέρβαση του μέγιστου αριθμού ορισμάτων.";
@@ -198,7 +198,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Memory mapping failed.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El mapeo de la memoria ha fallado.";
-        if (strcmp(lang_code, "fr") == 0) return "Échec de l’association mémoire.";
+        if (strcmp(lang_code, "fr") == 0) return "Échec de l'association mémoire.";
         if (strcmp(lang_code, "de") == 0) return "Speicherabbildung fehlgeschlagen.";
         if (strcmp(lang_code, "it") == 0) return "Mappatura della memoria fallita.";
         if (strcmp(lang_code, "el") == 0) return "Αποτυχία αντιστοίχισης μνήμης.";
@@ -258,7 +258,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Not an array.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "No es un array.";
-        if (strcmp(lang_code, "fr") == 0) return "Ce n’est pas un tableau.";
+        if (strcmp(lang_code, "fr") == 0) return "Ce n'est pas un tableau.";
         if (strcmp(lang_code, "de") == 0) return "Kein Array.";
         if (strcmp(lang_code, "it") == 0) return "Non è un array.";
         if (strcmp(lang_code, "el") == 0) return "Δεν είναι πίνακας.";
@@ -271,7 +271,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Array index %d is out-of-range.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El índice %d del array se encuentra fuera de rango.";
-        if (strcmp(lang_code, "fr") == 0) return "L’index de tableau %d est hors de portée.";
+        if (strcmp(lang_code, "fr") == 0) return "L'index de tableau %d est hors de portée.";
         if (strcmp(lang_code, "de") == 0) return "Array-Index %d ist außerhalb des gültigen Bereichs.";
         if (strcmp(lang_code, "it") == 0) return "L'indice %d dell'array è fuori dall'intervallo.";
         if (strcmp(lang_code, "el") == 0) return "Ο δείκτης πίνακα %d είναι εκτός ορίων.";
@@ -326,7 +326,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Value is not a number.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El valor no es un número.";
-        if (strcmp(lang_code, "fr") == 0) return "La valeur n’est pas un nombre.";
+        if (strcmp(lang_code, "fr") == 0) return "La valeur n'est pas un nombre.";
         if (strcmp(lang_code, "de") == 0) return "Wert ist keine Zahl.";
         if (strcmp(lang_code, "it") == 0) return "Il valore non è un numero.";
         if (strcmp(lang_code, "el") == 0) return "Η τιμή δεν είναι αριθμός.";
@@ -339,7 +339,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Value is not an integer.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El valor no es un entero.";
-        if (strcmp(lang_code, "fr") == 0) return "La valeur n’est pas un entier.";
+        if (strcmp(lang_code, "fr") == 0) return "La valeur n'est pas un entier.";
         if (strcmp(lang_code, "de") == 0) return "Wert ist keine ganze Zahl.";
         if (strcmp(lang_code, "it") == 0) return "Il valore non è un intero.";
         if (strcmp(lang_code, "el") == 0) return "Η τιμή δεν είναι ακέραιος αριθμός.";
@@ -360,7 +360,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Value is not a number or a string.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El valor no es un número ni un string.";
-        if (strcmp(lang_code, "fr") == 0) return "La valeur n’est ni un nombre ni une chaîne.";
+        if (strcmp(lang_code, "fr") == 0) return "La valeur n'est ni un nombre ni une chaîne.";
         if (strcmp(lang_code, "de") == 0) return "Wert ist weder eine Zahl noch ein String.";
         if (strcmp(lang_code, "it") == 0) return "Il valore non è né un numero né un string.";
         if (strcmp(lang_code, "el") == 0) return "Η τιμή δεν είναι ούτε αριθμός ούτε συμβολοσειρά.";
@@ -386,7 +386,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Subscript not an integer.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El subíndice no es un entero.";
-        if (strcmp(lang_code, "fr") == 0) return "L’indice n’est pas un entier.";
+        if (strcmp(lang_code, "fr") == 0) return "L'indice n'est pas un entier.";
         if (strcmp(lang_code, "de") == 0) return "Der Index ist keine ganze Zahl.";
         if (strcmp(lang_code, "it") == 0) return "L'indice non è un intero.";
         if (strcmp(lang_code, "el") == 0) return "Ο δείκτης δεν είναι ακέραιος αριθμός.";
@@ -399,7 +399,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Not an array or a dictionary.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "No es un array ni un diccionario.";
-        if (strcmp(lang_code, "fr") == 0) return "Ce n’est ni un tableau ni un dictionnaire.";
+        if (strcmp(lang_code, "fr") == 0) return "Ce n'est ni un tableau ni un dictionnaire.";
         if (strcmp(lang_code, "de") == 0) return "Weder ein Array noch ein Dictionary.";
         if (strcmp(lang_code, "it") == 0) return "Non è un array né un dizionario.";
         if (strcmp(lang_code, "el") == 0) return "Δεν είναι ούτε πίνακας ούτε λεξικό.";
@@ -412,7 +412,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Subscript not a string.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El subíndice no es un string.";
-        if (strcmp(lang_code, "fr") == 0) return "L’indice n’est pas une chaîne.";
+        if (strcmp(lang_code, "fr") == 0) return "L'indice n'est pas une chaîne.";
         if (strcmp(lang_code, "de") == 0) return "Der Index ist kein String.";
         if (strcmp(lang_code, "it") == 0) return "L'indice non è un string.";
         if (strcmp(lang_code, "el") == 0) return "Ο δείκτης δεν είναι συμβολοσειρά.";
@@ -425,7 +425,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Value is not a string, an array, or a dictionary.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El valor no es un string, un array ni un diccionario.";
-        if (strcmp(lang_code, "fr") == 0) return "La valeur n’est ni une chaîne, ni un tableau, ni un dictionnaire.";
+        if (strcmp(lang_code, "fr") == 0) return "La valeur n'est ni une chaîne, ni un tableau, ni un dictionnaire.";
         if (strcmp(lang_code, "de") == 0) return "Wert ist weder ein String, noch ein Array noch ein Dictionary.";
         if (strcmp(lang_code, "it") == 0) return "Il valore non è né un string, né un array né un dizionario.";
         if (strcmp(lang_code, "el") == 0) return "Η τιμή δεν είναι ούτε συμβολοσειρά, ούτε πίνακας, ούτε λεξικό.";
@@ -438,7 +438,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Not a dictionary.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "No es un diccionario.";
-        if (strcmp(lang_code, "fr") == 0) return "Ce n’est pas un dictionnaire.";
+        if (strcmp(lang_code, "fr") == 0) return "Ce n'est pas un dictionnaire.";
         if (strcmp(lang_code, "de") == 0) return "Kein Dictionary.";
         if (strcmp(lang_code, "it") == 0) return "Non è un dizionario.";
         if (strcmp(lang_code, "el") == 0) return "Δεν είναι λεξικό.";
@@ -490,85 +490,85 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Element %d is not an integer.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El elemento %d no es un número entero.";
-        if (strcmp(lang_code, "fr") == 0) return "L’élément %d n’est pas un entier.";
+        if (strcmp(lang_code, "fr") == 0) return "L'élément %d n'est pas un entier.";
         if (strcmp(lang_code, "de") == 0) return "Element %d ist keine ganze Zahl.";
-        if (strcmp(lang_code, "it") == 0) return "L’elemento %d non è un numero intero.";
+        if (strcmp(lang_code, "it") == 0) return "L'elemento %d non è un numero intero.";
         if (strcmp(lang_code, "el") == 0) return "Το στοιχείο %d δεν είναι ακέραιος αριθμός.";
         if (strcmp(lang_code, "ru") == 0) return "Элемент %d не является целым числом.";
         if (strcmp(lang_code, "zh") == 0) return "第 %d 个元素不是整数。";
         if (strcmp(lang_code, "tw") == 0) return "第 %d 個元素不是整數。";
         if (strcmp(lang_code, "ja") == 0) return "%d 番目の要素が整数ではありません。";
-        if (strcmp(lang_code, "ca") == 0) return "L’element %d no és un nombre enter.";
+        if (strcmp(lang_code, "ca") == 0) return "L'element %d no és un nombre enter.";
         return "Element %d is not an integer.";
     }
     if (strcmp(msg, "Element %d is not a float.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El elemento %d no es un número decimal.";
-        if (strcmp(lang_code, "fr") == 0) return "L’élément %d n’est pas un nombre à virgule flottante.";
+        if (strcmp(lang_code, "fr") == 0) return "L'élément %d n'est pas un nombre à virgule flottante.";
         if (strcmp(lang_code, "de") == 0) return "Element %d ist keine Gleitkommazahl.";
-        if (strcmp(lang_code, "it") == 0) return "L’elemento %d non è un numero decimale.";
+        if (strcmp(lang_code, "it") == 0) return "L'elemento %d non è un numero decimale.";
         if (strcmp(lang_code, "el") == 0) return "Το στοιχείο %d δεν είναι δεκαδικός αριθμός.";
         if (strcmp(lang_code, "ru") == 0) return "Элемент %d не является числом с плавающей точкой.";
         if (strcmp(lang_code, "zh") == 0) return "第 %d 个元素不是浮点数。";
         if (strcmp(lang_code, "tw") == 0) return "第 %d 個元素不是浮點數。";
         if (strcmp(lang_code, "ja") == 0) return "%d 番目の要素が浮動小数点数ではありません。";
-        if (strcmp(lang_code, "ca") == 0) return "L’element %d no és un nombre amb coma flotant.";
+        if (strcmp(lang_code, "ca") == 0) return "L'element %d no és un nombre amb coma flotant.";
         return "Element %d is not a float.";
     }
     if (strcmp(msg, "Element %d is not a string.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El elemento %d no es una cadena.";
-        if (strcmp(lang_code, "fr") == 0) return "L’élément %d n’est pas une chaîne de caractères.";
+        if (strcmp(lang_code, "fr") == 0) return "L'élément %d n'est pas une chaîne de caractères.";
         if (strcmp(lang_code, "de") == 0) return "Element %d ist keine Zeichenkette.";
-        if (strcmp(lang_code, "it") == 0) return "L’elemento %d non è una stringa.";
+        if (strcmp(lang_code, "it") == 0) return "L'elemento %d non è una stringa.";
         if (strcmp(lang_code, "el") == 0) return "Το στοιχείο %d δεν είναι συμβολοσειρά.";
         if (strcmp(lang_code, "ru") == 0) return "Элемент %d не является строкой.";
         if (strcmp(lang_code, "zh") == 0) return "第 %d 个元素不是字符串。";
         if (strcmp(lang_code, "tw") == 0) return "第 %d 個元素不是字串。";
         if (strcmp(lang_code, "ja") == 0) return "%d 番目の要素が文字列ではありません。";
-        if (strcmp(lang_code, "ca") == 0) return "L’element %d no és una cadena de caràcters.";
+        if (strcmp(lang_code, "ca") == 0) return "L'element %d no és una cadena de caràcters.";
         return "Element %d is not a string.";
     }
     if (strcmp(msg, "Element %d is not an array.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El elemento %d no es una matriz.";
-        if (strcmp(lang_code, "fr") == 0) return "L’élément %d n’est pas un tableau.";
+        if (strcmp(lang_code, "fr") == 0) return "L'élément %d n'est pas un tableau.";
         if (strcmp(lang_code, "de") == 0) return "Element %d ist kein Array.";
-        if (strcmp(lang_code, "it") == 0) return "L’elemento %d non è un array.";
+        if (strcmp(lang_code, "it") == 0) return "L'elemento %d non è un array.";
         if (strcmp(lang_code, "el") == 0) return "Το στοιχείο %d δεν είναι πίνακας.";
         if (strcmp(lang_code, "ru") == 0) return "Элемент %d не является массивом.";
         if (strcmp(lang_code, "zh") == 0) return "第 %d 个元素不是数组。";
         if (strcmp(lang_code, "tw") == 0) return "第 %d 個元素不是陣列。";
         if (strcmp(lang_code, "ja") == 0) return "%d 番目の要素が配列ではありません。";
-        if (strcmp(lang_code, "ca") == 0) return "L’element %d no és una matriu.";
+        if (strcmp(lang_code, "ca") == 0) return "L'element %d no és una matriu.";
         return "Element %d is not an array.";
     }
     if (strcmp(msg, "Element %d is not a dictionary.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El elemento %d no es un diccionario.";
-        if (strcmp(lang_code, "fr") == 0) return "L’élément %d n’est pas un dictionnaire.";
+        if (strcmp(lang_code, "fr") == 0) return "L'élément %d n'est pas un dictionnaire.";
         if (strcmp(lang_code, "de") == 0) return "Element %d ist kein Dictionary.";
-        if (strcmp(lang_code, "it") == 0) return "L’elemento %d non è un dizionario.";
+        if (strcmp(lang_code, "it") == 0) return "L'elemento %d non è un dizionario.";
         if (strcmp(lang_code, "el") == 0) return "Το στοιχείο %d δεν είναι λεξικό.";
         if (strcmp(lang_code, "ru") == 0) return "Элемент %d не является словарем.";
         if (strcmp(lang_code, "zh") == 0) return "第 %d 个元素不是字典。";
         if (strcmp(lang_code, "tw") == 0) return "第 %d 個元素不是字典。";
         if (strcmp(lang_code, "ja") == 0) return "%d 番目の要素が辞書ではありません。";
-        if (strcmp(lang_code, "ca") == 0) return "L’element %d no és un diccionari.";
+        if (strcmp(lang_code, "ca") == 0) return "L'element %d no és un diccionari.";
         return "Element %d is not a dictionary.";
     }
     if (strcmp(msg, "Element %d is not a function.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El elemento %d no es una función.";
-        if (strcmp(lang_code, "fr") == 0) return "L’élément %d n’est pas une fonction.";
+        if (strcmp(lang_code, "fr") == 0) return "L'élément %d n'est pas une fonction.";
         if (strcmp(lang_code, "de") == 0) return "Element %d ist keine Funktion.";
-        if (strcmp(lang_code, "it") == 0) return "L’elemento %d non è una funzione.";
-        if (strcmp(lang_code, "el") == 0) return "L’elemento %d non è una funzione.";
+        if (strcmp(lang_code, "it") == 0) return "L'elemento %d non è una funzione.";
+        if (strcmp(lang_code, "el") == 0) return "L'elemento %d non è una funzione.";
         if (strcmp(lang_code, "ru") == 0) return "Элемент %d не является функцией.";
         if (strcmp(lang_code, "zh") == 0) return "第 %d 个元素不是函数。";
         if (strcmp(lang_code, "tw") == 0) return "第 %d 個元素不是函式。";
         if (strcmp(lang_code, "ja") == 0) return "%d 番目の要素が関数ではありません。";
-        if (strcmp(lang_code, "ca") == 0) return "L’element %d no és una funció.";
+        if (strcmp(lang_code, "ca") == 0) return "L'element %d no és una funció.";
         return "Element %d is not a function.";
     }
     if (strcmp(msg, "Value for key %s is not an integer.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El valor de la clave %s no es un número entero.";
-        if (strcmp(lang_code, "fr") == 0) return "La valeur associée à la clé %s n’est pas un entier.";
+        if (strcmp(lang_code, "fr") == 0) return "La valeur associée à la clé %s n'est pas un entier.";
         if (strcmp(lang_code, "de") == 0) return "Der Wert für den Schlüssel %s ist keine ganze Zahl.";
         if (strcmp(lang_code, "it") == 0) return "Il valore per la chiave %s non è un numero intero.";
         if (strcmp(lang_code, "el") == 0) return "Η τιμή για το κλειδί %s δεν είναι ακέραιος αριθμός.";
@@ -581,7 +581,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Value for key %s is not a float.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El valor de la clave %s no es un número decimal.";
-        if (strcmp(lang_code, "fr") == 0) return "La valeur associée à la clé %s n’est pas un nombre à virgule flottante.";
+        if (strcmp(lang_code, "fr") == 0) return "La valeur associée à la clé %s n'est pas un nombre à virgule flottante.";
         if (strcmp(lang_code, "de") == 0) return "Der Wert für den Schlüssel %s ist keine Gleitkommazahl.";
         if (strcmp(lang_code, "it") == 0) return "Il valore per la chiave %s non è un numero decimale.";
         if (strcmp(lang_code, "el") == 0) return "Η τιμή για το κλειδί %s δεν είναι δεκαδικός αριθμός.";
@@ -594,7 +594,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Value for key %s is not a string.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El valor de la clave %s no es una cadena.";
-        if (strcmp(lang_code, "fr") == 0) return "La valeur associée à la clé %s n’est pas une chaîne de caractères.";
+        if (strcmp(lang_code, "fr") == 0) return "La valeur associée à la clé %s n'est pas une chaîne de caractères.";
         if (strcmp(lang_code, "de") == 0) return "Der Wert für den Schlüssel %s ist keine Zeichenkette.";
         if (strcmp(lang_code, "it") == 0) return "Il valore per la chiave %s non è una stringa.";
         if (strcmp(lang_code, "el") == 0) return "Η τιμή για το κλειδί %s δεν είναι συμβολοσειρά.";
@@ -607,7 +607,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Value for key %s is not an array.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El valor de la clave %s no es una matriz.";
-        if (strcmp(lang_code, "fr") == 0) return "La valeur associée à la clé %s n’est pas un tableau.";
+        if (strcmp(lang_code, "fr") == 0) return "La valeur associée à la clé %s n'est pas un tableau.";
         if (strcmp(lang_code, "de") == 0) return "Der Wert für den Schlüssel %s ist kein Array.";
         if (strcmp(lang_code, "it") == 0) return "Il valore per la chiave %s non è un array.";
         if (strcmp(lang_code, "el") == 0) return "Η τιμή για το κλειδί %s δεν είναι πίνακας.";
@@ -620,7 +620,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Value for key %s is not a dictionary.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El valor de la clave %s no es un diccionario.";
-        if (strcmp(lang_code, "fr") == 0) return "La valeur associée à la clé %s n’est pas un dictionnaire.";
+        if (strcmp(lang_code, "fr") == 0) return "La valeur associée à la clé %s n'est pas un dictionnaire.";
         if (strcmp(lang_code, "de") == 0) return "Der Wert für den Schlüssel %s ist kein Dictionary.";
         if (strcmp(lang_code, "it") == 0) return "Il valore per la chiave %s non è un dizionario.";
         if (strcmp(lang_code, "el") == 0) return "Η τιμή για το κλειδί %s δεν είναι λεξικό.";
@@ -633,7 +633,7 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Value for key %s is not a function.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "El valor de la clave %s no es una función.";
-        if (strcmp(lang_code, "fr") == 0) return "La valeur associée à la clé %s n’est pas une fonction.";
+        if (strcmp(lang_code, "fr") == 0) return "La valeur associée à la clé %s n'est pas une fonction.";
         if (strcmp(lang_code, "de") == 0) return "Der Wert für den Schlüssel %s ist keine Funktion.";
         if (strcmp(lang_code, "it") == 0) return "Il valore per la chiave %s non è una funzione.";
         if (strcmp(lang_code, "el") == 0) return "Η τιμή για το κλειδί %s δεν είναι συνάρτηση.";
@@ -646,72 +646,72 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Argument (%d: %s) not an integer.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "Argumento (%d: %s) no es un número entero.";
-        if (strcmp(lang_code, "fr") == 0) return "L’argument (%d : %s) n’est pas un entier.";
+        if (strcmp(lang_code, "fr") == 0) return "L'argument (%d : %s) n'est pas un entier.";
         if (strcmp(lang_code, "de") == 0) return "Argument (%d: %s) ist keine ganze Zahl.";
-        if (strcmp(lang_code, "it") == 0) return "L’argomento (%d: %s) non è un numero intero.";
+        if (strcmp(lang_code, "it") == 0) return "L'argomento (%d: %s) non è un numero intero.";
         if (strcmp(lang_code, "el") == 0) return "Το όρισμα (%d: %s) δεν είναι ακέραιος αριθμός.";
         if (strcmp(lang_code, "ru") == 0) return "Аргумент (%d: %s) не является целым числом.";
         if (strcmp(lang_code, "zh") == 0) return "参数 (%d: %s) 不是整数。";
         if (strcmp(lang_code, "tw") == 0) return "參數 (%d: %s) 不是整數。";
         if (strcmp(lang_code, "ja") == 0) return "引数 (%d: %s) が整数ではありません。";
-        if (strcmp(lang_code, "ca") == 0) return "L’argument (%d: %s) no és un nombre enter.";
+        if (strcmp(lang_code, "ca") == 0) return "L'argument (%d: %s) no és un nombre enter.";
         return "Argument (%d: %s) not an integer.";
     }
     if (strcmp(msg, "Argument (%d: %s) not a float.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "Argumento (%d: %s) no es un número decimal.";
-        if (strcmp(lang_code, "fr") == 0) return "L’argument (%d : %s) n’est pas un nombre à virgule flottante.";
+        if (strcmp(lang_code, "fr") == 0) return "L'argument (%d : %s) n'est pas un nombre à virgule flottante.";
         if (strcmp(lang_code, "de") == 0) return "Argument (%d: %s) ist keine Gleitkommazahl.";
-        if (strcmp(lang_code, "it") == 0) return "L’argomento (%d: %s) non è un numero decimale.";
+        if (strcmp(lang_code, "it") == 0) return "L'argomento (%d: %s) non è un numero decimale.";
         if (strcmp(lang_code, "el") == 0) return "Το όρισμα (%d: %s) δεν είναι δεκαδικός αριθμός.";
         if (strcmp(lang_code, "ru") == 0) return "Аргумент (%d: %s) не является числом с плавающей точкой.";
         if (strcmp(lang_code, "zh") == 0) return "参数 (%d: %s) 不是浮点数。";
         if (strcmp(lang_code, "tw") == 0) return "參數 (%d: %s) 不是浮點數。";
         if (strcmp(lang_code, "ja") == 0) return "引数 (%d: %s) が浮動小数点数ではありません。";
-        if (strcmp(lang_code, "ca") == 0) return "L’argument (%d: %s) no és un nombre amb coma flotant.";
+        if (strcmp(lang_code, "ca") == 0) return "L'argument (%d: %s) no és un nombre amb coma flotant.";
         return "Argument (%d: %s) not a float.";
     }
     if (strcmp(msg, "Argument (%d: %s) not a string.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "Argumento (%d: %s) no es una cadena.";
-        if (strcmp(lang_code, "fr") == 0) return "L’argument (%d : %s) n’est pas une chaîne de caractères.";
+        if (strcmp(lang_code, "fr") == 0) return "L'argument (%d : %s) n'est pas une chaîne de caractères.";
         if (strcmp(lang_code, "de") == 0) return "Argument (%d: %s) ist keine Zeichenkette.";
-        if (strcmp(lang_code, "it") == 0) return "L’argomento (%d: %s) non è una stringa.";
+        if (strcmp(lang_code, "it") == 0) return "L'argomento (%d: %s) non è una stringa.";
         if (strcmp(lang_code, "el") == 0) return "Το όρισμα (%d: %s) δεν είναι συμβολοσειρά.";
         if (strcmp(lang_code, "ru") == 0) return "Аргумент (%d: %s) не является строкой.";
         if (strcmp(lang_code, "zh") == 0) return "参数 (%d: %s) 不是字符串。";
         if (strcmp(lang_code, "tw") == 0) return "參數 (%d: %s) 不是字串。";
         if (strcmp(lang_code, "ja") == 0) return "引数 (%d: %s) が文字列ではありません。";
-        if (strcmp(lang_code, "ca") == 0) return "L’argument (%d: %s) no és una cadena de caràcters.";
+        if (strcmp(lang_code, "ca") == 0) return "L'argument (%d: %s) no és una cadena de caràcters.";
         return "Argument (%d: %s) not a string.";
     }
     if (strcmp(msg, "Argument (%d: %s) is not an array.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "Argumento (%d: %s) no es una matriz.";
-        if (strcmp(lang_code, "fr") == 0) return "L’argument (%d : %s) n’est pas un tableau.";
+        if (strcmp(lang_code, "fr") == 0) return "L'argument (%d : %s) n'est pas un tableau.";
         if (strcmp(lang_code, "de") == 0) return "Argument (%d: %s) ist kein Array.";
-        if (strcmp(lang_code, "it") == 0) return "L’argomento (%d: %s) non è un array.";
+        if (strcmp(lang_code, "it") == 0) return "L'argomento (%d: %s) non è un array.";
         if (strcmp(lang_code, "el") == 0) return "Το όρισμα (%d: %s) δεν είναι πίνακας.";
         if (strcmp(lang_code, "ru") == 0) return "Аргумент (%d: %s) не является массивом.";
         if (strcmp(lang_code, "zh") == 0) return "参数 (%d: %s) 不是数组。";
         if (strcmp(lang_code, "tw") == 0) return "參數 (%d: %s) 不是陣列。";
         if (strcmp(lang_code, "ja") == 0) return "引数 (%d: %s) が配列ではありません。";
-        if (strcmp(lang_code, "ca") == 0) return "	L’argument (%d: %s) no és una matriu.";
+        if (strcmp(lang_code, "ca") == 0) return "	L'argument (%d: %s) no és una matriu.";
         return "Argument (%d: %s) is not an array.";
     }
     if (strcmp(msg, "Argument (%d: %s) is not a dictionary.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "Argumento (%d: %s) no es un diccionario.";
-        if (strcmp(lang_code, "fr") == 0) return "L’argument (%d : %s) n’est pas un dictionnaire.";
+        if (strcmp(lang_code, "fr") == 0) return "L'argument (%d : %s) n'est pas un dictionnaire.";
         if (strcmp(lang_code, "de") == 0) return "Argument (%d: %s) ist kein Dictionary.";
-        if (strcmp(lang_code, "it") == 0) return "L’argomento (%d: %s) non è un dizionario.";
+        if (strcmp(lang_code, "it") == 0) return "L'argomento (%d: %s) non è un dizionario.";
         if (strcmp(lang_code, "el") == 0) return "Το όρισμα (%d: %s) δεν είναι λεξικό.";
         if (strcmp(lang_code, "ru") == 0) return "Аргумент (%d: %s) не является словарем.";
         if (strcmp(lang_code, "zh") == 0) return "参数 (%d: %s) 不是字典。";
         if (strcmp(lang_code, "tw") == 0) return "參數 (%d: %s) 不是字典。";
         if (strcmp(lang_code, "ja") == 0) return "引数 (%d: %s) が辞書ではありません。";
-        if (strcmp(lang_code, "ca") == 0) return "L’argument (%d: %s) no és un diccionari.";
+        if (strcmp(lang_code, "ca") == 0) return "L'argument (%d: %s) no és un diccionari.";
         return "Argument (%d: %s) is not a dictionary.";
     }
     if (strcmp(msg, "Not a function.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "No es una función.";
-        if (strcmp(lang_code, "fr") == 0) return "Ce n’est pas une fonction.";
+        if (strcmp(lang_code, "fr") == 0) return "Ce n'est pas une fonction.";
         if (strcmp(lang_code, "de") == 0) return "Keine Funktion.";
         if (strcmp(lang_code, "it") == 0) return "Non è una funzione.";
         if (strcmp(lang_code, "el") == 0) return "Δεν είναι συνάρτηση.";
@@ -746,10 +746,10 @@ const char *noct_gettext(const char *msg)
     }
     if (strcmp(msg, "Cannot open file %s.\n") == 0) {
         if (strcmp(lang_code, "es") == 0) return "No se puede abrir el archivo %s.\n";
-        if (strcmp(lang_code, "fr") == 0) return "Impossible d’ouvrir le fichier %s.\n";
+        if (strcmp(lang_code, "fr") == 0) return "Impossible d'ouvrir le fichier %s.\n";
         if (strcmp(lang_code, "de") == 0) return "Datei %s kann nicht geöffnet werden.\n";
         if (strcmp(lang_code, "it") == 0) return "Impossibile aprire il file %s.\n";
-        if (strcmp(lang_code, "el") == 0) return "Δεν είναι δυνατή η άνοιγμα του αρχείου %s.\n";
+        if (strcmp(lang_code, "el") == 0) return "Δεν είναι δυνατό το άνοιγμα του αρχείου %s.";
         if (strcmp(lang_code, "ru") == 0) return "Не удаётся открыть файл %s.\n";
         if (strcmp(lang_code, "zh") == 0) return "无法打开文件 %s。\n";
         if (strcmp(lang_code, "tw") == 0) return "無法開啟檔案 %s。\n";
@@ -791,7 +791,7 @@ const char *noct_gettext(const char *msg)
         if (strcmp(lang_code, "zh") == 0) return "正在添加文件 %s\n";
         if (strcmp(lang_code, "tw") == 0) return "正在新增檔案 %s\n";
         if (strcmp(lang_code, "ja") == 0) return "ファイル%sを追加しています。\n";
-        if (strcmp(lang_code, "ca") == 0) return "S’està afegint el fitxer %s\n";
+        if (strcmp(lang_code, "ca") == 0) return "S'està afegint el fitxer %s\n";
         return "Adding file %s\n";
     }
     if (strcmp(msg, "Cannot find %s.\n") == 0) {
@@ -817,7 +817,7 @@ const char *noct_gettext(const char *msg)
         if (strcmp(lang_code, "zh") == 0) return "正在搜索目录 %s。\n";
         if (strcmp(lang_code, "tw") == 0) return "正在搜尋目錄 %s。\n";
         if (strcmp(lang_code, "ja") == 0) return "ディレクトリ%sを検索中です。\n";
-        if (strcmp(lang_code, "ca") == 0) return "S’està cercant el directori %s.\n";
+        if (strcmp(lang_code, "ca") == 0) return "S'està cercant el directori %s.\n";
         return "Searching directory %s.\n";
     }
     if (strcmp(msg, "Skipping empty directory %s.\n") == 0) {
@@ -830,7 +830,7 @@ const char *noct_gettext(const char *msg)
         if (strcmp(lang_code, "zh") == 0) return "跳过空目录 %s。\n";
         if (strcmp(lang_code, "tw") == 0) return "跳過空目錄 %s。\n";
         if (strcmp(lang_code, "ja") == 0) return "空のディレクトリ%sをスキップしています。\n";
-        if (strcmp(lang_code, "ca") == 0) return "S’està ometent el directori buit %s.\n";
+        if (strcmp(lang_code, "ca") == 0) return "S'està ometent el directori buit %s.\n";
         return "Skipping empty directory %s.\n";
     }
     if (strcmp(msg, "Unknown option %s.\n") == 0) {
@@ -917,7 +917,7 @@ const char *noct_gettext(const char *msg)
         if (strcmp(lang_code, "zh") == 0) return "JIT 编译已启用。正在启动快速虚拟机…\n";
         if (strcmp(lang_code, "tw") == 0) return "JIT 編譯已啟用。正在啟動快速虛擬機器…\n";
         if (strcmp(lang_code, "ja") == 0) return "JITコンパイルが有効 ... 高速仮想マシン実行を開始します。\n";
-        if (strcmp(lang_code, "ca") == 0) return "La compilació JIT està activada. S’està iniciant la màquina virtual ràpida...\n";
+        if (strcmp(lang_code, "ca") == 0) return "La compilació JIT està activada. S'està iniciant la màquina virtual ràpida...\n";
         return "JIT compilation is enabled. Starting the fast VM...\n";
     }
     if (strcmp(msg, "Entering REPL mode.\n") == 0) {
@@ -930,7 +930,7 @@ const char *noct_gettext(const char *msg)
         if (strcmp(lang_code, "zh") == 0) return "进入 REPL 模式。\n";
         if (strcmp(lang_code, "tw") == 0) return "進入 REPL 模式。\n";
         if (strcmp(lang_code, "ja") == 0) return "REPLモードに入ります。\n";
-        if (strcmp(lang_code, "ca") == 0) return "S’està entrant al mode REPL.\n";
+        if (strcmp(lang_code, "ca") == 0) return "S'està entrant al mode REPL.\n";
         return "Entering REPL mode.\n";
     }
     if (strcmp(msg, "Usage\n") == 0) {

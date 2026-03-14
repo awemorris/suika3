@@ -1,7 +1,7 @@
 ID:syntax error
 en:Syntax error.
 es:Error de sintaxis.
-fr:syntax error
+fr:Syntax error
 de:Syntaxfehler.
 it:Errore di sintassi.
 el:Σφάλμα σύνταξης.
@@ -19,7 +19,7 @@ it:%s: Non c'è abbastanza memoria durante il parsing.
 el:%s: Δεν υπάρχει αρκετή μνήμη κατά την ανάλυση.
 ru:%s: Недостаточно памяти при разборе.
 zh:%s：解析时内存不足。
-tw:%s: Out of memory while parsing.
+tw:%s: 解析時記憶體不足。
 ja:%s: メモリが足りません。
 ca:%s: No hi ha prou memòria.
 ---
@@ -31,13 +31,13 @@ it:Ci sono troppe funzioni.
 el:Πάρα πολλές συναρτήσεις.
 ru:Слишком много функций.
 zh:函数过多。
-tw:繁体中国語。
+tw:函式過多。
 ja:関数が多すぎます。
 ca:Hi ha massa funcions.
 ---
 ID:continue appeared outside loop.
 es:continue es utilizado fuera de un bucle.
-fr:L’instruction continue est apparue en dehors d’une boucle.
+fr:L'instruction continue est apparue en dehors d'une boucle.
 de:continue wurde außerhalb einer Schleife verwendet.
 it:continue è stato utilizzato al di fuori di un ciclo.
 el:Η εντολή continue εμφανίστηκε εκτός βρόχου.
@@ -49,7 +49,7 @@ ca:continue és utilitzat fora d'un bucle.
 ---
 ID:LHS is not a term or an array element.
 es:LHS no es un término ni un elemento de un array.
-fr:La partie gauche n’est ni un terme ni un élément de tableau.
+fr:La partie gauche n'est ni un terme ni un élément de tableau.
 de:LHS ist weder ein Term noch ein Array-Element.
 it:LHS non è un termine né un elemento di un array.
 el:Η αριστερή πλευρά δεν είναι ούτε όρος ούτε στοιχείο πίνακα.
@@ -104,7 +104,7 @@ it:else è stato utilizzato dopo else.
 ---
 ID:Exceeded the maximum argument count.
 es:Se ha superado el número máximo de argumentos.
-fr:Nombre maximal d’arguments dépassé.
+fr:Nombre maximal d'arguments dépassé.
 de:Die maximale Anzahl von Argumenten wurde überschritten.
 it:È stato superato il numero massimo di argomenti.
 el:Υπέρβαση του μέγιστου αριθμού ορισμάτων.
@@ -176,7 +176,7 @@ ca:No s'han pogut carregar les dades del bytecode.
 ---
 ID:Memory mapping failed.
 es:El mapeo de la memoria ha fallado.
-fr:Échec de l’association mémoire.
+fr:Échec de l'association mémoire.
 de:Speicherabbildung fehlgeschlagen.
 it:Mappatura della memoria fallita.
 el:Αποτυχία αντιστοίχισης μνήμης.
@@ -231,7 +231,7 @@ ca:No s'ha trobat la funció %s.
 ---
 ID:Not an array.
 es:No es un array.
-fr:Ce n’est pas un tableau.
+fr:Ce n'est pas un tableau.
 de:Kein Array.
 it:Non è un array.
 el:Δεν είναι πίνακας.
@@ -243,7 +243,7 @@ ca:No és un array.
 ---
 ID:Array index %d is out-of-range.
 es:El índice %d del array se encuentra fuera de rango.
-fr:L’index de tableau %d est hors de portée.
+fr:L'index de tableau %d est hors de portée.
 de:Array-Index %d ist außerhalb des gültigen Bereichs.
 it:L'indice %d dell'array è fuori dall'intervallo.
 el:Ο δείκτης πίνακα %d είναι εκτός ορίων.
@@ -293,7 +293,7 @@ ca:La variable global "%s" no s'ha trobat.
 ---
 ID:Value is not a number.
 es:El valor no es un número.
-fr:La valeur n’est pas un nombre.
+fr:La valeur n'est pas un nombre.
 de:Wert ist keine Zahl.
 it:Il valore non è un numero.
 el:Η τιμή δεν είναι αριθμός.
@@ -305,7 +305,7 @@ ca:El valor no és un número.
 ---
 ID:Value is not an integer.
 es:El valor no es un entero.
-fr:La valeur n’est pas un entier.
+fr:La valeur n'est pas un entier.
 de:Wert ist keine ganze Zahl.
 it:Il valore non è un intero.
 el:Η τιμή δεν είναι ακέραιος αριθμός.
@@ -324,7 +324,7 @@ it:Il valore non è un string.
 ---
 ID:Value is not a number or a string.
 es:El valor no es un número ni un string.
-fr:La valeur n’est ni un nombre ni une chaîne.
+fr:La valeur n'est ni un nombre ni une chaîne.
 de:Wert ist weder eine Zahl noch ein String.
 it:Il valore non è né un numero né un string.
 el:Η τιμή δεν είναι ούτε αριθμός ούτε συμβολοσειρά.
@@ -348,7 +348,7 @@ ca:Divisió per zero.
 ---
 ID:Subscript not an integer.
 es:El subíndice no es un entero.
-fr:L’indice n’est pas un entier.
+fr:L'indice n'est pas un entier.
 de:Der Index ist keine ganze Zahl.
 it:L'indice non è un intero.
 el:Ο δείκτης δεν είναι ακέραιος αριθμός.
@@ -360,7 +360,7 @@ ca:El subíndex no és un enter.
 ---
 ID:Not an array or a dictionary.
 es:No es un array ni un diccionario.
-fr:Ce n’est ni un tableau ni un dictionnaire.
+fr:Ce n'est ni un tableau ni un dictionnaire.
 de:Weder ein Array noch ein Dictionary.
 it:Non è un array né un dizionario.
 el:Δεν είναι ούτε πίνακας ούτε λεξικό.
@@ -372,7 +372,7 @@ ca:No és un array ni un diccionari.
 ---
 ID:Subscript not a string.
 es:El subíndice no es un string.
-fr:L’indice n’est pas une chaîne.
+fr:L'indice n'est pas une chaîne.
 de:Der Index ist kein String.
 it:L'indice non è un string.
 el:Ο δείκτης δεν είναι συμβολοσειρά.
@@ -384,7 +384,7 @@ ca:El subíndex no és un string.
 ---
 ID:Value is not a string, an array, or a dictionary.
 es:El valor no es un string, un array ni un diccionario.
-fr:La valeur n’est ni une chaîne, ni un tableau, ni un dictionnaire.
+fr:La valeur n'est ni une chaîne, ni un tableau, ni un dictionnaire.
 de:Wert ist weder ein String, noch ein Array noch ein Dictionary.
 it:Il valore non è né un string, né un array né un dizionario.
 el:Η τιμή δεν είναι ούτε συμβολοσειρά, ούτε πίνακας, ούτε λεξικό.
@@ -396,7 +396,7 @@ ca:El valor no és un string, un array ni un diccionari.
 ---
 ID:Not a dictionary.
 es:No es un diccionario.
-fr:Ce n’est pas un dictionnaire.
+fr:Ce n'est pas un dictionnaire.
 de:Kein Dictionary.
 it:Non è un dizionario.
 el:Δεν είναι λεξικό.
@@ -444,79 +444,79 @@ ca:%s(): Els arguments de la funció no coincideixen.
 ---
 ID:Element %d is not an integer.
 es:El elemento %d no es un número entero.
-fr:L’élément %d n’est pas un entier.
+fr:L'élément %d n'est pas un entier.
 de:Element %d ist keine ganze Zahl.
-it:L’elemento %d non è un numero intero.
+it:L'elemento %d non è un numero intero.
 el:Το στοιχείο %d δεν είναι ακέραιος αριθμός.
 ru:Элемент %d не является целым числом.
 zh:第 %d 个元素不是整数。
 tw:第 %d 個元素不是整數。
 ja:%d 番目の要素が整数ではありません。
-ca:L’element %d no és un nombre enter.
+ca:L'element %d no és un nombre enter.
 ---
 ID:Element %d is not a float.
 es:El elemento %d no es un número decimal.
-fr:L’élément %d n’est pas un nombre à virgule flottante.
+fr:L'élément %d n'est pas un nombre à virgule flottante.
 de:Element %d ist keine Gleitkommazahl.
-it:L’elemento %d non è un numero decimale.
+it:L'elemento %d non è un numero decimale.
 el:Το στοιχείο %d δεν είναι δεκαδικός αριθμός.
 ru:Элемент %d не является числом с плавающей точкой.
 zh:第 %d 个元素不是浮点数。
 tw:第 %d 個元素不是浮點數。
 ja:%d 番目の要素が浮動小数点数ではありません。
-ca:L’element %d no és un nombre amb coma flotant.
+ca:L'element %d no és un nombre amb coma flotant.
 ---
 ID:Element %d is not a string.
 es:El elemento %d no es una cadena.
-fr:L’élément %d n’est pas une chaîne de caractères.
+fr:L'élément %d n'est pas une chaîne de caractères.
 de:Element %d ist keine Zeichenkette.
-it:L’elemento %d non è una stringa.
+it:L'elemento %d non è una stringa.
 el:Το στοιχείο %d δεν είναι συμβολοσειρά.
 ru:Элемент %d не является строкой.
 zh:第 %d 个元素不是字符串。
 tw:第 %d 個元素不是字串。
 ja:%d 番目の要素が文字列ではありません。
-ca:L’element %d no és una cadena de caràcters.
+ca:L'element %d no és una cadena de caràcters.
 ---
 ID:Element %d is not an array.
 es:El elemento %d no es una matriz.
-fr:L’élément %d n’est pas un tableau.
+fr:L'élément %d n'est pas un tableau.
 de:Element %d ist kein Array.
-it:L’elemento %d non è un array.
+it:L'elemento %d non è un array.
 el:Το στοιχείο %d δεν είναι πίνακας.
 ru:Элемент %d не является массивом.
 zh:第 %d 个元素不是数组。
 tw:第 %d 個元素不是陣列。
 ja:%d 番目の要素が配列ではありません。
-ca:L’element %d no és una matriu.
+ca:L'element %d no és una matriu.
 ---
 ID:Element %d is not a dictionary.
 es:El elemento %d no es un diccionario.
-fr:L’élément %d n’est pas un dictionnaire.
+fr:L'élément %d n'est pas un dictionnaire.
 de:Element %d ist kein Dictionary.
-it:L’elemento %d non è un dizionario.
+it:L'elemento %d non è un dizionario.
 el:Το στοιχείο %d δεν είναι λεξικό.
 ru:Элемент %d не является словарем.
 zh:第 %d 个元素不是字典。
 tw:第 %d 個元素不是字典。
 ja:%d 番目の要素が辞書ではありません。
-ca:L’element %d no és un diccionari.
+ca:L'element %d no és un diccionari.
 ---
 ID:Element %d is not a function.
 es:El elemento %d no es una función.
-fr:L’élément %d n’est pas une fonction.
+fr:L'élément %d n'est pas une fonction.
 de:Element %d ist keine Funktion.
-it:L’elemento %d non è una funzione.
-el:L’elemento %d non è una funzione.
+it:L'elemento %d non è una funzione.
+el:L'elemento %d non è una funzione.
 ru:Элемент %d не является функцией.
 zh:第 %d 个元素不是函数。
 tw:第 %d 個元素不是函式。
 ja:%d 番目の要素が関数ではありません。
-ca:L’element %d no és una funció.
+ca:L'element %d no és una funció.
 ---
 ID:Value for key %s is not an integer.
 es:El valor de la clave %s no es un número entero.
-fr:La valeur associée à la clé %s n’est pas un entier.
+fr:La valeur associée à la clé %s n'est pas un entier.
 de:Der Wert für den Schlüssel %s ist keine ganze Zahl.
 it:Il valore per la chiave %s non è un numero intero.
 el:Η τιμή για το κλειδί %s δεν είναι ακέραιος αριθμός.
@@ -528,7 +528,7 @@ ca:El valor per a la clau %s no és un nombre enter.
 ---
 ID:Value for key %s is not a float.
 es:El valor de la clave %s no es un número decimal.
-fr:La valeur associée à la clé %s n’est pas un nombre à virgule flottante.
+fr:La valeur associée à la clé %s n'est pas un nombre à virgule flottante.
 de:Der Wert für den Schlüssel %s ist keine Gleitkommazahl.
 it:Il valore per la chiave %s non è un numero decimale.
 el:Η τιμή για το κλειδί %s δεν είναι δεκαδικός αριθμός.
@@ -540,7 +540,7 @@ ca:El valor per a la clau %s no és un nombre amb coma flotant.
 ---
 ID:Value for key %s is not a string.
 es:El valor de la clave %s no es una cadena.
-fr:La valeur associée à la clé %s n’est pas une chaîne de caractères.
+fr:La valeur associée à la clé %s n'est pas une chaîne de caractères.
 de:Der Wert für den Schlüssel %s ist keine Zeichenkette.
 it:Il valore per la chiave %s non è una stringa.
 el:Η τιμή για το κλειδί %s δεν είναι συμβολοσειρά.
@@ -552,7 +552,7 @@ ca:El valor per a la clau %s no és una cadena de caràcters.
 ---
 ID:Value for key %s is not an array.
 es:El valor de la clave %s no es una matriz.
-fr:La valeur associée à la clé %s n’est pas un tableau.
+fr:La valeur associée à la clé %s n'est pas un tableau.
 de:Der Wert für den Schlüssel %s ist kein Array.
 it:Il valore per la chiave %s non è un array.
 el:Η τιμή για το κλειδί %s δεν είναι πίνακας.
@@ -564,7 +564,7 @@ ca:El valor per a la clau %s no és una matriu.
 ---
 ID:Value for key %s is not a dictionary.
 es:El valor de la clave %s no es un diccionario.
-fr:La valeur associée à la clé %s n’est pas un dictionnaire.
+fr:La valeur associée à la clé %s n'est pas un dictionnaire.
 de:Der Wert für den Schlüssel %s ist kein Dictionary.
 it:Il valore per la chiave %s non è un dizionario.
 el:Η τιμή για το κλειδί %s δεν είναι λεξικό.
@@ -576,7 +576,7 @@ ca:El valor per a la clau %s no és un diccionari.
 ---
 ID:Value for key %s is not a function.
 es:El valor de la clave %s no es una función.
-fr:La valeur associée à la clé %s n’est pas une fonction.
+fr:La valeur associée à la clé %s n'est pas une fonction.
 de:Der Wert für den Schlüssel %s ist keine Funktion.
 it:Il valore per la chiave %s non è una funzione.
 el:Η τιμή για το κλειδί %s δεν είναι συνάρτηση.
@@ -588,67 +588,67 @@ ca:El valor per a la clau %s no és una funció.
 ---
 ID:Argument (%d: %s) not an integer.
 es:Argumento (%d: %s) no es un número entero.
-fr:L’argument (%d : %s) n’est pas un entier.
+fr:L'argument (%d : %s) n'est pas un entier.
 de:Argument (%d: %s) ist keine ganze Zahl.
-it:L’argomento (%d: %s) non è un numero intero.
+it:L'argomento (%d: %s) non è un numero intero.
 el:Το όρισμα (%d: %s) δεν είναι ακέραιος αριθμός.
 ru:Аргумент (%d: %s) не является целым числом.
 zh:参数 (%d: %s) 不是整数。
 tw:參數 (%d: %s) 不是整數。
 ja:引数 (%d: %s) が整数ではありません。
-ca:L’argument (%d: %s) no és un nombre enter.
+ca:L'argument (%d: %s) no és un nombre enter.
 ---
 ID:Argument (%d: %s) not a float.
 es:Argumento (%d: %s) no es un número decimal.
-fr:L’argument (%d : %s) n’est pas un nombre à virgule flottante.
+fr:L'argument (%d : %s) n'est pas un nombre à virgule flottante.
 de:Argument (%d: %s) ist keine Gleitkommazahl.
-it:L’argomento (%d: %s) non è un numero decimale.
+it:L'argomento (%d: %s) non è un numero decimale.
 el:Το όρισμα (%d: %s) δεν είναι δεκαδικός αριθμός.
 ru:Аргумент (%d: %s) не является числом с плавающей точкой.
 zh:参数 (%d: %s) 不是浮点数。
 tw:參數 (%d: %s) 不是浮點數。
 ja:引数 (%d: %s) が浮動小数点数ではありません。
-ca:L’argument (%d: %s) no és un nombre amb coma flotant.
+ca:L'argument (%d: %s) no és un nombre amb coma flotant.
 ---
 ID:Argument (%d: %s) not a string.
 es:Argumento (%d: %s) no es una cadena.
-fr:L’argument (%d : %s) n’est pas une chaîne de caractères.
+fr:L'argument (%d : %s) n'est pas une chaîne de caractères.
 de:Argument (%d: %s) ist keine Zeichenkette.
-it:L’argomento (%d: %s) non è una stringa.
+it:L'argomento (%d: %s) non è una stringa.
 el:Το όρισμα (%d: %s) δεν είναι συμβολοσειρά.
 ru:Аргумент (%d: %s) не является строкой.
 zh:参数 (%d: %s) 不是字符串。
 tw:參數 (%d: %s) 不是字串。
 ja:引数 (%d: %s) が文字列ではありません。
-ca:L’argument (%d: %s) no és una cadena de caràcters.
+ca:L'argument (%d: %s) no és una cadena de caràcters.
 ---
 ID:Argument (%d: %s) is not an array.
 es:Argumento (%d: %s) no es una matriz.
-fr:L’argument (%d : %s) n’est pas un tableau.
+fr:L'argument (%d : %s) n'est pas un tableau.
 de:Argument (%d: %s) ist kein Array.
-it:L’argomento (%d: %s) non è un array.
+it:L'argomento (%d: %s) non è un array.
 el:Το όρισμα (%d: %s) δεν είναι πίνακας.
 ru:Аргумент (%d: %s) не является массивом.
 zh:参数 (%d: %s) 不是数组。
 tw:參數 (%d: %s) 不是陣列。
 ja:引数 (%d: %s) が配列ではありません。
-ca:	L’argument (%d: %s) no és una matriu.
+ca:	L'argument (%d: %s) no és una matriu.
 ---
 ID:Argument (%d: %s) is not a dictionary.
 es:Argumento (%d: %s) no es un diccionario.
-fr:L’argument (%d : %s) n’est pas un dictionnaire.
+fr:L'argument (%d : %s) n'est pas un dictionnaire.
 de:Argument (%d: %s) ist kein Dictionary.
-it:L’argomento (%d: %s) non è un dizionario.
+it:L'argomento (%d: %s) non è un dizionario.
 el:Το όρισμα (%d: %s) δεν είναι λεξικό.
 ru:Аргумент (%d: %s) не является словарем.
 zh:参数 (%d: %s) 不是字典。
 tw:參數 (%d: %s) 不是字典。
 ja:引数 (%d: %s) が辞書ではありません。
-ca:L’argument (%d: %s) no és un diccionari.
+ca:L'argument (%d: %s) no és un diccionari.
 ---
 ID:Not a function.
 es:No es una función.
-fr:Ce n’est pas une fonction.
+fr:Ce n'est pas une fonction.
 de:Keine Funktion.
 it:Non è una funzione.
 el:Δεν είναι συνάρτηση.
@@ -678,10 +678,10 @@ ID:Too many pinned local variables.
 ---
 ID:Cannot open file %s.\n
 es:No se puede abrir el archivo %s.\n
-fr:Impossible d’ouvrir le fichier %s.\n
+fr:Impossible d'ouvrir le fichier %s.\n
 de:Datei %s kann nicht geöffnet werden.\n
 it:Impossibile aprire il file %s.\n
-el:Δεν είναι δυνατή η άνοιγμα του αρχείου %s.\n
+el:Δεν είναι δυνατό το άνοιγμα του αρχείου %s.
 ru:Не удаётся открыть файл %s.\n
 zh:无法打开文件 %s。\n
 tw:無法開啟檔案 %s。\n
@@ -720,7 +720,7 @@ ru:Добавление файла %s\n
 zh:正在添加文件 %s\n
 tw:正在新增檔案 %s\n
 ja:ファイル%sを追加しています。\n
-ca:S’està afegint el fitxer %s\n
+ca:S'està afegint el fitxer %s\n
 ---
 ID:Cannot find %s.\n
 es:No se puede encontrar %s.\n
@@ -744,7 +744,7 @@ ru:Поиск в каталоге %s.\n
 zh:正在搜索目录 %s。\n
 tw:正在搜尋目錄 %s。\n
 ja:ディレクトリ%sを検索中です。\n
-ca:S’està cercant el directori %s.\n
+ca:S'està cercant el directori %s.\n
 ---
 ID:Skipping empty directory %s.\n
 es:Omitiendo el directorio vacío %s.\n
@@ -756,7 +756,7 @@ ru:Пропуск пустого каталога %s.\n
 zh:跳过空目录 %s。\n
 tw:跳過空目錄 %s。\n
 ja:空のディレクトリ%sをスキップしています。\n
-ca:S’està ometent el directori buit %s.\n
+ca:S'està ometent el directori buit %s.\n
 ---
 ID:Unknown option %s.\n
 es:Opción desconocida %s.\n
@@ -836,7 +836,7 @@ ru:JIT-компиляция включена. Запуск быстрой вир
 zh:JIT 编译已启用。正在启动快速虚拟机…\n
 tw:JIT 編譯已啟用。正在啟動快速虛擬機器…\n
 ja:JITコンパイルが有効 ... 高速仮想マシン実行を開始します。\n
-ca:La compilació JIT està activada. S’està iniciant la màquina virtual ràpida...\n
+ca:La compilació JIT està activada. S'està iniciant la màquina virtual ràpida...\n
 ---
 ID:Entering REPL mode.\n
 es:Entrando en modo REPL.\n
@@ -848,7 +848,7 @@ ru:Переход в режим REPL.\n
 zh:进入 REPL 模式。\n
 tw:進入 REPL 模式。\n
 ja:REPLモードに入ります。\n
-ca:S’està entrant al mode REPL.\n
+ca:S'està entrant al mode REPL.\n
 ---
 ID:Usage\n
 es:Uso\n

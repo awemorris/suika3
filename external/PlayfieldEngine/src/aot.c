@@ -31,6 +31,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
+#include "playfield/playfield.h"
 #include "noct/noct.h"
 #include "runtime.h"
 #include "ast.h"
@@ -146,19 +147,21 @@ static bool add_file_hook_c(const char *fname)
 
 	/* Do parse, build AST. */
 	if (!ast_build(fname, data)) {
-		wide_printf(N_TR("Error: %s: %d: %s\n"),
+		wide_printf(PF_TR("Error: %s: %d: %s"),
 			    ast_get_file_name(),
 			    ast_get_error_line(),
 			    ast_get_error_message());
+		wide_printf("\n");
 		return false;
 	}
 
 	/* Transform AST to HIR. */
 	if (!hir_build()) {
-		wide_printf(N_TR("Error: %s: %d: %s\n"),
+		wide_printf(PF_TR("Error: %s: %d: %s"),
 			    hir_get_file_name(),
 			    hir_get_error_line(),
 			    hir_get_error_message());
+		wide_printf("\n");
 		return false;
 	}
 
@@ -171,10 +174,11 @@ static bool add_file_hook_c(const char *fname)
 		/* Transform HIR to LIR (bytecode). */
 		hfunc = hir_get_function(j);
 		if (!lir_build(hfunc, &lfunc)) {
-			wide_printf(N_TR("Error: %s: %d: %s\n"),
+			wide_printf(PF_TR("Error: %s: %d: %s"),
 				    lir_get_file_name(),
 				    lir_get_error_line(),
 				    lir_get_error_message());
+			wide_printf("\n");
 			return false;;
 		}
 
@@ -227,7 +231,8 @@ static bool load_file_content(const char *fname, char **data, size_t *size)
 	/* Open the file. */
 	fp = fopen(fname, "rb");
 	if (fp == NULL) {
-		wide_printf(N_TR("Cannot open file %s.\n"), fname);
+		wide_printf(PF_TR("Cannot open file \"%s\"."), fname);
+		wide_printf("\n");
 		return false;
 	}
 
@@ -239,13 +244,14 @@ static bool load_file_content(const char *fname, char **data, size_t *size)
 	/* Allocate a buffer. */
 	*data = malloc(*size + 1);
 	if (*data == NULL) {
-		wide_printf(N_TR("Out of memory.\n"));
+		wide_printf(PF_TR("Out of memory."));
+		wide_printf("\n");
 		return false;
 	}
 
 	/* Read the data. */
 	if (fread(*data, 1, *size, fp) != *size) {
-		wide_printf(N_TR("Cannot read file %s.\n"), fname);
+		wide_printf(PF_TR("Cannot read file \"%s\"."), fname);
 		return false;
 	}
 
@@ -270,7 +276,8 @@ static bool add_file(const char *fname, bool (*add_file_hook)(const char *))
 	struct stat st;
 
 	if (stat(fname, &st) != 0) {
-		printf(N_TR("Cannot find %s.\n"), fname);
+		wide_printf(PF_TR("Cannot read file \"%s\"."), fname);
+		wide_printf("\n");
 		return false;
 	}
 	if (S_ISDIR(st.st_mode)) {
@@ -278,12 +285,14 @@ static bool add_file(const char *fname, bool (*add_file_hook)(const char *))
 		int count;
 		int i;
 
-		printf(N_TR("Searching directory %s.\n"), fname);
+		wide_printf(PF_TR("Searching directory \"%s\"."), fname);
+		wide_printf("\n");
 
 		/* Get directory content. */
 		count = scandir(fname, &names, NULL, alphasort);
 		if (count < 0) {
-			wide_printf(N_TR("Skipping empty directory %s.\n"), fname);
+			wide_printf(PF_TR("Skipping empty directory \"%s\"."), fname);
+			wide_printf("\n");
 			return false;
 		}
 
@@ -300,7 +309,8 @@ static bool add_file(const char *fname, bool (*add_file_hook)(const char *))
 				return false;
 		}
 	} else if(S_ISREG(st.st_mode)) {
-		wide_printf(N_TR("Adding file %s.\n"), fname);
+		wide_printf(PF_TR("Adding file \"%s\"."), fname);
+		wide_printf("\n");
 		if (!add_file_hook(fname))
 			return false;
 	}
@@ -319,7 +329,7 @@ static wchar_t wszMessage[BUF_SIZE];
 static char szMessage[BUF_SIZE];
 
 /* Convert UTF-8 to UTF-16. */
-static const wchar_t *win32_utf8_to_utf16(const char *utf8_message)
+const wchar_t *win32_utf8_to_utf16(const char *utf8_message)
 {
 	assert(utf8_message != NULL);
 	MultiByteToWideChar(CP_UTF8, 0, utf8_message, -1, wszMessage, BUF_SIZE - 1);
@@ -327,7 +337,7 @@ static const wchar_t *win32_utf8_to_utf16(const char *utf8_message)
 }
 
 /* Convert UTF-16 to UTF-8. */
-static const char *win32_utf16_to_utf8(const wchar_t *utf16_message)
+const char *win32_utf16_to_utf8(const wchar_t *utf16_message)
 {
 	assert(utf16_message != NULL);
 	WideCharToMultiByte(CP_UTF8, 0, utf16_message, -1, szMessage, BUF_SIZE - 1, NULL, NULL);
@@ -372,7 +382,8 @@ static bool add_file(const char *fname, bool (*add_file_hook)(const char *))
 	}
 	else
 	{
-		wide_printf(N_TR("Adding file %s\n"), fname);
+		wide_printf(PF_TR("Adding file \"%s\"."), fname);
+		wide_printf("\n");
 		if (!add_file_hook(fname))
 			return false;
 	}

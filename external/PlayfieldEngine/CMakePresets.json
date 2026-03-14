@@ -302,20 +302,6 @@
       }
     },
     {
-      "name":           "windows-mingw-x86",
-      "displayName":    "MinGW x86",
-      "generator":      "Ninja",
-      "binaryDir":      "${sourceDir}/build-mingw-x86",
-      "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-x86.cmake",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE":            "Release",
-        "PLAYFIELD_TARGET_WINDOWS":    "ON",
-        "PLAYFIELD_ENABLE_JIT":        "ON",
-        "PLAYFIELD_ENABLE_I18N":       "ON",
-        "PLAYFIELD_ENABLE_PACK":       "ON"
-      }
-    },
-    {
       "name":           "windows-mingw-x86_64",
       "displayName":    "MinGW x86_64",
       "generator":      "Ninja",
@@ -330,11 +316,11 @@
       }
     },
     {
-      "name":           "windows-mingw-arm64",
-      "displayName":    "MinGW Arm64",
+      "name":           "windows-mingw-x86",
+      "displayName":    "MinGW x86",
       "generator":      "Ninja",
-      "binaryDir":      "${sourceDir}/build-mingw-arm64",
-      "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-arm64.cmake",
+      "binaryDir":      "${sourceDir}/build-mingw-x86",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-x86.cmake",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":            "Release",
         "PLAYFIELD_TARGET_WINDOWS":    "ON",
@@ -352,6 +338,20 @@
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":            "Release",
         "PLAYFIELD_TARGET_WINDOWS95":  "ON"
+      }
+    },
+    {
+      "name":           "windows-mingw-arm64",
+      "displayName":    "MinGW Arm64",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-mingw-arm64",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-arm64.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "PLAYFIELD_TARGET_WINDOWS":    "ON",
+        "PLAYFIELD_ENABLE_JIT":        "ON",
+        "PLAYFIELD_ENABLE_I18N":       "ON",
+        "PLAYFIELD_ENABLE_PACK":       "ON"
       }
     },
     {

@@ -32,7 +32,6 @@ option(SUIKA_ENABLE_STATIC           "Build a static library"             OFF)
 option(SUIKA_ENABLE_SHARED           "Build a dynamic library"            OFF)
 option(SUIKA_ENABLE_DIST             "Build for packages"                 OFF)
 option(SUIKA_ENABLE_ROT90            "Rotate screen for GBM"              OFF)
-option(SUIKA_ENABLE_MEDIAFOUNDATION  "Enable Media Foundation support"    OFF)
 option(SUIKA_ENABLE_GST              "Enable GStreamer support"           OFF)
 
 #
@@ -190,11 +189,6 @@ endif()
 # If building for Unity.
 if(SUIKA_TARGET_UNITY)
   set(PLAYFIELD_TARGET_UNITY ON)
-endif()
-
-# Media Foundation on Windows
-if(SUIKA_ENABLE_MEDIAFOUNDATION)
-  set(PLAYFIELD_ENABLE_MEDIAFOUNDATION ON)
 endif()
 
 # Gstreamer on Linux.

@@ -37,7 +37,6 @@ option(PLAYFIELD_ENABLE_STATIC           "Build a static library"             OF
 option(PLAYFIELD_ENABLE_SHARED           "Build a dynamic library"            OFF)
 option(PLAYFIELD_ENABLE_DIST             "Build for packages"                 OFF)
 option(PLAYFIELD_ENABLE_ROT90            "Rotate screen for GBM"              OFF)
-option(PLAYFIELD_ENABLE_MEDIAFOUNDATION  "Enable Media Foundation support"    OFF)
 option(PLAYFIELD_ENABLE_GST              "Enable GStreamer support"           OFF)
 
 # For derived projects
@@ -271,10 +270,6 @@ endif()
 # Screen rotate
 if(PLAYFIELD_ENABLE_ROT90)
   set(STRATO_ENABLE_ROT90 ON)
-endif()
-
-if(PLAYFIELD_ENABLE_MEDIAFOUNDATION)
-  set(STRATO_ENABLE_MEDIAFOUNDATION ON)
 endif()
 
 if(PLAYFIELD_ENABLE_GST)
@@ -585,6 +580,8 @@ if(   PLAYFIELD_TARGET_WINDOWS
       src/compiler.c
     )
     target_include_directories(playfield-compiler PRIVATE
+      include
+      external/StratoHAL/include
       external/NoctLang/src/core
       external/NoctLang/src/backend
     )
@@ -600,6 +597,8 @@ if(   PLAYFIELD_TARGET_WINDOWS
       external/NoctLang/src/backend/cback.c
     )
     target_include_directories(playfield-aot PRIVATE
+      include
+      external/StratoHAL/include
       external/NoctLang/src/core
       external/NoctLang/src/backend
     )

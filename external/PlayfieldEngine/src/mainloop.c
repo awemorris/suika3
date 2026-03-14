@@ -418,8 +418,10 @@ hal_callback_on_event_frame(void)
 		return false;
 
 	/* Call render(). */
-	if (!pfi_call_vm_function("render"))
-		return false;
+	if (!hal_is_video_playing()) {
+		if (!pfi_call_vm_function("render"))
+			return false;
+	}
 
 	/* Check the exit flag. */
 	exit_flag = 0;

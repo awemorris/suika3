@@ -19,10 +19,10 @@ const char *hal_gettext(const char *msg)
     }
     if (strcmp(msg, "Cannot open file \"%s\".") == 0) {
         if (strcmp(lang_code, "es") == 0) return "No se puede abrir el archivo \"%s\".";
-        if (strcmp(lang_code, "fr") == 0) return "Impossible douvrir le fichier \"%s\".";
+        if (strcmp(lang_code, "fr") == 0) return "Impossible d'ouvrir le fichier \"%s\".";
         if (strcmp(lang_code, "it") == 0) return "Impossibile aprire il file \"%s\".";
         if (strcmp(lang_code, "de") == 0) return "Datei \"%s\" kann nicht geöffnet werden.";
-        if (strcmp(lang_code, "el") == 0) return "Δεν είναι δυνατή η ανοίξη του αρχείου \"%s\".";
+        if (strcmp(lang_code, "el") == 0) return "Δεν είναι δυνατό το άνοιγμα του αρχείου \"%s\".";
         if (strcmp(lang_code, "ru") == 0) return "Невозможно открыть файл \"%s\".";
         if (strcmp(lang_code, "zh") == 0) return "无法打开文件 \"%s\"。";
         if (strcmp(lang_code, "tw") == 0) return "無法打開檔案 \"%s\"。";
@@ -55,8 +55,8 @@ const char *hal_gettext(const char *msg)
     }
     if (strcmp(msg, "The app is crashed.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "La aplicación se ha bloqueado.";
-        if (strcmp(lang_code, "fr") == 0) return "L’application a planté.";
-        if (strcmp(lang_code, "it") == 0) return "L’applicazione è andata in crash.";
+        if (strcmp(lang_code, "fr") == 0) return "L'application a planté.";
+        if (strcmp(lang_code, "it") == 0) return "L'applicazione è andata in crash.";
         if (strcmp(lang_code, "de") == 0) return "Die App ist abgestürzt.";
         if (strcmp(lang_code, "el") == 0) return "Η εφαρμογή κατέρρευσε.";
         if (strcmp(lang_code, "ru") == 0) return "Приложение завершилось с ошибкой.";
@@ -67,8 +67,8 @@ const char *hal_gettext(const char *msg)
     }
     if (strcmp(msg, "Failed to initialize the sound.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "Error al inicializar el sonido.";
-        if (strcmp(lang_code, "fr") == 0) return "Echec de linitialisation du son.";
-        if (strcmp(lang_code, "it") == 0) return "Impossibile inizializzare l’audio.";
+        if (strcmp(lang_code, "fr") == 0) return "Échec de l'initialisation du son.";
+        if (strcmp(lang_code, "it") == 0) return "Impossibile inizializzare l'audio.";
         if (strcmp(lang_code, "de") == 0) return "Initialisierung des Sounds fehlgeschlagen.";
         if (strcmp(lang_code, "el") == 0) return "Αποτυχία αρχικοποίησης του ήχου.";
         if (strcmp(lang_code, "ru") == 0) return "Не удалось инициализировать звук.";

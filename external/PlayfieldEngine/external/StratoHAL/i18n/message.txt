@@ -11,10 +11,10 @@ ja:メモリが不足しています。
 ---
 ID:Cannot open file "%s".
 es:No se puede abrir el archivo "%s".
-fr:Impossible douvrir le fichier "%s".
+fr:Impossible d'ouvrir le fichier "%s".
 it:Impossibile aprire il file "%s".
 de:Datei "%s" kann nicht geöffnet werden.
-el:Δεν είναι δυνατή η ανοίξη του αρχείου "%s".
+el:Δεν είναι δυνατό το άνοιγμα του αρχείου "%s".
 ru:Невозможно открыть файл "%s".
 zh:无法打开文件 "%s"。
 tw:無法打開檔案 "%s"。
@@ -44,8 +44,8 @@ ja:スタートアップファイルがありません。
 ---
 ID:The app is crashed.
 es:La aplicación se ha bloqueado.
-fr:L’application a planté.
-it:L’applicazione è andata in crash.
+fr:L'application a planté.
+it:L'applicazione è andata in crash.
 de:Die App ist abgestürzt.
 el:Η εφαρμογή κατέρρευσε.
 ru:Приложение завершилось с ошибкой.
@@ -55,8 +55,8 @@ ja:アプリケーションがクラッシュしました。
 ---
 ID:Failed to initialize the sound.
 es:Error al inicializar el sonido.
-fr:Echec de linitialisation du son.
-it:Impossibile inizializzare l’audio.
+fr:Échec de l'initialisation du son.
+it:Impossibile inizializzare l'audio.
 de:Initialisierung des Sounds fehlgeschlagen.
 el:Αποτυχία αρχικοποίησης του ήχου.
 ru:Не удалось инициализировать звук.
