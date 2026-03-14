@@ -260,7 +260,7 @@ InitApp(
 	// Initialize the graphics HAL.
 	if (!D3D12Initialize(hWndMain, nWindowWidth, nWindowHeight))
 	{
-		log_info(S_TR("Failed to initialize the graphics."));
+		log_info(HAL_TR("Failed to initialize the graphics."));
 		return FALSE;
 	}
 
@@ -273,7 +273,7 @@ InitApp(
 	// Initialize the sound HAL.
 	if (!XA2Initialize())
 	{
-	    log_error(S_TR("Failed to initialize the sound."));
+	    log_error(HAL_TR("Failed to initialize the sound."));
 	    return FALSE;
 	}
 
@@ -942,7 +942,7 @@ hal_log_error(
 bool
 hal_log_out_of_memory(void)
 {
-	log_error(S_TR("Out of memory."));
+	log_error(HAL_TR("Out of memory."));
 	return true;
 }
 

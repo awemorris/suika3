@@ -564,6 +564,7 @@ The official recommended binary is the 64-bit version.
 | Windows | XP Professional x64 Edition | SP2   | x64    | (No UCRT)                                       | ❌            | -        |
 
 There is a 32-bit version for backward compatibility.
+Note that the 32-bit version cannot handle multi-byte file names.
 
 | OS      | Version                     | Patch | CPU    | Runtimes                               | 32-bit Binary | Direct3D | Special     |
 |---------|-----------------------------|-------|--------|----------------------------------------|---------------|----------|-------------|
@@ -605,6 +606,10 @@ There is a 32-bit version for backward compatibility.
 | Windows | 95                          | OSR2  | x86    | -                                      | Not Checked   | -        | soft render |
 | Windows | NT 4.0                      |       | x86    |                                        | Not Checked   | -        | soft render |
 | Windows | NT 3.51                     |       | x86    |                                        | ❌            | -        | Insufficient Win32 APIs |
+
+Actually, Playfield Engine implements its own software rendering
+engine, so Direct3D is not required for Windows platforms. (However,
+it is slow.)
 
 **macOS:**
 

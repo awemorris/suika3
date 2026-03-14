@@ -35,9 +35,10 @@
 
 #include <windows.h>
 
-BOOL MFPlayVideo(HWND hWnd, const char *pszFileName, int nOfsX, int nOfsY, int nWidth, int nHeight);
-VOID MFStopVideo(VOID);
-BOOL MFIsVideoPlaying(VOID);
-BOOL MFProcessEvents(VOID);
+BOOL MFVInit(VOID);
+BOOL MFVPlayVideo(HWND hWnd, const char *pszFileName, int nOfsX, int nOfsY, int nWidth, int nHeight);
+VOID MFVStopVideo(VOID);
+BOOL MFVIsVideoPlaying(VOID);
+BOOL MFVProcessEvents(VOID);
 
 #endif

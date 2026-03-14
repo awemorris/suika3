@@ -756,7 +756,7 @@ static bool Engine_stopSound(NoctEnv *env)
 	return true;
 }
 
-/* Engine.stopSound() */
+/* Engine.setSoundVolume() */
 static bool Engine_setSoundVolume(NoctEnv *env)
 {
 	int stream;
@@ -765,6 +765,41 @@ static bool Engine_setSoundVolume(NoctEnv *env)
 		return false;
 
 	if (!pf_stop_sound(stream))
+		return false;
+
+	return true;
+}
+
+/* Engine.playVideo() */
+static bool Engine_playVideo(NoctEnv *env)
+{
+	const char *file;
+	int is_skippable;
+
+	if (!get_string_param(env, "file", &file))
+		return false;
+
+	if (!pf_play_video(file, false))
+		return false;
+
+	return true;
+}
+
+/* Engine.stopVideo() */
+static bool Engine_stopVideo(NoctEnv *env)
+{
+	pf_stop_video();
+	return true;
+}
+
+/* Engine.stopVideo() */
+static bool Engine_isVideoPlaying(NoctEnv *env)
+{
+	NoctValue tmp;
+
+	bool ret = pf_is_video_playing();
+
+	if (!noct_set_return_make_int(env, &tmp, ret ? 1 : 0))
 		return false;
 
 	return true;
@@ -923,7 +958,7 @@ static bool get_int_param(NoctEnv *env, const char *name, int *ret)
 	}
 
 	if (!noct_get_dict_elem(env, &param, name, &elem)) {
-		noct_error(env, PF_TR("Parameter %s is not set."), name);
+		noct_error(env, PF_TR("Parameter \"%s\" is not set."), name);
 		noct_unpin_local(env, 2, &param, &elem);
 		return false;
 	}
@@ -962,7 +997,7 @@ static bool get_string_param(NoctEnv *env, const char *name, const char **ret)
 	}
 
 	if (!noct_get_dict_elem(env, &param, name, &elem)) {
-		noct_error(env, PF_TR("Parameter %s is not set."), name);
+		noct_error(env, PF_TR("Parameter \"%s\" is not set."), name);
 		noct_unpin_local(env, 2, &param, &elem);
 		return false;
 	}
@@ -988,7 +1023,7 @@ static bool get_string_param(NoctEnv *env, const char *name, const char **ret)
 		noct_get_string(env, &elem, ret);
 		break;
 	default:
-		noct_error(env, PF_TR("Unexpected parameter value for %s."), name);
+		noct_error(env, PF_TR("Unexpected parameter value for \"%s\"."), name);
 		noct_unpin_local(env, 2, &param, &elem);
 		return false;
 	}
@@ -1008,7 +1043,7 @@ static bool get_value_param(NoctEnv *env, const char *name, NoctValue *value)
 	}
 
 	if (!noct_get_dict_elem(env, &param, name, value)) {
-		noct_error(env, PF_TR("Parameter %s is not set."), name);
+		noct_error(env, PF_TR("Parameter \"%s\" is not set."), name);
 		noct_unpin_local(env, 1, &param);
 		return false;
 	}
@@ -1028,25 +1063,25 @@ static bool get_dict_elem_int_param(NoctEnv *env, const char *name, const char *
 	}
 
 	if (!noct_get_dict_elem(env, &param, name, &elem)) {
-		noct_error(env, PF_TR("Parameter %s is not set."), name);
+		noct_error(env, PF_TR("Parameter \"%s\" is not set."), name);
 		noct_unpin_local(env, 3, &param, &elem, &ival);
 		return false;
 	}
 
 	if (elem.type != NOCT_VALUE_DICT) {
-		noct_error(env, PF_TR("Unexpected parameter value for %s."), name);
+		noct_error(env, PF_TR("Unexpected parameter value for \"%s\"."), name);
 		noct_unpin_local(env, 3, &param, &elem, &ival);
 		return false;
 	}
 
 	if (!noct_get_dict_elem(env, &elem, key, &ival)) {
-		noct_error(env, PF_TR("Parameter %s doesn't have the key %s."), name, key);
+		noct_error(env, PF_TR("Parameter \"%s\" doesn't have the key \"%s\"."), name, key);
 		noct_unpin_local(env, 3, &param, &elem, &ival);
 		return false;
 	}
 
 	if (ival.type != NOCT_VALUE_INT) {
-		noct_error(env, PF_TR("Unexpected parameter value for %s.%s."), name, key);
+		noct_error(env, PF_TR("Unexpected parameter value for \"%s.%s\"."), name, key);
 		noct_unpin_local(env, 3, &param, &elem, &ival);
 		return false;
 	}
@@ -1085,6 +1120,10 @@ install_api(
 		RTFUNC(destroyTexture),
 		RTFUNC(playSound),
 		RTFUNC(stopSound),
+		RTFUNC(setSoundVolume),
+		RTFUNC(playVideo),
+		RTFUNC(stopVideo),
+		RTFUNC(isVideoPlaying),
 		RTFUNC(loadFont),
 		RTFUNC(createTextTexture),
 		RTFUNC(writeSaveData),

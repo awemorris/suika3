@@ -28,39 +28,71 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
+#define COBJMACROS
+#define INITGUID
 #include <windows.h>
-
 #include <mfapi.h>
 #include <mfidl.h>
 #include <mfreadwrite.h>
 #include <mferror.h>
 #include <evr.h>
-#include <strsafe.h>
+#include <stdio.h>
 
 extern "C" {
 #include "mfvideo.h"
 };
 
-//#pragma comment(lib, "mf.lib")
-//#pragma comment(lib, "mfplat.lib")
-//#pragma comment(lib, "mfuuid.lib")
-//#pragma comment(lib, "mfreadwrite.lib")
-//#pragma comment(lib, "evr.lib")
+//
+// Dynamic API Loading
+//
+
+typedef HRESULT (WINAPI *PFN_MFStartup)(ULONG Version, DWORD dwFlags);
+typedef HRESULT (WINAPI *PFN_MFShutdown)(void);
+typedef HRESULT (WINAPI *PFN_MFCreateAttributes)(IMFAttributes **ppMFAttributes, UINT32 cInitialSize);
+typedef HRESULT (WINAPI *PFN_MFCreateMediaSession)(IMFAttributes *pConfiguration, IMFMediaSession **ppMediaSession);
+typedef HRESULT (WINAPI *PFN_MFCreateSourceResolver)(IMFSourceResolver **ppISourceResolver);
+typedef HRESULT (WINAPI *PFN_MFCreateTopology)(IMFTopology **ppTopo);
+typedef HRESULT (WINAPI *PFN_MFCreateTopologyNode)(MF_TOPOLOGY_TYPE NodeType, IMFTopologyNode **ppNode);
+typedef HRESULT (WINAPI *PFN_MFCreateVideoRendererActivate)(HWND hwndVideo, IMFActivate **ppActivate);
+typedef HRESULT (WINAPI *PFN_MFCreateAudioRendererActivate)(IMFActivate **ppActivate);
+typedef HRESULT (WINAPI *PFN_MFGetService)(IUnknown *punkObject, REFGUID guidService, REFIID riid, LPVOID *ppvObject);
+
+struct api {
+    HMODULE h_mfplat;
+    HMODULE h_mf;
+    HMODULE h_evr;
+
+    PFN_MFStartup                     MFStartup;
+    PFN_MFCreateAttributes            MFCreateAttributes;
+    PFN_MFCreateMediaSession          MFCreateMediaSession;
+    PFN_MFCreateSourceResolver        MFCreateSourceResolver;
+    PFN_MFCreateTopology              MFCreateTopology;
+    PFN_MFCreateTopologyNode          MFCreateTopologyNode;
+    PFN_MFCreateVideoRendererActivate MFCreateVideoRendererActivate;
+    PFN_MFCreateAudioRendererActivate MFCreateAudioRendererActivate;
+    PFN_MFGetService                  MFGetService;
+    PFN_MFShutdown                    MFShutdown;
+} api;
+
+static const GUID MY_GUID_NULL = {0};
+
+//
+// Safe Release
+//
 
 template<class T>
 static void SafeRelease(T*& p)
 {
 	if (p)
 	{
-		p->Release(); p = nullptr;
+		p->Release();
+		p = nullptr;
 	}
 }
 
-static inline HRESULT HR(HRESULT hr)
-{
-	return hr;
-}
-
+//
+// Player State
+//
 struct MFPlayerState
 {
     bool inited = false;
@@ -80,15 +112,103 @@ struct MFPlayerState
 static MFPlayerState g;
 
 // Forward declaraton.
-static HRESULT MFEnsureStartup();
-static HRESULT MFCreateSession();
-static HRESULT MFCreateSourceFromURL(const wchar_t* url, IMFMediaSource** ppSource);
-static HRESULT MFBuildTopology(IMFMediaSource* pSource, HWND hwnd, IMFTopology** ppTopology);
-static HRESULT MFApplyVideoRect();
-static VOID MFCleanup(bool keepMFStartup);
+static HRESULT EnsureStartup();
+static HRESULT CreateSession();
+static HRESULT CreateSourceFromURL(const wchar_t* url, IMFMediaSource** ppSource);
+static HRESULT BuildTopology(IMFMediaSource* pSource, HWND hwnd, IMFTopology** ppTopology);
+static HRESULT AcquireVideoDisplay();
+static HRESULT ApplyVideoRect();
+static void DetachVideoWindow();
+static VOID Cleanup(bool keepMFStartup);
 static HRESULT AnsiToWideACP(const char* s, wchar_t** outWide);
 
-BOOL MFPlayVideo(HWND hWnd, const char* pszFileName, int nOfsX, int nOfsY, int nWidth, int nHeight)
+//
+// Initialize.
+//
+BOOL MFVInit(VOID)
+{
+    ZeroMemory(&api, sizeof(api));
+
+    api.h_mfplat = LoadLibraryA("mfplat.dll");
+    api.h_mf     = LoadLibraryA("mf.dll");
+    api.h_evr    = LoadLibraryA("evr.dll");
+    if (!api.h_mfplat || !api.h_mf || !api.h_evr)
+	{
+		hal_log_error("err0");
+        return FALSE;
+	}
+
+    api.MFStartup = (PFN_MFStartup)GetProcAddress(api.h_mfplat, "MFStartup");
+    api.MFCreateAttributes = (PFN_MFCreateAttributes)GetProcAddress(api.h_mfplat, "MFCreateAttributes");
+    api.MFCreateMediaSession = (PFN_MFCreateMediaSession)GetProcAddress(api.h_mf, "MFCreateMediaSession");
+    api.MFCreateSourceResolver = (PFN_MFCreateSourceResolver)GetProcAddress(api.h_mf, "MFCreateSourceResolver");
+    api.MFCreateTopology = (PFN_MFCreateTopology)GetProcAddress(api.h_mf, "MFCreateTopology");
+    api.MFCreateTopologyNode = (PFN_MFCreateTopologyNode)GetProcAddress(api.h_mf, "MFCreateTopologyNode");
+    api.MFCreateVideoRendererActivate = (PFN_MFCreateVideoRendererActivate)GetProcAddress(api.h_mf, "MFCreateVideoRendererActivate");
+    api.MFCreateAudioRendererActivate = (PFN_MFCreateAudioRendererActivate)GetProcAddress(api.h_mf, "MFCreateAudioRendererActivate");
+    api.MFGetService = (PFN_MFGetService)GetProcAddress(api.h_mf, "MFGetService");
+    api.MFShutdown = (PFN_MFShutdown)GetProcAddress(api.h_mfplat, "MFShutdown");
+    if (api.MFStartup == NULL)
+	{
+		hal_log_error("err1-1");
+	}
+	if (api.MFCreateAttributes == NULL)
+	{
+		hal_log_error("err1-2");
+        return FALSE;
+	}
+	if (api.MFCreateMediaSession == NULL)
+	{
+		hal_log_error("err1-3");
+        return FALSE;
+	}
+	if (api.MFCreateSourceResolver == NULL)
+	{
+		hal_log_error("err1-4");
+        return FALSE;
+	}
+	if (api.MFCreateTopology == NULL)
+	{
+		hal_log_error("err1-5");
+        return FALSE;
+	}
+    if (api.MFCreateTopologyNode == NULL)
+	{
+		hal_log_error("err1-6");
+        return FALSE;
+	}
+	if (api.MFCreateVideoRendererActivate == NULL)
+	{
+		hal_log_error("err1-7");
+        return FALSE;
+	}
+    if (api.MFCreateAudioRendererActivate == NULL)
+	{
+		hal_log_error("err1-8");
+        return FALSE;
+	}
+    if (api.MFGetService == NULL)
+	{
+		hal_log_error("err1-9");
+        return FALSE;
+	}
+    if (api.MFShutdown == NULL)
+	{
+		hal_log_error("err1-10");
+        return FALSE;
+	}
+
+    HRESULT hr = EnsureStartup();
+    if (FAILED(hr))
+	{
+		hal_log_error("err2");
+        return FALSE;
+	}
+
+    return TRUE;
+}
+
+BOOL MFVPlayVideo(HWND hWnd, const char* pszFileName, int nOfsX, int nOfsY, int nWidth, int nHeight)
 {
     if (!hWnd || !pszFileName || nWidth <= 0 || nHeight <= 0)
         return FALSE;
@@ -96,9 +216,9 @@ BOOL MFPlayVideo(HWND hWnd, const char* pszFileName, int nOfsX, int nOfsY, int n
     HRESULT hr = S_OK;
 
     // Stop previous playback if any.
-    MFStopVideo();
+    MFVStopVideo();
 
-    hr = MFEnsureStartup();
+    hr = EnsureStartup();
     if (FAILED(hr))
 	    return FALSE;
 
@@ -113,11 +233,11 @@ BOOL MFPlayVideo(HWND hWnd, const char* pszFileName, int nOfsX, int nOfsY, int n
     if (FAILED(hr))
 		return FALSE;
 
-    hr = MFCreateSession();
+    hr = CreateSession();
     if (SUCCEEDED(hr))
-		hr = MFCreateSourceFromURL(wfile, &g.source);
+		hr = CreateSourceFromURL(wfile, &g.source);
     if (SUCCEEDED(hr))
-		hr = MFBuildTopology(g.source, hWnd, &g.topology);
+		hr = BuildTopology(g.source, hWnd, &g.topology);
     if (SUCCEEDED(hr))
 		hr = g.session->SetTopology(0, g.topology);
 
@@ -125,17 +245,21 @@ BOOL MFPlayVideo(HWND hWnd, const char* pszFileName, int nOfsX, int nOfsY, int n
 
     if (FAILED(hr))
 	{
-        MFCleanup(false);
+        Cleanup(false);
         return FALSE;
     }
+
+	if (g.hCloseEvent)
+		ResetEvent(g.hCloseEvent);
 
     // Start: session will actually start after MESessionTopologyStatus(READY) etc.
     PROPVARIANT varStart;
     PropVariantInit(&varStart);
-    hr = g.session->Start(&GUID_NULL, &varStart);
+    hr = g.session->Start(&MY_GUID_NULL, &varStart);
     PropVariantClear(&varStart);
-    if (FAILED(hr)) {
-        MFCleanup(false);
+    if (FAILED(hr))
+	{
+        Cleanup(false);
         return FALSE;
     }
 
@@ -149,10 +273,16 @@ BOOL MFPlayVideo(HWND hWnd, const char* pszFileName, int nOfsX, int nOfsY, int n
     InvalidateRect(g.hwnd, nullptr, TRUE);
     UpdateWindow(g.hwnd);
 
+	for (int i = 0; i < 20; i++)
+	{
+		MFVProcessEvents();
+		Sleep(1);
+	}
+
     return TRUE;
 }
 
-VOID MFStopVideo(VOID)
+VOID MFVStopVideo(VOID)
 {
     if (!g.inited)
 		return;
@@ -175,7 +305,7 @@ VOID MFStopVideo(VOID)
             // Give it some time; if you don't want to block, remove this wait and rely on MFProcessEvent().
             for (int i = 0; i < 200; ++i)
 			{
-                MFProcessEvents();
+                MFVProcessEvents();
                 DWORD w = WaitForSingleObject(g.hCloseEvent, 5);
                 if (w == WAIT_OBJECT_0)
 					break;
@@ -183,28 +313,30 @@ VOID MFStopVideo(VOID)
         }
     }
 
-    MFCleanup(false);
+    Cleanup(true);
 }
 
-BOOL MFIsVideoPlaying(VOID)
+BOOL MFVIsVideoPlaying(VOID)
 {
-    return g.playing ? TRUE : FALSE;
+    return (g.playing || g.closing) ? TRUE : FALSE;
 }
 
-BOOL MFProcessEvents(VOID)
+BOOL MFVProcessEvents(VOID)
 {
     if (!g.session)
-		return FALSE;
+        return FALSE;
 
     bool handledAny = false;
+    bool needCleanup = false;
+    HWND hwndToRepaint = nullptr;
 
     while (true) {
         IMFMediaEvent* pEvent = nullptr;
         HRESULT hr = g.session->GetEvent(MF_EVENT_FLAG_NO_WAIT, &pEvent);
         if (hr == MF_E_NO_EVENTS_AVAILABLE)
-			break;
+            break;
         if (FAILED(hr))
-			break;
+            break;
 
         handledAny = true;
 
@@ -214,10 +346,7 @@ BOOL MFProcessEvents(VOID)
         HRESULT hrStatus = S_OK;
         pEvent->GetStatus(&hrStatus);
         if (FAILED(hrStatus))
-		{
-            // Something went wrong: stop.
             g.playing = false;
-        }
 
         switch (met) {
         case MESessionTopologyStatus:
@@ -225,38 +354,56 @@ BOOL MFProcessEvents(VOID)
             UINT32 topoStatus = 0;
             pEvent->GetUINT32(MF_EVENT_TOPOLOGY_STATUS, &topoStatus);
             if (topoStatus == MF_TOPOSTATUS_READY)
-			{
-                // Now we can query video display service and apply destination rect.
-                MFApplyVideoRect();
-            }
+                ApplyVideoRect();
             break;
         }
         case MESessionStarted:
-            MFApplyVideoRect();
+		{
+            ApplyVideoRect();
             break;
+		}
         case MESessionEnded:
-            // Reached end-of-stream.
+		{
             g.playing = false;
-            g.session->Stop();
+            g.closing = true;
+            if (g.session)
+                g.session->Close();
             break;
-
+		}
         case MESessionClosed:
-            // Close completed.
+		{
             g.playing = false;
+            g.closing = false;
+            hwndToRepaint = g.hwnd;
+            needCleanup = true;
             if (g.hCloseEvent)
-				SetEvent(g.hCloseEvent);
+                SetEvent(g.hCloseEvent);
             break;
+		}
         default:
             break;
         }
 
         SafeRelease(pEvent);
+
+        if (needCleanup)
+            break;
+    }
+
+    if (needCleanup)
+	{
+        Cleanup(true);
+        if (hwndToRepaint)
+		{
+            InvalidateRect(hwndToRepaint, NULL, TRUE);
+            UpdateWindow(hwndToRepaint);
+        }
     }
 
     return handledAny ? TRUE : FALSE;
 }
 
-static HRESULT MFEnsureStartup()
+static HRESULT EnsureStartup()
 {
     if (g.inited)
 		return S_OK;
@@ -272,11 +419,11 @@ static HRESULT MFEnsureStartup()
     if (FAILED(hr))
 		return hr;
 
-    hr = MFStartup(MF_VERSION);
+    hr = api.MFStartup(MF_VERSION, MFSTARTUP_NOSOCKET);
     if (FAILED(hr))
 		return hr;
 
-    g.hCloseEvent = CreateEventW(nullptr, TRUE, FALSE, nullptr);
+    g.hCloseEvent = CreateEvent(nullptr, TRUE, FALSE, nullptr);
     if (!g.hCloseEvent)
 		return HRESULT_FROM_WIN32(GetLastError());
 
@@ -284,21 +431,21 @@ static HRESULT MFEnsureStartup()
     return S_OK;
 }
 
-static HRESULT MFCreateSession()
+static HRESULT CreateSession()
 {
     SafeRelease(g.session);
 
     IMFAttributes* pAttrs = nullptr;
-    HRESULT hr = MFCreateAttributes(&pAttrs, 1);
+    HRESULT hr = api.MFCreateAttributes(&pAttrs, 1);
     if (SUCCEEDED(hr))
         pAttrs->SetUINT32(MF_READWRITE_ENABLE_HARDWARE_TRANSFORMS, TRUE);
 
-    hr = MFCreateMediaSession(pAttrs, &g.session);
+    hr = api.MFCreateMediaSession(pAttrs, &g.session);
     SafeRelease(pAttrs);
     return hr;
 }
 
-static HRESULT MFCreateSourceFromURL(const wchar_t* url, IMFMediaSource** ppSource)
+static HRESULT CreateSourceFromURL(const wchar_t* url, IMFMediaSource** ppSource)
 {
     if (!url || !ppSource)
 		return E_INVALIDARG;
@@ -310,7 +457,7 @@ static HRESULT MFCreateSourceFromURL(const wchar_t* url, IMFMediaSource** ppSour
 
     MF_OBJECT_TYPE objType = MF_OBJECT_INVALID;
 
-    HRESULT hr = MFCreateSourceResolver(&pResolver);
+    HRESULT hr = api.MFCreateSourceResolver(&pResolver);
     if (SUCCEEDED(hr))
 	{
         hr = pResolver->CreateObjectFromURL(url,
@@ -334,19 +481,24 @@ static HRESULT AddBranchForStream(
     IMFStreamDescriptor* pSD,
     HWND hwnd)
 {
-    BOOL fSelected = FALSE;
-    HRESULT hr = pPD->GetStreamDescriptorByIndex(0, &fSelected, &pSD);
+    //BOOL fSelected = FALSE;
+    //HRESULT hr = pPD->GetStreamDescriptorByIndex(0, &fSelected, &pSD);
+
+    if (!pTopology || !pSource || !pPD || !pSD)
+        return E_INVALIDARG;
+
+    HRESULT hr = S_OK;
 
     IMFTopologyNode* pSourceNode = nullptr;
     IMFTopologyNode* pOutputNode = nullptr;
 
     IMFMediaTypeHandler* pHandler = nullptr;
-    GUID major = GUID_NULL;
+    GUID major = MY_GUID_NULL;
 
     IMFActivate* pSinkActivate = nullptr;
 
     // Source node
-    hr = MFCreateTopologyNode(MF_TOPOLOGY_SOURCESTREAM_NODE, &pSourceNode);
+    hr = api.MFCreateTopologyNode(MF_TOPOLOGY_SOURCESTREAM_NODE, &pSourceNode);
     if (SUCCEEDED(hr))
 		hr = pSourceNode->SetUnknown(MF_TOPONODE_SOURCE, pSource);
     if (SUCCEEDED(hr))
@@ -367,11 +519,11 @@ static HRESULT AddBranchForStream(
 	{
         if (major == MFMediaType_Video)
 		{
-            hr = MFCreateVideoRendererActivate(g.hwnd, &pSinkActivate);
+            hr = api.MFCreateVideoRendererActivate(hwnd, &pSinkActivate);
         }
 		else if (major == MFMediaType_Audio)
 		{
-            hr = MFCreateAudioRendererActivate(&pSinkActivate);
+            hr = api.MFCreateAudioRendererActivate(&pSinkActivate);
         }
         else
 		{
@@ -385,7 +537,7 @@ static HRESULT AddBranchForStream(
     }
 
     if (SUCCEEDED(hr))
-		hr = MFCreateTopologyNode(MF_TOPOLOGY_OUTPUT_NODE, &pOutputNode);
+		hr = api.MFCreateTopologyNode(MF_TOPOLOGY_OUTPUT_NODE, &pOutputNode);
     if (SUCCEEDED(hr))
 		hr = pOutputNode->SetObject(pSinkActivate);
     if (SUCCEEDED(hr))
@@ -404,7 +556,7 @@ static HRESULT AddBranchForStream(
     return hr;
 }
 
-static HRESULT MFBuildTopology(IMFMediaSource* pSource, HWND hwnd, IMFTopology** ppTopology)
+static HRESULT BuildTopology(IMFMediaSource* pSource, HWND hwnd, IMFTopology** ppTopology)
 {
     if (!pSource || !ppTopology)
 		return E_INVALIDARG;
@@ -416,7 +568,7 @@ static HRESULT MFBuildTopology(IMFMediaSource* pSource, HWND hwnd, IMFTopology**
 
     HRESULT hr = pSource->CreatePresentationDescriptor(&pPD);
     if (SUCCEEDED(hr))
-		hr = MFCreateTopology(&pTopology);
+		hr = api.MFCreateTopology(&pTopology);
 
     if (SUCCEEDED(hr))
 	{
@@ -444,56 +596,81 @@ static HRESULT MFBuildTopology(IMFMediaSource* pSource, HWND hwnd, IMFTopology**
     return hr;
 }
 
-static HRESULT MFApplyVideoRect()
+static HRESULT AcquireVideoDisplay()
 {
-    IMFVideoDisplayControl* vdc = nullptr;
+    if (g.videoDisplay)
+        return S_OK;
 
-    HRESULT hr = MFGetService(g.session,
-							  MR_VIDEO_RENDER_SERVICE,
-							  IID_PPV_ARGS(&vdc));
-    if (FAILED(hr))
-		return hr;
+    if (!g.session)
+        return E_FAIL;
 
-    vdc->SetVideoWindow(g.hwnd);
-    vdc->SetAspectRatioMode(MFVideoARMode_PreservePicture);
-    hr = vdc->SetVideoPosition(nullptr, &g.dstRect);
-    vdc->Release();
-    return hr;
+    return api.MFGetService(
+        g.session,
+        MR_VIDEO_RENDER_SERVICE,
+        IID_PPV_ARGS(&g.videoDisplay));
 }
 
-static void MFCleanup(bool keepMFStartup)
+static HRESULT ApplyVideoRect()
 {
+    HRESULT hr = AcquireVideoDisplay();
+    if (FAILED(hr))
+        return hr;
+
+    hr = g.videoDisplay->SetVideoWindow(g.hwnd);
+    if (FAILED(hr))
+        return hr;
+
+    RECT rc;
+    GetClientRect(g.hwnd, &rc);
+    g.videoDisplay->SetVideoPosition(NULL, &rc);
+    g.videoDisplay->RepaintVideo();
+
+    hr = g.videoDisplay->SetAspectRatioMode(MFVideoARMode_PreservePicture);
+    if (FAILED(hr))
+        return hr;
+
+    return g.videoDisplay->SetVideoPosition(nullptr, &g.dstRect);
+}
+
+static void DetachVideoWindow()
+{
+    if (g.videoDisplay) {
+        RECT rc = { 0, 0, 0, 0 };
+        g.videoDisplay->SetVideoPosition(nullptr, &rc);
+        g.videoDisplay->SetVideoWindow(NULL);
+        // g.videoDisplay->RepaintVideo(); // If needed.
+    }
+}
+
+static void Cleanup(bool keepMFStartup)
+{
+    DetachVideoWindow();
+
     SafeRelease(g.videoDisplay);
 
-    if (g.source)
+    if (g.source) {
         g.source->Shutdown();
-    SafeRelease(g.source);
-
-    if (g.session)
-	{
-        // If not closed yet, try to close
-        g.session->Shutdown();
+        SafeRelease(g.source);
     }
-    SafeRelease(g.session);
-
-    SafeRelease(g.topology);
+    if (g.session) {
+        g.session->Shutdown();
+        SafeRelease(g.session);
+    }
+    if (g.topology) {
+        SafeRelease(g.topology);
+    }
 
     g.playing = false;
     g.closing = false;
     g.hwnd = nullptr;
-    g.dstRect = { 0,0,0,0 };
 
-    if (!keepMFStartup)
-	{
-        if (g.hCloseEvent)
-		{
+    if (!keepMFStartup) {
+        if (g.hCloseEvent) {
             CloseHandle(g.hCloseEvent);
             g.hCloseEvent = nullptr;
         }
-        if (g.inited)
-		{
-            MFShutdown();
-            CoUninitialize();
+        if (g.inited) {
+            api.MFShutdown();
             g.inited = false;
         }
     }
@@ -514,7 +691,7 @@ static HRESULT AnsiToWideACP(const char* s, wchar_t** outWide)
     if (!w)
 	    return E_OUTOFMEMORY;
 
-    if (!MultiByteToWideChar(CP_ACP, 0, s, -1, w, len))
+    if (!MultiByteToWideChar(CP_UTF8, 0, s, -1, w, len))
     {
         CoTaskMemFree(w);
         return HRESULT_FROM_WIN32(GetLastError());

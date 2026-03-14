@@ -1,10 +1,10 @@
 #include <string.h>
 
-const char *pf_get_system_language(void);
+const char *hal_get_system_language(void);
 
 const char *pf_gettext(const char *msg)
 {
-    const char *lang_code = pf_get_system_language();
+    const char *lang_code = hal_get_system_language();
     if (strcmp(msg, "Error: %s: %d: %s") == 0) {
         if (strcmp(lang_code, "es") == 0) return "Error: %s: %d: %s";
         if (strcmp(lang_code, "fr") == 0) return "Erreur : %s : %d : %s";
@@ -19,10 +19,10 @@ const char *pf_gettext(const char *msg)
     }
     if (strcmp(msg, "Cannot open file \"%s\".") == 0) {
         if (strcmp(lang_code, "es") == 0) return "No se puede abrir el archivo \"%s\".";
-        if (strcmp(lang_code, "fr") == 0) return "Impossible d’ouvrir le fichier \"%s\".";
+        if (strcmp(lang_code, "fr") == 0) return "Impossible d'ouvrir le fichier \"%s\".";
         if (strcmp(lang_code, "it") == 0) return "Impossibile aprire il file \"%s\".";
         if (strcmp(lang_code, "de") == 0) return "Datei \"%s\" kann nicht geöffnet werden.";
-        if (strcmp(lang_code, "el") == 0) return "Δεν είναι δυνατή η ανοίξη του αρχείου \"%s\".";
+        if (strcmp(lang_code, "el") == 0) return "Δεν είναι δυνατό το άνοιγμα του αρχείου \"%s\".";
         if (strcmp(lang_code, "ru") == 0) return "Невозможно открыть файл \"%s\".";
         if (strcmp(lang_code, "zh") == 0) return "无法打开文件 \"%s\"。";
         if (strcmp(lang_code, "tw") == 0) return "無法打開檔案 \"%s\"。";
@@ -31,7 +31,7 @@ const char *pf_gettext(const char *msg)
     }
     if (strcmp(msg, "Cannot get the size of file \"%s\".") == 0) {
         if (strcmp(lang_code, "es") == 0) return "No se puede obtener el tamaño del archivo \"%s\".";
-        if (strcmp(lang_code, "fr") == 0) return "Impossible d’obtenir la taille du fichier \"%s\".";
+        if (strcmp(lang_code, "fr") == 0) return "Impossible d'obtenir la taille du fichier \"%s\".";
         if (strcmp(lang_code, "it") == 0) return "Impossibile ottenere la dimensione del file \"%s\".";
         if (strcmp(lang_code, "de") == 0) return "Die Größe der Datei \"%s\" kann nicht ermittelt werden.";
         if (strcmp(lang_code, "el") == 0) return "Δεν είναι δυνατή η λήψη του μεγέθους του αρχείου \"%s\".";
@@ -55,7 +55,7 @@ const char *pf_gettext(const char *msg)
     }
     if (strcmp(msg, "In tag %s:%d: runtime error.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "En la etiqueta %s:%d: error en tiempo de ejecución.";
-        if (strcmp(lang_code, "fr") == 0) return "Dans la balise %s:%d : erreur d’exécution.";
+        if (strcmp(lang_code, "fr") == 0) return "Dans la balise %s : %d : erreur d'exécution.";
         if (strcmp(lang_code, "it") == 0) return "Nel tag %s:%d: errore di runtime.";
         if (strcmp(lang_code, "de") == 0) return "In Tag %s:%d: Laufzeitfehler.";
         if (strcmp(lang_code, "el") == 0) return "Στην ετικέτα %s:%d: σφάλμα χρόνου εκτέλεσης.";
@@ -67,7 +67,7 @@ const char *pf_gettext(const char *msg)
     }
     if (strcmp(msg, "%s:%d: Tag \"%s\" not found.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "%s:%d: No se encontró la etiqueta \"%s\".";
-        if (strcmp(lang_code, "fr") == 0) return "%s:%d : Balise \"%s\" introuvable.";
+        if (strcmp(lang_code, "fr") == 0) return "%s : %d : Balise \"%s\" introuvable.";
         if (strcmp(lang_code, "it") == 0) return "%s:%d: Tag \"%s\" non trovato.";
         if (strcmp(lang_code, "de") == 0) return "%s:%d: Tag \"%s\" wurde nicht gefunden.";
         if (strcmp(lang_code, "el") == 0) return "%s:%d: Η ετικέτα \"%s\" δεν βρέθηκε.";
@@ -79,7 +79,7 @@ const char *pf_gettext(const char *msg)
     }
     if (strcmp(msg, "%s:%d: \"tag_%s\" is not a function.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "%s:%d: \"tag_%s\" no es una función.";
-        if (strcmp(lang_code, "fr") == 0) return "%s:%d : \"tag_%s\" n’est pas une fonction.";
+        if (strcmp(lang_code, "fr") == 0) return "%s : %d : \"tag_%s\" n'est pas une fonction.";
         if (strcmp(lang_code, "it") == 0) return "%s:%d: \"tag_%s\" non è una funzione.";
         if (strcmp(lang_code, "de") == 0) return "%s:%d: \"tag_%s\" ist keine Funktion.";
         if (strcmp(lang_code, "el") == 0) return "%s:%d: Το \"tag_%s\" δεν είναι συνάρτηση.";
@@ -91,7 +91,7 @@ const char *pf_gettext(const char *msg)
     }
     if (strcmp(msg, "In tag %s:%d: Tag \"%s\" execution error.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "En la etiqueta %s:%d: Error de ejecución en la etiqueta \"%s\".";
-        if (strcmp(lang_code, "fr") == 0) return "Dans la balise %s:%d : Erreur d’exécution de la balise \"%s\".";
+        if (strcmp(lang_code, "fr") == 0) return "Dans la balise %s : %d : Erreur d'exécution de la balise \"%s\".";
         if (strcmp(lang_code, "it") == 0) return "Nel tag %s:%d: Errore di esecuzione del tag \"%s\".";
         if (strcmp(lang_code, "de") == 0) return "In Tag %s:%d: Ausführungsfehler im Tag \"%s\".";
         if (strcmp(lang_code, "el") == 0) return "Στην ετικέτα %s:%d: Σφάλμα εκτέλεσης στην ετικέτα \"%s\".";
@@ -115,8 +115,8 @@ const char *pf_gettext(const char *msg)
     }
     if (strcmp(msg, "Cannot load an image \"%s\".") == 0) {
         if (strcmp(lang_code, "es") == 0) return "No se puede cargar la imagen \"%s\".";
-        if (strcmp(lang_code, "fr") == 0) return "Impossible de charger l’image \"%s\".";
-        if (strcmp(lang_code, "it") == 0) return "Impossibile caricare l’immagine \"%s\".";
+        if (strcmp(lang_code, "fr") == 0) return "Impossible de charger l'image \"%s\".";
+        if (strcmp(lang_code, "it") == 0) return "Impossibile caricare l'immagine \"%s\".";
         if (strcmp(lang_code, "de") == 0) return "Das Bild \"%s\" kann nicht geladen werden.";
         if (strcmp(lang_code, "el") == 0) return "Δεν είναι δυνατή η φόρτωση της εικόνας \"%s\".";
         if (strcmp(lang_code, "ru") == 0) return "Не удаётся загрузить изображение \"%s\".";
@@ -139,7 +139,7 @@ const char *pf_gettext(const char *msg)
     }
     if (strcmp(msg, "Invalid font slot index.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "Índice de ranura de fuente no válido.";
-        if (strcmp(lang_code, "fr") == 0) return "Indice d’emplacement de police non valide.";
+        if (strcmp(lang_code, "fr") == 0) return "Indice d'emplacement de police non valide.";
         if (strcmp(lang_code, "it") == 0) return "Indice di slot del font non valido.";
         if (strcmp(lang_code, "de") == 0) return "Ungültiger Schriftart-Slot-Index.";
         if (strcmp(lang_code, "el") == 0) return "Μη έγκυρος δείκτης υποδοχής γραμματοσειράς.";
@@ -187,10 +187,10 @@ const char *pf_gettext(const char *msg)
     }
     if (strcmp(msg, "Cannot open a save file.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "No se puede abrir un archivo de guardado.";
-        if (strcmp(lang_code, "fr") == 0) return "Impossible d’ouvrir un fichier de sauvegarde.";
+        if (strcmp(lang_code, "fr") == 0) return "Impossible d'ouvrir un fichier de sauvegarde.";
         if (strcmp(lang_code, "it") == 0) return "Impossibile aprire un file di salvataggio.";
         if (strcmp(lang_code, "de") == 0) return "Eine Speicherdatei kann nicht geöffnet werden.";
-        if (strcmp(lang_code, "el") == 0) return "Δεν είναι δυνατή η ανοίξη ενός αρχείου αποθήκευσης.";
+        if (strcmp(lang_code, "el") == 0) return "Δεν είναι δυνατό το άνοιγμα ενός αρχείου αποθήκευσης.";
         if (strcmp(lang_code, "ru") == 0) return "Не удалось открыть файл сохранения.";
         if (strcmp(lang_code, "zh") == 0) return "无法打开存档文件。";
         if (strcmp(lang_code, "tw") == 0) return "無法開啟存檔檔案。";
@@ -199,7 +199,7 @@ const char *pf_gettext(const char *msg)
     }
     if (strcmp(msg, "Cannot write to a save file.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "No se puede escribir en un archivo de guardado.";
-        if (strcmp(lang_code, "fr") == 0) return "Impossible d’écrire dans un fichier de sauvegarde.";
+        if (strcmp(lang_code, "fr") == 0) return "Impossible d'écrire dans un fichier de sauvegarde.";
         if (strcmp(lang_code, "it") == 0) return "Impossibile scrivere in un file di salvataggio.";
         if (strcmp(lang_code, "de") == 0) return "In eine Speicherdatei kann nicht geschrieben werden.";
         if (strcmp(lang_code, "el") == 0) return "Δεν είναι δυνατή η εγγραφή σε ένα αρχείο αποθήκευσης.";
@@ -211,7 +211,7 @@ const char *pf_gettext(const char *msg)
     }
     if (strcmp(msg, "Cannot get the size of a save file.") == 0) {
         if (strcmp(lang_code, "es") == 0) return "No se puede obtener el tamaño de un archivo de guardado.";
-        if (strcmp(lang_code, "fr") == 0) return "Impossible d’obtenir la taille d’un fichier de sauvegarde.";
+        if (strcmp(lang_code, "fr") == 0) return "Impossible d'obtenir la taille d'un fichier de sauvegarde.";
         if (strcmp(lang_code, "it") == 0) return "Impossibile ottenere la dimensione di un file di salvataggio.";
         if (strcmp(lang_code, "de") == 0) return "Die Größe einer Speicherdatei kann nicht ermittelt werden.";
         if (strcmp(lang_code, "el") == 0) return "Δεν είναι δυνατή η λήψη του μεγέθους ενός αρχείου αποθήκευσης.";
@@ -268,6 +268,102 @@ const char *pf_gettext(const char *msg)
         if (strcmp(lang_code, "tw") == 0) return "無效的存檔資料。";
         if (strcmp(lang_code, "ja") == 0) return "セーブデータが無効です。";
         return "Invalid save data.";
+    }
+    if (strcmp(msg, "Searching directory \"%s\".") == 0) {
+        if (strcmp(lang_code, "es") == 0) return "Buscando en el directorio \"%s\".";
+        if (strcmp(lang_code, "fr") == 0) return "Recherche dans le répertoire \"%s\".";
+        if (strcmp(lang_code, "it") == 0) return "Ricerca nella directory \"%s\".";
+        if (strcmp(lang_code, "de") == 0) return "Suche im Verzeichnis \"%s\".";
+        if (strcmp(lang_code, "el") == 0) return "Αναζήτηση στον κατάλογο \"%s\".";
+        if (strcmp(lang_code, "ru") == 0) return "Поиск в каталоге «%s».";
+        if (strcmp(lang_code, "zh") == 0) return "正在搜索目录 \"%s\"。";
+        if (strcmp(lang_code, "tw") == 0) return "正在搜尋目錄 \"%s\"。";
+        if (strcmp(lang_code, "ja") == 0) return "ディレクトリ \"%s\" を検索中。";
+        return "Searching directory \"%s\".";
+    }
+    if (strcmp(msg, "Skipping empty directory \"%s\".") == 0) {
+        if (strcmp(lang_code, "es") == 0) return "Omitiendo el directorio vacío \"%s\".";
+        if (strcmp(lang_code, "fr") == 0) return "Ignorer le répertoire vide \"%s\".";
+        if (strcmp(lang_code, "it") == 0) return "Salto della directory vuota \"%s\".";
+        if (strcmp(lang_code, "de") == 0) return "Leeres Verzeichnis \"%s\" wird übersprungen.";
+        if (strcmp(lang_code, "el") == 0) return "Παράλειψη κενού καταλόγου \"%s\".";
+        if (strcmp(lang_code, "ru") == 0) return "Пропуск пустого каталога «%s».";
+        if (strcmp(lang_code, "zh") == 0) return "跳过空目录 \"%s\"。";
+        if (strcmp(lang_code, "tw") == 0) return "跳過空目錄 \"%s\"。";
+        if (strcmp(lang_code, "ja") == 0) return "空のディレクトリ \"%s\" をスキップします。";
+        return "Skipping empty directory \"%s\".";
+    }
+    if (strcmp(msg, "Adding file \"%s\".") == 0) {
+        if (strcmp(lang_code, "es") == 0) return "Añadiendo archivo \"%s\".";
+        if (strcmp(lang_code, "fr") == 0) return "Ajout du fichier \"%s\".";
+        if (strcmp(lang_code, "it") == 0) return "Aggiunta del file \"%s\".";
+        if (strcmp(lang_code, "de") == 0) return "Datei \"%s\" wird hinzugefügt.";
+        if (strcmp(lang_code, "el") == 0) return "Προσθήκη αρχείου \"%s\".";
+        if (strcmp(lang_code, "ru") == 0) return "Добавление файла «%s».";
+        if (strcmp(lang_code, "zh") == 0) return "正在添加文件 \"%s\"。";
+        if (strcmp(lang_code, "tw") == 0) return "正在新增檔案 \"%s\"。";
+        if (strcmp(lang_code, "ja") == 0) return "ファイル \"%s\" を追加しています。";
+        return "Adding file \"%s\".";
+    }
+    if (strcmp(msg, "Parameter is not set.") == 0) {
+        if (strcmp(lang_code, "es") == 0) return "El parámetro no está configurado.";
+        if (strcmp(lang_code, "fr") == 0) return "Le paramètre n'est pas défini.";
+        if (strcmp(lang_code, "it") == 0) return "Il parametro non è impostato.";
+        if (strcmp(lang_code, "de") == 0) return "Parameter ist nicht gesetzt.";
+        if (strcmp(lang_code, "el") == 0) return "Η παράμετρος δεν έχει οριστεί.";
+        if (strcmp(lang_code, "ru") == 0) return "Параметр не задан.";
+        if (strcmp(lang_code, "zh") == 0) return "未设置参数。";
+        if (strcmp(lang_code, "tw") == 0) return "未設定參數。";
+        if (strcmp(lang_code, "ja") == 0) return "パラメータが設定されていません。";
+        return "Parameter is not set.";
+    }
+    if (strcmp(msg, "Unexpected parameter value for \"%s\".") == 0) {
+        if (strcmp(lang_code, "es") == 0) return "Valor de parámetro inesperado para \"%s\".";
+        if (strcmp(lang_code, "fr") == 0) return "Valeur de paramètre inattendue pour \"%s\".";
+        if (strcmp(lang_code, "it") == 0) return "Valore del parametro imprevisto per \"%s\".";
+        if (strcmp(lang_code, "de") == 0) return "Unerwarteter Parameterwert für \"%s\".";
+        if (strcmp(lang_code, "el") == 0) return "Μη αναμενόμενη τιμή παραμέτρου για \"%s\".";
+        if (strcmp(lang_code, "ru") == 0) return "Непредвиденное значение параметра для «%s».";
+        if (strcmp(lang_code, "zh") == 0) return "参数 \"%s\" 的值异常。";
+        if (strcmp(lang_code, "tw") == 0) return "參數 \"%s\" 的值異常。";
+        if (strcmp(lang_code, "ja") == 0) return "パラメータ \"%s\" の値が不正です。";
+        return "Unexpected parameter value for \"%s\".";
+    }
+    if (strcmp(msg, "Parameter \"%s\" doesn't have the key \"%s\".") == 0) {
+        if (strcmp(lang_code, "es") == 0) return "El parámetro \"%s\" no tiene la clave \"%s\".";
+        if (strcmp(lang_code, "fr") == 0) return "Le paramètre \"%s\" n'a pas la clé \"%s\".";
+        if (strcmp(lang_code, "it") == 0) return "Il parametro \"%s\" non ha la chiave \"%s\".";
+        if (strcmp(lang_code, "de") == 0) return "Parameter \"%s\" hat keinen Schlüssel \"%s\".";
+        if (strcmp(lang_code, "el") == 0) return "Η παράμετρος \"%s\" δεν έχει το κλειδί \"%s\".";
+        if (strcmp(lang_code, "ru") == 0) return "Параметр «%s» не содержит ключ «%s».";
+        if (strcmp(lang_code, "zh") == 0) return "参数 \"%s\" 不包含键 \"%s\"。";
+        if (strcmp(lang_code, "tw") == 0) return "參數 \"%s\" 不包含鍵 \"%s\"。";
+        if (strcmp(lang_code, "ja") == 0) return "パラメータ \"%s\" にキー \"%s\" がありません。";
+        return "Parameter \"%s\" doesn't have the key \"%s\".";
+    }
+    if (strcmp(msg, "Unexpected parameter value for \"%s.%s\".") == 0) {
+        if (strcmp(lang_code, "es") == 0) return "Valor de parámetro  inesperado para \"%s.%s\".";
+        if (strcmp(lang_code, "fr") == 0) return "Valeur de paramètre inattendue pour \"%s.%s\".";
+        if (strcmp(lang_code, "it") == 0) return "Valore del parametro imprevisto per \"%s.%s\".";
+        if (strcmp(lang_code, "de") == 0) return "Unerwarteter Parameterwert für \"%s.%s\".";
+        if (strcmp(lang_code, "el") == 0) return "Μη αναμενόμενη τιμή παραμέτρου για \"%s.%s\".";
+        if (strcmp(lang_code, "ru") == 0) return "Непредвиденное значение параметра для «%s.%s».";
+        if (strcmp(lang_code, "zh") == 0) return "参数 \"%s.%s\" 的值異常。";
+        if (strcmp(lang_code, "tw") == 0) return "參數 \"%s.%s\" 的值異常。";
+        if (strcmp(lang_code, "ja") == 0) return "パラメータ \"%s.%s\" の値が不正です。";
+        return "Unexpected parameter value for \"%s.%s\".";
+    }
+    if (strcmp(msg, "Cannot deserialize function.") == 0) {
+        if (strcmp(lang_code, "es") == 0) return "No se puede deserializar la función.";
+        if (strcmp(lang_code, "fr") == 0) return "Impossible de désérialiser la fonction.";
+        if (strcmp(lang_code, "it") == 0) return "Impossibile deserializzare la funzione.";
+        if (strcmp(lang_code, "de") == 0) return "Funktion kann nicht deserialisiert werden.";
+        if (strcmp(lang_code, "el") == 0) return "Αδυναμία αποσειριοποίησης της συνάρτησης.";
+        if (strcmp(lang_code, "ru") == 0) return "Не удалось десериализовать функцию.";
+        if (strcmp(lang_code, "zh") == 0) return "无法反序列化函数。";
+        if (strcmp(lang_code, "tw") == 0) return "無法反序列化函式。";
+        if (strcmp(lang_code, "ja") == 0) return "関数をデシリアライズできません。";
+        return "Cannot deserialize function.";
     }
     return msg;
 }

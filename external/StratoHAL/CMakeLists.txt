@@ -33,7 +33,6 @@ option(STRATO_ENABLE_I18N             "Enable translation"                 OFF)
 option(STRATO_ENABLE_OBJECT           "Build an object library"            OFF)
 option(STRATO_ENABLE_SHARED           "Use shared libraries"               OFF)
 option(STRATO_ENABLE_ROT90            "Rotate screen"                      OFF)
-option(STRATO_ENABLE_MEDIAFOUNDATION  "Enable Media Foundation support"    OFF)
 option(STRATO_ENABLE_GST              "Enable GStreamer support"           OFF)
 
 #
@@ -215,41 +214,23 @@ endif()
 # For Windows.
 if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_WINDOWS95)
-  if(STRATO_ENABLE_MEDIAFOUNDATION)
-    set(STRATO_SOURCES
-      src/image.c
-      src/glyph.c
-      src/wave.c
-      src/stdfile.c
-      src/winmain.c
-      src/d3drender.c
-      src/d3d12render.cc
-      src/d3d11render.cc
-      src/d3d9render.cc
-      src/gdirender.c
-      src/dsound.c
-      src/mfvideo.cc
-      src/digamepad.cc
-      src/xigamepad.c
-    )
-  else()
-    set(STRATO_SOURCES
-      src/image.c
-      src/glyph.c
-      src/wave.c
-      src/stdfile.c
-      src/winmain.c
-      src/d3drender.c
-      src/d3d12render.cc
-      src/d3d11render.cc
-      src/d3d9render.cc
-      src/gdirender.c
-      src/dsound.c
-      src/dsvideo.cc
-      src/digamepad.cc
-      src/xigamepad.c
-    )
-  endif()
+  set(STRATO_SOURCES
+    src/image.c
+    src/glyph.c
+    src/wave.c
+    src/stdfile.c
+    src/winmain.c
+    src/d3drender.c
+    src/d3d12render.cc
+    src/d3d11render.cc
+    src/d3d9render.cc
+    src/gdirender.c
+    src/dsound.c
+    src/mfvideo.cc
+    src/dsvideo.cc
+    src/digamepad.cc
+    src/xigamepad.c
+  )
 endif()
 
 # For macOS.
@@ -636,12 +617,7 @@ if(   STRATO_TARGET_WINDOWS
     ${CMAKE_BINARY_DIR}/dx12headers/include/directx
     ${CMAKE_BINARY_DIR}/dx12headers/include/dxguids
   )
-
-  if(STRATO_ENABLE_MEDIAFOUNDATION)
-    target_compile_definitions(strato PRIVATE HAL_USE_MFVIDEO)
-  else()
-    target_compile_definitions(strato PRIVATE HAL_USE_DSVIDEO)
-  endif()
+  target_compile_definitions(strato PRIVATE HAL_USE_MFVIDEO HAL_USE_DSVIDEO)
 endif()
 
 # Linux X11: Add -DHAS_USE_GL -DHAL_USE_X11 -DHAL_GSTREAMER
@@ -713,15 +689,16 @@ endif()
 if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_GDK_WINDOWS
    OR STRATO_TARGET_GDK_XBOX_XS)
-  # -municode
-  if(MINGW)
-    target_compile_options(strato PUBLIC -municode)
-  endif()
-
   # /utf-8
   if(MSVC)
     target_compile_options(strato PUBLIC /utf-8)
     target_compile_definitions(strato PUBLIC UNICODE _UNICODE)
+  endif()
+
+  # -municode
+  if(MINGW)
+    target_compile_options(strato PUBLIC -municode)
+    target_compile_definitions(strato PUBLIC _UNICODE UNICODE)
   endif()
 endif()
 if(STRATO_TARGET_WINDOWS95)
@@ -759,16 +736,12 @@ if(   STRATO_TARGET_WINDOWS
   target_link_libraries(strato PUBLIC
     gdi32
     ole32
-    dsound
-    strmiids
+#   dsound
+#   strmiids
     dxguid
   )
 
-  if(STRATO_ENABLE_MEDIAFOUNDATION)
-    target_link_libraries(strato PUBLIC mf mfplat mfuuid mfreadwrite evr)
-  else()
-    target_link_libraries(strato PUBLIC strmiids)
-  endif()
+#  target_link_libraries(strato PUBLIC mf mfplat mfuuid mfreadwrite evr)
 
   # -mwindows -municode
   if(MINGW)

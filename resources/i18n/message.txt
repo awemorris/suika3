@@ -11,10 +11,10 @@ ja:エラー: %s: %d: %s
 ---
 ID:Cannot open file "%s".
 es:No se puede abrir el archivo "%s".
-fr:Impossible d’ouvrir le fichier "%s".
+fr:Impossible d'ouvrir le fichier "%s".
 it:Impossibile aprire il file "%s".
 de:Datei "%s" kann nicht geöffnet werden.
-el:Δεν είναι δυνατή η ανοίξη του αρχείου "%s".
+el:Δεν είναι δυνατό το άνοιγμα του αρχείου "%s".
 ru:Невозможно открыть файл "%s".
 zh:无法打开文件 "%s"。
 tw:無法打開檔案 "%s"。
@@ -22,7 +22,7 @@ ja:ファイル "%s" を開けません。
 ---
 ID:Cannot get the size of file "%s".
 es:No se puede obtener el tamaño del archivo "%s".
-fr:Impossible d’obtenir la taille du fichier "%s".
+fr:Impossible d'obtenir la taille du fichier "%s".
 it:Impossibile ottenere la dimensione del file "%s".
 de:Die Größe der Datei "%s" kann nicht ermittelt werden.
 el:Δεν είναι δυνατή η λήψη του μεγέθους του αρχείου "%s".
@@ -44,7 +44,7 @@ ja:ファイル "%s" を読み込めません。
 ---
 ID:In tag %s:%d: runtime error.
 es:En la etiqueta %s:%d: error en tiempo de ejecución.
-fr:Dans la balise %s:%d : erreur d’exécution.
+fr:Dans la balise %s : %d : erreur d'exécution.
 it:Nel tag %s:%d: errore di runtime.
 de:In Tag %s:%d: Laufzeitfehler.
 el:Στην ετικέτα %s:%d: σφάλμα χρόνου εκτέλεσης.
@@ -55,7 +55,7 @@ ja:タグ %s:%d: 実行エラー
 ---
 ID:%s:%d: Tag "%s" not found.
 es:%s:%d: No se encontró la etiqueta "%s".
-fr:%s:%d : Balise "%s" introuvable.
+fr:%s : %d : Balise "%s" introuvable.
 it:%s:%d: Tag "%s" non trovato.
 de:%s:%d: Tag "%s" wurde nicht gefunden.
 el:%s:%d: Η ετικέτα "%s" δεν βρέθηκε.
@@ -66,7 +66,7 @@ ja:%s:%d: タグ "%s" がみつかりません。
 ---
 ID:%s:%d: "tag_%s" is not a function.
 es:%s:%d: "tag_%s" no es una función.
-fr:%s:%d : "tag_%s" n’est pas une fonction.
+fr:%s : %d : "tag_%s" n'est pas une fonction.
 it:%s:%d: "tag_%s" non è una funzione.
 de:%s:%d: "tag_%s" ist keine Funktion.
 el:%s:%d: Το "tag_%s" δεν είναι συνάρτηση.
@@ -77,7 +77,7 @@ ja:%s:%d: "tag_%s" が関数ではありません。
 ---
 ID:In tag %s:%d: Tag "%s" execution error.
 es:En la etiqueta %s:%d: Error de ejecución en la etiqueta "%s".
-fr:Dans la balise %s:%d : Erreur d’exécution de la balise "%s".
+fr:Dans la balise %s : %d : Erreur d'exécution de la balise "%s".
 it:Nel tag %s:%d: Errore di esecuzione del tag "%s".
 de:In Tag %s:%d: Ausführungsfehler im Tag "%s".
 el:Στην ετικέτα %s:%d: Σφάλμα εκτέλεσης στην ετικέτα "%s".
@@ -99,8 +99,8 @@ ja:"%s" のファイルタイプを決定できません。
 ---
 ID:Cannot load an image "%s".
 es:No se puede cargar la imagen "%s".
-fr:Impossible de charger l’image "%s".
-it:Impossibile caricare l’immagine "%s".
+fr:Impossible de charger l'image "%s".
+it:Impossibile caricare l'immagine "%s".
 de:Das Bild "%s" kann nicht geladen werden.
 el:Δεν είναι δυνατή η φόρτωση της εικόνας "%s".
 ru:Не удаётся загрузить изображение "%s".
@@ -121,7 +121,7 @@ ja:テキスチャが多すぎます。
 ---
 ID:Invalid font slot index.
 es:Índice de ranura de fuente no válido.
-fr:Indice d’emplacement de police non valide.
+fr:Indice d'emplacement de police non valide.
 it:Indice di slot del font non valido.
 de:Ungültiger Schriftart-Slot-Index.
 el:Μη έγκυρος δείκτης υποδοχής γραμματοσειράς.
@@ -165,10 +165,10 @@ ja:セーブデータキーが長すぎます。
 ---
 ID:Cannot open a save file.
 es:No se puede abrir un archivo de guardado.
-fr:Impossible d’ouvrir un fichier de sauvegarde.
+fr:Impossible d'ouvrir un fichier de sauvegarde.
 it:Impossibile aprire un file di salvataggio.
 de:Eine Speicherdatei kann nicht geöffnet werden.
-el:Δεν είναι δυνατή η ανοίξη ενός αρχείου αποθήκευσης.
+el:Δεν είναι δυνατό το άνοιγμα ενός αρχείου αποθήκευσης.
 ru:Не удалось открыть файл сохранения.
 zh:无法打开存档文件。
 tw:無法開啟存檔檔案。
@@ -176,7 +176,7 @@ ja:セーブファイルを開けません。
 ---
 ID:Cannot write to a save file.
 es:No se puede escribir en un archivo de guardado.
-fr:Impossible d’écrire dans un fichier de sauvegarde.
+fr:Impossible d'écrire dans un fichier de sauvegarde.
 it:Impossibile scrivere in un file di salvataggio.
 de:In eine Speicherdatei kann nicht geschrieben werden.
 el:Δεν είναι δυνατή η εγγραφή σε ένα αρχείο αποθήκευσης.
@@ -187,7 +187,7 @@ ja:セーブファイルに書き込めません。
 ---
 ID:Cannot get the size of a save file.
 es:No se puede obtener el tamaño de un archivo de guardado.
-fr:Impossible d’obtenir la taille d’un fichier de sauvegarde.
+fr:Impossible d'obtenir la taille d'un fichier de sauvegarde.
 it:Impossibile ottenere la dimensione di un file di salvataggio.
 de:Die Größe einer Speicherdatei kann nicht ermittelt werden.
 el:Δεν είναι δυνατή η λήψη του μεγέθους ενός αρχείου αποθήκευσης.
@@ -239,4 +239,92 @@ ru:Недопустимые данные сохранения.
 zh:无效的存档数据。
 tw:無效的存檔資料。
 ja:セーブデータが無効です。
+---
+ID:Searching directory "%s".
+es:Buscando en el directorio "%s".
+fr:Recherche dans le répertoire "%s".
+it:Ricerca nella directory "%s".
+de:Suche im Verzeichnis "%s".
+el:Αναζήτηση στον κατάλογο "%s".
+ru:Поиск в каталоге «%s».
+zh:正在搜索目录 "%s"。
+tw:正在搜尋目錄 "%s"。
+ja:ディレクトリ "%s" を検索中。
+---
+ID:Skipping empty directory "%s".
+es:Omitiendo el directorio vacío "%s".
+fr:Ignorer le répertoire vide "%s".
+it:Salto della directory vuota "%s".
+de:Leeres Verzeichnis "%s" wird übersprungen.
+el:Παράλειψη κενού καταλόγου "%s".
+ru:Пропуск пустого каталога «%s».
+zh:跳过空目录 "%s"。
+tw:跳過空目錄 "%s"。
+ja:空のディレクトリ "%s" をスキップします。
+---
+ID:Adding file "%s".
+es:Añadiendo archivo "%s".
+fr:Ajout du fichier "%s".
+it:Aggiunta del file "%s".
+de:Datei "%s" wird hinzugefügt.
+el:Προσθήκη αρχείου "%s".
+ru:Добавление файла «%s».
+zh:正在添加文件 "%s"。
+tw:正在新增檔案 "%s"。
+ja:ファイル "%s" を追加しています。
+---
+ID:Parameter is not set.
+es:El parámetro no está configurado.
+fr:Le paramètre n'est pas défini.
+it:Il parametro non è impostato.
+de:Parameter ist nicht gesetzt.
+el:Η παράμετρος δεν έχει οριστεί.
+ru:Параметр не задан.
+zh:未设置参数。
+tw:未設定參數。
+ja:パラメータが設定されていません。
+---
+ID:Unexpected parameter value for "%s".
+es:Valor de parámetro inesperado para "%s".
+fr:Valeur de paramètre inattendue pour "%s".
+it:Valore del parametro imprevisto per "%s".
+de:Unerwarteter Parameterwert für "%s".
+el:Μη αναμενόμενη τιμή παραμέτρου για "%s".
+ru:Непредвиденное значение параметра для «%s».
+zh:参数 "%s" 的值异常。
+tw:參數 "%s" 的值異常。
+ja:パラメータ "%s" の値が不正です。
+---
+ID:Parameter "%s" doesn't have the key "%s".
+es:El parámetro "%s" no tiene la clave "%s".
+fr:Le paramètre "%s" n'a pas la clé "%s".
+it:Il parametro "%s" non ha la chiave "%s".
+de:Parameter "%s" hat keinen Schlüssel "%s".
+el:Η παράμετρος "%s" δεν έχει το κλειδί "%s".
+ru:Параметр «%s» не содержит ключ «%s».
+zh:参数 "%s" 不包含键 "%s"。
+tw:參數 "%s" 不包含鍵 "%s"。
+ja:パラメータ "%s" にキー "%s" がありません。
+---
+ID:Unexpected parameter value for "%s.%s".
+es:Valor de parámetro  inesperado para "%s.%s".
+fr:Valeur de paramètre inattendue pour "%s.%s".
+it:Valore del parametro imprevisto per "%s.%s".
+de:Unerwarteter Parameterwert für "%s.%s".
+el:Μη αναμενόμενη τιμή παραμέτρου για "%s.%s".
+ru:Непредвиденное значение параметра для «%s.%s».
+zh:参数 "%s.%s" 的值異常。
+tw:參數 "%s.%s" 的值異常。
+ja:パラメータ "%s.%s" の値が不正です。
+---
+ID:Cannot deserialize function.
+es:No se puede deserializar la función.
+fr:Impossible de désérialiser la fonction.
+it:Impossibile deserializzare la funzione.
+de:Funktion kann nicht deserialisiert werden.
+el:Αδυναμία αποσειριοποίησης της συνάρτησης.
+ru:Не удалось десериализовать функцию.
+zh:无法反序列化函数。
+tw:無法反序列化函式。
+ja:関数をデシリアライズできません。
 ---

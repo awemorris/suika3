@@ -60,7 +60,7 @@
 #define RICHEDIT	L"RICHEDIT50W"
 #define CONSOLAS	L"Consolas"
 #define CONSOLE		L"Console"
-#define _T(s)		L#s
+#define _T(s)		L##s
 typedef wchar_t TCHAR;
 #define tstrdup		_wcsdup
 #define tfopen		_wfopen
@@ -101,6 +101,8 @@ typedef char TCHAR;
 
 /* Window class names. */
 static const TCHAR tszWindowClassMain[] = _T("AppMain");
+static const TCHAR tszWindowClassRender[] = _T("AppRender");
+static const TCHAR tszWindowClassVideo[] = _T("AppVideo");
 static const TCHAR tszWindowClassLog[] = _T("AppLog");
 
 /* i18n messages. */
@@ -131,6 +133,8 @@ static TCHAR tszTitle[TITLE_BUF_SIZE];
 
 /* Windows object. */
 static HWND hWndMain;
+static HWND hWndRender;
+static HWND hWndVideo;
 
 /* Frame start time. */
 static DWORD dwStartTime;
@@ -140,6 +144,12 @@ static BOOL bRunning;
 
 /* Force D3D9? */
 static BOOL bForceD3D9;
+
+/* Is Media Foundation enabled? */
+static BOOL bMFVEnabled;
+
+/* Is DirectShow enabled? */
+static BOOL bDShowEnabled;
 
 /* Is full screen mode? */
 static BOOL bFullScreen;
@@ -203,7 +213,9 @@ static void GameLoop(void);
 static BOOL RunFrame(void);
 static BOOL SyncEvents(void);
 static BOOL WaitForNextFrame(void);
-static LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK WndProcMain(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK WndProcRender(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+static LRESULT CALLBACK WndProcVideo(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 static int ConvertKeyCode(int nVK);
 static void OnPaint(HWND hWnd);
 static void OnCommand(WPARAM wParam, LPARAM lParam);
@@ -215,6 +227,11 @@ static VOID AppendLogToEdit(const char *text);
 static LRESULT CALLBACK LogWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 static BOOL OpenLogFile(void);
 static void ShowLogFile(void);
+static BOOL PlayVideo(const char *pszFileName);
+static VOID StopVideo(VOID);
+static BOOL IsVideoPlaying(VOID);
+static VOID ProcessVideoEvents(VOID);
+static VOID ProcessGraphNotify(VOID);
 
 /*
  * cpuid.c
@@ -319,7 +336,7 @@ InitApp(
 		bFileOK = TRUE;
 	if (!bFileOK)
 	{
-		log_error(S_TR("No startup file."));
+		log_error(HAL_TR("No startup file."));
 		return FALSE;
 	}
 #endif
@@ -337,7 +354,7 @@ InitApp(
 		return FALSE;
 
 	/* Initialize the graphics HAL. */
-	if (!D3DInitialize(hWndMain, nWindowWidth, nWindowHeight, bForceD3D9))
+	if (!D3DInitialize(hWndRender, nWindowWidth, nWindowHeight, bForceD3D9))
 	{
 		hal_log_info(HAL_TR("Failed to initialize the graphics."));
 		return FALSE;
@@ -358,6 +375,19 @@ InitApp(
 
 	/* Initialize the joystick HAL. */
 	DInputInitialize(hInstance, hWndMain);
+
+	/* Init video. */
+#if defined(HAL_ARCH_X86_64) || defined(HAL_ARCH_ARM64)
+	/* On 64-bit environments, DirectShow does not work properly. So, we use Media Foundation if available. */
+	if (MFVInit())
+		bMFVEnabled = TRUE;
+#else
+	/* On 32-bit environments, we first try using Media Foundation, and if it fails, we try using DirectShow. */
+	if (MFVInit())
+		bMFVEnabled = TRUE;
+	else if (DShowInit())
+		bDShowEnabled = TRUE;
+#endif
 
 	return TRUE;
 }
@@ -386,63 +416,75 @@ InitWindow(
 	HINSTANCE hInstance,
 	int nCmdShow)
 {
-	WNDCLASSEX wcex;
+	WNDCLASSEX wcexMain, wcexRender, wcexVideo;
 	RECT rc;
 	int nVirtualScreenWidth, nVirtualScreenHeight;
 	int nFrameAddWidth, nFrameAddHeight;
 	int nMonitors;
-	int nGameWidth, nGameHeight;
 	int nWinWidth, nWinHeight;
 	int nPosX, nPosY;
 	int i;
 	BOOL bInitialFullScreen;
 
-	/* Register a window class. */
-	ZeroMemory(&wcex, sizeof(wcex));
-	wcex.cbSize			= sizeof(wcex);
-	wcex.lpfnWndProc    = WndProc;
-	wcex.hInstance      = hInstance;
-	wcex.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON));
-	wcex.hCursor        = LoadCursor(NULL, MAKEINTRESOURCE((WORD)(intptr_t)IDC_ARROW));
-	wcex.hbrBackground  = (HBRUSH)GetStockObject(BLACK_BRUSH);
-	wcex.lpszClassName  = tszWindowClassMain;
-	wcex.hIconSm		= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON));
-	if (!RegisterClassEx(&wcex))
+	/* Register the main window class. */
+	ZeroMemory(&wcexMain, sizeof(wcexMain));
+	wcexMain.cbSize			= sizeof(wcexMain);
+	wcexMain.lpfnWndProc    = WndProcMain;
+	wcexMain.hInstance      = hInstance;
+	wcexMain.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON));
+	wcexMain.hCursor        = LoadCursor(NULL, MAKEINTRESOURCE((WORD)(intptr_t)IDC_ARROW));
+	wcexMain.hbrBackground  = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wcexMain.lpszClassName  = tszWindowClassMain;
+	wcexMain.hIconSm		= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON));
+	if (!RegisterClassEx(&wcexMain))
 		return FALSE;
 
-	/* Select window styles. */
-#if !defined(USE_EDITOR)
-	dwStyle = WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_OVERLAPPED;
-#else
-	dwStyle = WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_OVERLAPPED | WS_THICKFRAME;
-#endif
+	/* Register the render window class. */
+	ZeroMemory(&wcexRender, sizeof(wcexRender));
+	wcexRender.cbSize		  = sizeof(wcexRender);
+	wcexRender.lpfnWndProc    = WndProcRender;
+	wcexRender.hInstance      = hInstance;
+	wcexRender.hIcon          = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON));
+	wcexRender.hCursor        = LoadCursor(NULL, MAKEINTRESOURCE((WORD)(intptr_t)IDC_ARROW));
+	wcexRender.hbrBackground  = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wcexRender.lpszClassName  = tszWindowClassRender;
+	wcexRender.hIconSm        = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON));
+	if (!RegisterClassEx(&wcexRender))
+		return FALSE;
 
-	/* Get a frame size. */
-	nFrameAddWidth = GetSystemMetrics(SM_CXFIXEDFRAME) * 2;
-	nFrameAddHeight = GetSystemMetrics(SM_CYCAPTION) +
-					  GetSystemMetrics(SM_CYMENU) +
-					  GetSystemMetrics(SM_CYFIXEDFRAME) * 2;
+	/* Register a video window class. */
+	ZeroMemory(&wcexVideo, sizeof(wcexVideo));
+	wcexVideo.cbSize		= sizeof(wcexVideo);
+	wcexVideo.lpfnWndProc   = WndProcVideo;
+	wcexVideo.hInstance     = hInstance;
+	wcexVideo.hIcon         = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON));
+	wcexVideo.hCursor       = LoadCursor(NULL, MAKEINTRESOURCE((WORD)(intptr_t)IDC_ARROW));
+	wcexVideo.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
+	wcexVideo.lpszClassName = tszWindowClassVideo;
+	wcexVideo.hIconSm       = LoadIcon(hInstance, MAKEINTRESOURCE(IDI_ICON));
+	if (!RegisterClassEx(&wcexVideo))
+		return FALSE;
 
-	/* Convert a window title from utf-8 to utf-16. */
+	/* Convert a window title from utf-8 to utf-16 (or active codepage on Win9x). */
 #ifdef _UNICODE
 	MultiByteToWideChar(CP_UTF8, 0, pszWindowTitle, -1, tszTitle, TITLE_BUF_SIZE - 1);
 #else
 	WideCharToMultiByte(CP_ACP, 0, win32_utf8_to_utf16(pszWindowTitle), -1, tszTitle, CONV_MESSAGE_SIZE - 1, NULL, NULL);
 #endif
 
-	/* Get a monitor count. */
-	nMonitors = GetSystemMetrics(SM_CMONITORS);
+	/* Get a frame size for the main window. */
+	nFrameAddWidth = GetSystemMetrics(SM_CXFIXEDFRAME) * 2;
+	nFrameAddHeight = GetSystemMetrics(SM_CYCAPTION) +
+					  GetSystemMetrics(SM_CYMENU) +
+					  GetSystemMetrics(SM_CYFIXEDFRAME) * 2;
 
-	/* Start calclulation from this window size. */
-	nGameWidth = nWindowWidth;
-	nGameHeight = nWindowHeight;
+	/* Get a base window size. */
+	nWinWidth = nWindowWidth + nFrameAddWidth;
+	nWinHeight = nWindowHeight + nFrameAddHeight;
 
 	/* Get a display size. */
 	nVirtualScreenWidth = GetSystemMetrics(SM_CXVIRTUALSCREEN);
 	nVirtualScreenHeight = GetSystemMetrics(SM_CYVIRTUALSCREEN);
-
-	nWinWidth = nGameWidth + nFrameAddWidth;
-	nWinHeight = nGameHeight + nFrameAddHeight;
 
 	/* If the display size is not enough. */
 	bInitialFullScreen = FALSE;
@@ -457,6 +499,7 @@ InitWindow(
 	}
 
 	/* Center the window if not multiple monitors. */
+	nMonitors = GetSystemMetrics(SM_CMONITORS);
 	if (nMonitors == 1)
 	{
 		nPosX = (nVirtualScreenWidth - nWinWidth) / 2;
@@ -469,26 +512,78 @@ InitWindow(
 	}
 
 	/* Create the main window. */
-	hWndMain = CreateWindowExA(0, tszWindowClassMain, tszTitle, dwStyle,
-							   nPosX, nPosY, nWinWidth, nWinHeight,
-							   NULL, NULL, hInstance, NULL);
+	dwStyle = WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_OVERLAPPED | WS_CLIPCHILDREN;
+	hWndMain = CreateWindowEx(0,
+							  tszWindowClassMain,
+							  tszTitle,
+							  dwStyle,
+							  nPosX,
+							  nPosY,
+							  nWinWidth,
+							  nWinHeight,
+							  NULL,
+							  NULL,
+							  hInstance,
+							  NULL);
 	if (hWndMain == NULL)
 	{
 		hal_log_error("CreateWindowEx() failed.");
 		return FALSE;
 	}
 
-	/* Adjust the window size. */
+	/* Adjust the main window size. */
 	SetRectEmpty(&rc);
-	rc.right = nGameWidth;
-	rc.bottom = nGameHeight;
+	rc.right = nWindowWidth;
+	rc.bottom = nWindowHeight;
 	AdjustWindowRectEx(&rc, dwStyle, FALSE, (DWORD)GetWindowLong(hWndMain, GWL_EXSTYLE));
 	SetWindowPos(hWndMain, NULL, 0, 0, rc.right - rc.left, rc.bottom - rc.top, SWP_NOZORDER | SWP_NOMOVE);
 	GetWindowRect(hWndMain, &rcWindow);
 
-	/* Show the window. */
+	/* Show the main window. */
 	ShowWindow(hWndMain, nCmdShow);
 	UpdateWindow(hWndMain);
+
+	/* Create the render window. */
+	hWndRender = CreateWindowEx(0,
+								tszWindowClassRender,
+                                _T(""),
+								WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+								0,
+								0,
+								nWindowWidth,
+								nWindowHeight,
+								hWndMain,
+								NULL,
+								hInstance,
+								NULL);
+	if (hWndRender == NULL)
+	{
+		hal_log_error("CreateWindowEx() failed.");
+		return FALSE;
+	}
+	ShowWindow(hWndRender, SW_SHOW);
+	UpdateWindow(hWndRender);
+
+	/* Create a video window. */
+	hWndVideo = CreateWindowEx(0,
+							   tszWindowClassVideo,
+							   _T(""),
+							   WS_CHILD | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN,
+							   0,
+							   0,
+							   nWindowWidth,
+							   nWindowHeight,
+							   hWndMain,
+							   NULL,
+							   hInstance,
+							   NULL);
+	if (hWndVideo == NULL)
+	{
+		hal_log_error("CreateWindowEx() failed.");
+		return FALSE;
+	}
+	ShowWindow(hWndVideo, SW_HIDE);
+	UpdateWindow(hWndVideo);
 
 	/* Process initial events. */
 	dwStartTime = GetTickCount();
@@ -556,22 +651,18 @@ RunFrame(void)
 	XInputUpdate();
 
 	/* If a video is showing. */
-	if(bVideoMode)
+	if(bVideoMode && IsVideoPlaying())
 	{
 		/* Process Media Foundation events. */
-#if defined(HAL_USE_MFVIDEO)
-		MFProcessEvents();
-#else
-		DShowProcessEvents();
-#endif
+		ProcessVideoEvents();
 		
 		/* Process events. */
 		if(!SyncEvents())
 			return FALSE;
 
 		/* Do a frame callback. */
-		if(!hal_callback_on_event_frame())
-			return FALSE;
+//		if(!hal_callback_on_event_frame())
+//			return FALSE;
 
 		return TRUE;
 	}
@@ -657,9 +748,9 @@ WaitForNextFrame(void)
 	return TRUE;
 }
 
-/* Window procedure. */
+/* Window procedure for the main window. */
 static LRESULT CALLBACK
-WndProc(
+WndProcMain(
 	HWND hWnd,
 	UINT message,
 	WPARAM wParam,
@@ -697,42 +788,6 @@ WndProc(
 	case WM_CLOSE:
 		DestroyWindow(hWnd);
 		return 0;
-	case WM_LBUTTONDOWN:
-		if (bRunning)
-		{
-			hal_callback_on_event_mouse_press(
-				HAL_MOUSE_LEFT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
-		}
-		return 0;
-	case WM_LBUTTONUP:
-		if (bRunning)
-		{
-			hal_callback_on_event_mouse_release(
-				HAL_MOUSE_LEFT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
-		}
-		return 0;
-	case WM_RBUTTONDOWN:
-		if (bRunning)
-		{
-			hal_callback_on_event_mouse_press(
-				HAL_MOUSE_RIGHT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
-		}
-		return 0;
-	case WM_RBUTTONUP:
-		if (bRunning)
-		{
-			hal_callback_on_event_mouse_release(
-				HAL_MOUSE_RIGHT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
-		}
-		return 0;
 	case WM_KEYDOWN:
 		/* Exclude auto repeat cases. */
 		if((HIWORD(lParam) & 0x4000) != 0)
@@ -753,47 +808,9 @@ WndProc(
 				hal_callback_on_event_key_release(kc);
 		}
 		return 0;
-	case WM_MOUSEMOVE:
-		if (bRunning)
-		{
-			hal_callback_on_event_mouse_move(
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
-		}
-		return 0;
-	case WM_MOUSEWHEEL:
-		if (bRunning)
-		{
-			if((int)(short)HIWORD(wParam) > 0)
-			{
-				hal_callback_on_event_key_press(HAL_KEY_UP);
-				hal_callback_on_event_key_release(HAL_KEY_UP);
-			}
-			else if((int)(short)HIWORD(wParam) < 0)
-			{
-				hal_callback_on_event_key_press(HAL_KEY_DOWN);
-				hal_callback_on_event_key_release(HAL_KEY_DOWN);
-			}
-		}
-		return 0;
-	case WM_KILLFOCUS:
-		if (bRunning)
-		{
-			hal_callback_on_event_key_release(HAL_KEY_CONTROL);
-		}
-		return 0;
-	case WM_PAINT:
-		OnPaint(hWnd);
-		return 0;
 	case WM_COMMAND:
 		OnCommand(wParam, lParam);
 		return 0;
-	case WM_GRAPHNOTIFY:
-#if !defined(HAL_USE_MFVIDEO)
-		if(!DShowProcessEvents())
-			bVideoMode = FALSE;
-#endif
-		break;
 	case WM_SIZING:
 		OnSizing((int)wParam, (LPRECT)lParam);
 		return TRUE;
@@ -845,6 +862,192 @@ WndProc(
 			}
 		}
 		break;
+	default:
+		break;
+	}
+
+	/* Chain the system WndProc. */
+	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+/* Window procedure for the render window. */
+static LRESULT CALLBACK
+WndProcRender(
+	HWND hWnd,
+	UINT message,
+	WPARAM wParam,
+	LPARAM lParam)
+{
+	int kc;
+
+	switch(message)
+	{
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	case WM_CLOSE:
+		DestroyWindow(hWnd);
+		return 0;
+	case WM_PAINT:
+		OnPaint(hWnd);
+		return 0;
+	case WM_LBUTTONDOWN:
+		if (bRunning)
+		{
+			hal_callback_on_event_mouse_press(
+				HAL_MOUSE_LEFT,
+				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+		}
+		return 0;
+	case WM_LBUTTONUP:
+		if (bRunning)
+		{
+			hal_callback_on_event_mouse_release(
+				HAL_MOUSE_LEFT,
+				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+		}
+		return 0;
+	case WM_RBUTTONDOWN:
+		if (bRunning)
+		{
+			hal_callback_on_event_mouse_press(
+				HAL_MOUSE_RIGHT,
+				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+		}
+		return 0;
+	case WM_RBUTTONUP:
+		if (bRunning)
+		{
+			hal_callback_on_event_mouse_release(
+				HAL_MOUSE_RIGHT,
+				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+		}
+		return 0;
+	case WM_MOUSEMOVE:
+		if (bRunning)
+		{
+			hal_callback_on_event_mouse_move(
+				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+		}
+		return 0;
+	case WM_MOUSEWHEEL:
+		if (bRunning)
+		{
+			if((int)(short)HIWORD(wParam) > 0)
+			{
+				hal_callback_on_event_key_press(HAL_KEY_UP);
+				hal_callback_on_event_key_release(HAL_KEY_UP);
+			}
+			else if((int)(short)HIWORD(wParam) < 0)
+			{
+				hal_callback_on_event_key_press(HAL_KEY_DOWN);
+				hal_callback_on_event_key_release(HAL_KEY_DOWN);
+			}
+		}
+		return 0;
+	case WM_KILLFOCUS:
+		if (bRunning)
+		{
+			hal_callback_on_event_key_release(HAL_KEY_CONTROL);
+		}
+		return 0;
+	default:
+		break;
+	}
+
+	/* Chain the system WndProc. */
+	return DefWindowProc(hWnd, message, wParam, lParam);
+}
+
+/* Window procedure for the render window. */
+static LRESULT CALLBACK
+WndProcVideo(
+	HWND hWnd,
+	UINT message,
+	WPARAM wParam,
+	LPARAM lParam)
+{
+	switch(message)
+	{
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
+	case WM_CLOSE:
+		DestroyWindow(hWnd);
+		return 0;
+	case WM_GRAPHNOTIFY:
+		ProcessGraphNotify();
+		break;
+	case WM_LBUTTONDOWN:
+		if (bRunning)
+		{
+			hal_callback_on_event_mouse_press(
+				HAL_MOUSE_LEFT,
+				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+		}
+		return 0;
+	case WM_LBUTTONUP:
+		if (bRunning)
+		{
+			hal_callback_on_event_mouse_release(
+				HAL_MOUSE_LEFT,
+				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+		}
+		return 0;
+	case WM_RBUTTONDOWN:
+		if (bRunning)
+		{
+			hal_callback_on_event_mouse_press(
+				HAL_MOUSE_RIGHT,
+				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+		}
+		return 0;
+	case WM_RBUTTONUP:
+		if (bRunning)
+		{
+			hal_callback_on_event_mouse_release(
+				HAL_MOUSE_RIGHT,
+				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+		}
+		return 0;
+	case WM_MOUSEMOVE:
+		if (bRunning)
+		{
+			hal_callback_on_event_mouse_move(
+				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+		}
+		return 0;
+	case WM_MOUSEWHEEL:
+		if (bRunning)
+		{
+			if((int)(short)HIWORD(wParam) > 0)
+			{
+				hal_callback_on_event_key_press(HAL_KEY_UP);
+				hal_callback_on_event_key_release(HAL_KEY_UP);
+			}
+			else if((int)(short)HIWORD(wParam) < 0)
+			{
+				hal_callback_on_event_key_press(HAL_KEY_DOWN);
+				hal_callback_on_event_key_release(HAL_KEY_DOWN);
+			}
+		}
+		return 0;
+	case WM_KILLFOCUS:
+		if (bRunning)
+		{
+			hal_callback_on_event_key_release(HAL_KEY_CONTROL);
+		}
+		return 0;
 	default:
 		break;
 	}
@@ -1006,11 +1209,7 @@ OnPaint(
 
 	hDC = BeginPaint(hWnd, &ps);
 
-#if defined(HAL_USE_MFVIDEO)
-	if (!MFIsVideoPlaying())
-#else
-	if (!DShowIsVideoPlaying())
-#endif
+	if (!IsVideoPlaying())
 		RunFrame();
 
 	EndPaint(hWnd, &ps);
@@ -1167,6 +1366,9 @@ OnSize(void)
 					 SWP_NOZORDER | SWP_FRAMECHANGED);
 		MoveWindow(hWndMain, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, TRUE);
 		InvalidateRect(hWndMain, NULL, TRUE);
+
+		MoveWindow(hWndRender, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, TRUE);
+		MoveWindow(hWndVideo, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, TRUE);
 	}
 	else if (bNeedWindowed)
 	{
@@ -1185,6 +1387,8 @@ OnSize(void)
 		InvalidateRect(hWndMain, NULL, TRUE);
 
 		GetClientRect(hWndMain, &rc);
+		MoveWindow(hWndRender, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, TRUE);
+		MoveWindow(hWndVideo, rc.left, rc.top, rc.right - rc.left, rc.bottom - rc.top, TRUE);
 	}
 	else
 	{
@@ -1376,6 +1580,142 @@ ShowLogFile(void)
         NULL,				// Arguments.
         NULL,               // Working directory.
         SW_SHOWNORMAL);		// ShowWindow() status.
+}
+
+/* Play a video. */
+static BOOL
+PlayVideo(
+	const char *pszFileName)
+{
+	RECT rc;
+
+	if (IsVideoPlaying())
+		StopVideo();
+
+	ShowWindow(hWndRender, SW_HIDE);
+	ShowWindow(hWndVideo, SW_SHOW);
+	UpdateWindow(hWndRender);
+	UpdateWindow(hWndVideo);
+
+	if (bMFVEnabled)
+	{
+		if (!MFVPlayVideo(hWndVideo, pszFileName, nViewportOffsetX, nViewportOffsetY, nViewportWidth, nViewportHeight))
+		{
+			bVideoMode = FALSE;
+			return FALSE;
+		}
+
+		/* Set the event loop video mode. */
+		bVideoMode = TRUE;
+		return TRUE;
+	}
+	if (bDShowEnabled)
+	{
+		if (!DShowPlayVideo(hWndVideo, pszFileName, nViewportOffsetX, nViewportOffsetY, nViewportWidth, nViewportHeight))
+		{
+			bVideoMode = FALSE;
+			return FALSE;
+		}
+
+		/* Set the event loop video mode. */
+		bVideoMode = TRUE;
+		return TRUE;
+	}
+
+	/* No video support. */
+	bVideoMode = FALSE;
+	return TRUE;
+}
+
+/* Stop the video. */
+static VOID
+StopVideo(VOID)
+{
+	RECT rc;
+
+	if (bVideoMode)
+	{
+		if (IsVideoPlaying())
+		{
+			if (bMFVEnabled)
+				MFVStopVideo();
+			else if (bDShowEnabled)
+				DShowStopVideo();
+
+			ShowWindow(hWndRender, SW_SHOW);
+			ShowWindow(hWndVideo, SW_HIDE);
+			UpdateWindow(hWndRender);
+			UpdateWindow(hWndVideo);
+		}
+	}
+}
+
+/* Check if a video is playing back. */
+static BOOL
+IsVideoPlaying(VOID)
+{
+	RECT rc;
+
+	if (!bVideoMode)
+		return FALSE;
+
+	if (bMFVEnabled)
+	{
+		if (!MFVIsVideoPlaying())
+		{
+			bVideoMode = FALSE;
+
+			ShowWindow(hWndRender, SW_SHOW);
+			ShowWindow(hWndVideo, SW_HIDE);
+			UpdateWindow(hWndRender);
+			UpdateWindow(hWndVideo);
+			return FALSE;
+		}
+		return TRUE;
+	}
+	else if (bDShowEnabled)
+	{
+		if (!DShowIsVideoPlaying())
+		{
+			bVideoMode = FALSE;
+
+			ShowWindow(hWndRender, SW_SHOW);
+			ShowWindow(hWndVideo, SW_HIDE);
+			UpdateWindow(hWndRender);
+			UpdateWindow(hWndVideo);
+			return FALSE;
+		}
+		return TRUE;
+	}
+	return FALSE;
+}
+
+/* Do video event processing. */
+static VOID
+ProcessVideoEvents(VOID)
+{
+	if (bMFVEnabled)
+		MFVProcessEvents();
+	else if (bDShowEnabled)
+		DShowProcessEvents();
+}
+
+/* Do event processing for WM_GRAPHNOTIFY. */
+static VOID
+ProcessGraphNotify(VOID)
+{
+	if (bDShowEnabled)
+	{
+		if (!DShowProcessEvents())
+		{
+			bVideoMode = FALSE;
+
+			ShowWindow(hWndRender, SW_SHOW);
+			ShowWindow(hWndVideo, SW_HIDE);
+			UpdateWindow(hWndRender);
+			UpdateWindow(hWndVideo);
+		}
+	}
 }
 
 #ifndef _UNICODE
@@ -1726,23 +2066,17 @@ hal_play_video(
 
 	path = hal_make_real_path(fname);
 
-	/* Set the event loop DirectShow mode. */
-	bVideoMode = TRUE;
-
-	/* Set a skippable flag. */
 	bVideoSkippable = is_skippable;
 
 	/* Start a playback. */
-#if defined(HAL_USE_MFVIDEO)
-	BOOL ret = MFPlayVideo(hWndMain, path, nViewportOffsetX, nViewportOffsetY, nViewportWidth, nViewportHeight);
-#else
-	BOOL ret = DShowPlayVideo(hWndMain, path, nViewportOffsetX, nViewportOffsetY, nViewportWidth, nViewportHeight);
-#endif
-	if(!ret)
-		bVideoMode = FALSE;
-
+	if (!PlayVideo(path))
+	{
+		free(path);
+		return FALSE;
+	}
+		
 	free(path);
-	return ret;
+	return TRUE;
 }
 
 /*
@@ -1751,13 +2085,7 @@ hal_play_video(
 void
 hal_stop_video(void)
 {
-#if defined(HAL_USE_MFVIDEO)
-	MFStopVideo();
-#else
-	DShowStopVideo();
-#endif
-
-	bVideoMode = FALSE;
+	StopVideo();
 }
 
 /*
@@ -1766,14 +2094,7 @@ hal_stop_video(void)
 bool
 hal_is_video_playing(void)
 {
-#if defined(HAL_USE_MFVIDEO)
-	if (!MFIsVideoPlaying())
-#else
-	if (!DShowIsVideoPlaying())
-#endif
-		bVideoMode = FALSE;
-
-	return bVideoMode;
+	return IsVideoPlaying();
 }
 
 /*
