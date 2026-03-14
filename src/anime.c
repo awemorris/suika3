@@ -957,7 +957,7 @@ s3_unregister_anime(
 	free(reg_anime_file[reg_index]);
 	reg_anime_name[reg_index] = NULL;
 	reg_anime_file[reg_index] = NULL;
-	memset(reg_anime_file, 0, sizeof(reg_anime_layers[0]));
+	memset(reg_anime_file, 0, sizeof(reg_anime_file));
 
 	return true;
 }

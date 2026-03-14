@@ -3110,7 +3110,7 @@ truncate_variable(
 	if (copy_len >= sizeof(buf) - 1)
 		return;
 
-	strncpy(buf, val, copy_len);
+	memcpy(buf, val, copy_len);
 	buf[copy_len] = '\0';
 
 	s3_set_variable_string(var, buf);
