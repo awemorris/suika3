@@ -1,5 +1,5 @@
-Suika3
-======
+Suika3 — Visual Novel Technology
+=================================
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/suika3-community/suika3/refs/heads/main/docs/img/logo-small.png">

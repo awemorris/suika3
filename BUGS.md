@@ -1,12 +1,28 @@
 BUGS
 ====
 
+* QA periods
+    * QA-26.07 started in 14 March 2026, will end in 30 June 2026.
+
+---
+
 ## Video playback is not working properly after a rendering.
 
 * Report Details
-  * Date: 14 March 2026
-  * OS: Windows 11
-  * CPU: x86_64
+    * ID: BUG-20260314-001
+    * Status: Resolved
+    * Component: StratoHAL / Video / DirectShow / MediaFoundation
+    * Severity: major
+    * Priority: high
+    * Reproducibility: always
+    * First Found In: 6fda2bb1cf9155e0616043f5040f9793db3e8276
+    * Fixed In: 820d539727b8b431ed55c79c44ee57969d67b10d
+    * Reported Date: 15:00 14 March 2026
+    * Fixed Date: 20:30 14 March 2026
+    * Detection: manual test
+    * Root Cause Type: window management / event handling
+    * OS: All Windows
+    * CPU: x86, x86_64, arm64
 
 ### Report
 
@@ -25,17 +41,28 @@ Added a rendering child HWND and a video child HWND.
 
 ### Commits
 
-* d0aaa9a748381fb6736154dcc432f867275201f5
-* 820d539727b8b431ed55c79c44ee57969d67b10d
+* d0aaa9a748381fb6736154dcc432f867275201f5 Fix Media Foundation video playback
+* 820d539727b8b431ed55c79c44ee57969d67b10d Fix DirectShow
 
 ---
 
 ## Video aspect ratio is wrong if DirectShow is used
 
 * Report Details
-  * Date: 14 March 2026
-  * OS: Windows 11
-  * CPU: x86_64
+    * ID: BUG-20260314-002
+    * Status: Resolved
+    * Component: StratoHAL / Video / DirectShow
+    * Severity: major
+    * Priority: high
+    * Reproducibility: always
+    * First Found In: 6fda2bb1cf9155e0616043f5040f9793db3e8276
+    * Fixed In: be8e6b359f763614c7577cfa590e23972729e96f
+    * Reported Date: 15:30 14 March 2026
+    * Fixed Date: 21:00 14 March 2026
+    * Detection: manual test
+    * Root Cause Type: window management / event handling
+    * OS: All Windows
+    * CPU: x86
 
 ### Report
 
@@ -51,17 +78,28 @@ Added a logic to StratoHAL.
 
 ### Commits
 
-* 18b4a766e84791154870e7592863c49367d986cf
-* be8e6b359f763614c7577cfa590e23972729e96f
+* 18b4a766e84791154870e7592863c49367d986cf Fix aspect ratio for DirectShow
+* be8e6b359f763614c7577cfa590e23972729e96f Fix DirectShow bug
 
 ---
 
 ## Video playback cannot be skipped
 
 * Report Details
-  * Date: 14 March 2026
-  * OS: Windows 11
-  * CPU: x86_64
+    * ID: BUG-20260314-003
+    * Status: Resolved
+    * Component: StratoHAL / Video / DirectShow / Media Foundation
+    * Severity: major
+    * Priority: high
+    * Reproducibility: always
+    * First Found In: 6fda2bb1cf9155e0616043f5040f9793db3e8276
+    * Fixed In: 82f0e0e86e3349269bf95a809b0a061eebc5cf40
+    * Reported Date: 16:00 14 March 2026
+    * Fixed Date: 22:00 14 March 2026
+    * Detection: manual test
+    * Root Cause Type: window management / event handling
+    * OS: All Windows
+    * CPU: x86, x86_64, arm64
 
 ### Report
 
@@ -77,6 +115,6 @@ Added event handlers for the video HWND in StratoHAL.
 
 ### Commits
 
-* 82f0e0e86e3349269bf95a809b0a061eebc5cf40
+* 82f0e0e86e3349269bf95a809b0a061eebc5cf40 Fix winmain.c to input clicks on video playback
 
 ---

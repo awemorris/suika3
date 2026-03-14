@@ -374,7 +374,7 @@
         "SUIKA_TARGET_WINDOWS":                     "ON",
         "SUIKA_ENABLE_JIT":                         "ON",
         "SUIKA_ENABLE_I18N":                        "ON",
-        "SUIKA_ENABLE_PACK":                        "ON",
+        "SUIKA_ENABLE_PACK":                        "ON"
       }
     },
     {
@@ -388,7 +388,7 @@
         "SUIKA_TARGET_WINDOWS95":                   "ON",
         "SUIKA_ENABLE_JIT":                         "ON",
         "SUIKA_ENABLE_I18N":                        "OFF",
-        "SUIKA_ENABLE_PACK":                        "OFF",
+        "SUIKA_ENABLE_PACK":                        "OFF"
       }
     },
     {
@@ -402,7 +402,7 @@
         "SUIKA_TARGET_WINDOWS":                     "ON",
         "SUIKA_ENABLE_JIT":                         "ON",
         "SUIKA_ENABLE_I18N":                        "ON",
-        "SUIKA_ENABLE_PACK":                        "ON",
+        "SUIKA_ENABLE_PACK":                        "ON"
       }
     },
     {
