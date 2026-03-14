@@ -6,7 +6,8 @@ project(suika3 LANGUAGES C CXX)
 #
 
 # Targets
-option(SUIKA_TARGET_WINDOWS          "Build for Windows"                     OFF)
+option(SUIKA_TARGET_WINDOWS          "Build for Windows XP or later"         OFF)
+option(SUIKA_TARGET_WINDOWS95        "Build for Windows 95/98/Me/2000"       OFF)
 option(SUIKA_TARGET_MACOS            "Build for macOS"                       OFF)
 option(SUIKA_TARGET_LINUX            "Build for Linux X11"                   OFF)
 option(SUIKA_TARGET_LINUX_WAYLAND    "Build for Linux Wayland"               OFF)
@@ -40,6 +41,7 @@ option(SUIKA_ENABLE_GST              "Enable GStreamer support"           OFF)
 
 # For when a target is manually specified.
 if(   SUIKA_TARGET_WINDOWS
+   OR SUIKA_TARGET_WINDOWS95
    OR SUIKA_TARGET_MACOS
    OR SUIKA_TARGET_LINUX
    OR SUIKA_TARGET_LINUX_WAYLAND
@@ -119,6 +121,8 @@ set(PLAYFIELD_ENABLE_INITHOOK ON)
 # Set the target and its specific options.
 if(SUIKA_TARGET_WINDOWS)
   set(PLAYFIELD_TARGET_WINDOWS ON)
+elseif(SUIKA_TARGET_WINDOWS95)
+  set(PLAYFIELD_TARGET_WINDOWS95 ON)
 elseif(SUIKA_TARGET_MACOS)
   set(PLAYFIELD_TARGET_MACOS ON)
 elseif(SUIKA_TARGET_LINUX)
@@ -331,10 +335,13 @@ set(SUIKA_BASE_SOURCES
 #endif()
 
 # Resource
-if(SUIKA_TARGET_WINDOWS AND NOT SUIKA3_ENABLE_STATIC)
-  set(SUIKA_RESOURCES
-    resources/windows/resource.rc
-  )
+if(   SUIKA_TARGET_WINDOWS
+   OR SUIKA_TARGET_WINDOWS95)
+  if(NOT SUIKA3_ENABLE_STATIC)
+    set(SUIKA_RESOURCES
+      resources/windows/resource.rc
+    )
+  endif()
 endif()
 
 # Add Target
@@ -418,6 +425,16 @@ if(SUIKA_TARGET_WINDOWS)
   else()
     target_compile_options(suika3 PRIVATE -municode -finput-charset=utf-8 -fexec-charset=utf-8)
     target_link_options(suika3 PRIVATE -mwindows -static -Wl,-u,wWinMain -Wl,-u,_wWinMain@16)
+  endif()
+endif()
+if(SUIKA_TARGET_WINDOWS95)
+  if(MSVC)
+    target_compile_options(suika3 PRIVATE /utf-8)
+    target_link_options(suika3 PRIVATE /SUBSYSTEM:WINDOWS)
+    add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+  else()
+    target_compile_options(suika3 PRIVATE -finput-charset=utf-8 -fexec-charset=shift-jis)
+    target_link_options(suika3 PRIVATE -mwindows -static -static-libgcc)
   endif()
 endif()
 

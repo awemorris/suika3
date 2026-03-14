@@ -367,21 +367,6 @@
       }
     },
     {
-      "name":           "windows-mingw-x86",
-      "displayName":    "MinGW x86",
-      "generator":      "Ninja",
-      "binaryDir":      "${sourceDir}/build-mingw-x86",
-      "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-x86.cmake",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE":                         "Release",
-        "SUIKA_TARGET_WINDOWS":                     "ON",
-        "SUIKA_ENABLE_JIT":                         "ON",
-        "SUIKA_ENABLE_I18N":                        "ON",
-        "SUIKA_ENABLE_PACK":                        "ON",
-        "SUIKA_ENABLE_MEDIAFOUNDATION":             "OFF"
-      }
-    },
-    {
       "name":           "windows-mingw-x86_64",
       "displayName":    "MinGW x86_64",
       "generator":      "Ninja",
@@ -394,6 +379,36 @@
         "SUIKA_ENABLE_I18N":                        "ON",
         "SUIKA_ENABLE_PACK":                        "ON",
         "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
+      }
+    },
+    {
+      "name":           "windows-mingw-x86",
+      "displayName":    "MinGW x86",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-mingw-x86",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-x86.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":                         "Release",
+        "SUIKA_TARGET_WINDOWS":                     "ON",
+        "SUIKA_ENABLE_JIT":                         "ON",
+        "SUIKA_ENABLE_I18N":                        "ON",
+        "SUIKA_ENABLE_PACK":                        "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION":             "ON"
+      }
+    },
+    {
+      "name":           "windows-mingw-win95",
+      "displayName":    "MinGW Windows 95",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-mingw-win95",
+      "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-win95.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":                         "Release",
+        "SUIKA_TARGET_WINDOWS":                     "ON",
+        "SUIKA_ENABLE_JIT":                         "ON",
+        "SUIKA_ENABLE_I18N":                        "ON",
+        "SUIKA_ENABLE_PACK":                        "ON",
+        "SUIKA_ENABLE_MEDIAFOUNDATION":             "OFF"
       }
     },
     {
@@ -864,12 +879,16 @@
       "configurePreset": "windows-vs2026-gdk-xbox-xs"
     },
     {
+      "name": "windows-mingw-x86_64",
+      "configurePreset": "windows-mingw-x86_64"
+    },
+    {
       "name": "windows-mingw-x86",
       "configurePreset": "windows-mingw-x86"
     },
     {
-      "name": "windows-mingw-x86_64",
-      "configurePreset": "windows-mingw-x86_64"
+      "name": "windows-mingw-win95",
+      "configurePreset": "windows-mingw-win95"
     },
     {
       "name": "windows-mingw-arm64",
