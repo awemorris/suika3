@@ -1078,6 +1078,7 @@ DRAW_IMAGE_3D_DIM(
 
 			/* Calc alpha values. */
 			src_a = a * ((float)hal_get_pixel_a(src_pix) / 255.0f);
+			dst_a = 1.0f - src_a;
 
 			/* Multiply 0.5 x alpha value and the source pixel value. */
 			src_r = src_a * 0.5f * (float)hal_get_pixel_r(src_pix);
