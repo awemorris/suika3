@@ -545,7 +545,7 @@
     },
     {
       "name":           "linux-x11-soft",
-      "displayName":    "Linux X11 (softrender)",
+      "displayName":    "Linux X11 Software Rendering",
       "generator":      "Ninja",
       "binaryDir":      "${sourceDir}/build-linux-x11-soft",
       "cacheVariables": {
@@ -822,7 +822,46 @@
         "CMAKE_BUILD_TYPE":            "Release",
         "CMAKE_C_COMPILER":            "cc",
         "CMAKE_CXX_COMPILER":          "CC",
-        "SUIKA_TARGET_OPENBSD":        "ON",
+        "SUIKA_TARGET_SOLARIS11":      "ON",
+        "SUIKA_ENABLE_PACK":           "ON"
+      }
+    },
+    {
+      "name":           "aix",
+      "displayName":    "AIX",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-aix",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "CMAKE_C_COMPILER":            "xlc",
+        "CMAKE_CXX_COMPILER":          "xlc++",
+        "SUIKA_TARGET_GENERICUNIX":    "ON",
+        "SUIKA_ENABLE_PACK":           "ON"
+      }
+    },
+    {
+      "name":           "hpux",
+      "displayName":    "HP-UX",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-hpux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "CMAKE_C_COMPILER":            "cc",
+        "CMAKE_CXX_COMPILER":          "aCC",
+        "SUIKA_TARGET_GENERICUNIX":    "ON",
+        "SUIKA_ENABLE_PACK":           "ON"
+      }
+    },
+    {
+      "name":           "unix",
+      "displayName":    "Generic Unknown UNIX",
+      "generator":      "Ninja",
+      "binaryDir":      "${sourceDir}/build-unix",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":            "Release",
+        "CMAKE_C_COMPILER":            "cc",
+        "CMAKE_CXX_COMPILER":          "c++",
+        "SUIKA_TARGET_GENERICUNIX":    "ON",
         "SUIKA_ENABLE_PACK":           "ON"
       }
     }
