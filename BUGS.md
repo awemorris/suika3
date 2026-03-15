@@ -118,3 +118,44 @@ Added event handlers for the video HWND in StratoHAL.
 * 82f0e0e86e3349269bf95a809b0a061eebc5cf40 Fix winmain.c to input clicks on video playback
 
 ---
+
+## Font color is wrong
+
+* Report Details
+    * ID: BUG-20260316-001
+    * Status: Resolved
+    * Component: StratoHAL / image / glyph
+    * Severity: high
+    * Priority: high
+    * Reproducibility: always
+    * First Found In: 6fda2bb1cf9155e0616043f5040f9793db3e8276
+    * Fixed In: 82f0e0e86e3349269bf95a809b0a061eebc5cf40
+    * Reported Date: 03:00 16 March 2026
+    * Fixed Date: 05:00 16 March 2026
+    * Detection: manual test
+    * Root Cause Type: Invalid CMake configuration
+    * OS: Linux X11 (No OpenGL), Solaris 11
+    * CPU: All
+
+### Report
+
+Font color is always wrong, the red component and the blue component is swapped.
+
+### Analysis
+
+In StratoHAL, we define the `HAL_USE_X11_SOFTRENDER` macro in
+`CMakeLists.txt` to detect software rendering at
+`platform.h`. However, that definition was defined by `PRIVATE`
+scope. Therefore, Playfield Engine didn't define the same macro. As a
+result, the return value of `hal_make_pixel()` was valid on StratoHAL
+and invalid on Playfield Engine and Suika3.
+
+### Patch
+
+Fixed CMakeLists.txt of StratoHAL.
+
+### Commits
+
+* 9ec64623285639ba3a8831ac2b7e67f3b7a8e735 Merge upstream
+
+---
