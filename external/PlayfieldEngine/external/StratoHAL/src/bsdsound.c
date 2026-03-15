@@ -452,4 +452,50 @@ mul_add_pcm(
     }
 }
 
-#endif /* defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__sun) */
+#endif /* defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__SunOS) */
+
+#if !defined(__FreeBSD__) && defined(__NetBSD__) && defined(__OpenBSD__) && defined(__SunOS)
+
+bool
+init_sound(void)
+{
+	return true;
+}
+
+void
+cleanup_sound(void)
+{
+	return true;
+}
+
+bool
+hal_play_sound(
+	int n,
+	struct hal_wave *w)
+{
+	return true;
+}
+
+bool
+hal_stop_sound(
+	int n)
+{
+	return true;
+}
+
+bool
+hal_set_sound_volume(
+	int n,
+	float vol)
+{
+	return true;
+}
+
+bool
+hal_is_sound_finished(
+	int n)
+{
+	return true;
+}
+
+#endif

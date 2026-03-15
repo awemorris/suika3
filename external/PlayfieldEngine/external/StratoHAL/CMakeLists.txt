@@ -25,6 +25,7 @@ option(STRATO_TARGET_FREEBSD_WAYLAND  "Build for FreeBSD Wayland"          OFF)
 option(STRATO_TARGET_NETBSD           "Build for NetBSD"                   OFF)
 option(STRATO_TARGET_OPENBSD          "Build for OpenBSD"                  OFF)
 option(STRATO_TARGET_SOLARIS11        "Build for Solaris 11"               OFF)
+option(STRATO_TARGET_GENERICUNIX      "Build for Unknown UNIX"             OFF)
 option(STRATO_TARGET_GDK_WINDOWS      "Build for GDK for Desktop"          OFF)
 option(STRATO_TARGET_GDK_XBOX_XS      "Build for GDK for Xbox Series X|S"  OFF)
 option(STRATO_TARGET_UWP              "Build for UWP"                      OFF)
@@ -69,39 +70,32 @@ else()
   if(WIN32)
     set(STRATO_TARGET_WINDOWS    ON)
     message(STATUS "Targeting Windows.")
-  endif()
-  if(APPLE AND NOT IOS)
+  elseif(APPLE AND NOT IOS)
     set(STRATO_TARGET_MACOS      ON)
     message(STATUS "Targeting macOS.")
-  endif()
-  if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(STRATO_TARGET_LINUX      ON)
     message(STATUS "Targeting Linux.")
-  endif()
-  if(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
     set(STRATO_TARGET_FREEBSD    ON)
     message(STATUS "Targeting FreeBSD.")
-  endif()
-  if(CMAKE_SYSTEM_NAME STREQUAL "NetBSD")
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "NetBSD")
     set(STRATO_TARGET_NETBSD     ON)
     message(STATUS "Targeting NetBSD.")
-  endif()
-  if(CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")
     set(STRATO_TARGET_OPENBSD    ON)
     message(STATUS "Targeting OpenBSD.")
-  endif()
-  if(CMAKE_SYSTEM_NAME STREQUAL "Solaris")
+  elseif(CMAKE_SYSTEM_NAME STREQUAL "Solaris")
     set(STRATO_TARGET_SOLARIS11  ON)
-  endif()
-
-  if(CMAKE_SYSTEM_NAME STREQUAL "SunOS")
-    if(CMAKE_SYSTEM_VERSION VERSION_GREATER_EQUAL "5.11")
+  elseif(    CMAKE_SYSTEM_NAME STREQUAL "SunOS"
+         AND CMAKE_SYSTEM_VERSION VERSION_GREATER_EQUAL "5.11")
       set(STRATO_TARGET_SOLARIS11 ON)
       message(STATUS "Targeting Solaris 11.")
-    else()
-      error("Solaris 10 is not supported yet.")
-    endif()
-endif()
+  else()
+      set(STRATO_TARGET_GENERICUNIX ON)
+      message(STATUS "Targeting generic UNIX.")
+  endif()
+
   # No automatic detection for:
   #  - iOS
   #  - Android
@@ -175,14 +169,27 @@ if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_NETBSD
    OR STRATO_TARGET_OPENBSD
-   OR STRATO_TARGET_SOLARIS11)
+   OR STRATO_TARGET_SOLARIS11
+   OR STRATO_TARGET_GENERICUNIX)
+  # Common
   find_library(X11_LIBRARY X11 REQUIRED)
   find_library(XPM_LIBRARY Xpm REQUIRED)
-  find_library(GL_LIBRARY GL REQUIRED)
-  if(STRATO_TARGET_LINUX OR STRATO_TARGET_FREEBSD)
+
+  # GL
+  if(   STRATO_TARGET_LINUX
+     OR STRATO_TARGET_FREEBSD
+     OR STRATO_TARGET_NETBSD
+     OR STRATO_TARGET_OPENBSD)
+    find_library(GL_LIBRARY GL REQUIRED)
+  endif()
+
+  # GLX (for older mesa)
+  if(   STRATO_TARGET_LINUX
+     OR STRATO_TARGET_FREEBSD)
     find_library(GLX_LIBRARY GLX)
   endif()
 
+  # Gstreamer
   if(STRATO_ENABLE_GST)
     find_package(PkgConfig REQUIRED)
     pkg_check_modules(GST REQUIRED IMPORTED_TARGET gstreamer-1.0 gstreamer-video-1.0)
@@ -333,7 +340,8 @@ endif()
 
 # For Linux X11 Software Rendering.
 if(   STRATO_TARGET_LINUX_X11SOFT
-   OR STRATO_TARGET_SOLARIS11)
+   OR STRATO_TARGET_SOLARIS11
+   OR STRATO_TARGET_GENERICUNIX)
   set(STRATO_SOURCES
       src/image.c
       src/glyph.c
@@ -693,6 +701,21 @@ if(STRATO_TARGET_SOLARIS11)
   target_include_directories(strato PUBLIC /usr/local/include /usr/X11R6/include)
 endif()
 
+# Generic Unknown UNIX:
+if(STRATO_TARGET_GENERICUNIX)
+  target_include_directories(
+    strato
+    PUBLIC
+    /usr/local/include
+    /usr/pkg/include
+    /usr/pkgsrc/include
+    /usr/X11R4/include
+    /usr/X11R5/include
+    /usr/X11R6/include
+    /usr/X11R7/include
+  )
+endif()
+
 # Android: Add -DHAL_USE_GLES
 if(STARATO_TARGET_ANDROID)
   target_compile_definitions(strato PRIVATE HAL_USE_GLES)
@@ -909,6 +932,21 @@ endif()
 # Solaris11: Add -L/usr/local/lib -L/usr/X11R6/lib
 if(STRATO_TARGET_SOLARIS11)
   target_link_directories(strato PUBLIC /usr/local/lib /usr/X11R6/lib)
+endif()
+
+# Generic Unknown UNIX:
+if(STRATO_TARGET_GENERICUNIX)
+  target_link_directories(
+    strato
+    PUBLIC
+    /usr/local/lib
+    /usr/pkg/lib
+    /usr/pkgsrc/lib
+    /usr/X11R4/lib
+    /usr/X11R5/lib
+    /usr/X11R6/lib
+    /usr/X11R7/lib
+  )
 endif()
 
 # GDK link options.

@@ -483,7 +483,7 @@
     },
     {
       "name":           "linux-fbdev",
-      "displayName":    "Linux fbdev Framebuffer OpenGL",
+	"displayName":    "Linux fbdev Framebuffer (softrender)",
       "generator":      "Ninja",
       "binaryDir":      "${sourceDir}/build-linux-fbdev",
       "cacheVariables": {
@@ -770,11 +770,50 @@
       "generator":      "Unix Makefiles",
       "binaryDir":      "${sourceDir}/build-solaris11",
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE":            "Debug",
+        "CMAKE_BUILD_TYPE":            "Release",
         "CMAKE_C_COMPILER":            "cc",
         "CMAKE_CXX_COMPILER":          "CC",
         "PLAYFIELD_TARGET_SOLARIS11":  "ON",
         "PLAYFIELD_ENABLE_PACK":       "ON"
+      }
+    },
+    {
+      "name":           "aix",
+      "displayName":    "AIX",
+      "generator":      "Unix Makefiles",
+      "binaryDir":      "${sourceDir}/build-aix",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":             "Release",
+        "CMAKE_C_COMPILER":             "xlc",
+        "CMAKE_CXX_COMPILER":           "xlc++",
+        "PLAYFIELD_TARGET_GENERICUNIX": "ON",
+        "PLAYFIELD_ENABLE_PACK":        "ON"
+      }
+    },
+    {
+      "name":           "hpux",
+      "displayName":    "HP-UX",
+      "generator":      "Unix Makefiles",
+      "binaryDir":      "${sourceDir}/build-hpux",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":             "Release",
+        "CMAKE_C_COMPILER":             "cc",
+        "CMAKE_CXX_COMPILER":           "aCC",
+        "PLAYFIELD_TARGET_GENERICUNIX": "ON",
+        "PLAYFIELD_ENABLE_PACK":        "ON"
+      }
+    },
+    {
+      "name":           "unix",
+      "displayName":    "Generic Unknown UNIX",
+      "generator":      "Unix Makefiles",
+      "binaryDir":      "${sourceDir}/build-unix",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE":             "Release",
+        "CMAKE_C_COMPILER":             "cc",
+        "CMAKE_CXX_COMPILER":           "c++",
+        "PLAYFIELD_TARGET_GENERICUNIX": "ON",
+        "PLAYFIELD_ENABLE_PACK":        "ON"
       }
     }
   ],

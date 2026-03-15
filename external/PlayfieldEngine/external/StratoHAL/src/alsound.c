@@ -28,6 +28,8 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
+#if defined(__linux)
+
 #include "alsound.h"
 
 #include <AL/al.h>
@@ -281,3 +283,5 @@ resume_sound(void)
 		if (stream[i] != NULL)
 			alSourcePlay(source[i]);
 }
+
+#endif /* defined(__linux) */
