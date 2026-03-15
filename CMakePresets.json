@@ -816,7 +816,7 @@
     {
       "name":           "solaris11",
       "displayName":    "Solaris 11",
-      "generator":      "Ninja",
+      "generator":      "Unix Makefiles",
       "binaryDir":      "${sourceDir}/build-solaris11",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":            "Release",
@@ -829,7 +829,7 @@
     {
       "name":           "aix",
       "displayName":    "AIX",
-      "generator":      "Ninja",
+      "generator":      "Unix Makefiles",
       "binaryDir":      "${sourceDir}/build-aix",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":            "Release",
@@ -842,7 +842,7 @@
     {
       "name":           "hpux",
       "displayName":    "HP-UX",
-      "generator":      "Ninja",
+      "generator":      "Unix Makefiles",
       "binaryDir":      "${sourceDir}/build-hpux",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":            "Release",
@@ -855,7 +855,7 @@
     {
       "name":           "unix",
       "displayName":    "Generic Unknown UNIX",
-      "generator":      "Ninja",
+      "generator":      "Unix Makefiles",
       "binaryDir":      "${sourceDir}/build-unix",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE":            "Release",

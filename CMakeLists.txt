@@ -62,6 +62,7 @@ if(   SUIKA_TARGET_WINDOWS
    OR SUIKA_TARGET_NETBSD
    OR SUIKA_TARGET_OPENBSD
    OR SUIKA_TARGET_SOLARIS11
+   OR SUIKA_TARGET_GENERICUNIX
 )
   # A target and options are manually specified.
 else()   
