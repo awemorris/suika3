@@ -54,7 +54,7 @@
         },
         {
             "name":           "windows-vs2022-arm64",
-            "displayName":    "VS2022 MSVC arm64 Debug",
+            "displayName":    "VS2022 MSVC arm64 Release",
             "generator":      "Visual Studio 17 2022",
             "architecture":   "arm64",
             "toolset":        "v143",

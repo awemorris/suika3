@@ -753,7 +753,7 @@ if(SUIKA_ENABLE_WEBSERVER)
     ${SUIKA_WEB_RESOURCE}
   )
 
-  if (SUIKA_TARGET_WINDOWS)
+  if (SUIKA_TARGET_WINDOWS OR SUIKA_TARGET_WINDOWS95)
     target_link_libraries(suika3-web wsock32 ws2_32)
   endif()
 endif()
