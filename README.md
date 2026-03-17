@@ -547,8 +547,8 @@ The footprint of Suika3 is very small.
 
 ### JIT Pipeline
 
-SuikaScript employs two distinct intermediate representations (IRs) to
-balance high-level program analysis with efficient execution:
+SuikaScript uses a dual-IR architecture where HIR handles analysis and
+LIR unifies execution across interpreter, JIT, and AOT backends:
 
 - **HIR (High-level Intermediate Representation)**
     - Structured control flow graph (CFG) for program analysis.
@@ -580,19 +580,6 @@ CFG for "func foo(a) { if (a > 0) { return a; } else { return -a; } }"
      
 ```
 
-```
-  DAG for "a = 1 + 2"
-
-
-     LHS   ---- ASSIGN  ----   RHS
-      |                         |
-     term                      ADD
-      |                        / \
-   symbol a                 term  term
-                             |       |
-                           int 1   int 2
-```
-
 - **LIR (Low-level Intermediate Representation)**
     - VM bytecode, serving as the primary format for both interpretation and JIT codegen input.
     - High abstraction level to achieve fast, portable interpretation.
@@ -618,10 +605,6 @@ Compilation stages are as below.
                                         |
                                         +--------> [C Source Backend]
 ```
-
-- The AST captures the syntactic structure.
-- The HIR provides an analyzable, optimization-friendly form.
-- The LIR bridges execution, serving both the interpreter and JIT.
 
 The separation of HIR and LIR enables:
 
