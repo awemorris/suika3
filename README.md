@@ -10,16 +10,16 @@
   <p>
     Suika3 is a portable visual novel engine designed to run on a wide range of platforms.
   </p>
-  <p>
-    Our custom JIT-VM / AOT-fallback scripting infrastructure lets you
-    publish the exact same game across both PC and app stores,
-    eliminating porting headaches!
-  </p>
   <a href="https://discord.gg/YZsq9u9Mgr"><img src="https://img.shields.io/badge/Suika3.VN-Discord-orange"></a>
   <img src="https://img.shields.io/github/stars/suika3-community/suika3.svg?style=flat&logo=github&colorB=deeppink&label=stars">
   <img src="https://img.shields.io/github/forks/suika3-community/suika3.svg">
   <img src="https://img.shields.io/badge/License-ZLib-purple.svg">
   <br><br>
+  <p>
+    Our custom JIT-VM / AOT-fallback scripting infrastructure lets you
+    publish the exact same game across both PC and app stores,
+    eliminating porting headaches!
+  </p>
   <img src="https://img.shields.io/badge/Desktop-Windows%20%2F%20macOS%20%2F%20Linux%20%2F%20Chromebook%20%2F%20Raspberry%20Pi-blue">
   <img src="https://img.shields.io/badge/Mobile-iOS%20%2F%20Andoid%20%2F%20HarmonyOS%20NEXT-blue">
   <img src="https://img.shields.io/badge/Console-Switch%20%2F%20PS5%20%2F%20Xbox-blue">
