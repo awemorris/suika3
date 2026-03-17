@@ -1,20 +1,21 @@
 Suika3
 ======
 
+<img src="https://raw.githubusercontent.com/suika3-community/suika3/refs/heads/main/docs/img/logo-small.png" alt="Suika3 Logo" align="left" width="120" hspace="20">
+Suika3 is a portable visual novel engine designed to run on a wide
+range of platforms (PC/iOS/Android/Web/etc.) using a custom JIT/AOT
+hybrid scripting infrastructure and C89-based rendering & audio
+runtime for mobile app store compliance.
+<br clear="left">
+
+<p align="center">
+![License](https://img.shields.io/badge/License-ZLib-purple.svg)
 ![Desktop](https://img.shields.io/badge/Desktop-Windows%20%2F%20macOS%20%2F%20Linux%20%2F%20Chromebook%20%2F%20Raspberry%20Pi-blue)
 ![Mobile](https://img.shields.io/badge/Mobile-iOS%20%2F%20Andoid%20%2F%20HarmonyOS%20NEXT-blue)
 ![Console](https://img.shields.io/badge/Console-Switch%20%2F%20PS5%20%2F%20Xbox-blue)
 ![Web](https://img.shields.io/badge/Web-Emscripten-blue)
 ![UNIX](https://img.shields.io/badge/UNIX-FreeBSD%20%2F%20NetBSD%20%2F%20OpenBSD%20%2F%20Solaris%2011-blue)
-
-<img src="https://raw.githubusercontent.com/suika3-community/suika3/refs/heads/main/docs/img/logo-small.png" alt="Suika3 Logo" align="left" width="120" hspace="20">
-
-Suika3 is a portable visual novel engine designed to run on a wide
-range of platforms (PC/iOS/Android/Web/etc.) using a custom JIT/AOT
-hybrid scripting infrastructure and C89-based rendering & audio
-runtime for mobile app store compliance.
-
-<br clear="left">
+</p>
 
 <div align="center">
   <img src="https://github.com/suika3-community/suika3/blob/main/docs/img/screenshot-20260317.webp" alt="Suika3 Screensho"><br>
