@@ -647,19 +647,21 @@ endif()
 #
 
 if(PLAYFIELD_ENABLE_PACK)
-  if (NOT PLAYFIELD_TARGET_WINDOWS)
+  if(    NOT PLAYFIELD_ENABLE_STATIC
+     AND NOT PLAYFIELD_ENABLE_SHARED
+     AND NOT PLAYFIELD_ENABLE_OBJECT)
+    if(PLAYFIELD_TARGET_WINDOWS OR PLAYFIELD_TARGET_WINDOWS95)
+      set(PLAYFIELD_PACK_RESOURCE resources/windows/pack-resource.rc)
+    endif()
+
     add_executable(
       playfield-pack
       src/pack.c
+      ${PLAYFIELD_PACK_RESOURCE}}
     )
-  else()
-    add_executable(
-      playfield-pack
-      src/pack.c
-      resources/windows/pack-resource.rc
-    )
+
+    target_link_libraries(playfield-pack stratopack)
   endif()
-  target_link_libraries(playfield-pack stratopack)
 endif()
 
 # ---
