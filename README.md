@@ -1,7 +1,7 @@
+<img src="https://raw.githubusercontent.com/suika3-community/suika3/refs/heads/main/docs/img/logo-small.png" alt="Suika3 Logo" align="left" width="120" hspace="20">
+
 Suika3
 ======
-
-<img src="https://raw.githubusercontent.com/suika3-community/suika3/refs/heads/main/docs/img/logo-small.png" alt="Suika3 Logo" align="left" width="120" hspace="20">
 
 Suika3 is a portable visual novel engine designed to run on a wide
 range of platforms (PC/iOS/Android/Web/etc.) using a custom JIT/AOT
