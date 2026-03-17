@@ -499,6 +499,7 @@ jobs:
           mkdir dist/misc
           mkdir dist/misc/windows
           mkdir dist/misc/macos
+          mkdir dist/misc/macos/project
           mkdir dist/misc/linux
           mkdir dist/misc/wasm
           mkdir dist/misc/ios
