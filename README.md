@@ -14,7 +14,11 @@
   <img src="https://img.shields.io/github/stars/suika3-community/suika3.svg?style=flat&logo=github&colorB=deeppink&label=stars">
   <img src="https://img.shields.io/github/forks/suika3-community/suika3.svg">
   <img src="https://img.shields.io/badge/License-ZLib-purple.svg">
-  <br><br>
+</div>
+
+---
+
+<div align="center">
   <p>
     Our custom JIT-VM / AOT-fallback scripting infrastructure lets you
     publish the exact same game across both PC and app stores,
@@ -29,10 +33,14 @@
   <br><br>
 </div>
 
+---
+
 <!-- SCREENSHOT -->
 <div align="center">
   <img src="https://github.com/suika3-community/suika3/blob/main/docs/img/screenshot-20260317.webp" alt="Suika3 Screenshot"><br>
 </div>
+
+---
 
 <!-- PLATFORMS -->
 <div align="center">
