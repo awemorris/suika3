@@ -31,6 +31,7 @@ option(PLAYFIELD_TARGET_OPENBSD          "Build for OpenBSD (X11, OpenGL)"      
 option(PLAYFIELD_TARGET_OPENBSD_X11SOFT  "Build for OpenBSD (X11, Soft3D)"            OFF)
 option(PLAYFIELD_TARGET_SOLARIS11        "Build for Solaris 11 (X11, Soft3D)"         OFF)
 option(PLAYFIELD_TARGET_GENERICUNIX      "Build for Unknown UNIX (X11, Soft3D)"       OFF)
+option(PLAYFIELD_TARGET_HAIKU            "Build for Haiku OS (Soft3D)"                OFF)
 option(PLAYFIELD_TARGET_GDK_WINDOWS      "Build for GDK for Desktop"                  OFF)
 option(PLAYFIELD_TARGET_GDK_XBOX_XS      "Build for GDK for Xbox Series X|S"          OFF)
 
@@ -84,6 +85,7 @@ if(   PLAYFIELD_TARGET_WINDOWS
    OR PLAYFIELD_TARGET_OPENBSD_X11SOFT
    OR PLAYFIELD_TARGET_SOLARIS11
    OR PLAYFIELD_TARGET_GENERICUNIX
+   OR PLAYFIELD_TARGET_HAIKU
    OR PLAYFIELD_TARGET_GDK_WINDOWS
    OR PLAYFIELD_TARGET_GDK_XBOX_XS
    OR PLAYFIELD_TARGET_UWP

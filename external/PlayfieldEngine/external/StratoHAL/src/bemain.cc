@@ -73,16 +73,20 @@ extern "C" void fill_buffer(void *cookie, void *buffer, size_t size, const media
 
 class NoctView : public BView
 {
-	public:
+private:
+	int last_buttons;
+
+public:
 	NoctView(BRect frame) :
 		BView(frame, "noctview", B_FOLLOW_ALL, B_WILL_DRAW)
 	{
 		SetViewColor(255, 255, 255);
+		last_buttons = 0;
 	}
 
 	void Draw(BRect updateRect) override
 	{
-		clear_image(image, 0);
+		hal_clear_image(image, 0);
 
 		hal_callback_on_event_frame();
 
@@ -105,21 +109,16 @@ class NoctView : public BView
 				hal_callback_on_event_mouse_press(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
 			if (buttons & B_SECONDARY_MOUSE_BUTTON)
 				hal_callback_on_event_mouse_press(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
+			last_buttons = buttons;
 		}
 	}
 
 	void MouseUp(BPoint where) override
 	{
-		on_event_mouse_move((int)where.x, (int)where.y);
+		hal_callback_on_event_mouse_move((int)where.x, (int)where.y);
 
-		uint32 buttons = 0;
-		if (Window()->CurrentMessage() &&
-		    Window()->CurrentMessage()->FindInt32("buttons", (int32*)&buttons) == B_OK) {
-			if (buttons & B_PRIMARY_MOUSE_BUTTON)
-				hal_callback_on_event_mouse_release(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
-			if (buttons & B_SECONDARY_MOUSE_BUTTON)
-				hal_callback_on_event_mouse_release(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
-		}
+		hal_callback_on_event_mouse_release(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
+		hal_callback_on_event_mouse_release(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
 	}
 
 	void KeyDown(const char* bytes, int32 numBytes) override
@@ -154,7 +153,7 @@ public:
 			0)
 	{
 		bitmap = new BBitmap(BRect(0, 0, width - 1, height - 1), B_RGBA32);
-		create_image_with_pixels(width, height, (pixel_t*)bitmap->Bits(), &image);
+		hal_create_image_with_pixels(width, height, (hal_pixel_t*)bitmap->Bits(), &image);
 
 		NoctView* view = new NoctView(Bounds());
 		AddChild(view);
@@ -191,7 +190,7 @@ public:
 		NoctWindow *window = new NoctWindow(window_title, window_width, window_height);
 		window->Show();
 
-#if 0
+//#if 0
 		media_raw_audio_format format = {
 			44100.0, 2, media_raw_audio_format::B_AUDIO_SHORT, B_MEDIA_LITTLE_ENDIAN, 4
 		};
@@ -199,7 +198,7 @@ public:
 			sound_player[i] = new BSoundPlayer(&format, "SoundPlayer", fill_buffer, NULL, (void*)(intptr_t)i);
 			sound_player[i]->Start();
 		}
-#endif
+//#endif
 
 		if (!hal_callback_on_event_start())
 			exit(1);
@@ -249,15 +248,34 @@ hal_render_image_normal(
 	if (src_height == -1)
 		src_height = src_image->height;
 
-	hal_draw_image_alpha(image,
-			     dst_left,
-			     dst_top,
-			     src_image,
-			     src_width,
-			     src_height,
-			     src_left,
-			     src_top,
-			     alpha);
+	if (dst_width != src_width ||
+	    dst_height != src_height) {
+		hal_draw_image_3d_alpha(image,
+					dst_left,
+					dst_top,
+					dst_left + dst_width,
+					dst_top,
+					dst_left,
+					dst_top + dst_height,
+					dst_left + dst_width,
+					dst_top + dst_height,
+					src_image,
+					src_left,
+					src_top,
+					src_width,
+					src_height,
+					alpha);
+	} else {
+		hal_draw_image_alpha(image,
+				     dst_left,
+				     dst_top,
+				     src_image,
+				     src_width,
+				     src_height,
+				     src_left,
+				     src_top,
+				     alpha);
+	}
 }
 
 void
@@ -282,15 +300,34 @@ hal_render_image_add(
 	if (src_height == -1)
 		src_height = src_image->height;
 
-	hal_draw_image_add(image,
-			   dst_left,
-			   dst_top,
-			   src_image,
-			   src_width,
-			   src_height,
-			   src_left,
-			   src_top,
-			   alpha);
+	if (dst_width != src_width ||
+	    dst_height != src_height) {
+		hal_draw_image_3d_add(image,
+				      dst_left,
+				      dst_top,
+				      dst_left + dst_width,
+				      dst_top,
+				      dst_left,
+				      dst_top + dst_height,
+				      dst_left + dst_width,
+				      dst_top + dst_height,
+				      src_image,
+				      src_left,
+				      src_top,
+				      src_width,
+				      src_height,
+				      alpha);
+	} else {
+		hal_draw_image_add(image,
+				   dst_left,
+				   dst_top,
+				   src_image,
+				   src_width,
+				   src_height,
+				   src_left,
+				   src_top,
+				   alpha);
+	}
 }
 
 void
@@ -315,15 +352,34 @@ hal_render_image_sub(
 	if (src_height == -1)
 		src_height = src_image->height;
 
-	hal_draw_image_sub(image,
-			   dst_left,
-			   dst_top,
-			   src_image,
-			   src_width,
-			   src_height,
-			   src_left,
-			   src_top,
-			   alpha);
+	if (dst_width != src_width ||
+	    dst_height != src_height) {
+		hal_draw_image_3d_sub(image,
+				      dst_left,
+				      dst_top,
+				      dst_left + dst_width,
+				      dst_top,
+				      dst_left,
+				      dst_top + dst_height,
+				      dst_left + dst_width,
+				      dst_top + dst_height,
+				      src_image,
+				      src_left,
+				      src_top,
+				      src_width,
+				      src_height,
+				      alpha);
+	} else {
+		hal_draw_image_sub(image,
+				   dst_left,
+				   dst_top,
+				   src_image,
+				   src_width,
+				   src_height,
+				   src_left,
+				   src_top,
+				   alpha);
+	}
 }
 
 void
@@ -348,15 +404,34 @@ hal_render_image_dim(
 	if (src_height == -1)
 		src_height = src_image->height;
 
-	hal_draw_image_dim(image,
-			   dst_left,
-			   dst_top,
-			   src_image,
-			   src_width,
-			   src_height,
-			   src_left,
-			   src_top,
-			   alpha);
+	if (dst_width != src_width ||
+	    dst_height != src_height) {
+		hal_draw_image_3d_dim(image,
+				      dst_left,
+				      dst_top,
+				      dst_left + dst_width,
+				      dst_top,
+				      dst_left,
+				      dst_top + dst_height,
+				      dst_left + dst_width,
+				      dst_top + dst_height,
+				      src_image,
+				      src_left,
+				      src_top,
+				      src_width,
+				      src_height,
+				      alpha);
+	} else {
+		hal_draw_image_dim(image,
+				   dst_left,
+				   dst_top,
+				   src_image,
+				   src_width,
+				   src_height,
+				   src_left,
+				   src_top,
+				   alpha);
+	}
 }
 
 void
@@ -400,7 +475,7 @@ hal_render_image_3d_normal(
 	int src_height,			/* The height of the source rectangle */
 	int alpha)			/* The alpha value (0 to 255) */
 {
-	hal_draw_image_3d_alpha(back_image,
+	hal_draw_image_3d_alpha(image,
 				(float)x1,
 				(float)y1,
 				(float)x2,
@@ -434,7 +509,7 @@ hal_render_image_3d_add(
 	int src_height,			/* The height of the source rectangle */
 	int alpha)			/* The alpha value (0 to 255) */
 {
-	hal_draw_image_3d_add(back_image,
+	hal_draw_image_3d_add(image,
 			      (float)x1,
 			      (float)y1,
 			      (float)x2,

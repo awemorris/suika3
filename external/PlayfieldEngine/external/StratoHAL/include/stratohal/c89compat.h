@@ -262,7 +262,7 @@ extern "C" {
 
 /* BeOS / Haiku */
 #if defined(__BEOS__) || defined(__HAIKU__)
-#define HAL_TARGET_BEOS
+#define HAL_TARGET_HAIKU
 #endif
 
 /* Error: No target detected. */
@@ -277,7 +277,7 @@ extern "C" {
     !defined(HAL_TARGET_IOS) &&                  \
     !defined(HAL_TARGET_ANDROID) &&              \
     !defined(HAL_TARGET_WASM) &&                 \
-    !defined(HAL_TARGET_BEOS) &&                 \
+    !defined(HAL_TARGET_HAIKU) &&                \
     !defined(HAL_TARGET_UNITY)
 #error "No target detected."
 #endif

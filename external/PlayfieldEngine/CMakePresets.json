@@ -975,6 +975,8 @@
             "binaryDir":      "${sourceDir}/build-haiku",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":             "Release",
+                "CMAKE_C_COMPILER":             "gcc",
+                "CMAKE_CXX_COMPILER":           "g++",
                 "PLAYFIELD_TARGET_HAIKU":       "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
                 "PLAYFIELD_ENABLE_BYTECOMP":    "ON",
