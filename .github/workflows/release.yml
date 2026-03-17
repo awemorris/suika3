@@ -398,7 +398,7 @@ jobs:
       - name: Install apt packages
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build flex bison mingw-w64
+          sudo apt-get install -y cmake ninja-build flex bison
 
       - name: Setup LLVM for Unity
         if: steps.cache-llvm-21-v1.outputs.cache-hit != 'true'
