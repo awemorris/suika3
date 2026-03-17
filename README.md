@@ -10,7 +10,7 @@ runtime for mobile app store compliance.
 
 <p align="center">
 <img src="https://img.shields.io/badge/License-ZLib-purple.svg">
-<img src="(https://img.shields.io/badge/Desktop-Windows%20%2F%20macOS%20%2F%20Linux%20%2F%20Chromebook%20%2F%20Raspberry%20Pi-blue">
+<img src="https://img.shields.io/badge/Desktop-Windows%20%2F%20macOS%20%2F%20Linux%20%2F%20Chromebook%20%2F%20Raspberry%20Pi-blue">
 <img src="https://img.shields.io/badge/Mobile-iOS%20%2F%20Andoid%20%2F%20HarmonyOS%20NEXT-blue">
 <img src="https://img.shields.io/badge/Console-Switch%20%2F%20PS5%20%2F%20Xbox-blue">
 <img src="https://img.shields.io/badge/Web-Emscripten-blue">
