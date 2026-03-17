@@ -1,13 +1,14 @@
 Suika3
 ======
 
-<img src="https://raw.githubusercontent.com/suika3-community/suika3/refs/heads/main/docs/img/logo-small.png" alt="Suika3 Logo" align="right" width="120" hspace="20">
+<img src="https://raw.githubusercontent.com/suika3-community/suika3/refs/heads/main/docs/img/logo-small.png" alt="Suika3 Logo" align="left" width="120" hspace="20">
 
 Suika3 is a portable visual novel engine designed to run on a wide
 range of platforms (PC/iOS/Android/Web/etc.) using a custom JIT/AOT
 hybrid scripting infrastructure and C89-based rendering & audio
-runtime for mobile app store compliance. Our slogan is "Visual Novel
-Anywhere!"
+runtime for mobile app store compliance.
+
+Our slogan is "Visual Novel Anywhere!"
 
 <br clear="left">
 
@@ -123,7 +124,7 @@ Suika3 is engineered with modern techniques, and delivers:
 - [Internationalization](#internationalization)
 - [Third-party Libraries](#third-party-libraries)
 - [CMake Presets](#cmake-presets)
-- [Codebase & Maturity](#codebase-maturity)
+- [Codebase & Maturity](#codebase--maturity)
 - [Quality Assurance](#quality-assurance)
 - [Adoption Status](#adoption-status)
 - [Repository Structure](#repository-structure)
@@ -133,7 +134,7 @@ Suika3 is engineered with modern techniques, and delivers:
 - [Screenshots](#screenshots)
 - [Versioning Policy](#versioning-policy)
 - [License](#license)
-- [Support & Contact](#support-contact)
+- [Support & Contact](#support--contact)
 - [Community](#community)
 - [Contribution](#contribution)
 - [Lineage: The Grand Journey](#lineage-the-grand-journey)
@@ -261,7 +262,7 @@ func render() {
 }
 ```
 
-> [!TIPS]
+> [!TIP]
 > These functions are the core mechanism of the `Playfield Engine` that
 > powers Suika3. Suika.start(), Suika.update(), and Suika.render() must
 > remain in place for the game to function properly.
@@ -525,7 +526,7 @@ The footprint of Suika3 is very small.
 | Windows 11   | 2 MB         | 300 MB in the task manager  |
 | Windows 2000 | 3 MB         | 8 MB in the task manager    |
 
-> [!TIPS]
+> [!TIP]
 > Due to the modern graphics architecture, game applications using
 > DirectX 12 typically consume at least 300 MB of memory even before
 > loading any game assets. The engine itself consumes only 8 MB on
@@ -1530,6 +1531,9 @@ information on supported platforms and their requirements.
 This indicates that the sample game has passed the verification
 process to ensure it runs on either the actual hardware or an
 emulator.
+
+It just means we have a working codebase for the platform, and you
+need a final QA for your game.
 
 ### Will there be breaking changes? What is the compatibility policy?
 
