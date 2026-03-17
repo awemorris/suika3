@@ -8,8 +8,6 @@ range of platforms (PC/iOS/Android/Web/etc.) using a custom JIT/AOT
 hybrid scripting infrastructure and C89-based rendering & audio
 runtime for mobile app store compliance.
 
-Our slogan is "Visual Novel Anywhere!"
-
 <br clear="left">
 
 <div align="center">
@@ -17,6 +15,8 @@ Our slogan is "Visual Novel Anywhere!"
 </div>
 
 ---
+
+## Our slogan is "Visual Novel Anywhere!"
 
 <div align="center">
   <img src="https://github.com/suika3-community/suika3/blob/main/docs/img/platforms.png" alt="Suika3 runs everywhere."><br>
