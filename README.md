@@ -14,11 +14,8 @@ runtime for mobile app store compliance.
   <img src="https://github.com/suika3-community/suika3/blob/main/docs/img/screenshot-20260317.webp" alt="Suika3 Screensho"><br>
 </div>
 
----
-
-## Our slogan is "Visual Novel Anywhere!"
-
 <div align="center">
+  <span font-size="2em;>Visual Novel Anywhere!</span>
   <img src="https://github.com/suika3-community/suika3/blob/main/docs/img/platforms.png" alt="Suika3 runs everywhere."><br>
 </div>
 
