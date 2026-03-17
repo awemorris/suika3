@@ -1,28 +1,8 @@
 # Show a background image.
-[bg file="bg/coast.png" time="0.5"]
+[bg file="bg/school.png" time="0.5"]
 
 # Show a character image.
-[ch center="ch/midori-normal.png" time="0.5" fade="normal"]
+[ch center="ch/midori-positive.png" time="0.5" fade="normal"]
 
 # Show a question text.
-[text text="Choose a name."]
-
-# Show options.
-[choose
-  name="choose_result"
-  text1="March"
-  text2="April"
-  text3="May"
-]
-
-# Branch by the choose's result.
-[if lhs="${choose_result}" op="==" rhs="March"]
-    [set name="name" value="March"]
-[elseif lhs="${choose_result}" op="==" rhs="April"]
-    [set name="name" value="April"]
-[else]
-    [set name="name" value="May"]
-[endif]
-
-# Show a text.
-[text name="${name}" text="Hello! My name is ${name}."]
+[text name="Midori" text="Now preparing for the first release!."]
