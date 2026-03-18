@@ -1255,8 +1255,8 @@ close collaboration with the community.
 
 ### Lead Maintainers
 
-- Awe Morris (IEEE Member, IEEE Computer Society Member)
-- Aitsuki
+- Awe Morris (Design and Implementation)
+- Aitsuki (Security Inspection)
 
 ---
 

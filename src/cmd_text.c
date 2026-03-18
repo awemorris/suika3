@@ -1140,7 +1140,7 @@ init_msgbox(void)
 {
 	/* If returning from system GUI */
 	if (gui_sys_flag)
-		return false;
+		return true;
 
 	/* Get the rectangle of the message box */
 	s3_get_msgbox_rect(&msgbox_x, &msgbox_y, &msgbox_w, &msgbox_h);

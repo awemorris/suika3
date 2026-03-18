@@ -652,7 +652,12 @@ s3_stop_gui(void)
 bool
 s3_is_gui_running(void)
 {
-	return is_gui_running;
+	if (is_gui_running) {
+		if (is_finished)
+			return false;
+		return true;
+	}
+	return false;
 }
 
 /*
@@ -661,9 +666,13 @@ s3_is_gui_running(void)
 bool
 s3_is_gui_finished(void)
 {
-	if (result_index != -1)
+	if (!is_gui_running) {
 		return true;
-	return false;
+	} else {
+		if (!is_finished)
+			return false;
+		return true;
+	}
 }
 
 /*
@@ -672,6 +681,8 @@ s3_is_gui_finished(void)
 bool
 s3i_run_gui_update(void)
 {
+	float progress;
+
 	/* If not in GUI mode. */
 	if (!is_gui_running)
 		return true;
@@ -679,6 +690,33 @@ s3i_run_gui_update(void)
 	/* If first frame, reset the first frame flag. */
 	if (is_first_frame) {
 		is_first_frame = false;
+	}
+
+	/* Calculate alpha value during fade-in and fade-out */
+	cur_alpha = 255;
+	if (is_fading_in) {
+		/* Process fade-in. */
+		progress = (float)s3_get_lap_timer_millisec(&fade_sw) / 1000.0f / fade_in_time;
+		if (progress < 1.0f) {
+			/* Continue fade-in. */
+			cur_alpha = (int)(progress * 255.0f);
+		} else {
+			/* End fade-in. */
+			is_fading_in = false;
+			cur_alpha = 255;
+		}
+	} else if (is_fading_out) {
+		/* Process fade-out. */
+		progress = (float)s3_get_lap_timer_millisec(&fade_sw) / 1000.0f / fade_out_time;
+		if (progress < 1.0f) {
+			/* Continue fade-out. */
+			cur_alpha = 255 - (int)(progress * 255.0f);
+		} else {
+			/* End fade-out. */
+			is_fading_out = false;
+			is_finished = true;
+			cur_alpha = 0;
+		}
 	}
 
 	/* Handle time limit. */
@@ -827,7 +865,7 @@ process_timeout(void)
 		is_bombed = true;
 		result_index = -1;
 		if (fade_out_time > 0) {
-			is_fading_out = true;
+			is_fading_out= true;
 			s3_reset_lap_timer(&fade_sw);
 		} else {
 			is_finished = true;
@@ -963,6 +1001,7 @@ static void process_input(void)
 		if (fade_out_time > 0) {
 			is_fading_out = true;
 			s3_reset_lap_timer(&fade_sw);
+			s3_clear_input_state();
 		} else {
 			is_finished = true;
 			s3_clear_input_state();
@@ -1674,35 +1713,7 @@ process_button_click(
 static void
 process_render(void)
 {
-	float progress;
 	int i;
-
-	/* Calculate alpha value during fade-in and fade-out */
-	cur_alpha = 255;
-	if (is_fading_in) {
-		/* Process fade-in. */
-		progress = (float)s3_get_lap_timer_millisec(&fade_sw) / 1000.0f / fade_in_time;
-		if (progress < 1.0f) {
-			/* Continue fade-in. */
-			cur_alpha = (int)(progress * 255.0f);
-		} else {
-			/* End fade-in. */
-			is_fading_in = false;
-			cur_alpha = 255;
-		}
-	} else if (is_fading_out) {
-		/* Process fade-out. */
-		progress = (float)s3_get_lap_timer_millisec(&fade_sw) / 1000.0f / fade_out_time;
-		if (progress < 1.0f) {
-			/* Continue fade-out. */
-			cur_alpha = 255 - (int)(progress * 255.0f);
-		} else {
-			/* End fade-out. */
-			is_fading_out = false;
-			is_finished = true;
-			cur_alpha = 0;
-		}
-	}
 
 	/* Render each button according to its state. */
 	for (i = 0; i < S3_BUTTON_LAYERS; i++) {

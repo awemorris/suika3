@@ -359,10 +359,16 @@ s3i_on_game_update(void)
 			/* Error: will stop the game after the next rendering. */
 			pf_set_vm_int("exitFlag", 1);
 		}
-		
-		/* If Call the tag for cleanup.*/
-		if (is_gui_tag && s3_is_gui_finished())
-			s3i_tag_gui(NULL);
+
+		if (s3_is_gui_finished()) {
+			s3_stop_gui();
+
+			/* If the GUI is triggered by the "gui" tag, do a cleanup.*/
+			if (is_gui_tag) {
+				/* Call the tag function with no parameter. */
+				s3i_tag_gui(NULL);
+			}
+		}
 	}
 
 	/* Do a sound fading. */
