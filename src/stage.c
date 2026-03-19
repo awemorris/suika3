@@ -42,6 +42,7 @@
 #include "text.h"
 #include "anime.h"
 #include "gui.h"
+#include "sysbtn.h"
 
 #include <playfield/playfield.h>
 
