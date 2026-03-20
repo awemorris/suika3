@@ -1185,6 +1185,7 @@ hal_is_video_playing(void)
 		var v = document.getElementById("video");
 		return v.ended;
 	);
+
 	if (ended) {
 		is_video_playing = false;
 		return false;

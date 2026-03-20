@@ -317,6 +317,8 @@ jobs:
           cmake --build --preset android-x86_64
           cmake --preset android-x86
           cmake --build --preset android-x86
+          cmake --preset android-riscv64
+          cmake --build --preset android-riscv64
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -351,6 +353,15 @@ jobs:
           name: android-x86
           path: |
             build-android-x86/libplayfield.so
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-riscv64
+          path: |
+            build-android-riscv64/libplayfield.so
           if-no-files-found: error
           retention-days: 7
 
@@ -645,6 +656,12 @@ jobs:
           name: android-x86
           path: android-x86
 
+      - name: Download Android RISC-V 64 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: android-riscv64
+          path: android-riscv64
+
       - name: Copy for Android
         run: |
           cp -R resources/projects/android/app dist/misc/android/
@@ -666,6 +683,8 @@ jobs:
           cp android-x86_64/libplayfield.so dist/misc/android/app/src/main/jniLibs/x86_64/
           mkdir -p dist/misc/android/app/src/main/jniLibs/x86
           cp android-x86/libplayfield.so dist/misc/android/app/src/main/jniLibs/x86/
+          mkdir -p dist/misc/android/app/src/main/jniLibs/riscv64
+          cp android-riscv64/libplayfield.so dist/misc/android/app/src/main/jniLibs/riscv64/
 
       - name: Download OpenHarmony arm64 artifacts
         uses: actions/download-artifact@v4

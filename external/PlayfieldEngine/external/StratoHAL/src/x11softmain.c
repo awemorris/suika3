@@ -340,15 +340,15 @@ bool init_x11_graphics(void)
 		/* 24-bpp, 24-bit depth, no padding. */
 		bpp = 24;
 
+		/* Allocate an image buffer which may be freed by XDestroyImage(). */
+		if (posix_memalign((void **)&pixels, 64, (size_t)(screen_width * screen_height * 4)) != 0)
+			return false;
+
 		/* Create a back image. */
-		if (!hal_create_image(screen_width, screen_height, &back_image)) {
+		if (!hal_create_image_with_pixels(screen_width, screen_height, pixels, &back_image)) {
 			free(pixels);
 			return false;
 		}
-
-		/* Allocate an image buffer which may be freed by XDestroyImage(). */
-		if (posix_memalign((void **)&low_bpp_pixels, 64, (size_t)(screen_width * screen_height * 3)) != 0)
-			return false;
 
 		/* Create an XImage object that holds the back image buffer. */
 		ximage = XCreateImage(display,
@@ -356,11 +356,11 @@ bool init_x11_graphics(void)
 				      24,
 				      ZPixmap,
 				      0,
-				      (char *)low_bpp_pixels,
+				      (char *)pixels,
 				      (unsigned int)screen_width,
 				      (unsigned int)screen_height,
-				      24,
-				      screen_width * 3);
+				      32,
+				      screen_width * 4);
 		if (ximage == NULL) {
 			hal_destroy_image(back_image);
 			back_image = NULL;
@@ -853,7 +853,9 @@ run_frame(void)
 							((uint16_t)(b & 0xf8) >> 3));
 			}
 		}
-	} else if (bpp == 24) {
+	}
+#if 0
+	else if (bpp == 24) {
 		int x, y;
 		hal_pixel_t *src = (hal_pixel_t *)back_image->pixels;
 		for (y = 0; y < screen_height; y++) {
@@ -866,6 +868,7 @@ run_frame(void)
 			}
 		}
 	}
+#endif
 
 	/* Transfer the bit block. */
 	gc = XCreateGC(display, window, 0, 0);

@@ -681,7 +681,7 @@
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both",
+                "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
                 "ANDROID_PLATFORM":            "30",
                 "ANDROID_ABI":                 "x86",
                 "PLAYFIELD_TARGET_ANDROID":    "ON",
@@ -696,7 +696,7 @@
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both",
+                "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
                 "ANDROID_PLATFORM":            "30",
                 "ANDROID_ABI":                 "x86_64",
                 "PLAYFIELD_TARGET_ANDROID":    "ON",
@@ -711,7 +711,7 @@
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both",
+                "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
                 "ANDROID_PLATFORM":            "30",
                 "ANDROID_ABI":                 "armeabi-v7a",
                 "PLAYFIELD_TARGET_ANDROID":    "ON",
@@ -726,9 +726,24 @@
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both,-z,max-page-size=16384",
+                "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
                 "ANDROID_PLATFORM":            "30",
                 "ANDROID_ABI":                 "arm64-v8a",
+                "PLAYFIELD_TARGET_ANDROID":    "ON",
+                "PLAYFIELD_ENABLE_SHARED":     "ON"
+            }
+        },
+        {
+            "name":           "android-riscv64",
+            "displayName":    "Android RISC-V 64",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-android-riscv64",
+            "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
+                "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
+                "ANDROID_PLATFORM":            "30",
+                "ANDROID_ABI":                 "riscv64",
                 "PLAYFIELD_TARGET_ANDROID":    "ON",
                 "PLAYFIELD_ENABLE_SHARED":     "ON"
             }
@@ -1173,6 +1188,10 @@
         {
             "name": "android-arm64",
             "configurePreset": "android-arm64"
+        },
+        {
+            "name": "android-riscv64",
+            "configurePreset": "android-riscv64"
         },
         {
             "name": "openharmony-x86_64",
