@@ -669,7 +669,6 @@ show_window(void)
 static void
 set_window_size(void)
 {
-#if 0
 	XSizeHints *sh;
 
 	sh = XAllocSizeHints();
@@ -680,7 +679,6 @@ set_window_size(void)
 	sh->max_height = screen_height;
 	XSetWMSizeHints(display, window, sh, XA_WM_NORMAL_HINTS);
 	XFree(sh);
-#endif
 }
 
 /* Set the event mask. */
