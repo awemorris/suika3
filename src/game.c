@@ -361,12 +361,15 @@ s3i_on_game_update(void)
 		}
 
 		if (s3_is_gui_finished()) {
-			s3_stop_gui();
-
-			/* If the GUI is triggered by the "gui" tag, do a cleanup.*/
 			if (is_gui_tag) {
-				/* Call the tag function with no parameter. */
+				/*
+				 * If the GUI is triggered by the "gui" tag, do a cleanup.
+				 * Call the tag function with no parameter.
+				 */
 				s3i_tag_gui(NULL);
+			} else {
+				/* Otherwise, stop the system GUI. */
+				s3_stop_gui();
 			}
 		}
 	}
