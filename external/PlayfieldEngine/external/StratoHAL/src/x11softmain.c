@@ -1794,21 +1794,21 @@ hal_render_image_3d_add(
 	int src_height,
 	int alpha)
 {
-	hal_draw_image_3d_alpha(back_image,
-				(float)x1,
-				(float)y1,
-				(float)x2,
-				(float)y2,
-				(float)x3,
-				(float)y3,
-				(float)x4,
-				(float)y4,
-				src_image,
-				src_left,
-				src_top,
-				src_width,
-				src_height,
-				alpha);
+	hal_draw_image_3d_add(back_image,
+			      (float)x1,
+			      (float)y1,
+			      (float)x2,
+			      (float)y2,
+			      (float)x3,
+			      (float)y3,
+			      (float)x4,
+			      (float)y4,
+			      src_image,
+			      src_left,
+			      src_top,
+			      src_width,
+			      src_height,
+			      alpha);
 }
 
 /*
@@ -1831,21 +1831,21 @@ hal_render_image_3d_sub(
 	int src_height,
 	int alpha)
 {
-	hal_draw_image_3d_alpha(back_image,
-				(float)x1,
-				(float)y1,
-				(float)x2,
-				(float)y2,
-				(float)x3,
-				(float)y3,
-				(float)x4,
-				(float)y4,
-				src_image,
-				src_left,
-				src_top,
-				src_width,
-				src_height,
-				alpha);
+	hal_draw_image_3d_sub(back_image,
+			      (float)x1,
+			      (float)y1,
+			      (float)x2,
+			      (float)y2,
+			      (float)x3,
+			      (float)y3,
+			      (float)x4,
+			      (float)y4,
+			      src_image,
+			      src_left,
+			      src_top,
+			      src_width,
+			      src_height,
+			      alpha);
 }
 
 /*
