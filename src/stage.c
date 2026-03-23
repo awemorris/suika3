@@ -1997,7 +1997,7 @@ s3_draw_stage_to_thumb(void)
 		y4 += (float)layer_y[i] * root_scale_y;
 
 		if (layer_dim[i]) {
-			pf_draw_image_3d_dim(thumb_image->tex_id,
+			pf_draw_texture_3d_dim(thumb_image->tex_id,
 					     x1, y1, x2, y2, x3, y3, x4, y4,
 					     layer_image[i]->tex_id,
 					     0,
@@ -2005,8 +2005,8 @@ s3_draw_stage_to_thumb(void)
 					     layer_image[i]->width,
 					     layer_image[i]->height,
 					     layer_alpha[i]);
-		} else if (layer_blend == S3_BLEND_NORMAL) {
-			pf_draw_image_3d_alpha(thumb_image->tex_id,
+		} else if (layer_blend[i] == S3_BLEND_ALPHA) {
+			pf_draw_texture_3d_alpha(thumb_image->tex_id,
 					       x1, y1, x2, y2, x3, y3, x4, y4,
 					       layer_image[i]->tex_id,
 					       0,
@@ -2014,8 +2014,8 @@ s3_draw_stage_to_thumb(void)
 					       layer_image[i]->width,
 					       layer_image[i]->height,
 					       layer_alpha[i]);
-		} else if (layer_blend == S3_BLEND_ADD) {
-			pf_draw_image_3d_add(thumb_image->tex_id,
+		} else if (layer_blend[i] == S3_BLEND_ADD) {
+			pf_draw_texture_3d_add(thumb_image->tex_id,
 					     x1, y1, x2, y2, x3, y3, x4, y4,
 					     layer_image[i]->tex_id,
 					     0,
@@ -2023,8 +2023,8 @@ s3_draw_stage_to_thumb(void)
 					     layer_image[i]->width,
 					     layer_image[i]->height,
 					     layer_alpha[i]);
-		} else if (layer_blend == S3_BLEND_SUB) {
-			pf_draw_image_3d_sub(thumb_image->tex_id,
+		} else if (layer_blend[i] == S3_BLEND_SUB) {
+			pf_draw_texture_3d_sub(thumb_image->tex_id,
 					     x1, y1, x2, y2, x3, y3, x4, y4,
 					     layer_image[i]->tex_id,
 					     0,

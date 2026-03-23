@@ -157,14 +157,8 @@ static bool Suika_getImageHeight(void *p);
 static bool Suika_loadGlyphImage(void *p);
 static bool Suika_destroyImage(void *p);
 static bool Suika_notifyImageUpdate(void *p);
-static bool Suika_drawImageCopy(void *p);
-static bool Suika_drawImageAlpha(void *p);
-static bool Suika_drawImageAdd(void *p);
-static bool Suika_drawImageSub(void *p);
-static bool Suika_drawImageDim(void *p);
-static bool Suika_drawImageGlyph(void *p);
-static bool Suika_drawImageEmoji(void *p);
-static bool Suika_drawImageScale(void *p);
+static bool Suika_drawImage(void *p);
+static bool Suika_drawImage3D(void *p);
 static bool Suika_makeColor(void *p);
 static bool Suika_fillImageRect(void *p);
 static bool Suika_getImagePixels(void *p);
@@ -531,14 +525,8 @@ static struct api_func api_func[] = {
 	{"loadGlyphImage",		Suika_loadGlyphImage,		1, dict_param},
 	{"destroyImage",		Suika_destroyImage,		1, dict_param},
 	{"notifyImageUpdate",		Suika_notifyImageUpdate,	1, dict_param},
-	{"drawImageCopy",		Suika_drawImageCopy,		1, dict_param},
-	{"drawImageAlpha",		Suika_drawImageAlpha,		1, dict_param},
-	{"drawImageAdd",		Suika_drawImageAdd,		1, dict_param},
-	{"drawImageSub",		Suika_drawImageSub,		1, dict_param},
-	{"drawImageDim",		Suika_drawImageDim,		1, dict_param},
-	{"drawImageGlyph",		Suika_drawImageGlyph,		1, dict_param},
-	{"drawImageEmoji",		Suika_drawImageEmoji,		1, dict_param},
-	{"drawImageScale",		Suika_drawImageScale,		1, dict_param},
+	{"drawImage",			Suika_drawImage,		1, dict_param},
+	{"drawImage3D",			Suika_drawImage,		1, dict_param},
 	{"makeColor",			Suika_makeColor,		1, dict_param},
 	{"fillImageRect",		Suika_fillImageRect,		1, dict_param},
 	{"getImagePixels",		Suika_getImagePixels,		1, dict_param},
@@ -3148,78 +3136,18 @@ Suika_notifyImageUpdate(void *p)
 }
 
 static bool
-Suika_drawImageCopy(void *p)
+Suika_drawImage(void *p)
 {
 	int dst_image;
 	int dst_left;
 	int dst_top;
 	int src_image;
-	int dst_width;
-	int dst_height;
 	int src_left;
 	int src_top;
-	struct s3_image *src_img;
-	struct s3_image *dst_img;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("dstImage", &dst_image))
-			break;
-		if (!pf_get_call_arg_int("dstLeft", &dst_left))
-			break;
-		if (!pf_get_call_arg_int("dstTop", &dst_top))
-			break;
-		if (!pf_get_call_arg_int("srcImage", &src_image))
-			break;
-		if (!pf_get_call_arg_int("dstWidth", &dst_width))
-			break;
-		if (!pf_get_call_arg_int("dstHeight", &dst_height))
-			break;
-		if (!pf_get_call_arg_int("srcLeft", &src_left))
-			break;
-		if (!pf_get_call_arg_int("srcTop", &src_top))
-			break;
-
-		src_img = s3i_int_to_image(src_image);
-		if (src_img == NULL)
-			break;
-		dst_img = s3i_int_to_image(dst_image);
-		if (dst_img == NULL)
-			break;
-
-		s3_draw_image_copy(dst_img,
-				   dst_left,
-				   dst_top,
-				   src_img,
-				   dst_width,
-				   dst_height,
-				   src_left,
-				   src_top);
-
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_drawImageAlpha(void *p)
-{
-	int dst_image;
-	int dst_left;
-	int dst_top;
-	int src_image;
-	int dst_width;
-	int dst_height;
-	int src_left;
-	int src_top;
+	int src_width;
+	int src_height;
 	int alpha;
+	int blend;
 	struct s3_image *src_img;
 	struct s3_image *dst_img;
 	bool ret;
@@ -3235,16 +3163,18 @@ Suika_drawImageAlpha(void *p)
 			break;
 		if (!pf_get_call_arg_int("srcImage", &src_image))
 			break;
-		if (!pf_get_call_arg_int("dstWidth", &dst_width))
-			break;
-		if (!pf_get_call_arg_int("dstHeight", &dst_height))
-			break;
 		if (!pf_get_call_arg_int("srcLeft", &src_left))
 			break;
 		if (!pf_get_call_arg_int("srcTop", &src_top))
+			break;
+		if (!pf_get_call_arg_int("srcWidth", &src_width))
+			break;
+		if (!pf_get_call_arg_int("srcHeight", &src_height))
 			break;
 		if (!pf_get_call_arg_int("alpha", &alpha))
 			break;
+		if (!pf_get_call_arg_int("blend", &blend))
+			break;
 
 		src_img = s3i_int_to_image(src_image);
 		if (src_img == NULL)
@@ -3253,15 +3183,84 @@ Suika_drawImageAlpha(void *p)
 		if (dst_img == NULL)
 			break;
 
-		s3_draw_image_alpha(dst_img,
-				    dst_left,
-				    dst_top,
-				    dst_width,
-				    dst_height,
-				    src_img,
-				    src_left,
-				    src_top,
-				    alpha);
+		switch (blend) {
+		case S3_BLEND_COPY:
+			s3_draw_image_copy(dst_img,
+					   dst_left,
+					   dst_top,
+					   src_img,
+					   src_left,
+					   src_top,
+					   src_width,
+					   src_height);
+			break;
+		case S3_BLEND_ALPHA:
+			s3_draw_image_alpha(dst_img,
+					    dst_left,
+					    dst_top,
+					    src_img,
+					    src_left,
+					    src_top,
+					    src_width,
+					    src_height,
+					    alpha);
+			break;
+		case S3_BLEND_ADD:
+			s3_draw_image_add(dst_img,
+					  dst_left,
+					  dst_top,
+					  src_img,
+					  src_left,
+					  src_top,
+					  src_width,
+					  src_height,
+					  alpha);
+			break;
+		case S3_BLEND_SUB:
+			s3_draw_image_sub(dst_img,
+					  dst_left,
+					  dst_top,
+					  src_img,
+					  src_left,
+					  src_top,
+					  src_width,
+					  src_height,
+					  alpha);
+			break;
+		case S3_BLEND_DIM:
+			s3_draw_image_dim(dst_img,
+					  dst_left,
+					  dst_top,
+					  src_img,
+					  src_left,
+					  src_top,
+					  src_width,
+					  src_height,
+					  alpha);
+			break;
+		case S3_BLEND_GLYPH:
+			s3_draw_image_glyph(dst_img,
+					    dst_left,
+					    dst_top,
+					    src_img,
+					    src_left,
+					    src_top,
+					    src_width,
+					    src_height,
+					    alpha);
+			break;
+		case S3_BLEND_EMOJI:
+			s3_draw_image_emoji(dst_img,
+					    dst_left,
+					    dst_top,
+					    src_img,
+					    src_left,
+					    src_top,
+					    src_width,
+					    src_height,
+					    alpha);
+			break;
+		}
 
 		/* Set the return value. */
 		if (!pf_set_return_int(1))
@@ -3274,17 +3273,13 @@ Suika_drawImageAlpha(void *p)
 }
 
 static bool
-Suika_drawImageAdd(void *p)
+Suika_drawImage3D(
+	void *p)
 {
-	int dst_image;
-	int dst_left;
-	int dst_top;
-	int src_image;
-	int dst_width;
-	int dst_height;
-	int src_left;
-	int src_top;
-	int alpha;
+	int x1, y1, x2, y2, x3, y3, x4, y4;
+	int src_left, src_top, src_width, src_height;
+	int alpha, blend;
+	int src_image, dst_image;
 	struct s3_image *src_img;
 	struct s3_image *dst_img;
 	bool ret;
@@ -3294,151 +3289,35 @@ Suika_drawImageAdd(void *p)
 		/* Get the argument. */
 		if (!pf_get_call_arg_int("dstImage", &dst_image))
 			break;
-		if (!pf_get_call_arg_int("dstLeft", &dst_left))
+		if (!pf_get_call_arg_int("x1", &x1))
 			break;
-		if (!pf_get_call_arg_int("dstTop", &dst_top))
+		if (!pf_get_call_arg_int("y1", &y1))
+			break;
+		if (!pf_get_call_arg_int("x2", &x2))
+			break;
+		if (!pf_get_call_arg_int("y2", &y2))
+			break;
+		if (!pf_get_call_arg_int("x3", &x3))
+			break;
+		if (!pf_get_call_arg_int("y3", &y3))
+			break;
+		if (!pf_get_call_arg_int("x4", &x4))
+			break;
+		if (!pf_get_call_arg_int("y4", &y4))
 			break;
 		if (!pf_get_call_arg_int("srcImage", &src_image))
-			break;
-		if (!pf_get_call_arg_int("dstWidth", &dst_width))
-			break;
-		if (!pf_get_call_arg_int("dstHeight", &dst_height))
 			break;
 		if (!pf_get_call_arg_int("srcLeft", &src_left))
 			break;
 		if (!pf_get_call_arg_int("srcTop", &src_top))
 			break;
-		if (!pf_get_call_arg_int("alpha", &alpha))
+		if (!pf_get_call_arg_int("srcWidth", &src_left))
 			break;
-
-		src_img = s3i_int_to_image(src_image);
-		if (src_img == NULL)
-			break;
-		dst_img = s3i_int_to_image(dst_image);
-		if (dst_img == NULL)
-			break;
-
-		s3_draw_image_add(dst_img,
-				  dst_left,
-				  dst_top,
-				  dst_width,
-				  dst_height,
-				  src_img,
-				  src_left,
-				  src_top,
-				  alpha);
-
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_drawImageSub(void *p)
-{
-	int dst_image;
-	int dst_left;
-	int dst_top;
-	int src_image;
-	int dst_width;
-	int dst_height;
-	int src_left;
-	int src_top;
-	int alpha;
-	struct s3_image *src_img;
-	struct s3_image *dst_img;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("dstImage", &dst_image))
-			break;
-		if (!pf_get_call_arg_int("dstLeft", &dst_left))
-			break;
-		if (!pf_get_call_arg_int("dstTop", &dst_top))
-			break;
-		if (!pf_get_call_arg_int("srcImage", &src_image))
-			break;
-		if (!pf_get_call_arg_int("dstWidth", &dst_width))
-			break;
-		if (!pf_get_call_arg_int("dstHeight", &dst_height))
-			break;
-		if (!pf_get_call_arg_int("srcLeft", &src_left))
-			break;
-		if (!pf_get_call_arg_int("srcTop", &src_top))
+		if (!pf_get_call_arg_int("srcHeight", &src_top))
 			break;
 		if (!pf_get_call_arg_int("alpha", &alpha))
 			break;
-
-		src_img = s3i_int_to_image(src_image);
-		if (src_img == NULL)
-			break;
-		dst_img = s3i_int_to_image(dst_image);
-		if (dst_img == NULL)
-			break;
-
-		s3_draw_image_sub(dst_img,
-				  dst_left,
-				  dst_top,
-				  dst_width,
-				  dst_height,
-				  src_img,
-				  src_left,
-				  src_top,
-				  alpha);
-
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_drawImageDim(void *p)
-{
-	int dst_image;
-	int dst_left;
-	int dst_top;
-	int src_image;
-	int dst_width;
-	int dst_height;
-	int src_left;
-	int src_top;
-	int alpha;
-	struct s3_image *src_img;
-	struct s3_image *dst_img;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("dstImage", &dst_image))
-			break;
-		if (!pf_get_call_arg_int("dstLeft", &dst_left))
-			break;
-		if (!pf_get_call_arg_int("dstTop", &dst_top))
-			break;
-		if (!pf_get_call_arg_int("srcImage", &src_image))
-			break;
-		if (!pf_get_call_arg_int("dstWidth", &dst_width))
-			break;
-		if (!pf_get_call_arg_int("dstHeight", &dst_height))
-			break;
-		if (!pf_get_call_arg_int("srcLeft", &src_left))
-			break;
-		if (!pf_get_call_arg_int("srcTop", &src_top))
-			break;
-		if (!pf_get_call_arg_int("alpha", &alpha))
+		if (!pf_get_call_arg_int("blend", &blend))
 			break;
 
 		src_img = s3i_int_to_image(src_image);
@@ -3448,198 +3327,81 @@ Suika_drawImageDim(void *p)
 		if (dst_img == NULL)
 			break;
 
-		s3_draw_image_dim(dst_img,
-				  dst_left,
-				  dst_top,
-				  dst_width,
-				  dst_height,
-				  src_img,
-				  src_left,
-				  src_top,
-				  alpha);
-
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
+		switch (blend) {
+		case S3_BLEND_COPY:
+		case S3_BLEND_GLYPH:
+		case S3_BLEND_EMOJI:
+			/* Not supported. */
+			/* Fall-thru */
+		case S3_BLEND_ALPHA:
+			s3_draw_image_3d_alpha(dst_img,
+					       x1,
+					       y1,
+					       x2,
+					       y2,
+					       x3,
+					       y3,
+					       x4,
+					       y4,
+					       src_img,
+					       src_left,
+					       src_top,
+					       src_width,
+					       src_height,
+					       alpha);
 			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_drawImageGlyph(void *p)
-{
-	int dst_image;
-	int dst_left;
-	int dst_top;
-	int src_image;
-	int dst_width;
-	int dst_height;
-	int src_left;
-	int src_top;
-	int alpha;
-	struct s3_image *src_img;
-	struct s3_image *dst_img;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("dstImage", &dst_image))
+		case S3_BLEND_ADD:
+			s3_draw_image_3d_add(dst_img,
+					     x1,
+					     y1,
+					     x2,
+					     y2,
+					     x3,
+					     y3,
+					     x4,
+					     y4,
+					     src_img,
+					     src_left,
+					     src_top,
+					     src_width,
+					     src_height,
+					     alpha);
 			break;
-		if (!pf_get_call_arg_int("dstLeft", &dst_left))
+		case S3_BLEND_SUB:
+			s3_draw_image_3d_sub(dst_img,
+					     x1,
+					     y1,
+					     x2,
+					     y2,
+					     x3,
+					     y3,
+					     x4,
+					     y4,
+					     src_img,
+					     src_left,
+					     src_top,
+					     src_width,
+					     src_height,
+					     alpha);
 			break;
-		if (!pf_get_call_arg_int("dstTop", &dst_top))
+		case S3_BLEND_DIM:
+			s3_draw_image_3d_dim(dst_img,
+					     x1,
+					     y1,
+					     x2,
+					     y2,
+					     x3,
+					     y3,
+					     x4,
+					     y4,
+					     src_img,
+					     src_left,
+					     src_top,
+					     src_width,
+					     src_height,
+					     alpha);
 			break;
-		if (!pf_get_call_arg_int("srcImage", &src_image))
-			break;
-		if (!pf_get_call_arg_int("dstWidth", &dst_width))
-			break;
-		if (!pf_get_call_arg_int("dstHeight", &dst_height))
-			break;
-		if (!pf_get_call_arg_int("srcLeft", &src_left))
-			break;
-		if (!pf_get_call_arg_int("srcTop", &src_top))
-			break;
-		if (!pf_get_call_arg_int("alpha", &alpha))
-			break;
-
-		src_img = s3i_int_to_image(src_image);
-		if (src_img == NULL)
-			break;
-		dst_img = s3i_int_to_image(dst_image);
-		if (dst_img == NULL)
-			break;
-
-		s3_draw_image_glyph(dst_img,
-				    dst_left,
-				    dst_top,
-				    dst_width,
-				    dst_height,
-				    src_img,
-				    src_left,
-				    src_top,
-				    alpha);
-
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_drawImageEmoji(void *p)
-{
-	int dst_image;
-	int dst_left;
-	int dst_top;
-	int src_image;
-	int dst_width;
-	int dst_height;
-	int src_left;
-	int src_top;
-	int alpha;
-	struct s3_image *src_img;
-	struct s3_image *dst_img;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("dstImage", &dst_image))
-			break;
-		if (!pf_get_call_arg_int("dstLeft", &dst_left))
-			break;
-		if (!pf_get_call_arg_int("dstTop", &dst_top))
-			break;
-		if (!pf_get_call_arg_int("srcImage", &src_image))
-			break;
-		if (!pf_get_call_arg_int("dstWidth", &dst_width))
-			break;
-		if (!pf_get_call_arg_int("dstHeight", &dst_height))
-			break;
-		if (!pf_get_call_arg_int("srcLeft", &src_left))
-			break;
-		if (!pf_get_call_arg_int("srcTop", &src_top))
-			break;
-		if (!pf_get_call_arg_int("alpha", &alpha))
-			break;
-
-		src_img = s3i_int_to_image(src_image);
-		if (src_img == NULL)
-			break;
-		dst_img = s3i_int_to_image(dst_image);
-		if (dst_img == NULL)
-			break;
-
-		s3_draw_image_emoji(dst_img,
-				    dst_left,
-				    dst_top,
-				    dst_width,
-				    dst_height,
-				    src_img,
-				    src_left,
-				    src_top,
-				    alpha);
-
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_drawImageScale(void *p)
-{
-	int dst_image;
-	int dst_width;
-	int dst_height;
-	int dst_left;
-	int dst_top;
-	int src_image;
-	struct s3_image *src_img;
-	struct s3_image *dst_img;
-	bool ret;
-
-	ret = false;
-	do {
-		/* Get the argument. */
-		if (!pf_get_call_arg_int("dstImage", &dst_image))
-			break;
-		if (!pf_get_call_arg_int("dstWidth", &dst_width))
-			break;
-		if (!pf_get_call_arg_int("dstHeight", &dst_height))
-			break;
-		if (!pf_get_call_arg_int("dstLeft", &dst_left))
-			break;
-		if (!pf_get_call_arg_int("dstTop", &dst_top))
-			break;
-		if (!pf_get_call_arg_int("srcImage", &src_image))
-			break;
-
-		src_img = s3i_int_to_image(src_image);
-		if (src_img == NULL)
-			break;
-		dst_img = s3i_int_to_image(dst_image);
-		if (dst_img == NULL)
-			break;
-
-		s3_draw_image_scale(dst_img,
-				    dst_left,
-				    dst_top,
-				    dst_width,
-				    dst_height,
-				    src_img);
+		}
 
 		/* Set the return value. */
 		if (!pf_set_return_int(1))

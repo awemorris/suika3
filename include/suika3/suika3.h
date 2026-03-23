@@ -242,9 +242,27 @@
 /*
  * Blending mode.
  */
+
+/* Normal alpha blending. (dst_a = 255) */
 #define S3_BLEND_ALPHA		(0)
+
+/* Add alpha blending. */
 #define S3_BLEND_ADD		(1)
+
+/* Sub alpha blending. */
 #define S3_BLEND_SUB		(2)
+
+/* No blend. (dst_a = src_a) */
+#define S3_BLEND_COPY		(3)
+
+/* RGB 50% alpha blending. */
+#define S3_BLEND_DIM		(4)
+
+/* Alpha blending for normal glyphs. (dst_a = src_a > dst_a ? src_a : dst_a) */
+#define S3_BLEND_GLYPH		(5)
+
+/* Alpha blending for emoji glyphs. (dst_a = src_a > dst_a ? src_a : dst_a) */
+#define S3_BLEND_EMOJI		(6)
 
 /*
  * Fading descriptor index.
@@ -1045,115 +1063,41 @@ void s3_notify_image_update(
 	struct s3_image *image);
 
 /*
- * Copy an image to an image.
+ * Draw an image to an image.
  */
-void s3_draw_image_copy(
+void s3_draw_image(
 	struct s3_image *dst,
 	int dst_left,
 	int dst_top,
-	struct s3_image *src,
-	int dst_width,
-	int dst_height,
-	int src_left,
-	int src_top);
-
-/*
- * Draw an image to an image with alpha blending.
- */
-void s3_draw_image_alpha(
-	struct s3_image *dst,
-	int dst_left,
-	int dst_top,
-	int dst_width,
-	int dst_height,
 	struct s3_image *src,
 	int src_left,
 	int src_top,
-	int alpha);
+	int src_width,
+	int src_height,
+	int alpha,
+	int blend);
 
 /*
- * Draw an image to an image with add blending.
- */
-void s3_draw_image_add(
-	struct s3_image *dst,
-	int dst_left,
-	int dst_top,
-	int dst_width,
-	int dst_height,
-	struct s3_image *src,
-	int src_left,
-	int src_top,
-	int alpha);
-
-/*
- * Draw an image to an image with sub blending.
- */
-void s3_draw_image_sub(
-	struct s3_image *dst,
-	int dst_left,
-	int dst_top,
-	int dst_width,
-	int dst_height,
-	struct s3_image *src,
-	int src_left,
-	int src_top,
-	int alpha);
-
-/*
- * Draw an image to an image with sub blending.
- */
-void s3_draw_image_dim(
-	struct s3_image *dst,
-	int dst_left,
-	int dst_top,
-	int dst_width,
-	int dst_height,
-	struct s3_image *src,
-	int src_left,
-	int src_top,
-	int alpha);
-
-/*
- * Draw a glyph image to an image.
+ * Draw an image to an imag (3D).
  */
 void
-s3_draw_image_glyph(
+s3_draw_image_3d(
 	struct s3_image *dst,
-	int dst_left,
-	int dst_top,
-	int dst_width,
-	int dst_height,
+	int x1,
+	int y1,
+	int x2,
+	int y2,
+	int x3,
+	int y3,
+	int x4,
+	int y4,
 	struct s3_image *src,
 	int src_left,
 	int src_top,
-	int alpha);
-
-/*
- * Draw an emoji image to an image.
- */
-void
-s3_draw_image_emoji(
-	struct s3_image *dst,
-	int dst_left,
-	int dst_top,
-	int dst_width,
-	int dst_height,
-	struct s3_image *src,
-	int src_left,
-	int src_top,
-	int alpha);
-
-/*
- * Draw an image with scaling.
- */
-void
-s3_draw_image_scale(
-	struct s3_image *dst,
-	int virtual_dst_width,
-	int virtual_dst_height,
-	int virtual_dst_left,
-	int virtual_dst_top,
-	struct s3_image *src);
+	int src_width,
+	int src_height,
+	int alpha,
+	int blend);
 
 /*
  * Make a pixel value.

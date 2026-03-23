@@ -295,28 +295,47 @@ void s3_notify_image_update(
 }
 
 /*
- * Copy an image to an image.
+ * Draw an image to an image.
  */
 void
-s3_draw_image_copy(
+s3_draw_image(
 	struct s3_image *dst,
 	int dst_left,
 	int dst_top,
 	struct s3_image *src,
-	int dst_width,
-	int dst_height,
 	int src_left,
-	int src_top)
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha,
+	int blend)
 {
-	pf_draw_texture_copy(
-		dst->tex_id,
-		dst_left,
-		dst_top,
-		src->tex_id,
-		dst_width,
-		dst_height,
-		src_left,
-		src_top);
+	switch (blend) {
+	case S3_BLEND_COPY:
+		pf_draw_texture_copy(
+			dst->tex_id,
+			dst_left,
+			dst_top,
+			src->tex_id,
+			src_left,
+			src_top,
+			src_width,
+			src_height);
+		break;
+	case S3_BLEND_ALPHA:
+		pf_draw_texture_alpha(
+			dst->tex_id,
+			dst_left,
+			dst_top,
+			src->tex_id,
+			src_left,
+			src_top,
+			src_width,
+			src_height,
+			alpha)
+		break;
+		
+
 	pf_notify_texture_update(dst->tex_id);
 }
 
@@ -328,11 +347,11 @@ s3_draw_image_alpha(
 	struct s3_image *dst,
 	int dst_left,
 	int dst_top,
-	int dst_width,
-	int dst_height,
 	struct s3_image *src,
 	int src_left,
 	int src_top,
+	int src_width,
+	int src_height,
 	int alpha)
 {
 	pf_draw_texture_alpha(
@@ -340,10 +359,10 @@ s3_draw_image_alpha(
 		dst_left,
 		dst_top,
 		src->tex_id,
-		dst_width,
-		dst_height,
 		src_left,
 		src_top,
+		src_width,
+		src_height,
 		alpha);
 	pf_notify_texture_update(dst->tex_id);
 }
@@ -356,11 +375,11 @@ s3_draw_image_add(
 	struct s3_image *dst,
 	int dst_left,
 	int dst_top,
-	int dst_width,
-	int dst_height,
 	struct s3_image *src,
 	int src_left,
 	int src_top,
+	int src_width,
+	int src_height,
 	int alpha)
 {
 	pf_draw_texture_add(
@@ -368,10 +387,10 @@ s3_draw_image_add(
 		dst_left,
 		dst_top,
 		src->tex_id,
-		dst_width,
-		dst_height,
 		src_left,
 		src_top,
+		src_width,
+		src_height,
 		alpha);
 	pf_notify_texture_update(dst->tex_id);
 }
@@ -384,11 +403,11 @@ s3_draw_image_sub(
 	struct s3_image *dst,
 	int dst_left,
 	int dst_top,
-	int dst_width,
-	int dst_height,
 	struct s3_image *src,
 	int src_left,
 	int src_top,
+	int src_width,
+	int src_height,
 	int alpha)
 {
 	pf_draw_texture_sub(
@@ -396,10 +415,10 @@ s3_draw_image_sub(
 		dst_left,
 		dst_top,
 		src->tex_id,
-		dst_width,
-		dst_height,
 		src_left,
 		src_top,
+		src_width,
+		src_height,
 		alpha);
 	pf_notify_texture_update(dst->tex_id);
 }
@@ -412,11 +431,11 @@ s3_draw_image_dim(
 	struct s3_image *dst,
 	int dst_left,
 	int dst_top,
-	int dst_width,
-	int dst_height,
 	struct s3_image *src,
 	int src_left,
 	int src_top,
+	int src_width,
+	int src_height,
 	int alpha)
 {
 	pf_draw_texture_dim(
@@ -424,10 +443,10 @@ s3_draw_image_dim(
 		dst_left,
 		dst_top,
 		src->tex_id,
-		dst_width,
-		dst_height,
 		src_left,
 		src_top,
+		src_width,
+		src_height,
 		alpha);
 	pf_notify_texture_update(dst->tex_id);
 }
@@ -440,11 +459,11 @@ s3_draw_image_glyph(
 	struct s3_image *dst,
 	int dst_left,
 	int dst_top,
-	int dst_width,
-	int dst_height,
 	struct s3_image *src,
 	int src_left,
 	int src_top,
+	int src_width,
+	int src_height,
 	int alpha)
 {
 	pf_draw_texture_glyph(
@@ -452,10 +471,10 @@ s3_draw_image_glyph(
 		dst_left,
 		dst_top,
 		src->tex_id,
-		dst_width,
-		dst_height,
 		src_left,
 		src_top,
+		src_width,
+		src_height,
 		alpha);
 	pf_notify_texture_update(dst->tex_id);
 }
@@ -468,11 +487,11 @@ s3_draw_image_emoji(
 	struct s3_image *dst,
 	int dst_left,
 	int dst_top,
-	int dst_width,
-	int dst_height,
 	struct s3_image *src,
 	int src_left,
 	int src_top,
+	int src_width,
+	int src_height,
 	int alpha)
 {
 	pf_draw_texture_emoji(
@@ -480,33 +499,11 @@ s3_draw_image_emoji(
 		dst_left,
 		dst_top,
 		src->tex_id,
-		dst_width,
-		dst_height,
 		src_left,
 		src_top,
+		src_width,
+		src_height,
 		alpha);
-	pf_notify_texture_update(dst->tex_id);
-}
-
-/*
- * Draw an image with scaling.
- */
-void
-s3_draw_image_scale(
-	struct s3_image *dst,
-	int virtual_dst_width,
-	int virtual_dst_height,
-	int virtual_dst_left,
-	int virtual_dst_top,
-	struct s3_image *src)
-{
-	pf_draw_texture_scale(
-		dst->tex_id,
-		virtual_dst_width,
-		virtual_dst_height,
-		virtual_dst_left,
-		virtual_dst_top,
-		src->tex_id);
 	pf_notify_texture_update(dst->tex_id);
 }
 
@@ -531,8 +528,8 @@ s3_draw_image_3d_alpha(
 	int src_height,
 	int alpha)
 {
-	hal_draw_image_3d_add(
-		dst_image,
+	pf_draw_texture_3d_add(
+		dst_image->tex_id,
 		x1,
 		y1,
 		x2,
@@ -541,7 +538,7 @@ s3_draw_image_3d_alpha(
 		y3,
 		x4,
 		y4,
-		src_image,
+		src_image->tex_id,
 		src_left,
 		src_top,
 		src_width,

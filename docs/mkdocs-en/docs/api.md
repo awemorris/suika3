@@ -101,10 +101,8 @@ Suika3 API Reference
     * [Suika.getImageWidth()](#suikagetimagewidth)
     * [Suika.getImageHeight()](#suikagetimageheight)
     * [Suika.destroyImage()](#suikadestroyimage)
-    * [Suika.drawImageCopy()](#suikadrawimagecopy)
-    * [Suika.drawImageAlpha()](#suikadrawimagealpha)
-    * [Suika.drawImageAdd()](#suikadrawimageadd)
-    * [Suika.drawImageSub()](#suikadrawimagesub)
+    * [Suika.drawImage()](#suikadrawimage)
+    * [Suika.drawImage3D()](#suikadrawimage3d)
     * [Suika.makeColor()](#suikamakecolor)
     * [Suika.fillImageRect()](#suikafillimagerect)
 * Stage
@@ -1689,7 +1687,7 @@ No return.
 
 ---
 
-## Suika.drawImageCopy()
+## Suika.drawImage()
 
 Copy an image to another image (no blending).
 
@@ -1705,6 +1703,60 @@ Copy an image to another image (no blending).
 | dstHeight  | Integer | Height to draw.                  |
 | srcLeft    | Integer | X coordinate in source.          |
 | srcTop     | Integer | Y coordinate in source.          |
+| alpha      | Integer | 0-255                            |
+| blend      | Integer | Blending type.                   |
+
+### Blending Types
+
+| Type                | Description                        |
+|---------------------|------------------------------------|
+| Suika.BLEND_COPY    | Copy.                              |
+| Suika.BLEND_ALPHA   | Alpha blending.                    |
+| Suika.BLEND_ADD     | Add blending.                      |
+| Suika.BLEND_SUB     | Sub blending.                      |
+| Suika.BLEND_DIM     | RGB 50% alpha blending.            |
+| Suika.BLEND_GLYPH   | Alpha blending for normal glyphs.  |
+| Suika.BLEND_EMOJI   | Alpha blending for emoji glyphs.   |
+
+### Return
+
+No return.
+
+---
+
+## Suika.drawImage3D()
+
+Copy an image to another image (no blending).
+
+### Parameters (Dictionary)
+
+| Parameter  | Type    | Description                      |
+|------------|---------|----------------------------------|
+| dstImage   | Object  | Destination image.               |
+| x1         | Integer | x1 coordinate in destination.    |
+| y1         | Integer | y1 coordinate in destination.    |
+| x2         | Integer | x2 coordinate in destination.    |
+| y2         | Integer | y2 coordinate in destination.    |
+| x3         | Integer | x3 coordinate in destination.    |
+| y3         | Integer | y3 coordinate in destination.    |
+| x4         | Integer | x4 coordinate in destination.    |
+| y5         | Integer | y4 coordinate in destination.    |
+| srcImage   | Object  | Source image.                    |
+| srcLeft    | Integer | X coordinate in source.          |
+| srcTop     | Integer | Y coordinate in source.          |
+| srcWidth   | Integer | Width in source.                 |
+| srcHeight  | Integer | Height in source.                |
+| alpha      | Integer | 0-255                            |
+| blend      | Integer | Blending type.                   |
+
+### Blending Types
+
+| Type                | Description                        |
+|---------------------|------------------------------------|
+| Suika.BLEND_ALPHA   | Alpha blending.                    |
+| Suika.BLEND_ADD     | Add blending.                      |
+| Suika.BLEND_SUB     | Sub blending.                      |
+| Suika.BLEND_DIM     | RGB 50% alpha blending.            |
 
 ### Return
 
