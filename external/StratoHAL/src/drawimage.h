@@ -613,113 +613,6 @@ DRAW_IMAGE_MELT(
 }
 
 void
-DRAW_IMAGE_SCALE(
-	struct hal_image *dst_image,
-	int virtual_dst_width,
-	int virtual_dst_height,
-	int virtual_dst_left,
-	int virtual_dst_top,
-	struct hal_image *src_image)
-{
-	hal_pixel_t * RESTRICT dst_ptr;
-	hal_pixel_t * RESTRICT src_ptr;
-	float scale_x, scale_y;
-	hal_pixel_t src_pix, dst_pix;
-	float src_a, src_r, src_g, src_b, dst_a, dst_r, dst_g, dst_b;
-	int real_dst_width, real_dst_height;
-	int real_src_width, real_src_height;
-	int real_draw_left, real_draw_top, real_draw_width, real_draw_height;
-	int virtual_x, virtual_y;
-	int i, j;
-
-	assert(dst_image != NULL);
-	assert(src_image != NULL);
-
-	/* Get the destination size. */
-	real_dst_width = dst_image->width;
-	real_dst_height = dst_image->height;
-
-	/* Calc the scale. */
-	scale_x = (float)real_dst_width / (float)virtual_dst_width;
-	scale_y = (float)real_dst_height / (float)virtual_dst_height;
-
-	/* Get the source size. */
-	real_src_width = src_image->width;
-	real_src_height = src_image->height;
-
-	/* Calc the destination position and size. */
-	real_draw_left = (int)((float)virtual_dst_left * scale_x);
-	real_draw_top = (int)((float)virtual_dst_top * scale_y);
-	real_draw_width = (int)((float)real_src_width * scale_x);
-	real_draw_height = (int)((float)real_src_height * scale_y);
-
-	/* Get the pixel pointes. */
-	dst_ptr = dst_image->pixels;
-	src_ptr = src_image->pixels;
-
-	/* Draw. */
-	for (i = real_draw_top; i < real_draw_top + real_draw_height; i++) {
-		/* Clip by a destination Y. */
-		if (i < 0)
-			continue;
-		if (i >= real_dst_height)
-			continue;
-
-		/* Calc a source Y, and clip. */
-		virtual_y = (int)((float)i / scale_y) - virtual_dst_top;
-		if (virtual_y < 0)
-			continue;
-		if (virtual_y >= real_src_height)
-			continue;
-
-		for (j = real_draw_left; j < real_draw_left + real_draw_width;
-		     j++) {
-			/* Clip by a destination X. */
-			if (j < 0)
-				continue;
-			if (j >= real_dst_width)
-				continue;
-
-			/* Calc a source X, and clip. */
-			virtual_x = (int)((float)j / scale_x) - virtual_dst_left;
-			if (virtual_x < 0)
-				continue;
-			if (virtual_x >= real_src_width)
-				continue;
-
-			/* Get a source pixel. */
-			src_pix = src_ptr[real_src_width * virtual_y + virtual_x];
-
-			/* Get a destination pixel. */
-			dst_pix = dst_ptr[real_dst_width * i + j];
-
-			/* Calc alpha. */
-			src_a = (float)hal_get_pixel_a(src_pix) / 255.0f;
-			dst_a = 1.0f - src_a;
-
-			/* Multiply alpha to a source pixel. */
-			src_r = src_a * (float)((src_pix >> 16) & 0xff);
-			src_g = src_a * (float)((src_pix >> 8) & 0xff);
-			src_b = src_a * (float)(src_pix & 0xff);
-
-			/* Multiply alpha to a destination pixel. */
-			dst_r = dst_a * (float)((dst_pix >> 16) & 0xff);
-			dst_g = dst_a * (float)((dst_pix >> 8) & 0xff);
-			dst_b = dst_a * (float)(dst_pix & 0xff);
-
-			/* Store to the destination. */
-			dst_ptr[real_dst_width * i + j] =
-				0xff000000 |
-				((uint32_t)(src_r + dst_r) << 16) |
-				((uint32_t)(src_g + dst_g) << 8) |
-				(uint32_t)(src_b + dst_b);
-		}
-	}
-
-	hal_notify_image_update(dst_image);
-}
-
-void
 DRAW_IMAGE_3D_ALPHA(
 	struct hal_image *dst_image,
 	float x1,
@@ -780,8 +673,8 @@ DRAW_IMAGE_3D_ALPHA(
 			continue;
 		if (min_x < 0)
 			min_x = 0;
-		if (max_x > dw)
-			max_x = dw;
+		if (max_x >= dw)
+			max_x = dw - 1;
 
 		tx = sc_min_tx[y];
 		ty = sc_min_ty[y];
@@ -894,8 +787,8 @@ DRAW_IMAGE_3D_ADD(
 			continue;
 		if (min_x < 0)
 			min_x = 0;
-		if (max_x > dw)
-			max_x = dw;
+		if (max_x >= dw)
+			max_x = dw - 1;
 
 		tx = sc_min_tx[y];
 		ty = sc_min_ty[y];
@@ -908,11 +801,11 @@ DRAW_IMAGE_3D_ADD(
 		else
 			ty_inc = 0;
 
-		for (x = sc_min_x[y]; x < sc_max_x[y]; x++) {
+		for (x = min_x; x < max_x; x++) {
 			if (tx >= sw)
-				tx = src_image->width - 1;
+				tx = sw - 1;
 			if (ty >= sh)
-				ty = src_image->height - 1;
+				ty = sh - 1;
 
 			/* Get the source and destination pixel values. */
 			dst_pix	= dst_pixel[y * dw + x];
@@ -1018,8 +911,8 @@ DRAW_IMAGE_3D_SUB(
 			continue;
 		if (min_x < 0)
 			min_x = 0;
-		if (max_x > dw)
-			max_x = dw;
+		if (max_x >= dw)
+			max_x = dw - 1;
 
 		tx = sc_min_tx[y];
 		ty = sc_min_ty[y];
@@ -1032,11 +925,11 @@ DRAW_IMAGE_3D_SUB(
 		else
 			ty_inc = 0;
 
-		for (x = sc_min_x[y]; x < sc_max_x[y]; x++) {
+		for (x = min_x; x < max_x; x++) {
 			if (tx >= sw)
-				tx = src_image->width - 1;
+				tx = sw - 1;
 			if (ty >= sh)
-				ty = src_image->height - 1;
+				ty = sh - 1;
 
 			/* Get the source and destination pixel values. */
 			dst_pix	= dst_pixel[y * dw + x];
@@ -1141,8 +1034,8 @@ DRAW_IMAGE_3D_DIM(
 			continue;
 		if (min_x < 0)
 			min_x = 0;
-		if (max_x > dw)
-			max_x = dw;
+		if (max_x >= dw)
+			max_x = dw - 1;
 
 		tx = sc_min_tx[y];
 		ty = sc_min_ty[y];
@@ -1155,11 +1048,11 @@ DRAW_IMAGE_3D_DIM(
 		else
 			ty_inc = 0;
 
-		for (x = sc_min_x[y]; x < sc_max_x[y]; x++) {
+		for (x = min_x; x < max_x; x++) {
 			if (tx >= sw)
-				tx = src_image->width - 1;
+				tx = sw - 1;
 			if (ty >= sh)
-				ty = src_image->height - 1;
+				ty = sh - 1;
 
 			/* Get the source and destination pixel values. */
 			dst_pix	= dst_pixel[y * dw + x];

@@ -859,9 +859,36 @@ scanline_edge(
 {
 	int y_start, y_end, y;
 
-	/* Ignore horizontal edges */
-	if (y1 == y2)
+	/* Horizontal edge. */
+	if (y1 == y2) {
+		y = (int)lroundf(y1);
+		if (y < 0 || y >= SC_LINES)
+			return;
+		if (x1 < x2) {
+			if (x1 < sc_min_x[y]) {
+				sc_min_x[y]  = x1;
+				sc_min_tx[y] = tx1;
+				sc_min_ty[y] = ty1;
+			}
+			if (x2 > sc_max_x[y]) {
+				sc_max_x[y]  = x2;
+				sc_max_tx[y] = tx2;
+				sc_max_ty[y] = ty2;
+			}
+		} else {
+			if (x2 < sc_min_x[y]) {
+				sc_min_x[y]  = x2;
+				sc_min_tx[y] = tx2;
+				sc_min_ty[y] = ty2;
+			}
+			if (x1 > sc_max_x[y]) {
+				sc_max_x[y]  = x1;
+				sc_max_tx[y] = tx1;
+				sc_max_ty[y] = ty2;
+			}
+		}
 		return;
+	}
 
 	/* Make y1 <= y2 */
 	if (y1 > y2) {
@@ -872,19 +899,32 @@ scanline_edge(
 		tmp = ty1; ty1 = ty2; ty2 = tmp;
 	}
 
-	/*
-	 * Use half-open interval [y_start, y_end)
-	 * to avoid double-hit at shared vertices.
-	 */
-	y_start = (int)ceilf(y1);
+	y_start = (int)floorf(y1);
 	y_end   = (int)ceilf(y2);
-
 	if (y_start < 0)
 		y_start = 0;
-	if (y_end > SC_LINES)
-		y_end = SC_LINES;
+	if (y_end >= SC_LINES)
+		y_end = SC_LINES - 1;
 
-	for (y = y_start; y < y_end; y++) {
+	/* Vertical edge. */
+	if (x1 == x2) {
+		for (y = y_start; y <= y_end; y++) {
+			if (x1 < sc_min_x[y]) {
+				sc_min_x[y]  = x1;
+				sc_min_tx[y] = tx1;
+				sc_min_ty[y] = ty1;
+			}
+			if (x1 > sc_max_x[y]) {
+				sc_max_x[y]  = x1;
+				sc_max_tx[y] = tx1;
+				sc_max_ty[y] = ty1;
+			}
+		}
+		return;
+	}
+
+	/* Non horizontal, non vertical. */
+	for (y = y_start; y <= y_end; y++) {
 		float t;
 		float x, tx, ty;
 		float ix, itx, ity;
@@ -897,18 +937,15 @@ scanline_edge(
 		ty = ty1 + (ty2 - ty1) * t;
 
 		ix  = lroundf(x);
-		itx = lroundf(tx);
-		ity = lroundf(ty);
-
 		if (ix < sc_min_x[y]) {
 			sc_min_x[y]  = ix;
-			sc_min_tx[y] = itx;
-			sc_min_ty[y] = ity;
+			sc_min_tx[y] = tx;
+			sc_min_ty[y] = ty;
 		}
 		if (ix > sc_max_x[y]) {
 			sc_max_x[y]  = ix;
-			sc_max_tx[y] = itx;
-			sc_max_ty[y] = ity;
+			sc_max_tx[y] = tx;
+			sc_max_ty[y] = ty;
 		}
 	}
 }
