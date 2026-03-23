@@ -1995,10 +1995,8 @@ process_button_render_generic(
 		if (b->rt.img_idle != NULL)
 			render_image_helper(b->rt.img_idle, b->bid);
 	} else {
-		struct s3_image *img;
-		img = b->rt.img_hover != NULL ? b->rt.img_hover : b->rt.img_idle;
-		if (img != NULL)
-			render_image_helper(img, b->bid);
+		if (b->rt.img_hover != NULL)
+			render_image_helper(b->rt.img_hover, b->bid);
 	}
 }
 
@@ -3334,7 +3332,7 @@ render_image_helper(
 	alpha = (int)(((float)s3_get_layer_alpha(layer) / 255.0f) * (cur_alpha / 255.0f) * 255.0f);
 
 	/* If 3D. */
-	if (rot != 0 ||
+	if (rot != 0.0f ||
 	    sx != 1.0f ||
 	    sy != 1.0f) {
 		float x1 = 0;
