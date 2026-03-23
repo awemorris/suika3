@@ -214,8 +214,8 @@ extern int conf_choose_y[S3_CHOOSEBOX_COUNT];
 extern int conf_choose_margin_top[S3_CHOOSEBOX_COUNT];
 
 /* Anime */
-extern char *conf_choose_focus_anime[S3_CHOOSEBOX_COUNT];
-extern char *conf_choose_unfocus_anime[S3_CHOOSEBOX_COUNT];
+extern char *conf_choose_idle_anime[S3_CHOOSEBOX_COUNT];
+extern char *conf_choose_hover_anime[S3_CHOOSEBOX_COUNT];
 
 /*
  * Save Data Settings

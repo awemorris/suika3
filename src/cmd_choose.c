@@ -127,6 +127,7 @@ static void process_main_input(void);
 static int get_pointed_index(void);
 static void play_se(const char *file);
 static void run_anime(int unfocus_index, int focus_index);
+static void set_choose_call_arg(int bid);
 static bool cleanup(void);
 
 /*
@@ -598,12 +599,34 @@ run_anime(
 	int focus_index)
 {
 	/* Anime for a choose box to be unfocused. */
-	if (unfocus_index != -1 && conf_choose_unfocus_anime[unfocus_index] != NULL)
-		s3_load_anime_from_file(conf_choose_unfocus_anime[unfocus_index], NULL, NULL);
+	if (unfocus_index != -1 && conf_choose_idle_anime[unfocus_index] != NULL) {
+		set_choose_call_arg(unfocus_index);
+		s3_load_anime_from_file(conf_choose_idle_anime[unfocus_index], NULL, NULL);
+	}
 
 	/* Anime for a choose box to be focused. */
-	if (focus_index != -1 && conf_choose_focus_anime[focus_index] != NULL)
-		s3_load_anime_from_file(conf_choose_focus_anime[focus_index], NULL, NULL);
+	if (focus_index != -1 && conf_choose_hover_anime[focus_index] != NULL) {
+		set_choose_call_arg(focus_index);
+		s3_load_anime_from_file(conf_choose_hover_anime[focus_index], NULL, NULL);
+	}
+}
+
+/* Set call arguments for an anime. */
+static void
+set_choose_call_arg(
+	int index)
+{
+	char layer_idle[32], layer_hover[32];
+	int i;
+
+	snprintf(layer_idle, sizeof(layer_idle), "choose%d-idle", index + 1);
+	snprintf(layer_hover, sizeof(layer_hover), "choose%d-hover", index + 1);
+
+	s3_set_call_argument(0, layer_idle);
+	s3_set_call_argument(1, layer_hover);
+
+ 	for (i = 2; i < S3_CALL_ARGS; i++)
+		s3_set_call_argument(i, NULL);
 }
 
 /* Cleanup. */

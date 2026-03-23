@@ -1,21 +1,20 @@
 [chapter name="Chapter 1"]
 
-[bgm file="bgm/piano.ogg"]
+[bgm file="bgm/afternoon1.ogg"]
 
 [bg file="bg/school.png" time="0.5"]
 
 [ch center="ch/midori/midori-normal.png" time="0.5" fade="normal"]
 
-[text name="Midori" voice="voice/001.ogg" text="Let me introduce our new Active Hamburger menu for mobile phones!"]
+[text name="Midori" text="Choose your favorite spring blossom."]
+
+[choose name="result"
+  text1="Sakura"
+  text2="Ume"
+  text3="Kobushi"
+]
 
 [ch center="ch/midori/midori-happy.png" time="0.5" fade="normal"]
 [move time="1.0" center-x="r-250" accel="deaccel"]
 
-[text name="Midori" voice="voice/002.ogg" text="The hamburger menu appears for a short time when you tap the screen."]
-[text name="Midori" voice="voice/003.ogg" text="A menu is shown when the hamburger menu is clicked."]
-[text name="Midori" voice="voice/004.ogg" text="Each menu item can be animated by a CSS-like description."]
-
-[move time="1.0" center-x="r250" accel="deaccel"]
-[ch center="ch/midori/midori-positive.png" time="0.5" fade="normal"]
-
-[text name="Midori" voice="voice/005.ogg" text="Thank you for taking time. Have a nice day!"]
+[text name="Midori" text="You choose ${result}!"]

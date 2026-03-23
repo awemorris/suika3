@@ -1,0 +1,86 @@
+#
+# Choose Box Hover Anime
+#
+# Parameters
+#   $0 : choose<N>-idle
+#   $1 : choose<N>-hover
+#
+
+scale {
+    layer:  $1;
+    start:  0.0;
+    end:    0.3;
+    from-x: +0;
+    from-y: +0;
+    from-a: 255;
+    from-scale-x: 1.0;
+    from-scale-y: 1.0;
+    from-rotate: 0.0;
+    to-x:   +0;
+    to-y:   +0;
+    to-a:   255;
+    to-scale-x: 1.0;
+    to-scale-y: 1.0;
+    to-rotate: 2.0;
+    center-x: 440;
+    center-y: 40;
+}
+scale {
+    layer:  $1;
+    start:  0.3;
+    end:    0.6;
+    from-x: +0;
+    from-y: +0;
+    from-a: 255;
+    from-scale-x: 1.0;
+    from-scale-y: 1.0;
+    from-rotate: 2.0;
+    to-x:   +0;
+    to-y:   +0;
+    to-a:   255;
+    to-scale-x: 1.0;
+    to-scale-y: 1.0;
+    to-rotate: 0.0;
+    center-x: 440;
+    center-y: 40;
+}
+scale {
+    layer:  $1;
+    start:  0.6;
+    end:    0.9;
+    from-x: +0;
+    from-y: +0;
+    from-a: 255;
+    from-scale-x: 1.0;
+    from-scale-y: 1.0;
+    from-rotate: 0.0;
+    to-x:   +0;
+    to-y:   +0;
+    to-a:   255;
+    to-scale-x: 1.0;
+    to-scale-y: 1.0;
+    to-rotate: -2.0;
+    center-x: 440;
+    center-y: 40;
+}
+scale {
+    layer:  $1;
+    start:  0.9;
+    end:    1.2;
+    from-x: +0;
+    from-y: +0;
+    from-a: 255;
+    from-scale-x: 1.0;
+    from-scale-y: 1.0;
+    from-rotate: -2.0;
+    to-x:   +0;
+    to-y:   +0;
+    to-a:   255;
+    to-scale-x: 1.0;
+    to-scale-y: 1.0;
+    to-rotate: 0.0;
+    center-x: 440;
+    center-y: 40;
+
+    loop: 0.0;
+}

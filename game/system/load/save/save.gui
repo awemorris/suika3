@@ -1,0 +1,166 @@
+#
+# Save Menu GUI
+#
+
+# Basic settings for this GUI.
+global {
+    # Fading-in time in seconds.
+    fadein: 0.1;
+
+    # Fading-out time in seconds.
+    fadeout: 0.2;
+
+    # Cancel on click on margin.
+    clickcancel: yes;
+
+    # Cancel on ESC key.
+    escapecancel: yes;
+
+    # Sound effect on cancel.
+    cancelse: system/save/click.ogg;
+
+    # Save slots per page.
+    saveslots: 4;
+}
+
+BASE {
+    id: 32;
+    type: noaction;
+    x: 0;
+    y: 0;
+    image-idle: system/save/save-base.png;
+}
+
+ITEM1 {
+    id: 1;
+    type: save;
+    index: 0;
+    x: 39;
+    y: 99;
+    image-idle: system/save/save-item-idle.png;
+    image-hover: system/save/save-item-hover.png;
+
+    index-x: 10;
+    index-y: 0;
+    date-x: 60;
+    date-y: 0;
+    thumb-x: 27;
+    thumb-y: 77;
+    chapter-x: 260;
+    chapter-y: 48;
+    msg-x: 260;
+    msg-y: 96;
+}
+
+ITEM2 {
+    id: 2;
+    type: save;
+    index: 1;
+    x: 658;
+    y: 99;
+    image-idle: system/save/save-item-idle.png;
+    image-hover: system/save/save-item-hover.png;
+
+    index-x: 10;
+    index-y: 0;
+    date-x: 60;
+    date-y: 0;
+    thumb-x: 27;
+    thumb-y: 77;
+    chapter-x: 260;
+    chapter-y: 48;
+    msg-x: 260;
+    msg-y: 96;
+}
+
+ITEM3 {
+    id: 3;
+    type: save;
+    index: 2;
+    x: 39;
+    y: 374;
+    image-idle: system/save/save-item-idle.png;
+    image-hover: system/save/save-item-hover.png;
+
+    index-x: 10;
+    index-y: 0;
+    date-x: 60;
+    date-y: 0;
+    thumb-x: 27;
+    thumb-y: 77;
+    chapter-x: 260;
+    chapter-y: 48;
+    msg-x: 260;
+    msg-y: 96;
+}
+
+ITEM4 {
+    id: 4;
+    type: save;
+    index: 3;
+    x: 658;
+    y: 374;
+    image-idle: system/save/save-item-idle.png;
+    image-hover: system/save/save-item-hover.png;
+
+    index-x: 10;
+    index-y: 0;
+    date-x: 60;
+    date-y: 0;
+    thumb-x: 27;
+    thumb-y: 77;
+    chapter-x: 260;
+    chapter-y: 48;
+    msg-x: 260;
+    msg-y: 96;
+}
+
+PAGE1 {
+    id: 5;
+    type: savepage;
+    index: 0;
+    x: 365;
+    y: 643;
+    image-idle: system/save/save-page-1.png;
+    image-hover: system/save/save-page-1.png;
+}
+
+PAGE2 {
+    id: 6;
+    type: savepage;
+    index: 1;
+    x: 480;
+    y: 643;
+    image-idle: system/save/save-page-2.png;
+    image-hover: system/save/save-page-2.png;
+}
+
+PAGE3 {
+    id: 7;
+    type: savepage;
+    index: 2;
+    x: 599;
+    y: 643;
+    image-idle: system/save/save-page-3.png;
+    image-hover: system/save/save-page-3.png;
+}
+
+PAGE4 {
+    id: 8;
+    type: savepage;
+    index: 3;
+    x: 718;
+    y: 640;
+    image-idle: system/save/save-page-4.png;
+    image-hover: system/save/save-page-4.png;
+}
+
+PAGE5 {
+    id: 9;
+    type: savepage;
+    index: 4;
+    x: 838;
+    y: 639;
+    image-idle: system/save/save-page-5.png;
+    image-hover: system/save/save-page-5.png;
+}
