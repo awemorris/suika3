@@ -454,8 +454,8 @@ process_main_input(void)
 		/* Avoid the first frame. */
 		if (!is_first_frame) {
 			play_se(s3_is_mouse_left_clicked() ? conf_choose_click_se : conf_choose_change_se);
-			run_anime(old_pointed_index, new_pointed_index);
 		}
+		run_anime(old_pointed_index, new_pointed_index);
 	}
 
 	/* If previously an item was pointed, and currently no item is pointed. */
