@@ -842,7 +842,7 @@ scanline_conversion(
 	scanline_edge(x1, y1, tx1, ty1, x2, y2, tx2, ty2);
 	scanline_edge(x2, y2, tx2, ty2, x3, y3, tx3, ty3);
 	scanline_edge(x3, y3, tx3, ty3, x1, y1, tx1, ty1);
-	scanline_edge(x2, y2, tx2, ty2, x3, y3, tx3, ty3);
+//	scanline_edge(x2, y2, tx2, ty2, x3, y3, tx3, ty3);
 	scanline_edge(x3, y3, tx3, ty3, x4, y4, tx4, ty4);
 	scanline_edge(x4, y4, tx4, ty4, x2, y2, tx2, ty2);
 }

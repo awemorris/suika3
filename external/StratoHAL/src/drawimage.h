@@ -738,7 +738,7 @@ DRAW_IMAGE_3D_ALPHA(
 	int alpha)
 {
 	int x, y;
-	int sw, dw, dst_y_max;
+	int sw, sh, dw, dst_y_max;
 	uint32_t *dst_pixel, *src_pixel;
 	uint32_t src_pix, dst_pix;
 	float a, src_r, src_g, src_b, src_a, dst_r, dst_g, dst_b, dst_a;
@@ -762,6 +762,7 @@ DRAW_IMAGE_3D_ALPHA(
 
 	dw = dst_image->width;
 	sw = src_image->width;
+	sh = src_image->height;
 	dst_pixel = dst_image->pixels;
 	src_pixel = src_image->pixels;
 	dst_y_max = (dst_image->height > SC_LINES) ? SC_LINES : dst_image->height;
@@ -784,10 +785,21 @@ DRAW_IMAGE_3D_ALPHA(
 
 		tx = sc_min_tx[y];
 		ty = sc_min_ty[y];
-		tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / (sc_max_x[y] - sc_min_x[y]);
-		ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / (sc_max_x[y] - sc_min_x[y]);
+		if (sc_max_x[y] - sc_min_x[y] != 0)
+			tx_inc = (float)(sc_max_tx[y] - sc_min_tx[y]) / (float)(sc_max_x[y] - sc_min_x[y]);
+		else
+			tx_inc = 0;
+		if (sc_max_x[y] - sc_min_x[y] != 0)
+			ty_inc = (float)(sc_max_ty[y] - sc_min_ty[y]) / (float)(sc_max_x[y] - sc_min_x[y]);
+		else
+			ty_inc = 0;
 
 		for (x = min_x; x <= max_x; x++) {
+			if (tx >= sw)
+				tx = src_image->width - 1;
+			if (ty >= sh)
+				ty = src_image->height - 1;
+
 			/* Get the source and destination pixel values. */
 			dst_pix	= dst_pixel[y * dw + x];
 			src_pix	= src_pixel[(int)ty * sw + (int)tx];
@@ -838,7 +850,7 @@ DRAW_IMAGE_3D_ADD(
 	int alpha)
 {
 	int x, y;
-	int sw, dw, dst_y_max;
+	int sw, sh, dw, dst_y_max;
 	uint32_t *dst_pixel, *src_pixel;
 	uint32_t src_pix, dst_pix;
 	uint32_t add_r, add_g, add_b;
@@ -864,18 +876,44 @@ DRAW_IMAGE_3D_ADD(
 
 	dw = dst_image->width;
 	sw = src_image->width;
+	sh = src_image->height;
 	dst_pixel = dst_image->pixels;
 	src_pixel = src_image->pixels;
 	dst_y_max = (dst_image->height > SC_LINES) ? SC_LINES : dst_image->height;
 	a = (float)alpha / 255.0f;
 
 	for (y = 0; y < dst_y_max; y++) {
-		float tx = sc_min_tx[y];
-		float ty = sc_min_ty[y];
-		float tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / (sc_max_x[y] - sc_min_x[y]);
-		float ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / (sc_max_x[y] - sc_min_x[y]);
+		int min_x, max_x;
+		float tx, ty, tx_inc, ty_inc;
+
+		min_x = sc_min_x[y];
+		max_x = sc_max_x[y];
+		if (min_x == INT_MAX)
+			continue;
+		if (max_x == INT_MIN)
+			continue;
+		if (min_x < 0)
+			min_x = 0;
+		if (max_x > dw)
+			max_x = dw;
+
+		tx = sc_min_tx[y];
+		ty = sc_min_ty[y];
+		if (sc_max_x[y] - sc_min_x[y] != 0)
+			tx_inc = (float)(sc_max_tx[y] - sc_min_tx[y]) / (float)(sc_max_x[y] - sc_min_x[y]);
+		else
+			tx_inc = 0;
+		if (sc_max_x[y] - sc_min_x[y] != 0)
+			ty_inc = (float)(sc_max_ty[y] - sc_min_ty[y]) / (float)(sc_max_x[y] - sc_min_x[y]);
+		else
+			ty_inc = 0;
 
 		for (x = sc_min_x[y]; x < sc_max_x[y]; x++) {
+			if (tx >= sw)
+				tx = src_image->width - 1;
+			if (ty >= sh)
+				ty = src_image->height - 1;
+
 			/* Get the source and destination pixel values. */
 			dst_pix	= dst_pixel[y * dw + x];
 			src_pix	= src_pixel[(int)ty * sw + (int)tx];
@@ -936,7 +974,7 @@ DRAW_IMAGE_3D_SUB(
 	int alpha)
 {
 	int x, y;
-	int sw, dw, dst_y_max;
+	int sw, sh, dw, dst_y_max;
 	uint32_t *dst_pixel, *src_pixel;
 	uint32_t src_pix, dst_pix;
 	uint32_t add_r, add_g, add_b;
@@ -962,18 +1000,44 @@ DRAW_IMAGE_3D_SUB(
 
 	dw = dst_image->width;
 	sw = src_image->width;
+	sh = src_image->height;
 	dst_pixel = dst_image->pixels;
 	src_pixel = src_image->pixels;
 	dst_y_max = (dst_image->height > SC_LINES) ? SC_LINES : dst_image->height;
 	a = (float)alpha / 255.0f;
 
 	for (y = 0; y < dst_y_max; y++) {
-		float tx = sc_min_tx[y];
-		float ty = sc_min_ty[y];
-		float tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / (sc_max_x[y] - sc_min_x[y]);
-		float ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / (sc_max_x[y] - sc_min_x[y]);
+		int min_x, max_x;
+		float tx, ty, tx_inc, ty_inc;
+
+		min_x = sc_min_x[y];
+		max_x = sc_max_x[y];
+		if (min_x == INT_MAX)
+			continue;
+		if (max_x == INT_MIN)
+			continue;
+		if (min_x < 0)
+			min_x = 0;
+		if (max_x > dw)
+			max_x = dw;
+
+		tx = sc_min_tx[y];
+		ty = sc_min_ty[y];
+		if (sc_max_x[y] - sc_min_x[y] != 0)
+			tx_inc = (float)(sc_max_tx[y] - sc_min_tx[y]) / (float)(sc_max_x[y] - sc_min_x[y]);
+		else
+			tx_inc = 0;
+		if (sc_max_x[y] - sc_min_x[y] != 0)
+			ty_inc = (float)(sc_max_ty[y] - sc_min_ty[y]) / (float)(sc_max_x[y] - sc_min_x[y]);
+		else
+			ty_inc = 0;
 
 		for (x = sc_min_x[y]; x < sc_max_x[y]; x++) {
+			if (tx >= sw)
+				tx = src_image->width - 1;
+			if (ty >= sh)
+				ty = src_image->height - 1;
+
 			/* Get the source and destination pixel values. */
 			dst_pix	= dst_pixel[y * dw + x];
 			src_pix	= src_pixel[(int)ty * sw + (int)tx];
@@ -1034,7 +1098,7 @@ DRAW_IMAGE_3D_DIM(
 	int alpha)
 {
 	int x, y;
-	int sw, dw, dst_y_max;
+	int sw, sh, dw, dst_y_max;
 	uint32_t *dst_pixel, *src_pixel;
 	uint32_t src_pix, dst_pix;
 	uint32_t add_r, add_g, add_b;
@@ -1059,18 +1123,44 @@ DRAW_IMAGE_3D_DIM(
 
 	dw = dst_image->width;
 	sw = src_image->width;
+	sh = src_image->height;
 	dst_pixel = dst_image->pixels;
 	src_pixel = src_image->pixels;
 	dst_y_max = (dst_image->height > SC_LINES) ? SC_LINES : dst_image->height;
 	a = (float)alpha / 255.0f;
 
 	for (y = 0; y < dst_y_max; y++) {
-		float tx = sc_min_tx[y];
-		float ty = sc_min_ty[y];
-		float tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / (sc_max_x[y] - sc_min_x[y]);
-		float ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / (sc_max_x[y] - sc_min_x[y]);
+		int min_x, max_x;
+		float tx, ty, tx_inc, ty_inc;
+
+		min_x = sc_min_x[y];
+		max_x = sc_max_x[y];
+		if (min_x == INT_MAX)
+			continue;
+		if (max_x == INT_MIN)
+			continue;
+		if (min_x < 0)
+			min_x = 0;
+		if (max_x > dw)
+			max_x = dw;
+
+		tx = sc_min_tx[y];
+		ty = sc_min_ty[y];
+		if (sc_max_x[y] - sc_min_x[y] != 0)
+			tx_inc = (float)(sc_max_tx[y] - sc_min_tx[y]) / (float)(sc_max_x[y] - sc_min_x[y]);
+		else
+			tx_inc = 0;
+		if (sc_max_x[y] - sc_min_x[y] != 0)
+			ty_inc = (float)(sc_max_ty[y] - sc_min_ty[y]) / (float)(sc_max_x[y] - sc_min_x[y]);
+		else
+			ty_inc = 0;
 
 		for (x = sc_min_x[y]; x < sc_max_x[y]; x++) {
+			if (tx >= sw)
+				tx = src_image->width - 1;
+			if (ty >= sh)
+				ty = src_image->height - 1;
+
 			/* Get the source and destination pixel values. */
 			dst_pix	= dst_pixel[y * dw + x];
 			src_pix	= src_pixel[(int)ty * sw + (int)tx];
