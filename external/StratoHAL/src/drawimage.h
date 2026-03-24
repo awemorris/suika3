@@ -678,24 +678,36 @@ DRAW_IMAGE_3D_ALPHA(
 
 		tx = sc_min_tx[y];
 		ty = sc_min_ty[y];
-		if (sc_max_x[y] - sc_min_x[y] != 0)
+		if (sc_max_x[y] - sc_min_x[y] != 0) {
 			tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / (sc_max_x[y] - sc_min_x[y]);
-		else
-			tx_inc = 0;
-		if (sc_max_x[y] - sc_min_x[y] != 0)
 			ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / (sc_max_x[y] - sc_min_x[y]);
-		else
+		} else {
+			tx_inc = 0;
 			ty_inc = 0;
+		}
 
 		for (x = min_x; x <= max_x; x++) {
-			if (tx >= sw)
-				tx = src_image->width - 1;
-			if (ty >= sh)
-				ty = src_image->height - 1;
+			/* Clip by destination. */
+			if (x < 0)
+				continue;
+			if (x >= dw)
+				break;
 
-			/* Get the source and destination pixel values. */
-			dst_pix	= dst_pixel[y * dw + x];
+			/* Wrap texture sampling. */
+			if (tx < 0)
+				tx = 0;
+			if (tx >= sw)
+				tx = sw - 1;
+			if (ty < 0)
+				ty = 0;
+			if (ty >= sh)
+				ty = sh - 1;
+
+			/* Sample the texture. */
 			src_pix	= src_pixel[(int)ty * sw + (int)tx];
+
+			/* Get the destination pixel value for blending. */
+			dst_pix	= dst_pixel[y * dw + x];
 
 			/* Calc alpha values. */
 			src_a = a * ((float)hal_get_pixel_a(src_pix) / 255.0f);
@@ -792,24 +804,36 @@ DRAW_IMAGE_3D_ADD(
 
 		tx = sc_min_tx[y];
 		ty = sc_min_ty[y];
-		if (sc_max_x[y] - sc_min_x[y] != 0)
+		if (sc_max_x[y] - sc_min_x[y] != 0) {
 			tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / (sc_max_x[y] - sc_min_x[y]);
-		else
-			tx_inc = 0;
-		if (sc_max_x[y] - sc_min_x[y] != 0)
 			ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / (sc_max_x[y] - sc_min_x[y]);
-		else
+		} else {
+			tx_inc = 0;
 			ty_inc = 0;
+		}
 
 		for (x = min_x; x < max_x; x++) {
+			/* Clip by destination. */
+			if (x < 0)
+				continue;
+			if (x >= dw)
+				break;
+
+			/* Wrap texture sampling. */
+			if (tx < 0)
+				tx = 0;
 			if (tx >= sw)
 				tx = sw - 1;
+			if (ty < 0)
+				ty = 0;
 			if (ty >= sh)
 				ty = sh - 1;
 
-			/* Get the source and destination pixel values. */
-			dst_pix	= dst_pixel[y * dw + x];
+			/* Sample the texture. */
 			src_pix	= src_pixel[(int)ty * sw + (int)tx];
+
+			/* Get the destination pixel value for blending. */
+			dst_pix	= dst_pixel[y * dw + x];
 
 			/* Calc alpha values. */
 			src_a = a * ((float)hal_get_pixel_a(src_pix) / 255.0f);
@@ -916,24 +940,36 @@ DRAW_IMAGE_3D_SUB(
 
 		tx = sc_min_tx[y];
 		ty = sc_min_ty[y];
-		if (sc_max_x[y] - sc_min_x[y] != 0)
+		if (sc_max_x[y] - sc_min_x[y] != 0) {
 			tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / (sc_max_x[y] - sc_min_x[y]);
-		else
-			tx_inc = 0;
-		if (sc_max_x[y] - sc_min_x[y] != 0)
 			ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / (sc_max_x[y] - sc_min_x[y]);
-		else
+		} else {
+			tx_inc = 0;
 			ty_inc = 0;
+		}
 
 		for (x = min_x; x < max_x; x++) {
+			/* Clip by destination. */
+			if (x < 0)
+				continue;
+			if (x >= dw)
+				break;
+
+			/* Wrap texture sampling. */
+			if (tx < 0)
+				tx = 0;
 			if (tx >= sw)
 				tx = sw - 1;
+			if (ty < 0)
+				ty = 0;
 			if (ty >= sh)
 				ty = sh - 1;
 
-			/* Get the source and destination pixel values. */
-			dst_pix	= dst_pixel[y * dw + x];
+			/* Sample the texture. */
 			src_pix	= src_pixel[(int)ty * sw + (int)tx];
+
+			/* Get the destination pixel value for blending. */
+			dst_pix	= dst_pixel[y * dw + x];
 
 			/* Calc alpha values. */
 			src_a = a * ((float)hal_get_pixel_a(src_pix) / 255.0f);
@@ -1039,24 +1075,36 @@ DRAW_IMAGE_3D_DIM(
 
 		tx = sc_min_tx[y];
 		ty = sc_min_ty[y];
-		if (sc_max_x[y] - sc_min_x[y] != 0)
+		if (sc_max_x[y] - sc_min_x[y] != 0) {
 			tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / (sc_max_x[y] - sc_min_x[y]);
-		else
-			tx_inc = 0;
-		if (sc_max_x[y] - sc_min_x[y] != 0)
 			ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / (sc_max_x[y] - sc_min_x[y]);
-		else
+		} else {
+			tx_inc = 0;
 			ty_inc = 0;
+		}
 
 		for (x = min_x; x < max_x; x++) {
+			/* Clip by destination. */
+			if (x < 0)
+				continue;
+			if (x >= dw)
+				break;
+
+			/* Wrap texture sampling. */
+			if (tx < 0)
+				tx = 0;
 			if (tx >= sw)
 				tx = sw - 1;
+			if (ty < 0)
+				ty = 0;
 			if (ty >= sh)
 				ty = sh - 1;
 
-			/* Get the source and destination pixel values. */
-			dst_pix	= dst_pixel[y * dw + x];
+			/* Sample the texture. */
 			src_pix	= src_pixel[(int)ty * sw + (int)tx];
+
+			/* Get the destination pixel value for blending. */
+			dst_pix	= dst_pixel[y * dw + x];
 
 			/* Calc alpha values. */
 			src_a = a * ((float)hal_get_pixel_a(src_pix) / 255.0f);

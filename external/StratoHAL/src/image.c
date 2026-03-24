@@ -864,11 +864,12 @@ scanline_edge(
 		y = (int)lroundf(y1);
 		if (y < 0 || y >= SC_LINES)
 			return;
+
 		if (x1 < x2) {
-			if (x1 < sc_min_x[y]) {
-				sc_min_x[y]  = x1;
-				sc_min_tx[y] = tx1;
-				sc_min_ty[y] = ty1;
+			if (x1 < sc_min_x[y_start]) {
+				sc_min_x[y_start]  = x1;
+				sc_min_tx[y_start] = tx1;
+				sc_min_ty[y_start] = ty1;
 			}
 			if (x2 > sc_max_x[y]) {
 				sc_max_x[y]  = x2;
@@ -899,19 +900,17 @@ scanline_edge(
 		tmp = ty1; ty1 = ty2; ty2 = tmp;
 	}
 
-	y_start = (int)floorf(y1);
-	y_end   = (int)ceilf(y2);
-	if (y_start < 0)
-		y_start = 0;
-	if (y_end >= SC_LINES)
-		y_end = SC_LINES - 1;
-
 	/* Vertical edge. */
 	if (x1 == x2) {
-		for (y = y_start; y <= y_end; y++) {
+		for (y = y1; y <= y2; y++) {
 			float t, ty;
-			
-			t = ((float)y - (float)y_start) / ((float)y_end - (float)y_start);
+
+			if (y < 0)
+				continue;
+			if (y >= SC_LINES)
+				break;
+
+			t = ((float)y - (float)y1) / ((float)y2 - (float)y1);
 			ty = ty1 + (ty2 - ty1) * t;
 
 			if (x1 < sc_min_x[y]) {
@@ -929,19 +928,21 @@ scanline_edge(
 	}
 
 	/* Non horizontal, non vertical. */
-	for (y = y_start; y <= y_end; y++) {
-		float t;
-		float x, tx, ty;
+	for (y = y1; y <= y2; y++) {
+		float t, x, tx, ty;
 		int ix;
 
-		t = ((float)y - (float)y_start) / ((float)y_end - (float)y_start);
+		if (y < 0)
+			continue;
+		if (y >= SC_LINES)
+			break;
+
+		t = ((float)y - (float)y1) / ((float)y2 - (float)y1);
 		x  = x1  + (x2  - x1)  * t;
 		tx = tx1 + (tx2 - tx1) * t;
 		ty = ty1 + (ty2 - ty1) * t;
 
 		ix  = (int)floorf(x);
-		if (ix < 0)
-			ix = 0;
 		if (ix < sc_min_x[y]) {
 			sc_min_x[y]  = ix;
 			sc_min_tx[y] = tx;
