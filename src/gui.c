@@ -561,6 +561,7 @@ s3_load_gui_file(
 	is_click_cancel = false;
 	is_escape_cancel = false;
 
+	success = false;
 	do {
 		/* Open the GUI file */
 		if (!load_gui_file(gui_file))

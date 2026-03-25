@@ -471,8 +471,8 @@ static INLINE uint32_t pf_be_to_host_32(uint32_t d) {
 		((d >> 24) & 0xff);
 }
 static INLINE uint16_t pf_be_to_host_16(uint16_t d) {
-	return ((d & 0xff) << 8) |
-		((d >> 8) & 0xff);
+	return (uint16_t)(((uint32_t)(d & 0xff) << 8) |
+		          ((d >> 8) & 0xff));
 }
 static INLINE uint64_t pf_host_to_be_64(uint64_t d) {
 	return ((d & 0xff) << 56) |
@@ -491,8 +491,8 @@ static INLINE uint32_t pf_host_to_be_32(uint32_t d) {
 		((d >> 24) & 0xff);
 }
 static INLINE uint16_t pf_host_to_be_16(uint16_t d) {
-	return ((d & 0xff) << 8) |
-		((d >> 8) & 0xff);
+	return (uint16_t)(((uint32_t)(d & 0xff) << 8) |
+			  ((d >> 8) & 0xff));
 }
 
 #else

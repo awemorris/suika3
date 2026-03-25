@@ -164,7 +164,7 @@ static int layer_center_y[S3_STAGE_LAYERS];
 static float layer_rotate[S3_STAGE_LAYERS];
 
 /* Dimming state for the layers. */
-static float layer_dim[S3_STAGE_LAYERS];
+static bool layer_dim[S3_STAGE_LAYERS];
 
 /* File names for the layers. */
 static char *layer_file_name[S3_STAGE_LAYERS];

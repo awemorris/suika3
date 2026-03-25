@@ -1286,9 +1286,9 @@ read_u32(
 		return false;
 
 	*ret = (stream_buf[stream_buf_pos + 0] |
-		(stream_buf[stream_buf_pos + 1] << 8) |
-		(stream_buf[stream_buf_pos + 2] << 16) |
-		(stream_buf[stream_buf_pos + 3] << 24));
+		((uint32_t)stream_buf[stream_buf_pos + 1] << 8) |
+		((uint32_t)stream_buf[stream_buf_pos + 2] << 16) |
+		((uint32_t)stream_buf[stream_buf_pos + 3] << 24));
 
 	stream_buf_pos += 4;
 
@@ -1326,9 +1326,9 @@ read_f32(
 		return false;
 
 	*(uint32_t *)ret = (stream_buf[stream_buf_pos + 0] |
-			    (stream_buf[stream_buf_pos + 1] << 8) |
-			    (stream_buf[stream_buf_pos + 2] << 16) |
-			    (stream_buf[stream_buf_pos + 3] << 24));
+			    ((uint32_t)stream_buf[stream_buf_pos + 1] << 8) |
+			    ((uint32_t)stream_buf[stream_buf_pos + 2] << 16) |
+			    ((uint32_t)stream_buf[stream_buf_pos + 3] << 24));
 
 	stream_buf_pos += 4;
 

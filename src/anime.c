@@ -946,7 +946,7 @@ s3_unregister_anime(
 {
 	int reg_index, i;
 
-	for (reg_index = 0; reg_index < S3_REG_ANIME_COUNT; i++) {
+	for (reg_index = 0; reg_index < S3_REG_ANIME_COUNT; reg_index++) {
 		if (reg_anime_name[reg_index] == NULL)
 			continue;
 		if (strcmp(reg_anime_name[reg_index], reg_name) == 0)
