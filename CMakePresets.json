@@ -446,11 +446,7 @@
                 "SUIKA_ENABLE_I18N":           "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
                 "SUIKA_ENABLE_BYTECOMP":       "ON",
-                "SUIKA_ENABLE_AOTCOMP":        "ON",
-
-                "CMAKE_C_FLAGS_DEBUG":         "-gdwarf-4 -ggdb -O0",
-                "CMAKE_CXX_FLAGS_DEBUG":       "-gdwarf-4 -ggdb -O0",
-                "APPLE_SILENT_UNUSED_IDEMPOTENT_LINKER_ARGS": "ON"
+                "SUIKA_ENABLE_AOTCOMP":        "ON"
             }
         },
         {
