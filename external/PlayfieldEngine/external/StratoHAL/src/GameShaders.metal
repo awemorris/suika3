@@ -134,5 +134,5 @@ fragmentCrossShader(RasterizerData in [[stage_in]],
     const half4 src1Sample = src1Texture.sample(textureSampler, in.textureCoordinate1);
     const half4 src2Sample = src2Texture.sample(textureSampler, in.textureCoordinate2);
     const half a = (half)in.alpha;
-    return float4(src1Sample * (1.0h - a) + src2Sample * a);
+    return float4(src2Sample * (1.0h - a) + src1Sample * a);
 }
