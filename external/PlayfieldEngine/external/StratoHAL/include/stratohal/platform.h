@@ -536,16 +536,18 @@ hal_draw_image_melt(
 	int threshold);
 
 /*
- * Draw an image with scaling.
+ * Draw two images for a cross fading.
  */
 void
-hal_draw_image_scale(
+hal_draw_image_cross(
 	struct hal_image *dst_image,
-	int virtual_dst_width,
-	int virtual_dst_height,
-	int virtual_dst_left,
-	int virtual_dst_top,
-	struct hal_image *src_image);
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	int src1_left,
+	int src1_top,
+	int src2_left,
+	int src2_top,
+	int alpha);
 
 /*
  * Draw an image on an image. (3D)
@@ -629,6 +631,32 @@ hal_draw_image_3d_dim(
 	int src_top,
 	int src_width,
 	int src_height,
+	int alpha);
+
+/*
+ * Draw two images for a cross fading.
+ */
+void
+hal_draw_image_3d_cross(
+	struct hal_image *dst_img,
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	float src1_x1,
+	float src1_y1,
+	float src1_x2,
+	float src1_y2,
+	float src1_x3,
+	float src1_y3,
+	float src1_x4,
+	float src1_y4,
+	float src2_x1,
+	float src2_y1,
+	float src2_x2,
+	float src2_y2,
+	float src2_x3,
+	float src2_y3,
+	float src2_x4,
+	float src2_y4,
 	int alpha);
 
 /*

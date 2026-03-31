@@ -1712,6 +1712,29 @@ hal_render_image_melt(
 }
 
 /*
+ * Render two images for a cross fading.
+ */
+void
+hal_render_image_cross(
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	float src1_left,
+	float src1_top,
+	float src2_left,
+	float src2_top,
+	int alpha)
+{
+	hal_draw_image_cross(back_image,
+			     src1_img,
+			     src2_img,
+			     src1_left,
+			     src1_top,
+			     src2_left,
+			     src2_top,
+			     alpha);
+}
+
+/*
  * Render an image. (3d transform, alpha blending)
  */
 void
@@ -1857,6 +1880,53 @@ hal_render_image_3d_dim(
 			      src_width,
 			      src_height,
 			      alpha);
+}
+
+/*
+ * Render two images for a cross fading.
+ */
+void
+hal_render_image_3d_cross(
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	float src1_x1,
+	float src1_y1,
+	float src1_x2,
+	float src1_y2,
+	float src1_x3,
+	float src1_y3,
+	float src1_x4,
+	float src1_y4,
+	float src2_x1,
+	float src2_y1,
+	float src2_x2,
+	float src2_y2,
+	float src2_x3,
+	float src2_y3,
+	float src2_x4,
+	float src2_y4,
+	int alpha)
+{
+	hal_draw_image_3d_cross(back_image,
+				src1_img,
+				src2_img,
+				src1_x1,
+				src1_y1,
+				src1_x2,
+				src1_y2,
+				src1_x3,
+				src1_y3,
+				src1_x4,
+				src1_y4,
+				src2_x1,
+				src2_y1,
+				src2_x2,
+				src2_y2,
+				src2_x3,
+				src2_y3,
+				src2_x4,
+				src2_y4,
+				alpha);
 }
 
 /*

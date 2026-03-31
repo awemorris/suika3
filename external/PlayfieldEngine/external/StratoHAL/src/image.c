@@ -66,27 +66,21 @@ extern bool is_sse_available;
 /*
  * Scanline Conversion Buffer
  */
-static int sc_min_x[SC_LINES];
-static int sc_max_x[SC_LINES];
-static float sc_min_tx[SC_LINES];
-static float sc_max_tx[SC_LINES];
-static float sc_min_ty[SC_LINES];
-static float sc_max_ty[SC_LINES];
+struct scbuf {
+	int sc_min_x;
+	int sc_max_x;
+	float sc_min_tx;
+	float sc_max_tx;
+	float sc_min_ty;
+	float sc_max_ty;
+};
+static struct scbuf scbuf1[SC_LINES];
+static struct scbuf scbuf2[SC_LINES];
 
 /*
  * Forward Declaraion
  */
 
-static void
-scanline_edge(
-        float x1,
-	float y1,
-	float tx1,
-	float ty1,
-        float x2,
-	float y2,
-	float tx2,
-	float ty2);
 bool
 check_draw_image(
 	struct hal_image *dst_image,
@@ -324,11 +318,12 @@ hal_fill_image_alpha(
 #define DRAW_IMAGE_DIM		hal_draw_image_dim
 #define DRAW_IMAGE_RULE		hal_draw_image_rule
 #define DRAW_IMAGE_MELT		hal_draw_image_melt
-#define DRAW_IMAGE_SCALE	hal_draw_image_scale
+#define DRAW_IMAGE_CROSS	hal_draw_image_cross
 #define DRAW_IMAGE_3D_ALPHA	hal_draw_image_3d_alpha
 #define DRAW_IMAGE_3D_ADD	hal_draw_image_3d_add
 #define DRAW_IMAGE_3D_SUB	hal_draw_image_3d_sub
 #define DRAW_IMAGE_3D_DIM	hal_draw_image_3d_dim
+#define DRAW_IMAGE_3D_CROSS	hal_draw_image_3d_cross
 #include "drawimage.h"
 
 #else
@@ -714,43 +709,49 @@ hal_draw_image_melt(
 }
 
 void
-hal_draw_image_scale(
+hal_draw_image_cross(
 	struct hal_image *dst_image,
-	int virtual_dst_width,
-	int virtual_dst_height,
-	int virtual_dst_left,
-	int virtual_dst_top,
-	struct hal_image *src_image)
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	int src1_left,
+	int src1_top,
+	int src1_width,
+	int src1_height,
+	int src2_left,
+	int src2_top,
+	int src2_width,
+	int src2_height,
+	int alpha)
 {
-	void hal_draw_image_scale_avx2(struct hal_image *, int, int, int, int, struct hal_image *);
-	void hal_draw_image_scale_avx(struct hal_image *, int, int, int, int, struct hal_image *);
-	void hal_draw_image_scale_sse42(struct hal_image *, int, int, int, int, struct hal_image *);
-	void hal_draw_image_scale_sse4(struct hal_image *, int, int, int, int, struct hal_image *);
-	void hal_draw_image_scale_sse3(struct hal_image *, int, int, int, int, struct hal_image *);
-	void hal_draw_image_scale_sse2(struct hal_image *, int, int, int, int, struct hal_image *);
-	void hal_draw_image_scale_sse(struct hal_image *, int, int, int, int, struct hal_image *);
-	void hal_draw_image_scale_scalar(struct hal_image *, int, int, int, int, struct hal_image *);
+	void hal_draw_image_cross_avx2(struct hal_image *, struct hal_image *, struct hal_image *, int, int, int, int, int, int, int, int, int);
+	void hal_draw_image_cross_avx(struct hal_image *, struct hal_image *, struct hal_image *, int, int, int, int, int, int, int, int, int);
+	void hal_draw_image_cross_sse42(struct hal_image *, struct hal_image *, struct hal_image *, int, int, int, int, int, int, int, int, int);
+	void hal_draw_image_cross_sse4(struct hal_image *, struct hal_image *, struct hal_image *, int, int, int, int, int, int, int, int, int);
+	void hal_draw_image_cross_sse3(struct hal_image *, struct hal_image *, struct hal_image *, int, int, int, int, int, int, int, int, int);
+	void hal_draw_image_cross_sse2(struct hal_image *, struct hal_image *, struct hal_image *, int, int, int, int, int, int, int, int, int);
+	void hal_draw_image_cross_sse(struct hal_image *, struct hal_image *, struct hal_image *, int, int, int, int, int, int, int, int, int);
+	void hal_draw_image_cross_scalar(struct hal_image *, struct hal_image *, struct hal_image *, int, int, int, int, int, int, int, int, int);
 
 	if (is_avx2_available)
-		hal_draw_image_scale_avx2(dst_image, virtual_dst_width, virtual_dst_height, virtual_dst_left, virtual_dst_top, src_image);
+		hal_draw_image_cross_avx2(dst_image, src1_image, src2_image, src1_left, src1_top, src1_width, src1_height, src2_left, src2_top, src2_width, src2_height, alpha);
 	else if (is_avx_available)
-		hal_draw_image_scale_avx(dst_image, virtual_dst_width, virtual_dst_height, virtual_dst_left, virtual_dst_top, src_image);
+		hal_draw_image_cross_avx(dst_image, src1_image, src2_image, src1_left, src1_top, src1_width, src1_height, src2_left, src2_top, src2_width, src2_height, alpha);
 #if !defined(_MSC_VER)
 	else if (is_sse42_available)
-		hal_draw_image_scale_sse42(dst_image, virtual_dst_width, virtual_dst_height, virtual_dst_left, virtual_dst_top, src_image);
+		hal_draw_image_cross_sse42(dst_image, src1_image, src2_image, src1_left, src1_top, src1_width, src1_height, src2_left, src2_top, src2_width, src2_height, alpha);
 	else if (is_sse4_available)
-		hal_draw_image_scale_sse4(dst_image, virtual_dst_width, virtual_dst_height, virtual_dst_left, virtual_dst_top, src_image);
+		hal_draw_image_cross_sse4(dst_image, src1_image, src2_image, src1_left, src1_top, src1_width, src1_height, src2_left, src2_top, src2_width, src2_height, alpha);
 	else if (is_sse3_available)
-		hal_draw_image_scale_sse3(dst_image, virtual_dst_width, virtual_dst_height, virtual_dst_left, virtual_dst_top, src_image);
+		hal_draw_image_cross_sse3(dst_image, src1_image, src2_image, src1_left, src1_top, src1_width, src1_height, src2_left, src2_top, src2_width, src2_height, alpha);
 #endif
 	else if (is_sse2_available)
-		hal_draw_image_scale_sse2(dst_image, virtual_dst_width, virtual_dst_height, virtual_dst_left, virtual_dst_top, src_image);
+		hal_draw_image_cross_sse2(dst_image, src1_image, src2_image, src1_left, src1_top, src1_width, src1_height, src2_left, src2_top, src2_width, src2_height, alpha);
 #if !defined(_MSC_VER) && defined(HAL_ARCH_X86)
 	else if (is_sse_available)
-		hal_draw_image_scale_sse(dst_image, virtual_dst_width, virtual_dst_height, virtual_dst_left, virtual_dst_top, src_image);
+		hal_draw_image_cross_sse(dst_image, src1_image, src2_image, src1_left, src1_top, src1_width, src1_height, src2_left, src2_top, src2_width, src2_height, alpha);
 #endif
 	else
-		hal_draw_image_scale_scalar(dst_image, virtual_dst_width, virtual_dst_height, virtual_dst_left, virtual_dst_top, src_image);
+		hal_draw_image_cross_scalar(dst_image, src1_image, src2_image, src1_left, src1_top, src1_width, src1_height, src2_left, src2_top, src2_width, src2_height, alpha);
 }
 
 void
@@ -768,7 +769,8 @@ hal_draw_image_3d_alpha(
 	int src_left,
 	int src_top,
 	int src_width,
-	int src_height)
+	int src_height,
+	int alpha)
 {
 	void hal_draw_image_3d_alpha_avx2(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
 	void hal_draw_image_3d_alpha_avx(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
@@ -780,25 +782,234 @@ hal_draw_image_3d_alpha(
 	void hal_draw_image_3d_alpha_scalar(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
 
 	if (is_avx2_available)
-		hal_draw_image_3d_alpha_avx2(dst_image, x1, y1, x2, y2, x3, y3, x4, y4 src_image, src_left, src_top, src_width, src_height);
+		hal_draw_image_3d_alpha_avx2(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
 	else if (is_avx_available)
-		hal_draw_image_3d_alpha_avx(dst_image, x1, y1, x2, y2, x3, y3, x4, y4 src_image, src_left, src_top, src_width, src_height);
+		hal_draw_image_3d_alpha_avx(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
 #if !defined(_MSC_VER)
 	else if (is_sse42_available)
-		hal_draw_image_3d_alpha_sse42(dst_image, x1, y1, x2, y2, x3, y3, x4, y4 src_image, src_left, src_top, src_width, src_height);
+		hal_draw_image_3d_alpha_sse42(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
 	else if (is_sse4_available)
-		hal_draw_image_3d_alpha_sse4(dst_image, x1, y1, x2, y2, x3, y3, x4, y4 src_image, src_left, src_top, src_width, src_height);
+		hal_draw_image_3d_alpha_sse4(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
 	else if (is_sse3_available)
-		hal_draw_image_3d_alpha_sse3(dst_image, x1, y1, x2, y2, x3, y3, x4, y4 src_image, src_left, src_top, src_width, src_height);
+		hal_draw_image_3d_alpha_sse3(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
 #endif
 	else if (is_sse2_available)
-		hal_draw_image_3d_alpha_sse2(dst_image, x1, y1, x2, y2, x3, y3, x4, y4 src_image, src_left, src_top, src_width, src_height);
+		hal_draw_image_3d_alpha_sse2(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
 #if !defined(_MSC_VER) && defined(HAL_ARCH_X86)
 	else if (is_sse_available)
-		hal_draw_image_3d_alpha_sse(dst_image, x1, y1, x2, y2, x3, y3, x4, y4 src_image, src_left, src_top, src_width, src_height);
+		hal_draw_image_3d_alpha_sse(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
 #endif
 	else
-		hal_draw_image_3d_alpha_scalar(dst_image, x1, y1, x2, y2, x3, y3, x4, y4 src_image, src_left, src_top, src_width, src_height);
+		hal_draw_image_3d_alpha_scalar(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+}
+
+void
+hal_draw_image_3d_add(
+	struct hal_image *dst_image,
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	void hal_draw_image_3d_add_avx2(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_add_avx(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_add_sse42(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_add_sse4(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_add_sse3(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_add_sse2(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_add_sse(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_add_scalar(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+
+	if (is_avx2_available)
+		hal_draw_image_3d_add_avx2(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+	else if (is_avx_available)
+		hal_draw_image_3d_add_avx(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+#if !defined(_MSC_VER)
+	else if (is_sse42_available)
+		hal_draw_image_3d_add_sse42(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+	else if (is_sse4_available)
+		hal_draw_image_3d_add_sse4(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+	else if (is_sse3_available)
+		hal_draw_image_3d_add_sse3(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+#endif
+	else if (is_sse2_available)
+		hal_draw_image_3d_add_sse2(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+#if !defined(_MSC_VER) && defined(HAL_ARCH_X86)
+	else if (is_sse_available)
+		hal_draw_image_3d_add_sse(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+#endif
+	else
+		hal_draw_image_3d_add_scalar(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+}
+
+void
+hal_draw_image_3d_sub(
+	struct hal_image *dst_image,
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	void hal_draw_image_3d_sub_avx2(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_sub_avx(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_sub_sse42(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_sub_sse4(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_sub_sse3(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_sub_sse2(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_sub_sse(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_sub_scalar(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+
+	if (is_avx2_available)
+		hal_draw_image_3d_sub_avx2(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+	else if (is_avx_available)
+		hal_draw_image_3d_sub_avx(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+#if !defined(_MSC_VER)
+	else if (is_sse42_available)
+		hal_draw_image_3d_sub_sse42(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+	else if (is_sse4_available)
+		hal_draw_image_3d_sub_sse4(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+	else if (is_sse3_available)
+		hal_draw_image_3d_sub_sse3(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+#endif
+	else if (is_sse2_available)
+		hal_draw_image_3d_sub_sse2(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+#if !defined(_MSC_VER) && defined(HAL_ARCH_X86)
+	else if (is_sse_available)
+		hal_draw_image_3d_sub_sse(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+#endif
+	else
+		hal_draw_image_3d_sub_scalar(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+}
+
+void
+hal_draw_image_3d_dim(
+	struct hal_image *dst_image,
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	void hal_draw_image_3d_dim_avx2(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_dim_avx(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_dim_sse42(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_dim_sse4(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_dim_sse3(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_dim_sse2(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_dim_sse(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+	void hal_draw_image_3d_dim_scalar(struct hal_image *, int, int, int, int, int, int, int, int, struct hal_image *, int, int, int, int);
+
+	if (is_avx2_available)
+		hal_draw_image_3d_dim_avx2(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+	else if (is_avx_available)
+		hal_draw_image_3d_dim_avx(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+#if !defined(_MSC_VER)
+	else if (is_sse42_available)
+		hal_draw_image_3d_dim_sse42(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+	else if (is_sse4_available)
+		hal_draw_image_3d_dim_sse4(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+	else if (is_sse3_available)
+		hal_draw_image_3d_dim_sse3(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+#endif
+	else if (is_sse2_available)
+		hal_draw_image_3d_dim_sse2(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+#if !defined(_MSC_VER) && defined(HAL_ARCH_X86)
+	else if (is_sse_available)
+		hal_draw_image_3d_dim_sse(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+#endif
+	else
+		hal_draw_image_3d_dim_scalar(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height);
+}
+
+void
+hal_draw_image_3d_cross(
+	struct hal_image *dst_image,
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	float src1_tx1,
+	float src1_ty1,
+	float src1_tx2,
+	float src1_ty2,
+	float src1_tx3,
+	float src1_ty3,
+	float src1_tx4,
+	float src1_ty4,
+	float src2_tx1,
+	float src2_ty1,
+	float src2_tx2,
+	float src2_ty2,
+	float src2_tx3,
+	float src2_ty3,
+	float src2_tx4,
+	float src2_ty4,
+	int alpha)
+{
+	void hal_draw_image_3d_cross_avx2(struct hal_image *, float, float, float, float, float, float, float, float, struct hal_image *, struct hal_image *, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, int);
+	void hal_draw_image_3d_cross_avx(struct hal_image *, float, float, float, float, float, float, float, float, struct hal_image *, struct hal_image *, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, int);
+	void hal_draw_image_3d_cross_sse42(struct hal_image *, float, float, float, float, float, float, float, float, struct hal_image *, struct hal_image *, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, int);
+	void hal_draw_image_3d_cross_sse4(struct hal_image *, float, float, float, float, float, float, float, float, struct hal_image *, struct hal_image *, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, int);
+	void hal_draw_image_3d_cross_sse3(struct hal_image *, float, float, float, float, float, float, float, float, struct hal_image *, struct hal_image *, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, int);
+	void hal_draw_image_3d_cross_sse2(struct hal_image *, float, float, float, float, float, float, float, float, struct hal_image *, struct hal_image *, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, int);
+	void hal_draw_image_3d_cross_sse(struct hal_image *, float, float, float, float, float, float, float, float, struct hal_image *, struct hal_image *, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, int);
+	void hal_draw_image_3d_cross_scalar(struct hal_image *, float, float, float, float, float, float, float, float, struct hal_image *, struct hal_image *, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, float, int);
+
+	if (is_avx2_available)
+		hal_draw_image_3d_cross_avx2(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src1_image, src2_image, src1_tx1, src1_ty1, src1_tx2, src1_ty2, src1_tx3, src1_ty3, src1_tx4, src1_ty4, src2_tx1, src2_ty1, src2_tx2, src2_ty2, src2_tx3, src2_ty3, src2_tx4, src2_ty4, alpha);
+	else if (is_avx_available)
+		hal_draw_image_3d_cross_avx(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src1_image, src2_image, src1_tx1, src1_ty1, src1_tx2, src1_ty2, src1_tx3, src1_ty3, src1_tx4, src1_ty4, src2_tx1, src2_ty1, src2_tx2, src2_ty2, src2_tx3, src2_ty3, src2_tx4, src2_ty4, alpha);
+#if !defined(_MSC_VER)
+	else if (is_sse42_available)
+		hal_draw_image_3d_cross_sse42(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src1_image, src2_image, src1_tx1, src1_ty1, src1_tx2, src1_ty2, src1_tx3, src1_ty3, src1_tx4, src1_ty4, src2_tx1, src2_ty1, src2_tx2, src2_ty2, src2_tx3, src2_ty3, src2_tx4, src2_ty4, alpha);
+	else if (is_sse4_available)
+		hal_draw_image_3d_cross_sse4(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src1_image, src2_image, src1_tx1, src1_ty1, src1_tx2, src1_ty2, src1_tx3, src1_ty3, src1_tx4, src1_ty4, src2_tx1, src2_ty1, src2_tx2, src2_ty2, src2_tx3, src2_ty3, src2_tx4, src2_ty4, alpha);
+	else if (is_sse3_available)
+		hal_draw_image_3d_cross_sse3(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src1_image, src2_image, src1_tx1, src1_ty1, src1_tx2, src1_ty2, src1_tx3, src1_ty3, src1_tx4, src1_ty4, src2_tx1, src2_ty1, src2_tx2, src2_ty2, src2_tx3, src2_ty3, src2_tx4, src2_ty4, alpha);
+#endif
+	else if (is_sse2_available)
+		hal_draw_image_3d_cross_sse2(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src1_image, src2_image, src1_tx1, src1_ty1, src1_tx2, src1_ty2, src1_tx3, src1_ty3, src1_tx4, src1_ty4, src2_tx1, src2_ty1, src2_tx2, src2_ty2, src2_tx3, src2_ty3, src2_tx4, src2_ty4, alpha);
+#if !defined(_MSC_VER) && defined(HAL_ARCH_X86)
+	else if (is_sse_available)
+		hal_draw_image_3d_cross_sse(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src1_image, src2_image, src1_tx1, src1_ty1, src1_tx2, src1_ty2, src1_tx3, src1_ty3, src1_tx4, src1_ty4, src2_tx1, src2_ty1, src2_tx2, src2_ty2, src2_tx3, src2_ty3, src2_tx4, src2_ty4, alpha);
+#endif
+	else
+		hal_draw_image_3d_cross_scalar(dst_image, x1, y1, x2, y2, x3, y3, x4, y4, src1_image, src2_image, src1_tx1, src1_ty1, src1_tx2, src1_ty2, src1_tx3, src1_ty3, src1_tx4, src1_ty4, src2_tx1, src2_ty1, src2_tx2, src2_ty2, src2_tx3, src2_ty3, src2_tx4, src2_ty4, alpha);
 }
 
 #endif
@@ -807,47 +1018,9 @@ hal_draw_image_3d_alpha(
  * Scanline Conversion (for 3D polygon drawing)
  */
 
-void
-scanline_conversion(
-        float x1,
-        float y1,
-        float tx1,
-        float ty1,
-        float x2,
-        float y2,
-        float tx2,
-        float ty2,
-        float x3,
-        float y3,
-        float tx3,
-        float ty3,
-        float x4,
-        float y4,
-        float tx4,
-        float ty4)
-{
-	int y;
-
-	/* Initialize scanline buffers. */
-	for (y = 0; y < SC_LINES; y++) {
-		sc_min_x[y]  = INT_MAX;
-		sc_max_x[y]  = INT_MIN;
-		sc_min_tx[y] = 0.0f;
-		sc_max_tx[y] = 0.0f;
-		sc_min_ty[y] = 0.0f;
-		sc_max_ty[y] = 0.0f;
-	}
-
-	/* Scan-convert the four edges of the quad */
-	scanline_edge(x1, y1, tx1, ty1, x2, y2, tx2, ty2);
-	scanline_edge(x2, y2, tx2, ty2, x3, y3, tx3, ty3);
-	scanline_edge(x3, y3, tx3, ty3, x1, y1, tx1, ty1);
-	scanline_edge(x3, y3, tx3, ty3, x4, y4, tx4, ty4);
-	scanline_edge(x4, y4, tx4, ty4, x2, y2, tx2, ty2);
-}
-
-static void
+static inline void
 scanline_edge(
+	struct scbuf *scbuf,
         float x1,
 	float y1,
 	float tx1,
@@ -866,26 +1039,26 @@ scanline_edge(
 			return;
 
 		if (x1 < x2) {
-			if (x1 < sc_min_x[iy]) {
-				sc_min_x[iy]  = (int)ceilf(x1);
-				sc_min_tx[iy] = tx1;
-				sc_min_ty[iy] = ty1;
+			if (x1 < scbuf[iy].sc_min_x) {
+				scbuf[iy].sc_min_x  = (int)ceilf(x1);
+				scbuf[iy].sc_min_tx = tx1;
+				scbuf[iy].sc_min_ty = ty1;
 			}
-			if (x2 > sc_max_x[iy]) {
-				sc_max_x[iy]  = (int)ceilf(x2);
-				sc_max_tx[iy] = tx2;
-				sc_max_ty[iy] = ty2;
+			if (x2 > scbuf[iy].sc_max_x) {
+				scbuf[iy].sc_max_x  = (int)ceilf(x2);
+				scbuf[iy].sc_max_tx = tx2;
+				scbuf[iy].sc_max_ty = ty2;
 			}
 		} else {
-			if (x2 < sc_min_x[iy]) {
-				sc_min_x[iy]  = (int)ceilf(x2);
-				sc_min_tx[iy] = tx2;
-				sc_min_ty[iy] = ty2;
+			if (x2 < scbuf[iy].sc_min_x) {
+				scbuf[iy].sc_min_x  = (int)ceilf(x2);
+				scbuf[iy].sc_min_tx = tx2;
+				scbuf[iy].sc_min_ty = ty2;
 			}
-			if (x1 > sc_max_x[iy]) {
-				sc_max_x[iy]  = (int)ceilf(x1);
-				sc_max_tx[iy] = tx1;
-				sc_max_ty[iy] = ty1;
+			if (x1 > scbuf[iy].sc_max_x) {
+				scbuf[iy].sc_max_x  = (int)ceilf(x1);
+				scbuf[iy].sc_max_tx = tx1;
+				scbuf[iy].sc_max_ty = ty1;
 			}
 		}
 		return;
@@ -920,15 +1093,15 @@ scanline_edge(
 			tx = tx1 + (tx2 - tx1) * t;
 			ty = ty1 + (ty2 - ty1) * t;
 
-			if (x1 < sc_min_x[iy]) {
-				sc_min_x[iy]  = ix;
-				sc_min_tx[iy] = tx;
-				sc_min_ty[iy] = ty;
+			if (x1 < scbuf[iy].sc_min_x) {
+				scbuf[iy].sc_min_x  = ix;
+				scbuf[iy].sc_min_tx = tx;
+				scbuf[iy].sc_min_ty = ty;
 			}
-			if (x1 > sc_max_x[iy]) {
-				sc_max_x[iy]  = ix;
-				sc_max_tx[iy] = tx;
-				sc_max_ty[iy] = ty;
+			if (x1 > scbuf[iy].sc_max_x) {
+				scbuf[iy].sc_max_x  = ix;
+				scbuf[iy].sc_max_tx = tx;
+				scbuf[iy].sc_max_ty = ty;
 			}
 		}
 		return;
@@ -955,17 +1128,101 @@ scanline_edge(
 		ty = ty1 + (ty2 - ty1) * t;
 
 		ix  = (int)floorf(x);
-		if (ix < sc_min_x[iy]) {
-			sc_min_x[iy]  = ix;
-			sc_min_tx[iy] = tx;
-			sc_min_ty[iy] = ty;
+		if (ix < scbuf[iy].sc_min_x) {
+			scbuf[iy].sc_min_x  = ix;
+			scbuf[iy].sc_min_tx = tx;
+			scbuf[iy].sc_min_ty = ty;
 		}
-		if (ix > sc_max_x[iy]) {
-			sc_max_x[iy]  = ix;
-			sc_max_tx[iy] = tx;
-			sc_max_ty[iy] = ty;
+		if (ix > scbuf[iy].sc_max_x) {
+			scbuf[iy].sc_max_x  = ix;
+			scbuf[iy].sc_max_tx = tx;
+			scbuf[iy].sc_max_ty = ty;
 		}
 	}
+}
+
+static inline void
+scanline_conversion_body(
+	struct scbuf *scbuf,
+        float x1,
+        float y1,
+        float tx1,
+        float ty1,
+        float x2,
+        float y2,
+        float tx2,
+        float ty2,
+        float x3,
+        float y3,
+        float tx3,
+        float ty3,
+        float x4,
+        float y4,
+        float tx4,
+        float ty4)
+{
+	int y;
+
+	/* Initialize scanline buffers. */
+	for (y = 0; y < SC_LINES; y++) {
+		scbuf[y].sc_min_x  = INT_MAX;
+		scbuf[y].sc_max_x  = INT_MIN;
+		scbuf[y].sc_min_tx = 0.0f;
+		scbuf[y].sc_max_tx = 0.0f;
+		scbuf[y].sc_min_ty = 0.0f;
+		scbuf[y].sc_max_ty = 0.0f;
+	}
+
+	/* Scan-convert the four edges of the quad */
+	scanline_edge(scbuf, x1, y1, tx1, ty1, x2, y2, tx2, ty2);
+	scanline_edge(scbuf, x2, y2, tx2, ty2, x3, y3, tx3, ty3);
+	scanline_edge(scbuf, x3, y3, tx3, ty3, x1, y1, tx1, ty1);
+	scanline_edge(scbuf, x3, y3, tx3, ty3, x4, y4, tx4, ty4);
+	scanline_edge(scbuf, x4, y4, tx4, ty4, x2, y2, tx2, ty2);
+}
+
+void
+scanline_conversion(
+        float x1,
+        float y1,
+        float tx1,
+        float ty1,
+        float x2,
+        float y2,
+        float tx2,
+        float ty2,
+        float x3,
+        float y3,
+        float tx3,
+        float ty3,
+        float x4,
+        float y4,
+        float tx4,
+        float ty4)
+{
+	scanline_conversion_body(scbuf1, x1, y1, tx1, ty1, x2, y2, tx2, ty2, x3, y3, tx3, ty3, x4, y4, tx4, ty4);
+}
+
+void
+scanline_conversion_2(
+        float x1,
+        float y1,
+        float tx1,
+        float ty1,
+        float x2,
+        float y2,
+        float tx2,
+        float ty2,
+        float x3,
+        float y3,
+        float tx3,
+        float ty3,
+        float x4,
+        float y4,
+        float tx4,
+        float ty4)
+{
+	scanline_conversion_body(scbuf2, x1, y1, tx1, ty1, x2, y2, tx2, ty2, x3, y3, tx3, ty3, x4, y4, tx4, ty4);
 }
 
 /*

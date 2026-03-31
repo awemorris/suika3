@@ -43,7 +43,14 @@ extern bool is_sse_available;
 bool check_draw_image(struct hal_image *dst_image, int *dst_left, int *dst_top,
 		      struct hal_image *src_image, int *width, int *height,
 		      int *src_left, int *src_top, int alpha);
-void scanline_conversion(float x1, float y1, float tx1, float ty1, float x2, float y2, float tx2, float ty2, float x3, float y3, float tx3, float ty3, float x4, float y4, float tx4, float ty4);
+void scanline_conversion(float x1, float y1, float tx1, float ty1,
+			 float x2, float y2, float tx2, float ty2,
+			 float x3, float y3, float tx3, float ty3,
+			 float x4, float y4, float tx4, float ty4);
+void scanline_conversion_2(float x1, float y1, float tx1, float ty1,
+			   float x2, float y2, float tx2, float ty2,
+			   float x3, float y3, float tx3, float ty3,
+			   float x4, float y4, float tx4, float ty4);
 
 void
 DRAW_IMAGE_COPY(
@@ -665,19 +672,19 @@ DRAW_IMAGE_3D_ALPHA(
 		int min_x, max_x;
 		float div, tx, ty, tx_inc, ty_inc;
 
-		min_x = sc_min_x[y];
-		max_x = sc_max_x[y];
+		min_x = scbuf1[y].sc_min_x;
+		max_x = scbuf1[y].sc_max_x;
 		if (min_x == INT_MAX)
 			continue;
 		if (max_x == INT_MIN)
 			continue;
 
-		tx = sc_min_tx[y];
-		ty = sc_min_ty[y];
+		tx = scbuf1[y].sc_min_tx;
+		ty = scbuf1[y].sc_min_ty;
 		div = (float)max_x - (float)min_x;
 		if (div != 0) {
-			tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / div;
-			ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / div;
+			tx_inc = (scbuf1[y].sc_max_tx - scbuf1[y].sc_min_tx) / div;
+			ty_inc = (scbuf1[y].sc_max_ty - scbuf1[y].sc_min_ty) / div;
 		} else {
 			tx_inc = 0;
 			ty_inc = 0;
@@ -788,8 +795,8 @@ DRAW_IMAGE_3D_ADD(
 		int min_x, max_x;
 		float div, tx, ty, tx_inc, ty_inc;
 
-		min_x = sc_min_x[y];
-		max_x = sc_max_x[y];
+		min_x = scbuf1[y].sc_min_x;
+		max_x = scbuf1[y].sc_max_x;
 		if (min_x == INT_MAX)
 			continue;
 		if (max_x == INT_MIN)
@@ -799,12 +806,12 @@ DRAW_IMAGE_3D_ADD(
 		if (max_x >= dw)
 			max_x = dw - 1;
 
-		tx = sc_min_tx[y];
-		ty = sc_min_ty[y];
-		div = (float)sc_max_x[y] - (float)sc_min_x[y];
+		tx = scbuf1[y].sc_min_tx;
+		ty = scbuf1[y].sc_min_ty;
+		div = (float)scbuf1[y].sc_max_x - (float)scbuf1[y].sc_min_x;
 		if (div != 0) {
-			tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / div;
-			ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / div;
+			tx_inc = (scbuf1[y].sc_max_tx - scbuf1[y].sc_min_tx) / div;
+			ty_inc = (scbuf1[y].sc_max_ty - scbuf1[y].sc_min_ty) / div;
 		} else {
 			tx_inc = 0;
 			ty_inc = 0;
@@ -925,8 +932,8 @@ DRAW_IMAGE_3D_SUB(
 		int min_x, max_x;
 		float div, tx, ty, tx_inc, ty_inc;
 
-		min_x = sc_min_x[y];
-		max_x = sc_max_x[y];
+		min_x = scbuf1[y].sc_min_x;
+		max_x = scbuf1[y].sc_max_x;
 		if (min_x == INT_MAX)
 			continue;
 		if (max_x == INT_MIN)
@@ -936,12 +943,12 @@ DRAW_IMAGE_3D_SUB(
 		if (max_x >= dw)
 			max_x = dw - 1;
 
-		tx = sc_min_tx[y];
-		ty = sc_min_ty[y];
-		div = (float)sc_max_x[y] - (float)sc_min_x[y];
+		tx = scbuf1[y].sc_min_tx;
+		ty = scbuf1[y].sc_min_ty;
+		div = (float)scbuf1[y].sc_max_x - (float)scbuf1[y].sc_min_x;
 		if (div != 0) {
-			tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / div;
-			ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / div;
+			tx_inc = (scbuf1[y].sc_max_tx - scbuf1[y].sc_min_tx) / div;
+			ty_inc = (scbuf1[y].sc_max_ty - scbuf1[y].sc_min_ty) / div;
 		} else {
 			tx_inc = 0;
 			ty_inc = 0;
@@ -1060,8 +1067,8 @@ DRAW_IMAGE_3D_DIM(
 		int min_x, max_x;
 		float div, tx, ty, tx_inc, ty_inc;
 
-		min_x = sc_min_x[y];
-		max_x = sc_max_x[y];
+		min_x = scbuf1[y].sc_min_x;
+		max_x = scbuf1[y].sc_max_x;
 		if (min_x == INT_MAX)
 			continue;
 		if (max_x == INT_MIN)
@@ -1071,12 +1078,12 @@ DRAW_IMAGE_3D_DIM(
 		if (max_x >= dw)
 			max_x = dw - 1;
 
-		tx = sc_min_tx[y];
-		ty = sc_min_ty[y];
-		div = (float)sc_max_x[y] - (float)sc_min_x[y];		
+		tx = scbuf1[y].sc_min_tx;
+		ty = scbuf1[y].sc_min_ty;
+		div = (float)scbuf1[y].sc_max_x - (float)scbuf1[y].sc_min_x;
 		if (div != 0) {
-			tx_inc = (sc_max_tx[y] - sc_min_tx[y]) / div;
-			ty_inc = (sc_max_ty[y] - sc_min_ty[y]) / div;
+			tx_inc = (scbuf1[y].sc_max_tx - scbuf1[y].sc_min_tx) / div;
+			ty_inc = (scbuf1[y].sc_max_ty - scbuf1[y].sc_min_ty) / div;
 		} else {
 			tx_inc = 0;
 			ty_inc = 0;
@@ -1130,4 +1137,256 @@ DRAW_IMAGE_3D_DIM(
 			ty += ty_inc;
 		}
 	}
+}
+
+void
+DRAW_IMAGE_CROSS(
+	struct hal_image *dst_image,
+	struct hal_image *src1_image,
+	struct hal_image *src2_image,
+	int src1_left,
+	int src1_top,
+	int src2_left,
+	int src2_top,
+	int alpha)
+{
+	int x, y;
+	float alpha_f;
+
+	alpha_f = (float)alpha / 255.0f;
+
+	for(y = 0; y < dst_image->height; y++) {
+		int src1_y, src2_y;
+
+		src1_y = y - src1_top;
+		src2_y = y - src2_top;
+
+		for(x = 0; x < dst_image->width; x++) {
+			hal_pixel_t src1_pix, src2_pix, dst_pix;
+			hal_pixel_t src_r, src_g, src_b;
+			hal_pixel_t dst_r, dst_g, dst_b;
+			float src1_a, src2_a, dst_a;
+			int src1_x, src2_x;
+
+			src1_x = x - src1_left;
+			src2_x = x - src2_left;
+
+			/* Get the source and destination pixel values. */
+			if (src1_x >= 0 && src1_x < src1_image->width &&
+			    src1_y >= 0 && src1_y < src1_image->height)
+				src1_pix = src1_image->pixels[src1_y * src1_image->width + src1_x];
+			else
+				src1_pix = 0;
+			if (src2_x >= 0 && src2_x < src2_image->width &&
+			    src2_y >= 0 && src2_y < src2_image->height)
+				src2_pix = src2_image->pixels[src2_y * src2_image->width + src2_x];
+			else
+				src2_pix = 0;
+			dst_pix	= dst_image->pixels[y * dst_image->width + x];
+
+			/* Calc alpha values. */
+			src1_a = alpha_f * ((float)hal_get_pixel_a(src1_pix) / 255.0f);
+			src2_a = (1.0f - alpha_f) * ((float)hal_get_pixel_a(src1_pix) / 255.0f);
+			dst_a = 1.0f - (src1_a + src2_a);
+
+			/* Multiply the alpha value and the source pixel value. */
+			src_r = src1_a * (float)((src1_pix >> 16) & 0xff) +
+				src2_a * (float)((src2_pix >> 16) & 0xff);
+			src_g = src1_a * (float)((src1_pix >> 8) & 0xff) +
+				src2_a * (float)((src2_pix >> 8) & 0xff);
+			src_b = src1_a * (float)(src1_pix & 0xff) +
+				src2_a * (float)(src2_pix & 0xff);
+
+			/* Multiply the alpha value and the destination pixel value. */
+			dst_r = dst_a * (float)((dst_pix >> 16) & 0xff);
+			dst_g = dst_a * (float)((dst_pix >> 8) & 0xff);
+			dst_b = dst_a * (float)(dst_pix & 0xff);
+
+			/* Store to the destination. */
+			dst_image->pixels[y * dst_image->width + x] =
+				0xff000000 |
+				((uint32_t)(src_r + dst_r) << 16) |
+				((uint32_t)(src_g + dst_g) << 8) |
+				(uint32_t)(src_b + dst_b);
+		}
+	}
+
+	hal_notify_image_update(dst_image);
+}
+
+void
+DRAW_IMAGE_3D_CROSS(
+        struct hal_image *dst_image,
+        struct hal_image *src1_image,
+        struct hal_image *src2_image,
+        float src1_x1,
+	float src1_y1,
+	float src1_x2,
+	float src1_y2,
+        float src1_x3,
+	float src1_y3,
+	float src1_x4,
+	float src1_y4,
+        float src2_x1,
+	float src2_y1,
+	float src2_x2,
+	float src2_y2,
+        float src2_x3,
+	float src2_y3,
+	float src2_x4,
+	float src2_y4,
+        int alpha)
+{
+        int x, y;
+        int dw, sw1, sh1, sw2, sh2, dst_y_max;
+        uint32_t *dst_pixel, *src1_pixel, *src2_pixel;
+        float alpha_f;
+
+        scanline_conversion(src1_x1,
+			    src1_y1,
+			    0.0f,
+			    0.0f,
+                            src1_x2,
+			    src1_y2,
+			    (float)src1_image->width,
+			    0.0f,
+                            src1_x3,
+			    src1_y3,
+			    0.0f,
+			    (float)src1_image->height,
+                            src1_x4,
+			    src1_y4,
+			    (float)src1_image->width,
+			    (float)src1_image->height);
+
+        scanline_conversion_2(src2_x1,
+			      src2_y1,
+			      0.0f,
+			      0.0f,
+			      src2_x2,
+			      src2_y2,
+			      (float)src2_image->width,
+			      0.0f,
+			      src2_x3,
+			      src2_y3,
+			      0.0f,
+			      (float)src2_image->height,
+			      src2_x4,
+			      src2_y4,
+			      (float)src2_image->width,
+			      (float)src2_image->height);
+
+        dw = dst_image->width;
+        sw1 = src1_image->width;  sh1 = src1_image->height;
+        sw2 = src2_image->width;  sh2 = src2_image->height;
+        dst_pixel = dst_image->pixels;
+        src1_pixel = src1_image->pixels;
+        src2_pixel = src2_image->pixels;
+        
+        dst_y_max = (dst_image->height > SC_LINES) ? SC_LINES : dst_image->height;
+        alpha_f = (float)alpha / 255.0f;
+
+        for (y = 0; y < dst_y_max; y++) {
+                int min_x1 = scbuf1[y].sc_min_x,  max_x1 = scbuf1[y].sc_max_x;
+                int min_x2 = scbuf2[y].sc_min_x, max_x2 = scbuf2[y].sc_max_x;
+
+                float tx1 = scbuf1[y].sc_min_tx,  ty1 = scbuf1[y].sc_min_ty;
+                float tx2 = scbuf2[y].sc_min_tx, ty2 = scbuf2[y].sc_min_ty;
+                float tx1_inc = 0, ty1_inc = 0, tx2_inc = 0, ty2_inc = 0;
+
+                if (min_x1 != INT_MAX && max_x1 != INT_MIN) {
+                        float div1 = (float)max_x1 - (float)min_x1;
+                        if (div1 != 0) {
+                                tx1_inc = (scbuf1[y].sc_max_tx - scbuf1[y].sc_min_tx) / div1;
+                                ty1_inc = (scbuf1[y].sc_max_ty - scbuf1[y].sc_min_ty) / div1;
+                        }
+                }
+
+                if (min_x2 != INT_MAX && max_x2 != INT_MIN) {
+                        float div2 = (float)max_x2 - (float)min_x2;
+                        if (div2 != 0) {
+                                tx2_inc = (scbuf2[y].sc_max_tx - scbuf2[y].sc_min_tx) / div2;
+                                ty2_inc = (scbuf2[y].sc_max_ty - scbuf2[y].sc_min_ty) / div2;
+                        }
+                }
+
+                int start_x = INT_MAX, end_x = INT_MIN;
+                if (min_x1 != INT_MAX)
+			start_x = (min_x1 < start_x) ? min_x1 : start_x;
+                if (min_x2 != INT_MAX)
+			start_x = (min_x2 < start_x) ? min_x2 : start_x;
+                if (max_x1 != INT_MIN)
+			end_x = (max_x1 > end_x) ? max_x1 : end_x;
+                if (max_x2 != INT_MIN)
+			end_x = (max_x2 > end_x) ? max_x2 : end_x;
+                if (start_x == INT_MAX || end_x == INT_MIN)
+                        continue;
+
+                for (x = start_x; x <= end_x; x++) {
+                        uint32_t src1_pix = 0, src2_pix = 0;
+
+                        if (min_x1 != INT_MAX && x >= min_x1 && x <= max_x1) {
+                                if (x >= 0 && x < dw) {
+                                        float stx = tx1, sty = ty1;
+                                        if (stx < 0)
+						stx = 0;
+					if (stx >= sw1)
+						stx = (float)sw1 - 1;
+                                        if (sty < 0)
+						sty = 0;
+					if (sty >= sh1)
+						sty = (float)sh1 - 1;
+                                        src1_pix = src1_pixel[(int)sty * sw1 + (int)stx];
+                                }
+                                tx1 += tx1_inc;
+                                ty1 += ty1_inc;
+                        }
+
+                        if (min_x2 != INT_MAX && x >= min_x2 && x <= max_x2) {
+                                if (x >= 0 && x < dw) {
+                                        float stx = tx2, sty = ty2;
+                                        if (stx < 0)
+						stx = 0;
+					if (stx >= sw2)
+						stx = (float)sw2 - 1;
+                                        if (sty < 0)
+						sty = 0;
+					if (sty >= sh2)
+						sty = (float)sh2 - 1;
+                                        src2_pix = src2_pixel[(int)sty * sw2 + (int)stx];
+                                }
+                                tx2 += tx2_inc;
+                                ty2 += ty2_inc;
+                        }
+
+                        if (x < 0 || x >= dw)
+				continue; /* Out of range. */
+                        if ((src1_pix >> 24) == 0 && (src2_pix >> 24) == 0)
+				continue; /* alpha = 0 */
+
+                        uint32_t dst_pix = dst_pixel[y * dw + x];
+
+                        float src1_a = alpha_f * ((float)hal_get_pixel_a(src1_pix) / 255.0f);
+                        float src2_a = (1.0f - alpha_f) * ((float)hal_get_pixel_a(src2_pix) / 255.0f);
+                        float dst_a = 1.0f - (src1_a + src2_a);
+
+                        float src_r = src1_a * (float)((src1_pix >> 16) & 0xff) +
+				      src2_a * (float)((src2_pix >> 16) & 0xff);
+                        float src_g = src1_a * (float)((src1_pix >> 8)  & 0xff) +
+				      src2_a * (float)((src2_pix >> 8)  & 0xff);
+                        float src_b = src1_a * (float)(src1_pix & 0xff) +
+				      src2_a * (float)(src2_pix & 0xff);
+
+                        float dst_r = dst_a * (float)((dst_pix >> 16) & 0xff);
+                        float dst_g = dst_a * (float)((dst_pix >> 8)  & 0xff);
+                        float dst_b = dst_a * (float)(dst_pix & 0xff);
+
+                        dst_pixel[y * dw + x] = 0xff000000 |
+                                                ((uint32_t)(src_r + dst_r) << 16) |
+                                                ((uint32_t)(src_g + dst_g) << 8) |
+                                                (uint32_t)(src_b + dst_b);
+                }
+        }
+
+	hal_notify_image_update(dst_image);
 }
