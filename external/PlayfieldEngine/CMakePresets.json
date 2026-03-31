@@ -485,7 +485,7 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
-                "PLAYFIELD_TARGET_MACOS":      "ON",
+                "PLAYFIELD_TARGET_MACOS_CLI":  "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
@@ -502,7 +502,7 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Debug",
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
-                "PLAYFIELD_TARGET_MACOS":      "ON",
+                "PLAYFIELD_TARGET_MACOS_CLI":  "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
@@ -519,7 +519,7 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
                 "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
-                "PLAYFIELD_TARGET_MACOS":      "ON",
+                "PLAYFIELD_TARGET_MACOS_LIB":  "ON",
                 "PLAYFIELD_ENABLE_MAIN2":      "ON",
                 "PLAYFIELD_ENABLE_STATIC":     "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
