@@ -59,7 +59,6 @@ D3DInitialize(
 		bAvoidD3D12 = TRUE;
 #endif
 
-#if 0
 	/* Try Direct3D 12. */
 	if (!bAvoidD3D12)
 	{
@@ -69,7 +68,6 @@ D3DInitialize(
 			return TRUE;
 		}
 	}
-#endif
 
 	/* Try Direct3D 11. */
 	if (!bAvoidD3D11)
@@ -372,7 +370,7 @@ hal_render_image_cross(
 		D3D12RenderImageCross(src1_image, src2_image, src1_left, src1_top, src2_left, src2_top, alpha);
 		break;
 	case MODE_D3D11:
-//		D3D11RenderImageCross(src1_image, src2_image, src1_left, src1_top, src2_left, src2_top, alpha);
+		D3D11RenderImageCross(src1_image, src2_image, src1_left, src1_top, src2_left, src2_top, alpha);
 		break;
 	case MODE_D3D9:
 //		D3D9RenderImageCross(src1_image, src2_image, src1_left, src1_top, src2_left, src2_top, alpha);

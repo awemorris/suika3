@@ -586,12 +586,17 @@ CreateSamplerState()
 {
     D3D11_SAMPLER_DESC sampDesc = {};
     sampDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-    sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-    sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+    sampDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+    sampDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+    sampDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+    sampDesc.BorderColor[0] = 0.0f; // R
+    sampDesc.BorderColor[1] = 0.0f; // G
+    sampDesc.BorderColor[2] = 0.0f; // B
+    sampDesc.BorderColor[3] = 0.0f; // A
     sampDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
     sampDesc.MinLOD = 0;
     sampDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
     HRESULT hr = g_pd3dDevice->CreateSamplerState(&sampDesc, &g_pSamplerLinear);
     if (FAILED(hr))
         return FALSE;
@@ -1470,7 +1475,6 @@ DrawPrimitive3D(
     {
     case PIPELINE_NORMAL:
     case PIPELINE_DIM:
-    case PIPELINE_CROSS:
 		g_pImmediateContext->OMSetBlendState(g_pBlendStateNormal, factor, 0xffffffff);
         g_pImmediateContext->PSSetShader(g_pPixelShaderNormal, nullptr, 0);
         break;
@@ -1490,12 +1494,10 @@ DrawPrimitive3D(
 		g_pImmediateContext->OMSetBlendState(g_pBlendStateNormal, factor, 0xffffffff);
         g_pImmediateContext->PSSetShader(g_pPixelShaderMelt, nullptr, 0);
         break;
-#if 0
     case PIPELINE_CROSS:
 		g_pImmediateContext->OMSetBlendState(g_pBlendStateNormal, factor, 0xffffffff);
         g_pImmediateContext->PSSetShader(g_pPixelShaderCross, nullptr, 0);
         break;
-#endif
     }
 
     g_pImmediateContext->PSSetSamplers(0, 1, &g_pSamplerLinear);
