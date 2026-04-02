@@ -11,15 +11,17 @@
     <b>&#x1f496; Welcome Home, Master! &#x1f496;</b>
   </p>
   <p>
-    Suika3 is a production-grade visual novel engine designed to deliver a high-performance native experience across a diverse range of platforms.
+    Suika3 is a production-grade visual novel engine<br>
+    designed to deliver a high-performance native experience<br>
+    across a diverse range of platforms.
+  </p>
+  <p>
+    <i>"Port it to the iPhone, Moé-Moé Kyun!" &</i>#x1f370;&#x2615;&#x1f497;
   </p>
   <a href="https://discord.gg/YZsq9u9Mgr"><img src="https://img.shields.io/badge/suika3.vn-Discord-orange"></a>
   <img src="https://img.shields.io/github/stars/suika3-community/suika3.svg?style=flat&logo=github&colorB=orange&label=stars">
   <img src="https://img.shields.io/github/forks/suika3-community/suika3.svg">
   <img src="https://img.shields.io/badge/License-ZLib-orange.svg">
-  <p>
-    "Port it to the iPhone, Moé-MoéKyun!" &#x1f370;&#x2615;&#x1f497;
-  </p>
 </div>
 
 ---
