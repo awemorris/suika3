@@ -2,7 +2,8 @@
   <b>
     <a href="https://suika3.vn">Suika3</a><br>
   </b>
-  A Modern Full-Stack Visual Novel and 2D Game Engine
+  A Modern Full-Stack<br>
+  Visual Novel and 2D Game Engine
 </h1>
 
 <div align="center">
@@ -84,18 +85,19 @@ suika3
 ## Introduction
 
 Suika3 is a production-grade visual novel engine specifically
-engineered for commercial mobile app development, developed by Awe Morris.
+engineered for commercial mobile app development, lead by Awe Morris.
 
-Games made with Suika3 are powered by `NovelML` and the `Ray` language.
+Games made with Suika3 are powered by `NovelML` and the `Ray`
+scripting platform.
 
 - **NovelML**: A tag-based, human-readable, extensible DSL designed
   specifically for visual novels. It features concise, declarative
   tags for seamless dialogue and scene control. Developers can add
   custom tags using the Ray language.
 
-- **Ray**: The robust extension scripting language for Suika3. It
-  utilizes a high-speed JIT compiler on desktop platforms (Sunlight
-  Virtual Machine) and can be compiled into native binaries (Moonlight
+- **Ray**: The robust scripting language for Suika3. It utilizes a
+  high-speed JIT compiler on desktop platforms (Sunlight Virtual
+  Machine) and can be compiled into native binaries (Moonlight
   AOT compiler) for production or mobile environments. Ray enables you
   to make not only VN but also generic 2D games.
 
@@ -107,7 +109,6 @@ behind every great community.
 
 ## Key Features
 
-With lead developer's 10+ years of R&D experience in computer science,
 Suika3 is engineered with modern techniques, and delivers:
 
 - **High Performance**: Powered by Ray's Sunlight JIT Virtual Machine,
@@ -150,7 +151,7 @@ Suika3 is engineered with modern techniques, and delivers:
 - [Building Locally](#building-locally)
 - [Quick Look](#quick-look)
 - [Examples](#examples)
-- [Why Ray Language?](#why-ray-language)
+- [Why Ray?](#why-ray)
 - [Technical Overview](#technical-overview)
 - [Garbage Collection](#garbage-collection)
 - [Compatibility List](#compatibility-list)
@@ -200,7 +201,7 @@ See [Quality Assurance](#quality-assurance) for the details.
 - ✅ Implementing the tag execution engine. (Suika3) (January 2026 - February 2026)
 - ✅ Refactoring all C functions into a stable "C API". (January 2026 - February 2026)
 - ✅ Implementing all tags in C. (January 2026 - February 2026)
-- ✅ Wrapping "C API" for the Ray language. (February 2026 - March 2026)
+- ✅ Wrapping "C API" for Ray. (February 2026 - March 2026)
 - ✅ API Freeze (March 7, 2026)
 - ✅ GUI Animation Implementation (March 10, 2026)
 - ✅ Code Freeze (March 12, 2026)
@@ -245,11 +246,11 @@ open it with your favorite text editor. It is written in
 ```
 - **Test:** Save the file and run `suika3.exe` again. You should see your new message on the screen!
 
-### 3. Customize the Screen (`main.pf`)
+### 3. Customize the Screen (`main.ray`)
 
 You can easily change the look and feel of your game window.
 
-- **Locate:** Open the `main.pf` file in your editor.
+- **Locate:** Open the `main.ray` file in your editor.
 - **Modify:** Look for the `func setup()` section. You can change the resolution and the title of your window here:
 ```
 // Called when the window is opened.
@@ -265,9 +266,9 @@ func setup() {
 
 ### 4. Under the Hood (Advanced Tips)
 
-The bottom part of your `main.pf` file contains the core game logic in
-the `Ray` language. It's best to leave these functions as they are
-unless you are doing advanced customization:
+The bottom part of your `main.ray` file contains the core game logic in
+`Ray`. It's best to leave these functions as they are unless you are
+doing advanced customization:
 
 - `func start()`: This is called once when your game launches.
 - `func update()`: This runs every single frame to handle game logic.
@@ -359,7 +360,7 @@ See the `game/` directory for:
 
 ---
 
-### Why Ray Language?
+### Why Ray?
 
 - **Instant Iteration:** No compile cycles, no waiting. The built-in
   JIT compiler runs your scripts immediately after editing, so you can
@@ -369,9 +370,9 @@ See the `game/` directory for:
   Android, and consoles. Even on platforms where JIT is restricted,
   you never have to sacrifice performance thanks to AOT.
 
-- **Sandbox Model:** Scripts cannot access arbitrary
-files/network. Only game assets and save data are accessible via
-engine-managed APIs.
+- **Sandbox Model:** Scripts cannot access arbitrary files/network.
+  Only game assets and save data are accessible via engine-managed
+  APIs.
 
 - **Smooth Store Approval:** Dramatically lower the risk of
   rejection. Since final builds consist of native code via AOT, you'll
@@ -487,7 +488,7 @@ For Xbox series, you can use the native Microsoft GDK port directly, not via Uni
 ### NoctLang
 
 ```
-Ray = NoctLang + Suika3 API
+Ray = NoctLang + Suika3 API + Playfield API
 ```
 
 **NoctLang** is a lightweight scripting language designed for in-app
@@ -512,12 +513,12 @@ These architectures are well-supported, we can say at least they all pass [the t
 
 However, the following are not supported yet (interpreter-only) because of the lack of development machines:
 
-- ❌ SH-4 (Dreamcast) (Run on interpreter)
-- ❌ Sun SPARC (Run on interpreter)
-- ❌ HP PA-RISC (Run on interpreter)
-- ❌ Motorola 68000 (Run on interpreter)
-- ❌ Loongson (Run on interpreter)
-- ❌ IBM Z (Run on interpreter)
+- ❌ SH-4 (Dreamcast) (Runs interpreter)
+- ❌ Sun SPARC (Runs interpreter)
+- ❌ HP PA-RISC (Runs interpreter)
+- ❌ Motorola 68000 (Runs interpreter)
+- ❌ Loongson (Runs interpreter)
+- ❌ IBM Z (Runs interpreter)
 - **Challenge:** If you have one, please provide a ssh access to the development environment for 3 days. We can port there ;-)
 
 ### AOT Compilation
@@ -636,18 +637,18 @@ The separation of HIR and LIR enables:
 - **Portability**: the same LIR can be interpreted directly or lowered into optimized machine code.
 
 As shown above, HIR expresses structure, while LIR expresses
-execution.  This split allows the Ray language to keep the JIT
+execution.  This split allows NoctLang to keep the JIT
 pipeline lightweight without sacrificing optimization opportunities.
 
 Because all JIT backends translate from the same LIR, portability
 across architectures comes naturally.  This unified approach is what
-makes the Ray language both portable and maintainable.
+makes NoctLang both portable and maintainable.
 
 ---
 
 ## Garbage Collection
 
-Suika3 features a high-performance generational garbage collector,
+`Ray` features a high-performance generational garbage collector,
 inspired by the architecture of the Java HotSpot VM. This design
 ensures that developers can focus on creation without being
 interrupted by the dreaded "GC spikes" or frame drops.
@@ -674,7 +675,7 @@ For more detailed implementation, please check
 
 ### Frame-Synchronized Latency Hiding
 
-The real "magic" of Suika3 lies in its timing. By executing the
+The real "magic" of Ray lies in its timing. By executing the
 Young-generation Copy GC every single frame, the system effectively
 hides the GC processing time within the natural frame interval.
 
@@ -692,16 +693,16 @@ experience for the player.
 
 | Category    | OS / Environment   | Status       | Last Checked | Checked On                       |
 |-------------|--------------------|--------------|--------------|----------------------------------|
-| **Desktop** | Windows            | ✅ Supported | 3 Mar 2026   | Windows 11 (x64/Arm64)           |
-|             | macOS              | ✅ Supported | 1 Mar 2026   | macOS 26 Tahoe (Apple Silicon)   |
-|             | Linux              | ✅ Supported | 3 Mar 2026   | Ubuntu 24.04 LTS (x86_64)        |
-| **Mobile**  | iOS                | ✅ Supported | -            | iOS 18                           |
-|             | Android            | ✅ Supported | -            | Android 15                       |
+| **Desktop** | Windows            | ✅ Supported | 3 April 2026 | Windows 11 (x64/Arm64)           |
+|             | macOS              | ✅ Supported | 3 April 2026 | macOS 26 Tahoe (Apple Silicon)   |
+|             | Linux              | ✅ Supported | 3 April 2026 | Ubuntu 24.04 LTS (x86_64)        |
+| **Mobile**  | iOS                | ✅ Supported | 3 April 2026 | iOS 18                           |
+|             | Android            | ✅ Supported | 3 April 2026 | Android 15                       |
 |             | HarmonyOS NEXT     | ✅ Supported | -            | API 10+                          |
 | **BSD**     | FreeBSD            | ✅ Supported | -            | 14.0-RELEASE amd64               |
 |             | NetBSD             | ✅ Supported | -            | 10.0 amd64, aarch64, armv7       |
 |             | OpenBSD            | ✅ Supported | -            | 10.0 amd64, aarch64, armv7       |
-| **Web**     | WebAssembly (Wasm) | ✅ Supported | -            | Chrome, Edge, Safari             |
+| **Web**     | WebAssembly (Wasm) | ✅ Supported | 3 April 2026 | Chrome, Edge, Safari             |
 |             | Chromebook         | ✅ Supported | -            | Chrome Browser / Linux Container |
 | **Other**   | Unity Integration  | ✅ Supported | -            | Unity 6.2 (Windows x86_64)       |
 
