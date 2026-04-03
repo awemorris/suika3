@@ -59,7 +59,6 @@ D3DInitialize(
 		bAvoidD3D12 = TRUE;
 #endif
 
-#if 0
 	/* Try Direct3D 12. */
 	if (!bAvoidD3D12)
 	{
@@ -86,7 +85,6 @@ D3DInitialize(
 		nGraphicsMode = MODE_D3D9;
 		return TRUE;
 	}
-#endif
 
 	/* Fallback to GDI. */
 	if (GDIInitialize(hWnd, nWidth, nHeight))

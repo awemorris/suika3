@@ -1,4 +1,4 @@
-Playfield Script API
+Playfield Engine API
 ====================
 
 Every API function takes one parameter. The parameter must be a dictionary and
@@ -409,6 +409,21 @@ This API starts playing a sound asset file on a specified sound track.
 ```
 func playJumpSound() {
     Engine.playSound({ stream: 0, file: "jump.ogg" });
+}
+```
+
+### Engine.playSoundLoop()
+
+This API starts playing a sound asset file on a specified sound track.
+
+|Argument Name       |Description                                                   |
+|--------------------|--------------------------------------------------------------|
+|stream              |Track index. (0-3)                                            |
+|file                |File to play.                                                 |
+
+```
+func playBGM() {
+    Engine.playSoundLoop({ stream: 0, file: "jump.ogg" });
 }
 ```
 

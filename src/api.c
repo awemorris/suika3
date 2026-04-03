@@ -1353,7 +1353,6 @@ pf_read_save_data(
 
 	/* Open a save file. */
 	if (!hal_open_rfile(fname, &rf)) {
-		hal_log_error(PF_TR("Cannot open a save file."));
 		free(fname);
 		return false;
 	}
@@ -1427,7 +1426,6 @@ pf_get_save_data_size(
 
 	/* Open a save file. */
 	if (!hal_open_rfile(fname, &rf)) {
-		hal_log_error(PF_TR("Cannot open a save file."));
 		free(fname);
 		return false;
 	}
@@ -1463,8 +1461,8 @@ make_save_file_name(
 
 	pos = strlen(buf);
 	for (i = 0; i < len; i++) {
-		buf[pos + 0] = get_hex_char(key[i] >> 4);
-		buf[pos + 1] = get_hex_char(key[i] & 4);
+		buf[pos + 0] = get_hex_char((key[i] >> 4) & 0xf);
+		buf[pos + 1] = get_hex_char(key[i] & 0xf);
 		pos += 2;
 	}
 	buf[pos] = '\0';

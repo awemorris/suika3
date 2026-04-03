@@ -37,6 +37,8 @@
 #include "playfield/playfield.h"
 
 /* The file name of the startup file. */
+#ifndef STARTUP_FILE
 #define STARTUP_FILE	"main.pf"
+#endif
 
 #endif
