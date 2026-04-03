@@ -284,8 +284,8 @@ jobs:
           #xcodebuild -exportArchive -archivePath app.xcarchive -exportPath ./output -exportOptionsPlist ../resources/ios/ExportOptions.plist CODE_SIGNING_ALLOWED=NO
           ls -R .
           mkdir Payload
-          zip -r suika3-ios-build-check.ipa Payload
-          tree output
+          cp -Ra app.xcarchive/Products/Applications/ios.app Payload/Suika3.app
+          zip -r suika3-ios-build-check.ipa Payload/Suika3.app
           cd ..
 
       - name: Upload iOS
