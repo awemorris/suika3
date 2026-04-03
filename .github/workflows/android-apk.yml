@@ -1,0 +1,67 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-android:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build flex bison openjdk-17-jdk gradle
+
+      - name: Setup for Android
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r28c
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+        with:
+          api-level: 35
+          build-tools: 35.0.0
+
+      - name: Build Libraries
+        run: |
+          cmake --preset android-arm64
+          cmake --build --preset android-arm64
+          cmake --preset android-armv7
+          cmake --build --preset android-armv7
+          cmake --preset android-x86_64
+          cmake --build --preset android-x86_64
+          cmake --preset android-x86
+          cmake --build --preset android-x86
+          cmake --preset android-riscv64
+          cmake --build --preset android-riscv64
+
+      - name: Prepare Project
+        run: |
+          cp -R resources/projects/android ./
+          mkdir -p android/app/src/main/assets
+          cp -R game/* android/app/src/main/assets/
+          mkdir -p android/app/src/main/java/io/noctvm/playfield/engineandroid
+          cp external/PlayfieldEngine/external/StratoHAL/src/MainActivity.java android/app/src/main/java/io/noctvm/playfield/engineandroid/
+          mkdir -p android/app/src/main/jniLibs/arm64-v8a
+          cp android-arm64/libsuika3.so android/app/src/main/jniLibs/arm64-v8a/libplayfield.so
+          mkdir -p android/app/src/main/jniLibs/armeabi-v7a
+          cp android-armv7/libsuika3.so android/app/src/main/jniLibs/armeabi-v7a/libplayfield.so
+          mkdir -p android/app/src/main/jniLibs/x86_64
+          cp android-x86_64/libsuika3.so android/app/src/main/jniLibs/x86_64/libplayfield.so
+          mkdir -p android/app/src/main/jniLibs/x86
+          cp android-x86/libsuika3.so android/app/src/main/jniLibs/x86/libplayfield.so
+          mkdir -p android/app/src/main/jniLibs/riscv64
+          cp android-riscv64/libsuika3.so android/app/src/main/jniLibs/riscv64/libplayfield.so
+
+      - name: Build Project
+        run: |
+          cd android
+          ./gradlew assembleDebug
+          tree

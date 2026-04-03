@@ -1,10 +1,14 @@
-Suika3 API Reference
-====================
+Ray High Level API Reference
+============================
+
+The `High Level API (Engine.*)` is designed for Visual Novel creation.
+
+Every API function takes one parameter.
+The parameter must be a dictionary and arguments must be stored as key-and-value pairs.
 
 ## Index
 
 * Fundamental
-    * [Suika.print()](#suikaprint)
     * [Suika.loadPlugin()](#suikaloadplugin)
 * Config
     * [Suika.setConfig()](#suikasetconfig)
@@ -92,7 +96,6 @@ Suika3 API Reference
     * [Suika.getLastEnglishTagIndex()](#suikagetlastenglishtagindex)
     * [Suika.clearLastEnglishTagIndex()](#suikaclearlastenglishtagindex)
     * [Suika.getLastTagName()](#suikagetlasttagname)
-
 * Image
     * [Suika.createImageFromFile()](#suikacreateimagefromfile)
     * [Suika.createImage()](#suikacreateimage)
@@ -312,25 +315,11 @@ Suika3 API Reference
 
 ---
 
-## Suika.print()
-
-Print a debug message.
-
-### Parameters (Direct)
-
-| Parameter | Type   | Description     |
-|-----------|--------|-----------------|
-| msg       | Any    | Value to print. |
-
-### Return
-
-No return.
-
----
-
 ## Suika.loadPlugin()
 
 Load a plugin.
+
+Only this API takes a non-dictionary argument.
 
 ### Parameters (Direct)
 

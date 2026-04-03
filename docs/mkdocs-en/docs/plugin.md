@@ -1,5 +1,5 @@
-Suika3 Plugin Development Reference
-===================================
+Ray Plugin Development Reference
+================================
 
 ## Folder
 

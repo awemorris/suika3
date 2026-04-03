@@ -1,18 +1,21 @@
 Suika3 Documentation
 ====================
 
-Welcome to the `Suika3` document center.
+Welcome to the `Suika3` documentation.
 
-**For all users, see:**
-* NovelML Syntax
-* NovelML Tag
-
-**For advanced users, see:**
-* Ray Syntax Reference
-* Ray API Reference
-
-**For developers who create Suika3 plugins, see:**
-* Plugin Development Reference
-
-**For developers who build Suika3 from the source code, see:**
-* Build Instruction
+- For Basic Usage:
+    - Getting Started Guide
+    - NovelML Syntax Reference
+    - NovelML Tag Reference
+    - Animation
+    - GUI
+    - Lip Sync
+    - Eye Blink
+- For Advanced Usage:
+    - Ray Syntax Reference
+    - Ray Low Level API Reference
+    - Ray High Level Reference
+    - Ray Plugin Development
+    - AOT Deployment Instructions
+- For Community Developers:
+    - Build Instructions

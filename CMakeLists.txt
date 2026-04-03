@@ -361,7 +361,7 @@ endif()
 # PlayfieldEngine
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/PlayfieldEngine)
 
-target_compile_definitions(playfield PRIVATE STARTUP_FILE=main.ray)
+target_compile_definitions(playfield PRIVATE STARTUP_FILE="main.ray")
 
 # ---
 

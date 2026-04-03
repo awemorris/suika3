@@ -745,6 +745,23 @@ static bool Engine_playSound(NoctEnv *env)
 	return true;
 }
 
+/* Engine.playSoundLoop() */
+static bool Engine_playSoundLoop(NoctEnv *env)
+{
+	int stream;
+	const char *file;
+
+	if (!get_int_param(env, "stream", &stream))
+		return false;
+	if (!get_string_param(env, "file", &file))
+		return false;
+
+	if (!pf_play_sound(stream, file, true))
+		return false;
+
+	return true;
+}
+
 /* Engine.stopSound() */
 static bool Engine_stopSound(NoctEnv *env)
 {
@@ -1129,6 +1146,7 @@ install_api(
 		RTFUNC(draw),
 		RTFUNC(destroyTexture),
 		RTFUNC(playSound),
+		RTFUNC(playSoundLoop),
 		RTFUNC(stopSound),
 		RTFUNC(setSoundVolume),
 		RTFUNC(playVideo),

@@ -80,8 +80,7 @@ suika3
 ## Introduction
 
 Suika3 is a production-grade visual novel engine specifically
-engineered for commercial mobile app development, developed by Awe
-Morris with the Suika3 Community.
+engineered for commercial mobile app development, developed by Awe Morris.
 
 Games made with Suika3 are powered by `NovelML` and the `Ray` language.
 
@@ -93,7 +92,8 @@ Games made with Suika3 are powered by `NovelML` and the `Ray` language.
 - **Ray**: The robust extension scripting language for Suika3. It
   utilizes a high-speed JIT compiler on desktop platforms (Sunlight
   Virtual Machine) and can be compiled into native binaries (Moonlight
-  AOT compiler) for production or mobile environments.
+  AOT compiler) for production or mobile environments. Ray enables you
+  to make not only VN but also generic 2D games.
 
 Although Suika3 is designed as a professional tool, you are absolutely
 welcome to use it just for fun — after all, fun is the driving force
@@ -876,13 +876,14 @@ and it is synchronized to the latest.
     - [Getting Started Guide](docs/mkdocs-en/docs/getting-started.md)
     - [NovelML Syntax Reference](docs/mkdocs-en/docs/novelml-syntax.md)
     - [NovelML Tag Reference](docs/mkdocs-en/docs/novelml-tags.md)
-    - [Animation]((docs/mkdocs-en/docs/anime.md)
-    - [GUI]((docs/mkdocs-en/docs/gui.md)
-    - [Lip Sync]((docs/mkdocs-en/docs/lip-sync.md)
-    - [Eye Blink]((docs/mkdocs-en/docs/eye-bink.md)
+    - [Animation](docs/mkdocs-en/docs/anime.md)
+    - [GUI](docs/mkdocs-en/docs/gui.md)
+    - [Lip Sync](docs/mkdocs-en/docs/lip-sync.md)
+    - [Eye Blink](docs/mkdocs-en/docs/eye-bink.md)
 - For Advanced Usage:
     - [Ray Syntax Reference](docs/mkdocs-en/docs/ray-syntax.md)
-    - [Ray API Reference](docs/mkdocs-en/docs/ray-api.md)
+    - [Ray Low Level API Reference](docs/mkdocs-en/docs/ray-2d-api.md)
+    - [Ray High Level Reference](docs/mkdocs-en/docs/ray-vn-api.md)
     - [Ray Plugin Development](docs/mkdocs-en/docs/plugin.md)
     - [AOT Deployment Instructions](docs/mkdocs-en/docs/aot.md)
 - For Community Developers:

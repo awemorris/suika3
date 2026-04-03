@@ -1,8 +1,10 @@
-Playfield Engine API
-====================
+Ray Low Level API
+=================
 
-Every API function takes one parameter. The parameter must be a dictionary and
-arguments must be stored as key-and-value pairs.
+The `Low Level API (Engine.*)` is designed for versatile 2D game creation.
+
+Every API function takes one parameter.
+The parameter must be a dictionary and arguments must be stored as key-and-value pairs.
 
 ## Skelton
 

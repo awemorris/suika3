@@ -1,18 +1,21 @@
-Suika3
-======
+Suika3 Documentation
+====================
 
-Welcome to the `Suika3` document center.
+Welcome to the `Suika3` documentation.
 
-**For all users:**
-* [NovelML Syntax Reference](novelml-syntax.md)
-* [NovelML Tag Reference](tag.md)
-
-**For advanced users:**
-* [Ray Syntax Reference(ray-syntax.md)]
-* [Ray API Reference](api.md)
-
-**For developers who create Suika3 plugins:**
-* [Plugin Development Reference](plugin.md)
-
-**For developers who build Suika3 from the source code:**
-* [Build Instruction](build.md)
+- For Basic Usage:
+    - [Getting Started Guide](docs/mkdocs-en/docs/getting-started.md)
+    - [NovelML Syntax Reference](docs/mkdocs-en/docs/novelml-syntax.md)
+    - [NovelML Tag Reference](docs/mkdocs-en/docs/novelml-tags.md)
+    - [Animation](docs/mkdocs-en/docs/anime.md)
+    - [GUI](docs/mkdocs-en/docs/gui.md)
+    - [Lip Sync](docs/mkdocs-en/docs/lip-sync.md)
+    - [Eye Blink](docs/mkdocs-en/docs/eye-bink.md)
+- For Advanced Usage:
+    - [Ray Syntax Reference](docs/mkdocs-en/docs/ray-syntax.md)
+    - [Ray Low Level API Reference](docs/mkdocs-en/docs/ray-2d-api.md)
+    - [Ray High Level API Reference](docs/mkdocs-en/docs/ray-vn-api.md)
+    - [Ray Plugin Development](docs/mkdocs-en/docs/plugin.md)
+    - [AOT Deployment Instructions](docs/mkdocs-en/docs/aot.md)
+- For Community Developers:
+    - [Build Instructions](docs/mkdocs-en/docs/build.md)
