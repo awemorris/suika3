@@ -302,7 +302,7 @@ jobs:
         with:
           name: ios-engine
           path: |
-            suika3-ios-build-check.ipa
+            ios/suika3-ios-build-check.ipa
           if-no-files-found: error
           retention-days: 7
 
