@@ -303,6 +303,62 @@ jobs:
           cmake --preset android-riscv64
           cmake --build --preset android-riscv64
 
+  build-android-apk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build flex bison openjdk-17-jdk gradle
+
+      - name: Setup for Android
+        uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r28c
+
+      - name: Build Libraries
+        run: |
+          cmake --preset android-arm64
+          cmake --build --preset android-arm64
+          cmake --preset android-armv7
+          cmake --build --preset android-armv7
+          cmake --preset android-x86_64
+          cmake --build --preset android-x86_64
+          cmake --preset android-x86
+          cmake --build --preset android-x86
+          cmake --preset android-riscv64
+          cmake --build --preset android-riscv64
+
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Prepare Project
+        run: |
+          cp -R resources/projects/android ./
+          mkdir -p android/app/src/main/assets
+          cp -R game/* android/app/src/main/assets/
+          mkdir -p android/app/src/main/java/io/noctvm/playfield/engineandroid
+          cp external/PlayfieldEngine/external/StratoHAL/src/MainActivity.java android/app/src/main/java/io/noctvm/playfield/engineandroid/
+          mkdir -p android/app/src/main/jniLibs/arm64-v8a
+          cp build-android-arm64/libsuika3.so android/app/src/main/jniLibs/arm64-v8a/libplayfield.so
+          mkdir -p android/app/src/main/jniLibs/armeabi-v7a
+          cp build-android-armv7/libsuika3.so android/app/src/main/jniLibs/armeabi-v7a/libplayfield.so
+          mkdir -p android/app/src/main/jniLibs/x86_64
+          cp build-android-x86_64/libsuika3.so android/app/src/main/jniLibs/x86_64/libplayfield.so
+          mkdir -p android/app/src/main/jniLibs/x86
+          cp build-android-x86/libsuika3.so android/app/src/main/jniLibs/x86/libplayfield.so
+          mkdir -p android/app/src/main/jniLibs/riscv64
+          cp build-android-riscv64/libsuika3.so android/app/src/main/jniLibs/riscv64/libplayfield.so
+
+      - name: Build Project
+        run: |
+          cd android
+          ./gradlew assembleDebug
+          cd ..
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -345,6 +401,15 @@ jobs:
           name: android-riscv64
           path: |
             build-android-riscv64/libsuika3.so
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-apk
+          path: |
+            android/app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 7
 
@@ -647,6 +712,12 @@ jobs:
           name: android-riscv64
           path: android-riscv64
 
+      - name: Download Android APK artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: android-apk
+          path: android-apk
+
       - name: Copy for Android
         run: |
           cp -R resources/projects/android/app dist/misc/android/
@@ -773,6 +844,7 @@ jobs:
           files: |
             Suika3-nightly-${{ env.DATE }}-${{ env.SHORT_SHA }}.zip
             Suika3-nightly-${{ env.DATE }}-${{ env.SHORT_SHA }}.7z
+            android-apk/app-debug.apk
           body: |
             This is an automated build from CI and is not an official release.
             The ZIP archive contains standalone engines for Windows, macOS, and Linux.
