@@ -279,9 +279,11 @@ jobs:
           cp resources/projects/ios/ios/ios.entitlements ios/ios/
           cp resources/projects/ios/ios/LaunchScreen.storyboard ios/ios/
 
+          cd ios
           xcodebuild archive -scheme ios -archivePath app.xcarchive CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO
           xcodebuild -exportArchive -archivePath app.xcarchive -exportPath ./output -exportOptionsPlist resources/ios/ExportOptions.plist CODE_SIGNING_ALLOWED=NO
           tree output
+          cd ..
 
       - name: Upload iOS
         uses: actions/upload-artifact@v4
