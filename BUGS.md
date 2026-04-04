@@ -159,3 +159,42 @@ Fixed CMakeLists.txt of StratoHAL.
 * 9ec64623285639ba3a8831ac2b7e67f3b7a8e735 Merge upstream
 
 ---
+
+## Pencil tag is missing
+
+* Report Details
+    * ID: BUG-20260316-001
+    * Status: Resolved
+    * Component: Suika3
+    * Severity: high
+    * Priority: high
+    * Reproducibility: always
+    * First Found In: b4e84027f0c42a66bc9c071232a5d1d272a73cad
+    * Fixed In: 382197f510f7c9a13e1509e037761e02cd104c87
+    * Reported Date: 12:00 1 April 2026
+    * Fixed Date: 23:00 4 April 2026
+    * Detection: document inspection
+    * Root Cause Type: overlooked on porting
+    * OS: All
+    * CPU: All
+
+### Report
+
+A Suika2 command `@pencil` should be ported to `[pencil]` tag, but it's missing.
+
+### Analysis
+
+In the porting process from Suika2 to Suika3, that command was overlooked.
+
+### Patch
+
+Added the `[pencil]` tag and `Suika.drawTextOnLayer()` API.
+
+Added/fixed:
+- CMakeLists.txt
+- src/api.c
+- src/cmd_pencil.c
+
+### Commits
+
+* 382197f510f7c9a13e1509e037761e02cd104c87
