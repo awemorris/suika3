@@ -97,8 +97,8 @@ scripting platform.
   VM; codename "諏訪武叡") and can be compiled into native binaries
   (Lunar-Ray AOT Compiler; codename "少彥智叡") for production or
   mobile environments, alongside the interpreter (Ubi-Ray Interpreter;
-  codename "天滿梅貴"). Ray enables you to make not only VN but also
-  generic 2D games.
+  codename "天滿梅貴"). Our native technology, Ray, enables you to
+  make not only VN but also generic 2D games.
 
 Although Suika3 is designed as a professional tool, you are absolutely
 welcome to use it just for fun — after all, fun is the driving force
@@ -372,7 +372,8 @@ See the `game/` directory for:
 
 - **True Native Performance:** Run extensions at full speed on iOS,
   Android, and consoles. Even on platforms where JIT is restricted,
-  you never have to sacrifice performance thanks to AOT.
+  you never have to sacrifice performance thanks to AOT. Ray is a
+  native technology.
 
 - **Sandbox Model:** Scripts cannot access arbitrary files/network.
   Only game assets and save data are accessible via engine-managed
