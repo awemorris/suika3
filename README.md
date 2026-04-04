@@ -104,6 +104,11 @@ Although Suika3 is designed as a professional tool, you are absolutely
 welcome to use it just for fun — after all, fun is the driving force
 behind every great community.
 
+> [!TIP]
+> Suika3 is an ambitious engine born from over 25 years of independent
+> R&D, and we are still shaping its future together with early
+> adopters.
+
 ---
 
 ## Key Features
