@@ -606,7 +606,7 @@ target_include_directories(strato PRIVATE ${BROTLI_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${BZIP2_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${ZLIB_INCLUDE_DIRS})
 
-if(STRATO_ENABLE_SHARED)
+if(STRATO_ENABLE_SHARED OR STRATO_ENABLE_DIST)
   target_compile_definitions(strato PRIVATE HAL_USE_SHARED)
 endif()
 
@@ -813,7 +813,7 @@ endif()
 #
 
 # Libraries.
-if(STRATO_ENABLE_SHARED)
+if(STRATO_ENABLE_SHARED OR STRATO_ENABLE_DIST)
   target_link_libraries(
     strato
     PUBLIC

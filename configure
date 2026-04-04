@@ -3,20 +3,21 @@
 PREFIX="/usr/local"
 HOST=""
 JIT="OFF"
+DIST=ON
 
 # Parse options.
 for OPT in "${@}"; do
     case "$OPT" in
         -h | --help)
             echo "Help:"
-            echo "  configure --prefix=[/usr/local]"
+            echo "  configure --prefix=[/usr/local] [--without-shared]"
             echo ""
             echo "[Dear Package Maintainers!]"
             echo "Thank you for your hardworking."
             echo "==Build Dep=="
-            echo "  Debian:  apt-get install cmake build-essential libx11-dev libxpm-dev libasound2-dev mesa-common-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-x"
-            echo "  RedHat:  dnf install patch cmake libX11-devel libXpm-devel alsa-lib-devel mesa-libGL-devel gstreamer1.0-devel gstreamer1.0-plugins-base-devel"
-            echo "  Arch:    pacman -S --needed base-devel cmake libx11 libxpm alsa-lib mesa gstreamer gst-plugins-base"
+            echo "  Debian:  apt-get install cmake build-essential libx11-dev libxpm-dev libasound2-dev mesa-common-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-x zlib1g-dev libpng-dev libjpeg-dev libbz2-dev libwebp-dev libogg-dev libvorbis-dev libfreetype-dev"
+            echo "  RedHat:  dnf install patch cmake libX11-devel libXpm-devel alsa-lib-devel mesa-libGL-devel gstreamer1.0-devel gstreamer1.0-plugins-base-devel zlib-devel libpng-devel libjpeg-devel libbz2-devel libwebp-devel libogg-devel libvorbis-devel libfreetype-devel"
+            echo "  Arch:    pacman -S --needed base-devel cmake libx11 libxpm alsa-lib mesa gstreamer gst-plugins-base zlib libpng libjpeg libbz2 libwebp libogg libvorbis libfreetype"
             echo "  Alpine:  apk add git make cmake gcc musl-dev libx11-dev libxpm-dev alsa-lib-dev mesa-dev gstreamer-dev gst-plugins-base-dev"
             echo "  SUSE:    zypper install cmake gcc libX11-devel libXpm-devel alsa-devel Mesa-libGL-devel gstreamer-devel gstreamer-plugins-base-devel"
             echo "  FreeBSD: pkg install cmake xorgproto libX11 libXpm mesa-libs gstreamer1 gstreamer1-plugins"
@@ -35,6 +36,9 @@ for OPT in "${@}"; do
             ;;
         --prefix=*)
             PREFIX=${1#--prefix=}
+            ;;
+        --without-shared)
+            DIST=OFF
             ;;
     esac
 done
@@ -80,9 +84,7 @@ fi
 cmake . \
       -DCMAKE_BUILD_TYPE=Release \
       -DCMAKE_INSTALL_PREFIX=$PREFIX \
-      -DSUIKA_ENABLE_JIT=$JIT \
+      -DPLAYFIELD_ENABLE_JIT=$JIT \
       -DSUIKA_ENABLE_PACK=ON \
-      -DSUIKA_ENABLE_BYTECOMP=ON \
-      -DSUIKA_ENABLE_AOTCOMP=ON \
       -DSUIKA_ENABLE_I18N=ON \
-      -DSUIKA_ENABLE_DIST=ON
+      -DSUIKA_ENABLE_DIST=$DIST
