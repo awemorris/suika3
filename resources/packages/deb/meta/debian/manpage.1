@@ -1,0 +1,36 @@
+.\"                                      Hey, EMACS: -*- nroff -*-
+.\" (C) Copyright 2026 The Suika3 Community <awe@suika3.vn>,
+.\" suika3.1 - Suika3 manpage
+.TH SUIKA3 1 "January 2026" "Suika3 1.0" "User Commands"
+.SH NAME
+suika3 \- Cross-platform scripting VM for visual novels
+.SH SYNOPSIS
+.B suika3
+
+.SH DESCRIPTION
+The
+.B Suika3
+is a cross-platform scripting VM for 2D games and visual novels.
+
+When invoked,
+.B suika3
+automatically executes the script
+.I main.ray
+from the current working directory.
+No other script files can be specified on the command line.
+
+.SH EXAMPLES
+Run the engine in a project directory containing \fImain.ray\fR:
+.EX
+cd mygame/
+suika3
+.EE
+
+.SH SEE ALSO
+.BR suika3-bcc (1)
+.BR suika3-aotc (1)
+.BR suika3-pack (1)
+
+.SH AUTHORS
+Awe Morris <awe@noctvm.io> and contributors.
+Project homepage: <https://github.com/suika3-community/suika3>
