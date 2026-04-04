@@ -7,16 +7,16 @@ Plugins must be stored in the `system/plugin/<PLUGIN-NAME>/` directory.
 
 ## File
 
-Plugin file must be stored to the `system/plugin/<PLUGIN-NAME>/<PLUGIN-NAME>.ray` file.
+A plugin file must be stored to the `system/plugin/<PLUGIN-NAME>/<PLUGIN-NAME>.ray` file.
 
 ## Function
 
-Plugin must define the `plugin_init_<PLUGIN-NAME>()` function.
+The plugin must define the `plugin_init_<PLUGIN-NAME>()` function.
 
-## Defining a new tag
+## Defining a New Tag
 
-Define a function named `Tag_mytag()` in the `system/plugin/<PLUGIN-NAME>/<PLUGIN-NAME>.ray` file to add a new tag named `mytag`.
-After loading the pllugin by `Suika.loadPlugin()`, you can use `mytag` in NovelML.
+Define a function named `Tag_mytag()` in the `system/plugin/<PLUGIN-NAME>/<PLUGIN-NAME>.ray` file to create a new tag named `mytag`.
+After loading the plugin via `Suika.loadPlugin()`, you can use `mytag` in NovelML.
 
 ## Sample
 

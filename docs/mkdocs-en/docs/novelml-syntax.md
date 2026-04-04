@@ -9,7 +9,7 @@ For the detailed explanation of each tag, please see [Suika3 Tag Reference](tag.
 
 ## 1. NovelML is a list of engine commands called “tags”
 
-NovelML is a list of **tags**. A tag is a **command to the engine**.
+NovelML is a list of **tags**. A tag is a **command for the engine**.
 
 - Each tag tells the engine to do something
 - Tags run **one by one**, in the order they appear
@@ -79,7 +79,7 @@ Typical examples:
 These tags:
 
 - Create and start an animation or movement
-- If `async="true"` is specified, **do not wait** for it to finish and immediately continue to the next tag
+- If `async="true"` is specified, the engine **does not wait** for it to finish and immediately continue to the next tag
 
 Because of this, tags after an `async="true"` tag may run **while the animation is still playing**.
 
@@ -191,12 +191,12 @@ Macros let you group several tags and run them together.
 
 ## 10. What happens at the end of a file
 
-If execution:
+If executed:
 
 - Reaches the end of the file, and
-- No more `goto` or `load` happens
+- No more `goto` or `load` tags happen
 
-Then **scenario execution ends**.
+Then the **scenario execution ends**.
 
 However, on some platforms (for example iOS or game consoles), the app is not allowed to quit.
 
@@ -213,7 +213,7 @@ instead of ending automatically.
 
 This document is meant to go with:
 
-- [Tag Reference](tag.md): what each tag does
-- This document: how a scenario runs
+- [Tag Reference](tag.md): explains what each tag does
+- This document: explains how a scenario runs
 
-For details of individual tags, see the [Tag Reference](tag.md).
+For details on individual tags, see the [Tag Reference](tag.md).

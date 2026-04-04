@@ -1,14 +1,15 @@
 Lip Synchronization
 ===================
 
-An lip synchronization image must be stored in the "lip" folder that is located in the same folder as the main character image exists.
+An lip synchronization image must be stored in the "lip" folder folder that is
+located in the same folder as the character's image(s).
 
 * happy.png (main character file)
 * lip/
     * happy.png (lip synchronization file)
 
-A lip synchronization image consists of images of lip synchronization differences.
-A frame must be as the same size as the main character image is.
+A lip synchronization image consists of frame(s) of lip synchronization difference(s).
+A frame must be the same size as the character's image is.
 Frames must be stored horizontally in the left to right order.
 
 Alpha values on borders must be smoothed.

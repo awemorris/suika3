@@ -318,7 +318,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
 
 ## Suika.loadPlugin()
 
-Load a plugin.
+Loads a plugin.
 
 Only this API takes a non-dictionary argument.
 
@@ -367,7 +367,7 @@ Integer that represents a number of config keys.
 
 ## Suika.getConfigKey()
 
-Get a config key for index.
+Get a config key's index.
 
 ### Parameters (Dictionary)
 

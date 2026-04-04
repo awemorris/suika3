@@ -1,4 +1,4 @@
-System Requirement Specification for Suika3
+System Requirement Specifications for Suika3
 ===========================================
 
 ## 1. Overview
@@ -30,10 +30,10 @@ Suika3 empowers creators through four specialized languages:
 ## 3. Key Objectives & Design Philosophy
 
 - Mobile-First Experience: Designed with the belief that smartphones
-  are the primary computing device. It avoids PC-centric UI/UX in
+  are a primary computing device. It avoids PC-centric UI/UX in
   favor of a native mobile feel.
 
-- Store Publish Compatibility: Fully compliant with iOS/Android store
+- Store Publishing Compatibility: Fully compliant with iOS/Android store
   policies via AOT compilation and responsive design.
 
 - High Portability:

@@ -1,4 +1,4 @@
-Suika3 Build Instruction
+Suika3 Build Instructions
 ========================
 
 Suika3 fully utilizes the CMake build system.
@@ -7,7 +7,7 @@ Suika3 fully utilizes the CMake build system.
     * Requires CMake 3.22 or later
     * Windows: Visual Studio 2022 or 2026 required
     * macOS: Xcode 8.2.1 or later required
-    * Linux: gcc 4.4 or later required (clang is also supported)
+    * Linux: GCC 4.4 or later required (Clang is also supported)
     * A full build takes:
         * 20 seconds for Visual Studio 2026 on Intel Core i5 13400
         * 5 seconds for Linux on Intel Core i5 13400
@@ -17,17 +17,17 @@ Suika3 fully utilizes the CMake build system.
 
 ## Windows (Visual Studio 2026)
 
-Visual Studio is the recommended build environment for Windows, and used by the official binary.
+Visual Studio is the recommended build environment for Windows, and is used for the official binary.
 
-### Prerequisite
+### Prerequisites
 
-* `Windows 11` PC with an Intel, AMD, or Arm64 processor
+* A `Windows 11` PC with an Intel, AMD, or Arm64 processor
 * `Visual Studio 2026` installed with C/C++ and CMake configured
 
 ### Steps
 
 * Clone the repository.
-* Open the top of the source code folder by Visual Studio.
+* Open the root of the source code folder in Visual Studio.
 * Wait for the CMake configuration to complete.
 * Choose the `VS2026 x64 Release` target.
 * Build the project.
@@ -39,13 +39,13 @@ The target file `out/build/windows-vs2026-x64-release/suika3.exe` will be create
 ## Windows (WSL2)
 
 This method uses MinGW on WSL2 to create a Windows exe file.
-Note that it is possible to build Suika3 by MinGW,
-but not recommended because of false positives in antivirus software.
+Note that it is possible to build Suika3 using MinGW,
+but it is not recommended due to false positives in antivirus software.
 
-### Prerequisite
+### Prerequisites
 
 * A `Windows 11` PC with an Intel, AMD, or Arm64 processor
-* A `WSL2` feature installed
+* The `WSL2` feature installed
 * `Ubuntu` or `Debian` installed on WSL2
 
 ```
@@ -69,7 +69,7 @@ The target file `build-mingw-x86_64/suika3.exe` will be created.
 
 ## Linux (X11)
 
-### Prerequisite
+### Prerequisites
 
 * A `Linux` machine with any processor
 * `X11` installed
@@ -97,16 +97,16 @@ cmake --build --preset linux-x11
 
 The target file `build-linux-x11/suika3` will be created.
 
-If you want to debug Suika3 with gdb, you can use the `linux-x11-debug` preset instead of `linux-x11`.
+If you want to debug Suika3 with GDB, you can use the `linux-x11-debug` preset instead of `linux-x11`.
 
 ---
 
 ## Linux (Wayland)
 
-Note that our Wayland support is still experimental.
-It is compatible with KDE, but not showing a window frame on GNOME.
+Note that Wayland support is still experimental.
+It is compatible with KDE, but has problems with showing windows on GNOME.
 
-### Prerequisite
+### Prerequisites
 
 * A `Linux` machine with any processor
 * `Wayland` installed
@@ -134,15 +134,15 @@ cmake --build --preset linux-wayland
 
 The target file `build-linux-wayland/suika3` will be created.
 
-If you want to debug Suika3 with gdb, you can use the `linux-wayland-debug` preset instead of `linux-wayland`.
+If you want to debug Suika3 with GDB, you can use the `linux-wayland-debug` preset instead of `linux-wayland`.
 
 ---
 
 ## macOS (App Bundle)
 
-This method creates an app bundle for macOS, and is used by the official binary.
+This method creates an app bundle for macOS, and is used for the official binary.
 
-### Prerequisite
+### Prerequisites
 
 * A Mac with an Apple Silicon or Intel processor
 * `macOS 11` or later installed
@@ -164,8 +164,8 @@ The target `build-macos/Suika3.app` will be created.
 ### DMG Packaging
 
 If you want to distribute Suika3 for macOS, you need to create a DMG file with code signing and notirization.
-You have to own a `Developer ID Application` certificate in the keychain and logged in with an Apple Developer account on Xcode.
-Note that an app bundle distributed by a zip file cannot access outside the app bundle, so we use DMG here.
+You need to have a `Developer ID Application` certificate in the keychain and be logged in with an Apple Developer account on Xcode.
+Please note that an app bundle distributed via a zip file cannot access outside of the app bundle, so we use DMG here.
 
 ```
 cd macos
@@ -192,9 +192,9 @@ codesign --sign "Developer ID Application" Suika3.dmg
 ## macOS (CLI)
 
 This method creates a command-line interface (CLI) version of Suika3 for macOS.
-It is useful for debugging and development, but not recommended for distribution because it does not have an app bundle.
+It is useful for debugging and development, but is not recommended for distribution.
 
-### Prerequisite
+### Prerequisites
 
 * A Mac with an Apple Silicon or Intel processor
 * `macOS 11` or later installed
@@ -213,13 +213,13 @@ cmake --build --preset macos-cli
 
 The target `build-macos/Suika3.app` will be created.
 
-If you want to debug Suika3 with lldb, you can use the `macos-cli-debug` preset instead of `macos`.
+If you want to debug Suika3 with LLDB, you can use the `macos-cli-debug` preset instead of `macos`.
 
 ---
 
 ## iOS
 
-### Prerequisite
+### Prerequisites
 
 * A Mac with an Apple Silicon or Intel processor
 * `macOS 11` or later installed
@@ -230,19 +230,19 @@ If you want to debug Suika3 with lldb, you can use the `macos-cli-debug` preset 
 * Pack assets into the `assets.arc` file.
 * Download [the official binary](https://github.com/suika3-community/suika/releases) and extract it.
 * Copy your `assets.arc` file into the `misc/ios/resources` folder.
-* Open the `misc/ios` folder by Xcode.
+* Open the `misc/ios` folder in Xcode.
 * Build and run.
 
 ### Build from Scratch
 
 If you want to build from scratch, use `cmake --preset ios-device` or `cmake --preset ios-simulator`,
-then copy the built `libsuika3.a` file into the `misc/ios/lib` folder, and open the `misc/ios` folder by Xcode.
+then copy the built `libsuika3.a` file into the `misc/ios/lib` folder, and open the `misc/ios` folder in Xcode.
 
 ---
 
 ## Android
 
-### Prerequisite
+### Prerequisites
 
 * `Android Studio`
 
@@ -250,17 +250,17 @@ then copy the built `libsuika3.a` file into the `misc/ios/lib` folder, and open 
 
 * Download [the official binary](https://github.com/suika3-community/suika/releases) and extract it.
 * Copy your asset files into the `misc/android/app/src/main/assets` folder.
-* Open the `misc/android` folder by Android Studio.
+* Open the `misc/android` folder in Android Studio.
 
 ### Build from Scratch
 
-If you want to build from scratch, use `cmake --preset android-arm64`, then copy the built `libsuika3.so` file into the `misc/android/app/src/main/jniLibs/arm64-v8a` folder, and open the `misc/android` folder by Android Studio.
+If you want to build from scratch, use `cmake --preset android-arm64`, then copy the built `libsuika3.so` file into the `misc/android/app/src/main/jniLibs/arm64-v8a` folder, and open the `misc/android` folder in Android Studio.
 
 ---
 
 ## WebAssembly
 
-### Prerequisite
+### Prerequisites
 
 * `emsdk` installed. (Any OS will do.)
 
@@ -279,7 +279,7 @@ The target file `wasm/index.html` will be created.
 
 ### Testing
 
-To run the app, place your `assets.arc` file in the `wasm` folder first.
+To run the app, place your `assets.arc` file in the `wasm` folder.
 
 After that, type `python -m http.server` and open `http://localhost:8000` in a browser window.
 
@@ -289,7 +289,7 @@ On Windows, you can use `suika3-web.exe` instead of `python`. It runs a small we
 
 ## FreeBSD
 
-### Prerequisite
+### Prerequisites
 
 * A `FreeBSD` machine
 * `cmake` and `ninja` installed.
@@ -311,7 +311,7 @@ The target file `build-freebsd/suika3` will be created.
 
 ## NetBSD
 
-### Prerequisite
+### Prerequisites
 
 * A `NetBSD` machine
 * `cmake` and `ninja` installed.
@@ -333,7 +333,7 @@ The target file `build-netbsd/suika3` will be created.
 
 ## OpenBSD
 
-### Prerequisite
+### Prerequisites
 
 * A `OpenBSD` machine
 * `cmake` and `ninja` installed.
@@ -355,7 +355,7 @@ The target file `build-openbsd/suika3` will be created.
 
 ## Unity Plugin
 
-### Prerequisite
+### Prerequisites
 
 * Full build of `LLVM-22` installed.
 

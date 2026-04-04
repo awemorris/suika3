@@ -26,19 +26,19 @@ Language setting.
 
 # Font 1
 #  - Default font
-#  - You can choose this font by \f{1} in a message
+#  - You can choose this font by adding \f{1} to a message
 font.ttf1=system/font/rounded-l-mplus-1c-bold.ttf
 
 # Font 2
-#  - You can choose this font by \f{2} in a message
+#  - You can choose this font by adding \f{2} to a message
 #font.ttf2=
 
 # Font 3
-#  - You can choose this font by \f{3} in a message
+#  - You can choose this font by adding \f{3} to a message
 #font.ttf3=
 
 # Font 4
-#  - You can choose this font by \f{4} in a message
+#  - You can choose this font by adding \f{4} to a message
 #font.ttf4=
 
 
@@ -66,7 +66,7 @@ msgbox.x=0
 msgbox.y=520
 
 #
-# Margins of the text of the message box in pixel
+# Margins for message box text in pixels
 #
 
 msgbox.margin.left=200
@@ -75,32 +75,32 @@ msgbox.margin.right=200
 msgbox.margin.bottom=30
 
 #
-# Line margin of the text of the message box in pixel
+# Line margin for message box text in pixels
 # (including character height)
 #
 
 msgbox.margin.line=40
 
 #
-# Character margin of the text of the message box in pixel
+# Character margin for message box text in pixels
 #
 
 msgbox.margin.char=0
 
 #
-# Font selection of the text of the message box (1,2,3,4)
+# Font selection for the message box text (1,2,3,4)
 #
 
 msgbox.font.select=1
 
 #
-# Font size of the text of the message box
+# Font size of the message box text
 #
 
 msgbox.font.size=36
 
 #
-# Font color of the text of the message box
+# Font color of the message box text
 #
 
 msgbox.font.r=255
@@ -904,19 +904,19 @@ character.folder2=ch/xiaoling/
 #character.folder32=
 
 #
-# Eye blinking interval in second
+# Eye blinking interval in seconds
 #
 
 character.eyeblink.interval=4.0
 
 #
-# Eye blinking frame length in second
+# Eye blinking frame length in seconds
 #
 
 character.eyeblink.frame=0.05
 
 #
-# Lip synchronization frame length in second
+# Lip synchronization frame length in seconds
 #
 
 character.lipsync.frame=0.04
@@ -933,7 +933,7 @@ character.lipsync.chars=14
 ## Note: Not working yet on RC1
 
 #
-# Auto focus speaker / unfocus non-spearkers on [text] with name
+# Auto focus on speaker / unfocus non-speakers on [text] with name
 #
 #autofocus.on_text_name=true
 
@@ -957,7 +957,7 @@ character.lipsync.chars=14
 ## Stage Settings
 
 #
-# Character margins in pixel
+# Character margins in pixels
 #
 
 stage.ch_margin.bottom=0
@@ -981,7 +981,7 @@ kirakira.enable=false
 kirakira.add_blend=false
 
 #
-# Frame length for Kira Kira Effect in second
+# Frame length for Kira Kira Effect in seconds
 #
 
 kirakira.frame=0.333
@@ -1036,7 +1036,7 @@ tts.enable=false
 ## Release Mode (Install App Mode)
 
 #
-# Enable Release Mode (write save data to AppData)
+# Enable Release Mode (writes save data to AppData)
 #
 
 release_mode.enable=false

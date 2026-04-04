@@ -6,7 +6,7 @@ GUI
 GUI is Suika3's UI/UX creation feature.
 
 In Suika3, buttons are defined in a dedicated GUI mode and operate in
-a synchronous manner, that is, calling a GUI results a button click or
+a synchronous manner, that is, calling a GUI results in a button click or
 a cancel.
 
 Asynchronous callbacks such as showing buttons while text tag

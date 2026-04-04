@@ -1,7 +1,7 @@
 Ray Syntax Reference
 ====================
 
-`Ray` is actually `Noct` programming language with Suika3 APIs.
+`Ray` is actually the `Noct` programming language with additional Suika3 APIs.
 
 ## Assignments
 
@@ -29,7 +29,7 @@ func main() {
 ## Global Variables
 
 Global variables can be defined in functions, and cannot be defined
-outside functions.
+outside of functions.
 
 ```
 func main() {

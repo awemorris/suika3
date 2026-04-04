@@ -11,7 +11,7 @@ To ensure compliance with App Store guidelines, Suika3 avoids placing
 small, PC-style buttons around the message window, adopting a
 mobile-first approach instead. The SysBtn consists of two images and
 associated animations. For a seamless user experience, the button is
-responsive: it appears upon mouse movement or touch and automatically
+responsive: it appears upon mouse movement or touch, and automatically
 hides after a few seconds of inactivity. While this behavior is
 hard-coded for store compliance, the SysBtn can be completely
 disabled—for instance, for demos or Kiosk mode—by setting
@@ -62,7 +62,7 @@ Please see also:
 
 ## Config Screen
 
-Config screen is fully customizable via a GUI file.
+The Config screen is fully customizable via a GUI file.
 
 The config screen in the sample game includes:
 - BGM, Sound Effect, and Voice Volume Sliders

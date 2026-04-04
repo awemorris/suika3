@@ -1,18 +1,18 @@
-How To Use AOT
+How to Use AOT
 ==============
 
 Suika3 supports **Ahead-of-Time (AOT) compilation** of scripts.
-That is, an app may run as a complete native code instead of bytecode interpreter.
+That is, an app may run completely native code instead of as a bytecode interpreter.
 
-The `suika3-aotcomp` command converts `.ray` scripts into **ANSI C source**.
-The generated `library.c` file will be compiled with the entire engine source.
+The `suika3-aotcomp` command converts `.ray` scripts into **ANSI C source code**.
+The generated `library.c` file will be compiled with the entire engine.
 
 ---
 
 ## 1. Modify `main.ray`
 
 Because the scripts will be compiled into native code,
-the runtime library loading will be no longer needed.
+loading the runtime library is no longer needed.
 
 Open `main.ray` and comment out the loadLibrary() calls.
 
@@ -21,8 +21,8 @@ Example:
 // Suika.loadPlugin("system")
 ```
 
-Please note that do not call `Suika.loadPlugin()` outside the
-`main.ray` file for convenience.
+Please note that you should not call `Suika.loadPlugin()` outside the
+`main.ray` file.
 
 ---
 
@@ -137,7 +137,7 @@ Overwrite the existing file.
 
 ---
 
-## Result
+## Results
 
 Scripts are embedded directly into the executable, providing:
 

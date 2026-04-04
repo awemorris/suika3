@@ -4,7 +4,7 @@ Ray Low Level API
 The `Low Level API (Engine.*)` is designed for versatile 2D game creation.
 
 Every API function takes one parameter.
-The parameter must be a dictionary and arguments must be stored as key-and-value pairs.
+The parameter must be a dictionary, and arguments must be stored as key-and-value pairs.
 
 ## Skelton
 
@@ -52,7 +52,7 @@ func render() {
 ### print()
 
 This API prints a string or dumps an object.
-Only this API takes a non-dictionary argument.
+Only takes a non-dictionary argument.
 
 ```
 func dumpEnemies() {
@@ -298,7 +298,7 @@ func renderPlayer() {
 
 ### Engine.draw()
 
-This API renders a texture to the screen, a simple version of `Engine.renderTexture()`.
+This API renders a texture to the screen (a simpler version of `Engine.renderTexture()`.)
 
 |Argument Name       |Description                                                   |
 |--------------------|--------------------------------------------------------------|
@@ -485,7 +485,7 @@ This API will fail when the specified key is not available.
 
 ### Engine.checkSaveData()
 
-This API checks whether the save data exist for a key string or not.
+This API checks whether the save data exists for a key string or not.
 The return value is a boolean.
 
 |Argument Name       |Description                                                   |
