@@ -7,7 +7,7 @@ Plugins must be stored in the `system/plugin/<PLUGIN-NAME>/` directory.
 
 ## File
 
-Plugin file must be stored to the `system/plugin/<PLUGIN-NAME>/<PLUGIN-NAME>.pf` file.
+Plugin file must be stored to the `system/plugin/<PLUGIN-NAME>/<PLUGIN-NAME>.ray` file.
 
 ## Function
 
@@ -15,12 +15,12 @@ Plugin must define the `plugin_init_<PLUGIN-NAME>()` function.
 
 ## Defining a new tag
 
-Define a function named `Tag_mytag()` in the `system/plugin/<PLUGIN-NAME>/<PLUGIN-NAME>.pf` file to add a new tag named `mytag`.
+Define a function named `Tag_mytag()` in the `system/plugin/<PLUGIN-NAME>/<PLUGIN-NAME>.ray` file to add a new tag named `mytag`.
 After loading the pllugin by `Suika.loadPlugin()`, you can use `mytag` in NovelML.
 
 ## Sample
 
-In `system/plugin/testplugin/testplugin.pf`:
+In `system/plugin/testplugin/testplugin.ray`:
 ```
 func plugin_init_testplugin() {
     // Called when loaded.
@@ -34,7 +34,7 @@ func Tag_testplugintag(params) {
 }
 ```
 
-In `main.pf`:
+In `main.ray`:
 ```
 // Called before the game starts.
 func start() {

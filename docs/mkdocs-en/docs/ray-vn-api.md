@@ -192,6 +192,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.isSysBtnPointed()](#suikaisysbtnpointed)
     * [Suika.isSysBtnClicked()](#suikaisysbtnclicked)
 * Text
+    * [Suika.drawTextOnLayer()](#suikadrawtextonlayer)
     * [Suika.getStringWidth()](#suikagetstringwidth)
     * [Suika.getStringHeight()](#suikagetstringheight)
     * [Suika.drawGlyph()](#suikadrawglyph)
@@ -3137,6 +3138,34 @@ No parameters.
 ### Return
 
 Returns a boolean value.
+
+---
+
+## Suika.drawTextOnLayer()
+
+Draw a text on a specified layer.
+
+### Parameters (Dictionary)
+
+| Parameter    | Type    | Description               |
+|--------------|---------|---------------------------|
+| layer        | Integer | Target stage layer index. |
+| fontType     | Integer | Font selection index.     |
+| fontSize     | Integer | Size of the font.         |
+| color        | Integer | Color.                    |
+| outlineWidth | Integer | Outline width.            |
+| outlineColor | Integer | Outline color.            |
+| lineMargin   | Integer | Line margin.              |
+| charMargin   | Integer | Character margin.         |
+| x            | Integer | Bounding box X position.  |
+| y            | Integer | Bounding box Y position.  |
+| width        | Integer | Bounding box width.       |
+| height       | Integer | Bounding box height.      |
+| text         | String  | Text.                     |
+
+### Return
+
+No return.
 
 ---
 

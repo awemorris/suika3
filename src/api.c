@@ -256,6 +256,7 @@ static bool Suika_isSysBtnPointed(void *p);
 static bool Suika_isSysBtnClicked(void *p);
 
 /* Text */
+static bool Suika_drawTextOnLayer(void *p);
 static bool Suika_getStringWidth(void *p);
 static bool Suika_getStringHeight(void *p);
 static bool Suika_drawGlyph(void *p);
@@ -621,6 +622,7 @@ static struct api_func api_func[] = {
 	{"isSysBtnClicked",		Suika_isSysBtnClicked,		0, NULL},
 
 	/* Text */
+	{"drawTextOnLayer",		Suika_drawTextOnLayer,		1, dict_param},
 	{"getStringWidth",		Suika_getStringWidth,		1, dict_param},
 	{"getStringHeight",		Suika_getStringHeight,		1, dict_param},
 	{"drawGlyph",			Suika_drawGlyph,		1, dict_param},
@@ -1185,7 +1187,7 @@ Suika_loadPlugin(
 	/* TODO: Add a path traversal check. */
 
 	/* Load a source file content. */
-	snprintf(path, sizeof(path), "plugins/%s/%s.pf", name, name);
+	snprintf(path, sizeof(path), "plugins/%s/%s.ray", name, name);
 	if (!s3_read_file_content(path, &data, &len))
 		return false;
 
@@ -5983,6 +5985,125 @@ Suika_isSysBtnClicked(
 /*
  * Text Subsystem
  */
+
+static bool
+Suika_drawTextOnLayer(
+	void *p)
+{
+	int layer;
+	int font_type;
+	int font_size;
+	s3_pixel_t color;
+	int outline_width;
+	s3_pixel_t outline_color;
+	int line_margin;
+	int char_margin;
+	int x;
+	int y;
+	int width;
+	int height;
+	char *text;
+	struct s3_image *layer_image;
+	int margin_right;
+	int margin_bottom;
+	struct s3_drawmsg *context;
+	bool ret;
+
+	UNUSED_PARAMETER(p);
+
+	text = NULL;
+	ret = false;
+	do {
+		/* Get the argument. */
+		if (!pf_get_call_arg_int("layer", &layer))
+			break;
+		if (!pf_get_call_arg_int("fontType", &font_type))
+			break;
+		if (!pf_get_call_arg_int("fontSize", &font_size))
+			break;
+		if (!pf_get_call_arg_int("color", (int *)&color))
+			break;
+		if (!pf_get_call_arg_int("outlineWidth", &outline_width))
+			break;
+		if (!pf_get_call_arg_int("outlineColor", (int *)&outline_color))
+			break;
+		if (!pf_get_call_arg_int("lineMargin", &line_margin))
+			break;
+		if (!pf_get_call_arg_int("charMargin", &char_margin))
+			break;
+		if (!pf_get_call_arg_int("x", &x))
+			break;
+		if (!pf_get_call_arg_int("y", &y))
+			break;
+		if (!pf_get_call_arg_int("width", &width))
+			break;
+		if (!pf_get_call_arg_int("height", &height))
+			break;
+		if (!pf_get_call_arg_string("text", &text))
+			break;
+
+		
+		layer_image = s3_get_layer_image(layer);
+		if (layer_image == NULL)
+			break;
+
+		margin_right = layer_image->width - x - width;
+		if (margin_right < 0)
+			margin_right = 0;
+
+		margin_bottom = layer_image->height - y - height;
+		if (margin_bottom < 0)
+			margin_bottom = 0;
+
+		context = s3_create_drawmsg(
+			layer_image,
+			text,
+			font_type,
+			font_size,
+			font_size,
+			font_size / 4,
+			outline_width,
+			0,
+			0,
+			layer_image->width,
+			layer_image->height,
+			x,
+			margin_right,
+			y,
+			margin_bottom,
+			line_margin,
+			char_margin,
+			(s3_pixel_t)color,
+			(s3_pixel_t)outline_color,
+			0, /* bg_color */
+			false, /* fill_bg */
+			false, /* dim */
+			false, /* ignore_lf */
+			false, /* ignore_font */
+			false, /* ignore_outline */
+			false, /* ignore color */
+			false, /* ignore_size */
+			false, /* ignore_position */
+			false, /* ignore_ruby */
+			false, /* ignore_wait */
+			NULL,
+			false);
+		
+		s3_draw_message(context, -1);
+		s3_destroy_drawmsg(context);
+
+		/* Set the return value. */
+		if (!pf_set_return_int(1))
+			break;
+
+		ret = true;
+	} while (0);
+
+	if (text != NULL)
+		free(text);
+
+	return ret;
+}
 
 static bool
 Suika_getStringWidth(

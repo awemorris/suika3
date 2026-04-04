@@ -9,12 +9,12 @@ The generated `library.c` file will be compiled with the entire engine source.
 
 ---
 
-## 1. Modify `main.pf`
+## 1. Modify `main.ray`
 
 Because the scripts will be compiled into native code,
 the runtime library loading will be no longer needed.
 
-Open `main.pf` and comment out the loadLibrary() calls.
+Open `main.ray` and comment out the loadLibrary() calls.
 
 Example:
 ```
@@ -22,7 +22,7 @@ Example:
 ```
 
 Please note that do not call `Suika.loadPlugin()` outside the
-`main.pf` file for convenience.
+`main.ray` file for convenience.
 
 ---
 
@@ -31,7 +31,7 @@ Please note that do not call `Suika.loadPlugin()` outside the
 To compile scripts into C source code, run:
 
 ```sh
-suika3-aot script1.pf script2.pf ...
+suika3-aotcomp main.ray script1.ray script2.ray ...
 ```
 
 This command generates the following file:
@@ -42,11 +42,11 @@ library.c
 The generated file contains the compiled script library.
 
 > [!TIPS]
-> Specify all script files in the command line, including `main.pf`.
+> Specify all script files in the command line, including `main.ray`.
 
 Example:
 ```
-suika3-aot main.pf system.pf scenario1.pf scenario2.pf
+suika3-aotcomp main.ray system.ray scenario1.ray scenario2.ray
 ```
 
 --
@@ -99,10 +99,10 @@ cmake --build --preset android-x86_64
 ```
 
 After that, copy the shared libraries to your Android project:
-* Copy `build-android-arm64/libsuika3.so` to `app/src/main/jniLibs/arm64-v8a/libsuika3.so`
-* Copy `build-android-armv7/libsuika3.so` to `app/src/main/jniLibs/armeabi-v7a/libsuika3.so`
-* Copy `build-android-x86/libsuika3.so` to `app/src/main/jniLibs/x86/libsuika3.so`
-* Copy `build-android-x86_64/libsuika3.so` to `app/src/main/jniLibs/x86_64/libsuika3.so`
+* Copy `build-android-arm64/libsuika3.so` to `app/src/main/jniLibs/arm64-v8a/libplayfield.so`
+* Copy `build-android-armv7/libsuika3.so` to `app/src/main/jniLibs/armeabi-v7a/libplayfield.so`
+* Copy `build-android-x86/libsuika3.so` to `app/src/main/jniLibs/x86/libplayfield.so`
+* Copy `build-android-x86_64/libsuika3.so` to `app/src/main/jniLibs/x86_64/libplayfield.so`
 
 Overwrite the existing file.
 
@@ -131,7 +131,7 @@ cmake --build --preset unity-win64
 ```
 
 After that, copy the libraries to your Unity project:
-* Copy `build-unity-win64/libsuika3.dll` to `Assets/Plugins/x86_64/libsuika3.dll`
+* Copy `build-unity-win64/libsuika3.dll` to `Assets/Plugins/x86_64/libplayfield.dll`
 
 Overwrite the existing file.
 

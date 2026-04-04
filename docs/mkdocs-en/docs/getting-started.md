@@ -23,11 +23,11 @@ Now, lets make the game say exactly what you want.
 ```
 - **Test:** Save the file and run `suika3.exe` again. You should see your new message on the screen!
 
-## 3. Customize the Screen (main.pf)
+## 3. Customize the Screen (main.ray)
 
 You can easily change the look and feel of your game window.
 
-- **Locate:** Open the `main.pf` file in your editor.
+- **Locate:** Open the `main.ray` file in your editor.
 - **Modify:** Look for the `func setup()` section. You can change the resolution and the title of your window here:
 ```
 // Called when the window is opened.
@@ -43,7 +43,7 @@ func setup() {
 
 ## 4. Under the Hood (Advanced Tips)
 
-The bottom part of your main.pf file contains the core engine
+The bottom part of your main.ray file contains the core engine
 logic. It's best to leave these functions as they are unless you are
 doing advanced customization:
 

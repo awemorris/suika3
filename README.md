@@ -2,22 +2,21 @@
   <b>
     <a href="https://suika3.vn">Suika3</a><br>
   </b>
-  A Modern Full-Stack<br>
-  Visual Novel and 2D Game Engine
+  A Modern, Ultra-Portable Full-Stack<br>
+  2D Game Engine <br>
+  with a Built-in Visual Novel DSL
 </h1>
 
 <div align="center">
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-small.png" alt="Suika3 Logo" width="120" hspace="20">
   <p>
-    <b>&#x1f496;&#x1f370; Welcome Home, Master! &#x2615;&#x1f496;</b>
-  </p>
-  <p>
     We've brought Suika3 to life<br>
-    with a whole lot of love for mobile devices!<br>
+    with a deep love for mobile devices —<br>
+    the platforms that major 3D engines left behind.<br>
     <br>
-    It's a powerful, production-ready engine<br>
+    It's a powerful, production-ready game engine<br>
     for Visual Novels and all kinds of 2D games,<br>
-    running beautifully on any platform you choose.
+    designed to run beautifully on any platform you choose.
   </p>
   <a href="https://discord.gg/YZsq9u9Mgr"><img src="https://img.shields.io/badge/suika3.vn-Discord-orange"></a>
   <img src="https://img.shields.io/badge/License-ZLib-orange.svg">
@@ -30,8 +29,8 @@
 <div align="center">
   <p>
     Our custom JIT/AOT scripting infrastructure<br>
-    lets you publish the exact same game<br>
-    across both Steam and App Store,<br>
+    allows you to publish the exact same game<br>
+    across both Steam and the App Store,<br>
     eliminating traditional porting headaches!
   </p>
   <img src="https://img.shields.io/badge/Desktop-Windows%20%2F%20macOS%20%2F%20Linux%20%2F%20Chromebook%20%2F%20Raspberry%20Pi-blue"><br>
@@ -84,8 +83,9 @@ suika3
 
 ## Introduction
 
-Suika3 is a production-grade visual novel engine specifically
-engineered for commercial mobile app development, lead by Awe Morris.
+Suika3 is a production-grade visual novel & 2D game engine
+specifically engineered for commercial mobile app development,
+developed by the Suika3 Project, led by Awe Morris.
 
 Games made with Suika3 are powered by `NovelML` and the `Ray`
 scripting platform.
@@ -96,10 +96,10 @@ scripting platform.
   custom tags using `Ray`.
 
 - **Ray**: The robust scripting language for Suika3. It utilizes a
-  high-speed JIT compiler on desktop platforms (Sun-Ray JIT Compiler; "陽光")
-  and can be compiled into native binaries (Lunar-Ray AOT Compiler; "月光") for
-  production or mobile environments. Ray enables you to make not only
-  VN but also generic 2D games.
+  high-speed JIT compiler on desktop platforms (Sun-Ray JIT Compiler;
+  "陽光") and can be compiled into native binaries (Lunar-Ray AOT
+  Compiler; "月光") for production or mobile environments. Ray enables
+  you to make not only VN but also generic 2D games.
 
 Although Suika3 is designed as a professional tool, you are absolutely
 welcome to use it just for fun — after all, fun is the driving force
@@ -125,8 +125,8 @@ Suika3 is engineered with modern techniques, and delivers:
   language. Developers can implement custom tags simply by writing a
   Ray function named `Tag_*()`.
 
-- **Reliable**: We do certain `Quality Assurance Process` to deliver
-  reliable software.
+- **Reliable**: We follow a structured `Quality Assurance` process
+  to deliver reliable software.
 
 - **Mobile UI/UX:** The default UX is mobile-first with a hamburger
   menu. Desktop-style tiny buttons on message windows are not a
@@ -393,10 +393,9 @@ See the `game/` directory for:
 If these specifications excite you, you're probably in the right
 place.
 
-Suika3 is not merely a wrapper around SDL combined with a scripting
-language. It features its own rendering and audio backends, and its
-own scripting language, positioning it as a fully independent game
-engine.
+Suika3 is not merely an SDL wrapper with scripting. It features its
+own rendering and audio backends, and its own scripting language,
+positioning it as a fully independent game engine.
 
 ### Core Architecture
 
@@ -409,7 +408,7 @@ the SIE PlayStation firmware team.
 
 ```
 +------------------------------+
-|        NovelML (Tags)        |
+|        NovelML (Tags)        | --> Will be expanded to other game genres.
 +------------------------------+
 |     Plugin Tags (by Ray)     | --> Ray can be compiled into a native binary!
 +------------------------------+
@@ -1153,7 +1152,20 @@ tampering. The obfuscation key can be changed in "key.h".)
 
 ## Engine Feature List
 
-Out-of-box Support:
+**2D Game Support:**
+- Texture from:
+    - Color
+    - Image
+    - Font
+- Render:
+    - Pixel-wise
+    - Scaling
+    - 3D Transform
+- Audio Playback (Vorbis)
+- Asset File Access
+- Save Data Access
+
+**Visual Novel Out-of-box Support:**
 - Message Display
 - Option Selection
 - Background and Character Display / Transition
@@ -1170,10 +1182,19 @@ Out-of-box Support:
 - Localization
 - Simulation Parameter Display
 
-The following are for future work:
-- 3D Character Model
+**Future  Work:**
 - 2D RPG Map Walk
+- 3D Character Model
 - Network Play
+
+---
+
+## Roadmap
+
+- Visual Novels (Done)
+- 2D RPGs
+- 2D Shooting Games
+- Sound Games
 
 ---
 
@@ -1473,6 +1494,7 @@ Play, regardless of their software, hardware, and budget limitations.
 - [What does "Supported" mean?](#what-does-supported-mean)
 - [Will there be breaking changes? What is the compatibility policy?](#will-there-be-breaking-changes-what-is-the-compatibility-policy)
 - [Does it support DLC or in-app purchases?](#does-it-support-dlc-or-in-app-purchases)
+- [Why the deep devotion to Apple and iPhone?](#why-the-deep-devotion-to-apple-and-iphone)
 
 ### What's this?
 
@@ -1756,3 +1778,11 @@ benefit from increased visibility and support. Early participation in
 shaping the ecosystem is likely to be rewarded as the market matures.
 
 This is the core strategy of the Suika3 project.
+
+### Why the deep devotion to Apple and iPhone?
+
+Apple products may not always be the most affordable or universally accessible.  
+Yet for over four decades, Apple has continually redefined the landscape of computing.
+
+We are proud to support their platforms, and our commitment remains unwavering —  
+from the iPhone all the way to Vision Pro.
