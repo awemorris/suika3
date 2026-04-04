@@ -4,7 +4,7 @@ How To Use AOT
 Suika3 supports **Ahead-of-Time (AOT) compilation** of scripts.
 That is, an app may run as a complete native code instead of bytecode interpreter.
 
-The `suika3-aot` command converts `.pf` scripts into **ANSI C source**.
+The `suika3-aotcomp` command converts `.ray` scripts into **ANSI C source**.
 The generated `library.c` file will be compiled with the entire engine source.
 
 ---

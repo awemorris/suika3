@@ -1,7 +1,7 @@
 Anime
 =====
 
-Anime is a feature to play layer-based animations by the [@anime](reference.html#anime) command.
+Anime is a feature to play layer-based animations by the anime tag.
 
 ## Anime File
 
@@ -44,40 +44,31 @@ The following is our layer structure.
 |------------------|--------------------------------------------|
 | bg               | background                                 |
 | bg2              | second background (for seemless scrolling) |
-|                  |                                            |
 | efb1             | effect on back 1                           |
 | efb2             | effect on back 2                           |
 | efb3             | effect on back 3                           |
 | efb4             | effect on back 4                           |
-|                  |                                            |
 | chb              | character at back center                   |
 | chb-eye          | character at back center                   |
 | chb-lip          | character at back center                   |
-|                  |                                            |
 | chl              | character at left                          |
 | chl-eye          | character at left                          |
 | chl-lip          | character at left                          |
-|                  |                                            |
 | chlc             | character at left center                   |
 | chlc-eye         | character at left center                   |
 | chlc-lip         | character at left center                   |
-|                  |                                            |
 | chr              | character at right                         |
 | chr-eye          | character at right                         |
 | chr-lip          | character at right                         |
-|                  |                                            |
 | chrc             | character at right center                  |
 | chrc-eye         | character at right center                  |
 | chrc-lip         | character at right center                  |
-|                  |                                            |
 | eff1             | effect on front 1                          |
 | eff2             | effect on front 2                          |
 | eff3             | effect on front 3                          |
 | eff4             | effect on front 4                          |
-|                  |                                            |
 | msgbox           | message box                                |
 | namebox          | name box                                   |
-|                  |                                            |
 | choose1-idle     | choose box 1 (idle)                        |
 | choose1-hover    | choose box 1 (hover)                       |
 | choose2-idle     | choose box 2 (idle)                        |
@@ -94,16 +85,12 @@ The following is our layer structure.
 | choose7-hover    | choose box 7 (hover)                       |
 | choose8-idle     | choose box 8 (idle)                        |
 | choose8-hover    | choose box 8 (hover)                       |
-|                  |                                            |
 | chf              | character face                             |
 | chf-eye          | character face                             |
 | chf-lip          | character face                             |
-|                  |                                            |
 | click            | click animation                            |
-|                  |                                            |
 | auto             | auto mode banner                           |
 | skip             | skip mode banner                           |
-|                  |                                            |
 | text1            | text layer 1                               |
 | text2            | text layer 2                               |
 | text3            | text layer 3                               |
