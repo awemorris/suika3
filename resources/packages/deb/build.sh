@@ -29,10 +29,6 @@ cd work
 # Create a source tarball.
 SAVE_DIR=`pwd`
 cd ../../../../
-ls -l
-ls -l resources/
-ls -l resources/packages
-ls -l resources/packages/deb
 git archive HEAD --output=resources/packages/deb/work/suika3_$VERSION.orig.tar.gz
 cd "$SAVE_DIR"
 
