@@ -1,11 +1,11 @@
 Anime
 =====
 
-Anime is a feature to play layer-based animations by the anime tag.
+Anime is a feature to play layer-based animations via the anime tag.
 
 ## Anime File
 
-An anime file is a text file which describes "sequences" of layer transforms.
+An anime file is a text file which describes sequences of layer transforms.
 
 ## Sequence
 
