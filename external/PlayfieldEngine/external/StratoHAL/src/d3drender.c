@@ -59,6 +59,7 @@ D3DInitialize(
 		bAvoidD3D12 = TRUE;
 #endif
 
+#ifndef HAL_NOD3D12
 	/* Try Direct3D 12. */
 	if (!bAvoidD3D12)
 	{
@@ -68,7 +69,9 @@ D3DInitialize(
 			return TRUE;
 		}
 	}
+#endif
 
+#ifndef HAL_NOD3D11
 	/* Try Direct3D 11. */
 	if (!bAvoidD3D11)
 	{
@@ -78,6 +81,7 @@ D3DInitialize(
 			return TRUE;
 		}
 	}
+#endif
 
 	/* Try Direct3D 9. */
 	if (D3D9Initialize(hWnd, nWidth, nHeight))
@@ -103,14 +107,18 @@ D3DCleanup(VOID)
 {
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12Cleanup();
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11Cleanup();
 		break;
+#endif
 	case MODE_D3D9:
-		D3D11Cleanup();
+		D3D9Cleanup();
 		break;
 	case MODE_GDI:
 		GDICleanup();
@@ -130,12 +138,16 @@ D3DResizeWindow(
 {
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12ResizeWindow(nScreenWidth, nScreenHeight, nOffsetX, nOffsetY, nViewportWidth, nViewportHeight, scale);
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11ResizeWindow(nScreenWidth, nScreenHeight, nOffsetX, nOffsetY, nViewportWidth, nViewportHeight, scale);
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9ResizeWindow(nScreenWidth, nScreenHeight, nOffsetX, nOffsetY, nViewportWidth, nViewportHeight, scale);
 		break;
@@ -151,12 +163,16 @@ D3DStartFrame(void)
 {
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12StartFrame();
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11StartFrame();
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9StartFrame();
 		break;
@@ -170,12 +186,16 @@ VOID D3DEndFrame(void)
 {
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12EndFrame();
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11EndFrame();
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9EndFrame();
 		break;
@@ -200,12 +220,16 @@ hal_notify_image_update(
 {
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12NotifyImageUpdate(img);
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11NotifyImageUpdate(img);
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9NotifyImageUpdate(img);
 		break;
@@ -219,12 +243,16 @@ void hal_notify_image_free(struct hal_image *img)
 {
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12NotifyImageFree(img);
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11NotifyImageFree(img);
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9NotifyImageFree(img);
 		break;
@@ -249,12 +277,16 @@ hal_render_image_normal(
 {
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12RenderImageNormal(dst_left, dst_top, dst_width, dst_height, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11RenderImageNormal(dst_left, dst_top, dst_width, dst_height, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9RenderImageNormal(dst_left, dst_top, dst_width, dst_height, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
@@ -279,12 +311,16 @@ hal_render_image_add(
 {
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12RenderImageAdd(dst_left, dst_top, dst_width, dst_height, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11RenderImageAdd(dst_left, dst_top, dst_width, dst_height, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9RenderImageAdd(dst_left, dst_top, dst_width, dst_height, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
@@ -309,12 +345,16 @@ hal_render_image_sub(
 {
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12RenderImageSub(dst_left, dst_top, dst_width, dst_height, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11RenderImageSub(dst_left, dst_top, dst_width, dst_height, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9RenderImageSub(dst_left, dst_top, dst_width, dst_height, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
@@ -339,12 +379,16 @@ hal_render_image_dim(
 {
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12RenderImageDim(dst_left, dst_top, dst_width, dst_height, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11RenderImageDim(dst_left, dst_top, dst_width, dst_height, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9RenderImageDim(dst_left, dst_top, dst_width, dst_height, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
@@ -366,12 +410,16 @@ hal_render_image_cross(
 {
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12RenderImageCross(src1_image, src2_image, src1_left, src1_top, src2_left, src2_top, alpha);
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11RenderImageCross(src1_image, src2_image, src1_left, src1_top, src2_left, src2_top, alpha);
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9RenderImageCross(src1_image, src2_image, src1_left, src1_top, src2_left, src2_top, alpha);
 		break;
@@ -389,12 +437,16 @@ hal_render_image_rule(
 {
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12RenderImageRule(src_image, rule_image, threshold);
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11RenderImageRule(src_image, rule_image, threshold);
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9RenderImageRule(src_image, rule_image, threshold);
 		break;
@@ -412,12 +464,16 @@ hal_render_image_melt(
 {
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12RenderImageMelt(src_image, rule_image, progress);
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11RenderImageMelt(src_image, rule_image, progress);
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9RenderImageMelt(src_image, rule_image, progress);
 		break;
@@ -446,12 +502,16 @@ hal_render_image_3d_normal(
 {
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12RenderImage3DNormal(x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11RenderImage3DNormal(x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9RenderImage3DNormal(x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
@@ -480,12 +540,16 @@ hal_render_image_3d_add(
 {
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12RenderImage3DAdd(x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11RenderImage3DAdd(x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9RenderImage3DAdd(x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
@@ -515,12 +579,16 @@ hal_render_image_3d_sub(
 	/* TODO */
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12RenderImage3DSub(x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11RenderImage3DSub(x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9RenderImage3DSub(x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
@@ -550,12 +618,16 @@ hal_render_image_3d_dim(
 	/* TODO */
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12RenderImage3DDim(x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11RenderImage3DDim(x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9RenderImage3DDim(x1, y1, x2, y2, x3, y3, x4, y4, src_image, src_left, src_top, src_width, src_height, alpha);
 		break;
@@ -589,12 +661,16 @@ hal_render_image_3d_cross(
 {
 	switch (nGraphicsMode)
 	{
+#ifndef HAL_NOD3D12
 	case MODE_D3D12:
 		D3D12RenderImage3DCross(src1_image, src2_image, src1_x1, src1_y1, src1_x2, src1_y2, src1_x3, src1_y3, src1_x4, src1_y4, src2_x1, src2_y1, src2_x2, src2_y2, src2_x3, src2_y3, src2_x4, src2_y4, alpha);
 		break;
+#endif
+#ifndef HAL_NOD3D11
 	case MODE_D3D11:
 		D3D11RenderImage3DCross(src1_image, src2_image, src1_x1, src1_y1, src1_x2, src1_y2, src1_x3, src1_y3, src1_x4, src1_y4, src2_x1, src2_y1, src2_x2, src2_y2, src2_x3, src2_y3, src2_x4, src2_y4, alpha);
 		break;
+#endif
 	case MODE_D3D9:
 		D3D9RenderImage3DCross(src1_image, src2_image, src1_x1, src1_y1, src1_x2, src1_y2, src1_x3, src1_y3, src1_x4, src1_y4, src2_x1, src2_y1, src2_x2, src2_y2, src2_x3, src2_y3, src2_x4, src2_y4, alpha);
 		break;

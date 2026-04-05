@@ -381,11 +381,15 @@ InitApp(
 	/* On 64-bit environments, DirectShow does not work properly. So, we use Media Foundation if available. */
 	if (MFVInit())
 		bMFVEnabled = TRUE;
-#else
+#elif defined(HAL_USE_MFVIDEO)
 	/* On 32-bit environments, we first try using Media Foundation, and if it fails, we try using DirectShow. */
 	if (MFVInit())
 		bMFVEnabled = TRUE;
 	else if (DShowInit())
+		bDShowEnabled = TRUE;
+#else
+	/* On 32-bit environments, we first try using Media Foundation, and if it fails, we try using DirectShow. */
+	if (DShowInit())
 		bDShowEnabled = TRUE;
 #endif
 
@@ -1597,6 +1601,7 @@ PlayVideo(
 	UpdateWindow(hWndRender);
 	UpdateWindow(hWndVideo);
 
+#ifdef HAL_USE_MFVIDEO
 	if (bMFVEnabled)
 	{
 		if (!MFVPlayVideo(hWndVideo, pszFileName, nViewportOffsetX, nViewportOffsetY, nViewportWidth, nViewportHeight))
@@ -1609,6 +1614,7 @@ PlayVideo(
 		bVideoMode = TRUE;
 		return TRUE;
 	}
+#endif
 	if (bDShowEnabled)
 	{
 		if (!DShowPlayVideo(hWndVideo, pszFileName, nViewportOffsetX, nViewportOffsetY, nViewportWidth, nViewportHeight))
@@ -1637,9 +1643,12 @@ StopVideo(VOID)
 	{
 		if (IsVideoPlaying())
 		{
+#ifdef HAL_USE_MFVIDEO
 			if (bMFVEnabled)
 				MFVStopVideo();
-			else if (bDShowEnabled)
+			else
+#endif
+			if (bDShowEnabled)
 				DShowStopVideo();
 
 			ShowWindow(hWndRender, SW_SHOW);
@@ -1659,6 +1668,7 @@ IsVideoPlaying(VOID)
 	if (!bVideoMode)
 		return FALSE;
 
+#ifdef HAL_USE_MFVIDEO
 	if (bMFVEnabled)
 	{
 		if (!MFVIsVideoPlaying())
@@ -1673,7 +1683,9 @@ IsVideoPlaying(VOID)
 		}
 		return TRUE;
 	}
-	else if (bDShowEnabled)
+	else
+#endif
+	if (bDShowEnabled)
 	{
 		if (!DShowIsVideoPlaying())
 		{
@@ -1694,9 +1706,12 @@ IsVideoPlaying(VOID)
 static VOID
 ProcessVideoEvents(VOID)
 {
+#ifdef HAL_USE_MFVIDEO
 	if (bMFVEnabled)
 		MFVProcessEvents();
-	else if (bDShowEnabled)
+	else
+#endif
+	if (bDShowEnabled)
 		DShowProcessEvents();
 }
 

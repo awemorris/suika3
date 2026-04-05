@@ -320,12 +320,30 @@ if(   STRATO_TARGET_WINDOWS
     src/stdfile.c
     src/winmain.c
     src/d3drender.c
-    src/d3d12render.cc
-    src/d3d11render.cc
     src/d3d9render.cc
+    src/d3d11render.cc
+    src/d3d12render.cc
     src/gdirender.c
     src/dsound.c
     src/mfvideo.cc
+    src/dsvideo.cc
+    src/digamepad.cc
+    src/xigamepad.c
+  )
+endif()
+if(STRATO_TARGET_WINDOWS95)
+  set(CMAKE_CXX_STANDARD 11)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  set(STRATO_SOURCES
+    src/image.c
+    src/glyph.c
+    src/wave.c
+    src/stdfile.c
+    src/winmain.c
+    src/d3drender.c
+    src/d3d9render.cc
+    src/gdirender.c
+    src/dsound.c
     src/dsvideo.cc
     src/digamepad.cc
     src/xigamepad.c
@@ -616,7 +634,6 @@ endif()
 
 # Windows
 if(   STRATO_TARGET_WINDOWS
-   OR STRATO_TARGET_WINDOWS95
    OR STRATO_TARGET_GDK_WINDOWS
    OR STRATO_TARGET_GDK_XBOX_XS)
   add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
@@ -638,6 +655,17 @@ if(   STRATO_TARGET_WINDOWS
       DESTINATION ${CMAKE_BINARY_DIR}
     )
   endif()
+endif()
+if(STRATO_TARGET_WINDOWS95)
+  add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+
+  target_compile_definitions(strato PRIVATE HAL_USE_DSVIDEO HAL_NOD3D12 HAL_NOD3D11)
+
+  target_include_directories(
+    strato
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/res
+  )
 endif()
 
 # macOS library
