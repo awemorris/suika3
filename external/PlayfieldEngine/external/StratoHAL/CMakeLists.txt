@@ -645,6 +645,14 @@ if(STRATO_TARGET_MACOS)
   if(STRATO_ENABLE_MAIN2)
     target_compile_definitions(strato PUBLIC HAL_USE_MAIN2)
   endif()
+  if(STRATO_ENABLE_DIST)
+  target_include_directories(
+    strato
+    PRIVATE
+    /opt/homebrew/include
+    /usr/local/include
+  )
+  endif()
 endif()
 
 # FreeBSD
@@ -745,6 +753,11 @@ if(STRATO_TARGET_UWP)
     INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/dx12headers.tar.gz
     DESTINATION ${CMAKE_BINARY_DIR}
   )
+endif()
+
+# fbdev
+if(STRATO_TARGET_LINUX_FBDEV)
+  target_include_directories(strato PUBLIC /usr/include/libdrm)
 endif()
 
 # Gstreamer
@@ -942,7 +955,6 @@ if(STRATO_TARGET_LINUX_FBDEV)
     pthread
     asound
   )
-  target_include_directories(strato PUBLIC /usr/include/libdrm)
 endif()
 
 # Linux
@@ -952,6 +964,11 @@ if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_FBDEV
    OR STRATO_TARGET_LINUX_X11SOFT)
   target_link_libraries(strato PUBLIC asound)
+endif()
+
+# macOS
+if(STRATO_TARGET_MACOS AND STRATO_ENABLE_DIST)
+  target_link_directories(strato PUBLIC /opt/homebrew/lib /usr/local/lib)
 endif()
 
 # FreeBSD
