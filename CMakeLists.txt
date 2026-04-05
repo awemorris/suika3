@@ -117,7 +117,7 @@ else()
     set(SUIKA_ENABLE_INSTALL            ON)
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
-    set(SUIKA_TARGET_FREEBSD_X11SOFT    ON)
+    set(SUIKA_TARGET_FREEBSD            ON)
     set(SUIKA_ENABLE_JIT                ON)
     set(SUIKA_ENABLE_I18N               ON)
     set(SUIKA_ENABLE_PACK               ON)

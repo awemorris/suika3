@@ -952,7 +952,8 @@ endif()
 
 # FreeBSD
 if(   STRATO_TARGET_FREEBSD
-   OR STRATO_TARGET_FREEBSD_WAYLAND)
+   OR STRATO_TARGET_FREEBSD_WAYLAND
+   OR STRATO_TARGET_FREEBSD_X11SOFT)
   target_link_directories(strato PUBLIC /usr/local/lib /usr/X11R7/lib)
 endif()
 
