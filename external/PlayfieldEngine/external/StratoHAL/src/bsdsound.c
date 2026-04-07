@@ -42,7 +42,7 @@
 #elif defined(__SunOS_5_11)
 #include <sys/soundcard.h>   /* Solaris 11 (OSS) */
 #define USE_SUN_OSS
-#else
+#elif defined(__sunos)
 #include <sys/audioio.h>     /* Solaris 10 */
 #define USE_SUN_AUDIO
 #endif
@@ -71,7 +71,7 @@
 #elif defined(USE_SUN_OSS)
 #define DEVICE		"/dev/dsp"
 #elif defined(USE_SUN_AUDIO)
-#define DEVICE		"/dev/dsp"
+#define DEVICE		"/dev/audio"
 #endif
 
 /*
