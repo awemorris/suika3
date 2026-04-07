@@ -75,10 +75,9 @@ In general, the following works:
 ```
 git clone https://github.com/awemorris/suika3.git
 cd suika3
-./configure
-make
-sudo make install
-cd game
+mkdir build && cd build
+../configure && make && sudo make install
+cd ../game
 suika3
 ```
 
@@ -733,82 +732,70 @@ experience for the player.
 |             | Chromebook         | ✅ Supported | -            | Chrome Browser / Linux Container |
 | **Other**   | Unity Integration  | ✅ Supported | -            | Unity 6.2 (Windows x86_64)       |
 
-### 64-bit Windows Compatibility List
+### 64-bit Windows Binary Compatibility List
 
 The official recommended binary is the 64-bit version.
 
-| OS      | Version                     | Patch | CPU    | Runtimes                                        | 64-bit Binary | Direct3D |
-|---------|-----------------------------|-------|--------|-------------------------------------------------|---------------|----------|
-| Windows | 11                          |       | x64    | (None required)                                 | ✅            | 12.0     |
-| Windows | 11                          |       | arm64  | (None required)                                 | ✅            | 12.0     |
-| Windows | 10                          |       | x64    | (None required)                                 | ✅            | 12.0     |
-| Windows | 10                          |       | arm64  | (None required)                                 | ✅            | 12.0     |
-| Windows | 8.1                         |       | x64    | (None required)                                 | ✅            | 11.0     |
-| Windows | 8                           |       | x64    | Microsoft Visual C++ Redistributable 2015       | ✅            | 11.0     |
-| Windows | 7                           |       | x64    | UCRT Update (KB2999226)                         | ✅            | 11.0     |
-|         |                             |       |        | Microsoft Visual C++ Redistributable 2015       |               |          |
-| Windows | 7                           | SP1   | x64    | Microsoft Visual C++ Redistributable 2015       | ✅            | 11.0     |
-| Windows | Vista                       |       | x64    | (No UCRT)                                       | ❌            | -        |
-| Windows | Vista                       | SP1   | x64    | DirectX End-User Runtimes (June 2010)           | ✅            | 9.0      |
-|         |                             |       |        | Microsoft Visual C++ Redistributable 2015       |               |          |
-| Windows | Vista                       | SP2   | x64    | Platform Update for Windows Vista               | ✅            | 11.0     |
-|         |                             |       |        | Microsoft Visual C++ Redistributable 2015       |               |          |
-| Windows | XP Professional x64 Edition |       | x64    | (No UCRT)                                       | ❌            | -        |
-| Windows | XP Professional x64 Edition | SP1   | x64    | (No UCRT)                                       | ❌            | -        |
-| Windows | XP Professional x64 Edition | SP2   | x64    | (No UCRT)                                       | ❌            | -        |
+| OS      | Version                     | Patch | CPU    | Runtimes                                                | 64-bit Binary | Direct3D |
+|---------|-----------------------------|-------|--------|---------------------------------------------------------|---------------|----------|
+| Windows | 11                          |       | x64    | (None required)                                         | ✅            | 12.0     |
+| Windows | 11                          |       | arm64  | (None required)                                         | ✅            | 12.0     |
+| Windows | 10                          |       | x64    | (None required)                                         | ✅            | 12.0     |
+| Windows | 10                          |       | arm64  | (None required)                                         | ✅            | 12.0     |
+| Windows | 8.1                         |       | x64    | (None required)                                         | ✅            | 11.0     |
+| Windows | 8                           |       | x64    | VC++ Redist 2015                                        | ✅            | 11.0     |
+| Windows | 7                           | SP1   | x64    | VC++ Redist 2015                                        | ✅            | 11.0     |
+| Windows | 7                           |       | x64    | VC++ Redist 2015, UCRT Update (KB2999226)               | ✅            | 11.0     |
+| Windows | Vista                       | SP2   | x64    | VC++ Redist 2015, Platform Update                       | ✅            | 11.0     |
+| Windows | Vista                       | SP1   | x64    | VC++ Redist 2025, DirectX End-User Runtimes (June 2010) | ✅            | 9.0      |
+| Windows | Vista                       |       | x64    | (No UCRT)                                               | ❌            | -        |
+| Windows | XP Professional x64 Edition | SP2   | x64    | (No UCRT)                                               | ❌            | -        |
+| Windows | XP Professional x64 Edition | SP1   | x64    | (No UCRT)                                               | ❌            | -        |
+| Windows | XP Professional x64 Edition |       | x64    | (No UCRT)                                               | ❌            | -        |
 
 ### 32-bit Windows Compatibility List
 
 Suika3 provides the 32-bit binary `suika3-32.exe` for backward compatibility,
 supporting legacy systems through older runtimes.
 
-| OS      | Version                     | Patch | CPU    | Runtimes                               | 32-bit Binary | Direct3D |
-|---------|-----------------------------|-------|--------|----------------------------------------|---------------|----------|
-| Windows | 11                          |       | x64    | (None required)                        | ✅            | 12.0     |
-| Windows | 11                          |       | arm64  | (None required)                        | ✅            | 12.0     |
-| Windows | 10                          |       | x86    | (None required)                        | ✅            | 12.0     |
-| Windows | 10                          |       | x64    | (None required)                        | ✅            | 12.0     |
-| Windows | 10                          |       | arm64  | (None required)                        | ✅            | 12.0     |
-| Windows | 8.1                         |       | x86    | (None required)                        | ✅            | 11.0     |
-| Windows | 8.1                         |       | x64    | (None required)                        | ✅            | 11.0     |
-| Windows | 8                           |       | x86    | (None required)                        | ✅            | 11.0     |
-| Windows | 8                           |       | x64    | (None required)                        | ✅            | 11.0     |
-| Windows | 7                           |       | x86    | (None required)                        | ✅            | 11.0     |
-| Windows | 7                           |       | x64    | (None required)                        | ✅            | 11.0     |
-| Windows | 7                           | SP1   | x86    | (None required)                        | ✅            | 11.0     |
-| Windows | 7                           | SP1   | x64    | (None required)                        | ✅            | 11.0     |
-| Windows | Vista                       |       | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |
-| Windows | Vista                       |       | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |
-| Windows | Vista                       | SP1   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |
-| Windows | Vista                       | SP1   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |
-| Windows | Vista                       | SP2   | x86    | DirectX 11 Platform Update             | ✅            | 11.0     |
-| Windows | Vista                       | SP2   | x64    | DirectX 11 Platform Update             | ✅            | 11.0     |
-| Windows | XP                          |       | x86    | DirectX 9.0b Runtime                   | ✅            | 9.0      |
-| Windows | XP                          | SP1   | x86    | DirectX 9.0b Runtime                   | ✅            | 9.0      |
-| Windows | XP                          | SP2   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |
-| Windows | XP                          | SP3   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |
-| Windows | XP Professional x64 Edition |       | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |
-| Windows | XP Professional x64 Edition | SP1   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |
-| Windows | XP Professional x64 Edition | SP2   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |
-
-### 32-bit Classic Windows Compatibility List
-
-Suika3 provides the 32-bit classic binary `suika3-95.exe` for early Win32 compatibility.
-
-| OS      | Version | Patch | CPU    | Runtimes                               | 32-bit Binary | Direct3D               |
-|---------|---------|-------|--------|----------------------------------------|---------------|------------------------|
-| Windows | 2000    |       | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0                    |
-| Windows | 2000    | SP1   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0                    |
-| Windows | 2000    | SP2   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0                    |
-| Windows | 2000    | SP3   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0                    |
-| Windows | 2000    | SP4   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0                    |
-| Windows | Me      |       | x86    |                                        | Not Tested    | soft rendering         |
-| Windows | 98      |       | x86    |                                        | Not Tested    | soft rendering         |
-| Windows | 98      | SE    | x86    |                                        | Not Tested    | soft rendering         |
-| Windows | 95      |       | x86    |                                        | Not Tested    | soft rendering         |
-| Windows | 95      | OSR2  | x86    |                                        | Not Tested    | soft rendering         |
-| Windows | NT 4.0  |       | x86    |                                        | Not Tested    | soft rendering         |
-| Windows | NT 3.51 |       | x86    |                                        | ❌            | Insufficient Win32 API |
+| OS      | Version                     | Patch | CPU    | Runtimes                               | 32-bit Binary | Direct3D               |
+|---------|-----------------------------|-------|--------|----------------------------------------|---------------|------------------------|
+| Windows | 11                          |       | x64    | (None required)                        | ✅            | 12.0                   |
+| Windows | 11                          |       | arm64  | (None required)                        | ✅            | 12.0                   |
+| Windows | 10                          |       | x86    | (None required)                        | ✅            | 12.0                   |
+| Windows | 10                          |       | x64    | (None required)                        | ✅            | 12.0                   |
+| Windows | 10                          |       | arm64  | (None required)                        | ✅            | 12.0                   |
+| Windows | 8.1                         |       | x86    | (None required)                        | ✅            | 11.0                   |
+| Windows | 8.1                         |       | x64    | (None required)                        | ✅            | 11.0                   |
+| Windows | 8                           |       | x86    | (None required)                        | ✅            | 11.0                   |
+| Windows | 8                           |       | x64    | (None required)                        | ✅            | 11.0                   |
+| Windows | 7                           |       | x86    | (None required)                        | ✅            | 11.0                   |
+| Windows | 7                           |       | x64    | (None required)                        | ✅            | 11.0                   |
+| Windows | 7                           | SP1   | x86    | (None required)                        | ✅            | 11.0                   |
+| Windows | 7                           | SP1   | x64    | (None required)                        | ✅            | 11.0                   |
+| Windows | Vista                       |       | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
+| Windows | Vista                       |       | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
+| Windows | Vista                       | SP1   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
+| Windows | Vista                       | SP1   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
+| Windows | Vista                       | SP2   | x86    | DirectX 11 Platform Update             | ✅            | 11.0                   |
+| Windows | Vista                       | SP2   | x64    | DirectX 11 Platform Update             | ✅            | 11.0                   |
+| Windows | XP                          |       | x86    | DirectX 9.0b Runtime                   | ✅            | 9.0                    |
+| Windows | XP                          | SP1   | x86    | DirectX 9.0b Runtime                   | ✅            | 9.0                    |
+| Windows | XP                          | SP2   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
+| Windows | XP                          | SP3   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
+| Windows | XP Professional x64 Edition |       | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
+| Windows | XP Professional x64 Edition | SP1   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
+| Windows | XP Professional x64 Edition | SP2   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0                    |
+| Windows | 2000                        |       | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0                    |
+| Windows | 2000                        | SP1   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0                    |
+| Windows | 2000                        | SP2   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0                    |
+| Windows | 2000                        | SP3   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0                    |
+| Windows | 2000                        | SP4   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0                    |
+| Windows | Me                          |       | x86    |                                        | -->           | Need VC++ 6.0          |
+| Windows | 98                          |       | x86    |                                        | -->           | Need VC++ 6.0          |
+| Windows | 95                          |       | x86    |                                        | -->           | Need VC++ 6.0          |
+| Windows | NT 4.0                      |       | x86    |                                        | -->           | Need VC++ 6.0          |
+| Windows | NT 3.51                     |       | x86    |                                        | ❌            | Insufficient Win32 API |
 
 ### macOS Compatibility List
 
@@ -842,11 +829,12 @@ Suika3 provides the 32-bit classic binary `suika3-95.exe` for early Win32 compat
 | Distribution      | Version               | CPU             | Status | Graphics                      |
 |-------------------|-----------------------|-----------------|--------|-------------------------------|
 | Raspberry Pi OS   | Debian 13             | arm64, armv7    | ✅     | X11 + OpenGL ES               |
+| Debian            | 13 / 12               | x86_64, arm64   | ✅     | X11 + OpenGL 3                |
 | Ubuntu            | 24.04 / 22.04 / 20.04 | x86_64, arm64   | ✅     | X11 + OpenGL 3                |
 | Kubuntu           | 25.04                 | x86_64, arm64   | ✅     | Wayland + OpenGL 3            |
 | Linux Mint        | 22.3                  | x86_64          | ✅     | X11 + OpenGL 3                |
 | Fedora            | 43                    | x86_64          | ✅     | X11 + OpenGL 3                |
-| Odroid            |                       | arm64           | ✅     | GBM + DRM + EGL + OpenGL ES 2 |
+| Odroid            |                       | arm64           | ✅     | GBM + DRM + EGL + OpenGL ES   |
 
 ### iOS Compatibility List
 
@@ -896,6 +884,10 @@ Suika3 provides the 32-bit classic binary `suika3-95.exe` for early Win32 compat
 | OS         | Status |
 |------------|--------|
 | Solaris 11 | ✅     |
+| Solaris 10 | ✅ gcc |
+| Solaris 9  | -      |
+| Solaris 8  | -      |
+| Solaris 7  | -      |
 
 ---
 
