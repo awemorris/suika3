@@ -179,7 +179,8 @@ extern "C" {
  * |NOCT_TARGET_FREEBSD   |FreeBSD               |Excluding Gaming Consoles   |
  * |NOCT_TARGET_NETBSD    |NetBSD                |                            |
  * |NOCT_TARGET_OPENBSD   |OpenBSD               |                            |
- * |NOCT_TARGET_SOLARIS   |Solaris               |                            |
+ * |NOCT_TARGET_SOLARIS11 |Solaris               |                            |
+ * |NOCT_TARGET_SOLARIS10 |Solaris               |                            |
  * |NOCT_TARGET_BEOS      |BeOS and Haiku        |                            |
  *
  * |Macro               |Description                     |
@@ -242,11 +243,15 @@ extern "C" {
 #endif
 #endif
 
-/* Solaris */
-#if defined(__sun)
-#define NOCT_TARGET_SOLARIS
-#ifndef NOCT_TARGET_POSIX
-#define NOCT_TARGET_POSIX
+/* SunOS/Solaris */
+#if defined(__sun) 
+#if defined(__SunOS_5_11)
+#define HAL_TARGET_SOLARIS11
+#else
+#define HAL_TARGET_SOLARIS10
+#endif
+#ifndef HAL_TARGET_POSIX
+#define HAL_TARGET_POSIX
 #endif
 #endif
 
@@ -272,7 +277,8 @@ extern "C" {
     !defined(NOCT_TARGET_FREEBSD) &&              \
     !defined(NOCT_TARGET_NETBSD) &&               \
     !defined(NOCT_TARGET_OPENBSD) &&              \
-    !defined(NOCT_TARGET_SOLARIS) &&              \
+    !defined(NOCT_TARGET_SOLARIS11) &&            \
+    !defined(NOCT_TARGET_SOLARIS10) &&            \
     !defined(NOCT_TARGET_PIOSIX) &&               \
     !defined(NOCT_TARGET_IOS) &&                  \
     !defined(NOCT_TARGET_ANDROID) &&              \

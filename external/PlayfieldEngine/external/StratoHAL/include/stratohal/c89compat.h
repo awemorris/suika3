@@ -243,17 +243,13 @@ extern "C" {
 #endif
 #endif
 
-/* Solaris 11 */
+/* SunOS/Solaris */
+#if defined(__sun) 
 #if defined(__SunOS_5_11)
 #define HAL_TARGET_SOLARIS11
-#ifndef HAL_TARGET_POSIX
-#define HAL_TARGET_POSIX
-#endif
-#endif
-
-/* Solaris 10 */
-#if defined(__sun) && !defined(defined(__SunOS_5_11)
+#else
 #define HAL_TARGET_SOLARIS10
+#endif
 #ifndef HAL_TARGET_POSIX
 #define HAL_TARGET_POSIX
 #endif
