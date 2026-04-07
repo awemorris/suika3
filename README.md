@@ -63,7 +63,7 @@
     - **Desktop:** Windows, macOS, Linux, Chromebook, Raspberry Pi
     - **Mobile:** iOS, Android, HarmonyOS NEXT
     - **Web:** WebAssembly
-    - **Console:** Xbox GDK, PS5 and Switch via Unity Integration, devkit required
+    - **Console:** Xbox (GDK), PS5/Switch/Xbox via Unity Integration \[DevKit required\]
     - **More:** FreeBSD, NetBSD, OpenBSD, Solaris, Haiku
 - **Users:** Professional creators, indie studios, enterprise teams.
 
