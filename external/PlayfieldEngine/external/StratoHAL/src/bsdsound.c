@@ -42,7 +42,7 @@
 #elif defined(__SunOS_5_11)
 #include <sys/soundcard.h>   /* Solaris 11 (OSS) */
 #define USE_SUN_OSS
-#elif defined(__sunos)
+#elif defined(__SunOS_5_10)
 #include <sys/audioio.h>     /* Solaris 10 */
 #define USE_SUN_AUDIO
 #endif
