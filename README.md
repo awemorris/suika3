@@ -672,6 +672,9 @@ execution. Therefore, all three execution models share a unified
 infrastructure and are semantically equivalent.
 
 This clean, unified execution model is the key novelty of NoctLang.
+To the best of our knowledge, NoctLang is the first practical
+language that unifies JIT, AOT, and interpreter execution models
+in this way.
 
 ---
 
