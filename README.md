@@ -37,7 +37,7 @@
   <img src="https://img.shields.io/badge/Mobile-iOS%20%2F%20Android%20%2F%20HarmonyOS%20NEXT-blue"><br>
   <img src="https://img.shields.io/badge/Console-Switch%20%2F%20PS5%20%2F%20Xbox-blue"><br>
   <img src="https://img.shields.io/badge/Web-Emscripten-blue"><br>
-  <img src="https://img.shields.io/badge/Exotic-FreeBSD%20%2F%20NetBSD%20%2F%20OpenBSD%20%2F%20Solaris%2011%20%2F%20Haiku-blue"><br>
+  <img src="https://img.shields.io/badge/Exotic-FreeBSD%20%2F%20NetBSD%20%2F%20OpenBSD%20%2F%20Solaris%20%2F%20Haiku-blue"><br>
   <img src="https://img.shields.io/badge/Store-App%20Store%20%2F%20Play%20Store%20%2F%20Microsoft%20Store%20%2F%20Steam%20%2F%20itch%2eio%20%2F%20App%20Gallery-green"><br>
   <br>
 </div>
@@ -76,7 +76,9 @@ In general, the following works:
 git clone https://github.com/awemorris/suika3.git
 cd suika3
 mkdir build && cd build
-../configure && make && sudo make install
+cmake ..
+cmake --build . --parallel
+sudo cmake --install .
 cd ../game
 suika3
 ```
@@ -106,6 +108,7 @@ scripting platform.
   mobile environments, alongside the interpreter (Ubi-Ray Interpreter;
   codename "天滿梅貴"). Our native technology, Ray, enables you to
   make not only VN but also generic 2D games.
+  (Ray codename: "神威/和光全球之天媛")
 
 Although Suika3 is designed as a professional tool, you are absolutely
 welcome to use it just for fun — after all, fun is the driving force
