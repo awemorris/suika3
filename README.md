@@ -110,6 +110,7 @@ scripting platform.
   make not only VN but also generic 2D games.
   (Ray codename: "神威/和光全球之天媛")
 
+
 Although Suika3 is designed as a professional tool, you are absolutely
 welcome to use it just for fun — after all, fun is the driving force
 behind every great community.
@@ -659,6 +660,18 @@ pipeline lightweight without sacrificing optimization opportunities.
 Because all JIT backends translate from the same LIR, portability
 across architectures comes naturally.  This unified approach is what
 makes NoctLang both portable and maintainable.
+
+### Unified Execution Model
+
+NoctLang preserves bytecode semantics across JIT, AOT, and interpreter
+execution models. Each NoctLang bytecode instruction is equivalent to
+a runtime C function call. The NoctLang JIT is a method-level baseline
+JIT in which each bytecode instruction is translated into a runtime
+function call. The same applies to both AOT and interpreter
+execution. Therefore, all three execution models share a unified
+infrastructure and are semantically equivalent.
+
+This clean, unified execution model is the key novelty of NoctLang.
 
 ---
 
