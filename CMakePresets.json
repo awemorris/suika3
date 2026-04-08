@@ -1225,6 +1225,10 @@
             "configurePreset": "solaris11"
         },
         {
+            "name": "solaris10",
+            "configurePreset": "solaris10"
+        },
+        {
             "name": "aix",
             "configurePreset": "aix"
         },

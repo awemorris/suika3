@@ -272,6 +272,27 @@ If you want to build from scratch, use `cmake --preset android-arm64`, then copy
 
 ---
 
+## HarmonyOS NEXT / OpenHarmony
+
+### Prerequisites
+
+* `OpenHarmony SDK` installed
+
+### Steps
+
+* Download [the official binary](https://github.com/awemorris/suika/releases) and extract it.
+* Copy your asset files into the `misc/openharmony/entry/src/main/resources/rawfile` folder.
+* Open the `misc/openharmony` folder in DevEco.
+* Build and run.
+
+### Build from Scratch
+
+If you want to build from scratch, use `cmake --preset openharmony-arm64`,
+then copy the built `libsuika3.a` file into the `misc/openharmony/entry/libs/arm64-v8a` folder,
+and open the `misc/openharmony` folder in DevEco.
+
+---
+
 ## WebAssembly
 
 ### Prerequisites
@@ -364,6 +385,74 @@ cmake --build --preset openbsd
 ```
 
 The target file `build-openbsd/suika3` will be created.
+
+---
+
+## Solaris 11
+
+### Prerequisites
+
+* A `Solaris 11` machine
+* `SunCC`, `cmake`, and `gmake` installed.
+* `cmake` must be compiled by source code.
+
+### Steps
+
+Open the terminal and type the following.
+
+```
+git clone https://github.com/suika3-community/suika3.git
+cd suika3
+cmake --preset solaris11
+cmake --build --preset solaris11
+```
+
+The target file `build-solaris11/suika3` will be created.
+
+---
+
+## Solaris 10
+
+### Prerequisites
+
+* A `Solaris 10` machine
+* `SunCC`, `cmake`, and `gmake` installed.
+* `cmake` must be compiled by source code.
+
+### Steps
+
+Open the terminal and type the following.
+
+```
+git clone https://github.com/suika3-community/suika3.git
+cd suika3
+cmake --preset solaris10
+cmake --build --preset solaris10
+```
+
+The target file `build-solaris10/suika3` will be created.
+
+---
+
+## Haiku
+
+### Prerequisites
+
+* A `Haiku` machine
+* `gcc`, `cmake`, and `ninja` installed.
+
+### Steps
+
+Open the terminal and type the following.
+
+```
+git clone https://github.com/suika3-community/suika3.git
+cd suika3
+cmake --preset haiku
+cmake --build --preset haiku
+```
+
+The target file `build-solaris10/suika3` will be created.
 
 ---
 
