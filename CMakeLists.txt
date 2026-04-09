@@ -1178,7 +1178,7 @@ if(SUIKA_ENABLE_INSTALL)
     install(
       FILES       "${CMAKE_CURRENT_SOURCE_DIR}/game/system/font/rounded-l-mplus-1c-bold.ttf"
                   "${CMAKE_CURRENT_SOURCE_DIR}/game/system/font/LICENSE"
-      DESTINATION "${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_GAME}"
+      DESTINATION "${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_GAME}/game"
     )
   endif()
 endif()
