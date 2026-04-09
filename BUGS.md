@@ -198,3 +198,44 @@ Added/fixed:
 ### Commits
 
 * 382197f510f7c9a13e1509e037761e02cd104c87
+
+---
+
+## Mouse click position is wrong on X11
+
+* Report Details
+    * ID: BUG-20260409-001
+    * Status: Resolved
+    * Component: StratoHAL
+    * Severity: high
+    * Priority: high
+    * Reproducibility: always
+    * First Found In: 38ce0f3dcfea5c109b287b52a3b4bb49584015db
+    * Fixed In: 3cf43369f4a71ac8eda40ff0528baa1b1bee74ba
+    * Reported Date: 11:20 9 April 2026
+    * Fixed Date: 11:25 9 April 2026
+    * Detection: buzz testing
+    * Root Cause Type: copy-and-taste misstake
+    * OS: Linux, *BSD, Solaris
+    * CPU: All
+
+### Report
+
+While mouse move position is good, mouse click position seems bad.
+
+### Analysis
+
+In `event_button_release()` in `x11main.c` and `x11softmain.c`,
+mouse offset and scaling is bad.
+
+### Patch
+
+`event_button_release()` is fixed.
+
+Fixed:
+- external/PlayfieldEngine/external/StratoHAL/src/x11main.c
+- external/PlayfieldEngine/external/StratoHAL/src/x11softmain.c
+
+### Commits
+
+- 3cf43369f4a71ac8eda40ff0528baa1b1bee74ba
