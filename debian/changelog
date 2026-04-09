@@ -1,0 +1,19 @@
+suika3 (26.04.5-1ubuntu1) sid; urgency=medium
+
+  * New upstream version 26.04.5
+  * Add build.sh
+
+ -- Awe Morris <awe@noctvm.io>  Fri, 10 Apr 2026 05:48:05 +0900
+
+suika3 (26.04.5-1) sid; urgency=medium
+
+  * New upstream version 26.04.5
+  * Add build.sh
+
+ -- Awe Morris <awe@noctvm.io>  Fri, 10 Apr 2026 05:47:00 +0900
+
+suika3 (26.04.4-1) sid; urgency=medium
+
+  * Sync upstream
+
+ -- Awe Morris <awe@noctvm.io>  Fri, 10 Apr 2026 05:24:58 +0900

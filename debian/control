@@ -29,22 +29,9 @@ Rules-Requires-Root: no
 Package: suika3
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends},
-         libjpeg | libjpeg8 | libjpeg62-turbo | libjpeg-turbo8,
-         zlib1g,
-         libpng16-16,
-         libbz2-1.0,
-         libwebp7,
-         libogg0,
-         libvorbis0a,
-         libvorbisfile3,
-         libfreetype6,
-         libasound2,
-         libx11-6,
-         libgstreamer1.0-0,
-         libgstreamer-plugins-base1.0-0,
+         gstreamer1.0-plugins-base,
+         gstreamer1.0-plugins-good,
          gstreamer1.0-x,
-         libxpm4,
-         libbrotli1,
          fonts-noto-core
 Description: Portable 2D Game and Visual Novel Scripting Runtime
  This program can be used to develop 2D games and visual novels.
