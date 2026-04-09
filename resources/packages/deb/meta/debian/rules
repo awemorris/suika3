@@ -11,11 +11,11 @@ override_dh_auto_configure:
 		-DSUIKA_ENABLE_BYTECOMP=ON \
 		-DSUIKA_ENABLE_AOTCOMP=ON \
 		-DSUIKA_DIR_DOCS="share/doc/suika3" \
-		-DSUIKA_DIR_GAME="share/doc/suika3/examples"
+		-DSUIKA_DIR_GAME="share/doc/suika3/examples/game"
 
 override_dh_auto_install:
 	dh_auto_install
-	$(MKDIR) $(CURDIR)/debian/suika3/usr/share/doc/suika3/examples/game
+	$(MKDIR) $(CURDIR)/debian/suika3/usr/share/doc/suika3/examples/game/fonts
 	$(LN) -s \
 	  /usr/share/fonts/truetype/noto/NotoSans-Regular.ttf \
 	  $(CURDIR)/debian/suika3/usr/share/doc/suika3/examples/game/system/font/rounded-l-mplus-1c-bold.ttf
