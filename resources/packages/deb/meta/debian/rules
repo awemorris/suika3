@@ -14,7 +14,7 @@ override_dh_auto_configure:
 		-DSUIKA_DIR_GAME="share/doc/suika3/examples"
 
 override_dh_auto_install:
-	$(MAKE) install
+	dh_auto_install
 	$(MKDIR) $(CURDIR)/debian/suika3/usr/share/doc/suika3/examples/game
 	$(LN) -s \
 	  /usr/share/fonts/truetype/noto/NotoSans-Regular.ttf \
