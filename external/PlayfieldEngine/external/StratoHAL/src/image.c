@@ -1456,6 +1456,7 @@ struct png_reader {
 };
 
 static void png_read_callback(png_structp png_ptr, png_bytep buf, png_size_t len);
+static void png_warning_silent(png_structp png_ptr, png_const_charp warning_msg);
 
 /*
  * Create an image with a PNG file.
@@ -1512,6 +1513,7 @@ hal_create_image_with_png(
 	reader.size = size;
 	reader.pos = 0;
 	png_set_read_fn(png_ptr, &reader, png_read_callback);
+	png_set_error_fn(png_ptr, NULL, NULL, png_warning_silent);
 	png_set_sig_bytes(png_ptr, 8);
 	png_read_info(png_ptr, info_ptr);
 
@@ -1610,6 +1612,15 @@ png_read_callback(
 	memcpy(buf, reader->data + reader->pos, len);
 
 	reader->pos += len;
+}
+
+static void
+png_warning_silent(
+	png_structp png_ptr,
+	png_const_charp warning_msg)
+{
+	UNUSED_PARAMETER(png_ptr);
+	UNUSED_PARAMETER(warning_msg);
 }
 
 /*
