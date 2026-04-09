@@ -1,10 +1,24 @@
 #!/usr/bin/make -f
 
 override_dh_auto_configure:
-	./configure --prefix=$(CURDIR)/debian/suika3/usr
+	dh_auto_configure -- \
+		-DCMAKE_BUILD_TYPE=Release \
+		-DCMAKE_INSTALL_PREFIX=$(CURDIR)/debian/suika3/usr \
+		-DSUIKA_ENABLE_DISTON \
+		-DSUIKA_ENABLE_JIT=ON \
+		-DSUIKA_ENABLE_I18N=ON \
+		-DSUIKA_ENABLE_PACK=ON \
+		-DSUIKA_ENABLE_BYTECOMP=ON \
+		-DSUIKA_ENABLE_AOTCOMP=ON \
+		-DSUIKA_DIR_DOCS="share/doc/suika3" \
+		-DSUIKA_DIR_GAME="share/doc/suika3/examples"
 
 override_dh_auto_install:
 	$(MAKE) install
+	$(MKDIR) $(CURDIR)/debian/suika3/usr/share/doc/suika3/examples/game
+	$(LN) -s \
+	  /usr/share/fonts/truetype/noto/NotoSans-Regular.ttf \
+	  $(CURDIR)/debian/suika3/usr/share/doc/suika3/examples/game/system/font/rounded-l-mplus-1c-bold.ttf
 
 %:
 	dh $@
