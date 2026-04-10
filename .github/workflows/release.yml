@@ -592,18 +592,11 @@ jobs:
     steps:
       - name: Show environment
         run: |
+          set -eu
+
           echo "job=${{ matrix.name }}"
           echo "container=${{ matrix.container }}"
           echo "distro=${{ matrix.distro }}"
-
-    defaults:
-      run:
-        shell: bash
-
-    steps:
-      - name: Show environment
-        run: |
-          set -eu
 
           echo "Installing dependencies (1)"
           export DEBIAN_FRONTEND=noninteractive
