@@ -566,6 +566,77 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
+  build-deb-debian:
+    runs-on: ubuntu-latest
+    container: ubuntu:noble
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          apt-get update
+          apt-get install -y --no-install-recommends \
+              build-essential \
+              dpkg-dev \
+              devscripts \
+              equivs \
+              git \
+              git-buildpackage \
+              ca-certificates
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          mk-build-deps -i -r -t "apt-get -y --no-install-recommends" debian/control
+
+      - name: Build package
+        run: |
+          set -eu
+
+          LATEST_TAG="$( \
+		  				 git tag --list '26.*' --sort=-version:refname | \
+						 grep -E '^26\.[0-9]+\.[0-9]+$' | \
+						 head -n1 \
+					  )"
+          test -n "$LATEST_TAG"
+
+          UPSTREAM_VERSION="$LATEST_TAG"
+          DEBIAN_REVISION="1"
+          DISTRO="sid"
+          CI_SUFFIX="~git${GITHUB_RUN_NUMBER}"
+          NEW_VERSION="${UPSTREAM_VERSION}-${DEBIAN_REVISION}~${DISTRO}${CI_SUFFIX}"
+
+          export DEBFULLNAME="GitHub Actions"
+          export DEBEMAIL="actions@github.com"
+
+          dch --newversion "$NEW_VERSION" \
+		  	  --distribution sid \
+			  "Automated CI build for sid from tag ${LATEST_TAG}."
+
+          git config user.email "awe@noctvm.io"
+          git config user.name "Awe Morris"
+          git add debian/changelog
+          git commit -m "Update debian/changelog for sid"
+
+          gbp buildpackage -us -uc -b \
+		  	  --git-upstream-tree=SLOPPY \
+			  --git-no-pristine-tar
+
+          mkdir -p artifacts
+          find .. -maxdepth 1 -type f \
+			   \( -name '*.deb' -o -name '*.buildinfo' -o -name '*.changes' \) \
+			   -exec mv -t artifacts {} +
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deb-ubuntu
+          path: artifacts/*
+          if-no-files-found: error
+          retention-days: 7
+
   zip:
     needs: [build-windows-vs2022, build-windows-mingw-w64, build-linux, build-macos, build-wasm, build-ios, build-android, build-openharmony, build-unity, build-mkdocs]
     runs-on: ubuntu-latest
