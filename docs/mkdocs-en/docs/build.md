@@ -15,16 +15,72 @@ Suika3 fully utilizes the CMake build system.
 
 ---
 
-## For Packaging
+## For Package Maintainers
 
-Use the `configure` script to build with shared libraries for
-packaging. (Other methods generate statically linked binaries.)
+Thank you, package maintainers, for working hard to keep the ecosystem a comfortable place!
 
+Build example:
 ```
 mkdir build
-../configure
-make
-make install
+cmake .. \
+	-DSUIKA_ENABLE_DIST=ON \
+	-DSUIKA_ENABLE_JIT=ON \
+	-DSUIKA_ENABLE_I18N=ON \
+	-DSUIKA_ENABLE_PACK=ON \
+	-DSUIKA_ENABLE_BYTECOMP=ON \
+	-DSUIKA_ENABLE_AOTCOMP=ON \
+	-DSUIKA_DIR_DOCS="share/doc/suika3" \
+	-DSUIKA_DIR_GAME="share/doc/suika3/examples/game"
+cmake --build .
+cmake --install .
+ln -sf \
+   /usr/share/fonts/truetype/noto/NotoSans-Regular.ttf \
+   /usr/share/doc/suika3/examples/game/system/font/rounded-l-mplus-1c-bold.ttf
+```
+
+Build dependencies example:
+```
+cmake
+zlib1g-dev
+libpng-dev
+libjpeg-dev
+libbz2-dev
+libwebp-dev
+libogg-dev
+libvorbis-dev
+libfreetype-dev
+libasound2-dev
+libx11-dev
+libgstreamer1.0-dev
+libgstreamer-plugins-base1.0-dev
+gstreamer1.0-x
+libxpm-dev
+mesa-common-dev
+libbrotli-dev
+```
+
+Run dependencies example:
+```
+zlib1g
+libpng
+libjpeg
+libbz2
+libwebp
+libogg
+libvorbis
+libfreetype
+libasound2
+libx11
+libgstreamer1.0
+libgstreamer-plugins-base1.0
+gstreamer1.0
+gstreamer1.0-plugins-base
+gstreamer1.0-plugins-good
+gstreamer1.0-x
+libxpm
+mesa-common
+libbrotli
+fonts-noto-core
 ```
 
 ---
