@@ -632,17 +632,13 @@ jobs:
               --git-upstream-tree=SLOPPY \
               --git-ignore-new \
               --git-no-pristine-tar
-
-          echo "Copying artifacts"
           ls -lha ../
-          mkdir -p artifacts
-          cp ../*.deb ./artifacts/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: deb-ubuntu
-          path: artifacts/*
+          path: work/*.deb
           if-no-files-found: error
           retention-days: 7
 
