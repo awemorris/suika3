@@ -592,6 +592,8 @@ jobs:
               ca-certificates
 
           echo "Cloning the git repository"
+          mkdir work
+          cd work
           git clone https://github.com/awemorris/suika3.git
           cd suika3
 
@@ -632,6 +634,7 @@ jobs:
               --git-no-pristine-tar
 
           echo "Copying artifacts"
+          ls -lha ../
           mkdir -p artifacts
           cp ../*.deb ./artifacts/
 
