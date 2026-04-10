@@ -568,7 +568,33 @@ jobs:
 
   build-deb-debian:
     runs-on: ubuntu-latest
-    container: debian:trixie
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: debian-trixie
+            container: debian:trixie
+            distro: trixie
+            artifact: deb-debian-trixie
+
+          - name: ubuntu-noble
+            container: ubuntu:noble
+            distro: noble
+            artifact: deb-ubuntu-noble
+
+    container:
+      image: ${{ matrix.container }}
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Show environment
+        run: |
+          echo "job=${{ matrix.name }}"
+          echo "container=${{ matrix.container }}"
+          echo "distro=${{ matrix.distro }}"
 
     defaults:
       run:
@@ -612,7 +638,7 @@ jobs:
           echo "Writing debian/changelog"
           UPSTREAM_VERSION="$LATEST_TAG"
           DEBIAN_REVISION="1"
-          DISTRO="trixie"
+          DISTRO="${{ matrix.distro }}"
           CI_SUFFIX="~git${GITHUB_RUN_NUMBER}"
           NEW_VERSION="${UPSTREAM_VERSION}-${DEBIAN_REVISION}~${DISTRO}${CI_SUFFIX}"
           echo "Version: $NEW_VERSION"
@@ -621,11 +647,6 @@ jobs:
           dch --newversion "$NEW_VERSION" \
               --distribution "$DISTRO" \
               "Automated CI build for sid from tag ${LATEST_TAG}."
-
-          #git config user.email "awe@noctvm.io"
-          #git config user.name "Awe Morris"
-          #git add debian/changelog
-          #git commit -m "Update debian/changelog for sid"
 
           echo "Building package"
           gbp buildpackage -us -uc -b \
@@ -637,7 +658,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: deb-ubuntu
+          name: deb-debian
           path: work/*.deb
           if-no-files-found: error
           retention-days: 7
