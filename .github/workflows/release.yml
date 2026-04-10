@@ -568,7 +568,7 @@ jobs:
 
   build-deb-debian:
     runs-on: ubuntu-latest
-    container: ubuntu:noble
+    container: debian:sid
 
     steps:
       - name: Checkout repository
