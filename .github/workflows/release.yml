@@ -850,7 +850,7 @@ jobs:
         with:
           tag_name: CI-${{ env.DATE }}-${{ env.SHORT_SHA }}
           name: Suika3-CI-${{ env.DATE }}-${{ env.SHORT_SHA }}
-          prerelease: false
+          prerelease: true
           files: |
             Suika3-CI-${{ env.DATE }}-${{ env.SHORT_SHA }}.zip
             Suika3-CI-${{ env.DATE }}-${{ env.SHORT_SHA }}.7z
