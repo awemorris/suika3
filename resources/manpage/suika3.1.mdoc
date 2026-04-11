@@ -15,21 +15,22 @@ is a cross-platform scripting VM for visual novels.
 When invoked,
 .Nm
 automatically executes the script
-.Pa main.pf
+.Pa main.ray
 from the current working directory.
 No other script files can be specified on the command line.
 .Sh EXAMPLES
 Run the engine in a project directory containing
-.Pa main.pf :
+.Pa main.ray :
 .Bd -literal -offset indent
 cd mygame/
 suika3
 .Ed
 .Sh SEE ALSO
-.Xr suika3-compiler 1 ,
-.Xr suika3-pack 1
+.Xr suika3-bcc (1),
+.Xr suika3-aotc (1),
+.Xr suika3-pack (1)
 .Sh AUTHORS
 .An Awe Morris Aq Mt awe@noctvm.io
 and contributors.
 Project homepage:
-.Lk https://github.com/suika3-community/suika3
+.Lk https://github.com/awemorris/suika3
