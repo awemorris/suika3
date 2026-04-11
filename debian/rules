@@ -11,8 +11,21 @@ override_dh_auto_configure:
 		-DSUIKA_DIR_DOCS="share/doc/suika3" \
 		-DSUIKA_DIR_GAME="share/doc/suika3/examples"
 
+#
+# Remove the bundled font in the sample game, and use a packaged system
+# font instead.  The bundled font has a separate license (not ZLIB),
+# and the packaging system should not install bundled fonts when
+# system-packaged ones are available.
+#
+# Create a symlink to NotoSans to satisfy the engine's expected file name
+# without modifying upstream sample data.
+#
+# In addition, remove the unused bgm2 directory because it is just a bonus
+# track.
+#
 override_dh_auto_install:
 	dh_auto_install
+	mkdir -p debian/suika3/usr/share/doc/suika3/examples/game/bgm2
 	mkdir -p debian/suika3/usr/share/doc/suika3/examples/game/system/font
 	ln -sf /usr/share/fonts/truetype/noto/NotoSans-Regular.ttf \
 		debian/suika3/usr/share/doc/suika3/examples/game/system/font/rounded-l-mplus-1c-bold.ttf
