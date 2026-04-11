@@ -647,6 +647,7 @@ jobs:
               --git-ignore-new \
               --git-no-pristine-tar
           ls -lha ../
+          mv ../*.deb ../suika3-${DISTRO}.deb
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -961,8 +962,8 @@ jobs:
             linux/suika3-x86_64.AppImage
             android-apk/suika3-android.apk
             ios-engine/suika3-ios.ipa
-            deb-trixie/*.deb
-            deb-noble/*.deb
+            deb-trixie/suika3-trixie.deb
+            deb-noble/suika3-noble.deb
           body: |
             - This is an automated build from CI and is not an official release.
             - The ZIP archive contains: 

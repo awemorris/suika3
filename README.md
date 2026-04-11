@@ -69,7 +69,9 @@
 
 ---
 
-## Build
+## Build and Install
+
+### Source Build
 
 In general, the following works:
 ```
@@ -84,6 +86,28 @@ suika3
 ```
 
 Please refer to [build.md](docs/mkdocs-en/docs/build.md) for platform-specific instructions.
+
+### Binary Installation
+
+Binary Downloads:
+| OS                     | Link                                                                                                   |
+|------------------------|--------------------------------------------------------------------------------------------------------|
+| Windows                | [Full](https://github.com/awemorris/suika3/releases/latest/download/Suika3.zip) [EXE](https://github.com/awemorris/suika3/releases/latest/download/suika3.exe) |
+| macOS                  | [Full](https://github.com/awemorris/suika3/releases/latest/download/Suika3.zip) [DMG](https://github.com/awemorris/suika3/releases/latest/download/Suika3.dmg) |
+| Debian 13 amd64        | [Deb](https://github.com/awemorris/suika3/releases/latest/download/suika3-trixie.deb)                  |
+| Ubuntu 24.04 LTS amd64 | [Deb](https://github.com/awemorris/suika3/releases/latest/download/suika3-noble.deb)                   |
+| Other Linux amd64      | [Full](https://github.com/awemorris/suika3/releases/latest/download/Suika3.zip)                        |
+
+- Packages
+    - macOS:
+    ```
+    brew tap awemorris/suika3
+    brew install suika3
+    ```
+    - FreeBSD:
+    ```
+    pkg install suika3
+    ```
 
 ---
 
