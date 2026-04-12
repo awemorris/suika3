@@ -819,18 +819,6 @@ jobs:
           name: unity-xbox
           path: unity-xbox
 
-      - name: Download Debian trixie artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: deb-trixie
-          path: deb-trixie
-
-      - name: Download Ubuntu noble artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: deb-noble
-          path: deb-noble
-
       - name: Copy for Unity
         run: |
           mkdir dist/misc/unity/Assets
