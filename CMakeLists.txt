@@ -1061,6 +1061,7 @@ if(SUIKA_ENABLE_INSTALL)
       DESTINATION "${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_GAME}"
       FILES_MATCHING
       PATTERN "*"
+      PATTERN "system/bgm2" EXCLUDE
       PATTERN "system/font/LICENSE" EXCLUDE
       PATTERN "system/font/rounded-l-mplus-1c-bold.ttf" EXCLUDE
     )
