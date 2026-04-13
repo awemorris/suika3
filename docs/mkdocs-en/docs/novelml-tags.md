@@ -6,8 +6,8 @@ Suika3 Tag Reference
 | Tag Name                    | Description                                                        |
 |-----------------------------|--------------------------------------------------------------------|
 | [anime](#anime)             | Loads and runs an animation file.                                  |
-| [bg](bg)                    | Changes the background image with a fading effect.                 |
-| [bgm](bgm)                  | Plays a background music file (Ogg Vorbis format).                 |
+| [bg](#bg)                   | Changes the background image with a fading effect.                 |
+| [bgm](#bgm)                 | Plays a background music file (Ogg Vorbis format).                 |
 | [callmacro](#callmacro)     | Calls a defined macro.                                             |
 | [ch](#ch)                   | Shows or hides characters with detailed layer parameters.          |
 | [chapter](#chapter)         | Sets a chapter name.                                               |
