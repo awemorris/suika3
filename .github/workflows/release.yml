@@ -856,10 +856,10 @@ jobs:
             Suika3.7z
             windows/build/windows-vs2022-x64/Release/suika3.exe
             dist/misc/windows/suika3-32.exe
-#            macos/build-macos/Suika3.dmg
+            #macos/build-macos/Suika3.dmg
             linux/suika3-x86_64.AppImage
             android-apk/*.apk
-#            ios-engine/*.ipa
+            #ios-engine/*.ipa
           body: |
             - This is an automated build from CI and is not an official release.
             - Note: Currently macOS and iOS builds are excluded because of a problem of renewal of Apple Developer Program renewal.
