@@ -105,6 +105,11 @@ static float timer_span;
 static uint64_t timer_sw;
 
 /*
+ * Original Pen Position
+ */
+static int orig_pen_x, orig_pen_y;
+
+/*
  * Result
  */
 static const char *result_var_name;
@@ -116,6 +121,7 @@ static const char *result_var_name;
 static bool init(void);
 static bool main_process(void);
 static bool get_text_arg(int index, const char **text, const char **value);
+static void get_choosebox_rect(int index, int *x, int *y, int *w, int *h);
 static void draw_text(int index, bool is_idle);
 static void process_main_input(void);
 static int get_pointed_index(void);
@@ -177,10 +183,17 @@ init(void)
 	result_var_name = s3_get_tag_arg_string("name", false, NULL);
 
 	/* Check for leftification. */
-	if (strcmp(s3_get_tag_arg_string("leftify", true, "false"), "true") == 0)
-		is_centered = false;
-	else
-		is_centered = true;
+	if (!s3_is_page_mode()) {
+		if (strcmp(s3_get_tag_arg_string("leftify", true, "false"), "true") == 0)
+			is_centered = false;
+		else
+			is_centered = true;
+	} else {
+		if (strcmp(s3_get_tag_arg_string("leftify", true, "true"), "true") == 0)
+			is_centered = false;
+		else
+			is_centered = true;
+	}
 
 	/* Collect the option infromation. */
 	actual_option_count = 0;
@@ -196,11 +209,11 @@ init(void)
 		}
 
 		/* Get the coordinates. */
-		s3_get_choosebox_rect(i,
-				      &button[i].x,
-				      &button[i].y,
-				      &button[i].w,
-				      &button[i].h);
+		get_choosebox_rect(i,
+				   &button[i].x,
+				   &button[i].y,
+				   &button[i].w,
+				   &button[i].h);
 
 		/* Fill the choose box layers. */
 		s3_fill_choosebox_idle_image(i);
@@ -327,6 +340,59 @@ get_text_arg(
 			
 	/* Option found for the index. */
 	return true;
+}
+
+static void
+get_choosebox_rect(
+	int index,
+	int *x,
+	int *y,
+	int *w,
+	int *h)
+{
+	if (!s3_is_page_mode()) {
+		s3_get_choosebox_rect(index, x, y, w, h);
+		return;
+	} else {
+		int pen_x, pen_y;
+		int x2, y2, w2, h2;
+
+		pen_x = s3_get_pen_position_x();
+		pen_y = s3_get_pen_position_y();
+
+		if (index == 0) {
+			orig_pen_x = pen_x;
+			orig_pen_y = pen_y;
+
+			if (!conf_msgbox_font_tategaki) {
+				pen_y += conf_msgbox_margin_line;
+				pen_x = conf_msgbox_margin_left;
+			} else {
+				pen_x -= conf_msgbox_margin_line;
+				pen_y = conf_msgbox_margin_top;
+			}
+
+			s3_get_choosebox_rect(0, &x2, &y2, &w2, &h2);
+			*x = pen_x;
+			*y = pen_y;
+			*w = w2;
+			*h = h2;
+		} else {
+			s3_get_choosebox_rect(index - 1, &x2, &y2, &w2, &h2);
+			if (!conf_msgbox_font_tategaki) {
+				pen_y += h2;
+			} else {
+				pen_x -= w2;
+			}
+			s3_get_choosebox_rect(index, &x2, &y2, &w2, &h2);
+			*x = pen_x;
+			*y = pen_y;
+			*w = w2;
+			*h = h2;
+		}
+
+		s3_set_pen_position(pen_x, pen_y);
+	}
 }
 
 /* Draw an option text to a choose box layer. */
@@ -685,9 +751,15 @@ cleanup(void)
 {
 	int i;
 
+	/* Restore the pen position if page mode. */
+	if (s3_is_page_mode())
+		s3_set_pen_position(orig_pen_x, orig_pen_y);
+
 	/* Stop anime sequences. */
-	for (i = 0; i < S3_CHOOSEBOX_COUNT; i++)
-		run_anime(i, -1);
+	for (i = 0; i < S3_CHOOSEBOX_COUNT; i++) {
+		s3_clear_layer_anime_sequence(S3_LAYER_CHOOSE1_IDLE + i * 2);
+		s3_clear_layer_anime_sequence(S3_LAYER_CHOOSE1_IDLE + i * 2 + 1);
+	}
 
 	/* Hide the choose boxes. */
 	if (!need_sysmenu_mode) {

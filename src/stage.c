@@ -393,6 +393,7 @@ s3i_setup_msgbox(void)
 	/* Layout the message box layer. */
 	layer_x[S3_LAYER_MSGBOX] = conf_msgbox_x;
 	layer_y[S3_LAYER_MSGBOX] = conf_msgbox_y;
+	layer_alpha[S3_LAYER_MSGBOX] = 0;
 
 	/* Transfer the message box image to the message box layer. */
 	s3_fill_msgbox();
@@ -454,11 +455,13 @@ s3i_setup_choose(bool is_hover, int index)
 	/* Destroy when reinitialized. */
 	for (i = 0; i < S3_CHOOSEBOX_COUNT; i ++) {
 		if (index == -1 || i == index) {
-			if (choose_idle_image[i] != NULL) {
+			if (choose_idle_image[i] != NULL &&
+			    (!is_hover || index == -1)) {
 				s3_destroy_image(choose_idle_image[i]);
 				choose_idle_image[i] = NULL;
 			}
-			if (choose_hover_image[i] != NULL) {
+			if (choose_hover_image[i] != NULL &&
+			    (is_hover || index == -1)) {
 				s3_destroy_image(choose_hover_image[i]);
 				choose_hover_image[i] = NULL;
 			}
@@ -849,13 +852,6 @@ s3_set_layer_position(
 
 	layer_x[layer] = x;
 	layer_y[layer] = y;
-
-	switch (layer) {
-	case S3_LAYER_CLICK: return;
-	case S3_LAYER_AUTO: return;
-	case S3_LAYER_SKIP: return;
-	default: break;
-	}
 }
 
 /*

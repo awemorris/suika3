@@ -582,8 +582,7 @@ init_special_action(bool *exit)
 				if (!conf_msgbox_font_tategaki) {
 					pen_y += conf_msgbox_margin_line;
 					pen_x = conf_msgbox_margin_left;
-				}
-				else {
+				} else {
 					pen_x -= conf_msgbox_margin_line;
 					pen_y = conf_msgbox_margin_top;
 				}
@@ -624,7 +623,7 @@ init_special_action(bool *exit)
 		s3_reset_page_line();
 
 		/* Show the message box. */
-		s3_show_msgbox(false);
+		s3_show_msgbox(true);
 
 		/* Exit. */
 		*exit = true;
@@ -634,6 +633,7 @@ init_special_action(bool *exit)
 	if (strcmp(action, "hide") == 0) {
 		/* Show the message box. */
 		s3_show_msgbox(false);
+		s3_show_namebox(false);
 
 		/* Exit. */
 		*exit = true;
@@ -727,6 +727,10 @@ init_flags_and_vars(void)
 
 	/* If registered in history but not displayed */
 	no_show = false;
+
+	/* Get the pen position. */
+	pen_x = s3_get_pen_position_x();
+	pen_y = s3_get_pen_position_y();
 }
 
 /* Initialize if in auto mode */

@@ -730,8 +730,10 @@ It can show the main dialogue or narration, and optionally display a character's
 | `text`           | No        | The message content to be displayed.             |                                                  |
 | `text-<locale>`  | Yes       | The message content to be displayed. (localized) |                                                  |
 | `voice`          | Yes       | The voice file.                                  |                                                  |
-| `voice-<locale>` | Yes       | The voice file. (localized)                                  |                                      |
+| `voice-<locale>` | Yes       | The voice file. (localized)                      |                                                  |
 | `name`           | Yes       | The character's name to display in the name box. | If omitted, the name box will usually be hidden. |
+| `action`         | Yes       | For NVL mode.                                    |                                                  |
+| `space`          | Yes       | For NVL mode.                                    |                                                  |
 
 ### Localization
 
@@ -789,6 +791,95 @@ The following are currently not supported but planned to be supported.
 | -si         | Sinhala                                  |
 | -ar         | Arabic (RTL)                             |
 | -fa         | Persian (RTL)                            |
+
+### Actions
+
+You can use special parameters in the `text` tag.
+
+```
+# Clear the message box.
+[text action="clear"]
+
+# Clear the message box and show it.
+[text action="new"]
+
+# Show the message box.
+[text action="shoe"]
+
+# Hide the message box.
+[text action="hide"]
+```
+
+### NVL Mode
+
+You can enter the NVL mode by setting some config.
+
+```
+[text action="hide"]
+[wait time="0.3"] # Wait for the message box to hide.
+[config name="game.novel" value="true"]
+[config name="msgbox.image" value="system/message/msgbox-nvl.png"]
+[config name="msgbox.x" value="0"]
+[config name="msgbox.y" value="0"]
+[config name="msgbox.margin.line" value="60"]
+[config name="namebox.enable" value="false"]
+[config name="choose.box1.idle" value="system/choose/nvl.png"]
+[config name="choose.box1.hover" value="system/choose/nvl.png"]
+[config name="choose.box1.idle_anime" value="system/choose/idle-nvl.anime"]
+[config name="choose.box1.hover_anime" value="system/choose/hover-nvl.anime"]
+[config name="choose.box2.idle" value="system/choose/nvl.png"]
+[config name="choose.box2.hover" value="system/choose/nvl.png"]
+[config name="choose.box2.idle_anime" value="system/choose/idle-nvl.anime"]
+[config name="choose.box2.hover_anime" value="system/choose/hover-nvl.anime"]
+[config name="choose.box3.idle" value="system/choose/nvl.png"]
+[config name="choose.box3.hover" value="system/choose/nvl.png"]
+[config name="choose.box3.idle_anime" value="system/choose/idle-nvl.anime"]
+[config name="choose.box3.hover_anime" value="system/choose/hover-nvl.anime"]
+[config name="click.move" value="true"]
+[text action="clear"]
+```
+
+You can go back to ADV mode by resetting the config.
+
+```
+[text action="hide"]
+[wait time="0.3"] # Wait for the message box to hide.
+[config name="game.novel" value="false"]
+[config name="msgbox.image" value="system/message/msgbox.png"]
+[config name="msgbox.x" value="0"]
+[config name="msgbox.y" value="520"]
+[config name="msgbox.margin.line" value="40"]
+[config name="namebox.enable" value="true"]
+[config name="choose.box1.idle" value="system/choose/idle.png"]
+[config name="choose.box1.hover" value="system/choose/hover.png"]
+[config name="choose.box1.idle_anime" value="system/choose/idle.anime"]
+[config name="choose.box1.hover_anime" value="system/choose/hover.anime"]
+[config name="choose.box2.idle" value="system/choose/idle.png"]
+[config name="choose.box2.hover" value="system/choose/hover.png"]
+[config name="choose.box2.idle_anime" value="system/choose/idle.anime"]
+[config name="choose.box2.hover_anime" value="system/choose/hover.anime"]
+[config name="choose.box3.idle" value="system/choose/idle.png"]
+[config name="choose.box3.hover" value="system/choose/hover.png"]
+[config name="choose.box3.idle_anime" value="system/choose/idle.anime"]
+[config name="choose.box3.hover_anime" value="system/choose/hover.anime"]
+[config name="click.move" value="false"]
+```
+
+In NVM mode, you can control text messages like this:
+
+```
+# New page.
+[text action="clear"]
+[text text="Hello, this is NVL mode test."]
+[text text="NVL mode has a fullscreen-styled message box."]
+[text text="By default, each text tag will do a line feed."]
+[text text="To continue a paragraph,"]
+[text text="specify the space parameter." space=" "]
+
+# New page.
+[text action="clear"]
+[text text="Please clear the message box explicitly."]
+```
 
 ### Tips
 
