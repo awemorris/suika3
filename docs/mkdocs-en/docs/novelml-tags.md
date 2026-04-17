@@ -474,15 +474,22 @@ In Suika3, **all variables are treated as text strings**, but they can be compar
 
 # Clear a variable by setting it to an empty string
 [set name="flag_event_01" value=""]
+
+# Add 1 to var1.
+[set name="var1" value1="${var1}" op="+" value2="1"]
+
 ```
 
 ### Arguments
 
-| Argument | Omissible     | Description                              | Notes                                                               |
-|----------|---------------|------------------------------------------|---------------------------------------------------------------------|
-| `name`   | No            | The unique name of the variable.         | Use alphanumeric characters and underscores for best compatibility. |
-| `value`  | No            | The content to store in the variable.    | Remember: everything is stored as a string!                         |
-| `global` | Yes (`false`) | Make the flag global.                    | Global variables are for achievement flags e.g., "Saw ED1".         |
+| Argument | Omissible     | Description                                 | Notes                                                               |
+|----------|---------------|---------------------------------------------|---------------------------------------------------------------------|
+| `name`   | No            | The unique name of the variable.            | Use alphanumeric characters and underscores for best compatibility. |
+| `value`  | Yes           | The content to store in the variable.       | Remember: everything is stored as a string!                         |
+| `value1` | Yes           | The operand 1 for opcode.                   |                                                                     |
+| `value2` | Yes           | The operand 2 for opcode.                   |                                                                     |
+| `op`     | Yes           | The opcode. (`+`, `-`, `*`, `/`, `//`, `%`) |                                                                     |
+| `global` | Yes (`false`) | Make the flag global.                       | Global variables are for achievement flags e.g., "Saw ED1".         |
 
 ### Tips
 

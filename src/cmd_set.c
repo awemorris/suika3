@@ -32,6 +32,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 #include <assert.h>
 
 /*
@@ -54,10 +55,84 @@ s3i_tag_set(
 
 	/* Get the variable value. */
 	value = s3_get_tag_arg_string("value", false, NULL);
+	if (value != NULL) {
+		/* Simply assign the variable. */
+		if (!s3_set_variable_string(name, value))
+			return false;
+	} else {
+		/* Calculate. */
+		const char *value1, *value2, *op;
 
-	/* Set the variable. */
-	if (!s3_set_variable_string(name, value))
-		return false;
+		value1 = s3_get_tag_arg_string("value1", false, NULL);
+		if (value1 == NULL)
+			return false;
+
+		op = s3_get_tag_arg_string("op", false, NULL);
+		if (op == NULL)
+			return false;
+
+		value2 = s3_get_tag_arg_string("value2", false, NULL);
+		if (value2 == NULL)
+			return false;
+
+		if (strcmp(op, "+") == 0) {
+			float v1 = (float)atof(value1);
+			float v2 = (float)atof(value2);
+			float v3 = v1 + v2;
+			if (fabs(v3 - round(v3)) < 1e-9) {
+				if (!s3_set_variable_int(name, (int)v3))
+					return false;
+			} else {
+				if (!s3_set_variable_float(name, v3))
+					return false;
+			}
+		} else if (strcmp(op, "-") == 0) {
+			float v1 = (float)atof(value1);
+			float v2 = (float)atof(value2);
+			float v3 = v1 - v2;
+			if (fabs(v3 - round(v3)) < 1e-9) {
+				if (!s3_set_variable_int(name, (int)v3))
+					return false;
+			} else {
+				if (!s3_set_variable_float(name, v3))
+					return false;
+			}
+		} else if (strcmp(op, "*") == 0) {
+			float v1 = (float)atof(value1);
+			float v2 = (float)atof(value2);
+			float v3 = v1 * v2;
+			if (fabs(v3 - round(v3)) < 1e-9) {
+				if (!s3_set_variable_int(name, (int)v3))
+					return false;
+			} else {
+				if (!s3_set_variable_float(name, v3))
+					return false;
+			}
+		} else if (strcmp(op, "/") == 0) {
+			float v1 = (float)atof(value1);
+			float v2 = (float)atof(value2);
+			float v3 = v1 / v2;
+			if (fabs(v3 - round(v3)) < 1e-9) {
+				if (!s3_set_variable_int(name, (int)v3))
+					return false;
+			} else {
+				if (!s3_set_variable_float(name, v3))
+					return false;
+			}
+		} else if (strcmp(op, "//") == 0) {
+			int v1 = atoi(value1);
+			int v2 = atoi(value2);
+			int v3 = v1 / v2;
+			if (!s3_set_variable_int(name, v3))
+				return false;
+		} else if (strcmp(op, "%") == 0) {
+			int v1 = atoi(value1);
+			int v2 = atoi(value2);
+			int v3 = v1 % v2;
+			if (!s3_set_variable_int(name, v3))
+				return false;
+		}
+	}
 
 	/* Set the continue flag to run also the next tag. */
 	s3_set_vm_int("s3Continue", 0);
