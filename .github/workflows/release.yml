@@ -22,7 +22,7 @@ jobs:
       - name: Install Windows XP Toolset
         shell: powershell
         run: |
-          $installPath = vswhere -version [16.0,17.0) -property installationPath
+          $installPath = vswhere -version [16.0,18.0] -property installationPath
           if (-not $installPath) { throw "Visual Studio 2019 not found" }
 
           $process = Start-Process "C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" -ArgumentList `
