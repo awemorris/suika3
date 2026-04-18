@@ -127,7 +127,7 @@ ZH {
 }
 
 JP {
-    id: 8;
+    id: 9;
     type: language;
     lang: ja;
     x: 1150;
