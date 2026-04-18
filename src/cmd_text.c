@@ -1483,7 +1483,7 @@ action_toggle_hide(void)
 	if (!is_hidden) {
 		/* Hide the message box */
 		is_hidden = true;
-		if (name_top == NULL)
+		if (name_top != NULL)
 			s3_show_namebox(false);
 		s3_show_msgbox(false);
 		s3_show_click(false);
@@ -1493,7 +1493,7 @@ action_toggle_hide(void)
 	} else {
 		/* Show the message box */
 		is_hidden = false;
-		if (name_top == NULL)
+		if (name_top != NULL)
 			s3_show_namebox(true);
 
 		s3_show_msgbox(true);
@@ -1518,17 +1518,19 @@ frame_sysbtn(void)
 #endif
 
 	/* Accept key operations */
-	if (s3_is_space_key_pressed()) {
-		action_toggle_hide();
-		s3_clear_input_state();
-		return true;
-	}
-
-	/* Accept clicks when the message box is hidden */
-	if (is_hidden && s3_is_mouse_left_clicked()) {
-		action_toggle_hide();
-		s3_clear_input_state();
-		return true;
+	if (!is_hidden) {
+		if (s3_is_mouse_right_clicked()) {
+			action_toggle_hide();
+			s3_clear_input_state();
+			return true;
+		}
+	} else {
+		if (s3_is_mouse_left_clicked() ||
+		    s3_is_mouse_right_clicked()) {
+			action_toggle_hide();
+			s3_clear_input_state();
+			return true;
+		}
 	}
 
 	/* If system buttons are not displayed in the config */
