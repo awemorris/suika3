@@ -239,3 +239,58 @@ Fixed:
 ### Commits
 
 - 3cf43369f4a71ac8eda40ff0528baa1b1bee74ba
+
+---
+
+## Sequence of a save and loads will clear background
+
+* Report Details
+    * ID: BUG-20260419-001
+    * Status: Resolved
+    * Component: Suika3
+    * Severity: high
+    * Priority: high
+    * Reproducibility: always
+    * First Found In: dcc84e48e887931ad43413b53a29f1ae2a544092
+    * Fixed In: 3fa47574eb076724a968b1f35481ecdf8756ada3
+    * Reported Date: 15:00 18 April 2026
+    * Fixed Date: 00:15 19 April 2026
+    * Detection: found in a testing for NVL
+    * Root Cause Type: Internal API misusage
+    * OS: All
+    * CPU: All
+    * GitHub Issue: 
+
+### Report
+
+After performing a sequence of saving and loading
+(specifically save -> load -> load),
+the background image fails to load.
+
+### Analysis
+
+In `s3_set_layer_image()`, `destroy_layer()` is called
+internally. This is a misuse of the internal API;
+`destroy_layer()` also frees the filename of the layer.
+
+Consequently, the following sequence in `save.c` corrupts the layer's
+filename:
+
+```
+s3_set_layer_file_name()
+s3_set_layer_image()
+```
+
+`s3_set_layer_image()` should call `s3_destroy_image()` instead of
+destroy_layer().
+
+### Patch
+
+`s3_set_layer_image()` has been fixed.
+
+Files modified:
+- src/stage.c
+
+### Commits
+
+- 3fa47574eb076724a968b1f35481ecdf8756ada3
