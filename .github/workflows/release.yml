@@ -599,6 +599,7 @@ jobs:
           cp windows/build/windows-vs2022-x86/Release/suika3-pack.exe dist/misc/windows/
           cp windows/build/windows-vs2022-x86/Release/suika3-web.exe dist/misc/wasm/
           cp windows/build/windows-vs2022-arm64/Release/suika3.exe dist/misc/windows/suika3-arm64.exe
+          cp windows/build/windows-vs2022-arm64/Release/suika3.exe dist/misc/windows/suika3-32.exe
           cp game/main.ray dist/
           cp game/start.novel dist/
           cp game/config.ini dist/
@@ -616,9 +617,9 @@ jobs:
           name: mingw
           path: mingw
 
-      - name: Copy for mingw.
-        run: |
-          cp mingw/suika3.exe dist/misc/windows/suika3-32.exe
+#     - name: Copy for mingw.
+#       run: |
+#         cp mingw/suika3.exe dist/misc/windows/suika3-32.exe
 
 #      - name: Download macOS artifacts
 #        uses: actions/download-artifact@v4
