@@ -110,7 +110,7 @@ cd /usr/ports/games/suika3 && make install clean
 
 ### VS Code Integration
 
-There is an awsome VS Code extension by `@lalalll-lalalll` to support
+There is an awesome VS Code extension by `@lalalll-lalalll` to support
 syntax highlighting for Suika3.
 
 Check it out: [NovelML-Highlighter](https://github.com/lalalll-lalalll/NovelML-Highlighter)
