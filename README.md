@@ -1580,6 +1580,7 @@ Now preparing...
 - [Will there be breaking changes? What is the compatibility policy?](#will-there-be-breaking-changes-what-is-the-compatibility-policy)
 - [Does it support DLC or in-app purchases?](#does-it-support-dlc-or-in-app-purchases)
 - [Why the deep devotion to Apple and iPhone?](#why-the-deep-devotion-to-apple-and-iphone)
+- [Why Using Python on iOS is Challenging?](#why-using-python-on-ios-is-challenging)
 
 ### What's this?
 
@@ -1871,3 +1872,50 @@ Yet for over four decades, Apple has continually redefined the landscape of comp
 
 We are proud to support their platforms, and our commitment remains unwavering —  
 from the iPhone all the way to Vision Pro.
+
+### Why Using Python on iOS is Challenging?
+
+On the App Store, Apple enforces a de facto strict limitation on
+"Virtual Machines (VMs) for compatibility" that involve dynamic code
+execution. Rather than being explicitly detailed in the written
+guidelines, this is widely recognized among developers as an "implicit
+rule" of the review process. A prime example is the near-total absence
+of general-purpose apps bundled with a Java runtime.
+
+In contrast, languages like `Lua`, frequently used in game
+development, are relatively well-accepted. This is because Lua is easy
+to "sandbox," making it suitable for a restricted scripting
+environment isolated from the app’s core functionality. In other
+words, it allows for a structure where the core OS features and the
+fundamental behavior of the app cannot be arbitrarily altered after
+the review process.
+
+`Python`, however, is a different story. It lacks a robust, built-in
+sandboxing mechanism by default, and depending on the design, scripts
+can gain broad access to iOS functionalities. From Apple’s
+perspective, this is often viewed as a "difficult-to-control VM" that
+allows significant behavioral changes post-review, making it a
+frequent target for rejection.
+
+You might wonder, "Then why are there Ren'Py games on the App Store?"
+This is the crux of the matter. In reality, Apple's review process
+involves a degree of discretionary operation. If a project comes from
+a major publisher or is a high-quality work that Apple deems "adds
+value to the overall store ecosystem," it may pass even if it is
+Python-based.
+
+Essentially, if you challenge the store with Ren'Py, you need an
+overwhelming level of polish to convince the reviewer. However, visual
+novels are a genre that relies heavily on artistic sensibility; it is
+no simple task to instantly convey that value to a reviewer whose
+primary focus is technical compliance.
+
+This is where Suika3 comes in.
+
+Suika3 utilizes a design that either converts scripts into native code
+beforehand via AOT (Ahead-of-Time compilation) or executes them within
+a strictly managed sandbox VM. This approach significantly reduces the
+technical risks associated with the App Store review process.
+
+By removing these technical barriers upfront, Suika3 empowers
+developers to compete solely on the "quality of their work."
