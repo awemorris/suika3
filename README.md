@@ -123,19 +123,19 @@ and install it by the following steps.
 
 Open `EXTENSIONS` tab.
 
-<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/highlighter-1.png" alt="Install highlighter 1" width="320" hspace="20">
+<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/syntax-highlighter-1.png" alt="Install highlighter 1" width="320" hspace="20">
 
 **Step 2**:
 
 Click "Install from VSIX..." from the "..." (Views and More Actions) menu, and select the downloaded file.
 
-<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/highlighter-2.png" alt="Install highlighter 1" width="320" hspace="20">
+<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/syntax-highlighter-2.png" alt="Install highlighter 1" width="320" hspace="20">
 
 **What you get**:
 
 Now you have a beautiful development environment!
 
-<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/highlighter-3.png" alt="Install highlighter 1" width="320" hspace="20">
+<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/syntax-highlighter-3.png" alt="Install highlighter 1" width="320" hspace="20">
 
 ---
 
