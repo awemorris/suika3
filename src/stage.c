@@ -1124,7 +1124,10 @@ s3_set_layer_image(
 	assert(layer != S3_LAYER_AUTO);
 	assert(layer != S3_LAYER_SKIP);
 
-	destroy_layer(layer);
+	if (layer_image[layer] != NULL) {
+		s3_destroy_image(layer_image[layer]);
+		layer_image[layer] = NULL;
+	}
 
 	layer_image[layer] = img;
 }

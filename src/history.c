@@ -175,6 +175,45 @@ s3_add_history(
 }
 
 /*
+ * Append to the last history.
+ */
+bool
+s3_append_history(
+	const char *text,
+	const char *spacing)
+{
+	struct history *h;
+	char *s;
+	size_t len;
+
+	h = &history[last_history_top];
+
+	len = 0;
+	if (h->text != NULL)
+		len += strlen(h->text);
+	len += strlen(spacing);
+	len += strlen(text);
+
+	s = malloc(len + 1);
+	if (s == NULL) {
+		s3_log_out_of_memory();
+		return false;
+	}
+
+	strcpy(s, "");
+	if (h->text != NULL)
+		strcat(s, h->text);
+	strcat(s, spacing);
+	strcat(s, text);
+
+	free(h->text);
+
+	h->text = s;
+
+	return true;
+}
+
+/*
  * Get the number of the history.
  */
 int

@@ -123,15 +123,8 @@ static int saved_pen_y;
 /* Calling arguments. */
 static char *call_arg[S3_CALL_ARGS];
 
-/* Stored message for the page mode. */
-static char *buffered_message;
-
 /* Lines in a page. */
 static int page_line;
-
-/* BGVoice */
-static char *bgvoice;
-static bool flag_bgvoice_playing;
 
 /* Chapter title. */
 static char *chapter_name;
@@ -237,12 +230,9 @@ s3i_on_game_start(void)
 	saved_pen_x = false;
 	saved_pen_y = false;
 	page_line = 0;
-	flag_bgvoice_playing = false;
 	msg_text_speed = 0.5f;
 	msg_auto_speed = 0.5f;
 	last_en_index = -1;
-	FREE(buffered_message);
-	FREE(bgvoice);
 	FREE(chapter_name);
 	FREE(last_message);
 	FREE(prev_last_message);
@@ -689,8 +679,6 @@ s3_is_message_active(void)
 void
 s3_start_auto_mode(void)
 {
-	assert(!flag_auto_mode);
-	assert(!flag_skip_mode);
 	flag_auto_mode = true;
 }
 
@@ -700,8 +688,6 @@ s3_start_auto_mode(void)
 void
 s3_stop_auto_mode(void)
 {
-	assert(flag_auto_mode);
-	assert(!flag_skip_mode);
 	flag_auto_mode = false;
 }
 
@@ -849,6 +835,11 @@ s3_pop_for_return(
 		s3_log_tag_error(S3_TR("Too many macro calls."));
 		return false;
 	}
+
+	if (stack_file[stack_pointer] != NULL) {
+		free(stack_file[stack_pointer]);
+		stack_file[stack_pointer] = NULL;
+	}
 	stack_pointer--;
 
 	*file = strdup(stack_file[stack_pointer]);
@@ -856,7 +847,6 @@ s3_pop_for_return(
 		s3_log_out_of_memory();
 		return false;
 	}
-	free(stack_file[stack_pointer]);
 	*index = stack_index[stack_pointer];
 
 	return true;
@@ -956,60 +946,6 @@ s3_is_page_mode(void)
 }
 
 /*
- * Append a string to the page mode buffer string.
- */
-bool
-s3_append_buffered_message(
-	const char *msg)
-{
-	char *s;
-	size_t len;
-
-	len = 0;
-	if (buffered_message != NULL)
-		len += strlen(buffered_message);
-	len += strlen(msg);
-
-	s = malloc(len + 1);
-	if (s == NULL) {
-		s3_log_out_of_memory();
-		return false;
-	}
-
-	strcpy(s, "");
-	if (buffered_message != NULL)
-		strcat(s, buffered_message);
-	strcat(s, msg);
-
-	FREE(buffered_message);
-
-	buffered_message = s;
-
-	return true;
-}
-
-/*
- * Get the page mode buffer string.
- */
-const char *
-s3_get_buffered_message(void)
-{
-	if (buffered_message == NULL)
-		return "";
-
-	return buffered_message;
-}
-
-/*
- * Clear the page mode buffer string.
- */
-void
-s3_clear_buffered_message(void)
-{
-	FREE(buffered_message);
-}
-
-/*
  * Reset the message line count in a page.
  */
 void
@@ -1037,49 +973,6 @@ s3_is_page_top(void)
 		return true;
 
 	return false;
-}
-
-/*
- * Register a BGVoice.
- */
-bool
-s3_register_bgvoice(
-	const char *file)
-{
-	FREE(bgvoice);
-
-	if (file != NULL)
-		STRDUP(bgvoice, file);
-
-	return true;
-}
-
-/*
- * Get the BGVoice.
- */
-const char *
-s3_get_bgvoice(void)
-{
-	return bgvoice;
-}
-
-/*
- * Set the BGVoice state playing.
- */
-void
-s3_set_bgvoice_playing(
-	bool is_playing)
-{
-	flag_bgvoice_playing = is_playing;
-}
-
-/*
- * Check if the BGVoice is playing.
- */
-bool
-s3_is_bgvoice_playing(void)
-{
-	return flag_bgvoice_playing;
 }
 
 /*
@@ -1115,8 +1008,43 @@ bool
 s3_set_last_message(
 	const char *msg)
 {
-	FREE(last_message);
+	FREE(prev_last_message);
+	prev_last_message = last_message;
 	STRDUP(last_message, msg);
+
+	return true;
+}
+
+/*
+ * Append to the last message.
+ */
+bool
+s3_append_last_message(
+	const char *msg)
+{
+	char *s;
+	size_t len;
+
+	FREE(prev_last_message);
+	prev_last_message = last_message;
+
+	len = 0;
+	if (last_message != NULL)
+		len += strlen(last_message);
+	len += strlen(msg);
+
+	s = malloc(len + 1);
+	if (s == NULL) {
+		s3_log_out_of_memory();
+		return false;
+	}
+
+	strcpy(s, "");
+	if (last_message != NULL)
+		strcat(s, last_message);
+	strcat(s, msg);
+
+	last_message = s;
 
 	return true;
 }

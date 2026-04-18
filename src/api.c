@@ -116,19 +116,13 @@ static bool Suika_writeCallStack(void *p);
 static bool Suika_setCallArgument(void *p);
 static bool Suika_getCallArgument(void *p);
 static bool Suika_isPageMode(void *p);
-static bool Suika_appendBufferedMessage(void *p);
-static bool Suika_getBufferedMessage(void *p);
-static bool Suika_clearBufferedMessage(void *p);
 static bool Suika_resetPageLine(void *p);
 static bool Suika_incPageLine(void *p);
 static bool Suika_isPageTop(void *p);
-static bool Suika_registerBGVoice(void *p);
-static bool Suika_getBGVoice(void *p);
-static bool Suika_setBGVoicePlaying(void *p);
-static bool Suika_isBGVoicePlaying(void *p);
 static bool Suika_setChapterName(void *p);
 static bool Suika_getChapterName(void *p);
 static bool Suika_setLastMessage(void *p);
+static bool Suika_appendLastMessage(void *p);
 static bool Suika_getLastMessage(void *p);
 static bool Suika_setTextSpeed(void *p);
 static bool Suika_getTextSpeed(void *p);
@@ -345,6 +339,7 @@ static bool Suika_getSaveThumbnail(void *p);
 /* History  */
 static bool Suika_clearHistory(void *p);
 static bool Suika_addHistory(void *p);
+static bool Suika_appendHistory(void *p);
 static bool Suika_getHistoryCount(void *p);
 static bool Suika_getHistoryName(void *p);
 static bool Suika_getHistoryMessage(void *p);
@@ -482,19 +477,13 @@ static struct api_func api_func[] = {
 	{"setCallArgument",		Suika_setCallArgument,		1, dict_param},
 	{"getCallArgument",		Suika_getCallArgument,		1, dict_param},
 	{"isPageMode",			Suika_isPageMode,		0, NULL},
-	{"appendBufferedMessage",	Suika_appendBufferedMessage,	1, dict_param},
-	{"getBufferedMessage",		Suika_getBufferedMessage,	0, NULL},
-	{"clearBufferedMessage",	Suika_clearBufferedMessage,	0, NULL},
 	{"resetPageLine",		Suika_resetPageLine,		0, NULL},
 	{"incPageLine",			Suika_incPageLine,		0, NULL},
 	{"isPageTop",			Suika_isPageTop,		0, NULL},
-	{"registerBGVoice",		Suika_registerBGVoice,		1, dict_param},
-	{"getBGVoice",			Suika_getBGVoice,		0, NULL},
-	{"setBGVoicePlaying",		Suika_setBGVoicePlaying,	1, dict_param},
-	{"isBGVoicePlaying",		Suika_isBGVoicePlaying,		0, NULL},
 	{"setChapterName",		Suika_setChapterName,		1, dict_param},
 	{"getChapterName",		Suika_getChapterName,		0, NULL},
 	{"setLastMessage",		Suika_setLastMessage,		1, dict_param},
+	{"appendLastMessage",		Suika_appendLastMessage,	1, dict_param},
 	{"getLastMessage",		Suika_getLastMessage,		0, NULL},
 	{"setTextSpeed",		Suika_setTextSpeed,		1, dict_param},
 	{"getTextSpeed",		Suika_getTextSpeed,		0, NULL},
@@ -711,6 +700,7 @@ static struct api_func api_func[] = {
 	/* History */
 	{"clearHistory",		Suika_clearHistory,		0, NULL},
 	{"addHistory",			Suika_addHistory,		1, dict_param},
+	{"appendHistory",		Suika_appendHistory,		1, dict_param},
 	{"getHistoryCount",		Suika_getHistoryCount,		0, NULL},
 	{"getHistoryName",		Suika_getHistoryName,		1, dict_param},
 	{"getHistoryMessage",		Suika_getHistoryMessage,	1, dict_param},
@@ -2556,69 +2546,6 @@ Suika_isPageMode(void *p)
 }
 
 static bool
-Suika_appendBufferedMessage(void *p)
-{
-	char *message;
-	bool ret;
-
-	UNUSED_PARAMETER(p);
-
-	message = NULL;
-	ret = false;
-	do {
-		/* Get the arguments. */
-		if (!pf_get_call_arg_string("message", &message))
-			break;
-
-		if (!s3_append_buffered_message(message))
-			break;
-
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
-
-	if (message != NULL)
-		free(message);
-
-	return ret;
-}
-
-static bool
-Suika_getBufferedMessage(void *p)
-{
-	const char *val;
-
-	UNUSED_PARAMETER(p);
-
-	val = s3_get_buffered_message();
-	if (val == NULL)
-		val = "";
-
-	/* Set the return value. */
-	if (!pf_set_return_string(val))
-		return false;
-
-	return true;
-}
-
-static bool
-Suika_clearBufferedMessage(void *p)
-{
-	UNUSED_PARAMETER(p);
-
-	s3_clear_buffered_message();
-
-	/* Set the return value. */
-	if (!pf_set_return_int(1))
-		return false;
-
-	return true;
-}
-
-static bool
 Suika_resetPageLine(
 	void *p)
 {
@@ -2655,95 +2582,6 @@ Suika_isPageTop(void *p)
 	UNUSED_PARAMETER(p);
 
 	val = s3_is_page_top();
-
-	/* Set the return value. */
-	if (!pf_set_return_int(val ? 1 : 0))
-		return false;
-
-	return true;
-}
-
-static bool
-Suika_registerBGVoice(void *p)
-{
-	char *file;
-	bool ret;
-
-	UNUSED_PARAMETER(p);
-
-	file = NULL;
-	ret = false;
-	do {
-		/* Get the arguments. */
-		if (!pf_get_call_arg_string("file", &file))
-			break;
-
-		if (!s3_register_bgvoice(file))
-			break;
-
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
-
-	if (file != NULL)
-		free(file);
-
-	return ret;
-}
-
-static bool
-Suika_getBGVoice(void *p)
-{
-	const char *val;
-
-	UNUSED_PARAMETER(p);
-
-	val = s3_get_bgvoice();
-
-	/* Set the return value. */
-	if (!pf_set_return_string(val))
-		return false;
-
-	return true;
-}
-
-static bool
-Suika_setBGVoicePlaying(void *p)
-{
-	int is_playing;
-	bool ret;
-
-	UNUSED_PARAMETER(p);
-
-	ret = false;
-	do {
-		/* Get the arguments. */
-		if (!pf_get_call_arg_int("isPlaying", &is_playing))
-			break;
-
-		s3_set_bgvoice_playing(is_playing ? true : false);
-
-		/* Set the return value. */
-		if (!pf_set_return_int(1))
-			break;
-
-		ret = true;
-	} while (0);
-
-	return ret;
-}
-
-static bool
-Suika_isBGVoicePlaying(void *p)
-{
-	bool val;
-
-	UNUSED_PARAMETER(p);
-
-	val = s3_is_bgvoice_playing();
 
 	/* Set the return value. */
 	if (!pf_set_return_int(val ? 1 : 0))
@@ -2815,6 +2653,37 @@ Suika_setLastMessage(void *p)
 			break;
 
 		if (!s3_set_last_message(message))
+			break;
+
+		/* Set the return value. */
+		if (!pf_set_return_int(1))
+			break;
+
+		ret = true;
+	} while (0);
+
+	if (message != NULL)
+		free(message);
+
+	return ret;
+}
+
+static bool
+Suika_appendLastMessage(void *p)
+{
+	char *message;
+	bool ret;
+
+	UNUSED_PARAMETER(p);
+
+	message = NULL;
+	ret = false;
+	do {
+		/* Get the arguments. */
+		if (!pf_get_call_arg_string("message", &message))
+			break;
+
+		if (!s3_append_last_message(message))
 			break;
 
 		/* Set the return value. */
@@ -8667,6 +8536,44 @@ Suika_addHistory(
 		free(message);
 	if (voice != NULL)
 		free(voice);
+
+	return ret;
+}
+
+static bool
+Suika_appendHistory(
+	void *p)
+{
+	char *message;
+	char *spacing;
+	bool ret;
+
+	UNUSED_PARAMETER(p);
+
+	message = NULL;
+	spacing = NULL;
+	ret = false;
+	do {
+		/* Get the arguments. */
+		if (!pf_get_call_arg_string("message", &message))
+			break;
+		if (!pf_get_call_arg_string("spacing", &spacing))
+			break;
+
+		if (!s3_append_history(message, spacing))
+			break;
+
+		/* Set the return value. */
+		if (!pf_set_return_int(1))
+			break;
+
+		ret = true;
+	} while (0);
+
+	if (message != NULL)
+		free(message);
+	if (spacing != NULL)
+		free(spacing);
 
 	return ret;
 }
