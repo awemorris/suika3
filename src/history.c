@@ -182,17 +182,23 @@ s3_append_history(
 	const char *text,
 	const char *spacing)
 {
-	int index;
 	struct history *h;
 	char *s;
 	size_t len;
 
-	if (last_history_top == -1)
-		index = 0;
-	else
-		index = last_history_top;
+	if (last_history_top == -1) {
+		if (!s3_add_history("",
+				    text,
+				    "",
+				    0,
+				    0,
+				    0,
+				    0))
+			return false;
+		return true;
+	}
 
-	h = &history[index];
+	h = &history[last_history_top];
 
 	len = 0;
 	if (h->text != NULL)

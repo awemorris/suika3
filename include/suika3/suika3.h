@@ -935,6 +935,20 @@ const char *
 s3_get_prev_last_message(void);
 
 /*
+ * Set the last speaker name.
+ */
+bool
+s3_set_last_name(
+	const char *name);
+
+/*
+ * Get the last speaker name.
+ */
+const char *
+s3_get_last_name(
+	void);
+
+/*
  * Set the text speed.
  */
 void
@@ -1532,6 +1546,12 @@ s3_show_namebox(
 	bool show);
 
 /*
+ * Chech if the name box is visible.
+ */
+bool
+s3_is_namebox_visible(void);
+
+/*
  * Fill the message box by the message box image.
  */
 void
@@ -1543,6 +1563,12 @@ s3_fill_msgbox(void);
 void
 s3_show_msgbox(
 	bool show);
+
+/*
+ * Chech if the message box is visible.
+ */
+bool
+s3_is_msgbox_visible(void);
 
 /*
  * Get the message box position and size.

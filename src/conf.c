@@ -31,6 +31,7 @@
 #include "conf.h"
 #include "mixer.h"
 #include "stage.h"
+#include "save.h"
 
 #include <playfield/playfield.h>
 
@@ -1444,6 +1445,18 @@ s3_set_config(
 	/* Ignore a NULL-valued key. */
 	if (rule_tbl[i].var_ptr == NULL)
 		return true;
+
+	/* Hook for ADV/NVL switching. */
+	if (!s3i_is_load_in_progress() &&
+	    strcmp(key, "game.novel") == 0 &&
+	    !conf_game_novel &&
+	    (strcmp(val, "true") == 0 ||
+	     strcmp(val, "yes") == 0 ||
+	     strcmp(val, "1") == 0)) {
+		/* Flush the prev_last_message. */
+		s3_set_last_message("");
+		s3_set_last_message("");
+	}
 
 	/* Assign by the type. */
 	switch (rule_tbl[i].type) {

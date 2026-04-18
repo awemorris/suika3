@@ -45,4 +45,18 @@ bool
 s3i_tag_gui(
 	void *p);
 
+/*
+ * For text and choose tags.
+ * Draw the loaded, last message.
+ */
+bool
+s3i_blit_load_message(void);
+
+/*
+ * For text and choose tags.
+ * Draw the loaded, last name.
+ */
+bool
+s3i_blit_load_name(void);
+
 #endif

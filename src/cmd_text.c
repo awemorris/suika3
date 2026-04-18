@@ -30,6 +30,7 @@
 #include <suika3/suika3.h>
 #include "conf.h"
 #include "text.h"
+#include "cmd.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -307,7 +308,6 @@ static bool frame_sysbtn(void);
 /* blit drawing processing */
 static void blit_frame(void);
 static bool is_end_of_msg(void);
-static bool blit_load_message(void);
 static void blit_msgbox(void);
 static void inline_wait_hook(float wait_time);
 static int get_frame_chars(void);
@@ -494,6 +494,18 @@ init(
 	/* Initialize flags */
 	init_flags_and_vars();
 
+	/* Restore for load. */
+	if (!s3_is_page_mode()) {
+		/* If not page mode, fill the msgbox layer by the msgbox image. */
+		clear_msgbox();
+	} else {
+		if (load_flag) {
+			/* If loaded, draw the last page. */
+			clear_msgbox();
+			s3i_blit_load_message();
+		}
+	}
+
 	/* If page mode */
 	if (!init_special_action(&exit_special)) {
 		return false;
@@ -648,6 +660,9 @@ init_special_action(bool *exit)
 
 	/* If no action specified. */
 	if (action == NULL) {
+		if (!s3_is_page_mode())
+			return true;
+
 		if (!is_page_top && !gui_sys_flag) {
 			if (space == NULL) {
 				/* Spacing is not specified, do line feed. */
@@ -866,6 +881,8 @@ init_name_top(void)
 		name_top = NULL;
 	}
 
+	s3_set_last_name(name);
+
 	if (name_top == NULL) {
 		/* No name. */
 		s3_show_namebox(false);
@@ -1010,17 +1027,6 @@ init_msgbox(void)
 	/* If returning from system GUI */
 	if (gui_sys_flag && !load_flag)
 		return true;
-
-	if (!s3_is_page_mode()) {
-		/* If not page mode, fill the msgbox layer by the msgbox image. */
-		clear_msgbox();
-	} else {
-		if (load_flag) {
-			/* If loaded, draw the last page. */
-			clear_msgbox();
-			blit_load_message();
-		}
-	}
 
 	/* Save the pen position for overlay painting */
 	orig_pen_x = pen_x;
@@ -1234,6 +1240,26 @@ blit_namebox(void)
 	s3_draw_message(context, char_count);
 
 	s3_destroy_drawmsg(context);
+
+	return true;
+}
+
+bool
+s3i_blit_load_name(void)
+{
+	const char *name;
+
+	name = s3_get_last_name();
+	if (name == NULL)
+		return true;
+
+	name_top = strdup(name);
+	if (name_top != NULL) {
+		blit_namebox();
+
+		free(name_top);
+		name_top = NULL;
+	}
 
 	return true;
 }
@@ -1610,16 +1636,13 @@ is_end_of_msg(void)
 	return false;
 }
 
-static bool
-blit_load_message(void)
+bool
+s3i_blit_load_message(void)
 {
 	struct s3_drawmsg *context;
 	const char *text;
 	s3_pixel_t save_body_color, save_body_outline_color;
 	int len;
-
-	if (!load_flag)
-		return true;
 
 	text = s3_get_prev_last_message();
 	if (text == NULL || strcmp(text, "") == 0)
@@ -1696,6 +1719,8 @@ blit_load_message(void)
 	body_color = save_body_color;
 	body_outline_color = save_body_outline_color;
 	avoid_dimming = true;
+
+	s3_set_pen_position(pen_x, pen_y);
 
 	return true;
 }

@@ -132,6 +132,9 @@ static char *chapter_name;
 /* Last message. */
 static char *last_message;
 
+/* Last name. */
+static char *last_name;
+
 /* Previous last message. (last_message minus the latest continued message) */
 static char *prev_last_message;
 
@@ -1069,6 +1072,32 @@ s3_get_prev_last_message(void)
 	if (prev_last_message == NULL)
 		return "";
 	return prev_last_message;
+}
+
+/*
+ * Set the last speaker name.
+ */
+bool
+s3_set_last_name(
+	const char *name)
+{
+	FREE(last_name);
+	if (name != NULL)
+		STRDUP(last_name, name);
+
+	return true;
+}
+
+/*
+ * Get the last speaker name.
+ */
+const char *
+s3_get_last_name(
+	void)
+{
+	if (last_name == NULL)
+		return "";
+	return last_name;
 }
 
 /*

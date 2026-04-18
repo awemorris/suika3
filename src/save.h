@@ -60,9 +60,9 @@ void
 s3i_cleanup_save(void);
 
 /*
- * Get the pending message (message box content right after load)
+ * Is loading in progress?
  */
-char *
-s3i_get_pending_message(void);
+bool
+s3i_is_load_in_progress(void);
 
 #endif

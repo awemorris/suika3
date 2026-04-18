@@ -97,6 +97,11 @@ static size_t stream_buf_pos;
 static char sbuf[1024];
 
 /*
+ * Loading state.
+ */
+static bool is_load_in_progress;
+
+/*
  * Forward declaration.
  */
 static bool load_basic_save_info_all(void);
@@ -288,6 +293,8 @@ s3_execute_load_global(void)
 	bool success;
 	char key[128];
 
+	is_load_in_progress = true;
+
 	success = false;
 	do {
 		/* Open the stream. */
@@ -373,6 +380,8 @@ s3_execute_load_global(void)
 		success = true;
 	} while (0);
 
+	is_load_in_progress = false;
+
 	if (!success) {
 		close_read_stream();
 		return false;
@@ -392,6 +401,7 @@ s3_execute_save_local(
 	uint32_t ver;
 	int i;
 	int count;
+	uint32_t u;
 	bool success;
 
 	success = false;
@@ -421,10 +431,28 @@ s3_execute_save_local(
 			break;
 
 		/* Write the last message. */
-		if (!write_string(s3_get_prev_last_message()))
+		if (!write_string(s3_get_last_name()))
 			break;
-		if (!write_string(s3_get_last_message()))
-			break;
+		if (strcmp(s3_get_tag_name(), "text") == 0) {
+			/*
+			 * Put the previous last message because
+			 * the first tag after load is [text] and
+			 * it prints the final piece of the last message.
+			 */
+			if (!write_string(s3_get_prev_last_message()))
+				break;
+			if (!write_string(s3_get_last_message()))
+				break;
+		} else {
+			/*
+			 * Put the entire last message because
+			 * the first tag after load is [choose].
+			 */
+			if (!write_string(s3_get_last_message()))
+				break;
+			if (!write_string(s3_get_last_message()))
+				break;
+		}
 
 		/* Write the page line. */
 		if (!write_u32(s3_is_page_top()? 0 : 1))
@@ -498,6 +526,14 @@ s3_execute_save_local(
 		}
 		if (i != S3_STAGE_LAYERS)
 			break; /* Error. */
+
+		/* Serialize the namebox/msgbox states. */
+		u = s3_is_namebox_visible() ? 1 : 0;
+		if (!write_u32(u))
+			break;
+		u = s3_is_msgbox_visible() ? 1 : 0;
+		if (!write_u32(u))
+			break;
 
 		/* Serialize the anime. */
 		for (i = 0; i < S3_REG_ANIME_COUNT; i++) {
@@ -599,7 +635,11 @@ s3_execute_load_local(
 	uint32_t x, y, count;
 	float f, sx, sy, rot;
 	struct s3_image *img;
+	uint32_t is_namebox_visible, is_msgbox_visible;
+	char *name;
 	bool success;
+
+	is_load_in_progress = true;
 
 	success = false;
 	do {
@@ -645,13 +685,19 @@ s3_execute_load_local(
 			break;
 
 		/* Read the last message. */
+		if (!read_string(sbuf, sizeof(sbuf)))	/* name */
+			break;
+		if (!s3_set_last_name(sbuf))
+			break;
+		name = strdup(sbuf);
 		if (!read_string(sbuf, sizeof(sbuf))) /* prev last */
 			break;
 		if (!s3_set_last_message(sbuf))
 			break;
 		s3_clear_history();
-		if (!s3_append_history(sbuf, ""))
+		if (!s3_add_history(name, sbuf, NULL, 0, 0, 0, 0))
 			break;
+		free(name);
 		if (!read_string(sbuf, sizeof(sbuf)))	/* last */
 			break;
 		if (!s3_set_last_message(sbuf))
@@ -758,6 +804,12 @@ s3_execute_load_local(
 		if (i != S3_STAGE_LAYERS)
 			break; /* Error. */
 
+		/* Deserialize the namebox/msgbox states. */
+		if (!read_u32(&is_namebox_visible))
+			break;
+		if (!read_u32(&is_msgbox_visible))
+			break;
+
 		/* Start the eyes and lips animes. */
 		for (i = 0; i < S3_CH_ALL_LAYERS; i++) {
 			int layer = s3_chpos_to_layer((int)i);
@@ -842,8 +894,8 @@ s3_execute_load_local(
 			return false;
 
 		/* Hide the name box, message box, and choose boxes. */
-		s3_show_namebox(false);
-		s3_show_msgbox(false);
+		s3_show_namebox(is_namebox_visible ? true : false);
+		s3_show_msgbox(is_msgbox_visible ? true : false);
 		s3_show_choosebox(-1, false, false);
 
 		/* Set the flag. */
@@ -852,6 +904,8 @@ s3_execute_load_local(
 		/* Succeeded. */
 		success = true;
 	} while (0);
+
+	is_load_in_progress = false;
 
 	if (!success) {
 		close_read_stream();
@@ -1039,6 +1093,8 @@ load_basic_save_info(
 			s3_log_out_of_memory();
 			break;
 		}
+		if (!read_string(sbuf, sizeof(sbuf)))
+			break;
 
 		/* Read the thumbnail. */
 		if (!read_data(s3_get_image_pixels(save_thumb[index]),
@@ -1090,6 +1146,14 @@ copy_thumb(
 	return true;
 }
 
+/*
+ * Is loading in progress?
+ */
+bool
+s3i_is_load_in_progress(void)
+{
+	return is_load_in_progress;
+}
 
 /*
  * Helpers

@@ -30,6 +30,8 @@
 #include <suika3/suika3.h>
 #include "text.h"
 #include "conf.h"
+#include "cmd.h"
+#include "image.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -179,6 +181,26 @@ init(void)
 	is_centered = true;
 	s3_reset_lap_timer(&timer_sw);
 
+	/* If loaded. */
+	if (s3_check_right_after_load()) {
+		/* Draw the message box. */
+		if (!conf_msgbox_font_tategaki) {
+			s3_set_pen_position(
+				conf_msgbox_margin_left,
+				conf_msgbox_margin_top);
+		} else {
+			s3_set_pen_position(
+				s3_get_layer_image(S3_LAYER_MSGBOX)->width -
+				conf_msgbox_margin_right -
+				conf_msgbox_font_size,
+				conf_msgbox_margin_top);
+		}
+		s3_append_history("", "");
+		s3_append_last_message("");
+		s3i_blit_load_message();
+		s3i_blit_load_name();
+	}
+
 	/* Get the result variable name. */
 	result_var_name = s3_get_tag_arg_string("name", false, NULL);
 
@@ -261,6 +283,10 @@ init(void)
 		s3_stop_skip_mode();
 		s3_show_skipmode_banner(false);
 	}
+
+	/* Show the msgbox if in the page mode. */
+	if (s3_is_page_mode())
+		s3_show_msgbox(true);
 
 	/* Show the sysbtn. */
 	s3_enable_sysbtn(true);

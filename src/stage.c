@@ -2967,8 +2967,47 @@ void
 s3_show_namebox(
 	bool show)
 {
+	const char *file;
+	int i;
+
+	/* Decide an anime to run. */
+	file = NULL;
+	if (!is_namebox_visible && show)
+		file = conf_namebox_anime_show;
+	else if (is_namebox_visible && !show)
+		file = conf_namebox_anime_hide;
+
+	/* Set the flag. */
 	is_namebox_visible = show;
-	layer_alpha[S3_LAYER_NAMEBOX] = show? 255 : 0;
+
+	/* Run an anime. */
+	if (file != NULL) {
+		/* Stop the anime. */
+		s3_clear_layer_anime_sequence(S3_LAYER_NAMEBOX);
+
+		/* Reset the position. */
+		s3_set_layer_position(S3_LAYER_NAMEBOX, conf_namebox_x, conf_namebox_y);
+		s3_set_layer_scale(S3_LAYER_NAMEBOX, 1.0f, 1.0f);
+		s3_set_layer_center(S3_LAYER_NAMEBOX, 0, 0);
+		s3_set_layer_rotate(S3_LAYER_NAMEBOX, 0);
+
+		/* Set the argument. ($0 = "namebox") */
+		s3_set_call_argument(0, "namebox");
+		for (i = 1; i < S3_CALL_ARGS; i++)
+			s3_set_call_argument(i, NULL);
+
+		/* Start the anime. */
+		s3_load_anime_from_file(file, NULL, NULL);
+	}
+}
+
+/*
+ * Chech if the name box is visible.
+ */
+bool
+s3_is_namebox_visible(void)
+{
+	return is_msgbox_visible;
 }
 
 /*
@@ -3035,6 +3074,15 @@ s3_show_msgbox(
 		/* Start the anime. */
 		s3_load_anime_from_file(file, NULL, NULL);
 	}
+}
+
+/*
+ * Chech if the message box is visible.
+ */
+bool
+s3_is_msgbox_visible(void)
+{
+	return is_msgbox_visible;
 }
 
 /*
