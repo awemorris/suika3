@@ -28,6 +28,15 @@ jobs:
       - name: Build (x64)
         run: cmake --build --preset windows-vs2022-x64 --config Release --parallel
 
+      - name: Configure (x64-console)
+        run: >
+          cmake --preset windows-vs2022-x64-console
+          -DFLEX_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_flex.exe"
+          -DBISON_EXECUTABLE="C:/ProgramData/chocolatey/bin/win_bison.exe"
+
+      - name: Build (x64-console)
+        run: cmake --build --preset windows-vs2022-x64-console --config Release --parallel
+
       - name: Configure (x86)
         run: >
           cmake --preset windows-vs2022-x86
@@ -628,6 +637,7 @@ jobs:
           cp windows/build/windows-vs2022-x86/Release/suika3-pack.exe dist/misc/windows/
           cp windows/build/windows-vs2022-x86/Release/suika3-web.exe dist/misc/wasm/
           cp windows/build/windows-vs2022-arm64/Release/suika3.exe dist/misc/windows/suika3-arm64.exe
+          cp windows/build/windows-vs2022-x64-console/Release/suika3.exe dist/misc/windows/suika3-debug.exe
           cp game/main.ray dist/
           cp game/start.novel dist/
           cp game/config.ini dist/

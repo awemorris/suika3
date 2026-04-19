@@ -4,23 +4,40 @@
     {
       "label": "Run Suika3",
       "type": "shell",
-      "command": "misc/windows/suika3-debug.exe",
+      "command": "suika3",
+      "windows": {
+        "command": "misc/windows/suika3-debug.exe"
+      },
       "options": {
         "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
       }
     },
     {
       "label": "Make Suika3 package",
       "type": "shell",
-      "command": "misc/windows/suika3-pack.exe",
-      "group": "build",
+      "command": "suika3-pack",
       "args": [
-        "-Command",
-        "& { $files = Get-ChildItem -Path . -Exclude 'misc', 'suika3.exe'; misc/windows/suika3-pack.exe @($files | ForEach-Object { $_.Name }) }"
+        "`ls -A | grep -vE '^(misc|suika3.exe|.vscode)$'`"
       ],
+      "windows": {
+        "command": "powershell",
+        "args": [
+          "-Command",
+          "& { $files = Get-ChildItem -Path . -Exclude 'misc', '.vscode', 'suika3.exe'; misc/windows/suika3-pack.exe @($files | ForEach-Object { $_.Name }) }"
+        ]
+      },
+      "group": "build",
       "options": {
         "cwd": "${workspaceFolder}"
       }
     }
- ]
+  ]
 }
