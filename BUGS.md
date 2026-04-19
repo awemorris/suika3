@@ -335,3 +335,83 @@ Files modified:
 ### Commits
 
 - 288e659b1e07a5374a21fdb0bc16ee4cdc229d97
+
+---
+
+## Cannot save on Wasm
+
+* Report Details
+    * ID: BUG-20260420-001
+    * Status: Resolved
+    * Component: StratoHAL
+    * Severity: high
+    * Priority: high
+    * Reproducibility: always
+    * First Found In: 86a91e17752978090ddc442743d67312d54fb7303
+    * Fixed In: f67d849e208413660f27201c6697ed261ca46c51
+    * Reported Date: 04:16 20 April 2026
+    * Fixed Date: 06:15 20 April 2026
+    * Detection: found in a multiplatform testing (GitHub #7)
+    * Root Cause Type: mkdir() call missing
+    * OS: All
+    * CPU: All
+
+### Report
+
+On the Wasm version, save will cause an error.
+
+### Analysis
+
+In `emmain.c`, `hal_make_save_directory()` is not implemented.
+In addition, that function is not called.
+
+### Patch
+
+`hal_make_save_directory()` has been fixed.
+
+Files modified:
+- external/PlayfieldEngine/external/StratoHAL/src/emmain.c
+
+### Commits
+
+- f67d849e208413660f27201c6697ed261ca46c51
+
+---
+
+## Cannot load save data on iOS and Wasm
+
+* Report Details
+    * ID: BUG-20260420-002
+    * Status: Resolved
+    * Component: StratoHAL
+    * Severity: high
+    * Priority: high
+    * Reproducibility: always
+    * First Found In: 86a91e17752978090ddc442743d67312d54fb7303
+    * Fixed In: f67d849e208413660f27201c6697ed261ca46c51
+    * Reported Date: 05:30 20 April 2026
+    * Fixed Date: 06:15 20 April 2026
+    * Detection: found in testing of BUG-20260420-001
+    * Root Cause Type: wrong implementation of hal_open_rfile()
+    * OS: iOS, Wasm
+    * CPU: All
+
+### Report
+
+On the Wasm version, save --> load will cause a bad behavior.
+
+### Analysis
+
+In `hal_open_rfile()` in `stdfile.c`,
+the treatment of save files was wrong.
+
+### Patch
+
+`hal_open_rfile()` has been fixed.
+
+Files modified:
+- external/PlayfieldEngine/external/StratoHAL/src/stdfile.c
+
+### Commits
+
+- f67d849e208413660f27201c6697ed261ca46c51
