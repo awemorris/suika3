@@ -1017,8 +1017,8 @@ if(SUIKA_ENABLE_INSTALL)
 
   if(SUIKA_ENABLE_FLATPAK)
     install(
-      FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/linux/suika3-run.sh"
-      DESTINATION ${CMAKE_INSTALL_BINDIR}/suika3-run.sh
+      PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/linux/suika3-run.sh"
+      DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
   endif()
 

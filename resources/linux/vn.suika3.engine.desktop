@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Suika3
-Exec=suika3
+Exec=suika3-run.sh
 Icon=vn.suika3.engine
 Terminal=false
 Type=Application

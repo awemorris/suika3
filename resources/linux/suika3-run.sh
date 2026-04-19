@@ -1,25 +1,40 @@
 #!/bin/sh
 
-# Check if an argument is provided and if the file exists
-if [ -z "$1" ] || [ ! -f "$1" ]; then
-    # Display error dialog in English
+RUN_OK=""
+WD=""
+
+if [ -z "$1" ]; then
+    if [ -f main.ray ]; then
+        RUN_OK=1;
+        WD=`pwd`;
+    elif [ -f assets.arc ]; then
+        RUN_OK=1;
+        WD=`pwd`;
+    fi
+else
+    if [ -f "$1" ]; then
+        RUN_OK=1;
+        WD=$(dirname "$1")
+    fi
+    if [ -d "$1" ]; then
+        RUN_OK=1;
+        WD="$1"
+    fi
+fi
+
+if [ -z "$RUN_OK" ]; then
     zenity --error \
            --title="Suika3 Engine Runtime" \
-           --text="No script file specified.\n\nPlease right-click a 'main.ray' file and select 'Open with Suika3', or drag and drop your script onto this application." \
+           --text="No script file specified.\n\nPlease right-click a 'main.ray' file and select 'Open with Suika3'." \
            --width=400
     exit 1
 fi
 
-# Get the directory of the provided file
-TARGET_DIR=$(dirname "$1")
-
-# Change directory and execute
-if cd "$TARGET_DIR"; then
-    # Launch the engine with the script filename
-    exec /app/bin/suika3 "$(basename "$1")"
+if cd "$WD"; then
+    exec /app/bin/suika3
 else
     zenity --error \
            --title="Suika3 Engine Runtime" \
-           --text="Failed to access the directory:\n$TARGET_DIR\n\nPlease check your Flatpak permission settings."
+           --text="Failed to access the directory:\n$WD\n\nPlease check your Flatpak permission settings."
     exit 1
 fi
