@@ -1116,6 +1116,7 @@ hal_render_image_3d_cross(
 bool
 hal_make_save_directory(void)
 {
+	mkdir(window_title, 0777);
 	return true;
 }
 
@@ -1133,7 +1134,7 @@ hal_make_real_path(
 	/* If it is a save directory. */
 	if (strncmp(fname, "save/", 5) == 0) {
 		char *space;
-		snprintf(buf, sizeof(buf), "%s/%s", window_title, fname);
+		snprintf(buf, sizeof(buf), "%s/%s", window_title, fname + 5);
 		ret = strdup(buf);
 		if (ret == NULL) {
 			hal_log_out_of_memory();

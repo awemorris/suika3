@@ -149,9 +149,7 @@ struct hal_wfile {
  * Forward declarations.
  */
 static bool open_package(struct hal_rfile *rf, const char *path);
-#if !defined(HAL_TARGET_IOS) && !defined(HAL_TARGET_WASM)
 static bool open_real(struct hal_rfile *rf, const char *path);
-#endif
 static void ungetc_rfile(struct hal_rfile *rf, char c);
 static void set_random_seed(uint64_t index, uint64_t *next_random);
 static char get_next_random(uint64_t *next_random, uint64_t *prev_random);
@@ -181,7 +179,7 @@ init_file(void)
 	fp = fopen(package_path, "rb");
 #endif
 #else
-	fp = fopen(package_path, "r");
+	fp = fopen(package_path, "rb");
 #endif
 	if (fp == NULL) {
 		/* Failed to open. */
@@ -269,9 +267,12 @@ hal_check_file_exist(
 	}
 
 #if defined(HAL_TARGET_IOS) || defined(HAL_TARGET_WASM)
-	(void)fp;
-	return false;
-#else
+	if (strncmp(file, "save/", 5) != 0) {
+		(void)fp;
+		return false;
+	}
+#endif
+
 	/* Make a real file path. */
 	char *real_path;
 	real_path = hal_make_real_path(file);
@@ -287,7 +288,7 @@ hal_check_file_exist(
 	fp = fopen(real_path, "rb");
 #endif
 #else
-	fp = fopen(real_path, "r");
+	fp = fopen(real_path, "rb");
 #endif
 
 	/* Check if file exists. */
@@ -300,7 +301,6 @@ hal_check_file_exist(
 	/* File exists. */
 	fclose(fp);
 	return true;
-#endif
 }
 
 /*
@@ -323,19 +323,18 @@ hal_open_rfile(
 	/* If we're using a package file. */
 	if (package_path != NULL) {
 		/* Open a package file. */
-		if (!open_package(fs, path)) {
-			free(fs);
-			return false;
+		if (open_package(fs, path)) {
+			/* Succeeded. */
+			*f = fs;
+			return true;
 		}
-
-		/* Succeeded. */
-		*f = fs;
-		return true;
 	}
 
 #if defined(HAL_TARGET_IOS) || defined(HAL_TARGET_WASM)
-	return false;
-#else
+	if (strncmp(path, "save/", 5) != 0)
+		return false;
+#endif
+
 	/* Open a real file. */
 	if (!open_real(fs, path)) {
 		free(fs);
@@ -345,7 +344,6 @@ hal_open_rfile(
 	/* Succeeded. */
 	*f = fs;
 	return true;
-#endif
 }
 
 /* Open a file in the package. */
@@ -376,7 +374,7 @@ open_package(
 	f->fp = fopen(package_path, "rb");
 #endif
 #else
-	f->fp = fopen(package_path, "r");
+	f->fp = fopen(package_path, "rb");
 #endif
 	if (f->fp == NULL) {
 		//hal_log_error("Cannot open file \"%s\".", package_path);
@@ -403,7 +401,6 @@ open_package(
 	return true;
 }
 
-#if !defined(HAL_TARGET_IOS) && !defined(HAL_TARGET_WASM)
 /* Open a real file on a file system. */
 static bool
 open_real(
@@ -426,7 +423,7 @@ open_real(
 	f->fp = fopen(real_path, "rb");
 #endif
 #else
-	f->fp = fopen(real_path, "r");
+	f->fp = fopen(real_path, "rb");
 #endif
 	free(real_path);
 	if (f->fp == NULL)
@@ -437,7 +434,6 @@ open_real(
 
 	return true;
 }
-#endif
 
 /*
  * Get a file size.
@@ -811,6 +807,9 @@ hal_open_wfile(
 		return false;
 	}
 
+	/* Make a directory. */
+	hal_make_save_directory();
+
 	/* Open a real file. */
 #ifdef HAL_TARGET_WINDOWS
 	_fmode = _O_BINARY;
@@ -823,7 +822,7 @@ hal_open_wfile(
 	(*wf)->fp = fopen(path, "w");
 #endif
 	if ((*wf)->fp == NULL) {
-		//log_error("Failed to open the file \"%s\".", path);
+		//hal_log_error("Failed to open the file \"%s\".", path);
 		free(path);
 		free(*wf);
 		*wf = NULL;

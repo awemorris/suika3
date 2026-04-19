@@ -908,6 +908,7 @@ s3_execute_load_local(
 	is_load_in_progress = false;
 
 	if (!success) {
+		s3_log_error("Failed to load.");
 		close_read_stream();
 		return false;
 	}
