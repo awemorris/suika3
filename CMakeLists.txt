@@ -147,6 +147,12 @@ option(SUIKA_ENABLE_GST "Enable Gstreamer support" OFF)
 #
 option(SUIKA_ENABLE_MAIN2 "Enable main2() hook" OFF)
 
+#
+# [SUIKA_ENABLE_CONSOLE]
+#  - Use console for debug output on Windows.
+#
+option(SUIKA_ENABLE_CONSOLE "Enable console debug output" OFF)
+
 # --
 
 #
@@ -429,6 +435,11 @@ if(SUIKA_ENABLE_MAIN2)
   set(PLAYFIELD_ENABLE_MAIN2 ON)
 endif()
 
+# Console for debug output on Windows.
+if(SUIKA_ENABLE_CONSOLE)
+  set(PLAYFIELD_ENABLE_CONSOLE)
+endif()
+  
 # Build libstratopack for suika3-pack
 if(SUIKA_ENABLE_PACK)
   set(PLAYFIELD_ENABLE_PACK ON)

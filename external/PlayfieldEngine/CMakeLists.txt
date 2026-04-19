@@ -51,6 +51,7 @@ option(PLAYFIELD_ENABLE_EDITOR           "Enable simple editor for Windows"     
 option(PLAYFIELD_ENABLE_ROT90            "Rotate screen for GBM"                      OFF)
 option(PLAYFIELD_ENABLE_GST              "Enable Gstreamer support"                   OFF)
 option(PLAYFIELD_ENABLE_MAIN2            "Enable macOS main2()"                       OFF)
+option(PLAYFIELD_ENABLE_CONSOLE          "Enable console debug output on Windows"     OFF)
 
 # For derived projects
 option(PLAYFIELD_ENABLE_INITHOOK         "Enable the inithook function"               OFF)
@@ -338,6 +339,10 @@ endif()
 
 if(PLAYFIELD_ENABLE_MAIN2)
   set(STRATO_ENABLE_MAIN2 ON)
+endif()
+
+if(PLAYFIELD_ENABLE_CONSOLE)
+  set(STRATO_ENABLE_CONSOLE)
 endif()
 
 # libstratopack

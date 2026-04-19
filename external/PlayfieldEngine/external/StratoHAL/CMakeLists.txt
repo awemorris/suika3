@@ -45,6 +45,7 @@ option(STRATO_ENABLE_I18N             "Enable translation"                      
 option(STRATO_ENABLE_ROT90            "Rotate screen"                           OFF)
 option(STRATO_ENABLE_GST              "Enable Gstreamer support"                OFF)
 option(STRATO_ENABLE_MAIN2            "Enable macOS main2()"                    OFF)
+option(STRATO_ENABLE_CONSOLE          "Enable console debug output"             OFF)
 
 #
 # Automatic Target Detection
@@ -670,6 +671,11 @@ if(   STRATO_TARGET_WINDOWS
       DESTINATION ${CMAKE_BINARY_DIR}
     )
   endif()
+
+  # Console
+  if(STRATO_ENABLE_CONSOLE)
+    target_compile_definitions(strato PRIVATE HAL_USE_CONSOLE)
+  endif()
 endif()
 if(STRATO_TARGET_WINDOWS95)
   add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
@@ -918,11 +924,19 @@ if(   STRATO_TARGET_WINDOWS
   endif()
 
   if(MSVC)
-    target_link_options(strato PUBLIC
-      /SUBSYSTEM:WINDOWS
-      /ENTRY:wWinMainCRTStartup
-      /MANIFEST:NO
-    )
+    if(NOT STRATO_ENABLE_CONSOLE)
+      target_link_options(strato PUBLIC
+        /SUBSYSTEM:WINDOWS
+        /ENTRY:wWinMainCRTStartup
+        /MANIFEST:NO
+      )
+    else()
+      target_link_options(strato PUBLIC
+        /SUBSYSTEM:CONSOLE
+        /ENTRY:wWinMainCRTStartup
+        /MANIFEST:NO
+      )
+	endif()
   endif()
 endif()
 

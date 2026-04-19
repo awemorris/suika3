@@ -137,6 +137,28 @@ Now you have a beautiful development environment!
 
 <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/syntax-highlighter-3.png" alt="Install highlighter 1" width="320" hspace="20">
 
+If you write the following in `tasks.json`, you can run Suika3 from VS Code:
+```
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Suika3 Execution",
+            "type": "shell",
+            "command": "C:\\tools\\suika3\\suika3.exe", 
+            "args": [],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
+```
+
 ---
 
 ## Introduction

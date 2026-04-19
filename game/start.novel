@@ -2,7 +2,7 @@
 # Remove # to test NVL mode.
 #
 
-#[callmacro name="nvl-mode"]
+[callmacro name="nvl-mode"]
 
 #
 # Fix the locale. (Please comment out to apply your OS locale!)
