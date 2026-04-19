@@ -390,7 +390,7 @@ jobs:
           cd android
           ./gradlew assembleDebug
           cd ..
-          cp android/app/build/outputs/apk/debug/app-debug.apk suika3-android-build-check.apk
+          cp android/app/build/outputs/apk/debug/app-debug.apk suika3.apk
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -442,7 +442,7 @@ jobs:
         with:
           name: android-apk
           path: |
-            suika3-android-build-check.apk
+            suika3.apk
           if-no-files-found: error
           retention-days: 7
 
@@ -881,8 +881,8 @@ jobs:
       - name: Make documents
         run: |
           mv dist Suika3
-          7z a -tzip -mx=9 Suika3.zip Suika3
-          7z a -t7z -mx=9 Suika3.7z Suika3
+          7z a -tzip -mx=9 Suika3-full.zip Suika3
+          7z a -t7z -mx=9 Suika3-full.7z Suika3
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -891,12 +891,12 @@ jobs:
           name: Suika3-CI-${{ env.DATE }}-${{ env.SHORT_SHA }}
           prerelease: true
           files: |
-            Suika3.zip
-            Suika3.7z
+            Suika3-full.zip
+            Suika3-full.7z
             windows/build/windows-vs2022-x64/Release/suika3.exe
-            dist/misc/windows/suika3-32.exe
+            Suika3/misc/windows/suika3-32.exe
             #macos/build-macos/Suika3.dmg
-            linux/suika3-x86_64.AppImage
+            #linux/suika3-x86_64.AppImage
             flatpak/Suika3.flatpak
             android-apk/*.apk
             #ios-engine/*.ipa
