@@ -1,0 +1,7 @@
+[Desktop Entry]
+Name=Suika3
+Exec=suika3
+Icon=vn.suika3.engine
+Terminal=false
+Type=Application
+Categories=Development;Game;Utility;

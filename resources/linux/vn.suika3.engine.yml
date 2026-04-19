@@ -1,0 +1,37 @@
+id: vn.suika3.engine
+runtime: org.freedesktop.Platform
+runtime-version: '25.08'
+sdk: org.freedesktop.Sdk
+command: suika3
+
+sdk-extensions:
+  - org.freedesktop.Platform.GStreamer.openmpt
+  
+build-options:
+  append-path: /usr/lib/sdk/GStreamer/bin
+  append-ld-library-path: /usr/lib/sdk/GStreamer/lib
+  append-pkg-config-path: /usr/lib/sdk/GStreamer/lib/pkgconfig
+
+finish-args:
+  - --socket=x11
+  - --device=dri
+  - --filesystem=host
+
+modules:
+  - name: suika3
+    buildsystem: cmake-ninja
+    config-opts:
+      - "-DCMAKE_BUILD_TYPE=Release"
+      - "-DSUIKA_ENABLE_GST=ON"
+    sources:
+      - type: dir
+        path: ../..
+
+  - name: suika3-desktop-assets
+    buildsystem: simple
+    build-commands:
+      - install -Dm644 vn.suika3.engine.desktop /app/share/applications/vn.suika3.engine.desktop
+      - install -Dm644 vn.suika3.engine.png /app/share/icons/hicolor/128x128/apps/vn.suika3.engine.png
+    sources:
+      - type: dir
+        path: .
