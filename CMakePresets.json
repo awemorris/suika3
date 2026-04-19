@@ -31,7 +31,7 @@
         },
         {
             "name":           "windows-vs2022-x64",
-            "displayName":    "VS2022 MSVC x64 Debug",
+            "displayName":    "VS2022 MSVC x64 Release",
             "generator":      "Visual Studio 17 2022",
             "architecture":   "x64",
             "toolset":        "v143",
@@ -98,6 +98,28 @@
                 "SUIKA_ENABLE_BYTECOMP":        "ON",
                 "SUIKA_ENABLE_AOTCOMP":         "ON",
                 "SUIKA_ENABLE_WEBSERVER":       "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name":           "windows-vs2022-x64-console",
+            "displayName":    "VS2022 MSVC x64 Console Release",
+            "generator":      "Visual Studio 17 2022",
+            "architecture":   "x64",
+            "toolset":        "v143",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_CONFIGURATION_TYPES":    "Release",
+                "CMAKE_BUILD_TYPE":             "Release",
+                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
+                "SUIKA_TARGET_WINDOWS":         "ON",
+                "SUIKA_ENABLE_JIT":             "ON",
+                "SUIKA_ENABLE_I18N":            "ON",
+                "SUIKA_ENABLE_CONSOLE":         "ON"
             },
             "condition": {
                 "type": "equals",
