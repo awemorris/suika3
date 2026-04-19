@@ -996,31 +996,28 @@ if(SUIKA_ENABLE_INSTALL)
   #
 
   # "suika3" command. 
-  install(TARGETS suika3       RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+  install(TARGETS suika3         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
 
-  if(NOT SUIKA_ENABLE_FLATPAK)
-    # "suika3-pack" command.
-    if(SUIKA_ENABLE_PACK)
-      install(TARGETS suika3-pack  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-    endif()
-
-    # "suika3-bcc" command. (bytecode compiler)
-    if(SUIKA_ENABLE_BYTECOMP)
-      install(TARGETS suika3-bcc   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-    endif()
-
-    # "suika3-aotc" command. (AOT compiler)
-    if(SUIKA_ENABLE_AOTCOMP)
-      install(TARGETS suika3-aotc  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
-    endif()
+  # "suika3-pack" command.
+  if(SUIKA_ENABLE_PACK)
+    install(TARGETS suika3-pack  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
   endif()
 
-  if(SUIKA_ENABLE_FLATPAK)
-    install(
-      PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/linux/suika3-run.sh"
-      DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
+  # "suika3-bcc" command. (bytecode compiler)
+  if(SUIKA_ENABLE_BYTECOMP)
+    install(TARGETS suika3-bcc   RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
   endif()
+
+  # "suika3-aotc" command. (AOT compiler)
+  if(SUIKA_ENABLE_AOTCOMP)
+    install(TARGETS suika3-aotc  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
+  endif()
+
+  # suika3-run.sh
+  install(
+    PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/linux/suika3-run.sh"
+    DESTINATION ${CMAKE_INSTALL_BINDIR}
+  )
 
   #
   # Install manpages. (mdoc for *BSD, roff for others)
@@ -1037,22 +1034,22 @@ if(SUIKA_ENABLE_INSTALL)
       # BSD mdoc
       install(
         FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3.1.mdoc"
-        DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
+        DESTINATION share/man/man1
         RENAME      "suika3.1"
       )
       install(
         FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-pack.1.mdoc"
-        DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
+        DESTINATION share/man/man1
         RENAME      "suika3-pack.1"
       )
       install(
         FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-bcc.1.mdoc"
-        DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
+        DESTINATION share/man/man1
         RENAME      "suika3-bcc.1"
       )
       install(
         FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-aotc.1.mdoc"
-        DESTINATION ${CMAKE_INSTALL_MANDIR}/man1
+        DESTINATION share/man/man1
         RENAME      "suika3-aotc.1"
       )
     else()
@@ -1062,10 +1059,31 @@ if(SUIKA_ENABLE_INSTALL)
                     "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-pack.1"
                     "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-bcc.1"
                     "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-aotc.1"
-        DESTINATION "${CMAKE_INSTALL_MANDIR}/man1"
+        DESTINATION share/man/man1
       )
     endif()
   endif()
+
+  #
+  # Insatll desktop-related files.
+  #
+
+  install(
+    FILES resources/linux/vn.suika3.engine.xml
+    DESTINATION share/mime/packages
+  )
+  install(
+    FILES resources/linux/vn.suika3.engine.desktop
+    DESTINATION share/applications
+  )
+  install(
+    FILES resources/linux/vn.suika3.engine.metainfo.xml
+    DESTINATION share/metainfo
+  )
+  install(
+    FILES resources/linux/vn.suika3.engine.png
+    DESTINATION share/icons/hicolor/512x512/apps
+  )
 
   #
   # Install documents.
@@ -1074,7 +1092,7 @@ if(SUIKA_ENABLE_INSTALL)
   if(NOT SUIKA_ENABLE_FLATPAK)
     install(
       DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/docs/mkdocs-en/docs"
-      DESTINATION ${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_DOCS}
+      DESTINATION ${SUIKA_DIR_DOCS}
     )
   endif()
 
@@ -1089,7 +1107,7 @@ if(SUIKA_ENABLE_INSTALL)
       # (A symlink to a system font should be created by packaging process.)
       install(
         DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game"
-        DESTINATION "${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_GAME}"
+        DESTINATION "${SUIKA_DIR_GAME}"
         FILES_MATCHING
         PATTERN "*"
         PATTERN "bgm2" EXCLUDE
@@ -1100,7 +1118,7 @@ if(SUIKA_ENABLE_INSTALL)
       # Include the font.
       install(
         DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game"
-        DESTINATION "${CMAKE_INSTALL_PREFIX}/${SUIKA_DIR_GAME}"
+        DESTINATION "${SUIKA_DIR_GAME}"
       )
     endif()
   endif()

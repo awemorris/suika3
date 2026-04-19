@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>vn.suika3.engine</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>zlib</project_license>
+  <name>Suika3</name>
+  <summary>A portable 2D game engine with a DSL for visual novels</summary>
+
+  <description>
+    <p>
+      Suika3 is a high-performance, mobile-first 2D game engine designed for
+      visual novels. It focuses on portability, written in C89 to ensure
+      long-term maintenance and compatibility.
+    </p>
+    <p>
+      Note: This is a game engine runtime. To run a game, you need to provide
+      a game directory as an argument.
+    </p>
+    <ul>
+      <li>Target: Mobile-first, yet runs anywhere including Linux</li>
+      <li>High-Performance: Native, written in C</li>
+      <li>Hybrid Scripting: JIT VM with AOT fallback for App Store compliance</li>
+      <li>Broad Platforms: Desktop, mobile, and game consoles</li>
+    </ul>
+  </description>
+
+  <launchable type="desktop-id">vn.suika3.engine.desktop</launchable>
+
+  <screenshots>
+    <screenshot type="default">
+      <caption>The Suika3 engine running a sample script</caption>
+      <image>https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260406.webp</image>
+    </screenshot>
+  </screenshots>
+
+  <url type="homepage">https://suika3.vn/</url>
+  <url type="bugtracker">https://github.com/awemorris/suika3/issues</url>
+
+  <content_rating type="oars-1.1" />
+
+  <releases>
+    <release version="26.04.10" date="2026-04-19">
+      <description>
+        <p>26.04 is the first public version.</p>
+      </description>
+    </release>
+  </releases>
+</component>

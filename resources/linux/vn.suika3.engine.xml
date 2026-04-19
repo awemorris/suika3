@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mime-info xmlns="http://www.freedesktop.org/standards/shared-mime-info">
+
+  <mime-type type="application/x-novelml">
+    <comment>NovelML Script</comment>
+    <glob pattern="*.novel"/>
+  </mime-type>
+
+  <mime-type type="application/x-rayscript">
+    <comment>Ray Script</comment>
+    <glob pattern="*.ray"/>
+  </mime-type>
+
+</mime-info>

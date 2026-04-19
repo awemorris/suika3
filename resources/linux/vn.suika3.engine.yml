@@ -33,16 +33,6 @@ modules:
       - "-DSUIKA_ENABLE_BYTECOMP=OFF"
       - "-DSUIKA_ENABLE_AOTCOMP=OFF"
       - "-DSUIKA_ENABLE_GST=ON"
-
     sources:
       - type: dir
         path: ../..
-
-  - name: suika3-desktop-assets
-    buildsystem: simple
-    build-commands:
-      - install -Dm644 vn.suika3.engine.desktop /app/share/applications/vn.suika3.engine.desktop
-      - install -Dm644 vn.suika3.engine.png /app/share/icons/hicolor/128x128/apps/vn.suika3.engine.png
-    sources:
-      - type: dir
-        path: .
