@@ -1151,7 +1151,7 @@
         },
         {
             "name": "windows-vs2022-x64-console",
-            "configurePreset": "windows-vs2026-x64-console"
+            "configurePreset": "windows-vs2022-x64-console"
         },
         {
             "name": "windows-vs2022-gdk-desktop",
