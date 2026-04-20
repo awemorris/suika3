@@ -383,7 +383,7 @@ s3_call_vm_tag_function(
 
 	/* Make a parameter dictionary. */
 	if (!noct_make_empty_dict(env, &dict)) {
-		s3_log_error(S3_TR("%s:%d: Runtime error"),
+		s3_log_error(S3_TR("Error: %s:%d: Runtime error"),
 			     s3_get_tag_file(),
 			     s3_get_tag_line());
 		return false;
@@ -400,13 +400,13 @@ s3_call_vm_tag_function(
 		prop_value = s3_get_tag_property_value(i);
 
 		if (!noct_make_string(env, &str, prop_value)) {
-			s3_log_error(S3_TR("%s:%d: Runtime error"),
+			s3_log_error(S3_TR("Error: %s:%d: Runtime error"),
 				     s3_get_tag_file(),
 				     s3_get_tag_line());
 			return false;
 		}
 		if (!noct_set_dict_elem(env, &dict, prop_name, &str)) {
-			s3_log_error(S3_TR("%s:%d: Runtime error"),
+			s3_log_error(S3_TR("Error: %s:%d: Runtime error"),
 				     s3_get_tag_file(),
 				     s3_get_tag_line());
 			return false;
@@ -419,14 +419,14 @@ s3_call_vm_tag_function(
 
 	/* Get a corresponding function.  */
 	if (!noct_get_global(env, func_name, &func_val)) {
-		s3_log_error(S3_TR("%s:%d: Tag \"%s\" not found."),
+		s3_log_error(S3_TR("Error: %s:%d: Tag \"%s\" not found."),
 			     s3_get_tag_file(),
 			     s3_get_tag_line(),
 			     tag_name);
 		return false;
 	}
 	if (!noct_get_func(env, &func_val, &func)) {
-		s3_log_error(S3_TR("%s:%d: \"Tag_%s\" is not a function."),
+		s3_log_error(S3_TR("Error: %s:%d: \"Tag_%s\" is not a function."),
 			     s3_get_tag_file(),
 			     s3_get_tag_line(),
 			     tag_name);
@@ -636,7 +636,7 @@ s3_log_tag_error(
 
 	n = (uint32_t)snprintf(buf,
 		     sizeof(buf),
-		     S3_TR("%s:%d: Tag %s: "),
+		     S3_TR("Error: %s:%d: Tag %s: "),
 		     s3_get_tag_file(),
 		     s3_get_tag_line(),
 		     s3_get_tag_name());
