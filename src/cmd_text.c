@@ -497,7 +497,8 @@ init(
 	/* Restore for load. */
 	if (!s3_is_page_mode()) {
 		/* If not page mode, fill the msgbox layer by the msgbox image. */
-		clear_msgbox();
+		if (!gui_sys_flag)
+			clear_msgbox();
 	} else {
 		if (load_flag) {
 			/* If loaded, draw the last page. */

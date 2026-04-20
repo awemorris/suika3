@@ -1089,13 +1089,13 @@ load_basic_save_info(
 			break;
 		if (!read_string(sbuf, sizeof(sbuf)))
 			break;
+		if (!read_string(sbuf, sizeof(sbuf)))
+			break;
 		save_message[index] = strdup(sbuf);
 		if (save_message[index] == NULL) {
 			s3_log_out_of_memory();
 			break;
 		}
-		if (!read_string(sbuf, sizeof(sbuf)))
-			break;
 
 		/* Read the thumbnail. */
 		if (!read_data(s3_get_image_pixels(save_thumb[index]),

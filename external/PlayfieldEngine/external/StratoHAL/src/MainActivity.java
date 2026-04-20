@@ -683,7 +683,11 @@ public class MainActivity extends Activity {
     private boolean bridgeCheckFileExists(String fileName) {
         byte[] buf = null;
         try {
-            InputStream is = getResources().getAssets().open(fileName);
+			InputStream is = null;
+			if(fileName.startsWith("save/"))
+				is = openFileInput(fileName);
+			else
+				is = getResources().getAssets().open(fileName);
             is.close();
         } catch(IOException e) {
             return false;
@@ -695,8 +699,8 @@ public class MainActivity extends Activity {
     // Get an entire file content.
     //
     private byte[] bridgeGetFileContent(String fileName) {
-        if(fileName.startsWith("sav/"))
-            return getSaveFileContent(fileName.split("/")[1]);
+        if(fileName.startsWith("save/"))
+            return getSaveFileContent(fileName.substring(5));
         else
             return getAssetFileContent(fileName);
     }
@@ -748,7 +752,10 @@ public class MainActivity extends Activity {
     //
     private OutputStream bridgeOpenSaveFile(String fileName) {
         try {
-            return openFileOutput(fileName, 0);
+            if(fileName.startsWith("save/"))
+                fileName = fileName.substring(5);
+            OutputStream os = openFileOutput(fileName, 0);
+            return os;
         } catch(IOException e) {
             Log.e(APP_NAME, "Failed to write file " + fileName);
         }

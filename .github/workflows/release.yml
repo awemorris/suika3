@@ -162,58 +162,6 @@ jobs:
 #          if-no-files-found: error
 #          retention-days: 7
 
-#  build-linux:
-#    runs-on: ubuntu-24.04
-#
-#    steps:
-#      - uses: actions/checkout@v4
-#
-#      - name: Install deps
-#        run: |
-#          sudo apt-get update
-#          sudo apt-get install -y cmake build-essential libx11-dev libxpm-dev libasound2-dev mesa-common-dev flex bison libfuse2 libwayland-dev wayland-protocols libegl1-mesa-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
-#
-#      - name: Download appimagetool
-#        run: |
-#          wget -q https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
-#          chmod +x appimagetool-x86_64.AppImage
-#
-#      - name: Add desktop
-#        run: |
-#          cat > suika3.desktop <<EOF
-#          [Desktop Entry]
-#          Type=Application
-#          Name=Suika3
-#          Exec=suika3
-#          Icon=suika3
-#          Categories=Game;
-#          EOF
-#
-#      - name: Build for x86_64 (X11)
-#        run: |
-#          cmake --preset linux
-#          cmake --build --preset linux
-#          mkdir -p AppDir/usr/bin
-#          cp build-linux/suika3 AppDir/usr/bin/
-#          cp resources/linux/AppRun AppDir/
-#          cp suika3.desktop AppDir/
-#          cp resources/icon.png AppDir/suika3.png
-#          ARCH=x86_64 ./appimagetool-x86_64.AppImage AppDir suika3-x86_64.AppImage
-#
-#      - name: Build for x86_64 (Wayland, check only)
-#        run: |
-#          cmake --preset linux-wayland
-#          cmake --build --preset linux-wayland
-#
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: linux-appimage
-#          path: |
-#            suika3-x86_64.AppImage
-#          if-no-files-found: error
-#          retention-days: 7
-
   build-flatpak:
     runs-on: ubuntu-24.04
 
@@ -371,10 +319,10 @@ jobs:
           cmake --build --preset android-armv7
           cmake --preset android-x86_64
           cmake --build --preset android-x86_64
-          cmake --preset android-x86
-          cmake --build --preset android-x86
-          cmake --preset android-riscv64
-          cmake --build --preset android-riscv64
+          #cmake --preset android-x86
+          #cmake --build --preset android-x86
+          #cmake --preset android-riscv64
+          #cmake --build --preset android-riscv64
 
       - name: Prepare Android Studio Project
         run: |
@@ -389,10 +337,10 @@ jobs:
           cp build-android-armv7/libsuika3.so android/app/src/main/jniLibs/armeabi-v7a/libplayfield.so
           mkdir -p android/app/src/main/jniLibs/x86_64
           cp build-android-x86_64/libsuika3.so android/app/src/main/jniLibs/x86_64/libplayfield.so
-          mkdir -p android/app/src/main/jniLibs/x86
-          cp build-android-x86/libsuika3.so android/app/src/main/jniLibs/x86/libplayfield.so
-          mkdir -p android/app/src/main/jniLibs/riscv64
-          cp build-android-riscv64/libsuika3.so android/app/src/main/jniLibs/riscv64/libplayfield.so
+          #mkdir -p android/app/src/main/jniLibs/x86
+          #cp build-android-x86/libsuika3.so android/app/src/main/jniLibs/x86/libplayfield.so
+          #mkdir -p android/app/src/main/jniLibs/riscv64
+          #cp build-android-riscv64/libsuika3.so android/app/src/main/jniLibs/riscv64/libplayfield.so
 
       - name: Build Android Studio Project
         run: |
@@ -760,17 +708,17 @@ jobs:
           name: android-x86_64
           path: android-x86_64
 
-      - name: Download Android x86 artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: android-x86
-          path: android-x86
+#      - name: Download Android x86 artifacts
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: android-x86
+#          path: android-x86
 
-      - name: Download Android RISC-V 64 artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: android-riscv64
-          path: android-riscv64
+#      - name: Download Android RISC-V 64 artifacts
+#        uses: actions/download-artifact@v4
+#        with:
+#          name: android-riscv64
+#          path: android-riscv64
 
       - name: Download Android APK artifacts
         uses: actions/download-artifact@v4
@@ -799,8 +747,8 @@ jobs:
           cp android-armv7/libsuika3.so dist/misc/android/app/src/main/jniLibs/armeabi-v7a/libplayfield.so
           mkdir -p dist/misc/android/app/src/main/jniLibs/x86_64
           cp android-x86_64/libsuika3.so dist/misc/android/app/src/main/jniLibs/x86_64/libplayfield.so
-          mkdir -p dist/misc/android/app/src/main/jniLibs/x86
-          cp android-x86/libsuika3.so dist/misc/android/app/src/main/jniLibs/x86/libplayfield.so
+          #mkdir -p dist/misc/android/app/src/main/jniLibs/x86
+          #cp android-x86/libsuika3.so dist/misc/android/app/src/main/jniLibs/x86/libplayfield.so
           #mkdir -p dist/misc/android/app/src/main/jniLibs/riscv64
           #cp android-riscv64/libsuika3.so dist/misc/android/app/src/main/jniLibs/riscv64/libplayfield.so
 
@@ -895,7 +843,6 @@ jobs:
         run: |
           mv dist Suika3
           7z a -tzip -mx=9 Suika3-full.zip Suika3
-          7z a -t7z -mx=9 Suika3-full.7z Suika3
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
@@ -905,11 +852,9 @@ jobs:
           prerelease: true
           files: |
             Suika3-full.zip
-            Suika3-full.7z
             windows/build/windows-vs2022-x64/Release/suika3.exe
             Suika3/misc/windows/suika3-32.exe
             #macos/build-macos/Suika3.dmg
-            #linux/suika3-x86_64.AppImage
             flatpak/Suika3.flatpak
             android-apk/*.apk
             #ios-engine/*.ipa
