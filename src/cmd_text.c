@@ -948,6 +948,8 @@ init_msg_top(void)
 
 	/* If we are in the page mode. */
 	msg = get_localized_text();
+	if (msg == NULL)
+		return false;
 
 	/* Register message history for history screen */
 	if (!register_message_for_history(msg))

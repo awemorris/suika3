@@ -8,6 +8,15 @@
       "windows": {
         "command": "misc/windows/suika3-debug.exe"
       },
+      "linux": {
+        "command": "flatpak",
+        "args": [
+          "run",
+          "--filesystem=${workspaceFolder}",
+          "--command=suika3",
+          "vn.suika3.engine"
+        ]
+      },
       "options": {
         "cwd": "${workspaceFolder}"
       },
@@ -31,7 +40,17 @@
         "command": "powershell",
         "args": [
           "-Command",
-          "& { $files = Get-ChildItem -Path . -Exclude 'misc', '.vscode', 'suika3.exe'; misc/windows/suika3-pack.exe @($files | ForEach-Object { $_.Name }) }"
+          "& { $files = Get-ChildItem -Path . -Exclude 'misc', '.vscode', 'suika3.exe', 'save', 'assets.arc' | Select-Object -ExpandProperty Name; misc/windows/suika3-pack.exe $files }"
+        ]
+      },
+      "linux": {
+        "command": "flatpak",
+        "args": [
+          "run",
+          "--filesystem=${workspaceFolder}",
+          "--command=suika3-pack",
+          "vn.suika3.engine",
+          "`ls -A | grep -vE '^(misc|suika3.exe|.vscode)$'`"
         ]
       },
       "group": "build",

@@ -161,6 +161,10 @@ static void rewind_random(uint64_t *next_random, uint64_t *prev_random);
 bool
 init_file(void)
 {
+#if defined(HAL_TARGET_WINDOWS) && defined(HAL_USE_CONSOLE)
+	/* suika3-debug.exe does not use the package file. */
+	return true;
+#else
 	FILE *fp;
 	uint64_t i, next_random;
 	int j;
@@ -231,6 +235,7 @@ init_file(void)
 	fclose(fp);
 
 	return true;
+#endif
 }
 
 /*

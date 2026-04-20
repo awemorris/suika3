@@ -44,30 +44,16 @@ int main(int argc, char *argv[])
 	{
 		MessageBoxW(NULL,
 			    L"Please specify files and folders in relative paths to make an archive file.",
-			    L"Playfield Archiver",
+			    L"Archiver",
 			    MB_OK | MB_ICONINFORMATION);
 		return 1;
-	}
-	else
-	{
-		MessageBoxW(NULL,
-			    L"Playfield Archiver will make an archive file. This will take a while.",
-			    L"Playfield Archiver",
-			    MB_OK | MB_ICONINFORMATION);
 	}
 #endif
 
 	int ret = command_archive(argc, argv);
 
 #ifdef _WIN32
-	if (ret == 0)
-	{
-		MessageBoxW(NULL,
-			    L"Done making the assets.arc file.",
-			    L"Playfield Archiver",
-			    MB_OK | MB_ICONINFORMATION);
-	}
-	else
+	if (ret != 0)
 	{
 		MessageBoxW(NULL,
 			    L"Error(s) on making the assets.arc file. See the console.",

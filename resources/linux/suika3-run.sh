@@ -31,7 +31,11 @@ if [ -z "$RUN_OK" ]; then
 fi
 
 if cd "$WD"; then
-    exec /app/bin/suika3
+    rm -f log.txt
+    /app/bin/suika3
+    if [ -f log.txt ]; then
+        /usr/bin/xdg-open log.txt;
+    fi
 else
     zenity --error \
            --title="Suika3 Engine Runtime" \

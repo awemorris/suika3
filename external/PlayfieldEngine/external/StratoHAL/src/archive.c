@@ -108,6 +108,8 @@ int command_archive(int argc, char *argv[])
 		return 1;
 	}
 
+	printf("Collecting files...\n");
+
 	/* Add scpecified files. */
 	for (i = 1; i < argc; i++) {
 		if (!add_file(argv[i])) {
@@ -116,17 +118,24 @@ int command_archive(int argc, char *argv[])
 		}
 	}
 
+	printf("Collecting sizes...\n");
+
 	/* Get all file sizes and decide all offsets. */
 	if (!get_file_sizes()) {
 		printf("Failed.\n");
 		return 1;
 	}
 
+	printf("Writing... (this will take a while)\n");
+
 	/* Write an archive file. */
 	if (!write_archive_file(HAL_PACKAGE_FILE)) {
 		printf("Failed.\n");
 		return 1;
 	}
+
+	printf("Successfully created the assets.arc file.\n");
+	printf("Total %ld bytes (%ld MB)\n", offset, offset / 1024 / 1024);
 
 	return 0;
 }
@@ -180,10 +189,14 @@ static bool add_file(const char *fname)
 
 		hFind = FindFirstFileW(wszFindPath, &wfd);
 		if(hFind == INVALID_HANDLE_VALUE)
+		{
+			printf("Skip %s\n", fname);
 			return false;
+		}
 		do
 		{
 			wchar_t wszNextPath[PATH_SIZE];
+			char szNextPath[PATH_SIZE];
 
 			if (wcscmp(wfd.cFileName, L".") == 0)
 				continue;
@@ -191,7 +204,8 @@ static bool add_file(const char *fname)
 				continue;
 
 			_snwprintf(wszNextPath, PATH_SIZE, L"%s\\%s", utf8_to_utf16(fname), wfd.cFileName);
-			if (!add_file(utf16_to_utf8(wszNextPath)))
+			snprintf(szNextPath, PATH_SIZE, "%s", utf16_to_utf8(wszNextPath));
+			if (!add_file(szNextPath))
 				return false;
 		}
 		while(FindNextFileW(hFind, &wfd));

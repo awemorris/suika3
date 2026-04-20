@@ -36,3 +36,6 @@ modules:
     sources:
       - type: dir
         path: ../..
+    post-install:
+      - update-mime-database /app/share/mime
+      - update-desktop-database /app/share/applications

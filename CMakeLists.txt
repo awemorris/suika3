@@ -58,10 +58,17 @@ option(SUIKA_ENABLE_DIST "Build for OS package" OFF)
 option(SUIKA_ENABLE_INSTALL "Enable installation" OFF)
 
 #
+# [SUIKA_ENABLE_NO_MANPAGES]
+# [SUIKA_ENABLE_NO_EXAMPLES]
+# [SUIKA_ENABLE_NO_DOCS]
+# [SUIKA_ENABLE_NO_DESKTOP]
 # [SUIKA_ENABLE_FLATPAK]
-#  - Install engine binary only
 #
-option(SUIKA_ENABLE_FLATPAK "Enable installation for flatpak-build" OFF)
+option(SUIKA_ENABLE_NO_MANPAGES "No man pages"          OFF)
+option(SUIKA_ENABLE_NO_EXAMPLES "No examples"           OFF)
+option(SUIKA_ENABLE_NO_DOCS     "No docs"               OFF)
+option(SUIKA_ENABLE_NO_DESKTOP  "No desktop files"      OFF)
+option(SUIKA_ENABLE_FLATPAK     "Install suika3-run.sh" OFF)
 
 #
 # [SUIKA_ENABLE_STATIC]
@@ -1014,16 +1021,18 @@ if(SUIKA_ENABLE_INSTALL)
   endif()
 
   # suika3-run.sh
-  install(
-    PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/linux/suika3-run.sh"
-    DESTINATION ${CMAKE_INSTALL_BINDIR}
-  )
+  if(SUIKA_ENABLE_FLATPAK)
+    install(
+      PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/linux/suika3-run.sh"
+      DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
+  endif()
 
   #
   # Install manpages. (mdoc for *BSD, roff for others)
   #
 
-  if(NOT SUIKA_ENABLE_FLATPAK)
+  if(NOT SUIKA_ENABLE_NO_MANPAGES)
     if(   SUIKA_TARGET_FREEBSD
        OR SUIKA_TARGET_FREEBSD_WAYLAND
        OR SUIKA_TARGET_FREEBSD_X11SOFT
@@ -1068,28 +1077,31 @@ if(SUIKA_ENABLE_INSTALL)
   # Insatll desktop-related files.
   #
 
-  install(
-    FILES resources/linux/vn.suika3.engine.xml
-    DESTINATION share/mime/packages
-  )
-  install(
-    FILES resources/linux/vn.suika3.engine.desktop
-    DESTINATION share/applications
-  )
-  install(
-    FILES resources/linux/vn.suika3.engine.metainfo.xml
-    DESTINATION share/metainfo
-  )
-  install(
-    FILES resources/linux/vn.suika3.engine.png
-    DESTINATION share/icons/hicolor/512x512/apps
-  )
+  if(NOT SUIKA_ENABLE_NO_DESKTOP)
+    install(
+      FILES resources/linux/vn.suika3.engine.xml
+      DESTINATION share/mime/packages
+      RENAME vn.suika3.engine.mime.xml
+    )
+    install(
+      FILES resources/linux/vn.suika3.engine.desktop
+      DESTINATION share/applications
+    )
+    install(
+      FILES resources/linux/vn.suika3.engine.metainfo.xml
+      DESTINATION share/metainfo
+    )
+    install(
+      FILES resources/linux/vn.suika3.engine.png
+      DESTINATION share/icons/hicolor/512x512/apps
+    )
+  endif()
 
   #
   # Install documents.
   # 
 
-  if(NOT SUIKA_ENABLE_FLATPAK)
+  if(NOT SUIKA_ENABLE_NO_DOCS)
     install(
       DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/docs/mkdocs-en/docs"
       DESTINATION ${SUIKA_DIR_DOCS}
@@ -1100,7 +1112,7 @@ if(SUIKA_ENABLE_INSTALL)
   # Install the sample game.
   #
 
-  if(NOT SUIKA_ENABLE_FLATPAK)
+  if(NOT SUIKA_ENABLE_NO_EXAMPLES)
     # Install ZLIB-licensed contents.
     if(SUIKA_ENABLE_DIST)
       # Exclude the font when packaging.

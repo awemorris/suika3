@@ -40,9 +40,13 @@
   <url type="bugtracker">https://github.com/awemorris/suika3/issues</url>
 
   <content_rating type="oars-1.1" />
+  <mimetypes>
+    <mimetype>application/x-novelml</mimetype>
+    <mimetype>application/x-rayscript</mimetype>
+  </mimetypes>
 
   <releases>
-    <release version="26.04.10" date="2026-04-19">
+    <release version="26.04.10" date="2026-04-20">
       <description>
         <p>26.04 is the first public version.</p>
       </description>
