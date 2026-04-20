@@ -2,7 +2,7 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "label": "Run Suika3",
+      "label": "Suika3: Run",
       "type": "shell",
       "problemMatcher": {
         "owner": "novelml",
@@ -43,7 +43,7 @@
       }
     },
     {
-      "label": "Make Suika3 package",
+      "label": "Suika3: Create a package file",
       "type": "shell",
       "command": "suika3-pack",
       "args": [
@@ -76,6 +76,30 @@
       "presentation": {
         "reveal": "always",
         "panel": "new"
+      }
+    },
+    {
+      "label": "Suika3: Build Android APK",
+      "type": "shell",
+      "windows": {
+        "command": "${workspaceFolder}/misc/android/build.bat"
+      },
+      "linux": {
+        "command": "sh ${workspaceFolder}/misc/android/build.sh"
+      },
+      "osx": {
+        "command": "sh ${workspaceFolder}/misc/android/build.sh"
+      },
+      "options": {
+        "cwd": "${workspaceFolder}/misc/android"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
       }
     }
   ]

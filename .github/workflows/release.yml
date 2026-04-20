@@ -787,6 +787,8 @@ jobs:
           cp -R resources/projects/android/settings.gradle dist/misc/android/
           cp -R resources/projects/android/gradlew.bat dist/misc/android/
           cp -R resources/projects/android/gradle dist/misc/android/
+          cp -R resources/projects/android/build.bat dist/misc/android/
+          cp -R resources/projects/android/build.sh dist/misc/android/
           mkdir -p dist/misc/android/app/src/main/assets
           cp -R game/* dist/misc/android/app/src/main/assets/
           mkdir -p dist/misc/android/app/src/main/java/io/noctvm/playfield/engineandroid
@@ -799,8 +801,8 @@ jobs:
           cp android-x86_64/libsuika3.so dist/misc/android/app/src/main/jniLibs/x86_64/libplayfield.so
           mkdir -p dist/misc/android/app/src/main/jniLibs/x86
           cp android-x86/libsuika3.so dist/misc/android/app/src/main/jniLibs/x86/libplayfield.so
-          mkdir -p dist/misc/android/app/src/main/jniLibs/riscv64
-          cp android-riscv64/libsuika3.so dist/misc/android/app/src/main/jniLibs/riscv64/libplayfield.so
+          #mkdir -p dist/misc/android/app/src/main/jniLibs/riscv64
+          #cp android-riscv64/libsuika3.so dist/misc/android/app/src/main/jniLibs/riscv64/libplayfield.so
 
       - name: Download OpenHarmony arm64 artifacts
         uses: actions/download-artifact@v4

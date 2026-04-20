@@ -135,7 +135,7 @@ int command_archive(int argc, char *argv[])
 	}
 
 	printf("Successfully created the assets.arc file.\n");
-	printf("Total %ld bytes (%ld MB)\n", offset, offset / 1024 / 1024);
+	printf("Total %ld bytes (%0.1f MB)\n", offset, (float)offset / 1024.0f / 1024.0f);
 
 	return 0;
 }
