@@ -660,8 +660,10 @@ init_special_action(bool *exit)
 
 	/* If no action specified. */
 	if (action == NULL) {
-		if (!s3_is_page_mode())
+		if (!s3_is_page_mode()) {
+			*exit = false;
 			return true;
+		}
 
 		if (!is_page_top && !gui_sys_flag) {
 			if (space == NULL) {
