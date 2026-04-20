@@ -4,6 +4,19 @@
     {
       "label": "Run Suika3",
       "type": "shell",
+      "problemMatcher": {
+        "owner": "novelml",
+        "fileLocation": [
+          "relative",
+          "${workspaceFolder}"
+        ],
+        "pattern": {
+          "regexp": "^(.+):(\\d+):\\s*(.+)$",
+          "file": 1,
+          "line": 2,
+          "message": 3
+        }
+      },
       "command": "suika3",
       "windows": {
         "command": "misc/windows/suika3-debug.exe"
@@ -21,12 +34,12 @@
         "cwd": "${workspaceFolder}"
       },
       "group": {
-        "kind": "test",
+        "kind": "build",
         "isDefault": true
       },
       "presentation": {
         "reveal": "always",
-        "panel": "shared"
+        "panel": "dedicated"
       }
     },
     {
@@ -53,9 +66,16 @@
           "`ls -A | grep -vE '^(misc|suika3.exe|.vscode)$'`"
         ]
       },
-      "group": "build",
       "options": {
         "cwd": "${workspaceFolder}"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": false
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
       }
     }
   ]
