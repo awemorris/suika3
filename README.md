@@ -109,6 +109,8 @@ wget https://github.com/awemorris/suika3/releases/latest/download/Suika3.flatpak
 flatpak install --user Suika3.flatpak
 ```
 
+Click the `start.novel` file to start Suika3 on Linux GUI.
+
 **FreeBSD:**
 ```
 cd /usr/ports/games/suika3 && make install clean
