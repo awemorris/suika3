@@ -36,14 +36,26 @@ if [ -z "$RUN_OK" ]; then
         done
     done
 
-    FILE=$(zenity --file-selection \
+    FILE=$(zenity --title "Suika3 Engine" \
+                  --file-selection \
                   --filename="$DEFAULT_FILE" \
-		  --file-filter="NovelML files | *.novel" \
-		  --file-filter="Ray scripts | *.ray" \
-		  --file-filter="Asset packages | assets.arc" \
-		  --file-filter="All files | *");
+                  --file-filter="NovelML files | *.novel" \
+                  --file-filter="Ray scripts | *.ray" \
+                  --file-filter="Asset packages | assets.arc" \
+                  --file-filter="All files | *");
     if [ -z "$FILE" ]; then
-        exit 1;
+        if [ ! -z "$DEFAULT_FILE" ]; then
+			RES=$(zenity --question \
+                         --title "Suika3 Engine" \
+				         --text "Do you want to run the sample game?");
+            if $RES; then
+                FILE="$DEFAULT_FILE";
+            else
+                exit 1;
+            fi;
+		else
+            exit 1;
+        fi;
     fi;
     WD=$(dirname "$FILE")
 fi
@@ -59,7 +71,7 @@ if cd "$WD"; then
     fi;
 else
     zenity --error \
-           --title="Suika3 Engine Runtime" \
+           --title="Suika3 Engine" \
            --text="Failed to access the directory:\n$WD\n\nPlease check your Flatpak permission settings."
     exit 1
 fi
