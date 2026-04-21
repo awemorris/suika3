@@ -23,7 +23,21 @@ else
 fi
 
 if [ -z "$RUN_OK" ]; then
+    DEFAULT_FILE="$HOME";
+    for base in /usr /usr/local /usr/pkg /opt; do
+        for sub in "share/suika3/game" \
+                   "share/examples/suika3/game" \
+                   "share/docs/suika3/examples/game"; do
+            target="$base/$sub/start.novel"
+            if [ -f "$target" ]; then
+                DEFAULT_FILE="$target"
+                break 2
+            fi
+        done
+    done
+
     FILE=$(zenity --file-selection \
+                  --filename="$DEFAULT_FILE" \
 		  --file-filter="NovelML files | *.novel" \
 		  --file-filter="Ray scripts | *.ray" \
 		  --file-filter="Asset packages | assets.arc" \
