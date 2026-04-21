@@ -298,7 +298,7 @@ static bool init_hal(int argc, char *argv[])
 	/* Initialize the sound HAL. */
 	if (!init_sound()) {
 		/* Ignore a failure. */
-		hal_log_warn("Can't initialize sound.\n");
+		hal_log_info("Can't initialize sound.\n");
 	}
 
 	/* Open an X11 display. */
@@ -1161,6 +1161,7 @@ hal_log_info(
 
 	printf("%s\n", buf);
 
+#if 0
 	open_log_file();
 	if (log_fp != NULL) {
 		fprintf(log_fp, "%s\n", buf);
@@ -1168,6 +1169,7 @@ hal_log_info(
 		if (ferror(log_fp))
 			return false;
 	}
+#endif
 
 	return true;
 }

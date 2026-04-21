@@ -10,32 +10,39 @@ if [ -z "$1" ]; then
     elif [ -f assets.arc ]; then
         RUN_OK=1;
         WD=`pwd`;
-    fi
+    fi;
 else
     if [ -f "$1" ]; then
         RUN_OK=1;
         WD=$(dirname "$1")
-    fi
+    fi;
     if [ -d "$1" ]; then
         RUN_OK=1;
         WD="$1"
-    fi
+    fi;
 fi
 
 if [ -z "$RUN_OK" ]; then
-    zenity --error \
-           --title="Suika3 Engine Runtime" \
-           --text="No script file specified.\n\nPlease right-click a 'main.ray' file and select 'Open with Suika3'." \
-           --width=400
-    exit 1
+    FILE=$(zenity --file-selection \
+		  --file-filter="NovelML files | *.novel" \
+		  --file-filter="Ray scripts | *.ray" \
+		  --file-filter="Asset packages | assets.arc" \
+		  --file-filter="All files | *");
+    if [ -z "$FILE" ]; then
+        exit 1;
+    fi;
+    WD=$(dirname "$FILE")
 fi
 
 if cd "$WD"; then
-    rm -f log.txt
-    /app/bin/suika3
+    rm -f log.txt;
+    suika3;
     if [ -f log.txt ]; then
-        /usr/bin/xdg-open log.txt;
-    fi
+        zenity --error \
+               --title="Suika3 Engine" \
+               --text="$(printf 'Error\n%s' "$(cat log.txt)")";
+        exit 1;
+    fi;
 else
     zenity --error \
            --title="Suika3 Engine Runtime" \

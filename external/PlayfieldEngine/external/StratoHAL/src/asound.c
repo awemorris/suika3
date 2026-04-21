@@ -270,7 +270,7 @@ init_pcm(
 	int ret;
 	ret = snd_pcm_open(&pcm[n], "default", SND_PCM_STREAM_PLAYBACK, 0);
 	if (ret < 0) {
-		hal_log_error("snd_pcm_open() failed.");
+		hal_log_info("snd_pcm_open() failed.");
 		return false;
 	}
 
@@ -280,39 +280,39 @@ init_pcm(
 	snd_pcm_hw_params_alloca(&params);
 	ret = snd_pcm_hw_params_any(pcm[n], params);
 	if (ret < 0) {
-		hal_log_error("snd_pcm_hw_params_any() failed.");
+		hal_log_info("snd_pcm_hw_params_any() failed.");
 		return false;
 	}
 	if (snd_pcm_hw_params_set_access(pcm[n], params,
 					 SND_PCM_ACCESS_RW_INTERLEAVED) < 0) {
-		hal_log_error("snd_pcm_hw_params_set_access() failed.");
+		hal_log_info("snd_pcm_hw_params_set_access() failed.");
 		return false;
 	}
 	if (snd_pcm_hw_params_set_format(pcm[n], params, SND_PCM_FORMAT_S16_LE) < 0) {
-		hal_log_error("snd_pcm_hw_params_set_format() failed.");
+		hal_log_info("snd_pcm_hw_params_set_format() failed.");
 		return false;
 	}
 	if (snd_pcm_hw_params_set_rate(pcm[n], params, SAMPLING_RATE, 0) < 0) {
-		hal_log_error("snd_pcm_hw_params_set_rate() failed.");
+		hal_log_info("snd_pcm_hw_params_set_rate() failed.");
 		return false;
 	}
 	if (snd_pcm_hw_params_set_channels(pcm[n], params, 2) < 0) {
-		hal_log_error("snd_pcm_hw_params_set_channels() failed.");
+		hal_log_info("snd_pcm_hw_params_set_channels() failed.");
 		return false;
 	}
 	if (snd_pcm_hw_params_set_periods(pcm[n], params, PERIODS, 0) < 0) {
-		hal_log_error("snd_pcm_hw_params_set_periods() failed.");
+		hal_log_info("snd_pcm_hw_params_set_periods() failed.");
 		return false;
 	}
 	if (snd_pcm_hw_params_set_buffer_size(pcm[n], params, BUF_FRAMES) < 0) {
 		frames = BUF_FRAMES;
 		if (snd_pcm_hw_params_set_buffer_size_near(pcm[n], params, &frames) < 0) {
-			hal_log_error("snd_pcm_hw_params_set_buffer_size_near() failed.");
+			hal_log_info("snd_pcm_hw_params_set_buffer_size_near() failed.");
 			return false;
 		}
 	}
 	if (snd_pcm_hw_params(pcm[n], params) < 0) {
-		hal_log_error("snd_pcm_hw_params() failed.");
+		hal_log_info("snd_pcm_hw_params() failed.");
 		return false;
 	}
 

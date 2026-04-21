@@ -5,6 +5,6 @@ Exec=suika3-run.sh %f
 Icon=vn.suika3.engine
 Terminal=false
 Type=Application
-Categories=Development;Game;
+Categories=Game;
 MimeType=application/x-rayscript;application/x-novelml;
 StartupNotify=true
