@@ -254,29 +254,6 @@ jobs:
           xcodebuild -create-xcframework -library build-ios-device/libsuika3.a -headers include -library build-ios-simulator/libsuika3.a -headers include -output Suika3.xcframework
           tar czf Suika3.xcframework.tar.gz Suika3.xcframework
  
-          mkdir ios
-          mkdir ios/Resources
-          cp resources/assets.arc ios/Resources/
-          mkdir ios/Resources/video
-          mkdir ios/ios.xcodeproj
-          cp resources/projects/ios/ios.xcodeproj/project.pbxproj ios/ios.xcodeproj/
-          mkdir ios/ios
-          cp -R Suika3.xcframework ios/ios/
-          cp -R resources/projects/ios/ios/Assets.xcassets ios/ios/
-          cp resources/projects/ios/ios/entry.c ios/ios/
-          cp resources/projects/ios/ios/Info.plist ios/ios/
-          cp resources/projects/ios/ios/ios.entitlements ios/ios/
-          cp resources/projects/ios/ios/LaunchScreen.storyboard ios/ios/
- 
-          cd ios
-          xcodebuild archive -scheme ios -archivePath app.xcarchive CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
-           xcodebuild -exportArchive -archivePath app.xcarchive -exportPath ./output -exportOptionsPlist ../resources/ios/ExportOptions.plist CODE_SIGNING_ALLOWED=NO
-          ls -R .
-          mkdir Payload
-          cp -Ra app.xcarchive/Products/Applications/ios.app Payload/Suika3.app
-          zip -r suika3-ios-build-check.ipa Payload/Suika3.app
-          cd ..
- 
       - name: Upload iOS
         uses: actions/upload-artifact@v4
         with:
@@ -286,15 +263,6 @@ jobs:
           if-no-files-found: error
           retention-days: 7
  
-      - name: Upload iOS
-        uses: actions/upload-artifact@v4
-        with:
-          name: ios-engine
-          path: |
-            ios/suika3-ios-build-check.ipa
-          if-no-files-found: error
-          retention-days: 7
-
   build-android:
     runs-on: ubuntu-latest
 
@@ -665,12 +633,6 @@ jobs:
           name: ios
           path: ios
  
-      - name: Download iOS ipa artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: ios-engine
-          path: ios-engine
- 
       - name: Copy for iOS.
         run: |
           mkdir dist/misc/ios/Resources/
@@ -850,10 +812,9 @@ jobs:
             Suika3-full.zip
             windows/build/windows-vs2022-x64/Release/suika3.exe
             Suika3/misc/windows/suika3-32.exe
-            #macos/build-macos/Suika3.dmg
+            macos/build-macos/Suika3.dmg
             flatpak/Suika3.flatpak
             android-apk/*.apk
-            #ios-engine/*.ipa
           body: |
             - This is an automated build from CI and is not an official release.
             - Note: Currently macOS and iOS builds are excluded because of a problem of renewal of Apple Developer Program.
