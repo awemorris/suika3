@@ -1078,26 +1078,6 @@ if(SUIKA_ENABLE_INSTALL)
     )
   endif()
 
-  #
-  # Insatll desktop-related files.
-  #
-
-  if(SUIKA_ENABLE_FREEDESKTOP)
-    install(
-      FILES resources/freedesktop/vn.suika3.engine.xml
-      DESTINATION share/mime/packages
-      RENAME vn.suika3.engine.mime.xml
-    )
-    install(
-      FILES resources/freedesktop/vn.suika3.engine.desktop
-      DESTINATION share/applications
-    )
-    install(
-      FILES resources/freedesktop/vn.suika3.engine.png
-      DESTINATION share/icons/hicolor/512x512/apps
-    )
-  endif()
-
   if(SUIKA_ENABLE_FLATPAK)
     install(
       FILES resources/flatpak/vn.suika3.engine.metainfo.xml
@@ -1120,24 +1100,64 @@ if(SUIKA_ENABLE_INSTALL)
   # Install the sample game.
   #
 
-  if(NOT SUIKA_ENABLE_FLATPAK)
-    # Install ZLIB-licensed contents.
-    if(SUIKA_ENABLE_DIST)
-      # Exclude the font when packaging.
-      # (A symlink to a system font should be created by packaging process.)
-      install(
-        DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game"
-        DESTINATION "${SUIKA_DIR_GAME}"
-        FILES_MATCHING
-        PATTERN "*"
-        PATTERN "system/font/*" EXCLUDE
-      )
-    else()
-      # Include the font.
-      install(
-        DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game"
-        DESTINATION "${SUIKA_DIR_GAME}"
-      )
-    endif()
+  # Install ZLIB-licensed contents.
+  if(SUIKA_ENABLE_DIST)
+    # Exclude the font when packaging.
+    # (A symlink to a system font should be created by packaging process.)
+    install(
+      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game"
+      DESTINATION "${SUIKA_DIR_GAME}"
+      FILES_MATCHING
+      PATTERN "*"
+      PATTERN "system/font/*" EXCLUDE
+    )
+  else()
+    # Include the font.
+    install(
+      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game"
+      DESTINATION "${SUIKA_DIR_GAME}"
+    )
   endif()
+
+  #
+  # Insatll desktop-related files.
+  #
+
+  if(SUIKA_ENABLE_FREEDESKTOP)
+    install(
+      FILES resources/freedesktop/vn.suika3.engine.xml
+      DESTINATION share/mime/packages
+      RENAME vn.suika3.engine.mime.xml
+    )
+    install(
+      FILES resources/freedesktop/vn.suika3.engine.desktop
+      DESTINATION share/applications
+    )
+    install(
+      FILES resources/freedesktop/vn.suika3.engine.png
+      DESTINATION share/icons/hicolor/512x512/apps
+    )
+
+    # Run update if not packaging.
+    if(NOT SUIKA_ENABLE_DIST)
+      find_program(UPDATE_DESKTOP_DATABASE_EXECUTABLE NAMES update-desktop-database)
+      find_program(UPDATE_MIME_DATABASE_EXECUTABLE NAMES update-mime-database)
+      if(UPDATE_DESKTOP_DATABASE_EXECUTABLE)
+        install(CODE "
+          execute_process(
+              COMMAND ${UPDATE_DESKTOP_DATABASE_EXECUTABLE}
+                      ${CMAKE_INSTALL_PREFIX}/share/applications
+          )
+        ")
+      endif()
+      if(UPDATE_MIME_DATABASE_EXECUTABLE)
+        install(CODE "
+         execute_process(
+             COMMAND ${UPDATE_MIME_DATABASE_EXECUTABLE}
+                      ${CMAKE_INSTALL_PREFIX}/share/mime
+          )
+        ")
+      endif()
+    endif() # NOT SUIKA_ENABLE_DIST
+  endif() # SUIKA_ENABLE_FREEDESKTOP
 endif()
