@@ -665,26 +665,26 @@ jobs:
           name: ios
           path: ios
  
-       - name: Download iOS ipa artifacts
-         uses: actions/download-artifact@v4
-         with:
-           name: ios-engine
-           path: ios-engine
+      - name: Download iOS ipa artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ios-engine
+          path: ios-engine
  
-       - name: Copy for iOS.
-         run: |
-           mkdir dist/misc/ios/Resources/
-           cp resources/assets.arc dist/misc/ios/Resources/
-           mkdir dist/misc/ios/Resources/video
-           mkdir dist/misc/ios/ios.xcodeproj
-           cp resources/projects/ios/ios.xcodeproj/project.pbxproj dist/misc/ios/ios.xcodeproj/
-           mkdir dist/misc/ios/ios
-           tar xfz ios/Suika3.xcframework.tar.gz -C dist/misc/ios/ios/
-           cp -R resources/projects/ios/ios/Assets.xcassets dist/misc/ios/ios/
-           cp resources/projects/ios/ios/entry.c dist/misc/ios/ios/
-           cp resources/projects/ios/ios/Info.plist dist/misc/ios/ios/
-           cp resources/projects/ios/ios/ios.entitlements dist/misc/ios/ios/
-           cp resources/projects/ios/ios/LaunchScreen.storyboard dist/misc/ios/ios/
+      - name: Copy for iOS.
+        run: |
+          mkdir dist/misc/ios/Resources/
+          cp resources/assets.arc dist/misc/ios/Resources/
+          mkdir dist/misc/ios/Resources/video
+          mkdir dist/misc/ios/ios.xcodeproj
+          cp resources/projects/ios/ios.xcodeproj/project.pbxproj dist/misc/ios/ios.xcodeproj/
+          mkdir dist/misc/ios/ios
+          tar xfz ios/Suika3.xcframework.tar.gz -C dist/misc/ios/ios/
+          cp -R resources/projects/ios/ios/Assets.xcassets dist/misc/ios/ios/
+          cp resources/projects/ios/ios/entry.c dist/misc/ios/ios/
+          cp resources/projects/ios/ios/Info.plist dist/misc/ios/ios/
+          cp resources/projects/ios/ios/ios.entitlements dist/misc/ios/ios/
+          cp resources/projects/ios/ios/LaunchScreen.storyboard dist/misc/ios/ios/
 
       - name: Download Android arm64 artifacts
         uses: actions/download-artifact@v4
