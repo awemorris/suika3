@@ -107,8 +107,8 @@ brew install suika3
 
 Flatpak:
 ```
-wget https://github.com/awemorris/suika3/releases/latest/download/Suika3.flatpak
-flatpak install --user Suika3.flatpak
+wget https://github.com/awemorris/suika3/releases/latest/download/Suika3-x86_64.flatpak
+flatpak install --user Suika3-x86_64.flatpak
 ```
 
 FreeBSD Ports:

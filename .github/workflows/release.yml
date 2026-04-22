@@ -212,14 +212,14 @@ jobs:
           flatpak install --user -y flathub org.freedesktop.Platform//25.08
           flatpak install --user -y flathub org.freedesktop.Platform.GStreamer.openmpt//25.08
           flatpak-builder --user -y --repo=myrepo --force-clean build-dir-x86_64 ./resources/flatpak/vn.suika3.engine.yml
-          flatpak build-bundle myrepo Suika3-arm64.flatpak vn.suika3.engine --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
+          flatpak build-bundle myrepo Suika3-aarch.flatpak vn.suika3.engine --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: flatpak-arm64
           path: |
-            Suika3-arm64.flatpak
+            Suika3-aarch64.flatpak
           if-no-files-found: error
           retention-days: 7
 
@@ -644,13 +644,13 @@ jobs:
       - name: Download Flatpak arm64 artifacts
         uses: actions/download-artifact@v4
         with:
-          name: flatpak-arm64
-          path: flatpak-arm64
+          name: flatpak-aarch64
+          path: flatpak-aarch64
 
       - name: Copy for Flatpak.
         run: |
           cp flatpak-x86_64/Suika3-x86_64.flatpak dist/misc/linux/
-          cp flatpak-arm64/Suika3-arm64.flatpak dist/misc/linux/
+          cp flatpak-aarch64/Suika3-aarch64.flatpak dist/misc/linux/
 
       - name: Download wasm artifacts
         uses: actions/download-artifact@v4
@@ -843,8 +843,8 @@ jobs:
             windows/build/windows-vs2022-x64/Release/suika3.exe
             Suika3/misc/windows/suika3-32.exe
             macos/build-macos/Suika3.dmg
-            flatpak/Suika3-x86_64.flatpak
-            flatpak/Suika3-arm64.flatpak
+            flatpak-x86_64/Suika3-x86_64.flatpak
+            flatpak-aarch64/Suika3-aarch64.flatpak
           body: |
             - This is an automated build from CI and is not an official release.
             - The ZIP archive contains: 
