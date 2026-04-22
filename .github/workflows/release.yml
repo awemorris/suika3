@@ -817,7 +817,6 @@ jobs:
             android-apk/*.apk
           body: |
             - This is an automated build from CI and is not an official release.
-            - Note: Currently macOS and iOS builds are excluded because of a problem of renewal of Apple Developer Program.
             - The ZIP archive contains: 
                 - Windows standalone engine (64-bit)
                 - Windows standalone engine (32-bit)
