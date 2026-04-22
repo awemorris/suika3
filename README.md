@@ -287,18 +287,14 @@ Suika3 is engineered with modern techniques, and delivers:
 
 ## Kanban (Status)
 
-The current version is `26.04.x`.**
+**The current version is `26.04.x`:**
 
-We are in the `Quality Stabilization Period` (April 1 - June 30, 2026) for
-the planned release `Suika3 26.07 LTS` (scheduled on July 1 2026).
-
-While the quality is improving day by day, our `System Testing` for
-the first release has only just begun, so many bugs still need to be
-fixed. However, we have secured a three-month system testing period,
-and we expect that major bugs will be resolved by the time of release.
-
-A detailed list of known issues can be found in [BUGS.md](BUGS.md).
-See [Quality Assurance](#quality-assurance) for the details.
+- Quality is improving daily, and `26.04.13` is now considered stable.
+- We are currently in the `Quality Stabilization Period` (April 1 - June 30, 2026)
+  in preparation for the upcoming `Suika3 26.07 LTS` release (scheduled for July 1, 2026).
+- While some minor bugs may remain, they will be fully resolved by the LTS release.
+- A detailed list of all issues can be found in [BUGS.md](BUGS.md).
+- See [Quality Assurance](#quality-assurance) for more details.
 
 **Our current status is:**
 
@@ -318,7 +314,6 @@ See [Quality Assurance](#quality-assurance) for the details.
 - Goal: `Suika3 26.07 LTS` Public Release (July 1, 2026)
 
 **Remaining Tasks:**
-- Website Update
 - Document: `SRS: System Requirement Specification`
 - Document: `SDS: System Design Specification`
 
