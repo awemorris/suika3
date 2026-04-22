@@ -648,6 +648,11 @@ if(STRATO_ENABLE_JIT)
   target_compile_definitions(strato PRIVATE USE_JIT)
 endif()
 
+# Console
+if(STRATO_ENABLE_CONSOLE)
+  target_compile_definitions(strato PRIVATE HAL_USE_CONSOLE)
+endif()
+
 # Windows
 if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_GDK_WINDOWS
@@ -670,11 +675,6 @@ if(   STRATO_TARGET_WINDOWS
       INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/dx12headers.tar.gz
       DESTINATION ${CMAKE_BINARY_DIR}
     )
-  endif()
-
-  # Console
-  if(STRATO_ENABLE_CONSOLE)
-    target_compile_definitions(strato PRIVATE HAL_USE_CONSOLE)
   endif()
 endif()
 if(STRATO_TARGET_WINDOWS95)

@@ -155,7 +155,7 @@ option(SUIKA_ENABLE_MAIN2 "Enable main2() hook" OFF)
 
 #
 # [SUIKA_ENABLE_CONSOLE]
-#  - Use console for debug output on Windows.
+#  - Use console for debug output..
 #
 option(SUIKA_ENABLE_CONSOLE "Enable console debug output" OFF)
 

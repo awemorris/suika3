@@ -1118,6 +1118,7 @@ hal_log_info(
     vsnprintf(buf, sizeof(buf), s, ap);
     va_end(ap);
 
+#ifndef HAL_USE_CONSOLE
     // Open the log window and put the text.
     openLogWindow();
     putTextToLogWindow(buf);
@@ -1129,6 +1130,9 @@ hal_log_info(
         fflush(fp);
     }
     NSLog(@"%@", [[NSString alloc] initWithUTF8String:buf]);
+#else
+    printf("%s\n", buf);
+#endif
 
     __sync_synchronize();
 
@@ -1147,6 +1151,7 @@ hal_log_warn(
     vsnprintf(buf, sizeof(buf), s, ap);
     va_end(ap);
 
+#ifndef HAL_USE_CONSOLE
     // Open the log window and put the text.
     openLogWindow();
     putTextToLogWindow(buf);
@@ -1158,6 +1163,9 @@ hal_log_warn(
         fflush(fp);
     }
     NSLog(@"%@", [[NSString alloc] initWithUTF8String:buf]);
+#else
+    printf("%s\n", buf);
+#endif
 
     __sync_synchronize();
 
@@ -1177,6 +1185,7 @@ hal_log_error(
     vsnprintf(buf, sizeof(buf), s, ap);
     va_end(ap);
 
+#ifndef HAL_USE_CONSOLE
     // Open the log window and put the text.
     openLogWindow();
     putTextToLogWindow(buf);
@@ -1188,6 +1197,9 @@ hal_log_error(
         fflush(fp);
     }
     NSLog(@"%@", [[NSString alloc] initWithUTF8String:buf]);
+#else
+    printf("%s\n", buf);
+#endif
 
     __sync_synchronize();
 
