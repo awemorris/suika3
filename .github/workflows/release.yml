@@ -174,7 +174,7 @@ jobs:
       - name: Install deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y flatpak-builder qemu-user-static
+          sudo apt-get install -y flatpak-builder
 
       - name: Build flatpak
         run: |
@@ -203,7 +203,7 @@ jobs:
       - name: Install deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y flatpak-builder qemu-user-static
+          sudo apt-get install -y flatpak-builder
 
       - name: Build flatpak
         run: |
