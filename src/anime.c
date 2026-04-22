@@ -238,6 +238,7 @@ static bool load_anime_file(const char *file);
 static bool update_layer_params(int layer);
 static void synthesis_eye_anime(int chpos);
 static bool is_japanese_locale(void);
+static bool is_chinese_locale(void);
 
 /*
  * Initialize the anime subsystem.
@@ -1296,6 +1297,8 @@ s3_run_lip_anime(
 	WORD_COUNT = conf_character_lipsync_chars == 0 ? 3 : conf_character_lipsync_chars;
 	if (is_japanese_locale())
 		WORD_COUNT /= 2;	/* Quirk for Japanese. */
+	else if (is_chinese_locale())
+		WORD_COUNT /= 4;	/* Quirk for Chinese. */
 
 	/* Describe the lip anime. */
 	frame_count = s3_get_layer_image(lip_layer)->width / s3_get_layer_image(base_layer)->width;
@@ -1313,6 +1316,7 @@ s3_run_lip_anime(
 		msg += n;
 
 		if (wc == ',' ||
+		    wc == U32C('，', 0x3001) ||
 		    wc == U32C('、', 0x3001)) {
 			ofs_time += base_time * 5;
 			word_count = WORD_COUNT;
@@ -1397,7 +1401,19 @@ is_japanese_locale(void)
 	const char *locale;
 
 	locale = s3_get_system_language();
-	if (strcmp(locale, "ja"))
+	if (strcmp(locale, "ja") == 0)
+		return true;
+
+	return false;
+}
+
+static bool
+is_chinese_locale(void)
+{
+	const char *locale;
+
+	locale = s3_get_system_language();
+	if (strncmp(locale, "zh", 2) == 0)
 		return true;
 
 	return false;

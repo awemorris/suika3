@@ -5,10 +5,15 @@
 #[callmacro name="nvl-mode"]
 
 #
-# Fix the locale. (Please comment out to apply your OS locale!)
+# Force a locale if you want.
+#  - There are 3 languages implemented in this sample game.
+#  - The language can be switched by the config GUI.
+#  - If not specified here (commented out), your OS locale will be used.
 #
 
 [config name="game.locale" value="en"]
+#[config name="game.locale" value="zh-cn"]
+#[config name="game.locale" value="ja"]
 
 #
 # Set the chapter name.
@@ -37,11 +42,11 @@
 [ch time="1.0" fade="normal" left="ch/xiaoling/xiaoling-normal.png"]
 
 # Say.
-[text name="Xiaoling" text="(......)"]
+[text name="Xiaoling" text="......"]
 
 # Say. (the same thing by the different notation.)
 [text name="Xiaoling" text="""
-  (......)
+  ......
 """]
 
 #
@@ -209,6 +214,9 @@
   NVL mode has a fullscreen-styled message box.
   By default, each text tag will do a line feed.
   """]
+[text action="inline" text=" To continue a line, use inline action."]
+
+[text action="clear"]
 [text text=
   """
   Alice was beginning to get very tired of sitting by her sister \
@@ -218,10 +226,6 @@
   “without pictures or conversations?”
   """]
 
-[text action="continue" text="You can divide a long text "]
-[text action="continue" text="into short texts "]
-[text action="continue" text="like this."]
-[text action="finish"]
 
 [text action="clear"]
 [text text=

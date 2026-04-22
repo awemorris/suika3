@@ -20,11 +20,11 @@ BEGIN
         BLOCK "040904b0"  // 0x0409 = US English, 0x04b0 = Unicode
         BEGIN
             VALUE "CompanyName",      "suika3.vn\0"
-            VALUE "FileDescription",  "Suika3 AOT Compiler\0"
+            VALUE "FileDescription",  "S3 AOT Compiler\0"
             VALUE "FileVersion",      "1.0.0.0\0"
-            VALUE "InternalName",     "suika3-aotcomp.exe\0"
-            VALUE "LegalCopyright",   "(C) 2026 The Suika3 Community\0"
-            VALUE "OriginalFilename", "suika3-aotcomp.exe\0"
+            VALUE "InternalName",     "suika3-aotc.exe\0"
+            VALUE "LegalCopyright",   "(C) 2026 Awe Morris / SCHOLA SUIKAE\0"
+            VALUE "OriginalFilename", "suika3-aotc.exe\0"
             VALUE "ProductName",      "Suika3\0"
             VALUE "ProductVersion",   "1.0.0.0\0"
         END

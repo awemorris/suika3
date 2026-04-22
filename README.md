@@ -77,6 +77,25 @@ Please refer to [Getting Started](docs/mkdocs-en/docs/getting-started.md).
 
 [https://github.com/awemorris/suika3/releases/latest/download/Suika3-full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-full.zip)
 
+### Package Managers
+
+Linux (Flatpak):
+```
+wget https://github.com/awemorris/suika3/releases/latest/download/Suika3-$(uname -m).flatpak
+flatpak install --user Suika3-$(uname -m).flatpak
+```
+
+macOS (Homebrew):
+```
+brew tap awemorris/suika3
+brew install suika3
+```
+
+FreeBSD Ports (latest):
+```
+pkg install suika3
+```
+
 ### Source Build
 
 Please refer to [build.md](docs/mkdocs-en/docs/build.md) for platform-specific instructions.
@@ -95,25 +114,6 @@ cmake .. && cmake --build . --parallel && sudo cmake --install .
 # Run the sample.
 cd ../game
 suika3
-```
-
-### Package Managers
-
-Linux (Flatpak):
-```
-wget https://github.com/awemorris/suika3/releases/latest/download/Suika3-$(uname -m).flatpak
-flatpak install --user Suika3-$(uname -m).flatpak
-```
-
-macOS (Homebrew):
-```
-brew tap awemorris/suika3
-brew install suika3
-```
-
-FreeBSD Ports (latest):
-```
-pkg install suika3
 ```
 
 ---

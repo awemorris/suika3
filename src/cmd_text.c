@@ -76,10 +76,9 @@ static char *name_top;
 static char *msg_top;
 
 /*
- * Buffered Message
+ * Inline Concatenation
  */
-static char *buf_msg;
-static bool should_free_buf_msg;
+static bool is_inline;
 
 /*
  * Drawing state
@@ -297,9 +296,9 @@ static bool blit_namebox(void);
 static void focus_character(void);
 static void init_click(void);
 static void init_repetition(void);
-static const char *get_localized_text(bool cache);
+static const char *get_localized_text(void);
 static const char *get_localized_name(void);
-static const char *get_localized_voice(void);;
+static const char *get_localized_voice(void);
 static void speak(void);
 static void init_lip_sync(void);
 static void cleanup_lip_sync(void);
@@ -655,7 +654,7 @@ init_flags_and_vars(void)
 	is_page_top = s3_is_page_top();
 
 	/* Others. */
-	should_free_buf_msg = false;
+	is_inline = false;
 }
 
 /* Initialize for the page mode and special actions. */
@@ -725,51 +724,8 @@ init_special_action(bool *exit)
 		return true;
 	}
 
-	if (strcmp(action, "continue") == 0) {
-		/* Append to buffered message. */
-		char *buf;
-		const char *text;
-		size_t len;
-		const char *name;
-
-		text = get_localized_text(false);
-
-		len = 0;
-		if (buf_msg != NULL)
-			len += strlen(buf_msg);
-		if (text != NULL)
-			len += strlen(text);
-		len++; /* NUL */
-
-		buf = malloc(len);
-		if (buf == NULL) {
-			s3_log_out_of_memory();
-			return false;
-		}
-
-		snprintf(buf, len, "%s%s", buf_msg ? buf_msg : "", text ? text : "");
-		if (buf_msg != NULL)
-			free(buf_msg);
-		buf_msg = buf;
-
-		name = get_localized_name();
-		if (name != NULL) {
-			if (name_top != NULL)
-				free(name_top);
-			name_top = strdup(name);
-			if (name_top == NULL) {
-				s3_log_out_of_memory();
-				return false;
-			}
-		}
-
-		/* Exit. */
-		*exit = true;
-		return true;
-	}
-
-	if (strcmp(action, "finish") == 0) {
-		should_free_buf_msg = true;
+	if (strcmp(action, "inline") == 0) {
+		is_inline = true;
 
 		/* Continue execution. */
 		*exit = false;
@@ -985,7 +941,7 @@ init_msg_top(void)
 	}
 
 	/* If we are in the page mode. */
-	msg = get_localized_text(true);
+	msg = get_localized_text();
 	if (msg == NULL)
 		return false;
 
@@ -1064,15 +1020,12 @@ register_message_for_history(
 static bool
 init_msgbox(void)
 {
-	bool concat;
-
 	/* If returning from system GUI */
 	if (gui_sys_flag && !load_flag)
 		return true;
 
-	/* Do LF for page mode if concat is not specified. */
-	concat = s3_get_tag_arg_bool("concat", true, false);
-	if (s3_is_page_mode() & !is_page_top && !concat) {
+	/* Do LF for page mode if `action="inline"` is not specified. */
+	if (s3_is_page_mode() & !is_page_top && !is_inline) {
 		if (!conf_msgbox_font_tategaki) {
 			pen_x = conf_msgbox_margin_left;
 			pen_y += conf_msgbox_margin_line;
@@ -2245,15 +2198,11 @@ blit_dimming(void)
 
 /* Get the text for the current locale. */
 static const char *
-get_localized_text(
-	bool cache)
+get_localized_text(void)
 {
 	char name[128];
 	const char *locale;
 	const char *text;
-
-	if (cache && buf_msg != NULL)
-		return buf_msg;
 
 	locale = s3_get_locale();
 	assert(locale != NULL);
@@ -2296,9 +2245,6 @@ get_localized_name(void)
 {
 	const char *locale, *major_locale, *name;
 	int i;
-
-	if (buf_msg != NULL && name_top != NULL)
-		return name_top;
 
 	name = s3_get_tag_arg_string("name", true, NULL);
 	if (name == NULL)
@@ -2551,12 +2497,6 @@ cleanup(void)
 	if (msgbox_context) {
 		s3_destroy_drawmsg(msgbox_context);
 		msgbox_context = NULL;
-	}
-
-	/* Free the bufferred message. */
-	if (should_free_buf_msg) {
-		free(buf_msg);
-		buf_msg = NULL;
 	}
 
 	/* Save the pen position for inline choose. */

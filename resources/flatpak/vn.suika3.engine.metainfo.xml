@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <component type="desktop-application">
   <id>vn.suika3.engine</id>
-  <metadata_license>CC0-1.0</metadata_license>
+  <metadata_license>Zlib</metadata_license>
   <project_license>Zlib</project_license>
 
   <name>Suika3</name>
@@ -46,7 +46,7 @@
   </mimetypes>
 
   <releases>
-    <release version="26.04.10" date="2026-04-20">
+    <release version="26.04.14" date="2026-04-23">
       <description>
         <p>26.04 is the first public version.</p>
       </description>
