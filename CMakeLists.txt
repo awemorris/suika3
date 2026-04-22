@@ -1101,7 +1101,7 @@ if(SUIKA_ENABLE_INSTALL)
   #
 
   # Install ZLIB-licensed contents.
-  if(SUIKA_ENABLE_DIST)
+  if(SUIKA_ENABLE_DIST AND NOT SUIKA_ENABLE_FLATPAK)
     # Exclude the font when packaging.
     # (A symlink to a system font should be created by packaging process.)
     install(
