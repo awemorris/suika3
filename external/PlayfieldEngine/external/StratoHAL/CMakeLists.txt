@@ -286,7 +286,7 @@ endif()
 if(   STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_FREEBSD_WAYLAND)
   find_package(PkgConfig REQUIRED)
-  pkg_check_modules(WAYLAND REQUIRED wayland-client wayland-egl)
+  pkg_check_modules(WAYLAND REQUIRED wayland-client wayland-egl libdecor-0)
 endif()
 
 # ---
@@ -1170,8 +1170,6 @@ if(   STRATO_TARGET_LINUX_WAYLAND
 
   set(XDG_SHELL_XML
       /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml)
-  set(XDG_DECORATION_XML
-      /usr/share/wayland-protocols/unstable/xdg-decoration/xdg-decoration-unstable-v1.xml)
 
   # generate xdg-shell sources
   set(GEN_SHELL_HDR ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-client-protocol.h)
@@ -1183,20 +1181,9 @@ if(   STRATO_TARGET_LINUX_WAYLAND
     DEPENDS ${XDG_SHELL_XML}
   )
 
-  # generate xdg-decoration sources
-  set(GEN_DECORATION_HDR ${CMAKE_CURRENT_BINARY_DIR}/zxdg-decoration-unstable-v1-client-protocol.h)
-  set(GEN_DECORATION_SRC ${CMAKE_CURRENT_BINARY_DIR}/zxdg-decoration-unstable-v1-protocol.c)
-  add_custom_command(
-    OUTPUT ${GEN_DECORATION_HDR} ${GEN_DECORATION_SRC}
-    COMMAND ${WAYLAND_SCANNER} client-header ${XDG_DECORATION_XML} ${GEN_DECORATION_HDR}
-    COMMAND ${WAYLAND_SCANNER} private-code ${XDG_DECORATION_XML} ${GEN_DECORATION_SRC}
-    DEPENDS ${XDG_DECORATION_XML}
-  )
-
   # add both generated sources
   target_sources(strato PRIVATE
     ${GEN_SHELL_SRC} ${GEN_SHELL_HDR}
-    ${GEN_DECORATION_SRC} ${GEN_DECORATION_HDR}
   )
   target_include_directories(strato PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
 endif()

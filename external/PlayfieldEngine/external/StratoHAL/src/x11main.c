@@ -1234,7 +1234,7 @@ void update_viewport_size(
 	mouse_scale = (float)screen_width / (float)width;
 
 	/* If height is not enough, calc the width. (with "height-first") */
-	if(use_height > (float)screen_width) {
+	if(use_height > (float)height) {
 		use_height = (float)height;
 		use_width = (float)use_height / aspect;
 		mouse_scale = (float)screen_height / (float)height;

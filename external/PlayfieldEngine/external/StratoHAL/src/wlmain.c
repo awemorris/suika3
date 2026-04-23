@@ -48,7 +48,7 @@
 #include <wayland-client.h>
 #include <wayland-egl.h>
 #include "xdg-shell-client-protocol.h" /* Generated */
-#include "zxdg-decoration-unstable-v1-client-protocol.h" /* Generated */
+#include <libdecor-0/libdecor.h>
 
 /* POSIX */
 #define _GNU_SOURCE
@@ -96,23 +96,17 @@ static int mouse_ofs_x;
 static int mouse_ofs_y;
 static bool is_full_screen;
 
-/* Physical Display Config */
-static int display_width;
-static int display_height;
-static int display_refresh;
-
 /* Wayland */
 static struct wl_display *wl_dpy;
 static struct wl_compositor *wl_compositor;
-static struct xdg_wm_base *xdg_base;
 static struct wl_surface *wl_surface;
 static struct xdg_surface *xdg_surface;
-static struct xdg_toplevel *xdg_toplevel;
 static struct wl_egl_window *wlegl_win;
-static struct zxdg_decoration_manager_v1 *decoration_mgr;
 static struct wl_seat *wl_seat;
 static struct wl_pointer *wl_pointer;
 static struct wl_keyboard *wl_keyboard;
+static struct libdecor *decor;
+static struct libdecor_frame *decor_frame;
 
 /* EGL Objects */
 static EGLDisplay egl_dpy;
@@ -129,6 +123,9 @@ static FILE *log_fp;
 
 /* Locale */
 const char *playfield_lang_code;
+
+/* Close window flag. */
+static bool is_close_requested;
 
 #if 0
 /* Flag to indicate whether we are playing a video or not */
@@ -155,10 +152,13 @@ static void flip(void);
 static bool wait_for_next_frame(void);
 static bool next_event(void);
 static void update_viewport_size(int width, int height);
-static void xdg_wm_base_ping(void *data, struct xdg_wm_base *base, uint32_t serial);
-static void xdg_surface_configure(void *data, struct xdg_surface* s, uint32_t serial);
-static void xdg_toplevel_configure(void *data, struct xdg_toplevel* tl, int32_t w, int32_t h, struct wl_array *states);
-static void xdg_toplevel_close(void *data, struct xdg_toplevel* tl);
+static void seat_capabilities(void *data, struct wl_seat *seat, uint32_t caps);
+static void seat_name(void *data, struct wl_seat *seat, const char *name);
+static void handle_configure(struct libdecor_frame *frame, struct libdecor_configuration *configuration, void *user_data);
+static void handle_commit(struct libdecor_frame *frame, void *user_data);
+static void handle_dismiss_popup(struct libdecor_frame *frame, const char *seat_name, void *user_data);
+static void handle_decor_error(struct libdecor *context, enum libdecor_error error, const char *message);
+static void handle_close(struct libdecor_frame *frame, void *user_data);
 static void registry_global(void *data, struct wl_registry *reg, uint32_t name, const char *interface, uint32_t version);
 static void registry_remove(void *data, struct wl_registry *reg, uint32_t name);
 static void pointer_enter(void *data, struct wl_pointer *pointer, uint32_t serial, struct wl_surface *surface, wl_fixed_t sx, wl_fixed_t sy);
@@ -179,38 +179,43 @@ static void keyboard_modifiers(void *data, struct wl_keyboard *keyboard, uint32_
 static void keyboard_repeat_info(void *data, struct wl_keyboard *keyboard, int32_t rate, int32_t delay);
 
 /* Wayland */
-static const struct xdg_wm_base_listener xdg_wm_base_listener = {
-    .ping = xdg_wm_base_ping,
-};
-static const struct xdg_surface_listener xdg_surface_listener = {
-    .configure = xdg_surface_configure,
-};
-static const struct xdg_toplevel_listener xdg_toplevel_listener = {
-    .configure = xdg_toplevel_configure,
-    .close     = xdg_toplevel_close,
-};
 static const struct wl_registry_listener registry_listener = {
 	.global        = registry_global,
 	.global_remove = registry_remove,
 };
 static const struct wl_pointer_listener pointer_listener = {
-    .enter = pointer_enter,
-    .leave = pointer_leave,
-    .motion = pointer_motion,
-    .button = pointer_button,
-    .axis = pointer_axis,
-    .frame = pointer_frame,
-    .axis_source = pointer_axis_source,
-    .axis_stop = pointer_axis_stop,
-    .axis_discrete = pointer_axis_discrete,
+	.enter = pointer_enter,
+	.leave = pointer_leave,
+	.motion = pointer_motion,
+	.button = pointer_button,
+	.axis = pointer_axis,
+	.frame = pointer_frame,
+	.axis_source = pointer_axis_source,
+	.axis_stop = pointer_axis_stop,
+	.axis_discrete = pointer_axis_discrete,
 };
 static const struct wl_keyboard_listener keyboard_listener = {
-    .keymap = keyboard_keymap,
-    .enter = keyboard_enter,
-    .leave = keyboard_leave,
-    .key = keyboard_key,
-    .modifiers = keyboard_modifiers,
-    .repeat_info = keyboard_repeat_info,
+	.keymap = keyboard_keymap,
+	.enter = keyboard_enter,
+	.leave = keyboard_leave,
+	.key = keyboard_key,
+	.modifiers = keyboard_modifiers,
+	.repeat_info = keyboard_repeat_info,
+};
+static const struct wl_seat_listener seat_listener = {
+	.capabilities = seat_capabilities,
+	.name = seat_name,
+};
+static struct libdecor_frame_interface decor_frame_iface = {
+	.configure = handle_configure,
+	.close = handle_close,
+	.commit = handle_commit,
+	.dismiss_popup = handle_dismiss_popup,
+
+};
+
+static struct libdecor_interface decor_iface = {
+	.error = handle_decor_error,
 };
 
 /*
@@ -303,7 +308,7 @@ static bool init_hal(int argc, char *argv[])
 	if (!init_opengl(screen_width, screen_height)) {
 		hal_log_error("Can't initialize OpenGL.");
 	}
-	update_viewport_size(display_width, display_height);
+	update_viewport_size(screen_width, screen_height);
 
 	/* Initialize the gamepad. */
 	init_evgamepad();
@@ -329,39 +334,74 @@ static bool open_display(void)
 		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
 		EGL_NONE
 	};
+	struct wl_registry *reg;
 	EGLint ncfg;
 	EGLConfig configs[64];
+	int i;
 
+	/* Connect to Wayland display. */
 	wl_dpy = wl_display_connect(NULL);
 	if (!wl_dpy) {
 		hal_log_error("wl_display_connect failed");
 		return false;
 	}
 
-	struct wl_registry* reg = wl_display_get_registry(wl_dpy);
+	/* Get globals. */
+	reg = wl_display_get_registry(wl_dpy);
+	if (!reg) {
+		hal_log_error("wl_display_get_registry failed");
+		return false;
+	}
 	wl_registry_add_listener(reg, &registry_listener, NULL);
+
+	/* Wait for registry_global(). */
 	wl_display_roundtrip(wl_dpy);
-	if (!wl_compositor || !xdg_base) {
-		hal_log_error("required globals missing");
+
+	if (!wl_compositor) {
+		hal_log_error("Required globals missing.");
 		return false;
 	}
 
+	/* Create libdecor context. */
+	decor = libdecor_new(wl_dpy, &decor_iface);
+	if (!decor) {
+		hal_log_error("libdecor_new failed");
+		return false;
+	}
+
+	/*
+	 * Let libdecor do its initial handshake before creating the frame.
+	 * This keeps the state machine settled.
+	 */
+	wl_display_roundtrip(wl_dpy);
+
+	/* Create main surface. */
 	wl_surface = wl_compositor_create_surface(wl_compositor);
-	xdg_surface = xdg_wm_base_get_xdg_surface(xdg_base, wl_surface);
-	xdg_surface_add_listener(xdg_surface, &xdg_surface_listener, NULL);
+	if (!wl_surface) {
+		hal_log_error("wl_compositor_create_surface failed");
+		return false;
+	}
 
-	xdg_toplevel = xdg_surface_get_toplevel(xdg_surface);
-	xdg_toplevel_add_listener(xdg_toplevel, &xdg_toplevel_listener, NULL);
-	xdg_toplevel_set_title(xdg_toplevel, window_title);
+	/* Create libdecor frame. */
+	decor_frame = libdecor_decorate(decor, wl_surface, &decor_frame_iface, NULL);
+	if (!decor_frame) {
+		hal_log_error("libdecor_decorate failed");
+		return false;
+	}
+	libdecor_frame_set_title(decor_frame, window_title);
 
-	wl_surface_commit(wl_surface);
-
+	/*
+	 * Create wl_egl_window BEFORE mapping the frame.
+	 * handle_configure() may call wl_egl_window_resize(), so wlegl_win
+	 * must already exist by the time configure events start arriving.
+	 */
 	wlegl_win = wl_egl_window_create(wl_surface, screen_width, screen_height);
 	if (!wlegl_win) {
 		hal_log_error("wl_egl_window_create failed");
 		return false;
 	}
 
+	/* Create EGL display. */
 	egl_dpy = eglGetDisplay((EGLNativeDisplayType)wl_dpy);
 	if (egl_dpy == EGL_NO_DISPLAY) {
 		hal_log_error("eglGetDisplay failed");
@@ -387,9 +427,11 @@ static bool open_display(void)
 		return false;
 	}
 
+	/* Pick a suitable config. */
 	egl_cfg = configs[0];
 	for (int i = 0; i < ncfg; i++) {
 		EGLint surface_type = 0, r = 0, g = 0, b = 0, a = 0, depth = 0;
+
 		eglGetConfigAttrib(egl_dpy, configs[i], EGL_SURFACE_TYPE, &surface_type);
 		eglGetConfigAttrib(egl_dpy, configs[i], EGL_RED_SIZE, &r);
 		eglGetConfigAttrib(egl_dpy, configs[i], EGL_GREEN_SIZE, &g);
@@ -398,43 +440,45 @@ static bool open_display(void)
 		eglGetConfigAttrib(egl_dpy, configs[i], EGL_DEPTH_SIZE, &depth);
 
 		if ((surface_type & EGL_WINDOW_BIT) &&
-		    r == 8 && g == 8 && b == 8 && a == 8) {
+		    r == 8 && g == 8 && b == 8 && a == 0) {
 			egl_cfg = configs[i];
 			break;
 		}
 	}
 
+	/* Create EGL context. */
 	egl_ctx = eglCreateContext(egl_dpy, egl_cfg, EGL_NO_CONTEXT, (EGLint[]){EGL_CONTEXT_CLIENT_VERSION,2, EGL_NONE});
 	if (egl_ctx == EGL_NO_CONTEXT) {
 		hal_log_error("eglCreateContext failed: 0x%04x\n", eglGetError());
 		return false;
 	}
 
+	/* Create EGL surface. */
 	egl_surf = eglCreateWindowSurface(egl_dpy, egl_cfg, (EGLNativeWindowType)wlegl_win, NULL);
 	if (egl_surf == EGL_NO_SURFACE) {
 		hal_log_error("eglCreateWindowSurface failed: 0x%04x\n", eglGetError());
 		return false;
 	}
 
+	/* Make context current BEFORE libdecor starts sending configure events. */
 	if (!eglMakeCurrent(egl_dpy, egl_surf, egl_surf, egl_ctx)) {
 		hal_log_error("eglMakeCurrent failed: 0x%04x\n", eglGetError());
 		return false;
 	}
 
-	if (decoration_mgr) {
-		struct zxdg_toplevel_decoration_v1 *deco =
-			zxdg_decoration_manager_v1_get_toplevel_decoration(decoration_mgr, xdg_toplevel);
-		zxdg_toplevel_decoration_v1_set_mode(deco, ZXDG_TOPLEVEL_DECORATION_V1_MODE_SERVER_SIDE);
-	}
-
+	/*
+	 * Initial viewport using the requested size.
+	 * Actual size will be updated by handle_configure().
+	 */
+	update_viewport_size(screen_width, screen_height);
+	
+	/*
+	 * Now it is safe to map the decorated frame.
+	 * From this point on, configure callbacks may resize the EGL window.
+	 */
+	libdecor_frame_map(decor_frame);
+	wl_surface_commit(wl_surface);
 	wl_display_roundtrip(wl_dpy);
-
-	if (wl_seat) {
-		wl_pointer = wl_seat_get_pointer(wl_seat);
-		wl_pointer_add_listener(wl_pointer, &pointer_listener, NULL);
-		wl_keyboard = wl_seat_get_keyboard(wl_seat);
-		wl_keyboard_add_listener(wl_keyboard, &keyboard_listener, NULL);
-	}
 
 	return true;
 }
@@ -460,9 +504,12 @@ static void close_display(void)
 	eglDestroyContext(egl_dpy, egl_ctx);
 	eglTerminate(egl_dpy);
     
+	if (decor_frame)
+		libdecor_frame_unref(decor_frame);
+	if (decor)
+		libdecor_unref(decor);
+
 	wl_egl_window_destroy(wlegl_win);
-	xdg_toplevel_destroy(xdg_toplevel);
-	xdg_surface_destroy(xdg_surface);
 	wl_surface_destroy(wl_surface);
 	wl_display_disconnect(wl_dpy);
 }
@@ -519,8 +566,15 @@ static bool run_frame(void)
 	if (!is_gst_playing)
 		opengl_start_rendering();
 #endif
-	wl_display_dispatch_pending(wl_dpy);
+
+	if (decor != NULL) {
+		if (libdecor_dispatch(decor, 0) < 0)
+			return false;
+	}
 	wl_display_flush(wl_dpy);
+	if (is_close_requested)
+		return false;
+
 	opengl_start_rendering();
 
 	/* Call a frame event. */
@@ -580,7 +634,6 @@ static void update_viewport_size(int width, int height)
 {
 	float aspect, use_width, use_height;
 	int orig_x, orig_y;
-	int viewport_width, viewport_height;
 
 	/* Calc the aspect ratio of the game. */
 	aspect = (float)screen_height / (float)screen_width;
@@ -591,7 +644,7 @@ static void update_viewport_size(int width, int height)
 	mouse_scale = (float)screen_width / (float)width;
 
 	/* If height is not enough, calc the width. (with "height-first") */
-	if(use_height > (float)screen_width) {
+	if(use_height > (float)height) {
 		use_height = (float)height;
 		use_width = (float)use_height / aspect;
 		mouse_scale = (float)screen_height / (float)height;
@@ -602,13 +655,19 @@ static void update_viewport_size(int width, int height)
 	orig_y = (int)((((float)height - use_height) / 2.0f) + 0.5);
 	mouse_ofs_x = orig_x;
 	mouse_ofs_y = orig_y;
-	printf("!mouse_scale = %f\n", mouse_scale);
 
 	/* Calc the viewport size. */
 	viewport_width = (int)use_width;
 	viewport_height = (int)use_height;
 
+	printf("!orig_x = %d\n", orig_x);
+	printf("!orig_y = %d\n", orig_x);
+	printf("!vp_w = %d\n", viewport_width);
+	printf("!vp_h = %d\n", viewport_height);
+	printf("!mouse_scale = %f\n", mouse_scale);
+
 	/* Update the screen offset and scale for drawing subsystem. */
+	printf("RESIZE(%d,%d,%d,%d)\n", orig_x, orig_y, viewport_width, viewport_height);
 	opengl_set_screen(orig_x, orig_y, viewport_width, viewport_height);
 }
 
@@ -1204,9 +1263,7 @@ hal_enter_full_screen_mode(void)
 	if (is_full_screen)
 		return;
 
-	xdg_toplevel_set_fullscreen(xdg_toplevel, NULL);
-	wl_surface_commit(wl_surface);
-
+	libdecor_frame_set_fullscreen(decor_frame, NULL);
 	is_full_screen = true;
 }
 
@@ -1219,9 +1276,7 @@ hal_leave_full_screen_mode(void)
 	if (!is_full_screen)
 		return;
 
-	xdg_toplevel_unset_fullscreen(xdg_toplevel);
-	wl_surface_commit(wl_surface);
-
+	libdecor_frame_unset_fullscreen(decor_frame);
 	is_full_screen = false;
 }
 
@@ -1309,68 +1364,136 @@ hal_set_continuous_swipe_enabled(
 static int last_mouse_x;
 static int last_mouse_y;
 
-static void xdg_wm_base_ping(void *data, struct xdg_wm_base *base, uint32_t serial)
+static void
+seat_capabilities(
+	void *data,
+	struct wl_seat *seat,
+	uint32_t caps)
 {
 	UNUSED_PARAMETER(data);
 
-	xdg_wm_base_pong(base, serial);
-}
+	if ((caps & WL_SEAT_CAPABILITY_POINTER) && wl_pointer == NULL) {
+		wl_pointer = wl_seat_get_pointer(seat);
+		wl_pointer_add_listener(wl_pointer, &pointer_listener, NULL);
+	} else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && wl_pointer != NULL) {
+		wl_pointer_destroy(wl_pointer);
+		wl_pointer = NULL;
+	}
 
-static void xdg_surface_configure(void *data, struct xdg_surface* s, uint32_t serial)
-{
-	UNUSED_PARAMETER(data);
-
-	xdg_surface_ack_configure(s, serial);
-}
-
-static void xdg_toplevel_configure(void *data, struct xdg_toplevel* tl, int32_t w, int32_t h, struct wl_array *states)
-{
-	struct wl_region *region;
-
-	UNUSED_PARAMETER(data);
-	UNUSED_PARAMETER(tl);
-	UNUSED_PARAMETER(states);
-
-	if (w > 0 && h > 0) {
-		wl_egl_window_resize(wlegl_win, w, h, 0, 0);
-		glViewport(0, 0, w, h);
-		update_viewport_size(w, h);
-
-		glDisable(GL_DEPTH_TEST);
-		glClearColor(0, 0, 0, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-		eglSwapBuffers(egl_dpy, egl_surf);
-
-		region = wl_compositor_create_region(wl_compositor);
-		wl_region_add(region, 0, 0, w, w);
-		wl_surface_set_opaque_region(wl_surface, region);
-		wl_region_destroy(region);
+	if ((caps & WL_SEAT_CAPABILITY_KEYBOARD) && wl_keyboard == NULL) {
+		wl_keyboard = wl_seat_get_keyboard(seat);
+		wl_keyboard_add_listener(wl_keyboard, &keyboard_listener, NULL);
+	} else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD) && wl_keyboard != NULL) {
+		wl_keyboard_destroy(wl_keyboard);
+		wl_keyboard = NULL;
 	}
 }
 
-static void xdg_toplevel_close(void *data, struct xdg_toplevel* tl)
+static void
+seat_name(
+	void *data,
+	struct wl_seat *seat,
+	const char *name)
 {
 	UNUSED_PARAMETER(data);
-	UNUSED_PARAMETER(tl);
-
-	wl_display_disconnect(wl_dpy);
-	exit(0);
+	UNUSED_PARAMETER(seat);
+	UNUSED_PARAMETER(name);
 }
 
-static void registry_global(void *data, struct wl_registry *reg, uint32_t name, const char *interface, uint32_t version)
+static void
+handle_configure(
+	struct libdecor_frame *frame,
+	struct libdecor_configuration *configuration,
+	void *user_data)
+{
+	static int last_width = -1;
+	static int last_height = -1;
+	int width, height;
+	int orig_x, orig_y;
+	int viewport_width, viewport_height;
+	struct libdecor_state *state;
+	enum libdecor_window_state window_state;
+
+	if (libdecor_configuration_get_window_state(configuration, &window_state)) {
+		bool is_maximized = (window_state & LIBDECOR_WINDOW_STATE_MAXIMIZED) != 0;
+		bool is_now_fullscreen = (window_state & LIBDECOR_WINDOW_STATE_FULLSCREEN) != 0;
+		if (!is_full_screen && is_now_fullscreen)
+			hal_enter_full_screen_mode();
+		else if (is_full_screen && !is_now_fullscreen)
+			hal_leave_full_screen_mode();
+		if (is_maximized) {
+			printf("MAX\n");
+		}
+	}
+
+	if (!libdecor_configuration_get_content_size(configuration, frame, &width, &height)) {
+		width = screen_width;
+		height = screen_height;
+	}
+
+	state = libdecor_state_new(width, height);
+	libdecor_frame_commit(frame, state, configuration);
+	libdecor_state_free(state);
+
+	if (width != last_width || height != last_height) {
+		if (wlegl_win != NULL)
+			wl_egl_window_resize(wlegl_win, width, height, 0, 0);
+
+		update_viewport_size(width, height);
+		last_width = width;
+		last_height = height;
+	}
+}
+
+static void
+handle_commit(struct libdecor_frame *frame, void *user_data)
+{
+	UNUSED_PARAMETER(frame);
+	UNUSED_PARAMETER(user_data);
+}
+
+static void
+handle_dismiss_popup(struct libdecor_frame *frame,
+                     const char *seat_name,
+                     void *user_data)
+{
+	UNUSED_PARAMETER(frame);
+	UNUSED_PARAMETER(seat_name);
+	UNUSED_PARAMETER(user_data);
+}
+
+static void
+handle_decor_error(struct libdecor *context,
+                   enum libdecor_error error,
+                   const char *message)
+{
+	hal_log_error("libdecor error %d: %s", (int)error, message ? message : "(null)");
+}
+
+static void
+handle_close(
+	struct libdecor_frame *frame,
+	void *user_data)
+{
+	is_close_requested = true;
+}
+
+static void
+registry_global(
+	void *data,
+	struct wl_registry *reg,
+	uint32_t name,
+	const char *interface,
+	uint32_t version)
 {
 	UNUSED_PARAMETER(data);
 	UNUSED_PARAMETER(version);
 
 	if (strcmp(interface, "wl_compositor") == 0) {
 		wl_compositor = wl_registry_bind(reg, name, &wl_compositor_interface, 4);
-	} else if (strcmp(interface, "xdg_wm_base") == 0) {
-		xdg_base = wl_registry_bind(reg, name, &xdg_wm_base_interface, 1);
-		xdg_wm_base_add_listener(xdg_base, &xdg_wm_base_listener, NULL);
-	} else if (strcmp(interface, "zxdg_decoration_manager_v1") == 0) {
-		decoration_mgr = wl_registry_bind(reg, name, &zxdg_decoration_manager_v1_interface, 1);
 	} else if (strcmp(interface, "wl_seat") == 0) {
 		wl_seat = wl_registry_bind(reg, name, &wl_seat_interface, version < 5 ? version : 5);
+		wl_seat_add_listener(wl_seat, &seat_listener, NULL);
 	}
 }
 
