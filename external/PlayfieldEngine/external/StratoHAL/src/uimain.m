@@ -652,7 +652,7 @@ hal_make_real_path(
         // If a save file:
         if(strncmp(fname, "save/", 5) == 0) {
             // Return a "Application Support" path.
-            NSString *path = [NSString stringWithFormat:@"%@/%@/%s/save/%s",
+            NSString *path = [NSString stringWithFormat:@"%@/%@/%s/%s",
                               NSHomeDirectory(),
                               @"/Library/Application Support",
                               window_title,

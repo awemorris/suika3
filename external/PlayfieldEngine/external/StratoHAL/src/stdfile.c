@@ -827,7 +827,7 @@ hal_open_wfile(
 	(*wf)->fp = fopen(path, "w");
 #endif
 	if ((*wf)->fp == NULL) {
-		//hal_log_error("Failed to open the file \"%s\".", path);
+		/*hal_log_error("OOPS: Failed to open the file \"%s\".", path);*/
 		free(path);
 		free(*wf);
 		*wf = NULL;
