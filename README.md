@@ -123,7 +123,7 @@ suika3
 There is an awesome VS Code extension by `@lalalll-lalalll` to support
 syntax highlighting for Suika3.
 
-Check it out: [NovelML-Highlighter](https://github.com/lalalll-lalalll/NovelML-Highlighter)
+Check it out: [NovelML-Helper](https://github.com/lalalll-lalalll/NovelML-Helper)
 
 To install this extension, visit the repository and download the .vsix
 file from the
@@ -156,26 +156,40 @@ Now you have a beautiful development environment!
 
 Open the extracted folder by `Visual Studio Code`.
 
-**Click `Terminal --> Run Build Task` (or press Ctrl-Shift-B):**
-
-<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/vscode-1.webp" alt="VSCode 1" width="640" hspace="20">
-
-**Suika3 will be executed:**
+- Click the command bar, `Run Task --> Suika3: Run` (or just press `Ctrl-Shift-B`)
+- Suika3 will launch immediately!
+- Any script errors will appear in the `PROBLEMS` tab.
+- You can click an error to jump directly to the corresponding line in the source code.
 
 <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/vscode-2.webp" alt="VSCode 2" width="640" hspace="20">
-
-**Errors will be shown in PROBLEMS:**
-
 <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/vscode-3.webp" alt="VSCode 3" width="640" hspace="20">
 
-### Android Execution
+### iOS and Android Execution
 
-Clicking the "Suika3: Build Android APK" task will automatically
-generate an APK file and install it on your Android device. There is
-no need to install the JDK or Android SDK manually, as they will be
-downloaded automatically in the build process!
+Ever dreamed of becoming an iOS/Android developer in just a minute?
+With Suika3, it's that simple.
 
-A similar workflow is planned for iOS as well. (Mac is required)
+- One-Click:
+    - By selecting the `Suika3: Build iOS IPA` or `Suika3: Build Android APK`
+      task, Suika3 will automatically build the app and install it
+      onto your USB-connected smartphone.
+- For Android:
+    - No manual setup required!
+    - The JDK and Android SDK will be downloaded automatically during the build process.
+- For iOS:
+    - Requires Xcode 15+ and an active enrollment in the `Apple Developer Program`.
+
+We truly believe Suika3 is one of the most streamlined tools in the
+world for creating and publishing iPhone, iPad, and Android apps to
+the stores!
+
+Even if you aren't ready to publish just yet, imagine the look on your
+friends' faces when they see your game running smoothly on an iPhone.
+You'll be the star of the day.
+
+And if you're looking for a publisher to back your project, having a
+playable, high-quality mobile demo is your ultimate weapon. It speaks
+louder than any pitch deck ever could!
 
 ---
 
@@ -289,7 +303,7 @@ Suika3 is engineered with modern techniques, and delivers:
 
 **The current version is `26.04.x`:**
 
-- Quality is improving daily, and `26.04.13` is now considered stable.
+- Quality is improving daily, and `26.04.15` is now considered stable.
 - We are currently in the `Quality Stabilization Period` (April 1 - June 30, 2026)
   in preparation for the upcoming `Suika3 26.07 LTS` release (scheduled for July 1, 2026).
 - While some minor bugs may remain, they will be fully resolved by the LTS release.
