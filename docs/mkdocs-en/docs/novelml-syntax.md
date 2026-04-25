@@ -3,7 +3,7 @@ NovelML Syntax Reference
 
 This document explains the basic syntax of NovelML and how it runs.
 
-For the detailed explanation of each tag, please see [Suika3 Tag Reference](novelml-tags.md).
+For the detailed explanation of each tag, please see "Suika3 Tag Reference".
 
 ---
 
@@ -213,7 +213,7 @@ instead of ending automatically.
 
 This document is meant to go with:
 
-- [Tag Reference](novelml-tags.md): explains what each tag does
+- Tag Reference: explains what each tag does
 - This document: explains how a scenario runs
 
-For details on individual tags, see the [Tag Reference](novelml-tags.md).
+For details on individual tags, see the "Tag Reference".
