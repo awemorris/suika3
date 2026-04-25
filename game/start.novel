@@ -1,5 +1,5 @@
 #
-# Remove # to test NVL mode.
+# Remove # to use NVL mode.
 #
 
 #[callmacro name="nvl-mode"]
@@ -8,12 +8,22 @@
 # Force a locale if you want.
 #  - There are 3 languages implemented in this sample game.
 #  - The language can be switched by the config GUI.
-#  - If not specified here (commented out), your OS locale will be used.
+#  - If not specified here (that is, commented out here), your OS locale will be used.
 #
 
 [config name="game.locale" value="en"]
 #[config name="game.locale" value="zh-cn"]
 #[config name="game.locale" value="ja"]
+
+#
+# Title Screen
+#
+
+# Show a GUI.
+[gui file="gui/title/title.gui"]
+
+# Will be jumped to here.
+[label name="start"]
 
 #
 # Set the chapter name.
@@ -31,8 +41,8 @@
 # Play a BGM.
 #
 
-[volume track="bgm" vol="0.5"]
-[bgm file="bgm/afternoon2.ogg"]
+#[volume track="bgm" vol="0.5"]
+#[bgm file="bgm/afternoon2.ogg"]
 
 #
 # Let Xiaoling enter and say.

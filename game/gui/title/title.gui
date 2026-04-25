@@ -1,0 +1,34 @@
+#
+# Title GUI
+#
+
+# Basic settings for this GUI.
+global {
+    # Fading-in time in seconds.
+    fadein: 0.5;
+
+    # Fading-out time in seconds.
+    fadeout: 0.5;
+
+    # Sound effect on cancel.
+    cancelse: se/click.ogg;
+}
+
+BASE {
+    id: 32;
+    type: noaction;
+    x: 0;
+    y: 0;
+    image-idle: gui/title/base.png;
+}
+
+START {
+    id: 1;
+    type: goto;
+    label: start;
+    image-idle: gui/title/start-idle.png;
+    image-hover: gui/title/start-hover.png;
+    image-press: gui/title/start-press.png;
+    x: 1100;
+    y: 540;
+}
