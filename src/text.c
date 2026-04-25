@@ -40,6 +40,8 @@
 #include <string.h>
 #include <assert.h>
 
+#define GLYPH_CACHE_SIZE	512
+
 /*
  * Emoji images
  */
@@ -48,13 +50,18 @@ static struct s3_image *emoji_image[S3_EMOJI_COUNT];
 /*
  * Last codepoint and the cached image.
  */
-static int last_slot;
-static uint32_t last_codepoint;
-static int last_size;
-static s3_pixel_t last_color;
-static int last_outline_width;
-static s3_pixel_t last_outline_color;
-static struct s3_image *last_image;
+struct glyph_cache {
+	int slot;
+	uint32_t codepoint;
+	int size;
+	s3_pixel_t color;
+	int outline_width;
+	s3_pixel_t outline_color;
+	struct s3_image *image;
+	uint64_t lru_time;
+};
+static struct glyph_cache glyph_cache[GLYPH_CACHE_SIZE];
+static uint64_t glyph_cache_time;
 
 /*
  * Context Table
@@ -69,9 +76,7 @@ struct s3_drawmsg *ctx_tbl[CONTEXT_MAX];
 /*
  * Forward declarations
  */
-static bool load_cached_glyph(int slot, uint32_t codepoint, int size,
-			      hal_pixel_t color, int outline_width,
-			      hal_pixel_t outline_color);
+static struct s3_image *load_cached_glyph(int slot, uint32_t codepoint, int size, hal_pixel_t color, int outline_width, hal_pixel_t outline_color);
 static bool isgraph_extended(const char **mbs, uint32_t *wc);
 static int translate_font_type(int font_type);
 static bool draw_emoji(struct s3_drawmsg *context, const char *name,
@@ -107,21 +112,6 @@ s3i_init_text(void)
 		}
 	}
 
-	last_slot = -1;
-	last_codepoint = (uint32_t)-1;
-	last_size = -1;
-	last_color = 0;
-	last_outline_width = 0;
-	last_outline_color = 0;
-	last_image = NULL;
-
-	for (i = 0; i < CONTEXT_MAX; i++) {
-		if (ctx_tbl[i] != NULL) {
-			free(ctx_tbl[i]);
-			ctx_tbl[i] = NULL;
-		}
-	}
-
 	return true;
 }
 
@@ -133,22 +123,28 @@ s3i_cleanup_text(void)
 {
 	int i;
 
-	for (i = 0; i < S3_EMOJI_COUNT; i++) {
-		if (emoji_image[i] != NULL) {
-			s3_destroy_image(emoji_image[i]);
-			emoji_image[i] = NULL;
+	/* Free the glyph cache. */
+	for (i = 0; i < GLYPH_CACHE_SIZE; i++) {
+		if (glyph_cache[i].image != NULL) {
+			s3_destroy_image(glyph_cache[i].image);
+			glyph_cache[i].image = NULL;
 		}
 	}
+	memset(glyph_cache, 0, sizeof(glyph_cache));
 
-	if (last_image != NULL) {
-		s3_destroy_image(last_image);
-		last_image = NULL;
-	}
-
+	/* Free the text draw contexts. */
 	for (i = 0; i < CONTEXT_MAX; i++) {
 		if (ctx_tbl[i] != NULL) {
 			free(ctx_tbl[i]);
 			ctx_tbl[i] = NULL;
+		}
+	}
+
+	/* Free the emojis. */
+	for (i = 0; i < S3_EMOJI_COUNT; i++) {
+		if (emoji_image[i] != NULL) {
+			s3_destroy_image(emoji_image[i]);
+			emoji_image[i] = NULL;
 		}
 	}
 }
@@ -262,10 +258,13 @@ s3_get_glyph_width(
 	int font_size,
 	uint32_t codepoint)
 {
-	if (!load_cached_glyph(font_type, codepoint, font_size, 0, 0, 0))
+	struct s3_image *glyph;
+
+	glyph = load_cached_glyph(font_type, codepoint, font_size, 0, 0, 0);
+	if (glyph == NULL)
 		return 0;
 
-	return last_image->width;
+	return glyph->width;
 }
 
 /*
@@ -274,10 +273,13 @@ s3_get_glyph_width(
 int
 s3_get_glyph_height(int font_type, int font_size, uint32_t codepoint)
 {
-	if (!load_cached_glyph(font_type, codepoint, font_size, 0, 0, 0))
+	struct s3_image *glyph;
+
+	glyph = load_cached_glyph(font_type, codepoint, font_size, 0, 0, 0);
+	if (glyph == NULL)
 		return 0;
 
-	return last_image->height;
+	return glyph->height;
 }
 
 /*
@@ -359,7 +361,7 @@ s3_get_string_height(int font_type, int font_size, const char *mbs)
 }
 
 /* Load a glyph */
-static bool
+static struct s3_image *
 load_cached_glyph(
 	int slot,
 	uint32_t codepoint,
@@ -368,6 +370,9 @@ load_cached_glyph(
 	int outline_width,
 	s3_pixel_t outline_color)
 {
+	int i, lru_index;
+	uint64_t lru_time;
+
 	assert(slot >= 0 && slot < S3_FONT_COUNT);
 	assert(size > 0);
 	assert(outline_width >= 0);
@@ -375,39 +380,60 @@ load_cached_glyph(
 	slot = translate_font_type(slot);
 
 	/* If cached. */
-	if (last_slot == slot &&
-	    last_codepoint == codepoint &&
-	    last_size == size &&
-	    last_color == color &&
-	    last_outline_width == outline_width &&
-	    last_outline_color == outline_color &&
-	    last_image != NULL)
-		return true;
+	lru_index = 0;
+	lru_time = (uint64_t)-1;
+	for (i = 0; i < GLYPH_CACHE_SIZE; i++) {
+		/* If found a top unused entry. */
+		if (glyph_cache[i].image == NULL) {
+			/* Glyph not found, use this entry. */
+			lru_index = i;
+			break;
+		}
 
-	last_slot = slot;
-	last_codepoint = codepoint;
-	last_size = size;
-	last_color = color;
-	last_outline_width = outline_width;
-	last_outline_color = outline_color;
+		/* If found a cached glyph. */
+		if (glyph_cache[i].slot == slot &&
+		    glyph_cache[i].codepoint == codepoint &&
+		    glyph_cache[i].size == size &&
+		    glyph_cache[i].color == color &&
+		    glyph_cache[i].outline_width == outline_width &&
+		    glyph_cache[i].outline_color == outline_color &&
+		    glyph_cache[i].image != NULL) {
+			glyph_cache[i].lru_time = glyph_cache_time++;
+			return glyph_cache[i].image;
+		}
 
-	if (last_image != NULL) {
-		s3_destroy_image(last_image);
-		last_image = NULL;
+		/* Otherwise, update the LRU item if it is older. */
+		if (glyph_cache[i].lru_time < lru_time) {
+			lru_index = i;
+			lru_time = glyph_cache[i].lru_time;
+		}
 	}
 
-	last_image = s3_load_glyph_image(slot,
-					 codepoint,
-					 size,
-					 color,
-					 outline_width,
-					 outline_color);
-	if (last_image == NULL)
-		return false;
+	/* Destroy the cached glyph. */
+	if (glyph_cache[lru_index].image != NULL) {
+		s3_destroy_image(glyph_cache[lru_index].image);
+		glyph_cache[lru_index].image = NULL;
+	}
 
-	return true;
+	/* Load a glyph. */
+	glyph_cache[lru_index].slot = slot;
+	glyph_cache[lru_index].codepoint = codepoint;
+	glyph_cache[lru_index].size = size;
+	glyph_cache[lru_index].color = color;
+	glyph_cache[lru_index].outline_width = outline_width;
+	glyph_cache[lru_index].outline_color = outline_color;
+	glyph_cache[lru_index].lru_time = glyph_cache_time++;
+	glyph_cache[lru_index].image = s3_load_glyph_image(slot,
+							   codepoint,
+							   size,
+							   color,
+							   outline_width,
+							   outline_color);
+	if (glyph_cache[lru_index].image == NULL)
+		return NULL;
+
+	return glyph_cache[lru_index].image;
 }
-
 
 /* Get an alternative font slot if needed. */
 static int
@@ -472,17 +498,19 @@ s3_draw_glyph(
 	int *ret_h,
 	bool is_dim)
 {
+	struct s3_image *glyph;
 	int ofs_y;
 
 	UNUSED_PARAMETER(is_dim);
 
 	/* Load a glyph to the cache slot. */
-	if (!load_cached_glyph(font_type,
-			       codepoint,
-			       base_font_size,
-			       color,
-			       outline_size,
-			       outline_color))
+	glyph = load_cached_glyph(font_type,
+				  codepoint,
+				  base_font_size,
+				  color,
+				  outline_size,
+				  outline_color);
+	if (glyph == NULL)
 		return false;
 
 	/* Draw the cached glyph on the destination image. */
@@ -490,17 +518,17 @@ s3_draw_glyph(
 	s3_draw_image(img,
 		      x,
 		      y + ofs_y,
-		      last_image,
+		      glyph,
 		      0,
 		      0,
-		      last_image->width,
-		      last_image->height,
+		      glyph->width,
+		      glyph->height,
 		      255,
 		      S3_BLEND_GLYPH);
 
 	/* Set the width and height for return. */
-	*ret_w = last_image->width;
-	*ret_h = last_image->height;
+	*ret_w = glyph->width;
+	*ret_h = glyph->height;
 
 	return true;
 }

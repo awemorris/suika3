@@ -57,12 +57,13 @@
 #endif
 
 /*
- * sound Buffer Parameters
+ * Sound Buffer Parameters
  */
 #define SAMPLING_RATE		(44100)
 #define CHANNELS		(2)
 #define FRAME_SIZE		(4)
 #define BUF_FRAMES		(SAMPLING_RATE / 4)
+#define QUEUE_BUFFERS		(2)
 
 /*
  * OpenSL ES Objects
@@ -75,7 +76,8 @@ static SLPlayItf bq_player_play[HAL_SOUND_TRACKS];
 static BUFFERQUEUEITF bq_player_buffer_queue[HAL_SOUND_TRACKS];
 
 /* Buffers */
-static uint32_t sample_buf[HAL_SOUND_TRACKS][BUF_FRAMES];
+static uint32_t sample_buf[HAL_SOUND_TRACKS][QUEUE_BUFFERS][BUF_FRAMES];
+static int sample_buf_index[HAL_SOUND_TRACKS];
 
 /* Mutex objects to synchronize accesses to sample_buf */
 static pthread_mutex_t sound_mutex[HAL_SOUND_TRACKS];
@@ -85,6 +87,7 @@ static struct hal_wave *wave[HAL_SOUND_TRACKS];
 
 /* Volume Values */
 static float volume[HAL_SOUND_TRACKS];
+static float volume_pow[HAL_SOUND_TRACKS];
 
 /* Finish Flags */
 static bool pre_finish[HAL_SOUND_TRACKS];	 /* Shows if we reached an end-of-stream. */
@@ -180,6 +183,10 @@ play_callback(BUFFERQUEUEITF bq, void *context)
 static void
 enqueue(int stream)
 {
+	int bi;
+	uint32_t *buf;
+	SLresult r;
+
 	if (wave[stream] == NULL)
 		return;
 
@@ -190,18 +197,25 @@ enqueue(int stream)
 		return;
 	}
 
+	/* Ring buffer. */
+	bi = sample_buf_index[stream];
+	buf = sample_buf[stream][bi];
+	sample_buf_index[stream] = (bi + 1) % QUEUE_BUFFERS;
+
 	/* Get PCM samples. */
-	int read_samples = hal_get_wave_samples(wave[stream], sample_buf[stream], BUF_FRAMES);
+	int read_samples = hal_get_wave_samples(wave[stream], buf, BUF_FRAMES);
 
 	/* Fill the remaining samples by zeros for a case where we have reached an end-of-stream. */
 	if (read_samples < BUF_FRAMES)
-		memset(sample_buf[stream] + read_samples, 0, (size_t)(BUF_FRAMES - read_samples) * FRAME_SIZE);
+		memset(buf + read_samples, 0, (size_t)(BUF_FRAMES - read_samples) * FRAME_SIZE);
 
 	/* Scale samples by a volume value. */
-	scale_samples(sample_buf[stream], BUF_FRAMES, volume[stream]);
+	scale_samples(buf, BUF_FRAMES, volume_pow[stream]);
 
 	/* Write the buffer. */
-	(*bq_player_buffer_queue[stream])->Enqueue(bq_player_buffer_queue[stream], sample_buf[stream], read_samples * FRAME_SIZE);
+	r = (*bq_player_buffer_queue[stream])->Enqueue(bq_player_buffer_queue[stream], buf, BUF_FRAMES * FRAME_SIZE);
+	if (r != SL_RESULT_SUCCESS)
+		sample_buf_index[stream] = bi;
 
 	/* Set a pre-finish flag if we reached an end-of-stream. */
 	if (hal_is_wave_eos(wave[stream]))
@@ -219,9 +233,6 @@ scale_samples(uint32_t *buf, int frames, float vol)
 	int i;
 
 	__sync_synchronize();
-
-	/* Convert a scale factor to an exponential value. */
-	scale = (powf(10.0f, vol) - 1.0f) / (10.0f - 1.0f);
 
 	/* Scale samples. */
 	for (i = 0; i < frames; i++) {
@@ -292,7 +303,11 @@ hal_set_sound_volume(
 	int stream,
 	float vol)
 {
+	/* Save the volume. */
 	volume[stream] = vol;
+
+	/* Convert a scale factor to an exponential value. */
+	volume_pow[stream] = (powf(10.0f, vol) - 1.0f) / (10.0f - 1.0f);
 
 	__sync_synchronize();
 

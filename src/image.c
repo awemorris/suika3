@@ -39,7 +39,7 @@
 #define NEVER_COME_HERE	0
 
 /* Max images. */
-#define IMAGE_MAX	(1024)
+#define IMAGE_MAX	(2048)
 
 /* Image table. */
 struct s3_image *img_tbl[IMAGE_MAX];

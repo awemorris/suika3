@@ -123,12 +123,22 @@ enum {
 	TYPE_LANGUAGE,
 };
 
+/* Save item entries. */
 enum save_text_type {
 	SAVE_TEXT_INDEX,
 	SAVE_TEXT_DATE,
 	SAVE_TEXT_CHAPTER,
 	SAVE_TEXT_MSG,
 };
+
+/* Frame interval of dragging to mitigate high load. */
+#if defined(HAL_TARGET_IOS) || \
+    defined(HAL_TARGET_ANDROID) || \
+    defined(HAL_TARGET_WASM)
+#define DRAG_TICK_INTERVAL (30)
+#else
+#define DRAG_TICK_INTERVAL (20)
+#endif
 
 /* Button. */
 struct gui_button {
@@ -274,7 +284,6 @@ struct gui_button {
 		/* Stopwatch for message showing and auto mode wait. */
 		uint64_t sw;
 	} rt;
-
 };
 static struct gui_button button[S3_BUTTON_LAYERS];
 
@@ -392,6 +401,10 @@ static bool did_load;
 /* Did chain? */
 static bool did_chain;
 
+/* Tick management. */
+static uint64_t cur_tick;
+static uint64_t last_drag_tick;
+
 /* Time limit. */
 static float bomb_time;
 static uint64_t bomb_sw;
@@ -445,7 +458,7 @@ static void draw_history_text_item(struct s3_image *target, int index, const cha
 static void process_button_render_history(int button_index);
 static void process_history_scroll_up(void);
 static void process_history_scroll_down(void);
-static void process_history_scroll_at(float pos);
+static void process_history_scroll_at(float pos, bool force);
 static float adjust_history_slider_value(float pos);
 static void process_history_voice(int button_index);
 static bool init_preview_buttons(void);
@@ -856,6 +869,9 @@ s3i_run_gui_update(void)
 	if (is_load_failed)
 		return false;
 
+	/* Increment the tick count. */
+	cur_tick++;
+
 	return true;
 }
 
@@ -1196,11 +1212,11 @@ update_runtime_props(bool is_first_time)
 			else
 				button[i].rt.is_disabled = true;
 			break;
-		case TYPE_HISTORYSCROLL:
-		case TYPE_HISTORYSCROLL_HORIZONTAL:
-			button[i].rt.slider = adjust_history_slider_value(transient_history_slider);
-			process_history_scroll_at(button[i].rt.slider);
-			break;
+//		case TYPE_HISTORYSCROLL:
+//		case TYPE_HISTORYSCROLL_HORIZONTAL:
+//			button[i].rt.slider = adjust_history_slider_value(transient_history_slider);
+//			process_history_scroll_at(button[i].rt.slider, false);
+//			break;
 		case TYPE_LANGUAGE:
 			button[i].rt.is_disabled = is_current_language(button[i].lang);
 			break;
@@ -1570,7 +1586,7 @@ process_button_drag(int index)
 	    b->type != TYPE_HISTORYSCROLL_HORIZONTAL)
 		return false;
 
-	/* If not dragging. */
+	/* If the item is not dragging, set dragging state. */
 	if (!b->rt.is_dragging) {
 		/* If not dragging. */
 		if (!s3_is_mouse_dragging())
@@ -1588,6 +1604,7 @@ process_button_drag(int index)
 		dragging_index = index;
 		b->rt.is_dragging = true;
 		b->rt.slider = calc_slider_value(index);
+		last_drag_tick = cur_tick;
 
 		switch (b->type) {
 		case TYPE_MASTERVOL:
@@ -1598,50 +1615,66 @@ process_button_drag(int index)
 			break;
 		case TYPE_HISTORYSCROLL:
 		case TYPE_HISTORYSCROLL_HORIZONTAL:
-			b->rt.slider = adjust_history_slider_value(b->rt.slider);
+			transient_history_slider = adjust_history_slider_value(b->rt.slider);
+			process_history_scroll_at(transient_history_slider, true);
 			break;
 		}
+
+		/* Update other buttons in case there are multiple buttons of the same type. */
+		update_runtime_props(true);
 		return true;
 	}
 
 	/*
-	 * If dragging.
+	 * If still dragging.
 	 */
+	if (s3_is_mouse_dragging()) {
+		/* Ignore continued frame dragging.  */
+		if (cur_tick - last_drag_tick >= DRAG_TICK_INTERVAL) {
+			last_drag_tick = cur_tick;
 
-	/* Reflect the slider amount in the settings. */
-	b->rt.slider = calc_slider_value(index);
-	switch (b->type) {
-	case TYPE_MASTERVOL:
-		s3_set_master_volume(b->rt.slider);
-		break;
-	case TYPE_BGMVOL:
-		s3_set_mixer_global_volume(S3_TRACK_BGM, b->rt.slider);
-		break;
-	case TYPE_VOICEVOL:
-		s3_set_mixer_global_volume(S3_TRACK_VOICE, b->rt.slider);
-		break;
-	case TYPE_SEVOL:
-		s3_set_mixer_global_volume(S3_TRACK_SE, b->rt.slider);
-		break;
-	case TYPE_CHARACTERVOL:
-		s3_set_character_volume(b->index, b->rt.slider);
-		break;
-	case TYPE_TEXTSPEED:
-		transient_text_speed = b->rt.slider;
-		break;
-	case TYPE_AUTOSPEED:
-		transient_auto_speed = b->rt.slider;
-		break;
-	case TYPE_HISTORYSCROLL:
-	case TYPE_HISTORYSCROLL_HORIZONTAL:
-		transient_history_slider = adjust_history_slider_value(b->rt.slider);
-		break;
-	default:
-		break;
+			/* Reflect the slider amount in the settings. */
+			b->rt.slider = calc_slider_value(index);
+			switch (b->type) {
+			case TYPE_MASTERVOL:
+				s3_set_master_volume(b->rt.slider);
+				break;
+			case TYPE_BGMVOL:
+				s3_set_mixer_global_volume(S3_TRACK_BGM, b->rt.slider);
+				break;
+			case TYPE_VOICEVOL:
+				s3_set_mixer_global_volume(S3_TRACK_VOICE, b->rt.slider);
+				break;
+			case TYPE_SEVOL:
+				s3_set_mixer_global_volume(S3_TRACK_SE, b->rt.slider);
+				break;
+			case TYPE_CHARACTERVOL:
+				s3_set_character_volume(b->index, b->rt.slider);
+				break;
+			case TYPE_TEXTSPEED:
+				transient_text_speed = b->rt.slider;
+				break;
+			case TYPE_AUTOSPEED:
+				transient_auto_speed = b->rt.slider;
+				break;
+			case TYPE_HISTORYSCROLL:
+			case TYPE_HISTORYSCROLL_HORIZONTAL:
+				transient_history_slider = adjust_history_slider_value(b->rt.slider);
+				process_history_scroll_at(transient_history_slider, true);
+				break;
+			default:
+				break;
+			}
+
+			/* Update other buttons in case there are multiple buttons of the same type. */
+			update_runtime_props(true);
+		}
 	}
 
-	/* If dragging is finished. */
-	if (!s3_is_mouse_dragging()) {
+	/*
+	 * If dragging is finished.
+	 */
+	else {
 		b->rt.is_dragging = false;
 		dragging_index = -1;
 		is_drag_finished = true;
@@ -1677,15 +1710,15 @@ process_button_drag(int index)
 			break;
 		case TYPE_HISTORYSCROLL:
 		case TYPE_HISTORYSCROLL_HORIZONTAL:
-			process_history_scroll_at(transient_history_slider);
+			process_history_scroll_at(transient_history_slider, true);
 			break;
 		default:
 			break;
 		}
-	}
 
-	/* Update other buttons in case there are multiple buttons of the same type. */
-	update_runtime_props(false);
+		/* Update other buttons in case there are multiple buttons of the same type. */
+		update_runtime_props(false);
+	}
 
 	return true;
 }
@@ -3037,13 +3070,19 @@ static void process_history_scroll_down(void)
 }
 
 /* Process scroll at a specific position on the history bar. */
-static void process_history_scroll_at(float pos)
+static void process_history_scroll_at(float pos, bool force)
 {
-	/* Adjust the slider position. */
-	transient_history_slider = adjust_history_slider_value(pos);
+	float new_pos;
 
-	/* Redraw. */
-	need_update_history_buttons = true;
+	/* Adjust the slider position. */
+	new_pos = adjust_history_slider_value(pos);
+	if (force || new_pos != transient_history_slider) {
+		/* Update. */
+		transient_history_slider = new_pos;
+
+		/* Redraw. */
+		need_update_history_buttons = true;
+	}
 }
 
 /* Adjust the history scroll bar position. */

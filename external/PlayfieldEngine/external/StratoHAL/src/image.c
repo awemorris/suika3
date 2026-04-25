@@ -165,6 +165,7 @@ hal_create_image(
 	(*img)->width = w;
 	(*img)->height = h;
 	(*img)->pixels = pixels;
+	(*img)->no_free = false;
 	(*img)->id = id_top++;
 
 	return true;

@@ -167,6 +167,9 @@ public class MainActivity extends Activity {
     // The synchronization object for the mutual exclusion between the main thread and the rendering thread.
     private final Object syncObj = new Object();
 
+	// Rendering in-flight flag.
+	private boolean in_flight;
+
 	//
 	// Key code
 	//
@@ -297,16 +300,50 @@ public class MainActivity extends Activity {
         @Override
         public void onSurfaceCreated(GL10 gl, EGLConfig config) {
             if(!resumeFromVideo) {
-                synchronized (syncObj) {
-                    nativeInitGame();
-                    VIEWPORT_WIDTH = nativeGetScreenWidth();
-                    VIEWPORT_HEIGHT = nativeGetScreenHeight();
-                    isLoaded = true;
+				synchronized(syncObj) {
+					while(true) {
+						if(!in_flight) {
+							in_flight = true;
+							break;
+						}
+						try {
+							syncObj.wait();
+						} catch (InterruptedException e) {
+						}
+					}
+				}
+				try {
+					nativeInitGame();
+					VIEWPORT_WIDTH = nativeGetScreenWidth();
+					VIEWPORT_HEIGHT = nativeGetScreenHeight();
+					isLoaded = true;
+				} finally {
+					synchronized(syncObj) {
+						in_flight = false;
+						syncObj.notifyAll();
+					}
                 }
             } else {
                 resumeFromVideo = false;
-                synchronized (syncObj) {
+				synchronized(syncObj) {
+					while(true) {
+						if(!in_flight) {
+							in_flight = true;
+							break;
+						}
+						try {
+							syncObj.wait();
+						} catch (InterruptedException e) {
+						}
+					}
+				}
+				try {
                     nativeReinitOpenGL();
+				} finally {
+					synchronized(syncObj) {
+						in_flight = false;
+						syncObj.notifyAll();
+					}
                 }
             }
         }
@@ -343,23 +380,32 @@ public class MainActivity extends Activity {
         //
         @Override
         public void onDrawFrame(GL10 gl) {
-            boolean ret = true;
-            synchronized(syncObj) {
-                if(!isLoaded)
-                    return;
-                if(isFinished)
-                    return;
-                if(video != null)
-                    return;
-                ret = nativeRunFrame();
-                if (!ret)
-                    nativeCleanup();
-            }
-            if (!ret) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                    finishAndRemoveTask();
-                isFinished = true;
-            }
+			synchronized (syncObj) {
+				if (in_flight)
+					return;
+
+				if(video != null)
+					return;
+				if(!isLoaded)
+					return;
+
+				in_flight = true;
+			}
+			try {
+				boolean ret = nativeRunFrame();
+				if(!ret)
+					nativeCleanup();
+				if (!ret) {
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+						finishAndRemoveTask();
+					isFinished = true;
+				}
+			} finally {
+				synchronized (syncObj) {
+					in_flight = false;
+					syncObj.notifyAll();
+				}
+			}
         }
 
         //
@@ -372,7 +418,19 @@ public class MainActivity extends Activity {
             int pointed = event.getPointerCount();
             int delta = y - touchLastY;
 
-            synchronized(syncObj) {
+			synchronized(syncObj) {
+				while(true) {
+					if(!in_flight) {
+						in_flight = true;
+						break;
+					}
+					try {
+						syncObj.wait();
+					} catch (InterruptedException e) {
+					}
+				}
+			}
+			try {
                 switch (event.getActionMasked()) {
                     case MotionEvent.ACTION_DOWN:
                         nativeOnTouchStart(x, y, pointed);
@@ -383,64 +441,109 @@ public class MainActivity extends Activity {
                     case MotionEvent.ACTION_UP:
                         nativeOnTouchEnd(x, y, touchCount);
                         break;
-                }
-            }
+				}
+			} finally {
+				synchronized(syncObj) {
+					in_flight = false;
+					syncObj.notifyAll();
+				}
+			}
 
-            touchCount = pointed;
+			touchCount = pointed;
             return true;
         }
 
 		@Override
 		public boolean onKeyDown(int keyCode, KeyEvent event) {
-			switch (keyCode) {
-			case KeyEvent.KEYCODE_BUTTON_A:
-				nativeOnKeyDown(KEY_GAMEPAD_A);
-				return true;
-			case KeyEvent.KEYCODE_BUTTON_B:
-				nativeOnKeyDown(KEY_GAMEPAD_B);
-				return true;
-			case KeyEvent.KEYCODE_BUTTON_X:
-				nativeOnKeyDown(KEY_GAMEPAD_X);
-				return true;
-			case KeyEvent.KEYCODE_BUTTON_Y:
-				nativeOnKeyDown(KEY_GAMEPAD_Y);
-				return true;
-			case KeyEvent.KEYCODE_BUTTON_L1:
-				nativeOnKeyDown(KEY_GAMEPAD_L);
-				return true;
-			case KeyEvent.KEYCODE_BUTTON_R1:
-				nativeOnKeyDown(KEY_GAMEPAD_R);
-				return true;
-			default:
-				break;
+			synchronized(syncObj) {
+				while(true) {
+					if(!in_flight) {
+						in_flight = true;
+						break;
+					}
+					try {
+						syncObj.wait();
+					} catch (InterruptedException e) {
+					}
+				}
 			}
+			try {
+				switch (keyCode) {
+				case KeyEvent.KEYCODE_BUTTON_A:
+					nativeOnKeyDown(KEY_GAMEPAD_A);
+					return true;
+				case KeyEvent.KEYCODE_BUTTON_B:
+					nativeOnKeyDown(KEY_GAMEPAD_B);
+					return true;
+				case KeyEvent.KEYCODE_BUTTON_X:
+					nativeOnKeyDown(KEY_GAMEPAD_X);
+					return true;
+				case KeyEvent.KEYCODE_BUTTON_Y:
+					nativeOnKeyDown(KEY_GAMEPAD_Y);
+					return true;
+				case KeyEvent.KEYCODE_BUTTON_L1:
+					nativeOnKeyDown(KEY_GAMEPAD_L);
+					return true;
+				case KeyEvent.KEYCODE_BUTTON_R1:
+					nativeOnKeyDown(KEY_GAMEPAD_R);
+					return true;
+				default:
+					break;
+				}
+			} finally {
+				synchronized(syncObj) {
+					in_flight = false;
+					syncObj.notifyAll();
+				}
+			}
+
 			return super.onKeyDown(keyCode, event);
 		}
 
 		@Override
 		public boolean onKeyUp(int keyCode, KeyEvent event) {
-			switch (keyCode) {
-			case KeyEvent.KEYCODE_BUTTON_A:
-				nativeOnKeyUp(KEY_GAMEPAD_A);
-				return true;
-			case KeyEvent.KEYCODE_BUTTON_B:
-				nativeOnKeyUp(KEY_GAMEPAD_B);
-				return true;
-			case KeyEvent.KEYCODE_BUTTON_X:
-				nativeOnKeyUp(KEY_GAMEPAD_X);
-				return true;
-			case KeyEvent.KEYCODE_BUTTON_Y:
-				nativeOnKeyUp(KEY_GAMEPAD_Y);
-				return true;
-			case KeyEvent.KEYCODE_BUTTON_L1:
-				nativeOnKeyUp(KEY_GAMEPAD_L);
-				return true;
-			case KeyEvent.KEYCODE_BUTTON_R1:
-				nativeOnKeyUp(KEY_GAMEPAD_R);
-				return true;
-			default:
-				break;
+			synchronized(syncObj) {
+				while(true) {
+					if(!in_flight) {
+						in_flight = true;
+						break;
+					}
+					try {
+						syncObj.wait();
+					} catch (InterruptedException e) {
+					}
+				}
 			}
+			try {
+				switch (keyCode) {
+				case KeyEvent.KEYCODE_BUTTON_A:
+					nativeOnKeyUp(KEY_GAMEPAD_A);
+					return true;
+				case KeyEvent.KEYCODE_BUTTON_B:
+					nativeOnKeyUp(KEY_GAMEPAD_B);
+					return true;
+				case KeyEvent.KEYCODE_BUTTON_X:
+					nativeOnKeyUp(KEY_GAMEPAD_X);
+					return true;
+				case KeyEvent.KEYCODE_BUTTON_Y:
+					nativeOnKeyUp(KEY_GAMEPAD_Y);
+					return true;
+				case KeyEvent.KEYCODE_BUTTON_L1:
+					nativeOnKeyUp(KEY_GAMEPAD_L);
+					return true;
+				case KeyEvent.KEYCODE_BUTTON_R1:
+					nativeOnKeyUp(KEY_GAMEPAD_R);
+					return true;
+				default:
+					break;
+				}
+			} finally {
+				synchronized(syncObj) {
+					in_flight = false;
+					syncObj.notifyAll();
+				}
+			}
+
 			return super.onKeyDown(keyCode, event);
 		}
 
@@ -458,25 +561,45 @@ public class MainActivity extends Activity {
 
 				float hatX = event.getAxisValue(MotionEvent.AXIS_HAT_X);
 				float hatY = event.getAxisValue(MotionEvent.AXIS_HAT_Y);
-				if (hatX == -1.0f) {
-					nativeOnKeyDown(KEY_GAMEPAD_LEFT);
-					nativeOnKeyUp(KEY_GAMEPAD_RIGHT);
-				} else if (hatX == 1.0f) {
-					nativeOnKeyDown(KEY_GAMEPAD_RIGHT);
-					nativeOnKeyUp(KEY_GAMEPAD_LEFT);
-				} else {
-					nativeOnKeyUp(KEY_GAMEPAD_RIGHT);
-					nativeOnKeyUp(KEY_GAMEPAD_LEFT);
+
+				synchronized(syncObj) {
+					while(true) {
+						if(!in_flight) {
+							in_flight = true;
+							break;
+						}
+						try {
+							syncObj.wait();
+						} catch (InterruptedException e) {
+						}
+					}
 				}
-				if (hatY == -1.0f) {
-					nativeOnKeyDown(KEY_GAMEPAD_UP);
-					nativeOnKeyUp(KEY_GAMEPAD_DOWN);
-				} else if (hatY == 1.0f) {
-					nativeOnKeyDown(KEY_GAMEPAD_DOWN);
-					nativeOnKeyUp(KEY_GAMEPAD_UP);
-				} else {
-					nativeOnKeyUp(KEY_GAMEPAD_UP);
-					nativeOnKeyUp(KEY_GAMEPAD_DOWN);
+				try {
+					if (hatX == -1.0f) {
+						nativeOnKeyDown(KEY_GAMEPAD_LEFT);
+						nativeOnKeyUp(KEY_GAMEPAD_RIGHT);
+					} else if (hatX == 1.0f) {
+						nativeOnKeyDown(KEY_GAMEPAD_RIGHT);
+						nativeOnKeyUp(KEY_GAMEPAD_LEFT);
+					} else {
+						nativeOnKeyUp(KEY_GAMEPAD_RIGHT);
+						nativeOnKeyUp(KEY_GAMEPAD_LEFT);
+					}
+					if (hatY == -1.0f) {
+						nativeOnKeyDown(KEY_GAMEPAD_UP);
+						nativeOnKeyUp(KEY_GAMEPAD_DOWN);
+					} else if (hatY == 1.0f) {
+						nativeOnKeyDown(KEY_GAMEPAD_DOWN);
+						nativeOnKeyUp(KEY_GAMEPAD_UP);
+					} else {
+						nativeOnKeyUp(KEY_GAMEPAD_UP);
+						nativeOnKeyUp(KEY_GAMEPAD_DOWN);
+					}
+				} finally {
+					synchronized(syncObj) {
+						in_flight = false;
+						syncObj.notifyAll();
+					}
 				}
 
 				return true;
@@ -504,11 +627,28 @@ public class MainActivity extends Activity {
         //
         @Override
         public void surfaceCreated(SurfaceHolder paramSurfaceHolder) {
-			synchronized (syncObj) {
+			synchronized(syncObj) {
+				while(true) {
+					if(!in_flight) {
+						in_flight = true;
+						break;
+					}
+					try {
+						syncObj.wait();
+					} catch (InterruptedException e) {
+					}
+				}
+			}
+			try {
 				if(video != null) {
 					SurfaceHolder holder = videoView.getHolder();
 					video.setDisplay(holder);
 					setWillNotDraw(false);
+				}
+			} finally {
+				synchronized(syncObj) {
+					in_flight = false;
+					syncObj.notifyAll();
 				}
 			}
         }
@@ -547,21 +687,32 @@ public class MainActivity extends Activity {
         //
         @Override
         public void onDraw(Canvas canvas) {
-            boolean ret = true;
-            synchronized (syncObj) {
-                if(video == null)
-                    return;
-                if(!isLoaded)
-                    return;
-                ret = nativeRunFrame();
-                if(!ret)
-                    nativeCleanup();
-            }
-            if (!ret) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
-                    finishAndRemoveTask();
-                isFinished = true;
-            }
+			synchronized (syncObj) {
+				if (in_flight)
+					return;
+
+				if(video == null)
+					return;
+				if(!isLoaded)
+					return;
+
+				in_flight = true;
+			}
+			try {
+				boolean ret = nativeRunFrame();
+				if(!ret)
+					nativeCleanup();
+				if (!ret) {
+					if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP)
+						finishAndRemoveTask();
+					isFinished = true;
+				}
+			} finally {
+				synchronized (syncObj) {
+					in_flight = false;
+					syncObj.notifyAll();
+				}
+			}
         }
 
         //
@@ -573,9 +724,26 @@ public class MainActivity extends Activity {
                 synchronized (syncObj) {
                     if (video != null) {
                         new Handler(Looper.getMainLooper()).post(() -> {
-							synchronized (syncObj) {
+							synchronized(syncObj) {
+								while(true) {
+									if(!in_flight) {
+										in_flight = true;
+										break;
+									}
+									try {
+										syncObj.wait();
+									} catch (InterruptedException e) {
+									}
+								}
+							}
+							try {
 								if (video != null)
 									videoView.invalidate();
+							} finally {
+								synchronized(syncObj) {
+									in_flight = false;
+									syncObj.notifyAll();
+								}
 							}
                         });
                     }
@@ -611,6 +779,18 @@ public class MainActivity extends Activity {
     //
     private void bridgePlayVideo(String fileName, boolean isSkippable) {
 		synchronized(syncObj) {
+			while(true) {
+				if(!in_flight) {
+					in_flight = true;
+					break;
+				}
+				try {
+					syncObj.wait();
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+		try {
 			if (video != null) {
 				video.stop();
 				video = null;
@@ -631,6 +811,11 @@ public class MainActivity extends Activity {
 			} catch(IOException e) {
 				Log.e(APP_NAME, "Failed to play video " + fileName);
 			}
+		} finally {
+			synchronized(syncObj) {
+				in_flight = false;
+				syncObj.notifyAll();
+			}
 		}
     }
 
@@ -639,6 +824,18 @@ public class MainActivity extends Activity {
     //
     private void bridgeStopVideo() {
 		synchronized(syncObj) {
+			while(true) {
+				if(!in_flight) {
+					in_flight = true;
+					break;
+				}
+				try {
+					syncObj.wait();
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+		try {
 			if(video != null) {
 				video.stop();
 				video.reset();
@@ -650,6 +847,11 @@ public class MainActivity extends Activity {
 						view.setRenderMode(RENDERMODE_CONTINUOUSLY);
 				});
 			}
+		} finally {
+			synchronized(syncObj) {
+				in_flight = false;
+				syncObj.notifyAll();
+			}
 		}
     }
 
@@ -658,7 +860,19 @@ public class MainActivity extends Activity {
     //  - If a video playback was finished, this method returns false.
     //
     private boolean bridgeIsVideoPlaying() {
-        synchronized (syncObj) {
+		synchronized(syncObj) {
+			while(true) {
+				if(!in_flight) {
+					in_flight = true;
+					break;
+				}
+				try {
+					syncObj.wait();
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+		try {
             if (video != null) {
                 int pos = video.getCurrentPosition();
                 if (pos == 0)
@@ -673,8 +887,13 @@ public class MainActivity extends Activity {
                     view.setRenderMode(RENDERMODE_CONTINUOUSLY);
                 });
             }
-            return false;
-        }
+		} finally {
+			synchronized(syncObj) {
+				in_flight = false;
+				syncObj.notifyAll();
+			}
+		}
+		return false;
     }
 
     //

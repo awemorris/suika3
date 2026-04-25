@@ -44,7 +44,7 @@
 
 #define INVALID_DESC	(0)
 
-#define TEXTURE_COUNT	(256)
+#define TEXTURE_COUNT	(2048)
 
 /* Texture struct. */
 struct texture_entry {
