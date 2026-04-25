@@ -13,5 +13,8 @@ rm -rf resources/assets.arc
 # Remove projects for proprietary OSes.
 rm -rf resources/projects
 
+# Remove flatpak thing.
+rm -rf resources/flatpak/vn.suika3.engine.metainfo.xml
+
 # Remove fonts.
 rm -rf game/system/font/*
