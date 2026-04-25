@@ -1025,10 +1025,10 @@ if(SUIKA_ENABLE_INSTALL)
     install(TARGETS suika3-aotc  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
   endif()
 
-  # suika3-run.sh
+  # suika3-run
   if(SUIKA_ENABLE_FREEDESKTOP)
     install(
-      PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/freedesktop/suika3-run.sh"
+      PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/freedesktop/suika3-run"
       DESTINATION ${CMAKE_INSTALL_BINDIR}
     )
   endif()
@@ -1065,6 +1065,13 @@ if(SUIKA_ENABLE_INSTALL)
       DESTINATION share/man/man1
       RENAME      "suika3-aotc.1"
     )
+    if(SUIKA_ENABLE_FREEDESKTOP)
+      install(
+        FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-run.1.mdoc"
+        DESTINATION share/man/man1
+        RENAME      "suika3-run.1"
+      )
+    endif()
   elseif(NOT SUIKA_ENABLE_FLATPAK
          OR
 	 NOT SUIKA_ENABLE_LINUX)
@@ -1074,6 +1081,7 @@ if(SUIKA_ENABLE_INSTALL)
                   "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-pack.1"
                   "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-bcc.1"
                   "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-aotc.1"
+                  "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-run.1"
       DESTINATION share/man/man1
     )
   endif()

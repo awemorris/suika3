@@ -1,7 +1,7 @@
 [Desktop Entry]
 Name=Suika3
 Comment=Portable 2D game and visual novel engine
-Exec=suika3-run.sh %f
+Exec=suika3-run %f
 Icon=vn.suika3.engine
 Terminal=false
 Type=Application
