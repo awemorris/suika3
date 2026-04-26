@@ -567,6 +567,8 @@ s3i_cleanup_gui(void)
 			s3_destroy_image(button[i].rt.img_idle);
 		if (button[i].rt.img_hover != NULL)
 			s3_destroy_image(button[i].rt.img_hover);
+		if (button[i].rt.img_press != NULL)
+			s3_destroy_image(button[i].rt.img_press);
 		if (button[i].rt.img_active != NULL)
 			s3_destroy_image(button[i].rt.img_active);
 		if (button[i].rt.img_disable != NULL)
