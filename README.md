@@ -118,7 +118,7 @@ suika3
 
 ---
 
-## VS Code Syntax Highlighting
+## Syntax Highlighting on Visual Studio Code
 
 There is an awesome VS Code extension by `@lalalll-lalalll` to support
 syntax highlighting for Suika3.
@@ -129,22 +129,6 @@ To install this extension, visit the repository and download the .vsix
 file from the
 [Releases page](https://github.com/lalalll-lalalll/NovelML-Highlighter/releases)
 and install it by the following steps.
-
-**Step 1**:
-
-Open `EXTENSIONS` tab.
-
-<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/syntax-highlighter-1.png" alt="Install highlighter 1" width="320" hspace="20">
-
-**Step 2**:
-
-Click "Install from VSIX..." from the "..." (Views and More Actions) menu, and select the downloaded file.
-
-<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/syntax-highlighter-2.png" alt="Install highlighter 1" width="320" hspace="20">
-
-**What you get**:
-
-Now you have a beautiful development environment!
 
 <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/syntax-highlighter-3.png" alt="Install highlighter 1" width="320" hspace="20">
 
@@ -158,10 +142,12 @@ Open the extracted folder by `Visual Studio Code`.
 
 - Click the command bar, `Run Task --> Suika3: Run` (or just press `Ctrl-Shift-B`)
 - Suika3 will launch immediately!
+
+<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/vscode-2.webp" alt="VSCode 2" width="640" hspace="20">
+
 - Any script errors will appear in the `PROBLEMS` tab.
 - You can click an error to jump directly to the corresponding line in the source code.
 
-<img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/vscode-2.webp" alt="VSCode 2" width="640" hspace="20">
 <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/vscode-3.webp" alt="VSCode 3" width="640" hspace="20">
 
 ### iOS and Android Execution
@@ -174,14 +160,15 @@ With Suika3, it's that simple.
       task, Suika3 will automatically build the app and install it
       onto your USB-connected smartphone.
 - For Android:
-    - No manual setup required
-    - No Android Studio required
+    - Turn on `Developer Mode` and `USB Debugging` on the phone
+    - No manual setup required on the Suika3 side
+    - No Android Studio required, of course
     - No paid license required
     - JDK and Android SDK will be downloaded automatically during the build process
 - For iOS:
-    - Xcode 15+ required
+    - Xcode 15+ required (free)
     - No paid license required for testing on iPhone simulators
-    - `Apple Developer Program` required for testing on iPhone/iPad ($99/year)
+    - `Apple Developer Program` required for testing on real iPhone/iPad ($99/year)
 
 We truly believe Suika3 is one of the most streamlined tools in the
 world for creating and publishing iPhone, iPad, and Android apps to
@@ -307,7 +294,7 @@ Suika3 is engineered with modern techniques, and delivers:
 
 **The current version is `26.04.x`:**
 
-- Quality is improving daily, and `26.04.15` is now considered stable.
+- Quality is improving daily, and `26.04.23` is now considered stable.
 - We are currently in the `Quality Stabilization Period` (April 1 - June 30, 2026)
   in preparation for the upcoming `Suika3 26.07 LTS` release (scheduled for July 1, 2026).
 - While some minor bugs may remain, they will be fully resolved by the LTS release.
@@ -339,39 +326,65 @@ Suika3 is engineered with modern techniques, and delivers:
 
 ## Getting Started Guide
 
+See alsp [Getting Started Guid](docs/mkdocs-en/getting-started.md)
+
 This guide will help you jump-start your very first visual novel
 project in just a few easy steps.
 
-### 1. Your First Run
+### Installation
 
 Let's get the engine running so you can see the magic happen!
 
-- **Download:** Grab the latest release ZIP file.
-- **Extract:** Extract the ZIP file.
-    - On Windows: Just extract.
-    - On macOS: Open `misc/macos/Suika3.dmg` and copy the `Suika3` app to the folder where `suika3.exe` exists.
-    - On Linux: copy `misc/linux/suika3-x86_64.AppImage` to the folder where `suika3.exe` exists.
-- **Launch:** Open the folder and:
-    - On Windows: Run `suika3.exe`
-    - On macOS: Run `Suika3`
-    - On Linux: Run `suika3-x86_64.AppImage`
+**Windows:**
+- **Download & Extract**
+    - Download [Suika3-full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-full.zip) and extract it to your preferred folder.
+- **Launch**
+    - Open the folder and run `suika3.exe` to start to the sample game!
 
-### 2. Personalize Your Story (`start.novel`)
+**macOS:**
+- **Download & Extract**
+    - Download Suika3-full.zip and extract it to your preferred folder.
+- **Mount the Disk Image**
+    - Navigate to `misc/macos/` and open `Suika3.dmg`.
+- **Setup the App Bundle**
+    - Copy the `Suika3` app from the DMG into the same folder where `suika3.exe` (and the data folder) is located.
+    - Note: The app bundle must reside alongside your game data to function correctly.
+- **Launch**
+    - Double-click the `Suika3` app to start the sample game!
+
+**Linux:**
+- **Download & Extract**
+    - Download Suika3-full.zip and extract it to your preferred directory.
+- **Install the Flatpak Package**
+    - Navigate to `misc/linux/` and open `Suika3.flatpak` (or run `flatpak install --user Suika3.flatpak`).
+    - This associates `.novel` and `.ray` files with the Suika3 engine.
+- **Launch**
+    - Open the extracted folder, then double-click `start.novel` to launch the sample game!
+
+### Personalize Your Story (`start.novel`)
 
 Now, let's make the game say exactly what you want.
 
-- **Open:** Find the `start.novel` file in your project folder and
-open it with your favorite text editor. It is written in
-`NovelML`.
+- **Open:**
+    - Find the `start.novel` file in your project folder and open it with your favorite text editor.
+- **Edit:**
+    - Add the following tag at the beginning of the file:
+    ```
+    [text text="Hello, world! This is my first game."]
+    ```
+- **Test:**
+    - Save the file and run Suika3 again.
+    - You should see your new message on the screen!
+
 - **Edit:** Replace the existing text with the following command:
 ```
 [text text="Hello, world! This is my first game."]
 ```
 - **Test:** Save the file and run `suika3.exe` again. You should see your new message on the screen!
 
-### 3. Customize the Screen (`main.ray`)
+### Under the Hood (Advanced Tips)
 
-You can easily change the look and feel of your game window.
+You can easily change the screen size of your game.
 
 - **Locate:** Open the `main.ray` file in your editor.
 - **Modify:** Look for the `func setup()` section. You can change the resolution and the title of your window here:
@@ -387,11 +400,9 @@ func setup() {
 }
 ```
 
-### 4. Under the Hood (Advanced Tips)
-
-The bottom part of your `main.ray` file contains the core game logic in
-`Ray`. It's best to leave these functions as they are unless you are
-doing advanced customization:
+The bottom part of your `main.ray` file contains the core game logic
+in `Ray`. It's best to leave these functions as they are unless you
+are doing advanced customization:
 
 - `func start()`: This is called once when your game launches.
 - `func update()`: This runs every single frame to handle game logic.
@@ -468,7 +479,7 @@ func render() {
 
 ## Examples
 
-A sample game is included in the release zip.
+[A sample game](game) is included in the release zip.
 
 See the `game/` folder for:
 - Demo project
@@ -504,6 +515,10 @@ See the `game/` folder for:
 - **Long-term Stability:** Because we develop the language in-house,
   you're shielded from breaking changes in upstream projects. We own
   and control the full stack, so your scripts stay compatible forever.
+
+In short, since we couldn't find a practical, free language that
+integrated JIT, AOT, and an interpreter into a single project, we
+created one ourselves.
 
 ---
 
@@ -572,7 +587,7 @@ alternative, StratoHAL covers:
 - The same major platforms as SDL3.
 
 - Uniquely provides console support through Unity Integration without
-  relying on any NDA-restricted code.
+  relying on any NDA-restricted code on the source tree.
 
 - Software 3D rendering for older platforms.
 
@@ -934,15 +949,15 @@ supporting legacy systems through older runtimes.
 
 ### Linux Compatibility List
 
-| Distribution      | Version               | CPU             | Status | Graphics                      |
-|-------------------|-----------------------|-----------------|--------|-------------------------------|
-| Raspberry Pi OS   | Debian 13             | arm64, armv7    | ✅     | X11 + OpenGL ES               |
-| Debian            | 13 / 12               | x86_64, arm64   | ✅     | X11 + OpenGL 3                |
-| Ubuntu            | 24.04 / 22.04 / 20.04 | x86_64, arm64   | ✅     | X11 + OpenGL 3                |
-| Kubuntu           | 25.04                 | x86_64, arm64   | ✅     | Wayland + OpenGL 3            |
-| Linux Mint        | 22.3                  | x86_64          | ✅     | X11 + OpenGL 3                |
-| Fedora            | 43                    | x86_64          | ✅     | X11 + OpenGL 3                |
-| Odroid            |                       | arm64           | ✅     | GBM + DRM + EGL + OpenGL ES   |
+| Distribution      | Version               | CPU             | Status | Graphics                                |
+|-------------------|-----------------------|-----------------|--------|-----------------------------------------|
+| Debian            | 13 / 12               | x86_64, arm64   | ✅     | X11 + OpenGL 3 or Wayland + OpenGL ES 3 |
+| Raspberry Pi OS   | Debian 13             | arm64, armv7    | ✅     | X11 + OpenGL ES                         |
+| Ubuntu            | 24.04 / 22.04 / 20.04 | x86_64, arm64   | ✅     | X11 + OpenGL 3 or Wayland + OpenGL ES 3 |
+| Kubuntu           | 25.04                 | x86_64, arm64   | ✅     | X11 + OpenGL 3 or Wayland + OpenGL ES 3 |
+| Linux Mint        | 22.3                  | x86_64          | ✅     | X11 + OpenGL 3 or Wayland + OpenGL ES 3 |
+| Fedora            | 43                    | x86_64          | ✅     | X11 + OpenGL 3 or Wayland + OpenGL ES 3 |
+| Odroid Variants   |                       | arm64           | ✅     | GBM + DRM + EGL + OpenGL ES             |
 
 ### iOS Compatibility List
 
@@ -957,28 +972,28 @@ supporting legacy systems through older runtimes.
 | iOS 13 | ✅       |
 | iOS 12 | ✅       |
 | iOS 11 | ✅       |
-| iOS 10 | ?        |
-| iOS 9  | ?        |
-| iOS 8  | ?        |
+| iOS 10 | ✅       |
+| iOS 9  | ✅       |
+| iOS 8  | ✅       |
 | iOS 7  | No Metal |
 
 ### Android Compatibility List
 
-| OS          | Status | Special                      |
-|-------------|--------|------------------------------|
-| Android 16  | ✅     |                              |
-| Android 15  | ✅     |                              |
-| Android 14  | ✅     |                              |
-| Android 13  | ✅     |                              |
-| Android 12  | ✅     |                              |
-| Android 11  | ✅     |                              |
-| Android 10  | ✅     |                              |
-| Android 9   | ✅     |                              |
-| Android 8   | ✅     |                              |
-| Android 7   | ✅     | Change the build properties. |
-| Android 6   | ✅     | Change the build properties. |
-| Android 5   | ✅     | Change the build properties. |
-| Android 4.4 | ✅     | Change the build properties. |
+| OS          | Status |
+|-------------|--------|
+| Android 16  | ✅     |
+| Android 15  | ✅     |
+| Android 14  | ✅     |
+| Android 13  | ✅     |
+| Android 12  | ✅     |
+| Android 11  | ✅     |
+| Android 10  | ✅     |
+| Android 9   | ✅     |
+| Android 8   | ✅     |
+| Android 7   | ✅     |
+| Android 6   | ✅     |
+| Android 5   | ✅     |
+| Android 4.4 | ✅     |
 
 ### HarmonyOS / OpenHarmony Compatibility List
 
@@ -987,15 +1002,36 @@ supporting legacy systems through older runtimes.
 | API 20     | ✅     |
 | API 12     | ✅     |
 
+### FreeBSD
+
+| OS         | Status      |
+|------------|-------------|
+| FreeBSD 15 | ✅          |
+| FreeBSD 14 | ✅          |
+
+### NetBSD
+
+| OS         | Status      |
+|------------|-------------|
+| NetBSD 10  | ✅          |
+| NetBSD 9   | ✅          |
+| NetBSD 8   | ✅          |
+
+### OpeBSD
+
+| OS           | Status      |
+|--------------|-------------|
+| OpenBSD 7.8  | ✅          |
+
 ### Solaris
 
-| OS         | Status |
-|------------|--------|
-| Solaris 11 | ✅     |
-| Solaris 10 | ✅     |
-| Solaris 9  | -      |
-| Solaris 8  | -      |
-| Solaris 7  | -      |
+| OS         | Status      |
+|------------|-------------|
+| Solaris 11 | ✅          |
+| Solaris 10 | ✅          |
+| Solaris 9  | Not Checked |
+| Solaris 8  | Not Checked |
+| Solaris 7  | Not Checked |
 
 ---
 
@@ -1025,7 +1061,7 @@ and it is synchronized to the latest.
 
 ## Internationalization
 
-Suika3 supports the following languages, and the translation is in progress.
+Suika3 supports the following languages.
 
 | Language               | Our Code    | Translation Type         | Scope of Translation             | Progress      |
 |------------------------|-------------|--------------------------|----------------------------------|---------------|
@@ -1046,7 +1082,7 @@ Suika3 supports the following languages, and the translation is in progress.
 | Traditional Chinese    | `zh-tw`     | Machine Translation      | UI                               | Done          |
 | Japanese               | `ja`        | Native Translation       | UI                               | Done          |
 
-### How to switch languages
+### How To Switch Languages
 
 Suika3 uses the system locale. To switch languages, set your system
 locale.
@@ -1112,55 +1148,59 @@ full text of each license and copyright notice.
 Suika3 ships with CMake presets covering various platforms and build
 configurations.
 
-|Preset                         |Platform              |Compiler   |Directory                              |Target        |Type           |
-|-------------------------------|----------------------|-----------|---------------------------------------|--------------|---------------|
-|windows-vs2022-x86-debug       |Windows               |MSVC       |out/build/windows-vs2022-x86-debug     |suika3.exe    |Executable     |
-|windows-vs2022-x86-release     |Windows               |MSVC       |out/build/windows-vs2022-x86-release   |suika3.exe    |Executable     |
-|windows-vs2022-x64-debug       |Windows               |MSVC       |out/build/windows-vs2022-x64-debug     |suika3.exe    |Executable     |
-|windows-vs2022-x64-release     |Windows               |MSVC       |out/build/windows-vs2022-x64-release   |suika3.exe    |Executable     |
-|windows-vs2022-arm64-debug     |Windows               |MSVC       |out/build/windows-vs2022-arm64-debug   |suika3.exe    |Executable     |
-|windows-vs2022-arm64-release   |Windows               |MSVC       |out/build/windows-vs2022-arm64-release |suika3.exe    |Executable     |
-|windows-vs2022-gdk-desktop     |Windows               |MSVC       |out/build/windows-vs2022-gdk-desktop   |suika3.exe    |Executable     |
-|windows-vs2022-gdk-xbox-xs     |Windows               |MSVC       |out/build/windows-vs2022-gdk-xbox-xs   |suika3.exe    |Executable     |
-|windows-vs2026-x86-debug       |Windows               |MSVC       |out/build/windows-vs2026-x86-debug     |suika3.exe    |Executable     |
-|windows-vs2026-x86-release     |Windows               |MSVC       |out/build/windows-vs2026-x86-release   |suika3.exe    |Executable     |
-|windows-vs2026-x64-debug       |Windows               |MSVC       |out/build/windows-vs2026-x64-debug     |suika3.exe    |Executable     |
-|windows-vs2026-x64-release     |Windows               |MSVC       |out/build/windows-vs2026-x64-release   |suika3.exe    |Executable     |
-|windows-vs2026-arm64-debug     |Windows               |MSVC       |out/build/windows-vs2026-arm64-debug   |suika3.exe    |Executable     |
-|windows-vs2026-arm64-release   |Windows               |MSVC       |out/build/windows-vs2026-arm64-release |suika3.exe    |Executable     |
-|windows-vs2026-gdk-desktop     |Windows               |MSVC       |out/build/windows-vs2026-gdk-desktop   |suika3.exe    |Executable     |
-|windows-vs2026-gdk-xbox-xs     |Windows               |MSVC       |out/build/windows-vs2026-gdk-xbox-xs   |suika3.exe    |Executable     |
-|windows-mingw-x86              |Windows               |MinGW-GCC  |build-mingw-x86                        |suika3.exe    |Executable     |
-|windows-mingw-x86_64           |Windows               |MinGW-GCC  |build-mingw-x86_64                     |suika3.exe    |Executable     |
-|windows-mingw-arm64            |Windows               |MinGW-LLVM |build-mingw-arm64                      |suika3.exe    |Executable     |
-|macos                          |macOS                 |Clang      |build-macos                            |Suika3.app    |App Bundle     |
-|linux                          |Linux (X11)           |GCC        |build-linux                            |suika3        |Executable     |
-|linux-wayland                  |Linux (Wayland)       |GCC        |build-linux                            |suika3        |Executable     |
-|linux-gdm                      |Linux (GBM)           |GCC        |build-linux                            |suika3        |Executable     |
-|linux-gdm-rot90                |Linux (GBM)           |GCC        |build-linux                            |suika3        |Executable     |
-|linux-fbdev                    |Linux (fbdev)         |GCC        |build-linux                            |suika3        |Executable     |
-|linux-x11soft                  |Linux                 |GCC        |build-linux                            |suika3        |Executable     |
-|freebsd                        |FreeBSD               |Clang      |build-freebsd                          |suika3        |Executable     |
-|netbsd                         |NetBSD                |GCC        |build-netbsd                           |suika3        |Executable     |
-|openbsd                        |OpenBSD               |Clang      |build-openbsd                          |suika3        |Executable     |
-|solaris11                      |Solaris11             |SunCC      |build-solaris11                        |suika3        |Executable     |
-|solaris10                      |Solaris10             |SunCC      |build-solaris10                        |suika3        |Executable     |
-|haiku                          |Haiku OS              |GCC        |build-haiku                            |suika3        |Executable     |
-|wasm                           |WebAssembly           |Emscripten |build-wasm                             |index.html    |HTML + Wasm    |
-|wasm-local                     |Chromebook            |Emscripten |build-wasm-local                       |index.html    |HTML + Wasm    |
-|ios-device                     |iOS Device            |Clang      |build-ios-device                       |libsuika3.a   |Static Library |
-|ios-simulator                  |iOS Simulator         |Clang      |build-ios-simulator                    |libsuika3.a   |Static Library |
-|android-x86                    |Android x86           |Clang      |build-android-x86                      |libsuika3.so  |Shared Library |
-|android-x86_64                 |Android x86_64        |Clang      |build-android-x86_64                   |libsuika3.so  |Shared Library |
-|android-armv7                  |Android armv7         |Clang      |build-android-armv7                    |libsuika3.so  |Shared Library |
-|android-arm64                  |Android arm64         |Clang      |build-android-arm64                    |libsuika3.so  |Shared Library |
-|openharmony-arm64              |HarmonyOS NEXT arm64  |Clang      |build-openharmony-arm64                |libsuika3.a   |Static Library |
-|openharmony-armv7              |HarmonyOS NEXT armv7  |Clang      |build-openharmony-armv7                |libsuika3.a   |Static Library |
-|openharmony-x86_64             |HarmonyOS NEXT x86_64 |Clang      |build-openharmony-x86_64               |libsuika3.a   |Static Library |
-|unity-win64                    |Unity Plugin          |Clang-CL   |build-unity-win64                      |libsuika3.dll |DLL Plugin     |
-|unity-switch                   |Unity Plugin          |Clang      |build-unity-switch                     |libsuika3.a   |Static Library |
-|unity-ps5                      |Unity Plugin          |Clang      |build-unity-ps5                        |libsuika3.a   |Static Library |
-|unity-xbox                     |Unity Plugin          |Clang      |build-unity-xbox                       |libsuika3.a   |Static Library |
+|Preset                              |Platform              |Compiler   |Directory                              |Target        |Type           |
+|------------------------------------|----------------------|-----------|---------------------------------------|--------------|---------------|
+|windows-vs2022-x86-debug            |Windows               |MSVC       |out/build/windows-vs2022-x86-debug     |suika3.exe    |Executable     |
+|windows-vs2022-x86-release          |Windows               |MSVC       |out/build/windows-vs2022-x86-release   |suika3.exe    |Executable     |
+|windows-vs2022-x64-debug            |Windows               |MSVC       |out/build/windows-vs2022-x64-debug     |suika3.exe    |Executable     |
+|windows-vs2022-x64-release          |Windows               |MSVC       |out/build/windows-vs2022-x64-release   |suika3.exe    |Executable     |
+|windows-vs2022-arm64-debug          |Windows               |MSVC       |out/build/windows-vs2022-arm64-debug   |suika3.exe    |Executable     |
+|windows-vs2022-arm64-release        |Windows               |MSVC       |out/build/windows-vs2022-arm64-release |suika3.exe    |Executable     |
+|windows-vs2022-gdk-desktop          |Windows               |MSVC       |out/build/windows-vs2022-gdk-desktop   |suika3.exe    |Executable     |
+|windows-vs2022-gdk-xbox-xs          |Windows               |MSVC       |out/build/windows-vs2022-gdk-xbox-xs   |suika3.exe    |Executable     |
+|windows-vs2026-x86-debug            |Windows               |MSVC       |out/build/windows-vs2026-x86-debug     |suika3.exe    |Executable     |
+|windows-vs2026-x86-release          |Windows               |MSVC       |out/build/windows-vs2026-x86-release   |suika3.exe    |Executable     |
+|windows-vs2026-x64-debug            |Windows               |MSVC       |out/build/windows-vs2026-x64-debug     |suika3.exe    |Executable     |
+|windows-vs2026-x64-release          |Windows               |MSVC       |out/build/windows-vs2026-x64-release   |suika3.exe    |Executable     |
+|windows-vs2026-x64-console-release  |Windows               |MSVC       |out/build/windows-vs2026-x64-release   |suika3.exe    |Executable     |
+|windows-vs2026-arm64-debug          |Windows               |MSVC       |out/build/windows-vs2026-arm64-debug   |suika3.exe    |Executable     |
+|windows-vs2026-arm64-release        |Windows               |MSVC       |out/build/windows-vs2026-arm64-release |suika3.exe    |Executable     |
+|windows-vs2026-gdk-desktop          |Windows               |MSVC       |out/build/windows-vs2026-gdk-desktop   |suika3.exe    |Executable     |
+|windows-vs2026-gdk-xbox-xs          |Windows               |MSVC       |out/build/windows-vs2026-gdk-xbox-xs   |suika3.exe    |Executable     |
+|windows-mingw-x86                   |Windows               |MinGW-GCC  |build-mingw-x86                        |suika3.exe    |Executable     |
+|windows-mingw-x86_64                |Windows               |MinGW-GCC  |build-mingw-x86_64                     |suika3.exe    |Executable     |
+|windows-mingw-arm64                 |Windows               |MinGW-LLVM |build-mingw-arm64                      |suika3.exe    |Executable     |
+|windows-mingw-win95                 |Windows 9x            |MinGW-GCC  |build-mingw-win95                      |suika3.exe    |Executable     |
+|macos                               |macOS                 |Clang      |build-macos                            |Suika3.app    |App Bundle     |
+|macos-cli                           |macOS (CLI)           |Clang      |build-macos                            |Suika3.app    |App Bundle     |
+|linux                               |Linux (X11)           |GCC        |build-linux                            |suika3        |Executable     |
+|linux-wayland                       |Linux (Wayland)       |GCC        |build-linux                            |suika3        |Executable     |
+|linux-gdm                           |Linux (GBM)           |GCC        |build-linux                            |suika3        |Executable     |
+|linux-gdm-rot90                     |Linux (GBM)           |GCC        |build-linux                            |suika3        |Executable     |
+|linux-fbdev                         |Linux (fbdev)         |GCC        |build-linux                            |suika3        |Executable     |
+|linux-x11soft                       |Linux                 |GCC        |build-linux                            |suika3        |Executable     |
+|freebsd                             |FreeBSD               |Clang      |build-freebsd                          |suika3        |Executable     |
+|netbsd                              |NetBSD                |GCC        |build-netbsd                           |suika3        |Executable     |
+|openbsd                             |OpenBSD               |Clang      |build-openbsd                          |suika3        |Executable     |
+|solaris11                           |Solaris11             |SunCC      |build-solaris11                        |suika3        |Executable     |
+|solaris10                           |Solaris10             |SunCC      |build-solaris10                        |suika3        |Executable     |
+|haiku                               |Haiku OS              |GCC        |build-haiku                            |suika3        |Executable     |
+|wasm                                |WebAssembly           |Emscripten |build-wasm                             |index.html    |HTML + Wasm    |
+|wasm-local                          |Chromebook            |Emscripten |build-wasm-local                       |index.html    |HTML + Wasm    |
+|ios-device                          |iOS Device            |Clang      |build-ios-device                       |libsuika3.a   |Static Library |
+|ios-simulator                       |iOS Simulator         |Clang      |build-ios-simulator                    |libsuika3.a   |Static Library |
+|android-x86                         |Android x86           |Clang      |build-android-x86                      |libsuika3.so  |Shared Library |
+|android-x86_64                      |Android x86_64        |Clang      |build-android-x86_64                   |libsuika3.so  |Shared Library |
+|android-armv7                       |Android armv7         |Clang      |build-android-armv7                    |libsuika3.so  |Shared Library |
+|android-arm64                       |Android arm64         |Clang      |build-android-arm64                    |libsuika3.so  |Shared Library |
+|android-riscv64                     |Android riscv64       |Clang      |build-android-riscv64                  |libsuika3.so  |Shared Library |
+|openharmony-arm64                   |HarmonyOS NEXT arm64  |Clang      |build-openharmony-arm64                |libsuika3.a   |Static Library |
+|openharmony-armv7                   |HarmonyOS NEXT armv7  |Clang      |build-openharmony-armv7                |libsuika3.a   |Static Library |
+|openharmony-x86_64                  |HarmonyOS NEXT x86_64 |Clang      |build-openharmony-x86_64               |libsuika3.a   |Static Library |
+|unity-win64                         |Unity Plugin          |Clang-CL   |build-unity-win64                      |libsuika3.dll |DLL Plugin     |
+|unity-switch                        |Unity Plugin          |Clang      |build-unity-switch                     |libsuika3.a   |Static Library |
+|unity-ps5                           |Unity Plugin          |Clang      |build-unity-ps5                        |libsuika3.a   |Static Library |
+|unity-xbox                          |Unity Plugin          |Clang      |build-unity-xbox                       |libsuika3.a   |Static Library |
 
 ---
 
@@ -1257,13 +1297,6 @@ external/                          # Third-party libraries and dependencies
 
 ## Game Packaging & Distribution
 
-To generate `assets.arc` from your game assets, please use the
-`suika3-pack` tool provided in this repository. This tool will create
-an obfuscated archive of your assets that can be efficiently loaded by
-the engine. (The obfuscation algorithm is a key rotating XOR, and it
-is not intended for strong security. It can help prevent casual
-tampering. The obfuscation key can be changed in "key.h".)
-
 | OS                 | Assets                                                                                                                         |
 |--------------------|--------------------------------------------------------------------------------------------------------------------------------|
 | Windows            | Assets should be stored into a file name `assets.arc`.                                                                         |
@@ -1274,6 +1307,20 @@ tampering. The obfuscation key can be changed in "key.h".)
 | HarmonyOS NEXT     | Assets must not be packed. Please add your assets to the `entry/src/main/resources/rawfiles/` folder directly as normal files. |
 | WebAssembly (Wasm) | Assets should be stored into `assets.arc` and placed alongside `index.html`.                                                   |
 | Unity              | Assets must not be packed. Please add your assets to the `Assets/Resources/StreamingAssets/` folder directly as normal files.  |
+
+To generate `assets.arc` from your game assets, please use the
+`suika3-pack` tool. The `suika3-pack` tool creates an obfuscated
+archive of your assets that can be efficiently loaded by the
+engine. (The obfuscation algorithm is a key rotating XOR, and it is
+not intended for strong security. It can help prevent casual
+tampering. The obfuscation key can be changed in "key.h".)
+
+On Windows, macOS, and Linux, you can use a predefined task on Visual
+Studio Code.
+
+- Click the search bar
+- Click `Run Task`
+- Click `Suika3: Create a package file`
 
 ---
 
@@ -1319,9 +1366,7 @@ tampering. The obfuscation key can be changed in "key.h".)
 ## Roadmap
 
 - Visual Novels (Done)
-- 2D RPGs
-- 2D Shooting Games
-- Sound Games
+- Other 2D games that have story parts
 
 ---
 
@@ -2017,4 +2062,3 @@ technical risks associated with the App Store review process.
 
 By removing these technical barriers upfront, Suika3 empowers
 developers to compete solely on the "quality of their work."
-
