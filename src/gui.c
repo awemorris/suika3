@@ -215,6 +215,8 @@ struct gui_button {
 	int date_y;
 	int thumb_x;
 	int thumb_y;
+	int thumb_width;
+	int thumb_height;
 	int chapter_x;
 	int chapter_y;
 	int msg_x;
@@ -260,6 +262,7 @@ struct gui_button {
 		struct s3_image *img_disable;
 		struct s3_image *img_canvas_idle;
 		struct s3_image *img_canvas_hover;
+		struct s3_image *img_canvas_press;
 
 		/* Offset for hitstory. */
 		int history_offset;
@@ -572,6 +575,8 @@ s3i_cleanup_gui(void)
 			s3_destroy_image(button[i].rt.img_canvas_idle);
 		if (button[i].rt.img_canvas_hover != NULL)
 			s3_destroy_image(button[i].rt.img_canvas_hover);
+		if (button[i].rt.img_canvas_press != NULL)
+			s3_destroy_image(button[i].rt.img_canvas_press);
 		if (button[i].rt.msg_context != NULL)
 			s3_destroy_drawmsg(button[i].rt.msg_context);
 	}
@@ -2303,6 +2308,14 @@ init_save_buttons(void)
 			if (button[i].rt.img_canvas_hover == NULL)
 				return false;
 		}
+
+		if (button[i].rt.img_press != NULL) {
+			button[i].rt.img_canvas_press = s3_create_image(
+				s3_get_image_width(button[i].rt.img_press),
+				s3_get_image_height(button[i].rt.img_press));
+			if (button[i].rt.img_canvas_press == NULL)
+				return false;
+		}
 	}
 
 	return true;
@@ -2346,9 +2359,6 @@ draw_save_button(
 	time_t save_time;
 	int save_index;
 
-	assert(button[button_index].rt.img_canvas_idle != NULL);
-	assert(button[button_index].rt.img_canvas_hover != NULL);
-
 	b = &button[button_index];
 
 	/* Calculate the save data number. */
@@ -2382,33 +2392,81 @@ draw_save_button(
 			      255,
 			      S3_BLEND_COPY);
 	}
+	if (b->rt.img_canvas_press != NULL) {
+		s3_draw_image(b->rt.img_canvas_press,
+			      0,
+			      0,
+			      b->rt.img_press,
+			      0,
+			      0,
+			      s3_get_image_width(b->rt.img_press),
+			      s3_get_image_height(b->rt.img_press),
+			      255,
+			      S3_BLEND_COPY);
+	}
+
+	thumb = s3_get_save_thumbnail(save_index);
+	if (b->thumb_width == 0)
+		b->thumb_width = s3_get_image_width(thumb);
+	if (b->thumb_height == 0)
+		b->thumb_height = s3_get_image_height(thumb);
 
 	/* Draw the thumbnail. */
-	thumb = s3_get_save_thumbnail(save_index);
 	if (thumb != NULL) {
 		if (b->rt.img_canvas_idle != NULL) {
-			s3_draw_image(
+			s3_draw_image_3d(
 				b->rt.img_canvas_idle,
 				b->thumb_x,
 				b->thumb_y,
+				b->thumb_x + b->thumb_width,
+				b->thumb_y,
+				b->thumb_x,
+				b->thumb_y + b->thumb_height,
+				b->thumb_x + b->thumb_width,
+				b->thumb_y + b->thumb_height,
 				thumb,
 				0,
 				0,
-				s3_get_image_width(thumb),
-				s3_get_image_height(thumb),
+				thumb->width,
+				thumb->height,
 				255,
 				S3_BLEND_ALPHA);
 		}
 		if (b->rt.img_canvas_hover != NULL) {
-			s3_draw_image(
+			s3_draw_image_3d(
 				b->rt.img_canvas_hover,
 				b->thumb_x,
 				b->thumb_y,
+				b->thumb_x + b->thumb_width,
+				b->thumb_y,
+				b->thumb_x,
+				b->thumb_y + b->thumb_height,
+				b->thumb_x + b->thumb_width,
+				b->thumb_y + b->thumb_height,
 				thumb,
 				0,
 				0,
-				s3_get_image_width(thumb),
-				s3_get_image_height(thumb),
+				thumb->width,
+				thumb->height,
+				255,
+				S3_BLEND_ALPHA);
+		}
+		if (b->rt.img_canvas_press != NULL) {
+			s3_draw_image_3d(
+				b->rt.img_canvas_press,
+				b->thumb_x,
+				b->thumb_y,
+				b->thumb_x + b->thumb_width,
+				b->thumb_y,
+				b->thumb_x,
+				b->thumb_y + b->thumb_height,
+				b->thumb_x + b->thumb_width,
+				b->thumb_y + b->thumb_height,
+				thumb,
+				0,
+				0,
+				thumb->width,
+				thumb->height,
 				255,
 				S3_BLEND_ALPHA);
 		}
@@ -2456,6 +2514,14 @@ draw_save_button(
 				    text,
 				    SAVE_TEXT_DATE);
 	}
+	if (b->rt.img_canvas_press != NULL) {
+		draw_save_text_item(b->rt.img_canvas_press,
+				    button_index,
+				    b->date_x,
+				    b->date_y,
+				    text,
+				    SAVE_TEXT_DATE);
+	}
 	
 	/* Draw the chapter title. */
 	chapter = s3_get_save_chapter_name(save_index);
@@ -2470,6 +2536,14 @@ draw_save_button(
 		}
 		if (b->rt.img_canvas_hover != NULL) {
 			draw_save_text_item(b->rt.img_canvas_hover,
+					    button_index,
+					    b->chapter_x,
+					    b->chapter_y,
+					    chapter,
+					    SAVE_TEXT_CHAPTER);
+		}
+		if (b->rt.img_canvas_press != NULL) {
+			draw_save_text_item(b->rt.img_canvas_press,
 					    button_index,
 					    b->chapter_x,
 					    b->chapter_y,
@@ -2497,12 +2571,22 @@ draw_save_button(
 					    msg,
 					    SAVE_TEXT_MSG);
 		}
+		if (b->rt.img_canvas_press != NULL) {
+			draw_save_text_item(b->rt.img_canvas_press,
+					    button_index,
+					    b->msg_x,
+					    b->msg_y,
+					    msg,
+					    SAVE_TEXT_MSG);
+		}
 	}
 
 	if (b->rt.img_canvas_idle != NULL)
 		s3_notify_image_update(b->rt.img_canvas_idle);
 	if (b->rt.img_canvas_hover != NULL)
 		s3_notify_image_update(b->rt.img_canvas_hover);
+	if (b->rt.img_canvas_press != NULL)
+		s3_notify_image_update(b->rt.img_canvas_press);
 }
 
 /* Render save data text. */
@@ -2741,10 +2825,19 @@ process_button_render_save(
 		if (b->rt.img_canvas_idle != NULL)
 			render_image_helper(b->rt.img_canvas_idle, b->bid);
 	} else {
-		if (b->rt.img_canvas_hover != NULL)
-			render_image_helper(b->rt.img_canvas_hover, b->bid);
-		else if (b->rt.img_canvas_idle != NULL)
-			render_image_helper(b->rt.img_canvas_idle, b->bid);
+		if (b->rt.is_pressed) {
+			if (b->rt.img_canvas_press != NULL)
+				render_image_helper(b->rt.img_canvas_press, b->bid);
+			else if (b->rt.img_canvas_hover != NULL)
+				render_image_helper(b->rt.img_canvas_hover, b->bid);
+			else if (b->rt.img_canvas_idle != NULL)
+				render_image_helper(b->rt.img_canvas_idle, b->bid);
+		} else {
+			if (b->rt.img_canvas_hover != NULL)
+				render_image_helper(b->rt.img_canvas_hover, b->bid);
+			else if (b->rt.img_canvas_idle != NULL)
+				render_image_helper(b->rt.img_canvas_idle, b->bid);
+		}
 	}
 
 	/* Render the NEW image. */
@@ -2823,6 +2916,13 @@ init_history_buttons(void)
 			if (button[i].rt.img_canvas_hover == NULL)
 				return false;
 		}
+		if (button[i].rt.img_press != NULL) {
+			button[i].rt.img_canvas_press = s3_create_image(
+				s3_get_image_width(button[i].rt.img_press),
+				s3_get_image_height(button[i].rt.img_press));
+			if (button[i].rt.img_canvas_press == NULL)
+				return false;
+		}
 	}
 
 	return true;
@@ -2842,10 +2942,19 @@ process_button_render_history(
 		return;
 
 	if (!b->rt.is_disabled && index == pointed_index) {
-		if (b->rt.img_canvas_hover != NULL)
-			render_image_helper(b->rt.img_canvas_hover, b->bid);
-		else if (b->rt.img_canvas_idle != NULL)
-			render_image_helper(b->rt.img_canvas_idle, b->bid);
+		if (b->rt.is_pressed) {
+			if (b->rt.img_canvas_press != NULL)
+				render_image_helper(b->rt.img_canvas_press, b->bid);
+			else if (b->rt.img_canvas_hover != NULL)
+				render_image_helper(b->rt.img_canvas_hover, b->bid);
+			else if (b->rt.img_canvas_idle != NULL)
+				render_image_helper(b->rt.img_canvas_idle, b->bid);
+		} else {
+			if (b->rt.img_canvas_hover != NULL)
+				render_image_helper(b->rt.img_canvas_hover, b->bid);
+			else if (b->rt.img_canvas_idle != NULL)
+				render_image_helper(b->rt.img_canvas_idle, b->bid);
+		}
 	} else {
 		if (b->rt.img_canvas_idle != NULL)
 			render_image_helper(b->rt.img_canvas_idle, b->bid);
@@ -2868,6 +2977,11 @@ draw_history_buttons(void)
 		}
 		if (button[i].rt.img_canvas_hover != NULL) {
 			draw_history_button(button[i].rt.img_canvas_hover,
+					    button[i].rt.img_hover,
+					    i);
+		}
+		if (button[i].rt.img_canvas_press != NULL) {
+			draw_history_button(button[i].rt.img_canvas_press,
 					    button[i].rt.img_hover,
 					    i);
 		}
@@ -4720,6 +4834,18 @@ set_button_key_value(
 	/* thumb-y */
 	if (strcmp("thumb-y", key) == 0) {
 		b->thumb_y = atoi(val);
+		return true;
+	}
+
+	/* thumb-width */
+	if (strcmp("thumb-width", key) == 0) {
+		b->thumb_width = atoi(val);
+		return true;
+	}
+
+	/* thumb-height */
+	if (strcmp("thumb-height", key) == 0) {
+		b->thumb_height = atoi(val);
 		return true;
 	}
 

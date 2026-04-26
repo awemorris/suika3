@@ -39,6 +39,7 @@ ITEM1 {
     y: 98;
     image-idle: system/load/load-item-idle.png;
     image-hover: system/load/load-item-hover.png;
+    image-press: system/load/load-item-press.png;
 
     index-x: 10;
     index-y: 0;
@@ -46,6 +47,8 @@ ITEM1 {
     date-y: 0;
     thumb-x: 27;
     thumb-y: 77;
+    thumb-width: 213;
+    thumb-height: 120;
     chapter-x: 260;
     chapter-y: 48;
     msg-x: 260;
@@ -62,6 +65,7 @@ ITEM2 {
     y: 98;
     image-idle: system/load/load-item-idle.png;
     image-hover: system/load/load-item-hover.png;
+    image-press: system/load/load-item-press.png;
 
     index-x: 10;
     index-y: 0;
@@ -69,6 +73,8 @@ ITEM2 {
     date-y: 0;
     thumb-x: 27;
     thumb-y: 77;
+    thumb-width: 213;
+    thumb-height: 120;
     chapter-x: 260;
     chapter-y: 48;
     msg-x: 260;
@@ -85,6 +91,7 @@ ITEM3 {
     y: 374;
     image-idle: system/load/load-item-idle.png;
     image-hover: system/load/load-item-hover.png;
+    image-press: system/load/load-item-press.png;
 
     index-x: 10;
     index-y: 0;
@@ -92,6 +99,8 @@ ITEM3 {
     date-y: 0;
     thumb-x: 27;
     thumb-y: 77;
+    thumb-width: 213;
+    thumb-height: 120;
     chapter-x: 260;
     chapter-y: 48;
     msg-x: 260;
@@ -108,6 +117,7 @@ ITEM4 {
     y: 374;
     image-idle: system/load/load-item-idle.png;
     image-hover: system/load/load-item-hover.png;
+    image-press: system/load/load-item-press.png;
 
     index-x: 10;
     index-y: 0;
@@ -115,6 +125,8 @@ ITEM4 {
     date-y: 0;
     thumb-x: 27;
     thumb-y: 77;
+    thumb-width: 213;
+    thumb-height: 120;
     chapter-x: 260;
     chapter-y: 48;
     msg-x: 260;
