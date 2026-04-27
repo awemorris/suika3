@@ -517,11 +517,11 @@ Files modified:
     * Priority: high
     * Reproducibility: frequently
     * First Found In: 88649ac3a04b1982f8867ac89184a3c6e196414b
-    * Fixed In: 21d546781a4bfe284920649c9a4a904c998abf5a
+    * Fixed In: 1e5361f86da3b3320e455f7e5aae793888dd2da3
     * Reported Date: 09:00 27 April 2026
     * Fixed Date: 09:45 27 April 2026
     * Detection: Author's exploratory testing
-    * Root Cause Type: Mistakes on STL usage and resource reinitialization
+    * Root Cause Type: Multiple causes; insufficient testing on newly introduced D3D12 code.
     * OS: Windows 10/11
     * CPU: x86/x86_64/arm64
 
@@ -532,14 +532,23 @@ Switching from full screen mode to windowed mode may cause crash.
 ### Analysis
 
 Analysis:
-- Cause 1: Mistake on STL usage
-    - In `D3D12EndFrame()`, `std::find()` may not find a valid entry.
-    - Passing the result of `std::find()` directly to `erase()` caused assertion error inside STL.
-- Cause 2: Mistake on D3D12 reinitialization
-    - When switching between full-screen mode and windowed mode, D3D12 will be reinitialized.
-    - In `ReleaseAllD3D12Objects()`, `g_freeTextureBundleList` was not cleared on D3D12 reinitialization.
-    - In `UploadTextureIfNeeded()`, `img->texture` was not NULLified when D3D12 was reinitialized.
-    - This made inconsistency of texture management, and caused crashes.
+- Cause 1: Mistake in STL usage
+    - In `D3D12EndFrame()`, `std::find()` may fail to find a valid entry.
+    - Passing the result of `std::find()` directly to `erase()` caused an assertion error inside the STL.
+- Cause 2: Mistake in D3D12 reinitialization
+    - When switching between full-screen mode and windowed mode, D3D12 is reinitialized.
+    - In `ReleaseAllD3D12Objects()`, `g_freeTextureBundleList` was not cleared during D3D12 reinitialization.
+    - In `UploadTextureIfNeeded()`, `img->texture` was not set to `NULL` when D3D12 was reinitialized.
+    - This caused inconsistency in texture management and led to crashes.
+- Cause 3: Free-after-free
+    - In `D3D12NotifyImageFree()`, a texture is added to the list `g_freeTextureBundleList`.
+    - Textures in `g_freeTextureBundleList` are freed later in `D3D12EndFrame()`.
+    - When switching between full-screen and windowed mode, the D3D12 context is recreated and textures are bulk-freed.
+    - Pointer references from `img->texture` and `TextureBundle::pTexture` intentionally remained
+      even after the texture objects themselves had been bulk-freed. (It is an intended way.)
+    - `D3D12NotifyImageFree()` must ignore textures created in older contexts.
+    - However, the previous implementation did not store a context ID in `TextureBundle`,
+      so it had no way to distinguish stale texture pointers from valid ones.
 
 ### Patch
 
@@ -550,4 +559,4 @@ Files modified:
 
 ### Commits
 
-- 21d546781a4bfe284920649c9a4a904c998abf5a
+- 1e5361f86da3b3320e455f7e5aae793888dd2da3
