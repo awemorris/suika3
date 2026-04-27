@@ -504,3 +504,50 @@ Files modified:
 ### Commits
 
 - b531a17f11948875afea4b7a60252af8722630f2
+
+---
+
+## Full-screen/windowed switching causes crash when using Direct3D 12
+
+* Report Details
+    * ID: BUG-20260427-001
+    * Status: Resolved
+    * Component: StratoHAL
+    * Severity: high
+    * Priority: high
+    * Reproducibility: frequently
+    * First Found In: 88649ac3a04b1982f8867ac89184a3c6e196414b
+    * Fixed In: 21d546781a4bfe284920649c9a4a904c998abf5a
+    * Reported Date: 09:00 27 April 2026
+    * Fixed Date: 09:45 27 April 2026
+    * Detection: Author's exploratory testing
+    * Root Cause Type: Lack of horizontal rollout of corrections
+    * OS: Windows 10/11
+    * CPU: x86/x86_64/arm64
+
+### Report
+
+Switching from full screen mode to windowed mode may cause crash.
+
+### Analysis
+
+Analysis:
+- Cause 1: Mistake on STL usage
+    - In `D3D12EndFrame()`, `std::find()` may not find a valid entry.
+    - Passing the result of `std::find()` directly to `erase()` caused assertion error inside STL.
+- Cause 2: Mistake on D3D12 reinitialization
+    - When switching between full-screen mode and windowed mode, D3D12 will be reinitialized.
+    - In `ReleaseAllD3D12Objects()`, `g_freeTextureBundleList` was not cleared on D3D12 reinitialization.
+    - In `UploadTextureIfNeeded()`, `img->texture` was not NULLified when D3D12 was reinitialized.
+    - This made inconsistency of texture management, and caused crashes.
+
+### Patch
+
+`d3d12render.cc` was patched.
+
+Files modified:
+- external/PlayfieldEngine/external/StratoHAL/src/d3d12render.cc
+
+### Commits
+
+- 21d546781a4bfe284920649c9a4a904c998abf5a
