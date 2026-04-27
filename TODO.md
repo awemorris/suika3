@@ -4,7 +4,6 @@ TODO
 ## Remaining Tasks
 
 - `Auto Focus` feature is not working.
-- Full screen novel style is not tested at all. (ported from Suika2 as is)
 - Unity version is not tested after the final shader change due to RC1 time limit.
 
 ---

@@ -118,6 +118,7 @@ struct TextureBundle
 {
     ComPtr<ID3D12Resource> pTexture;
     int nIndex;
+	int nContextID;
 
     TextureBundle() : nIndex(-1) { }
 };
@@ -1659,13 +1660,15 @@ ReleaseAllD3D12Objects()
 
 	// Release all textures.
     for (TextureBundle *pTextureBundle : g_allTextureBundleList)
-	{
-        g_availableTextureIndexList.push_back(pTextureBundle->nIndex);
         delete pTextureBundle;
-	}
 	g_allTextureBundleList.clear();
 	g_freeTextureBundleList.clear();
-	
+
+	// Initialize the available texture index list.
+	g_availableTextureIndexList.clear();
+	for (int i = 0; i < TEXTURE_COUNT; i++)
+		g_availableTextureIndexList.push_back(i);
+
 	// Release other objects.
     g_commandList.Reset();
     g_commandAllocator.Reset();
@@ -1786,14 +1789,24 @@ D3D12EndFrame(VOID)
     // Free textures which are requested to be destroyed in the frame.
 	for (TextureBundle* pTextureBundle : g_freeTextureBundleList)
 	{
+		assert(pTextureBundle->nIndex < TEXTURE_COUNT);
+
+		// Ignore if D3D reinitialized.
+		if (pTextureBundle->nContextID != g_contextID)
+			continue;
+
+		// Make the texture index reusable.
 		g_availableTextureIndexList.push_back(pTextureBundle->nIndex);
+
+		// Remove the texture from the texture list.
 		auto it = std::find(g_allTextureBundleList.begin(), g_allTextureBundleList.end(), pTextureBundle);
 		if (it != g_allTextureBundleList.end())
 		{
 			g_allTextureBundleList.erase(it);
 			delete pTextureBundle;
 		}
-	}    g_freeTextureBundleList.clear();
+	}
+	g_freeTextureBundleList.clear();
 }
 
 static void
@@ -1837,9 +1850,14 @@ D3D12NotifyImageFree(
     TextureBundle* pTextureBundle = (TextureBundle*)img->texture;
     if (pTextureBundle != NULL)
     {
-        // Free it after a execution of the command list.
-        g_freeTextureBundleList.push_back(pTextureBundle);
-        img->texture = NULL;
+		// Free the texture after a execution of the command list.
+		// Exclude the case where D3D12 was reinitialized,
+		// that is, the texture was tied to an older context and
+		// the texture and/or the pointer are already bulk-freed.
+		if (pTextureBundle->nContextID == g_contextID)
+			g_freeTextureBundleList.push_back(pTextureBundle);
+
+		img->texture = NULL;
     }
 }
 
@@ -2527,7 +2545,6 @@ UploadTextureIfNeeded(
 		{
 			// Device was recreated: the texture was already deleted,
 			// and the pTextureBundle is an invalid pointer that is already freed.
-			img->texture = NULL;
 		}
 
 		img->texture = NULL;
@@ -2540,10 +2557,12 @@ UploadTextureIfNeeded(
     // Get a texture index.
     int textureIndex = g_availableTextureIndexList.back();
     g_availableTextureIndexList.pop_back();
+	assert(textureIndex < TEXTURE_COUNT);
 
     // Create a texture bundle.
     TextureBundle* pTextureBundle = new TextureBundle();
     pTextureBundle->nIndex = textureIndex;
+	pTextureBundle->nContextID = g_contextID;
     img->texture = pTextureBundle;
     img->need_upload = FALSE;
 	img->context = g_contextID;
@@ -2593,14 +2612,14 @@ UploadTextureIfNeeded(
 
 	D3D12_CPU_DESCRIPTOR_HANDLE handle = srvHandleCPU;
 	handle.ptr += static_cast<SIZE_T>(pTextureBundle->nIndex) * g_srvDescriptorSize;
+	ID3D12Resource* destinationResource = pTextureBundle->pTexture.Get();
 	g_device->CreateShaderResourceView(
-		pTextureBundle->pTexture.Get(),
+		destinationResource,
 		&srvDesc,
 		handle);
 
-    // Create a GPU upload buffer.
-    ID3D12Resource *pTextureUploadHeap;
-    const UINT64 uploadBufferSize = GetRequiredIntermediateSize_NoD3DX(pTextureBundle->pTexture.Get(), 0, 1);
+	// Create a GPU upload buffer.
+    const UINT64 uploadBufferSize = GetRequiredIntermediateSize_NoD3DX(destinationResource, 0, 1);
 	D3D12_HEAP_PROPERTIES prop2 = {};
 	prop2.Type                 = D3D12_HEAP_TYPE_UPLOAD;
 	prop2.CPUPageProperty      = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
@@ -2619,6 +2638,7 @@ UploadTextureIfNeeded(
 	buf.SampleDesc.Quality = 0;
 	buf.Layout             = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 	buf.Flags              = D3D12_RESOURCE_FLAG_NONE;
+	ID3D12Resource* pTextureUploadHeap;
 	hr = g_device->CreateCommittedResource(
 		&prop2,
 		D3D12_HEAP_FLAG_NONE,
