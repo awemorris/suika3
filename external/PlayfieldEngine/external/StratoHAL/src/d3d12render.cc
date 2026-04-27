@@ -1789,8 +1789,6 @@ D3D12EndFrame(VOID)
     // Free textures which are requested to be destroyed in the frame.
 	for (TextureBundle* pTextureBundle : g_freeTextureBundleList)
 	{
-		assert(pTextureBundle->nIndex < TEXTURE_COUNT);
-
 		// Ignore if D3D reinitialized.
 		if (pTextureBundle->nContextID != g_contextID)
 			continue;
@@ -2557,7 +2555,6 @@ UploadTextureIfNeeded(
     // Get a texture index.
     int textureIndex = g_availableTextureIndexList.back();
     g_availableTextureIndexList.pop_back();
-	assert(textureIndex < TEXTURE_COUNT);
 
     // Create a texture bundle.
     TextureBundle* pTextureBundle = new TextureBundle();
