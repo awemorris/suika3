@@ -696,6 +696,7 @@ static BOOL CreateVertexBuffer();
 static BOOL CreateFence();
 static void ReleaseAllD3D12Objects();
 static void WaitForPreviousFrame();
+static VOID FreeTextures();
 static VOID DrawPrimitive2D(int dst_left, int dst_top, int dst_width,
 							int dst_height, struct hal_image *src1_image,
 							struct hal_image *src2_image, int src1_left,
@@ -1658,16 +1659,22 @@ ReleaseAllD3D12Objects()
 {
 	WaitForPreviousFrame();
 
-	// Release all textures.
-    for (TextureBundle *pTextureBundle : g_allTextureBundleList)
-        delete pTextureBundle;
-	g_allTextureBundleList.clear();
-	g_freeTextureBundleList.clear();
+    // Free textures which are requested to be destroyed in the frame.
+	FreeTextures();
 
-	// Initialize the available texture index list.
-	g_availableTextureIndexList.clear();
-	for (int i = 0; i < TEXTURE_COUNT; i++)
-		g_availableTextureIndexList.push_back(i);
+	// Release all COM objects of textures.
+	// Keep TextureBundle instances because they are referenced by hal_image::tex.
+	// They will be released later.
+	for (TextureBundle* pTextureBundle : g_allTextureBundleList)
+	{
+		//assert(pTextureBundle->nContextID == g_contextID);
+		pTextureBundle->pTexture.Reset();
+	}
+
+    // Free texture upload heaps.
+    for (ID3D12Resource* pTexUploadHeap : g_freeUploadHeapList)
+        pTexUploadHeap->Release();
+    g_freeUploadHeapList.clear();
 
 	// Release other objects.
     g_commandList.Reset();
@@ -1779,6 +1786,7 @@ D3D12EndFrame(VOID)
     if (FAILED(hr))
         return;
 
+	// Wait for finish.
     WaitForPreviousFrame();
 
     // Free texture upload heaps.
@@ -1787,24 +1795,7 @@ D3D12EndFrame(VOID)
     g_freeUploadHeapList.clear();
 
     // Free textures which are requested to be destroyed in the frame.
-	for (TextureBundle* pTextureBundle : g_freeTextureBundleList)
-	{
-		// Ignore if D3D reinitialized.
-		if (pTextureBundle->nContextID != g_contextID)
-			continue;
-
-		// Make the texture index reusable.
-		g_availableTextureIndexList.push_back(pTextureBundle->nIndex);
-
-		// Remove the texture from the texture list.
-		auto it = std::find(g_allTextureBundleList.begin(), g_allTextureBundleList.end(), pTextureBundle);
-		if (it != g_allTextureBundleList.end())
-		{
-			g_allTextureBundleList.erase(it);
-			delete pTextureBundle;
-		}
-	}
-	g_freeTextureBundleList.clear();
+	FreeTextures();
 }
 
 static void
@@ -1832,6 +1823,29 @@ WaitForPreviousFrame()
     }
 
     g_frameIndex = g_swapChain->GetCurrentBackBufferIndex();
+}
+
+// Free textures which are requested to be destroyed in the frame.
+static VOID
+FreeTextures()
+{
+	for (TextureBundle* pTextureBundle : g_freeTextureBundleList)
+	{
+		//assert(pTextureBundle->nContextID == g_contextID);
+
+		// Make the texture index reusable.
+		g_availableTextureIndexList.push_back(pTextureBundle->nIndex);
+
+		// Remove the texture from the texture list.
+		auto it = std::find(g_allTextureBundleList.begin(), g_allTextureBundleList.end(), pTextureBundle);
+		if (it != g_allTextureBundleList.end())
+		{
+			g_allTextureBundleList.erase(it);
+			pTextureBundle->pTexture.Reset();
+			delete pTextureBundle;
+		}
+	}
+	g_freeTextureBundleList.clear();
 }
 
 VOID
@@ -2534,15 +2548,25 @@ UploadTextureIfNeeded(
 	// Schedule deleting the previous texture.
     if (img->texture != NULL)
     {
+		TextureBundle* pTextureBundle = (TextureBundle*)img->texture;
+
 		if (img->context == g_contextID)
 		{
-			// Device is not recreated: Need to delete the texture.
-			g_freeTextureBundleList.push_back((TextureBundle*)img->texture);
+			// Device is not recreated: Need to delete the texture,
+			// but it will be done in later.
+			g_freeTextureBundleList.push_back(pTextureBundle);
 		}
 		else
 		{
-			// Device was recreated: the texture was already deleted,
-			// and the pTextureBundle is an invalid pointer that is already freed.
+			// Device was recreated: the texture COM object was already deleted,
+			// but the pTextureBundle is still active.
+		   g_availableTextureIndexList.push_back(pTextureBundle->nIndex);
+           auto it = std::find(g_allTextureBundleList.begin(), g_allTextureBundleList.end(), pTextureBundle);
+		   if (it != g_allTextureBundleList.end())
+		   {
+			   g_allTextureBundleList.erase(it);
+			   delete pTextureBundle;
+		   }
 		}
 
 		img->texture = NULL;
