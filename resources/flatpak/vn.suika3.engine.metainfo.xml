@@ -42,8 +42,7 @@
 
   <content_rating type="oars-1.1" />
   <provide>
-    <mediatype>application/x-novelml</mediatype>
-    <mediatype>application/x-rayscript</mediatype>
+    <mediatype>vn.suika3.engine.desktop</mediatype>
   </provide>
 
   <releases>
