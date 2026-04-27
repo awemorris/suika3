@@ -41,9 +41,6 @@
   <url type="vcs-browser">https://github.com/awemorris/suika3</url>
 
   <content_rating type="oars-1.1" />
-  <provide>
-    <mediatype>vn.suika3.engine.desktop</mediatype>
-  </provide>
 
   <releases>
     <release version="26.04.20" date="2026-04-25">
