@@ -12,7 +12,9 @@ build-options:
 finish-args:
   - --socket=x11
   - --device=dri
-  - --filesystem=host
+  - --socket=wayland
+  - --socket=pulseaudio
+  - --talk-name=org.freedesktop.portal.Desktop
 
 modules:
   - name: suika3

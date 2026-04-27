@@ -1028,10 +1028,17 @@ if(SUIKA_ENABLE_INSTALL)
 
   # suika3-run
   if(SUIKA_ENABLE_FREEDESKTOP)
-    install(
-      PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/freedesktop/suika3-run"
-      DESTINATION ${CMAKE_INSTALL_BINDIR}
-    )
+    if(NOT SUIKA_ENABLE_FLATPAK)
+      install(
+        PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/freedesktop/suika3-run"
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+      )
+    else()
+      install(
+        PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/flatpak/suika3-run"
+        DESTINATION ${CMAKE_INSTALL_BINDIR}
+      )
+    endif()
   endif()
 
   #
@@ -1146,12 +1153,12 @@ if(SUIKA_ENABLE_INSTALL)
       RENAME vn.suika3.engine.mime.xml
     )
     install(
-      FILES resources/freedesktop/vn.suika3.engine.desktop
-      DESTINATION share/applications
-    )
-    install(
       FILES resources/freedesktop/vn.suika3.engine.png
       DESTINATION share/icons/hicolor/512x512/apps
+    )
+    install(
+      FILES resources/freedesktop/vn.suika3.engine.desktop
+      DESTINATION share/applications
     )
 
     # Run update if not packaging.

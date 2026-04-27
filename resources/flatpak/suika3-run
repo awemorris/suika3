@@ -1,0 +1,41 @@
+#!/bin/sh
+
+DIR="$1"
+if [ -n "$DIR" ]; then
+    if [ -f "$DIR" ]; then
+        DIR=$(dirname "$DIR")
+    fi;
+fi
+
+if [ ! -d "$DIR" ] & [ ! -r "$DIR/start.novel" ] & [ ! -r "$DIR/main.ray" ]; then
+    export GTK_USE_PORTAL=1;
+    DIR=$(zenity --title "Suika3 Engine" \
+                 --file-selection \
+                 --directory \
+                 --filename="$DIR/");
+    if [ -z "$DIR" ]; then
+        if zenity --question \
+                  --title "Suika3 Engine" \
+                  --text "Do you want to run the sample game?"; then
+            DIR="/app/share/suika3/game";
+        else
+            exit 1;
+        fi;
+    fi;
+fi
+
+if cd "$DIR"; then
+    rm -f log.txt;
+    suika3;
+    if [ -f log.txt ]; then
+        zenity --error \
+               --title="Suika3 Engine" \
+               --text="$(printf 'Error\n%s' "$(cat log.txt)")";
+        exit 1;
+    fi;
+else
+    zenity --error \
+           --title="Suika3 Engine" \
+           --text="Failed to access the directory:\n$WD\n\nPlease check your Flatpak permission settings."
+    exit 1
+fi
