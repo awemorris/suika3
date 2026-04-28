@@ -8,7 +8,7 @@
 </h1>
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-small.png" alt="Suika3 Logo" width="120" hspace="20">
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-mid.png" alt="Suika3 Logo" hspace="20">
   <p>
     We've brought Suika3 to life<br>
     with a deep love for mobile devices —<br>
