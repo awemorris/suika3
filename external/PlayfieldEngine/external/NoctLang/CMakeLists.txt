@@ -174,7 +174,7 @@ if(NOCTLANG_ENABLE_I18N)
   target_compile_definitions(noctlang PRIVATE NOCT_USE_TRANSLATION)
 endif()  
 if(NOCTLANG_TARGET_UNITY)
-  target_compile_definitions(noctlang PRIVATE NOCT_TARGET_UNITY)
+  target_compile_definitions(noctlang PUBLIC NOCT_TARGET_UNITY)
 endif()
 
 # Win32 Unicode settings.
