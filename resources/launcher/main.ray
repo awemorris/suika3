@@ -1,0 +1,101 @@
+// Called when the window is opened.
+func setup() {
+    // Return the window settings.
+    return {
+        width:      1280,
+        height:     720,
+        title:      "My First Game",
+        fullscreen: false
+    };
+}
+
+// Called before the game starts.
+func start() {
+    // Do not delete the following line.
+    Suika.start();
+}
+
+// Called before a frame rendering.
+func update() {
+    // Do not delete the following line.
+    Suika.update();
+}
+
+// Called every frame rendering.
+func render() {
+    // Do not delete the following line.
+    Suika.render();
+}
+
+// [runCommand] tag.
+func Tag_runCommand(params) {
+    // Expand variables in string arguments.
+    Suika.evaluateTag();
+
+    // Get the arguments.
+    var command = Suika.getTagArgString({name: "command"});
+    var workDir = Suika.getTagArgString({name: "workDir"});
+    var waitForFinish = int(Suika.getTagArgString({name: "waitForFinish"}));
+
+    // Run a command.
+    System.runCommand(command, workDir, waitForFinish);
+
+    // Prologue.
+    Suika.moveToNextTag();
+    return true;
+}
+
+// [getOSName] tag.
+func Tag_getOSName(params) {
+    // Expand variables in string arguments.
+    Suika.evaluateTag();
+
+    // Get the argument.
+    var varName = Suika.getTagArgString({name: "varName"});
+
+    // Get the OS name.
+    var osName = System.getOSName();
+
+    // Store to the specified variable.
+    Suika.setVariableString({name: varName, value: osName});
+
+    // Prologue.
+    Suika.moveToNextTag();
+    return true;
+}
+
+// [getSampleDir] tag.
+func Tag_getSampleDir(params) {
+    // Expand variables in string arguments.
+    Suika.evaluateTag();
+
+    // Get the argument.
+    var varName = Suika.getTagArgString({name: "varName"});
+
+    // Here is the candidates of the sample directory.
+    var list = [
+        "/usr/share/suika3/game",                   // prefix="/usr"
+        "/usr/local/share/suika3/game",             // prefix="/usr/local"
+        "/usr/share/doc/suika3/examples/game",      // Debian
+        "/usr/local/share/examples/suika3/game"     // FreeBSD
+    ];
+
+    // Search the sample direcotry that really exists.
+    dir = list[0];
+    for (d in list) {
+        if (System.checkFileExists(d + "/start.novel")) {
+            dir = d; // Found.
+            break;
+	}
+    }
+
+    // Store to the specified variable.
+    Suika.setVariableString({
+        name: varName,
+        value: dir
+    });
+
+    // Prologue.
+    Suika.moveToNextTag();
+    return true;
+}

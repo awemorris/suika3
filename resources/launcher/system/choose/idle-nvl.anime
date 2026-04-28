@@ -1,0 +1,45 @@
+#
+# Choose Box Hover Anime
+#
+# Arguments
+#   $0 : choose<N>-idle
+#   $1 : choose<N>-hover
+#
+
+#
+# choose<N>-idle ($0)
+#
+default {
+    layer:  $0;
+    start:  0.0;
+    end:    0.5;
+    from-x: r0;
+    from-y: r0;
+    from-scale-x: 1.0;
+    from-scale-y: 1.0;
+    from-a: 255;
+    to-x:   r0;
+    to-y:   r0;
+    to-scale-x: 1.0;
+    to-scale-y: 1.0;
+    to-a:   255;
+}
+
+#
+# choose<N>-hover ($1)
+#
+default {
+    layer:  $1;
+    start:  0.0;
+    end:    0.5;
+    from-x: r0;
+    from-y: r0;
+    from-scale-x: 1.0;
+    from-scale-y: 1.0;
+    from-a: 255;
+    to-x:   r0;
+    to-y:   r0;
+    to-scale-x: 1.0;
+    to-scale-y: 1.0;
+    to-a:   255;
+}

@@ -339,3 +339,25 @@ zh:无法反序列化函数。
 tw:無法反序列化函式。
 ja:関数をデシリアライズできません。
 ---
+ID:Parameter is required to be a dictionary.
+es:El parámetro debe ser un diccionario.
+fr:Le paramètre doit être un dictionnaire.
+de:Der Parameter muss ein Dictionary sein.
+it:Il parametro deve essere un dizionario.
+el:Η παράμετρος πρέπει να είναι λεξικό.
+ru:Параметр должен быть словарем.
+zh:参数必须是字典。
+tw:參數必須是字典。
+ja:引数は辞書形式である必要があります。
+---
+ID:Parameter key "%s" not found.
+es:La clave "%s" no se encontró en el parámetro.
+fr:La clé "%s" est introuvable dans le paramètre.
+de:Schlüssel "%s" im Parameter nicht gefunden.
+it:Chiave "%s" non trovata nel parametro.
+el:Το κλειδί "%s" δεν βρέθηκε στην παράμετρο.
+ru:Ключ "%s" не найден в параметре.
+zh:未找到参数键 "%s"。
+tw:找不到參數鍵 "%s"。
+ja:パラメーターのキー "%s" が見つかりません。
+---

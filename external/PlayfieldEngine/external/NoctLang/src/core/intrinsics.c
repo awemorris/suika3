@@ -31,6 +31,7 @@ static bool rt_intrin_resize(NoctEnv *env);
 static bool rt_intrin_charCount(NoctEnv *env);
 static bool rt_intrin_charAt(NoctEnv *env);
 static bool rt_intrin_substring(NoctEnv *env);
+static bool rt_intrin_indexOf(NoctEnv *env);
 static bool rt_intrin_fast_gc(NoctEnv *env);
 static bool rt_intrin_full_gc(NoctEnv *env);
 static bool rt_intrin_compact_gc(NoctEnv *env);
@@ -54,6 +55,7 @@ struct intrin_item {
 	{"charCount",  "__charCount", 1, {"this",               }, rt_intrin_charCount,  true,  NULL},
 	{"charAt",     "__charAt",    2, {"this", "index"       }, rt_intrin_charAt,     true,  NULL},
 	{"substring",  "__substring", 3, {"this", "start", "len"}, rt_intrin_substring,  true,  NULL},
+	{"indexOf",    "__indexOf",   2, {"this", "str"         }, rt_intrin_indexOf,    true,  NULL},
 	{"isset",      "__isset",     2, {"this", "key"         }, rt_intrin_isset,      true,  NULL},
 	{"unset",      "__unset",     2, {"this", "key"         }, rt_intrin_unset,      true,  NULL},
 	{"fast_gc",    "fast_gc",     0, {NULL},                   rt_intrin_fast_gc,    false, NULL},
@@ -529,6 +531,41 @@ rt_intrin_substring(
 		return false;
 
 	noct_free(tmp);
+
+	return true;
+}
+
+/* indexOf() */
+static bool
+rt_intrin_indexOf(
+	NoctEnv *env)
+{
+	NoctValue str, substr, ret;
+	const char *str_s;
+	const char *substr_s;
+	size_t i, len_str, len_substr, range_max;
+	int result;
+
+	if (!noct_get_arg_check_string(env, 0, &str, &str_s))
+		return false;
+	if (!noct_get_arg_check_string(env, 1, &substr, &substr_s))
+		return false;
+
+	len_str = strlen(str_s);
+	len_substr = strlen(substr_s);
+	result = -1;
+	if (len_str > len_substr) {
+		range_max = len_str - len_substr;
+		for (i = 0; i < range_max; i++) {
+			if (strncmp(str_s + i, substr_s, len_substr) == 0) {
+				result = (int)i;
+				break;
+			}
+		}
+	}
+
+	if (!noct_set_return_make_int(env, &ret, result))
+		return false;
 
 	return true;
 }

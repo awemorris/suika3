@@ -738,6 +738,22 @@ noct_make_dict_copy(
 
 NOCT_DLL
 bool
+noct_get_tmpvar_size(
+	NoctEnv *env,
+	uint32_t *size)
+{
+	assert(env != NULL);
+
+	if (env->frame->tmpvar_size == 0)
+		*size = 0;
+	else
+		*size = env->frame->tmpvar_size;
+
+	return true;
+}
+
+NOCT_DLL
+bool
 noct_get_arg(
 	NoctEnv *env,
 	uint32_t index,
@@ -745,6 +761,7 @@ noct_get_arg(
 {
 	assert(env != NULL);
 	assert(val != NULL);
+	assert(index < env->frame->tmpvar_size);
 
 	*val = env->frame->tmpvar[index];
 

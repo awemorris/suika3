@@ -128,6 +128,26 @@
             }
         },
         {
+            "name":           "windows-vs2022-x64-launcher",
+            "displayName":    "VS2022 MSVC x64 Launcher Release",
+            "generator":      "Visual Studio 17 2022",
+            "architecture":   "x64",
+            "toolset":        "v143",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_CONFIGURATION_TYPES":    "Release",
+                "CMAKE_BUILD_TYPE":             "Release",
+                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
+                "SUIKA_TARGET_WINDOWS":         "ON",
+                "SUIKA_ENABLE_UNSAFE":          "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
             "name":           "windows-vs2022-gdk-desktop",
             "displayName":    "VS2022 GDK Windows",
             "generator":      "Visual Studio 17 2022",
@@ -395,7 +415,7 @@
             }
         },
         {
-            "name":           "windows-vs2026-x64-console",
+            "name":           "windows-vs2026-console-x64",
             "displayName":    "VS2026 MSVC x64 Console Release",
             "generator":      "Visual Studio 18 2026",
             "architecture":   "x64",
@@ -409,6 +429,26 @@
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
                 "SUIKA_ENABLE_CONSOLE":         "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name":           "windows-vs2026-launcher-x64",
+            "displayName":    "VS2026 MSVC x64 Launcher Release",
+            "generator":      "Visual Studio 18 2022",
+            "architecture":   "x64",
+            "toolset":        "v145",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_CONFIGURATION_TYPES":    "Release",
+                "CMAKE_BUILD_TYPE":             "Release",
+                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
+                "SUIKA_TARGET_WINDOWS":         "ON",
+                "SUIKA_ENABLE_UNSAFE":          "ON"
             },
             "condition": {
                 "type": "equals",
@@ -513,6 +553,25 @@
                 "SUIKA_ENABLE_AOTCOMP":    "ON",
                 "SUIKA_ENABLE_WEBSERVER":  "ON",
                 "SUIKA_ENABLE_CONSOLE":    "ON"
+            }
+        },
+        {
+            "name":           "windows-mingw-x86_64-launcher",
+            "displayName":    "MinGW x86_64 launcher",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-mingw-x86_64-launcher",
+            "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-x86_64.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":        "Release",
+                "SUIKA_TARGET_WINDOWS":    "ON",
+                "SUIKA_ENABLE_INSTALL":    "ON",
+                "SUIKA_ENABLE_JIT":        "ON",
+                "SUIKA_ENABLE_I18N":       "ON",
+                "SUIKA_ENABLE_PACK":       "ON",
+                "SUIKA_ENABLE_BYTECOMP":   "ON",
+                "SUIKA_ENABLE_AOTCOMP":    "ON",
+                "SUIKA_ENABLE_WEBSERVER":  "ON",
+                "SUIKA_ENABLE_UNSAFE":     "ON"
             }
         },
         {
@@ -753,6 +812,17 @@
                 "SUIKA_ENABLE_PACK":           "ON",
                 "SUIKA_ENABLE_BYTECOMP":       "ON",
                 "SUIKA_ENABLE_AOTCOMP":        "ON"
+            }
+        },
+        {
+            "name":           "linux-launcher",
+            "displayName":    "Linux",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-linux-launcher",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Debug",
+                "SUIKA_TARGET_LINUX":          "ON",
+                "SUIKA_ENABLE_UNSAFE":         "ON"
             }
         },
         {
@@ -1221,6 +1291,10 @@
             "configurePreset": "windows-vs2022-x64-console"
         },
         {
+            "name": "windows-vs2022-x64-launcher",
+            "configurePreset": "windows-vs2022-x64-launcher"
+        },
+        {
             "name": "windows-vs2022-gdk-desktop",
             "configurePreset": "windows-vs2022-gdk-desktop"
         },
@@ -1257,8 +1331,12 @@
             "configurePreset": "windows-vs2026-arm64-debug"
         },
         {
-            "name": "windows-vs2026-x64-console",
-            "configurePreset": "windows-vs2026-x64-console"
+            "name": "windows-vs2026-console-x64",
+            "configurePreset": "windows-vs2026-console-x64"
+        },
+        {
+            "name": "windows-vs2026-launcher-x64",
+            "configurePreset": "windows-vs2026-launcher-x64"
         },
         {
             "name": "windows-vs2026-gdk-desktop",
@@ -1331,6 +1409,10 @@
         {
             "name": "linux-x11soft",
             "configurePreset": "linux-x11soft"
+        },
+        {
+            "name": "linux-launcher",
+            "configurePreset": "linux-launcher"
         },
         {
             "name": "ios-device",

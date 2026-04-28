@@ -526,6 +526,15 @@ noct_make_dict_copy(
 	NoctValue *src);
 
 /*
+ * Retrieves a tmpvar size from the current stack frame.
+ */
+NOCT_DLL
+bool
+noct_get_tmpvar_size(
+	NoctEnv *env,
+	uint32_t *size);
+
+/*
  * Retrieves a function argument from the current stack frame.
  */
 NOCT_DLL

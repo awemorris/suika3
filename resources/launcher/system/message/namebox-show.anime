@@ -1,0 +1,11 @@
+namebox {
+    layer:    namebox;
+    start:    0.0;
+    end:      0.3;
+    from-x:   r0;
+    from-y:   r0;
+    from-a:   0;
+    to-x:     r0;
+    to-y:     r0;
+    to-a:     255;
+}

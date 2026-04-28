@@ -1,0 +1,37 @@
+idle {
+    layer: sysbtn-idle;
+
+    start: 0.0;
+    end: 0.2;
+
+    from-x: 1183;
+    from-y: 48;
+    from-a: 128;
+    from-scale-x: 1.0;
+    from-scale-y: 1.0;
+
+    to-x: 1183;
+    to-y: 48;
+    to-a: 128;
+    to-scale-x: 1.0;
+    to-scale-y: 1.0;
+}
+
+hover {
+    layer: sysbtn-hover;
+
+    start: 0.0;
+    end: 0.1;
+
+    from-x: 1183;
+    from-y: 48;
+    from-a: 0;
+    from-scale-x: 1.0;
+    from-scale-y: 1.0;
+
+    to-x: 1183;
+    to-y: 48;
+    to-a: 0;
+    to-scale-x: 1.0;
+    to-scale-y: 1.0;
+}

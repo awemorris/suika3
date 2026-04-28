@@ -114,6 +114,12 @@ pfi_create_vm(
 	if (!noct_register_api_math(env))
 		return false;
 
+#if defined(PF_USE_UNSAFE)
+	/* Install System.* API. */
+	if (!noct_register_api_system(env))
+		return false;
+#endif
+
 	/* Install the custom APIs to the runtime. */
 	if (!install_api(env))
 		return false;

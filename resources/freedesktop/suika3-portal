@@ -1,26 +1,26 @@
-#!/bin/sh
+#!/bin/bash
 
 DIR="$1"
-if [ -n "$DIR" ]; then
-    if [ -f "$DIR" ]; then
-        DIR=$(dirname "$DIR")
-    fi;
+if [ -f "$DIR" ]; then
+    DIR=$(dirname "$DIR")
 fi
 
-if [ ! -d "$DIR" ] & [ ! -r "$DIR/start.novel" ] & [ ! -r "$DIR/main.ray" ]; then
+if [ ! -d "$DIR" ] | [ ! -r "$DIR/start.novel" ] | [ ! -r "$DIR/main.ray" ]; then
+    DEFAULT_PATH="";
+    if [ -z "$DIR" ]; then
+	DEFAULT_PATH="";
+    else
+	DEFAULT_PATH="$DIR/";
+    fi
+
     export GTK_USE_PORTAL=1;
     DIR=$(zenity --title "Suika3 Engine" \
                  --file-selection \
                  --directory \
-                 --filename="$DIR/");
+                 --filename="$DEFAULT_PATH");
+
     if [ -z "$DIR" ]; then
-        if zenity --question \
-                  --title "Suika3 Engine" \
-                  --text "Do you want to run the sample game?"; then
-            DIR="/app/share/suika3/game";
-        else
-            exit 1;
-        fi;
+        exit 1;
     fi;
 fi
 

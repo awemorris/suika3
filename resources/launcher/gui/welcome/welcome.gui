@@ -1,0 +1,42 @@
+global {
+    fadein: 1.0;
+    fadeout: 1.0;
+}
+
+BASE {
+    id: 32;
+    type: noaction;
+    x: 0;
+    y: 0;
+    image-idle: gui/welcome/base.png;
+}
+
+LOGO {
+    id: 31;
+    type: noaction;
+    x: 160;
+    y: 0;
+    image-idle: gui/welcome/logo.png;
+}
+
+SAMPLE {
+    id: 1;
+    type: goto;
+    label: sample;
+    image-idle: gui/welcome/sample-idle.png;
+    image-hover: gui/welcome/sample-hover.png;
+    image-press: gui/welcome/sample-press.png;
+    x: 480;
+    y: 400;
+}
+
+OPEN {
+    id: 2;
+    type: goto;
+    label: open;
+    image-idle: gui/welcome/open-idle.png;
+    image-hover: gui/welcome/open-hover.png;
+    image-press: gui/welcome/open-press.png;
+    x: 480;
+    y: 540;
+}

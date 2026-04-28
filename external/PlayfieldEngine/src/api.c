@@ -63,6 +63,7 @@ static int search_free_entry(void);
 static bool create_texture(int width, int height, int *ret, struct hal_image **img);
 static char *make_save_file_name(const char *key);
 static char get_hex_char(int val);
+static bool get_dict_arg(NoctEnv *env, NoctValue *param);
 
 /*
  * Initialization
@@ -1620,20 +1621,34 @@ pf_install_api(
 bool
 pf_get_call_arg_int(
 	const char *name,
-	int *val)
+	int *val,
+	bool omissible,
+	int def_val)
 {
 	NoctEnv *env;
 	NoctValue param, value;
+	bool exists;
 
 	env = pfi_get_vm_env();
 
 	/* Get the "param" argument. */
-	if (!noct_get_arg_check_array(env, 0, &param))
+	if (!get_dict_arg(env, &param))
 		return false;
 
-	/* Get the element by name. */
-	if (!noct_get_dict_elem_check_int(env, &param, name, &value, val))
+	/* Check for the argument. */
+	if (!noct_check_dict_key(env, &param, name, &exists))
 		return false;
+
+	if (exists || !omissible) {
+		/* Get the element by name. */
+		if (!noct_get_dict_elem_check_int(env, &param, name, &value, val))
+			return false;
+	} else if (!exists && !omissible) {
+		pf_log_error(PF_TR(""));
+		return false;
+	} else {
+		*val = def_val;
+	}
 
 	return true;
 }
@@ -1644,20 +1659,31 @@ pf_get_call_arg_int(
 bool
 pf_get_call_arg_float(
 	const char *name,
-	float *val)
+	float *val,
+	bool omissible,
+	float def_val)
 {
 	NoctEnv *env;
 	NoctValue param, value;
+	bool exists;
 
 	env = pfi_get_vm_env();
 
 	/* Get the "param" argument. */
-	if (!noct_get_arg_check_array(env, 0, &param))
+	if (!get_dict_arg(env, &param))
 		return false;
 
-	/* Get the element by name. */
-	if (!noct_get_dict_elem_check_float(env, &param, name, &value, val))
+	/* Check for the argument. */
+	if (!noct_check_dict_key(env, &param, name, &exists))
 		return false;
+
+	if (exists || !omissible) {
+		/* Get the element by name. */
+		if (!noct_get_dict_elem_check_float(env, &param, name, &value, val))
+			return false;
+	} else {
+		*val = def_val;
+	}
 
 	return true;
 }
@@ -1668,27 +1694,46 @@ pf_get_call_arg_float(
 bool
 pf_get_call_arg_string(
 	const char *name,
-	char **val)
+	char **val,
+	bool omissible,
+	const char *def_val)
 {
 	NoctEnv *env;
 	NoctValue param, value;
 	const char *s;
+	bool exists;
 
 	env = pfi_get_vm_env();
 
 	/* Get the "param" argument. */
-	if (!noct_get_arg_check_array(env, 0, &param))
+	if (!get_dict_arg(env, &param))
 		return false;
 
-	/* Get the element by name. */
-	if (!noct_get_dict_elem_check_string(env, &param, name, &value, &s))
+	/* Check for the argument. */
+	if (!noct_check_dict_key(env, &param, name, &exists))
 		return false;
 
-	/* Duplicate the string. */
-	*val = strdup(s);
-	if (*val == NULL) {
-		hal_log_out_of_memory();
-		return false;
+	if (exists || !omissible) {
+		/* Get the element by name. */
+		if (!noct_get_dict_elem_check_string(env, &param, name, &value, &s))
+			return false;
+
+		/* Duplicate the string. */
+		*val = strdup(s);
+		if (*val == NULL) {
+			hal_log_out_of_memory();
+			return false;
+		}
+	} else {
+		if (def_val != NULL) {
+			*val = strdup(def_val);
+			if (*val == NULL) {
+				hal_log_out_of_memory();
+				return false;
+			}
+		} else {
+			*val = NULL;
+		}
 	}
 
 	return true;
@@ -1709,7 +1754,7 @@ pf_get_call_arg_array_length(
 	env = pfi_get_vm_env();
 
 	/* Get the "param" argument. */
-	if (!noct_get_arg_check_array(env, 0, &param))
+	if (!get_dict_arg(env, &param))
 		return false;
 
 	/* Get the element by name. */
@@ -1739,7 +1784,7 @@ pf_get_call_arg_array_int(
 	env = pfi_get_vm_env();
 
 	/* Get the "param" argument. */
-	if (!noct_get_arg_check_array(env, 0, &param))
+	if (!get_dict_arg(env, &param))
 		return false;
 
 	/* Get the element by name. */
@@ -1768,7 +1813,7 @@ pf_get_call_arg_array_float(
 	env = pfi_get_vm_env();
 
 	/* Get the "param" argument. */
-	if (!noct_get_arg_check_array(env, 0, &param))
+	if (!get_dict_arg(env, &param))
 		return false;
 
 	/* Get the element by name. */
@@ -1798,7 +1843,7 @@ pf_get_call_arg_array_string(
 	env = pfi_get_vm_env();
 
 	/* Get the "param" argument. */
-	if (!noct_get_arg_check_array(env, 0, &param))
+	if (!get_dict_arg(env, &param))
 		return false;
 
 	/* Get the element by name. */
@@ -1826,24 +1871,35 @@ bool
 pf_get_call_arg_dict_int(
 	const char *name,
 	const char *key,
-	int *val)
+	int *val,
+	bool omissible,
+	int def_val)
 {
 	NoctEnv *env;
 	NoctValue param, dict, value;
+	bool exists;
 
 	env = pfi_get_vm_env();
 
 	/* Get the "param" argument. */
-	if (!noct_get_arg_check_array(env, 0, &param))
+	if (!get_dict_arg(env, &param))
 		return false;
 
 	/* Get the element by name. */
 	if (!noct_get_dict_elem_check_dict(env, &param, name, &dict))
 		return false;
 
-	/* Get the dict element. */
-	if (!noct_get_dict_elem_check_int(env, &dict, key, &value, val))
+	/* Check for the argument. */
+	if (!noct_check_dict_key(env, &dict, key, &exists))
 		return false;
+
+	if (exists || !omissible) {
+		/* Get the dict element. */
+		if (!noct_get_dict_elem_check_int(env, &dict, key, &value, val))
+			return false;
+	} else {
+		*val = def_val;
+	}
 
 	return true;
 }
@@ -1855,24 +1911,35 @@ bool
 pf_get_call_arg_dict_float(
 	const char *name,
 	const char *key,
-	float *val)
+	float *val,
+	bool omissible,
+	float def_val)
 {
 	NoctEnv *env;
 	NoctValue param, dict, value;
+	bool exists;
 
 	env = pfi_get_vm_env();
 
 	/* Get the "param" argument. */
-	if (!noct_get_arg_check_array(env, 0, &param))
+	if (!get_dict_arg(env, &param))
 		return false;
 
 	/* Get the element by name. */
 	if (!noct_get_dict_elem_check_dict(env, &param, name, &dict))
 		return false;
 
-	/* Get the dict element. */
-	if (!noct_get_dict_elem_check_float(env, &dict, key, &value, val))
+	/* Check for the argument. */
+	if (!noct_check_dict_key(env, &dict, key, &exists))
 		return false;
+
+	if (exists || !omissible) {
+		/* Get the dict element. */
+		if (!noct_get_dict_elem_check_float(env, &dict, key, &value, val))
+			return false;
+	} else {
+		*val = def_val;
+	}
 
 	return true;
 }
@@ -1884,30 +1951,78 @@ bool
 pf_get_call_arg_dict_string(
 	const char *name,
 	const char *key,
-	char **val)
+	char **val,
+	bool omissible,
+	const char *def_val)
 {
 	NoctEnv *env;
 	NoctValue param, dict, value;
 	const char *s;
+	bool exists;
 
 	env = pfi_get_vm_env();
 
 	/* Get the "param" argument. */
-	if (!noct_get_arg_check_array(env, 0, &param))
+	if (!get_dict_arg(env, &param))
 		return false;
 
 	/* Get the element by name. */
 	if (!noct_get_dict_elem_check_dict(env, &param, name, &dict))
 		return false;
 
-	/* Get the dict element. */
-	if (!noct_get_dict_elem_check_string(env, &dict, key, &value, &s))
+	/* Check for the argument. */
+	if (!noct_check_dict_key(env, &dict, key, &exists))
 		return false;
 
-	/* Duplicate the string. */
-	*val = strdup(s);
-	if (*val == NULL) {
-		hal_log_out_of_memory();
+	if (exists || !omissible) {
+		/* Get the dict element. */
+		if (!noct_get_dict_elem_check_string(env, &dict, key, &value, &s))
+			return false;
+
+		/* Duplicate the string. */
+		*val = strdup(s);
+		if (*val == NULL) {
+			hal_log_out_of_memory();
+			return false;
+		}
+	} else {
+		if (def_val != NULL) {
+			*val = strdup(def_val);
+			if (*val == NULL) {
+				hal_log_out_of_memory();
+				return false;
+			}
+		} else {
+			*val = NULL;
+		}
+	}
+
+	return true;
+}
+
+static bool
+get_dict_arg(
+	NoctEnv *env,
+	NoctValue *param)
+{
+	uint32_t size;
+	int type;
+
+	if (!noct_get_tmpvar_size(env, &size))
+		return false;
+
+	assert(size >= 1);
+
+	if (!noct_get_arg(env, 0, param)) {
+		pf_log_error(PF_TR("Parameter is required to be a dictionary."));
+		return false;
+	}
+
+	if (!noct_get_value_type(env, param, &type))
+		return false;
+
+	if (type != NOCT_VALUE_DICT) {
+		noct_error(env, PF_TR("Parameter is required to be a dictionary."));
 		return false;
 	}
 

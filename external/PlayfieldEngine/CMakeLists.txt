@@ -52,6 +52,7 @@ option(PLAYFIELD_ENABLE_ROT90            "Rotate screen for GBM"                
 option(PLAYFIELD_ENABLE_GST              "Enable Gstreamer support"                   OFF)
 option(PLAYFIELD_ENABLE_MAIN2            "Enable macOS main2()"                       OFF)
 option(PLAYFIELD_ENABLE_CONSOLE          "Enable console debug output on Windows"     OFF)
+option(PLAYFIELD_ENABLE_UNSAFE           "Enable unsafe APIs for launchers"           OFF)
 
 # For derived projects
 option(PLAYFIELD_ENABLE_INITHOOK         "Enable the inithook function"               OFF)
@@ -177,8 +178,12 @@ endif()
 
 # Use Math.* API.
 set(NOCTLANG_API_MATH     ON)
-set(NOCTLANG_API_SYSTEM   OFF)
 set(NOCTLANG_API_CONSOLE  OFF)
+if(PLAYFIELD_ENABLE_UNSAFE)
+  set(NOCTLANG_API_SYSTEM ON)
+else()
+  set(NOCTLANG_API_SYSTEM OFF)
+endif()
 
 # If building with JIT.
 if(PLAYFIELD_ENABLE_JIT)
@@ -576,7 +581,12 @@ endif()
 
 # Emscripten
 if(PLAYFIELD_TARGET_WASM AND NOT PLAYFIELD_ENABLE_STATIC)
-  target_compile_definitions(playfield PRIVATE USE_EMSCRIPTEN)
+  target_compile_definitions(playfield PRIVATE PF_USE_EMSCRIPTEN)
+endif()
+
+# Unsafe
+if(PLAYFIELD_ENABLE_UNSAFE)
+    target_compile_definitions(playfield PRIVATE PF_USE_UNSAFE)
 endif()
 
 # ---

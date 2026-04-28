@@ -675,7 +675,9 @@ pf_install_api(
 bool
 pf_get_call_arg_int(
 	const char *name,
-	int *val);
+	int *val,
+	bool omissible,
+	int def_val);
 
 /*
  * Get a function call parameter as a float.
@@ -683,7 +685,9 @@ pf_get_call_arg_int(
 bool
 pf_get_call_arg_float(
 	const char *name,
-	float *val);
+	float *val,
+	bool omissible,
+	float def_val);
 
 /*
  * Get a function call parameter as a string.
@@ -691,7 +695,9 @@ pf_get_call_arg_float(
 bool
 pf_get_call_arg_string(
 	const char *name,
-	char **val);
+	char **val,
+	bool omissible,
+	const char *def_val);
 
 /*
  * Get the length of an array of a function call parameter.
@@ -735,7 +741,9 @@ bool
 pf_get_call_arg_dict_int(
 	const char *name,
 	const char *key,
-	int *val);
+	int *val,
+	bool omissible,
+	int def_val);
 
 /*
  * Get a float element of a dictionary of a function call parameter.
@@ -744,7 +752,9 @@ bool
 pf_get_call_arg_dict_float(
 	const char *name,
 	const char *key,
-	float *val);
+	float *val,
+	bool omissible,
+	float def_val);
 
 /*
  * Get a string element of an array of a function call parameter.
@@ -753,7 +763,9 @@ bool
 pf_get_call_arg_dict_string(
 	const char *name,
 	const char *key,
-	char **val);
+	char **val,
+	bool omissible,
+	const char *def_val);
 
 /*
  * Set an integer return value.

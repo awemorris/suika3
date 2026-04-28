@@ -1088,7 +1088,7 @@ s3_set_layer_file_name(
 		free(layer_file_name[layer]);
 		layer_file_name[layer] = NULL;
 	}
-	if (file_name != NULL) {
+	if (file_name != NULL && strcmp(file_name, "") != 0) {
 		layer_file_name[layer] = strdup(file_name);
 		if (layer_file_name[layer] == NULL) {
 			s3_log_out_of_memory();

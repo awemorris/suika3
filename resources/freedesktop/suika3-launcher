@@ -1,0 +1,22 @@
+#!/bin/sh
+
+LAUNCHER_DIR="";
+for base in /usr /usr/local /usr/pkg /opt /app; do
+    for sub in "share/suika3/launcher" \
+               "share/doc/suika3/launcher"; do
+               "share/docs/suika3/launcher"; do
+        if [ -d "$target" ]; then
+            LAUNCHER_DIR="$target";
+            break 2;
+        fi
+    done
+done
+
+if cd "$LAUNCHER_DIR"; then
+    suika3;
+else
+    echo "No launcher directory found.";
+    exit 1;
+fi
+
+exit 0;

@@ -1,0 +1,35 @@
+[label name="start"]
+
+[gui file="gui/welcome/welcome.gui"]
+    [label name="sample"]
+        [getOSName varName="OS"]
+        [if lhs="${OS}" op="==" rhs="windows"]
+            [runCommand
+                command="..\\bin\\suika3.exe"
+                workDir="..\\sample"
+                waitForFinish="0"]
+        [else]
+            [getSampleDir varName="DIR"]
+            [runCommand
+                command="suika3"
+                workDir="${DIR}"
+                waitForFinish="0"]
+	[endif]
+        [goto name="end"]
+
+    [label name="open"]
+        [getOSName varName="OS"]
+        [if lhs="${OS}" op="==" rhs="windows"]
+            [runCommand
+                command="powershell -NoProfile -ExecutionPolicy Bypass -File .\\scripts\\run.ps1"
+                workDir="."
+                waitForFinish="0"]
+        [else]
+            [runCommand
+                command="suika3-run"
+                workDir="."
+                waitForFinish="0"]
+        [endif]
+        [goto name="end"]
+
+[label name="end"]

@@ -31,8 +31,8 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#ifndef PLAYFIELD_C89COMPAT_H
-#define PLAYFIELD_C89COMPAT_H
+#ifndef NOCT_C89COMPAT_H
+#define NOCT_C89COMPAT_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -442,25 +442,25 @@ typedef unsigned long long uint64_t;
  */
 #if defined(PF_ARCH_LE)
 
-static INLINE uint64_t pf_host_to_le_64(uint64_t d) {
+static INLINE uint64_t noct_host_to_le_64(uint64_t d) {
 	return d;
 }
-static INLINE uint32_t pf_host_to_le_32(uint32_t d) {
+static INLINE uint32_t noct_host_to_le_32(uint32_t d) {
 	return d;
 }
-static INLINE uint16_t pf_host_to_le_16(uint16_t d) {
+static INLINE uint16_t noct_host_to_le_16(uint16_t d) {
 	return d;
 }
-static INLINE uint64_t pf_le_to_host_64(uint64_t d) {
+static INLINE uint64_t noct_le_to_host_64(uint64_t d) {
 	return d;
 }
-static INLINE uint32_t pf_le_to_host_32(uint32_t d) {
+static INLINE uint32_t noct_le_to_host_32(uint32_t d) {
 	return d;
 }
-static INLINE uint16_t pf_le_to_host_16(uint16_t d) {
+static INLINE uint16_t noct_le_to_host_16(uint16_t d) {
 	return d;
 }
-static INLINE uint64_t pf_be_to_host_64(uint64_t d) {
+static INLINE uint64_t noct_be_to_host_64(uint64_t d) {
 	return ((d & 0xff) << 56) |
 		(((d >> 8) & 0xff) << 48) |
 		(((d >> 16) & 0xff) << 40) |
@@ -470,17 +470,17 @@ static INLINE uint64_t pf_be_to_host_64(uint64_t d) {
 		(((d >> 48) & 0xff) << 8) |
 		(((d >> 56) & 0xff));
 }
-static INLINE uint32_t pf_be_to_host_32(uint32_t d) {
+static INLINE uint32_t noct_be_to_host_32(uint32_t d) {
 	return ((d & 0xff) << 24) |
 		(((d >> 8) & 0xff) << 16) |
 		(((d >> 16) & 0xff) << 8) |
 		((d >> 24) & 0xff);
 }
-static INLINE uint16_t pf_be_to_host_16(uint16_t d) {
+static INLINE uint16_t noct_be_to_host_16(uint16_t d) {
 	return ((d & 0xff) << 8) |
 		((d >> 8) & 0xff);
 }
-static INLINE uint64_t pf_host_to_be_64(uint64_t d) {
+static INLINE uint64_t noct_host_to_be_64(uint64_t d) {
 	return ((d & 0xff) << 56) |
 		(((d >> 8) & 0xff) << 48) |
 		(((d >> 16) & 0xff) << 40) |
@@ -490,38 +490,38 @@ static INLINE uint64_t pf_host_to_be_64(uint64_t d) {
 		(((d >> 48) & 0xff) << 8) |
 		(((d >> 56) & 0xff));
 }
-static INLINE uint32_t pf_host_to_be_32(uint32_t d) {
+static INLINE uint32_t noct_host_to_be_32(uint32_t d) {
 	return ((d & 0xff) << 24) |
 		(((d >> 8) & 0xff) << 16) |
 		(((d >> 16) & 0xff) << 8) |
 		((d >> 24) & 0xff);
 }
-static INLINE uint16_t pf_host_to_be_16(uint16_t d) {
+static INLINE uint16_t noct_host_to_be_16(uint16_t d) {
 	return ((d & 0xff) << 8) |
 		((d >> 8) & 0xff);
 }
 
 #else
 
-static INLINE uint64_t pf_host_to_be_64(uint64_t d) {
+static INLINE uint64_t noct_host_to_be_64(uint64_t d) {
 	return d;
 }
-static INLINE uint32_t pf_host_to_be_32(uint32_t d) {
+static INLINE uint32_t noct_host_to_be_32(uint32_t d) {
 	return d;
 }
-static INLINE uint16_t pf_host_to_be_16(uint16_t d) {
+static INLINE uint16_t noct_host_to_be_16(uint16_t d) {
 	return d;
 }
-static INLINE uint64_t pf_be_to_host_64(uint64_t d) {
+static INLINE uint64_t noct_be_to_host_64(uint64_t d) {
 	return d;
 }
-static INLINE uint32_t pf_be_to_host_32(uint32_t d) {
+static INLINE uint32_t noct_be_to_host_32(uint32_t d) {
 	return d;
 }
-static INLINE uint16_t pf_be_to_host_16(uint16_t d) {
+static INLINE uint16_t noct_be_to_host_16(uint16_t d) {
 	return d;
 }
-static INLINE uint64_t pf_le_to_host_64(uint64_t d) {
+static INLINE uint64_t noct_le_to_host_64(uint64_t d) {
 	return ((d & 0xff) << 56) |
 		(((d >> 8) & 0xff) << 48) |
 		(((d >> 16) & 0xff) << 40) |
@@ -531,17 +531,17 @@ static INLINE uint64_t pf_le_to_host_64(uint64_t d) {
 		(((d >> 48) & 0xff) << 8) |
 		(((d >> 56) & 0xff));
 }
-static INLINE uint32_t pf_le_to_host_32(uint32_t d) {
+static INLINE uint32_t noct_le_to_host_32(uint32_t d) {
 	return ((d & 0xff) << 24) |
 		(((d >> 8) & 0xff) << 16) |
 		(((d >> 16) & 0xff) << 8) |
 		((d >> 24) & 0xff);
 }
-static INLINE uint16_t pf_le_to_host_16(uint16_t d) {
+static INLINE uint16_t noct_le_to_host_16(uint16_t d) {
 	return (uint16_t)(((uint32_t)(d & 0xff) << 8) |
 			  ((d >> 8) & 0xff));
 }
-static INLINE uint64_t pf_host_to_le_64(uint64_t d) {
+static INLINE uint64_t noct_host_to_le_64(uint64_t d) {
 	return ((d & 0xff) << 56) |
 		(((d >> 8) & 0xff) << 48) |
 		(((d >> 16) & 0xff) << 40) |
@@ -551,13 +551,13 @@ static INLINE uint64_t pf_host_to_le_64(uint64_t d) {
 		(((d >> 48) & 0xff) << 8) |
 		(((d >> 56) & 0xff));
 }
-static INLINE uint32_t pf_host_to_le_32(uint32_t d) {
+static INLINE uint32_t noct_host_to_le_32(uint32_t d) {
 	return ((d & 0xff) << 24) |
 		(((d >> 8) & 0xff) << 16) |
 		(((d >> 16) & 0xff) << 8) |
 		((d >> 24) & 0xff);
 }
-static INLINE uint16_t pf_host_to_le_16(uint16_t d) {
+static INLINE uint16_t noct_host_to_le_16(uint16_t d) {
 	return (uint16_t)(((uint32_t)(d & 0xff) << 8) |
 			  ((d >> 8) & 0xff));
 }

@@ -1216,9 +1216,9 @@ Suika_setConfig(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("key", &key))
+		if (!pf_get_call_arg_string("key", &key, false, NULL))
 			break;
-		if (!pf_get_call_arg_string("value", &value))
+		if (!pf_get_call_arg_string("value", &value, false, NULL))
 			break;
 
 		/* Set the config value. */
@@ -1277,7 +1277,7 @@ Suika_getConfigKey(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		/* Get the config key. */
@@ -1309,7 +1309,7 @@ Suika_isGlobalSaveConfig(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("key", &key))
+		if (!pf_get_call_arg_string("key", &key, false, NULL))
 			break;
 
 		/* Check if the config is saved-global. */
@@ -1342,7 +1342,7 @@ Suika_isLocalSaveConfig(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("key", &key))
+		if (!pf_get_call_arg_string("key", &key, false, NULL))
 			break;
 
 		/* Check if the config is saved-local. */
@@ -1363,7 +1363,7 @@ Suika_isLocalSaveConfig(
 
 static bool
 Suika_getConfigType(
-		    void *p)
+	void *p)
 {
 	char *key;
 	char type;
@@ -1376,7 +1376,7 @@ Suika_getConfigType(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("key", &key))
+		if (!pf_get_call_arg_string("key", &key, false, NULL))
 			break;
 
 		/* Get the config type. */
@@ -1426,7 +1426,7 @@ Suika_getStringConfig(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("key", &key))
+		if (!pf_get_call_arg_string("key", &key, false, NULL))
 			break;
 
 		/* Get the config value. */
@@ -1459,7 +1459,7 @@ Suika_getBoolConfig(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("key", &key))
+		if (!pf_get_call_arg_string("key", &key, false, NULL))
 			break;
 
 		/* Get the config value. */
@@ -1492,7 +1492,7 @@ Suika_getIntConfig(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("key", &key))
+		if (!pf_get_call_arg_string("key", &key, false, NULL))
 			break;
 
 		/* Get the config value. */
@@ -1525,7 +1525,7 @@ Suika_getFloatConfig(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("key", &key))
+		if (!pf_get_call_arg_string("key", &key, false, NULL))
 			break;
 
 		/* Get the config value. */
@@ -1558,7 +1558,7 @@ Suika_getConfigAsString(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("key", &key))
+		if (!pf_get_call_arg_string("key", &key, false, NULL))
 			break;
 
 		/* Get the config value. */
@@ -2179,7 +2179,7 @@ Suika_setSaveLoad(void *p)
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("enable", &enable))
+		if (!pf_get_call_arg_int("enable", &enable, false, -1))
 			break;
 
 		s3_set_save_load(enable ? true : false);
@@ -2221,7 +2221,7 @@ Suika_setNonInterruptible(void *p)
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("enable", &enable))
+		if (!pf_get_call_arg_int("enable", &enable, false, -1))
 			break;
 
 		s3_set_non_interruptible(enable ? true : false);
@@ -2264,9 +2264,9 @@ Suika_setPenPosition(void *p)
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("x", &x))
+		if (!pf_get_call_arg_int("x", &x, false, -1))
 			break;
-		if (!pf_get_call_arg_int("y", &y))
+		if (!pf_get_call_arg_int("y", &y, false, -1))
 			break;
 
 		s3_set_pen_position(x, y);
@@ -2326,9 +2326,9 @@ Suika_pushForCall(void *p)
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_string("file", &file))
+		if (!pf_get_call_arg_string("file", &file, false, NULL))
 			break;
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		if (!s3_push_for_call(file, index))
@@ -2403,7 +2403,7 @@ Suika_readCallStack(void *p)
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("sp", &sp))
+		if (!pf_get_call_arg_int("sp", &sp, false, -1))
 			break;
 
 		if (!s3_read_call_stack(sp, &file, &index))
@@ -2442,11 +2442,11 @@ Suika_writeCallStack(void *p)
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("sp", &sp))
+		if (!pf_get_call_arg_int("sp", &sp, false, -1))
 			break;
-		if (!pf_get_call_arg_string("file", &file))
+		if (!pf_get_call_arg_string("file", &file, false, NULL))
 			break;
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		if (!s3_write_call_stack(sp, file, index))
@@ -2478,9 +2478,9 @@ Suika_setCallArgument(void *p)
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
-		if (!pf_get_call_arg_string("value", &value))
+		if (!pf_get_call_arg_string("value", &value, false, NULL))
 			break;
 
 		if (!s3_set_call_argument(index, value))
@@ -2512,7 +2512,7 @@ Suika_getCallArgument(void *p)
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		value = s3_get_call_argument(index);
@@ -2602,7 +2602,7 @@ Suika_setChapterName(void *p)
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
 
 		if (!s3_set_chapter_name(name))
@@ -2649,7 +2649,7 @@ Suika_setLastMessage(void *p)
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("message", &message))
+		if (!pf_get_call_arg_string("message", &message, false, NULL))
 			break;
 
 		if (!s3_set_last_message(message))
@@ -2680,7 +2680,7 @@ Suika_appendLastMessage(void *p)
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_string("message", &message))
+		if (!pf_get_call_arg_string("message", &message, false, NULL))
 			break;
 
 		if (!s3_append_last_message(message))
@@ -2726,7 +2726,7 @@ Suika_setTextSpeed(void *p)
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_float("speed", &speed))
+		if (!pf_get_call_arg_float("speed", &speed, false, 0.0f))
 			break;
 
 		s3_set_text_speed(speed);
@@ -2768,7 +2768,7 @@ Suika_setAutoSpeed(void *p)
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_float("speed", &speed))
+		if (!pf_get_call_arg_float("speed", &speed, false, 0.0f))
 			break;
 
 		s3_set_auto_speed(speed);
@@ -2877,7 +2877,7 @@ Suika_createImageFromFile(void *p)
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("file", &file))
+		if (!pf_get_call_arg_string("file", &file, false, NULL))
 			break;
 
 		img = s3_create_image_from_file(file);
@@ -2913,9 +2913,9 @@ Suika_createImage(void *p)
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("width", &width))
+		if (!pf_get_call_arg_int("width", &width, false, -1))
 			break;
-		if (!pf_get_call_arg_int("height", &height))
+		if (!pf_get_call_arg_int("height", &height, false, -1))
 			break;
 
 		img = s3_create_image(width, height);
@@ -2947,7 +2947,7 @@ Suika_getImageWidth(void *p)
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("image", &image))
+		if (!pf_get_call_arg_int("image", &image, false, -1))
 			break;
 
 		img = s3i_int_to_image(image);
@@ -2979,7 +2979,7 @@ Suika_getImageHeight(void *p)
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("image", &image))
+		if (!pf_get_call_arg_int("image", &image, false, -1))
 			break;
 
 		img = s3i_int_to_image(image);
@@ -3018,17 +3018,17 @@ Suika_loadGlyphImage(void *p)
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("fontType", &font_type))
+		if (!pf_get_call_arg_int("fontType", &font_type, false, -1))
 			break;
-		if (!pf_get_call_arg_string("glyph", &glyph))
+		if (!pf_get_call_arg_string("glyph", &glyph, false, NULL))
 			break;
-		if (!pf_get_call_arg_int("size", &size))
+		if (!pf_get_call_arg_int("size", &size, false, -1))
 			break;
-		if (!pf_get_call_arg_int("color", &color))
+		if (!pf_get_call_arg_int("color", &color, false, -1))
 			break;
-		if (!pf_get_call_arg_int("outlineWidth", &outline_width))
+		if (!pf_get_call_arg_int("outlineWidth", &outline_width, false, -1))
 			break;
-		if (!pf_get_call_arg_int("outlineColor", &outline_color))
+		if (!pf_get_call_arg_int("outlineColor", &outline_color, false, -1))
 			break;
 
 		if (!s3_utf8_to_utf32(glyph, &wc))
@@ -3070,7 +3070,7 @@ Suika_destroyImage(void *p)
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("image", &image))
+		if (!pf_get_call_arg_int("image", &image, false, -1))
 			break;
 
 		img = s3i_int_to_image(image);
@@ -3101,7 +3101,7 @@ Suika_notifyImageUpdate(void *p)
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("image", &image))
+		if (!pf_get_call_arg_int("image", &image, false, -1))
 			break;
 
 		img = s3i_int_to_image(image);
@@ -3143,25 +3143,25 @@ Suika_drawImage(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("dstImage", &dst_image))
+		if (!pf_get_call_arg_int("dstImage", &dst_image, false, -1))
 			break;
-		if (!pf_get_call_arg_int("dstLeft", &dst_left))
+		if (!pf_get_call_arg_int("dstLeft", &dst_left, true, 0))
 			break;
-		if (!pf_get_call_arg_int("dstTop", &dst_top))
+		if (!pf_get_call_arg_int("dstTop", &dst_top, true, 0))
 			break;
-		if (!pf_get_call_arg_int("srcImage", &src_image))
+		if (!pf_get_call_arg_int("srcImage", &src_image, false, -1))
 			break;
-		if (!pf_get_call_arg_int("srcLeft", &src_left))
+		if (!pf_get_call_arg_int("srcLeft", &src_left, true, 0))
 			break;
-		if (!pf_get_call_arg_int("srcTop", &src_top))
+		if (!pf_get_call_arg_int("srcTop", &src_top, true, 0))
 			break;
-		if (!pf_get_call_arg_int("srcWidth", &src_width))
+		if (!pf_get_call_arg_int("srcWidth", &src_width, false, -1))
 			break;
-		if (!pf_get_call_arg_int("srcHeight", &src_height))
+		if (!pf_get_call_arg_int("srcHeight", &src_height, false, -1))
 			break;
-		if (!pf_get_call_arg_int("alpha", &alpha))
+		if (!pf_get_call_arg_int("alpha", &alpha, true, 255))
 			break;
-		if (!pf_get_call_arg_int("blend", &blend))
+		if (!pf_get_call_arg_int("blend", &blend, true, 0))
 			break;
 
 		src_img = s3i_int_to_image(src_image);
@@ -3209,37 +3209,37 @@ Suika_drawImage3D(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("dstImage", &dst_image))
+		if (!pf_get_call_arg_int("dstImage", &dst_image, false, -1))
 			break;
-		if (!pf_get_call_arg_int("x1", &x1))
+		if (!pf_get_call_arg_int("x1", &x1, false, -1))
 			break;
-		if (!pf_get_call_arg_int("y1", &y1))
+		if (!pf_get_call_arg_int("y1", &y1, false, -1))
 			break;
-		if (!pf_get_call_arg_int("x2", &x2))
+		if (!pf_get_call_arg_int("x2", &x2, false, -1))
 			break;
-		if (!pf_get_call_arg_int("y2", &y2))
+		if (!pf_get_call_arg_int("y2", &y2, false, -1))
 			break;
-		if (!pf_get_call_arg_int("x3", &x3))
+		if (!pf_get_call_arg_int("x3", &x3, false, -1))
 			break;
-		if (!pf_get_call_arg_int("y3", &y3))
+		if (!pf_get_call_arg_int("y3", &y3, false, -1))
 			break;
-		if (!pf_get_call_arg_int("x4", &x4))
+		if (!pf_get_call_arg_int("x4", &x4, false, -1))
 			break;
-		if (!pf_get_call_arg_int("y4", &y4))
+		if (!pf_get_call_arg_int("y4", &y4, false, -1))
 			break;
-		if (!pf_get_call_arg_int("srcImage", &src_image))
+		if (!pf_get_call_arg_int("srcImage", &src_image, false, -1))
 			break;
-		if (!pf_get_call_arg_int("srcLeft", &src_left))
+		if (!pf_get_call_arg_int("srcLeft", &src_left, true, -1))
 			break;
-		if (!pf_get_call_arg_int("srcTop", &src_top))
+		if (!pf_get_call_arg_int("srcTop", &src_top, true, 0))
 			break;
-		if (!pf_get_call_arg_int("srcWidth", &src_width))
+		if (!pf_get_call_arg_int("srcWidth", &src_width, false, -1))
 			break;
-		if (!pf_get_call_arg_int("srcHeight", &src_height))
+		if (!pf_get_call_arg_int("srcHeight", &src_height, false, -1))
 			break;
-		if (!pf_get_call_arg_int("alpha", &alpha))
+		if (!pf_get_call_arg_int("alpha", &alpha, true, 255))
 			break;
-		if (!pf_get_call_arg_int("blend", &blend))
+		if (!pf_get_call_arg_int("blend", &blend, true, 0))
 			break;
 
 		src_img = s3i_int_to_image(src_image);
@@ -3291,13 +3291,13 @@ Suika_makeColor(void *p)
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("r", &r))
+		if (!pf_get_call_arg_int("r", &r, false, -1))
 			break;
-		if (!pf_get_call_arg_int("g", &g))
+		if (!pf_get_call_arg_int("g", &g, false, -1))
 			break;
-		if (!pf_get_call_arg_int("b", &b))
+		if (!pf_get_call_arg_int("b", &b, false, -1))
 			break;
-		if (!pf_get_call_arg_int("a", &a))
+		if (!pf_get_call_arg_int("a", &a, false, -1))
 			break;
 
 		val = (int)s3_make_pixel((uint32_t)a,
@@ -3332,17 +3332,17 @@ Suika_fillImageRect(void *p)
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("image", &image))
+		if (!pf_get_call_arg_int("image", &image, false, -1))
 			break;
-		if (!pf_get_call_arg_int("left", &left))
+		if (!pf_get_call_arg_int("left", &left, false, -1))
 			break;
-		if (!pf_get_call_arg_int("top", &top))
+		if (!pf_get_call_arg_int("top", &top, false, -1))
 			break;
-		if (!pf_get_call_arg_int("width", &width))
+		if (!pf_get_call_arg_int("width", &width, false, -1))
 			break;
-		if (!pf_get_call_arg_int("height", &height))
+		if (!pf_get_call_arg_int("height", &height, false, -1))
 			break;
-		if (!pf_get_call_arg_int("color", &color))
+		if (!pf_get_call_arg_int("color", &color, false, -1))
 			break;
 
 		img = s3i_int_to_image(image);
@@ -3413,7 +3413,7 @@ Suika_getLayerX(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		val = s3_get_layer_x(layer);
@@ -3441,7 +3441,7 @@ Suika_getLayerY(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		val = s3_get_layer_y(layer);
@@ -3470,11 +3470,11 @@ Suika_setLayerPosition(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
-		if (!pf_get_call_arg_int("x", &x))
+		if (!pf_get_call_arg_int("x", &x, false, -1))
 			break;
-		if (!pf_get_call_arg_int("y", &y))
+		if (!pf_get_call_arg_int("y", &y, false, -1))
 			break;
 
 		s3_set_layer_position(layer, x, y);
@@ -3502,7 +3502,7 @@ Suika_getLayerScaleX(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		val = s3_get_layer_scale_x(layer);
@@ -3530,7 +3530,7 @@ Suika_getLayerScaleY(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		val = s3_get_layer_scale_y(layer);
@@ -3559,11 +3559,11 @@ Suika_setLayerScale(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
-		if (!pf_get_call_arg_float("scaleX", &scale_x))
+		if (!pf_get_call_arg_float("scaleX", &scale_x, false, -1))
 			break;
-		if (!pf_get_call_arg_float("scaleY", &scale_y))
+		if (!pf_get_call_arg_float("scaleY", &scale_y, false, -1))
 			break;
 
 		s3_set_layer_scale(layer, scale_x, scale_y);
@@ -3591,7 +3591,7 @@ Suika_getLayerCenterX(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		val = s3_get_layer_center_x(layer);
@@ -3619,7 +3619,7 @@ Suika_getLayerCenterY(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		val = s3_get_layer_center_y(layer);
@@ -3648,11 +3648,11 @@ Suika_setLayerCenter(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
-		if (!pf_get_call_arg_int("centerX", &center_x))
+		if (!pf_get_call_arg_int("centerX", &center_x, false, -1))
 			break;
-		if (!pf_get_call_arg_int("centerY", &center_y))
+		if (!pf_get_call_arg_int("centerY", &center_y, false, -1))
 			break;
 
 		s3_set_layer_center(layer, center_x, center_y);
@@ -3680,7 +3680,7 @@ Suika_getLayerRotate(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		val = s3_get_layer_rotate(layer);
@@ -3708,9 +3708,9 @@ Suika_setLayerRotate(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
-		if (!pf_get_call_arg_float("rotate", &rotate))
+		if (!pf_get_call_arg_float("rotate", &rotate, false, 0))
 			break;
 
 		s3_set_layer_rotate(layer, rotate);
@@ -3738,7 +3738,7 @@ Suika_getLayerDim(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		val = s3_get_layer_dim(layer);
@@ -3766,9 +3766,9 @@ Suika_setLayerDim(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
-		if (!pf_get_call_arg_int("dim", &dim))
+		if (!pf_get_call_arg_int("dim", &dim, false, -1))
 			break;
 
 		s3_set_layer_dim(layer, dim);
@@ -3796,7 +3796,7 @@ Suika_getLayerWidth(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		val = s3_get_layer_width(layer);
@@ -3824,7 +3824,7 @@ Suika_getLayerHeight(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		val = s3_get_layer_height(layer);
@@ -3852,7 +3852,7 @@ Suika_getLayerAlpha(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		val = s3_get_layer_alpha(layer);
@@ -3880,9 +3880,9 @@ Suika_setLayerAlpha(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
-		if (!pf_get_call_arg_int("alpha", &alpha))
+		if (!pf_get_call_arg_int("alpha", &alpha, false, -1))
 			break;
 
 		s3_set_layer_alpha(layer, alpha);
@@ -3910,7 +3910,7 @@ Suika_getLayerBlend(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 	
 		val = s3_get_layer_blend(layer);
@@ -3938,9 +3938,9 @@ Suika_setLayerBlend(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
-		if (!pf_get_call_arg_int("blend", &blend))
+		if (!pf_get_call_arg_int("blend", &blend, false, -1))
 			break;
 	
 		s3_set_layer_blend(layer, blend);
@@ -3968,7 +3968,7 @@ Suika_getLayerFile(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 	
 		val = s3_get_layer_file_name(layer);
@@ -3999,9 +3999,9 @@ Suika_setLayerFile(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
-		if (!pf_get_call_arg_string("file", &file))
+		if (!pf_get_call_arg_string("file", &file, false, NULL))
 			break;
 
 		if (!s3_set_layer_file_name(layer, file))
@@ -4033,7 +4033,7 @@ Suika_getLayerImage(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 	
 		val = s3i_image_to_int(s3_get_layer_image(layer));
@@ -4062,9 +4062,9 @@ Suika_setLayerImage(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
-		if (!pf_get_call_arg_int("image", &image))
+		if (!pf_get_call_arg_int("image", &image, false, -1))
 			break;
 
 		img = s3i_int_to_image(image);
@@ -4093,7 +4093,7 @@ Suika_getLayerFrame(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		val = s3_get_layer_frame(layer);
@@ -4121,9 +4121,9 @@ Suika_setLayerFrame(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
-		if (!pf_get_call_arg_int("frame", &frame))
+		if (!pf_get_call_arg_int("frame", &frame, false, -1))
 			break;
 
 		s3_set_layer_frame(layer, frame);
@@ -4151,7 +4151,7 @@ Suika_getLayerText(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		val = s3_get_layer_text(layer);
@@ -4182,9 +4182,9 @@ Suika_setLayerText(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
-		if (!pf_get_call_arg_string("text", &text))
+		if (!pf_get_call_arg_string("text", &text, false, NULL))
 			break;
 
 		s3_set_layer_text(layer, text);
@@ -4289,7 +4289,7 @@ Suika_chposToLayer(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("chpos", &chpos))
+		if (!pf_get_call_arg_int("chpos", &chpos, false, -1))
 			break;
 
 		val = s3_chpos_to_layer(chpos);
@@ -4317,7 +4317,7 @@ Suika_chposToEyeLayer(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("chpos", &chpos))
+		if (!pf_get_call_arg_int("chpos", &chpos, false, -1))
 			break;
 
 		val = s3_chpos_to_eye_layer(chpos);
@@ -4345,7 +4345,7 @@ Suika_chposToLipLayer(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("chpos", &chpos))
+		if (!pf_get_call_arg_int("chpos", &chpos, false, -1))
 			break;
 
 		val = s3_chpos_to_lip_layer(chpos);
@@ -4373,7 +4373,7 @@ Suika_layerToChpos(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		val = s3_layer_to_chpos(layer);
@@ -4451,7 +4451,7 @@ Suika_getFadeMethod(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
 
 		val = s3_get_fade_method(name);
@@ -4483,7 +4483,7 @@ Suika_getAccelMethod(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
 
 		val = s3_get_accel_method(name);
@@ -4563,9 +4563,9 @@ Suika_setShakeOffset(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("x", &x))
+		if (!pf_get_call_arg_int("x", &x, false, -1))
 			break;
-		if (!pf_get_call_arg_int("y", &y))
+		if (!pf_get_call_arg_int("y", &y, false, -1))
 			break;
 
 		s3_set_shake_offset(x, y);
@@ -4626,9 +4626,9 @@ Suika_setChNameMapping(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("chpos", &chpos))
+		if (!pf_get_call_arg_int("chpos", &chpos, false, -1))
 			break;
-		if (!pf_get_call_arg_int("chNameIndex", &chNameIndex))
+		if (!pf_get_call_arg_int("chNameIndex", &chNameIndex, false, -1))
 			break;
 
 		s3_set_ch_name_mapping(chpos, chNameIndex);
@@ -4672,7 +4672,7 @@ Suika_setChTalking(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("chpos", &chpos))
+		if (!pf_get_call_arg_int("chpos", &chpos, false, -1))
 			break;
 
 		s3_set_ch_talking(chpos);
@@ -4732,9 +4732,9 @@ Suika_forceChDim(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("chpos", &chpos))
+		if (!pf_get_call_arg_int("chpos", &chpos, false, -1))
 			break;
-		if (!pf_get_call_arg_int("dim", &dim))
+		if (!pf_get_call_arg_int("dim", &dim, false, -1))
 			break;
 
 		s3_force_ch_dim(chpos, dim ? true : false);
@@ -4762,7 +4762,7 @@ Suika_getChDim(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("chpos", &chpos))
+		if (!pf_get_call_arg_int("chpos", &chpos, false, -1))
 			break;
 
 		val = s3_get_ch_dim(chpos);
@@ -4843,7 +4843,7 @@ Suika_showNameBox(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("show", &show))
+		if (!pf_get_call_arg_int("show", &show, false, -1))
 			break;
 
 		s3_show_namebox(show ? true : false);
@@ -4885,7 +4885,7 @@ Suika_showMessageBox(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("show", &show))
+		if (!pf_get_call_arg_int("show", &show, false, -1))
 			break;
 
 		s3_show_msgbox(show ? true : false);
@@ -4952,9 +4952,9 @@ Suika_setClickPosition(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("x", &x))
+		if (!pf_get_call_arg_int("x", &x, false, -1))
 			break;
-		if (!pf_get_call_arg_int("y", &y))
+		if (!pf_get_call_arg_int("y", &y, false, -1))
 			break;
 
 		s3_set_click_position(x, y);
@@ -4981,7 +4981,7 @@ Suika_showClick(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("show", &show))
+		if (!pf_get_call_arg_int("show", &show, false, -1))
 			break;
 
 		s3_show_click(show ? true : false);
@@ -5008,7 +5008,7 @@ Suika_setClickIndex(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		s3_set_click_index(index);
@@ -5074,7 +5074,7 @@ Suika_fillChooseBoxIdleImage(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		s3_fill_choosebox_idle_image(index);
@@ -5101,7 +5101,7 @@ Suika_fillChooseBoxHoverImage(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		s3_fill_choosebox_hover_image(index);
@@ -5130,11 +5130,11 @@ Suika_showChooseBox(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
-		if (!pf_get_call_arg_int("showIdle", &show_idle))
+		if (!pf_get_call_arg_int("showIdle", &show_idle, false, -1))
 			break;
-		if (!pf_get_call_arg_int("showHover", &show_hover))
+		if (!pf_get_call_arg_int("showHover", &show_hover, false, -1))
 			break;
 
 		s3_show_choosebox(index,
@@ -5169,7 +5169,7 @@ Suika_getChooseBoxRect(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		s3_get_choosebox_rect(index, &x, &y, &w, &h);
@@ -5207,7 +5207,7 @@ Suika_showAutoModeBanner(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("show", &show))
+		if (!pf_get_call_arg_int("show", &show, false, -1))
 			break;
 
 		s3_show_automode_banner(show ? true : false);
@@ -5234,7 +5234,7 @@ Suika_showSkipModeBanner(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("show", &show))
+		if (!pf_get_call_arg_int("show", &show, false, -1))
 			break;
 
 		s3_show_skipmode_banner(show ? true : false);
@@ -5272,27 +5272,27 @@ Suika_renderImage(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("dstLeft", &dst_left))
+		if (!pf_get_call_arg_int("dstLeft", &dst_left, true, 0))
 			break;
-		if (!pf_get_call_arg_int("dstTop", &dst_top))
+		if (!pf_get_call_arg_int("dstTop", &dst_top, true, 0))
 			break;
-		if (!pf_get_call_arg_int("dstWidth", &dst_width))
+		if (!pf_get_call_arg_int("dstWidth", &dst_width, false, -1))
 			break;
-		if (!pf_get_call_arg_int("dstHeight", &dst_height))
+		if (!pf_get_call_arg_int("dstHeight", &dst_height, false, -1))
 			break;
-		if (!pf_get_call_arg_int("image", &image))
+		if (!pf_get_call_arg_int("image", &image, false, -1))
 			break;
-		if (!pf_get_call_arg_int("srcLeft", &src_left))
+		if (!pf_get_call_arg_int("srcLeft", &src_left, true, 0))
 			break;
-		if (!pf_get_call_arg_int("srcTop", &src_top))
+		if (!pf_get_call_arg_int("srcTop", &src_top, true, 0))
 			break;
-		if (!pf_get_call_arg_int("srcWidth", &src_width))
+		if (!pf_get_call_arg_int("srcWidth", &src_width, false, -1))
 			break;
-		if (!pf_get_call_arg_int("srcHeight", &src_height))
+		if (!pf_get_call_arg_int("srcHeight", &src_height, false, -1))
 			break;
-		if (!pf_get_call_arg_int("alpha", &alpha))
+		if (!pf_get_call_arg_int("alpha", &alpha, true, 255))
 			break;
-		if (!pf_get_call_arg_int("blend", &blend))
+		if (!pf_get_call_arg_int("blend", &blend, true, 0))
 			break;
 
 		img = s3i_int_to_image(image);
@@ -5336,35 +5336,35 @@ Suika_renderImage3d(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("x1", &x1))
+		if (!pf_get_call_arg_int("x1", &x1, false, -1))
 			break;
-		if (!pf_get_call_arg_int("y1", &y1))
+		if (!pf_get_call_arg_int("y1", &y1, false, -1))
 			break;
-		if (!pf_get_call_arg_int("x2", &x2))
+		if (!pf_get_call_arg_int("x2", &x2, false, -1))
 			break;
-		if (!pf_get_call_arg_int("y2", &y2))
+		if (!pf_get_call_arg_int("y2", &y2, false, -1))
 			break;
-		if (!pf_get_call_arg_int("x3", &x3))
+		if (!pf_get_call_arg_int("x3", &x3, false, -1))
 			break;
-		if (!pf_get_call_arg_int("y3", &y3))
+		if (!pf_get_call_arg_int("y3", &y3, false, -1))
 			break;
-		if (!pf_get_call_arg_int("x4", &x4))
+		if (!pf_get_call_arg_int("x4", &x4, false, -1))
 			break;
-		if (!pf_get_call_arg_int("y4", &y4))
+		if (!pf_get_call_arg_int("y4", &y4, false, -1))
 			break;
-		if (!pf_get_call_arg_int("image", &image))
+		if (!pf_get_call_arg_int("image", &image, false, -1))
 			break;
-		if (!pf_get_call_arg_int("srcLeft", &src_left))
+		if (!pf_get_call_arg_int("srcLeft", &src_left, true, 0))
 			break;
-		if (!pf_get_call_arg_int("srcTop", &src_top))
+		if (!pf_get_call_arg_int("srcTop", &src_top, true, 0))
 			break;
-		if (!pf_get_call_arg_int("srcWidth", &src_width))
+		if (!pf_get_call_arg_int("srcWidth", &src_width, false, -1))
 			break;
-		if (!pf_get_call_arg_int("srcHeight", &src_height))
+		if (!pf_get_call_arg_int("srcHeight", &src_height, false, -1))
 			break;
-		if (!pf_get_call_arg_int("alpha", &alpha))
+		if (!pf_get_call_arg_int("alpha", &alpha, true, 0))
 			break;
-		if (!pf_get_call_arg_int("beldn", &blend))
+		if (!pf_get_call_arg_int("beldn", &blend, true, 0))
 			break;
 
 		img = s3i_int_to_image(image);
@@ -5413,11 +5413,11 @@ Suika_setMixerInputFile(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("track", &track))
+		if (!pf_get_call_arg_int("track", &track, false, -1))
 			break;
-		if (!pf_get_call_arg_string("file", &file))
+		if (!pf_get_call_arg_string("file", &file, false, NULL))
 			break;
-		if (!pf_get_call_arg_int("isLooped", &is_looped))
+		if (!pf_get_call_arg_int("isLooped", &is_looped, false, -1))
 			break;
 
 		if (!s3_set_mixer_input_file(track, file, is_looped ? true : false))
@@ -5450,11 +5450,11 @@ Suika_setMixerVolume(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("track", &track))
+		if (!pf_get_call_arg_int("track", &track, false, -1))
 			break;
-		if (!pf_get_call_arg_float("volume", &volume))
+		if (!pf_get_call_arg_float("volume", &volume, false, 0.0f))
 			break;
-		if (!pf_get_call_arg_float("span", &span))
+		if (!pf_get_call_arg_float("span", &span, false, 0.0f))
 			break;
 
 		s3_set_mixer_volume(track, volume, span);
@@ -5482,7 +5482,7 @@ Suika_getMixerVolume(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("track", &track))
+		if (!pf_get_call_arg_int("track", &track, false, -1))
 			break;
 
 		val = s3_get_mixer_volume(track);
@@ -5509,7 +5509,7 @@ Suika_setMasterVolume(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_float("volume", &volume))
+		if (!pf_get_call_arg_float("volume", &volume, false, -1))
 			break;
 
 		s3_set_master_volume(volume);
@@ -5559,9 +5559,9 @@ Suika_setMixerGlobalVolume(void *p)
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("track", &track))
+		if (!pf_get_call_arg_int("track", &track, false, -1))
 			break;
-		if (!pf_get_call_arg_float("volume", &volume))
+		if (!pf_get_call_arg_float("volume", &volume, false, 0.0f))
 			break;
 
 		s3_set_mixer_global_volume(track, volume);
@@ -5589,7 +5589,7 @@ Suika_getMixerGlobalVolume(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("track", &track))
+		if (!pf_get_call_arg_int("track", &track, false, -1))
 			break;
 
 		val = s3_get_mixer_global_volume(track);
@@ -5617,9 +5617,9 @@ Suika_setCharacterVolume(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
-		if (!pf_get_call_arg_float("volume", &vol))
+		if (!pf_get_call_arg_float("volume", &vol, false, 0.0f))
 			break;
 
 		s3_set_character_volume(index, vol);
@@ -5646,7 +5646,7 @@ Suika_getCharacterVolume(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		float val = s3_get_character_volume(index);
@@ -5674,7 +5674,7 @@ Suika_isMixerSoundFinished(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("track", &track))
+		if (!pf_get_call_arg_int("track", &track, false, -1))
 			break;
 
 		val = s3_is_mixer_sound_finished(track);
@@ -5702,7 +5702,7 @@ Suika_getTrackFile(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("track", &track))
+		if (!pf_get_call_arg_int("track", &track, false, -1))
 			break;
 
 		file = s3_get_track_file_name(track);
@@ -5731,7 +5731,7 @@ Suika_applyCharacterVolume(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		s3_apply_character_volume(index);
@@ -5762,7 +5762,7 @@ Suika_enableSysBtn(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("isEnabled", &is_enabled))
+		if (!pf_get_call_arg_int("isEnabled", &is_enabled, false, -1))
 			break;
 
 		s3_enable_sysbtn(is_enabled ? true : false);
@@ -5876,31 +5876,31 @@ Suika_drawTextOnLayer(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
-		if (!pf_get_call_arg_int("fontType", &font_type))
+		if (!pf_get_call_arg_int("fontType", &font_type, true, 0))
 			break;
-		if (!pf_get_call_arg_int("fontSize", &font_size))
+		if (!pf_get_call_arg_int("fontSize", &font_size, true, 16))
 			break;
-		if (!pf_get_call_arg_int("color", (int *)&color))
+		if (!pf_get_call_arg_int("color", (int *)&color, true, 0))
 			break;
-		if (!pf_get_call_arg_int("outlineWidth", &outline_width))
+		if (!pf_get_call_arg_int("outlineWidth", &outline_width, true, 0))
 			break;
-		if (!pf_get_call_arg_int("outlineColor", (int *)&outline_color))
+		if (!pf_get_call_arg_int("outlineColor", (int *)&outline_color, true, 0))
 			break;
-		if (!pf_get_call_arg_int("lineMargin", &line_margin))
+		if (!pf_get_call_arg_int("lineMargin", &line_margin, true, 16))
 			break;
-		if (!pf_get_call_arg_int("charMargin", &char_margin))
+		if (!pf_get_call_arg_int("charMargin", &char_margin, true, 0))
 			break;
-		if (!pf_get_call_arg_int("x", &x))
+		if (!pf_get_call_arg_int("x", &x, true, 0))
 			break;
-		if (!pf_get_call_arg_int("y", &y))
+		if (!pf_get_call_arg_int("y", &y, true, 0))
 			break;
-		if (!pf_get_call_arg_int("width", &width))
+		if (!pf_get_call_arg_int("width", &width, true, 1024))
 			break;
-		if (!pf_get_call_arg_int("height", &height))
+		if (!pf_get_call_arg_int("height", &height, true, 1024))
 			break;
-		if (!pf_get_call_arg_string("text", &text))
+		if (!pf_get_call_arg_string("text", &text, false, NULL))
 			break;
 
 		layer_image = s3_get_layer_image(layer);
@@ -5981,11 +5981,11 @@ Suika_getStringWidth(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("fontType", &fontType))
+		if (!pf_get_call_arg_int("fontType", &fontType, true, 0))
 			break;
-		if (!pf_get_call_arg_int("fontSize", &fontSize))
+		if (!pf_get_call_arg_int("fontSize", &fontSize, true, 16))
 			break;
-		if (!pf_get_call_arg_string("text", &text))
+		if (!pf_get_call_arg_string("text", &text, false, NULL))
 			break;
 
 		val = s3_get_string_width(fontType, fontSize, text);
@@ -6019,11 +6019,11 @@ Suika_getStringHeight(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("fontType", &fontType))
+		if (!pf_get_call_arg_int("fontType", &fontType, true, 0))
 			break;
-		if (!pf_get_call_arg_int("fontSize", &fontSize))
+		if (!pf_get_call_arg_int("fontSize", &fontSize, true, 16))
 			break;
-		if (!pf_get_call_arg_string("text", &text))
+		if (!pf_get_call_arg_string("text", &text, false, NULL))
 			break;
 
 		val = s3_get_string_height(fontType, fontSize, text);
@@ -6067,27 +6067,27 @@ Suika_drawGlyph(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("image", &image))
+		if (!pf_get_call_arg_int("image", &image, false, -1))
 			break;
-		if (!pf_get_call_arg_int("fontType", &fontType))
+		if (!pf_get_call_arg_int("fontType", &fontType, true, 0))
 			break;
-		if (!pf_get_call_arg_int("fontSize", &fontSize))
+		if (!pf_get_call_arg_int("fontSize", &fontSize, true, 16))
 			break;
-		if (!pf_get_call_arg_int("baseFontSize", &baseFontSize))
+		if (!pf_get_call_arg_int("baseFontSize", &baseFontSize, true, 16))
 			break;
-		if (!pf_get_call_arg_int("outlineSize", &outlineSize))
+		if (!pf_get_call_arg_int("outlineSize", &outlineSize, true, 0))
 			break;
-		if (!pf_get_call_arg_int("x", &x))
+		if (!pf_get_call_arg_int("x", &x, true, 0))
 			break;
-		if (!pf_get_call_arg_int("y", &y))
+		if (!pf_get_call_arg_int("y", &y, true, 0))
 			break;
-		if (!pf_get_call_arg_int("color", &color))
+		if (!pf_get_call_arg_int("color", &color, true, 0))
 			break;
-		if (!pf_get_call_arg_int("outlineColor", &outlineColor))
+		if (!pf_get_call_arg_int("outlineColor", &outlineColor, true, 0))
 			break;
-		if (!pf_get_call_arg_string("glyph", &glyph))
+		if (!pf_get_call_arg_string("glyph", &glyph, false, NULL))
 			break;
-		if (!pf_get_call_arg_int("dim", &dim))
+		if (!pf_get_call_arg_int("dim", &dim, true, 0))
 			break;
 
 		img = s3i_int_to_image(image);
@@ -6169,69 +6169,69 @@ Suika_createDrawMsg(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("image", &image))
+		if (!pf_get_call_arg_int("image", &image, false, -1))
 			break;
-		if (!pf_get_call_arg_string("text", &text))
+		if (!pf_get_call_arg_string("text", &text, false, NULL))
 			break;
-		if (!pf_get_call_arg_int("fontType", &fontType))
+		if (!pf_get_call_arg_int("fontType", &fontType, true, 0))
 			break;
-		if (!pf_get_call_arg_int("fontSize", &fontSize))
+		if (!pf_get_call_arg_int("fontSize", &fontSize, true, 16))
 			break;
-		if (!pf_get_call_arg_int("baseFontSize", &baseFontSize))
+		if (!pf_get_call_arg_int("baseFontSize", &baseFontSize, true, 16))
 			break;
-		if (!pf_get_call_arg_int("rubySize", &rubySize))
+		if (!pf_get_call_arg_int("rubySize", &rubySize, true, 8))
 			break;
-		if (!pf_get_call_arg_int("outlineSize", &outlineSize))
+		if (!pf_get_call_arg_int("outlineSize", &outlineSize, true, 0))
 			break;
-		if (!pf_get_call_arg_int("penX", &penX))
+		if (!pf_get_call_arg_int("penX", &penX, true, 0))
 			break;
-		if (!pf_get_call_arg_int("penY", &penY))
+		if (!pf_get_call_arg_int("penY", &penY, true, 0))
 			break;
-		if (!pf_get_call_arg_int("areaWidth", &areaWidth))
+		if (!pf_get_call_arg_int("areaWidth", &areaWidth, true, 1024))
 			break;
-		if (!pf_get_call_arg_int("areaHeight", &areaHeight))
+		if (!pf_get_call_arg_int("areaHeight", &areaHeight, true, 1024))
 			break;
-		if (!pf_get_call_arg_int("leftMargin", &leftMargin))
+		if (!pf_get_call_arg_int("leftMargin", &leftMargin, true, 0))
 			break;
-		if (!pf_get_call_arg_int("rightMargin", &rightMargin))
+		if (!pf_get_call_arg_int("rightMargin", &rightMargin, true, 0))
 			break;
-		if (!pf_get_call_arg_int("topMargin", &topMargin))
+		if (!pf_get_call_arg_int("topMargin", &topMargin, true, 16))
 			break;
-		if (!pf_get_call_arg_int("bottomMargin", &bottomMargin))
+		if (!pf_get_call_arg_int("bottomMargin", &bottomMargin, true, 0))
 			break;
-		if (!pf_get_call_arg_int("lineMargin", &lineMargin))
+		if (!pf_get_call_arg_int("lineMargin", &lineMargin, true, 16))
 			break;
-		if (!pf_get_call_arg_int("charMargin", &charMargin))
+		if (!pf_get_call_arg_int("charMargin", &charMargin, true, 0))
 			break;
-		if (!pf_get_call_arg_int("color", &color))
+		if (!pf_get_call_arg_int("color", &color, true, 0))
 			break;
-		if (!pf_get_call_arg_int("outlineColor", &outlineColor))
+		if (!pf_get_call_arg_int("outlineColor", &outlineColor, true, 0))
 			break;
-		if (!pf_get_call_arg_int("bgColor", &bgColor))
+		if (!pf_get_call_arg_int("bgColor", &bgColor, true, 0))
 			break;
-		if (!pf_get_call_arg_int("fillBg", &fillBg))
+		if (!pf_get_call_arg_int("fillBg", &fillBg, true, 0))
 			break;
-		if (!pf_get_call_arg_int("dim", &dim))
+		if (!pf_get_call_arg_int("dim", &dim, true, 0))
 			break;
-		if (!pf_get_call_arg_int("ignoreLF", &ignoreLF))
+		if (!pf_get_call_arg_int("ignoreLF", &ignoreLF, true, 0))
 			break;
-		if (!pf_get_call_arg_int("ignoreFont", &ignoreFont))
+		if (!pf_get_call_arg_int("ignoreFont", &ignoreFont, true, 0))
 			break;
-		if (!pf_get_call_arg_int("ignoreOutline", &ignoreOutline))
+		if (!pf_get_call_arg_int("ignoreOutline", &ignoreOutline, true, 0))
 			break;
-		if (!pf_get_call_arg_int("ignoreColor", &ignoreColor))
+		if (!pf_get_call_arg_int("ignoreColor", &ignoreColor, true, 0))
 			break;
-		if (!pf_get_call_arg_int("ignoreSize", &ignoreSize))
+		if (!pf_get_call_arg_int("ignoreSize", &ignoreSize, true, 0))
 			break;
-		if (!pf_get_call_arg_int("ignorePosition", &ignorePosition))
+		if (!pf_get_call_arg_int("ignorePosition", &ignorePosition, true, 0))
 			break;
-		if (!pf_get_call_arg_int("ignoreRuby", &ignoreRuby))
+		if (!pf_get_call_arg_int("ignoreRuby", &ignoreRuby, true, 0))
 			break;
-		if (!pf_get_call_arg_int("ignoreWait", &ignoreWait))
+		if (!pf_get_call_arg_int("ignoreWait", &ignoreWait, true, 0))
 			break;
-		if (!pf_get_call_arg_int("inlineWaitHook", &inlineWaitHook))
+		if (!pf_get_call_arg_int("inlineWaitHook", &inlineWaitHook, true, 0))
 			break;
-		if (!pf_get_call_arg_int("tategaki", &tategaki))
+		if (!pf_get_call_arg_int("tategaki", &tategaki, true, 0))
 			break;
 
 		/* TODO: inline hook. */
@@ -6296,7 +6296,7 @@ Suika_destroyDrawMsg(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("context", &context))
+		if (!pf_get_call_arg_int("context", &context, false, -1))
 			break;
 
 		ctx = s3i_int_to_drawmsg(context);
@@ -6330,7 +6330,7 @@ Suika_countDrawMsgChars(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("context", &context))
+		if (!pf_get_call_arg_int("context", &context, false, -1))
 			break;
 
 		ctx = s3i_int_to_drawmsg(context);
@@ -6364,9 +6364,9 @@ Suika_drawMessage(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("context", &context))
+		if (!pf_get_call_arg_int("context", &context, false, -1))
 			break;
-		if (!pf_get_call_arg_int("maxChars", &max_chars))
+		if (!pf_get_call_arg_int("maxChars", &max_chars, false, -1))
 			break;
 
 		ctx = s3i_int_to_drawmsg(context);
@@ -6401,7 +6401,7 @@ Suika_getDrawMsgPenPosition(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("context", &context))
+		if (!pf_get_call_arg_int("context", &context, false, -1))
 			break;
 
 		ctx = s3i_int_to_drawmsg(context);
@@ -6440,7 +6440,7 @@ Suika_setDrawMsgIgnoreInlineWait(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("context", &context))
+		if (!pf_get_call_arg_int("context", &context, false, -1))
 			break;
 
 		ctx = s3i_int_to_drawmsg(context);
@@ -6473,7 +6473,7 @@ Suika_isQuotedSerif(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("text", &text))
+		if (!pf_get_call_arg_string("text", &text, false, NULL))
 			break;
 
 		val = s3_is_quoted_serif(text);
@@ -6505,7 +6505,7 @@ Suika_isEscapeSequenceChar(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("text", &text))
+		if (!pf_get_call_arg_string("text", &text, false, NULL))
 			break;
 
 		val = s3_is_escape_sequence_char(*text);
@@ -6557,7 +6557,7 @@ Suika_moveToTagFile(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("file", &file))
+		if (!pf_get_call_arg_string("file", &file, false, NULL))
 			break;
 
 		if (!s3_move_to_tag_file(file))
@@ -6588,7 +6588,7 @@ Suika_moveToTagIndex(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		if (!s3_move_to_tag_index(index))
@@ -6640,7 +6640,7 @@ Suika_moveToLabelTag(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("label", &label))
+		if (!pf_get_call_arg_string("label", &label, false, NULL))
 			break;
 
 		if (!s3_move_to_label_tag(label))
@@ -6672,7 +6672,7 @@ Suika_moveToMacroTag(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("macro", &macro))
+		if (!pf_get_call_arg_string("macro", &macro, false, NULL))
 			break;
 
 		if (!s3_move_to_macro_tag(macro))
@@ -6841,7 +6841,7 @@ Suika_getTagPropertyName(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 	
 		val = s3_get_tag_property_name(index);
@@ -6871,7 +6871,7 @@ Suika_getTagPropertyValue(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 	
 		val = s3_get_tag_property_value(index);
@@ -6902,7 +6902,7 @@ Suika_checkTagArg(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
 
 		val = s3_check_tag_arg(name);
@@ -6936,11 +6936,11 @@ Suika_getTagArgBool(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
-		if (!pf_get_call_arg_int("omissible", &omissible))
+		if (!pf_get_call_arg_int("omissible", &omissible, false, -1))
 			break;
-		if (!pf_get_call_arg_int("defValue", &def_value))
+		if (!pf_get_call_arg_int("defValue", &def_value, false, -1))
 			break;
 
 		val = s3_get_tag_arg_bool(name,
@@ -6976,11 +6976,11 @@ Suika_getTagArgInt(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
-		if (!pf_get_call_arg_int("omissible", &omissible))
+		if (!pf_get_call_arg_int("omissible", &omissible, true, 0))
 			break;
-		if (!pf_get_call_arg_int("defValue", &def_value))
+		if (!pf_get_call_arg_int("defValue", &def_value, true, 0))
 			break;
 
 		val = s3_get_tag_arg_int(name,
@@ -7016,11 +7016,11 @@ Suika_getTagArgFloat(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
-		if (!pf_get_call_arg_int("omissible", &omissible))
+		if (!pf_get_call_arg_int("omissible", &omissible, true, 0))
 			break;
-		if (!pf_get_call_arg_float("defValue", &def_value))
+		if (!pf_get_call_arg_float("defValue", &def_value, true, 0.0f))
 			break;
 
 		val = s3_get_tag_arg_float(name,
@@ -7057,11 +7057,11 @@ Suika_getTagArgString(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
-		if (!pf_get_call_arg_int("omissible", &omissible))
+		if (!pf_get_call_arg_int("omissible", &omissible, true, 0))
 			break;
-		if (!pf_get_call_arg_string("defValue", &def_value))
+		if (!pf_get_call_arg_string("defValue", &def_value, true, ""))
 			break;
 
 		val = s3_get_tag_arg_string(name,
@@ -7217,9 +7217,9 @@ Suika_loadAnimeFromFile(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("file", &file))
+		if (!pf_get_call_arg_string("file", &file, false, NULL))
 			break;
-		if (!pf_get_call_arg_string("regName", &reg_name))
+		if (!pf_get_call_arg_string("regName", &reg_name, false, NULL))
 			break;
 
 		if (strcmp(reg_name, "") == 0) {
@@ -7266,7 +7266,7 @@ Suika_clearLayerAnimeSequence(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		s3_clear_layer_anime_sequence(layer);
@@ -7308,7 +7308,7 @@ Suika_newAnimeSequence(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		s3_new_anime_sequence(layer);
@@ -7337,9 +7337,9 @@ Suika_addAnimeSequencePropertyF(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
-		if (!pf_get_call_arg_float("value", &value))
+		if (!pf_get_call_arg_float("value", &value, false, 0.0f))
 			break;
 
 		s3_add_anime_sequence_property_f(name, value);
@@ -7371,9 +7371,9 @@ Suika_addAnimeSequencePropertyI(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
-		if (!pf_get_call_arg_int("value", &value))
+		if (!pf_get_call_arg_int("value", &value, false, 0))
 			break;
 
 		s3_add_anime_sequence_property_i(name, value);
@@ -7403,7 +7403,7 @@ Suika_startLayerAnime(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		s3_start_layer_anime(layer);
@@ -7464,7 +7464,7 @@ Suika_isAnimeFinishedForLayer(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("layer", &layer))
+		if (!pf_get_call_arg_int("layer", &layer, false, -1))
 			break;
 
 		val = s3_is_anime_finished_for_layer(layer);
@@ -7507,7 +7507,7 @@ Suika_unregisterAnime(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
 
 		if (!s3_unregister_anime(name))
@@ -7538,7 +7538,7 @@ Suika_getRegAnimeName(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		name = s3_get_reg_anime_name(index);
@@ -7569,7 +7569,7 @@ Suika_getRegAnimeFile(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		file = s3_get_reg_anime_file_name(index);
@@ -7600,9 +7600,9 @@ Suika_loadEyeImageIfExists(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("chpos", &chpos))
+		if (!pf_get_call_arg_int("chpos", &chpos, false, -1))
 			break;
-		if (!pf_get_call_arg_string("file", &file))
+		if (!pf_get_call_arg_string("file", &file, false, NULL))
 			break;
 
 		if (!s3_load_eye_image_if_exists(chpos, file))
@@ -7633,7 +7633,7 @@ Suika_reloadEyeAnime(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("chpos", &chpos))
+		if (!pf_get_call_arg_int("chpos", &chpos, false, -1))
 			break;
 
 		if (!s3_reload_eye_anime(chpos))
@@ -7663,9 +7663,9 @@ Suika_loadLipImageIfExists(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("chpos", &chpos))
+		if (!pf_get_call_arg_int("chpos", &chpos, false, -1))
 			break;
-		if (!pf_get_call_arg_string("file", &file))
+		if (!pf_get_call_arg_string("file", &file, false, NULL))
 			break;
 
 		if (!s3_load_lip_image_if_exists(chpos, file))
@@ -7698,9 +7698,9 @@ Suika_runLipAnime(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("chpos", &chpos))
+		if (!pf_get_call_arg_int("chpos", &chpos, false, -1))
 			break;
-		if (!pf_get_call_arg_string("text", &text))
+		if (!pf_get_call_arg_string("text", &text, false, NULL))
 			break;
 
 		s3_run_lip_anime(chpos, text);
@@ -7730,7 +7730,7 @@ Suika_stopLipAnime(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("chpos", &chpos))
+		if (!pf_get_call_arg_int("chpos", &chpos, false, -1))
 			break;
 
 		s3_stop_lip_anime(chpos);
@@ -7763,9 +7763,9 @@ Suika_setVariableInt(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
-		if (!pf_get_call_arg_int("value", &value))
+		if (!pf_get_call_arg_int("value", &value, false, -1))
 			break;
 
 		s3_set_variable_int(name, value);
@@ -7797,9 +7797,9 @@ Suika_setVariableFloat(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
-		if (!pf_get_call_arg_float("value", &value))
+		if (!pf_get_call_arg_float("value", &value, false, 0.0f))
 			break;
 
 		s3_set_variable_float(name, value);
@@ -7832,9 +7832,9 @@ Suika_setVariableString(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
-		if (!pf_get_call_arg_string("value", &value))
+		if (!pf_get_call_arg_string("value", &value, false, NULL))
 			break;
 
 		s3_set_variable_string(name, value);
@@ -7867,7 +7867,7 @@ Suika_unsetVariable(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
 
 		s3_unset_variable(name);
@@ -7899,9 +7899,9 @@ Suika_makeVariableGlobal(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
-		if (!pf_get_call_arg_int("isGlobal", &is_global))
+		if (!pf_get_call_arg_int("isGlobal", &is_global, false, -1))
 			break;
 
 		s3_make_variable_global(name, is_global);
@@ -7933,7 +7933,7 @@ Suika_getVariableInt(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
 
 		val = s3_get_variable_int(name);
@@ -7965,7 +7965,7 @@ Suika_getVariableFloat(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
 
 		val = s3_get_variable_float(name);
@@ -7997,7 +7997,7 @@ Suika_getVariableString(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
 
 		val = s3_get_variable_string(name);
@@ -8047,7 +8047,7 @@ Suika_getVariableName(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		name = s3_get_variable_name(index);
@@ -8078,7 +8078,7 @@ Suika_checkVariableExists(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
 
 		val = s3_check_variable_exists(name);
@@ -8110,7 +8110,7 @@ Suika_isGlobalVariable(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
 
 		val = s3_is_global_variable(name);
@@ -8191,7 +8191,7 @@ Suika_executeSaveLocal(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		if (!s3_execute_save_local(index))
@@ -8219,7 +8219,7 @@ Suika_executeLoadLocal(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		if (!s3_execute_load_local(index))
@@ -8248,7 +8248,7 @@ Suika_checkSaveExists(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		val = s3_check_save_exists(index);
@@ -8274,7 +8274,7 @@ Suika_deleteLocalSave(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		s3_delete_local_save(index);
@@ -8334,7 +8334,7 @@ Suika_getSaveTimestamp(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		timestamp = s3_get_save_timestamp(index);
@@ -8379,7 +8379,7 @@ Suika_getSaveChapterName(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		name = s3_get_save_chapter_name(index);
@@ -8409,7 +8409,7 @@ Suika_getSaveLastMessage(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		message = s3_get_save_last_message(index);
@@ -8440,7 +8440,7 @@ Suika_getSaveThumbnail(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		img = s3_get_save_thumbnail(index);
@@ -8499,19 +8499,19 @@ Suika_addHistory(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_string("name", &name))
+		if (!pf_get_call_arg_string("name", &name, false, NULL))
 			break;
-		if (!pf_get_call_arg_string("message", &message))
+		if (!pf_get_call_arg_string("message", &message, false, NULL))
 			break;
-		if (!pf_get_call_arg_string("voice", &voice))
+		if (!pf_get_call_arg_string("voice", &voice, false, NULL))
 			break;
-		if (!pf_get_call_arg_int("bodyColor", &body_color))
+		if (!pf_get_call_arg_int("bodyColor", &body_color, false, 0))
 			break;
-		if (!pf_get_call_arg_int("bodyOutlineColor", &body_outline_color))
+		if (!pf_get_call_arg_int("bodyOutlineColor", &body_outline_color, false, 0))
 			break;
-		if (!pf_get_call_arg_int("nameColor", &name_color))
+		if (!pf_get_call_arg_int("nameColor", &name_color, false, 0))
 			break;
-		if (!pf_get_call_arg_int("nameOutlineColor", &name_outline_color))
+		if (!pf_get_call_arg_int("nameOutlineColor", &name_outline_color, false, 0))
 			break;
 
 		if (!s3_add_history(name,
@@ -8555,7 +8555,7 @@ Suika_appendHistory(
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_string("message", &message))
+		if (!pf_get_call_arg_string("message", &message, false, NULL))
 			break;
 
 		if (!s3_append_history(message))
@@ -8606,7 +8606,7 @@ Suika_getHistoryName(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		name = s3_get_history_name(index);
@@ -8635,7 +8635,7 @@ Suika_getHistoryMessage(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		message = s3_get_history_text(index);
@@ -8665,7 +8665,7 @@ Suika_getHistoryVoice(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("index", &index))
+		if (!pf_get_call_arg_int("index", &index, false, -1))
 			break;
 
 		voice = s3_get_history_voice(index);
@@ -8747,7 +8747,7 @@ Suika_setSeenFlags(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_int("flags", &flags))
+		if (!pf_get_call_arg_int("flags", &flags, false, -1))
 			break;
 
 		s3_set_seen_flags(flags);
@@ -8797,9 +8797,9 @@ Suika_loadGUIFile(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("file", &file))
+		if (!pf_get_call_arg_string("file", &file, false, NULL))
 			break;
-		if (!pf_get_call_arg_int("isSys", &is_sys))
+		if (!pf_get_call_arg_int("isSys", &is_sys, false, -1))
 			break;
 
 		if (!s3_load_gui_file(file, is_sys ? true : false))
@@ -8987,7 +8987,7 @@ Suika_checkFileExists(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("file", &file))
+		if (!pf_get_call_arg_string("file", &file, false, NULL))
 			break;
 
 		val = s3_check_file_exists(file);
@@ -9067,9 +9067,9 @@ Suika_playVideo(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("file", &file))
+		if (!pf_get_call_arg_string("file", &file, false, NULL))
 			break;
-		if (!pf_get_call_arg_int("isSkippable", &is_skippable))
+		if (!pf_get_call_arg_int("isSkippable", &is_skippable, false, -1))
 			break;
 		
 		if (!s3_play_video(file, is_skippable ? true : false))
@@ -9133,7 +9133,7 @@ Suika_speakText(
 	ret = false;
 	do {
 		/* Get the argument. */
-		if (!pf_get_call_arg_string("text", &text))
+		if (!pf_get_call_arg_string("text", &text, false, NULL))
 			break;
 
 		s3_speak_text(text);

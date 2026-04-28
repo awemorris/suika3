@@ -155,9 +155,15 @@ option(SUIKA_ENABLE_MAIN2 "Enable main2() hook" OFF)
 
 #
 # [SUIKA_ENABLE_CONSOLE]
-#  - Use console for debug output..
+#  - Use console for debug output.
 #
 option(SUIKA_ENABLE_CONSOLE "Enable console debug output" OFF)
+
+#
+# [SUIKA_ENABLE_UNSAFE]
+#  - Enable `System.*` APIs for launcher apps.
+#
+option(SUIKA_ENABLE_UNSAFE "Enable unsafe APIs for launchers" OFF)
 
 # --
 
@@ -165,9 +171,10 @@ option(SUIKA_ENABLE_CONSOLE "Enable console debug output" OFF)
 # Path Options
 #
 
-set(SUIKA_DIR_DOCS "share/suika3" CACHE STRING "Document installation destination")
-set(SUIKA_DIR_GAME "share/suika3" CACHE STRING "Example installation destination")
-set(SUIKA_DIR_ELISP "share/suika3" CACHE STRING "Example installation destination")
+set(SUIKA_DIR_DOCS      "share/suika3" CACHE STRING "Document installation destination")
+set(SUIKA_DIR_SAMPLE    "share/suika3" CACHE STRING "Example installation destination")
+set(SUIKA_DIR_LAUNCHER  "share/suika3" CACHE STRING "Launcher installation destination")
+set(SUIKA_DIR_ELISP     "share/suika3" CACHE STRING "Elisp installation destination")
 
 # ---
 
@@ -456,6 +463,11 @@ endif()
 # Build libstratopack for suika3-pack
 if(SUIKA_ENABLE_PACK)
   set(PLAYFIELD_ENABLE_PACK ON)
+endif()
+
+# Unsafe (for launchers)
+if(SUIKA_ENABLE_UNSAFE)
+  set(PLAYFIELD_ENABLE_UNSAFE ON)
 endif()
 
 # ---
@@ -1026,19 +1038,13 @@ if(SUIKA_ENABLE_INSTALL)
     install(TARGETS suika3-aotc  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})
   endif()
 
-  # suika3-run
+  # suika3-launcher and suika3-portal
   if(SUIKA_ENABLE_FREEDESKTOP)
-    if(NOT SUIKA_ENABLE_FLATPAK)
-      install(
-        PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/freedesktop/suika3-run"
-        DESTINATION ${CMAKE_INSTALL_BINDIR}
-      )
-    else()
-      install(
-        PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/flatpak/suika3-run"
-        DESTINATION ${CMAKE_INSTALL_BINDIR}
-      )
-    endif()
+    install(
+      PROGRAMS    "${CMAKE_CURRENT_SOURCE_DIR}/resources/freedesktop/suika3-portal"
+                  "${CMAKE_CURRENT_SOURCE_DIR}/resources/freedesktop/suika3-launcher"
+      DESTINATION ${CMAKE_INSTALL_BINDIR}
+    )
   endif()
 
   #
@@ -1139,6 +1145,28 @@ if(SUIKA_ENABLE_INSTALL)
     install(
       DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/elisp"
       DESTINATION "${SUIKA_DIR_ELISP}"
+    )
+  endif()
+
+  #
+  # Install the launcher files.
+  #
+
+  if(SUIKA_ENABLE_DIST AND NOT SUIKA_ENABLE_FLATPAK)
+    # Exclude the font when packaging.
+    # (A symlink to a system font should be created by packaging process.)
+    install(
+      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/launcher"
+      DESTINATION "${SUIKA_DIR_LAUNCHER}"
+      FILES_MATCHING
+      PATTERN "*"
+      PATTERN "system/font/*" EXCLUDE
+    )
+  else()
+    # Include the font.
+    install(
+      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/launcher"
+      DESTINATION "${SUIKA_DIR_LAUNCHER}"
     )
   endif()
 
