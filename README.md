@@ -50,6 +50,8 @@
     Click to play on the browser!<br>
     <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260406.webp" alt="Suika3 Screenshot"><br>
   </a>
+  <p>Now we have a nice launcher:</p>
+  <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260406.webp" alt="Suika3 Screenshot"><br>
 </div>
 
 ---

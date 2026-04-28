@@ -4,7 +4,7 @@ func setup() {
     return {
         width:      1280,
         height:     720,
-        title:      "My First Game",
+        title:      "Suika3 Engine",
         fullscreen: false
     };
 }

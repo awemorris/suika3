@@ -639,7 +639,8 @@
                 "SUIKA_ENABLE_PACK":           "ON",
                 "SUIKA_ENABLE_BYTECOMP":       "ON",
                 "SUIKA_ENABLE_AOTCOMP":        "ON",
-                "SUIKA_ENABLE_CONSOLE":        "ON"
+                "SUIKA_ENABLE_CONSOLE":        "ON",
+                "SUIKA_ENABLE_UNSAFE":         "ON"
             }
         },
         {
