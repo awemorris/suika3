@@ -377,5 +377,29 @@ const char *pf_gettext(const char *msg)
         if (strncmp(lang_code, "ja", 2) == 0) return "関数をデシリアライズできません。";
         return "Cannot deserialize function.";
     }
+    if (strcmp(msg, "Parameter is required to be a dictionary.") == 0) {
+        if (strncmp(lang_code, "es", 2) == 0) return "El parámetro debe ser un diccionario.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Le paramètre doit être un dictionnaire.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Der Parameter muss ein Dictionary sein.";
+        if (strncmp(lang_code, "it", 2) == 0) return "Il parametro deve essere un dizionario.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Η παράμετρος πρέπει να είναι λεξικό.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Параметр должен быть словарем.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "参数必须是字典。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "參數必須是字典。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "引数は辞書形式である必要があります。";
+        return "Parameter is required to be a dictionary.";
+    }
+    if (strcmp(msg, "Parameter key \"%s\" not found.") == 0) {
+        if (strncmp(lang_code, "es", 2) == 0) return "La clave \"%s\" no se encontró en el parámetro.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "La clé \"%s\" est introuvable dans le paramètre.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Schlüssel \"%s\" im Parameter nicht gefunden.";
+        if (strncmp(lang_code, "it", 2) == 0) return "Chiave \"%s\" non trovata nel parametro.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Το κλειδί \"%s\" δεν βρέθηκε στην παράμετρο.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Ключ \"%s\" не найден в параметре.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "未找到参数键 \"%s\"。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "找不到參數鍵 \"%s\"。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "パラメーターのキー \"%s\" が見つかりません。";
+        return "Parameter key \"%s\" not found.";
+    }
     return msg;
 }
