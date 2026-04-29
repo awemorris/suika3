@@ -52,6 +52,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
+#include <locale.h>
 #include <assert.h>
 
 /* Log File */
@@ -84,7 +85,11 @@ static int mouse_y;
 /* Log */
 static FILE *log_fp;
 
+/* Locale */
+static const char *lang_code;
+
 /* Forward Declaration */
+static void init_locale(void);
 static bool init_fb(void);
 static void cleanup_fb(void);
 static bool init_input(void);
@@ -102,6 +107,8 @@ main(
 
 	UNUSED_PARAMETER(argc);
 	UNUSED_PARAMETER(argv);
+
+	init_locale();
 
 	if (!init_fb())
 		return 1;
@@ -137,6 +144,107 @@ main(
 
 	return 0;
 
+}
+
+/* Initialize the locale. */
+static void
+init_locale(void)
+{
+	const char *locale = setlocale(LC_MESSAGES, "");
+        if (locale == NULL || locale[0] == '\0') {
+		locale = getenv("LC_ALL");
+		if (locale == NULL || locale[0] == '\0') {
+			locale = getenv("LC_MESSAGES");
+			if (locale == NULL || locale[0] == '\0')
+				locale = getenv("LANG");
+		}
+	}
+	if (locale == NULL || locale[0] == '\0') {
+		lang_code = "en";
+		return;
+	}
+
+	/* English */
+	if (strncmp(locale, "en_AU", 5) == 0) {
+		lang_code = "en-au";
+		return;
+	}
+	if (strncmp(locale, "en_GB", 5) == 0) {
+		lang_code = "en-gb";
+		return;
+	}
+	if (strncmp(locale, "en_NZ", 5) == 0) {
+		lang_code = "en-nz";
+		return;
+	}
+	if (strncmp(locale, "en_US", 5) == 0) {
+		lang_code = "en-us";
+		return;
+	}
+	if (strncmp(locale, "en", 2) == 0) {
+		lang_code = "en";
+		return;
+	}
+
+	/* French */
+	if (strncmp(locale, "fr_CA", 5) == 0) {
+		lang_code = "fr-ca";
+		return;
+	}
+	if (strncmp(locale, "fr", 2) == 0) {
+		lang_code = "fr";
+		return;
+	}
+
+	/* Spanish */
+	if (strncmp(locale, "es_ES", 5) == 0) {
+		lang_code = "es";
+		return;
+	}
+	if (strncmp(locale, "es", 2) == 0) {
+		lang_code = "es-la";
+		return;
+	}
+
+	/* Chinese */
+	if (strncmp(locale, "zh_TW", 5) == 0 ||
+	    strncmp(locale, "zh_HK", 5) == 0) {
+		lang_code = "zh-tw";
+		return;
+	}
+	if (strncmp(locale, "zh", 2) == 0) {
+		lang_code = "zh-cn";
+		return;
+	}
+
+	/* Others */
+	if (strncmp(locale, "ja", 2) == 0) {
+		lang_code = "ja";
+		return;
+	}
+	if (strncmp(locale, "de", 2) == 0) {
+		lang_code = "de";
+		return;
+	}
+	if (strncmp(locale, "it", 2) == 0){
+		lang_code = "it";
+		return;
+	}
+	if (strncmp(locale, "el", 2) == 0) {
+		lang_code = "el";
+		return;
+	}
+	if (strncmp(locale, "ru", 2) == 0) {
+		lang_code = "ru";
+		return;
+	}
+	if (strncmp(locale, "ko", 2) == 0) {
+		lang_code = "ko";
+		return;
+	}
+
+	/* Fallback */
+	lang_code = "en";
 }
 
 static bool init_fb(void)
@@ -437,6 +545,26 @@ hal_render_image_melt(
 }
 
 void
+hal_render_image_cross(
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	float src1_left,
+	float src1_top,
+	float src2_left,
+	float src2_top,
+	int alpha)
+{
+	hal_draw_image_cross(image,
+			     src1_img,
+			     src2_img,
+			     src1_left,
+			     src1_top,
+			     src2_left,
+			     src2_top,
+			     alpha);
+}
+
+void
 hal_render_image_3d_normal(
 	float x1,			/* x1 */
 	float y1,			/* y1 */
@@ -570,6 +698,50 @@ hal_render_image_3d_dim(
 			      src_width,
 			      src_height,
 			      alpha);
+}
+
+void
+hal_render_image_3d_cross(
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	float src1_x1,
+	float src1_y1,
+	float src1_x2,
+	float src1_y2,
+	float src1_x3,
+	float src1_y3,
+	float src1_x4,
+	float src1_y4,
+	float src2_x1,
+	float src2_y1,
+	float src2_x2,
+	float src2_y2,
+	float src2_x3,
+	float src2_y3,
+	float src2_x4,
+	float src2_y4,
+	int alpha)
+{
+	hal_draw_image_3d_cross(image,
+				src1_img,
+				src2_img,
+				src1_x1,
+				src1_y1,
+				src1_x2,
+				src1_y2,
+				src1_x3,
+				src1_y3,
+				src1_x4,
+				src1_y4,
+				src2_x1,
+				src2_y1,
+				src2_x2,
+				src2_y2,
+				src2_x3,
+				src2_y3,
+				src2_x4,
+				src2_y4,
+				alpha);
 }
 
 /*
@@ -763,65 +935,7 @@ hal_log_out_of_memory(void)
 const char *
 hal_get_system_language(void)
 {
-	const char *locale = setlocale(LC_MESSAGES, "");
-        if (locale == NULL || locale[0] == '\0') {
-		locale = getenv("LC_ALL");
-		if (locale == NULL || locale[0] == '\0') {
-			locale = getenv("LC_MESSAGES");
-			if (locale == NULL || locale[0] == '\0')
-				locale = getenv("LANG");
-		}
-	}
-	if (locale == NULL || locale[0] == '\0')
-		return "en";
-
-	/* English */
-	if (strncmp(locale, "en_AU", 5) == 0)
-		return "en-au";
-	if (strncmp(locale, "en_GB", 5) == 0)
-		return "en-gb";
-	if (strncmp(locale, "en_NZ", 5) == 0)
-		return "en-nz";
-	if (strncmp(locale, "en_US", 5) == 0)
-		return "en-us";
-	if (strncmp(locale, "en", 2) == 0)
-		return "en";
-
-	/* French */
-	if (strncmp(locale, "fr_CA", 5) == 0)
-		return "fr-ca";
-	if (strncmp(locale, "fr", 2) == 0)
-		return "fr-fr";
-
-	/* Spanish */
-	if (strncmp(locale, "es_ES", 5) == 0)
-		return "es-es";
-	if (strncmp(locale, "es", 2) == 0)
-		return "es-la";
-
-	/* Chinese */
-	if (strncmp(locale, "zh_TW", 5) == 0 ||
-	    strncmp(locale, "zh_HK", 5) == 0)
-		return "zh-tw";
-	if (strncmp(locale, "zh", 2) == 0)
-		return "zh-cn";
-
-	/* Others */
-	if (strncmp(locale, "ja", 2) == 0)
-		return "ja";
-	if (strncmp(locale, "de", 2) == 0)
-		return "de";
-	if (strncmp(locale, "it", 2) == 0)
-		return "it";
-	if (strncmp(locale, "el", 2) == 0)
-		return "el";
-	if (strncmp(locale, "ru", 2) == 0)
-		return "ru";
-	if (strncmp(locale, "ko", 2) == 0)
-		return "ko";
-
-	/* Fallback */
-	return "en";
+	return lang_code;
 }
 
 void
