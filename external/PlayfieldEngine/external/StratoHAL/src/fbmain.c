@@ -106,7 +106,7 @@ static void cleanup_input(void);
 static void process_input(void);
 static void process_event(int index);
 static bool open_log_file(void);
-static void draw_video_frame(void);
+static bool draw_video_frame(void);
 
 int
 main(
@@ -133,32 +133,42 @@ main(
 
 	init_sound();
 	init_input();
+	gstplay_init(argc, argv);
 
 	if (!hal_callback_on_event_start())
 		return 1;
 
 	while (1) {
+		bool need_flip;
+
 		process_input();
 
 		hal_clear_image(image, 0);
 
 		if (is_gst_playing) {
-			/* Process a frame. */
-			draw_video_frame();
+			need_flip = draw_video_frame();
 
-			/* If the playback is finished. */
 			if (!gstplay_is_playing()) {
 				gstplay_stop();
 				is_gst_playing = false;
 			}
+
+			if (!hal_callback_on_event_frame())
+				break;
+		} else {
+			need_flip = true;
+
+			if (!hal_callback_on_event_frame())
+				break;
 		}
 
-		if (!hal_callback_on_event_frame())
-			break;
-
-		for (y = 0; y < screen_height; y++) {
-			for (x = 0; x < screen_width; x++) {
-				fb_pixels[y * fb_width + x] = image->pixels[y * image->width + x];
+		if (need_flip) {
+			int fb_orig_x = (fb_width - screen_width) / 2;
+			int fb_orig_y = (fb_height - screen_height) / 2;	
+			for (y = 0; y < screen_height; y++) {
+				for (x = 0; x < screen_width; x++) {
+					fb_pixels[(y + fb_orig_y) * fb_width + (x + fb_orig_x)] = image->pixels[y * image->width + x];
+				}
 			}
 		}
 	}
@@ -166,48 +176,6 @@ main(
 
 	return 0;
 
-}
-
-static void
-draw_video_frame(void)
-{
-	struct hal_image *video_image;
-	int dst_width, dst_height, dst_x, dst_y;
-
-	/* Update the playback stauts. */
-	video_image = gstplay_loop_iteration();
-	if (video_image == NULL) {
-		/* Rendering is not required for this game frame. */
-		return;
-	}
-
-	/* Fit while preserving aspect ratio. */
-	if (screen_width * image->height <= screen_height * image->width) {
-		dst_width = screen_width;
-		dst_height = screen_width * image->height / image->width;
-	} else {
-		dst_height = screen_height;
-		dst_width = screen_height * image->width / image->height;
-	}
-	dst_x = (screen_width - dst_width) / 2;
-	dst_y = (screen_height - dst_height) / 2;
-
-	/* Draw. */
-	hal_draw_image_3d_alpha(image,
-				dst_x,
-				dst_y,
-				dst_x + dst_width,
-				dst_y,
-				dst_x,
-				dst_y + dst_height,
-				dst_x + dst_width,
-				dst_y + dst_height,
-				video_image,
-				0,
-				0,
-				video_image->width,
-				video_image->height,
-				255);
 }
 
 /* Initialize the locale. */
@@ -479,6 +447,50 @@ process_event(
 				hal_callback_on_event_key_release(HAL_KEY_SPACE);
 		}
 	}
+}
+
+static bool
+draw_video_frame(void)
+{
+	struct hal_image *video_image;
+	int dst_width, dst_height, dst_x, dst_y;
+
+	/* Update the playback stauts. */
+	video_image = gstplay_loop_iteration();
+	if (video_image == NULL) {
+		/* Rendering is not required for this game frame. */
+		return false;
+	}
+
+	/* Fit while preserving aspect ratio. */
+	if (screen_width * image->height <= screen_height * image->width) {
+		dst_width = screen_width;
+		dst_height = screen_width * image->height / image->width;
+	} else {
+		dst_height = screen_height;
+		dst_width = screen_height * image->width / image->height;
+	}
+	dst_x = (screen_width - dst_width) / 2;
+	dst_y = (screen_height - dst_height) / 2;
+
+	/* Draw. */
+	hal_draw_image_3d_alpha(image,
+				dst_x,
+				dst_y,
+				dst_x + dst_width,
+				dst_y,
+				dst_x,
+				dst_y + dst_height,
+				dst_x + dst_width,
+				dst_y + dst_height,
+				video_image,
+				0,
+				0,
+				video_image->width,
+				video_image->height,
+				255);
+
+	return true;
 }
 
 /*
@@ -882,11 +894,19 @@ hal_get_lap_timer_millisec(
 
 bool
 hal_play_video(
-	const char *fname,	/* file name */
-	bool is_skippable)	/* allow skip for a unseen video */
+	const char *fname,
+	bool is_skippable)
 {
-	UNUSED_PARAMETER(fname);
-	UNUSED_PARAMETER(is_skippable);
+	char *path;
+
+	path = hal_make_real_path(fname);
+
+	is_gst_playing = true;
+	is_gst_skippable = is_skippable;
+
+	gstplay_play(path);
+
+	free(path);
 
 	return true;
 }
@@ -894,12 +914,15 @@ hal_play_video(
 void
 hal_stop_video(void)
 {
+	gstplay_stop();
+
+	is_gst_playing = false;
 }
 
 bool
 hal_is_video_playing(void)
 {
-	return false;
+	return is_gst_playing;
 }
 
 bool

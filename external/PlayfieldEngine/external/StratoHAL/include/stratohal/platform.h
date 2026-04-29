@@ -233,6 +233,7 @@ struct hal_image {
         defined(HAL_TARGET_MACOS) || \
         defined(HAL_TARGET_IOS) || \
         defined(HAL_USE_X11_SOFTRENDER) || \
+	defined(HAL_USE_FBDEV) || \
         defined(HAL_TARGET_HAIKU) || \
 	defined(HAL_TARGET_UNITY) \
     )

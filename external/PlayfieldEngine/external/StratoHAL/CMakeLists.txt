@@ -762,6 +762,11 @@ if(STRATO_TARGET_LINUX_WAYLAND)
   target_compile_definitions(strato PRIVATE HAL_USE_WAYLAND_ONLY)
 endif()
 
+# Linux fbdev
+if(STRATO_TARGET_LINUX_FBDEV)
+  target_compile_definitions(strato PRIVATE HAL_USE_FBDEV)
+endif()
+
 # FreeBSD
 if(   STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_FREEBSD_WAYLAND
