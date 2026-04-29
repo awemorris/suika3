@@ -1034,7 +1034,7 @@ static void process_input(void)
 		is_key_detected = process_left_right_arrow_keys();
 
 	/* Update the state of mouse pointing. */
-	if (!is_key_detected && !is_fading_in && !is_fading_out) {
+	if (!is_key_detected && !is_pointed_by_key && !is_fading_in && !is_fading_out) {
 		is_mouse_point_detected = false;
 		for (i = S3_BUTTON_LAYERS - 1; i >= 0; i--) {
 			if (!button[i].is_initialized)
@@ -1052,7 +1052,7 @@ static void process_input(void)
 
 	/* Update the state of mouse dragging. */
 	is_drag_processed = false;
-	if (!is_key_detected && !is_fading_in && !is_fading_out) {
+	if (!is_key_detected && !is_pointed_by_key && !is_fading_in && !is_fading_out) {
 		is_drag_finished = false;
 		for (i = S3_BUTTON_LAYERS - 1; i >= 0; i--) {
 			if (!button[i].is_initialized)
@@ -1541,17 +1541,23 @@ process_button_point(int index, bool key)
 
 	/* If it is a key operation. */
 	if (key) {
+		printf("key: %d\n", index);
+		if (index == pointed_index)
+			return false;
+
 		/* Set it to the pointed state. */
 		pointed_index = index;
 		is_pointed_by_key = true;
 		save_mouse_pos_x = mouse_pos_x;
 		save_mouse_pos_y = mouse_pos_y;
+		is_mouse_point_detected = true;
 
 		/* Speak. */
 		if (conf_tts_enable)
 			speak(button[index].alt);
 		return true;
 	}
+
 
 	/* If the mouse is within the button area. */
 	if (mouse_pos_x >= b->x && mouse_pos_x <= b->x + b->width &&

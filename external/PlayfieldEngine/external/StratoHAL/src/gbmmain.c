@@ -132,7 +132,7 @@ static bool is_gst_playing;
 static bool is_gst_skippable;
 
 /* Input Info */
-#define EV_DEV_MAX	16
+#define EV_DEV_MAX	64
 static int ev_fd[EV_DEV_MAX];
 static int ev_count;
 static struct pollfd ev_fds[EV_DEV_MAX];
