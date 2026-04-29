@@ -254,10 +254,8 @@ init_hal(
 	/* Initialize the gamepad. */
 	init_evgamepad();
 
-#if 0
 	/* Initialize the viddeo HAL. */
 	gstplay_init(argc, argv);
-#endif
 
 	return true;
 }
@@ -531,17 +529,6 @@ run_game_loop(void)
 
 	/* Main Loop */
 	while (true) {
-#if 0
-		/* Process video playback. */
-		if (is_gst_playing) {
-			gstplay_loop_iteration();
-			if (!gstplay_is_playing()) {
-				gstplay_stop();
-				is_gst_playing = false;
-			}
-		}
-#endif
-
 		/* Run a frame. */
 		if (!run_frame())
 			break;
