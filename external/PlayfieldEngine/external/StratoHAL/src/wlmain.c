@@ -542,21 +542,21 @@ static bool run_frame(void)
 {
 	bool cont;
 
+	/* Sync the decorator. */
+	if (decor != NULL) {
+		if (libdecor_dispatch(decor, 0) < 0)
+			return false;
+	}
+	wl_display_flush(wl_dpy);
+	if (is_close_requested)
+		return false;
+
 	/* Read the gamepad. */
 	update_evgamepad();
 
 	if (!is_gst_playing) {
 		/* Start rendering. */
 		opengl_start_rendering();
-
-		/* Sync the decorator. */
-		if (decor != NULL) {
-			if (libdecor_dispatch(decor, 0) < 0)
-				return false;
-		}
-		wl_display_flush(wl_dpy);
-		if (is_close_requested)
-			return false;
 
 		/* Start rendering. */
 		opengl_start_rendering();
@@ -566,8 +566,10 @@ static bool run_frame(void)
 
 		/* End rendering. */
 		opengl_end_rendering();
-		eglSwapBuffers(wl_dpy, wl_surface);
-		wl_display_flush(wl_dpy);
+
+		/* Sync. */
+		eglSwapBuffers(egl_dpy, egl_surf);
+		wl_display_flush(egl_dpy);
 	} else {
 		/* Render. */
 		render_video_frame();
@@ -624,8 +626,10 @@ render_video_frame(void)
                 image->height,
                 255);
 	opengl_end_rendering();
-	eglSwapBuffers(wl_dpy, wl_surface);
-	wl_display_flush(wl_dpy);
+
+	/* Sync. */
+	eglSwapBuffers(egl_dpy, egl_surf);
+	wl_display_flush(egl_dpy);
 }
 
 /* Wait for the next frame timing. */
