@@ -1842,7 +1842,7 @@ hal_play_video(
 	is_gst_playing = true;
 	is_gst_skippable = is_skippable;
 
-	gstplay_play(path, window);
+	gstplay_play(path);
 
 	free(path);
 
