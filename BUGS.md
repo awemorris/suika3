@@ -572,3 +572,44 @@ Files modified:
 ### Commits
 
 - bc985e94be84b2e827f10e68a859e3ff95c530a3
+
+---
+
+## Save index is not drawn for the "press" state
+
+* Report Details
+    * ID: BUG-20260428-001
+    * Status: Resolved
+    * Component: Suika3
+    * Severity: mid
+    * Priority: high
+    * Reproducibility: always
+    * First Found In: 3c6da7889a7a94f606e679cde2a46bd5b185824f
+    * Fixed In: 715c258bdc6018fea0d320b8b4b41172ffd18853
+    * Reported Date: 01:00 29 April 2026
+    * Fixed Date: 10:20 29 April 2026
+    * Detection: GitHub Issues
+    * Root Cause Type: Mistake on horizontal expansion when adding "press" state
+    * OS: Windows 10/11
+    * CPU: x86/x86_64/arm64
+
+### Report
+
+> Index number disappears when Save button is in "Clicked" state
+
+### Analysis
+
+In `draw_save_button()` in `gui.c`, the corresponding drawing logic
+was missing due to a mistake on horizontal expansion when adding
+"press" state.
+
+### Patch
+
+`gui.c` was patched.
+
+Files modified:
+- src/gui.c
+
+### Commits
+
+- 715c258bdc6018fea0d320b8b4b41172ffd18853
