@@ -5,7 +5,8 @@ sdk: org.freedesktop.Sdk
 command: suika3-launcher
 
 finish-args:
-  - --socket=x11
+  - --socket=wayland
+  - --socket=fallback-x11
   - --device=dri
   - --socket=pulseaudio
   - --share=ipc

@@ -3,15 +3,114 @@ Suika3 Build Instructions
 
 Suika3 fully utilizes the CMake build system.
 
-* Notes
-    * Requires CMake 3.22 or later
-    * Windows: Visual Studio 2022 or 2026 required
-    * macOS: Xcode 8.2.1 or later required
-    * Linux: GCC 4.4 or later required (Clang is also supported)
-    * A full build takes:
-        * 20 seconds for Visual Studio 2026 on Intel Core i5 13400
-        * 5 seconds for Linux on Intel Core i5 13400
-        * 5 seconds for macOS on Apple M5
+Notes:
+* Requires CMake 3.22 or later
+* Linux: GCC 4.4 or later (Clang is also supported)
+* Windows: Visual Studio 2022/2026, or gcc/clang on WSL
+* macOS: Xcode 8.2.1 or later required
+
+---
+
+## Linux (Wayland/X11 Dual)
+
+### Prerequisites
+
+* A `Linux` machine with any processor
+
+On Debian, Ubuntu, or Raspberry Pi OS:
+```
+sudo apt-get install git cmake ninja-build build-essential libasound2-dev libx11-dev libxpm-dev libwayland-dev wayland-protocols libegl1-mesa-dev libegl-dev libgles-dev libwayland-client0 libwayland-egl1 libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-x libdecor-0-dev
+```
+
+On RedHat, Rocky Linux, Fedora, etc.:
+```
+sudo dnf groupinstall "Development Tools" "Development Libraries"
+sudo dnf install patch git cmake ninja-build alsa-lib-devel libX11-devel libXpm-devel wayland-devel wayland-protocols-devel mesa-libEGL-devel alsa-lib-devel gstreamer1.0-devel gstreamer1.0-plugins-base-devel libdecor-devel
+```
+
+### Steps
+
+Open the terminal and type the following.
+```
+git clone https://github.com/suika3-community/suika3.git
+cd suika3
+cmake --preset linux
+cmake --build --preset linux
+```
+
+The target file `build-linux/suika3` will be created.
+
+If you want to debug Suika3 with GDB, you can use the `linux-debug` preset instead of `linux`.
+
+---
+
+## Linux (X11-Only)
+
+### Prerequisites
+
+* A `Linux` machine with any processor
+
+On Debian, Ubuntu, or Raspberry Pi OS:
+```
+sudo apt-get install git cmake ninja-build build-essential libasound2-dev libx11-dev libxpm-dev mesa-common-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-x libdecor-0-dev
+```
+
+On RedHat, Rocky Linux, Fedora, etc.:
+```
+sudo dnf groupinstall "Development Tools" "Development Libraries"
+sudo dnf install patch git cmake ninja-build libX11-devel libXpm-devel alsa-lib-devel mesa-libGL-devel gstreamer1.0-devel gstreamer1.0-plugins-base-devel
+```
+
+### Steps
+
+Open the terminal and type the following.
+```
+git clone https://github.com/suika3-community/suika3.git
+cd suika3
+cmake --preset linux-x11
+cmake --build --preset linux-x11
+```
+
+The target file `build-linux-x11/suika3` will be created.
+
+If you want to debug Suika3 with GDB, you can use the `linux-x11-debug` preset instead of `linux-x11`.
+
+
+---
+
+## Linux (Wayland)
+
+Note that Wayland support is still experimental.
+It is compatible with KDE, but has problems with showing windows on GNOME.
+
+### Prerequisites
+
+* A `Linux` machine with any processor
+
+On Debian or Ubuntu:
+```
+sudo apt-get install git cmake ninja-build build-essential libasound2-dev libwayland-dev wayland-protocols libegl1-mesa-dev libegl-dev libgles-dev libwayland-client0 libwayland-egl1 libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-x libdecor-0-dev
+```
+
+On RedHat, Rocky Linux, Fedora, etc.:
+```
+sudo dnf groupinstall "Development Tools" "Development Libraries"
+sudo dnf install patch git cmake ninja-build wayland-devel wayland-protocols-devel mesa-libEGL-devel alsa-lib-devel gstreamer1.0-devel gstreamer1.0-plugins-base-devel libdecor-devel
+```
+
+### Steps
+
+Open the terminal and type the following.
+```
+git clone https://github.com/suika3-community/suika3.git
+cd suika3
+cmake --preset linux-wayland
+cmake --build --preset linux-wayland
+```
+
+The target file `build-linux-wayland/suika3` will be created.
+
+If you want to debug Suika3 with GDB, you can use the `linux-wayland-debug` preset instead of `linux-wayland`.
 
 ---
 
@@ -64,77 +163,6 @@ cmake --build --preset windows-mingw-x86_64
 ```
 
 The target file `build-mingw-x86_64/suika3.exe` will be created.
-
----
-
-## Linux (X11)
-
-### Prerequisites
-
-* A `Linux` machine with any processor
-* `X11` installed
-
-On Debian, Ubuntu, or Raspberry Pi OS:
-```
-sudo apt-get install git cmake ninja-build build-essential libx11-dev libxpm-dev libasound2-dev mesa-common-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-x
-```
-
-On RedHat, Rocky Linux, Fedora, etc.:
-```
-sudo dnf groupinstall "Development Tools" "Development Libraries"
-sudo dnf install patch git cmake ninja-build libX11-devel libXpm-devel alsa-lib-devel mesa-libGL-devel gstreamer1.0-devel gstreamer1.0-plugins-base-devel
-```
-
-### Steps
-
-Open the terminal and type the following.
-```
-git clone https://github.com/suika3-community/suika3.git
-cd suika3
-cmake --preset linux-x11
-cmake --build --preset linux-x11
-```
-
-The target file `build-linux-x11/suika3` will be created.
-
-If you want to debug Suika3 with GDB, you can use the `linux-x11-debug` preset instead of `linux-x11`.
-
----
-
-## Linux (Wayland)
-
-Note that Wayland support is still experimental.
-It is compatible with KDE, but has problems with showing windows on GNOME.
-
-### Prerequisites
-
-* A `Linux` machine with any processor
-* `Wayland` installed
-
-On Debian or Ubuntu:
-```
-sudo apt-get install git cmake ninja-build build-essential libasound2-dev libwayland-dev wayland-protocols libegl1-mesa-dev libegl-dev libgles-dev libwayland-client0 libwayland-egl1 libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-x libdecor-0-dev
-```
-
-On RedHat, Rocky Linux, Fedora, etc.:
-```
-sudo dnf groupinstall "Development Tools" "Development Libraries"
-sudo dnf install patch git cmake ninja-build wayland-devel wayland-protocols-devel mesa-libEGL-devel alsa-lib-devel gstreamer1.0-devel gstreamer1.0-plugins-base-devel libdecor-devel
-```
-
-### Steps
-
-Open the terminal and type the following.
-```
-git clone https://github.com/suika3-community/suika3.git
-cd suika3
-cmake --preset linux-wayland
-cmake --build --preset linux-wayland
-```
-
-The target file `build-linux-wayland/suika3` will be created.
-
-If you want to debug Suika3 with GDB, you can use the `linux-wayland-debug` preset instead of `linux-wayland`.
 
 ---
 
