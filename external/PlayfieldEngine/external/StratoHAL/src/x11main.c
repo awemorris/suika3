@@ -46,8 +46,13 @@
 #include <X11/Xlocale.h>
 
 /* OpenGL */
+#if defined(HAL_USE_X11_ONLY)
 #include <GL/gl.h>			/* OpenGL */
 #include <GL/glx.h>			/* GLX */
+#else
+#include <EGL/egl.h>
+#include <GLES2/gl2.h>
+#endif
 #include "glrender.h"			/* OpenGL Compatibility Helper */
 
 /* POSIX */
@@ -102,9 +107,19 @@ static Pixmap icon = BadAlloc;
 static Pixmap icon_mask = BadAlloc;
 static Atom delete_message = BadAlloc;
 
+
 /* GLX Objects */
+#if defined(HAL_USE_X11_ONLY)
 static GLXWindow glx_window = None;
 static GLXContext glx_context = None;
+#endif
+
+/* EGL Objects */
+#if !defined(HAL_USE_X11_ONLY)
+static EGLDisplay egl_display;
+static EGLContext egl_context;
+static EGLSurface egl_surface;
+#endif
 
 /* Frame Start Time */
 static struct timeval tv_start;
@@ -114,7 +129,7 @@ static struct timeval tv_start;
 static FILE *log_fp;
 
 /* Locale */
-const char *playfield_lang_code;
+static const char *lang_code;
 
 /* Flag to indicate whether we are playing a video or not */
 static bool is_gst_playing;
@@ -125,6 +140,7 @@ static bool is_gst_skippable;
 /* Icon */
 extern char *icon_xpm[35];
 
+#if defined(HAL_USE_X11_ONLY)
 /* OpenGL 3.0 API */
 GLuint (APIENTRY *glCreateShader)(GLenum type);
 void (APIENTRY *glShaderSource)(GLuint shader, GLsizei count, const GLchar *const*string, const GLint *length);
@@ -184,6 +200,7 @@ static struct API api[] =
 	{(void **)&glDeleteVertexArrays, "glDeleteVertexArrays"},
 	{(void **)&glDeleteBuffers, "glDeleteBuffers"},
 };
+#endif
 
 /* forward declaration */
 static void init_locale(void);
@@ -191,7 +208,7 @@ static bool init_hal(int argc, char *argv[]);
 static bool open_log_file(void);
 static void close_log_file(void);
 static bool open_display(void);
-static bool create_glx_window(void);
+static bool create_window(void);
 static bool set_window_title(void);
 static bool show_window(void);
 static void set_window_size(void);
@@ -222,10 +239,9 @@ static Bool want_configure(Display* d, XEvent* ev, XPointer arg);
 /*
  * Main
  */
-int
-main(
-	int argc,
-	char *argv[])
+
+#if defined(HAL_USE_X11_ONLY)
+int main(int argc, char *argv[])
 {
 	/* Initialize HAL. */
 	if (!init_hal(argc, argv))
@@ -246,42 +262,34 @@ main(
 
 	return 0;
 }
-
-/* Initialize the locale. */
-static void
-init_locale(void)
+#else
+bool main_init_x11(int argc, char *argv[])
 {
-	const char *locale;
+	/* Initialize HAL. */
+	if (!init_hal(argc, argv))
+		return false;
 
-	locale = setlocale(LC_ALL, "");
-
-	if (locale == NULL || locale[0] == '\0' || locale[1] == '\0')
-		playfield_lang_code = "en";
-	else if (strncmp(locale, "en", 2) == 0)
-		playfield_lang_code = "en";
-	else if (strncmp(locale, "fr", 2) == 0)
-		playfield_lang_code = "fr";
-	else if (strncmp(locale, "de", 2) == 0)
-		playfield_lang_code = "de";
-	else if (strncmp(locale, "it", 2) == 0)
-		playfield_lang_code = "it";
-	else if (strncmp(locale, "es", 2) == 0)
-		playfield_lang_code = "es";
-	else if (strncmp(locale, "el", 2) == 0)
-		playfield_lang_code = "el";
-	else if (strncmp(locale, "ru", 2) == 0)
-		playfield_lang_code = "ru";
-	else if (strncmp(locale, "zh_CN", 5) == 0)
-		playfield_lang_code = "zh";
-	else if (strncmp(locale, "zh_TW", 5) == 0)
-		playfield_lang_code = "tw";
-	else if (strncmp(locale, "ja", 2) == 0)
-		playfield_lang_code = "ja";
-	else
-		playfield_lang_code = "en";
-
-	setlocale(LC_ALL, "C");
+	return true;
 }
+
+bool main_run_x11(void)
+{
+	/* Do a start callback. */
+	if (!hal_callback_on_event_start())
+		return false;
+
+	/* Run game loop. */
+	run_game_loop();
+
+	/* Do a stop callback.. */
+	hal_callback_on_event_stop();
+
+	/* Cleanup HAL. */
+	cleanup_hal();
+
+	return true;
+}
+#endif
 
 /* Initialize HAL. */
 static bool init_hal(int argc, char *argv[])
@@ -309,8 +317,8 @@ static bool init_hal(int argc, char *argv[])
 		return false;
 	}
 
-	/* Create a GLX window. */
-	if (!create_glx_window()) {
+	/* Create a window. */
+	if (!create_window()) {
 		hal_log_error("Failed to initialize graphics.");
 		return false;
 	}
@@ -339,6 +347,107 @@ static bool init_hal(int argc, char *argv[])
 	return true;
 }
 
+/* Initialize the locale. */
+static void
+init_locale(void)
+{
+	const char *locale = setlocale(LC_MESSAGES, "");
+        if (locale == NULL || locale[0] == '\0') {
+		locale = getenv("LC_ALL");
+		if (locale == NULL || locale[0] == '\0') {
+			locale = getenv("LC_MESSAGES");
+			if (locale == NULL || locale[0] == '\0')
+				locale = getenv("LANG");
+		}
+	}
+	if (locale == NULL || locale[0] == '\0') {
+		lang_code = "en";
+		return;
+	}
+
+	/* English */
+	if (strncmp(locale, "en_AU", 5) == 0) {
+		lang_code = "en-au";
+		return;
+	}
+	if (strncmp(locale, "en_GB", 5) == 0) {
+		lang_code = "en-gb";
+		return;
+	}
+	if (strncmp(locale, "en_NZ", 5) == 0) {
+		lang_code = "en-nz";
+		return;
+	}
+	if (strncmp(locale, "en_US", 5) == 0) {
+		lang_code = "en-us";
+		return;
+	}
+	if (strncmp(locale, "en", 2) == 0) {
+		lang_code = "en";
+		return;
+	}
+
+	/* French */
+	if (strncmp(locale, "fr_CA", 5) == 0) {
+		lang_code = "fr-ca";
+		return;
+	}
+	if (strncmp(locale, "fr", 2) == 0) {
+		lang_code = "fr";
+		return;
+	}
+
+	/* Spanish */
+	if (strncmp(locale, "es_ES", 5) == 0) {
+		lang_code = "es";
+		return;
+	}
+	if (strncmp(locale, "es", 2) == 0) {
+		lang_code = "es-la";
+		return;
+	}
+
+	/* Chinese */
+	if (strncmp(locale, "zh_TW", 5) == 0 ||
+	    strncmp(locale, "zh_HK", 5) == 0) {
+		lang_code = "zh-tw";
+		return;
+	}
+	if (strncmp(locale, "zh", 2) == 0) {
+		lang_code = "zh-cn";
+		return;
+	}
+
+	/* Others */
+	if (strncmp(locale, "ja", 2) == 0) {
+		lang_code = "ja";
+		return;
+	}
+	if (strncmp(locale, "de", 2) == 0) {
+		lang_code = "de";
+		return;
+	}
+	if (strncmp(locale, "it", 2) == 0){
+		lang_code = "it";
+		return;
+	}
+	if (strncmp(locale, "el", 2) == 0) {
+		lang_code = "el";
+		return;
+	}
+	if (strncmp(locale, "ru", 2) == 0) {
+		lang_code = "ru";
+		return;
+	}
+	if (strncmp(locale, "ko", 2) == 0) {
+		lang_code = "ko";
+		return;
+	}
+
+	/* Fallback */
+	lang_code = "en";
+}
+
 /* Open an X11 display. */
 static bool
 open_display(void)
@@ -351,9 +460,10 @@ open_display(void)
 	return true;
 }
 
+#if defined(HAL_USE_X11_ONLY)
 /* Create a GLX window. */
 static bool
-create_glx_window(void)
+create_window(void)
 {
 	int pix_attr[] = {
 		GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
@@ -466,6 +576,164 @@ create_glx_window(void)
 
 	return true;
 }
+#else
+/* Create an EGL window. */
+static bool
+create_window(void)
+{
+	EGLint config_attr[] = {
+		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+		EGL_RED_SIZE, 1,
+		EGL_GREEN_SIZE, 1,
+		EGL_BLUE_SIZE, 1,
+		EGL_ALPHA_SIZE, 0,
+		EGL_DEPTH_SIZE, 0,
+		EGL_STENCIL_SIZE, 0,
+		EGL_NONE
+	};
+	EGLint ctx_attr[] = {
+		EGL_CONTEXT_CLIENT_VERSION, 2,
+		EGL_NONE
+	};
+	EGLConfig config;
+	EGLint nconfig;
+	EGLint visual_id;
+	XVisualInfo vi_template;
+	XVisualInfo *vi;
+	XSetWindowAttributes swa;
+	XEvent event;
+	int nvi;
+
+	viewport_width = screen_width;
+	viewport_height = screen_height;
+
+	screen = DefaultScreen(display);
+	physical_width = DisplayWidth(display, screen);
+	physical_height = DisplayHeight(display, screen);
+
+	/* Initialize EGL. */
+	egl_display = eglGetDisplay((EGLNativeDisplayType)display);
+	if (egl_display == EGL_NO_DISPLAY)
+		return false;
+
+	if (!eglInitialize(egl_display, NULL, NULL))
+		return false;
+
+	if (!eglBindAPI(EGL_OPENGL_ES_API))
+		return false;
+
+	/* Choose an EGL framebuffer config. */
+	if (!eglChooseConfig(egl_display,
+			     config_attr,
+			     &config,
+			     1,
+			     &nconfig) ||
+	    nconfig == 0)
+		return false;
+
+	/* Get the native X11 visual matching the EGL config. */
+	if (!eglGetConfigAttrib(egl_display,
+				config,
+				EGL_NATIVE_VISUAL_ID,
+				&visual_id))
+		return false;
+
+	vi_template.visualid = (VisualID)visual_id;
+	vi = XGetVisualInfo(display, VisualIDMask, &vi_template, &nvi);
+	if (vi == NULL || nvi == 0)
+		return false;
+
+	/* Create an X11 window. */
+	swa.border_pixel = 0;
+	swa.event_mask = StructureNotifyMask;
+	swa.colormap = XCreateColormap(display,
+				       RootWindow(display, vi->screen),
+				       vi->visual,
+				       AllocNone);
+
+	window = XCreateWindow(display,
+			       RootWindow(display, vi->screen),
+			       0,
+			       0,
+			       (unsigned int)screen_width,
+			       (unsigned int)screen_height,
+			       0,
+			       vi->depth,
+			       InputOutput,
+			       vi->visual,
+			       CWBorderPixel | CWColormap | CWEventMask,
+			       &swa);
+
+	XFree(vi);
+
+	if (window == None)
+		return false;
+
+	/* Create an EGL window surface. */
+	egl_surface = eglCreateWindowSurface(
+		egl_display,
+		config,
+		(EGLNativeWindowType)window,
+		NULL);
+
+	if (egl_surface == EGL_NO_SURFACE) {
+		XDestroyWindow(display, window);
+		window = None;
+		return false;
+	}
+
+	/* Create a GLESv2 context. */
+	egl_context = eglCreateContext(
+		egl_display,
+		config,
+		EGL_NO_CONTEXT,
+		ctx_attr);
+
+	if (egl_context == EGL_NO_CONTEXT) {
+		eglDestroySurface(egl_display, egl_surface);
+		XDestroyWindow(display, window);
+		egl_surface = EGL_NO_SURFACE;
+		window = None;
+		return false;
+	}
+
+	/* Map the window and wait until it is visible. */
+	XMapWindow(display, window);
+	XNextEvent(display, &event);
+
+	/* Bind the GLES context. */
+	if (!eglMakeCurrent(egl_display,
+			    egl_surface,
+			    egl_surface,
+			    egl_context)) {
+		eglDestroyContext(egl_display, egl_context);
+		eglDestroySurface(egl_display, egl_surface);
+		XDestroyWindow(display, window);
+		egl_context = EGL_NO_CONTEXT;
+		egl_surface = EGL_NO_SURFACE;
+		window = None;
+		return false;
+	}
+
+	/* Initialize the GLES rendering subsystem. */
+	if (!init_opengl(screen_width, screen_height)) {
+		eglMakeCurrent(egl_display,
+			       EGL_NO_SURFACE,
+			       EGL_NO_SURFACE,
+			       EGL_NO_CONTEXT);
+		eglDestroyContext(egl_display, egl_context);
+		eglDestroySurface(egl_display, egl_surface);
+		XDestroyWindow(display, window);
+		egl_context = EGL_NO_CONTEXT;
+		egl_surface = EGL_NO_SURFACE;
+		window = None;
+		return false;
+	}
+
+	return true;
+}
+#endif
 
 /* Setup the window. */
 static bool
@@ -753,7 +1021,8 @@ cleanup_hal(void)
 	close_log_file();
 }
 
-/* Destroy the window. */
+#if defined(HAL_USE_X11_ONLY)
+/* Destroy the GLX window. */
 static void
 destroy_window(void)
 {
@@ -776,6 +1045,36 @@ destroy_window(void)
 			XDestroyWindow(display, window);
 	}
 }
+#else
+/* Destroy the EGL window. */
+static void
+destroy_window(void)
+{
+	if (egl_display != EGL_NO_DISPLAY) {
+		eglMakeCurrent(egl_display,
+			       EGL_NO_SURFACE,
+			       EGL_NO_SURFACE,
+			       EGL_NO_CONTEXT);
+
+		if (egl_context != EGL_NO_CONTEXT)
+			eglDestroyContext(egl_display, egl_context);
+
+		if (egl_surface != EGL_NO_SURFACE)
+			eglDestroySurface(egl_display, egl_surface);
+
+		eglTerminate(egl_display);
+	}
+
+	egl_display = EGL_NO_DISPLAY;
+	egl_context = EGL_NO_CONTEXT;
+	egl_surface = EGL_NO_SURFACE;
+
+	if (window != None) {
+		XDestroyWindow(display, window);
+		window = None;
+	}
+}
+#endif
 
 /* Destroy the icon image. */
 static void
@@ -845,7 +1144,13 @@ run_frame(void)
 
 		/* End rendering. */
 		opengl_end_rendering();
+
+		/* Swap buffers. */
+#if defined(HAL_USE_X11_ONLY)
 		glXSwapBuffers(display, glx_window);
+#else
+		eglSwapBuffers(egl_display, egl_surface);
+#endif
 	} else {
 		/* Render. */
 		render_video_frame();
@@ -902,7 +1207,13 @@ render_video_frame(void)
                 image->height,
                 255);
 	opengl_end_rendering();
+
+	/* Swap buffers. */
+#if defined(HAL_USE_X11_ONLY)
 	glXSwapBuffers(display, glx_window);
+#else
+	eglSwapBuffers(egl_display, egl_surface);
+#endif
 }
 
 /* Wait for the next frame timing. */
@@ -1303,11 +1614,46 @@ void update_viewport_size(
  * HAL
  */
 
+#if defined(HAL_USE_X11_ONLY)
+#define hal_log_info_x11			hal_log_info
+#define hal_log_warn_x11			hal_log_warn
+#define hal_log_error_x11			hal_log_error
+#define hal_log_out_of_memory_x11		hal_log_out_of_memory
+#define open_log_file_x11			open_log_file
+#define hal_make_save_directory_x11		hal_make_save_directory
+#define hal_make_real_path_x11			hal_make_real_path
+#define hal_reset_lap_timer_x11			hal_reset_lap_timer
+#define hal_get_lap_timer_millisec_x11		hal_get_lap_timer_millisec
+#define hal_notify_image_update_x11		hal_notify_image_update
+#define hal_notify_image_free_x11		hal_notify_image_free
+#define hal_render_image_normal_x11		hal_render_image_normal
+#define hal_render_image_add_x11		hal_render_image_add
+#define hal_render_image_sub_x11		hal_render_image_sub
+#define hal_render_image_dim_x11		hal_render_image_dim
+#define hal_render_image_rule_x11		hal_render_image_rule
+#define hal_render_image_melt_x11		hal_render_image_melt
+#define hal_render_image_cross_x11		hal_render_image_cross
+#define hal_render_image_3d_normal_x11		hal_render_image_3d_normal
+#define hal_render_image_3d_add_x11		hal_render_image_3d_add
+#define hal_render_image_3d_sub_x11		hal_render_image_3d_sub
+#define hal_render_image_3d_dim_x11		hal_render_image_3d_dim
+#define hal_render_image_3d_cross_x11		hal_render_image_3d_cross
+#define hal_play_video_x11			hal_play_video
+#define hal_stop_video_x11			hal_stop_video
+#define hal_is_video_playing_x11		hal_is_video_playing
+#define hal_is_full_screen_supported_x11	hal_is_full_screen_supported
+#define hal_is_full_screen_mode_x11		hal_is_full_screen_mode
+#define hal_enter_full_screen_mode_x11		hal_enter_full_screen_mode
+#define hal_leave_full_screen_mode_x11		hal_leave_full_screen_mode
+#define hal_get_system_language_x11		hal_get_system_language
+#define hal_set_continuous_swipe_enabled_x11	hal_set_continuous_swipe_enabled
+#endif
+
 /*
  * Put an INFO log.
  */
 bool
-hal_log_info(
+hal_log_info_x11(
 	const char *s,
 	...)
 {
@@ -1320,16 +1666,6 @@ hal_log_info(
 
 	printf("%s\n", buf);
 
-#if 0
-	open_log_file();
-	if (log_fp != NULL) {
-		fprintf(log_fp, "%s\n", buf);
-		fflush(log_fp);
-		if (ferror(log_fp))
-			return false;
-	}
-#endif
-
 	return true;
 }
 
@@ -1337,7 +1673,7 @@ hal_log_info(
  * Put a WARN log.
  */
 bool
-hal_log_warn(
+hal_log_warn_x11(
 	const char *s,
 	...)
 {
@@ -1365,7 +1701,7 @@ hal_log_warn(
  * Put an ERROR log.
  */
 bool
-hal_log_error(
+hal_log_error_x11(
 	const char *s,
 	...)
 {
@@ -1393,7 +1729,7 @@ hal_log_error(
  * Put an out-of-memory error.
  */
 bool
-hal_log_out_of_memory(void)
+hal_log_out_of_memory_x11(void)
 {
 	hal_log_error(HAL_TR("Out of memory."));
 	return true;
@@ -1417,7 +1753,7 @@ open_log_file(void)
  * Make a save directory.
  */
 bool
-hal_make_save_directory(void)
+hal_make_save_directory_x11(void)
 {
 	struct stat st = {0};
 
@@ -1431,7 +1767,7 @@ hal_make_save_directory(void)
  * Make an effective path from a directory name and a file name.
  */
 char *
-hal_make_real_path(
+hal_make_real_path_x11(
 	const char *fname)
 {
 	char *buf;
@@ -1455,7 +1791,7 @@ hal_make_real_path(
  * Reset a timer.
  */
 void
-hal_reset_lap_timer(
+hal_reset_lap_timer_x11(
 	uint64_t *t)
 {
 	struct timespec ts;
@@ -1463,6 +1799,7 @@ hal_reset_lap_timer(
 	*t = (uint64_t)ts.tv_sec * 1000 + (uint64_t)ts.tv_nsec / 1000000;
 
 #if 0
+	/* Use this for older systems. */
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
 	*t = (uint64_t)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
@@ -1473,7 +1810,7 @@ hal_reset_lap_timer(
  * Get a timer lap.
  */
 uint64_t
-hal_get_lap_timer_millisec(
+hal_get_lap_timer_millisec_x11(
 	uint64_t *t)
 {
 	struct timespec ts;
@@ -1483,6 +1820,7 @@ hal_get_lap_timer_millisec(
 	return (end - *t);
 
 #if 0
+	/* Use this for older systems. */
 	struct timeval tv;
 	uint64_t end;
 	gettimeofday(&tv, NULL);
@@ -1495,7 +1833,7 @@ hal_get_lap_timer_millisec(
  * Notify an image update.
  */
 void
-hal_notify_image_update(
+hal_notify_image_update_x11(
 	struct hal_image *img)
 {
 	opengl_notify_image_update(img);
@@ -1505,7 +1843,7 @@ hal_notify_image_update(
  * Notify an image free.
  */
 void
-hal_notify_image_free(
+hal_notify_image_free_x11(
 	struct hal_image *img)
 {
 	opengl_notify_image_free(img);
@@ -1515,7 +1853,7 @@ hal_notify_image_free(
  * Render an image. (alpha blend)
  */
 void
-hal_render_image_normal(
+hal_render_image_normal_x11(
 	int dst_left,
 	int dst_top,
 	int dst_width,
@@ -1545,7 +1883,7 @@ hal_render_image_normal(
  * Render an image. (add blend)
  */
 void
-hal_render_image_add(
+hal_render_image_add_x11(
 	int dst_left,
 	int dst_top,
 	int dst_width,
@@ -1575,7 +1913,7 @@ hal_render_image_add(
  * Render an image. (sub blend)
  */
 void
-hal_render_image_sub(
+hal_render_image_sub_x11(
 	int dst_left,
 	int dst_top,
 	int dst_width,
@@ -1605,7 +1943,7 @@ hal_render_image_sub(
  * Render an image. (dim blend)
  */
 void
-hal_render_image_dim(
+hal_render_image_dim_x11(
 	int dst_left,
 	int dst_top,
 	int dst_width,
@@ -1635,7 +1973,7 @@ hal_render_image_dim(
  * Render an image. (rule universal transition)
  */
 void
-hal_render_image_rule(
+hal_render_image_rule_x11(
 	struct hal_image *src_img,
 	struct hal_image *rule_img,
 	int threshold)
@@ -1647,7 +1985,7 @@ hal_render_image_rule(
  * Render an image. (melt universal transition)
  */
 void
-hal_render_image_melt(
+hal_render_image_melt_x11(
 	struct hal_image *src_img,
 	struct hal_image *rule_img,
 	int progress)
@@ -1659,7 +1997,7 @@ hal_render_image_melt(
  * Render two images for a cross fading.
  */
 void
-hal_render_image_cross(
+hal_render_image_cross_x11(
 	struct hal_image *src1_img,
 	struct hal_image *src2_img,
 	float src1_left,
@@ -1681,7 +2019,7 @@ hal_render_image_cross(
  * Render an image. (3d transform, alpha blending)
  */
 void
-hal_render_image_3d_normal(
+hal_render_image_3d_normal_x11(
 	float x1,
 	float y1,
 	float x2,
@@ -1707,7 +2045,7 @@ hal_render_image_3d_normal(
  * Render an image. (3d transform, add blending)
  */
 void
-hal_render_image_3d_add(
+hal_render_image_3d_add_x11(
 	float x1,
 	float y1,
 	float x2,
@@ -1733,7 +2071,7 @@ hal_render_image_3d_add(
  * Render an image. (3d transform, sub blending)
  */
 void
-hal_render_image_3d_sub(
+hal_render_image_3d_sub_x11(
 	float x1,
 	float y1,
 	float x2,
@@ -1759,7 +2097,7 @@ hal_render_image_3d_sub(
  * Render an image. (3d transform, dim blending)
  */
 void
-hal_render_image_3d_dim(
+hal_render_image_3d_dim_x11(
 	float x1,
 	float y1,
 	float x2,
@@ -1785,7 +2123,7 @@ hal_render_image_3d_dim(
  * Render two images for a cross fading.
  */
 void
-hal_render_image_3d_cross(
+hal_render_image_3d_cross_x11(
 	struct hal_image *src1_img,
 	struct hal_image *src2_img,
 	float src1_x1,
@@ -1831,7 +2169,7 @@ hal_render_image_3d_cross(
  * Play a video.
  */
 bool
-hal_play_video(
+hal_play_video_x11(
 	const char *fname,
 	bool is_skippable)
 {
@@ -1853,7 +2191,7 @@ hal_play_video(
  * Stop the video.
  */
 void
-hal_stop_video(void)
+hal_stop_video_x11(void)
 {
 	gstplay_stop();
 
@@ -1864,7 +2202,7 @@ hal_stop_video(void)
  * Check whether a video is playing.
  */
 bool
-hal_is_video_playing(void)
+hal_is_video_playing_x11(void)
 {
 	return is_gst_playing;
 }
@@ -1873,7 +2211,7 @@ hal_is_video_playing(void)
  * Check whether full screen mode is supported.
  */
 bool
-hal_is_full_screen_supported(void)
+hal_is_full_screen_supported_x11(void)
 {
 	return false;
 }
@@ -1882,7 +2220,7 @@ hal_is_full_screen_supported(void)
  * Check whether we are in full screen mode.
  */
 bool
-hal_is_full_screen_mode(void)
+hal_is_full_screen_mode_x11(void)
 {
 	return false;
 }
@@ -1891,7 +2229,7 @@ hal_is_full_screen_mode(void)
  * Enter full screen mode.
  */
 void
-hal_enter_full_screen_mode(void)
+hal_enter_full_screen_mode_x11(void)
 {
 	Atom wm_state;
 	Atom fs_atom;
@@ -1925,7 +2263,7 @@ hal_enter_full_screen_mode(void)
  * Leave full screen mode.
  */
 void
-hal_leave_full_screen_mode(void)
+hal_leave_full_screen_mode_x11(void)
 {
 	Atom wm_state;
 	Atom fs_atom;
@@ -1959,7 +2297,7 @@ hal_leave_full_screen_mode(void)
  * Get the system locale.
  */
 const char *
-hal_get_system_language(void)
+hal_get_system_language_x11(void)
 {
 	const char *locale = setlocale(LC_MESSAGES, "");
         if (locale == NULL || locale[0] == '\0') {
@@ -2026,7 +2364,7 @@ hal_get_system_language(void)
  * Enable/disable message skip by touch move.
  */
 void
-hal_set_continuous_swipe_enabled(
+hal_set_continuous_swipe_enabled_x11(
 	bool is_enabled)
 {
 	UNUSED_PARAMETER(is_enabled);

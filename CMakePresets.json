@@ -695,7 +695,9 @@
                 "SUIKA_ENABLE_I18N":           "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
                 "SUIKA_ENABLE_BYTECOMP":       "ON",
-                "SUIKA_ENABLE_AOTCOMP":        "ON"
+                "SUIKA_ENABLE_AOTCOMP":        "ON",
+                "SUIKA_ENABLE_GST":            "ON",
+                "SUIKA_ENABLE_UNSAFE":         "ON"
             }
         },
         {
@@ -712,7 +714,47 @@
                 "SUIKA_ENABLE_I18N":           "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
                 "SUIKA_ENABLE_BYTECOMP":       "ON",
-                "SUIKA_ENABLE_AOTCOMP":        "ON"
+                "SUIKA_ENABLE_AOTCOMP":        "ON",
+                "SUIKA_ENABLE_GST":            "ON",
+                "SUIKA_ENABLE_UNSAFE":         "ON"
+            }
+        },
+        {
+            "name":           "linux-x11",
+            "displayName":    "Linux",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-linux-x11",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
+                "SUIKA_TARGET_LINUX_X11":      "ON",
+                "SUIKA_ENABLE_INSTALL":        "ON",
+                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
+                "SUIKA_ENABLE_JIT":            "ON",
+                "SUIKA_ENABLE_I18N":           "ON",
+                "SUIKA_ENABLE_PACK":           "ON",
+                "SUIKA_ENABLE_BYTECOMP":       "ON",
+                "SUIKA_ENABLE_AOTCOMP":        "ON",
+                "SUIKA_ENABLE_GST":            "ON",
+                "SUIKA_ENABLE_UNSAFE":         "ON"
+            }
+        },
+        {
+            "name":           "linux-x11-debug",
+            "displayName":    "Linux",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-linux-x11-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Debug",
+                "SUIKA_TARGET_LINUX_X11":      "ON",
+                "SUIKA_ENABLE_INSTALL":        "ON",
+                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
+                "SUIKA_ENABLE_JIT":            "ON",
+                "SUIKA_ENABLE_I18N":           "ON",
+                "SUIKA_ENABLE_PACK":           "ON",
+                "SUIKA_ENABLE_BYTECOMP":       "ON",
+                "SUIKA_ENABLE_AOTCOMP":        "ON",
+                "SUIKA_ENABLE_GST":            "ON",
+                "SUIKA_ENABLE_UNSAFE":         "ON"
             }
         },
         {
@@ -730,7 +772,8 @@
                 "SUIKA_ENABLE_PACK":           "ON",
                 "SUIKA_ENABLE_BYTECOMP":       "ON",
                 "SUIKA_ENABLE_AOTCOMP":        "ON",
-                "SUIKA_ENABLE_GST":            "ON"
+                "SUIKA_ENABLE_GST":            "ON",
+                "SUIKA_ENABLE_UNSAFE":         "ON"
             }
         },
         {
@@ -747,7 +790,9 @@
                 "SUIKA_ENABLE_I18N":           "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
                 "SUIKA_ENABLE_BYTECOMP":       "ON",
-                "SUIKA_ENABLE_AOTCOMP":        "ON"
+                "SUIKA_ENABLE_AOTCOMP":        "ON",
+                "SUIKA_ENABLE_GST":            "ON",
+                "SUIKA_ENABLE_UNSAFE":         "ON"
             }
         },
         {
@@ -813,17 +858,7 @@
                 "SUIKA_ENABLE_I18N":           "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
                 "SUIKA_ENABLE_BYTECOMP":       "ON",
-                "SUIKA_ENABLE_AOTCOMP":        "ON"
-            }
-        },
-        {
-            "name":           "linux-launcher",
-            "displayName":    "Linux",
-            "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-linux-launcher",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Debug",
-                "SUIKA_TARGET_LINUX":          "ON",
+                "SUIKA_ENABLE_AOTCOMP":        "ON",
                 "SUIKA_ENABLE_UNSAFE":         "ON"
             }
         },
@@ -1393,6 +1428,14 @@
             "configurePreset": "linux-debug"
         },
         {
+            "name": "linux-x11",
+            "configurePreset": "linux-x11"
+        },
+        {
+            "name": "linux-x11-debug",
+            "configurePreset": "linux-x11-debug"
+        },
+        {
             "name": "linux-wayland",
             "configurePreset": "linux-wayland"
         },
@@ -1411,10 +1454,6 @@
         {
             "name": "linux-x11soft",
             "configurePreset": "linux-x11soft"
-        },
-        {
-            "name": "linux-launcher",
-            "configurePreset": "linux-launcher"
         },
         {
             "name": "ios-device",

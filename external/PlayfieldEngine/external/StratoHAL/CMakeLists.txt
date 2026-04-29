@@ -9,7 +9,8 @@ project(StratoHAL LANGUAGES C CXX)
 option(STRATO_TARGET_WINDOWS          "Build for Windows 2000 or later"         OFF)
 option(STRATO_TARGET_WINDOWS95        "Build for Windows 95/98/Me"              OFF)
 option(STRATO_TARGET_MACOS            "Build for macOS"                         OFF)
-option(STRATO_TARGET_LINUX            "Build for Linux (X11, OpenGL)"           OFF)
+option(STRATO_TARGET_LINUX            "Build for Linux (Wayland/X11 Dual)"      OFF)
+option(STRATO_TARGET_LINUX_X11        "Build for Linux (Wayland, OpenGL)"       OFF)
 option(STRATO_TARGET_LINUX_WAYLAND    "Build for Linux (Wayland, OpenGL)"       OFF)
 option(STRATO_TARGET_LINUX_GBM        "Build for Linux (GBM, OpenGL ES)"        OFF)
 option(STRATO_TARGET_LINUX_FBDEV      "Build for Linux (fbdev, Soft3D)"         OFF)
@@ -57,6 +58,7 @@ if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_MACOS
    OR STRATO_TARGET_MACOS_LIB
    OR STRATO_TARGET_LINUX
+   OR STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_LINUX_GBM
    OR STRATO_TARGET_LINUX_FBDEV
@@ -216,6 +218,7 @@ endif()
 
 # libX11
 if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_LINUX_X11SOFT
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_FREEBSD_X11SOFT
@@ -232,7 +235,7 @@ if(   STRATO_TARGET_LINUX
 endif()
 
 # libGL and libGLX
-if(   STRATO_TARGET_LINUX
+if(   STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_NETBSD
    OR STRATO_TARGET_OPENBSD
@@ -241,14 +244,15 @@ if(   STRATO_TARGET_LINUX
 endif()
 
 # GLX (for older Mesa on Linux and FreeBSD)
-if(   STRATO_TARGET_LINUX
+if(   STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_FREEBSD)
   find_library(GLX_LIBRARY GLX)
 endif()
 
 # libEGL
-if(   STRATO_TARGET_LINUX_GBM
+if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_WAYLAND
+   OR STRATO_TARGET_LINUX_GBM
    OR STRATO_TARGET_FREEBSD_WAYLAND)
   find_package(PkgConfig REQUIRED)
   pkg_check_modules(EGL REQUIRED egl)
@@ -269,6 +273,7 @@ endif()
 
 # ALSA
 if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_LINUX_GBM
    OR STRATO_TARGET_LINUX_FBDEV
@@ -283,7 +288,8 @@ if(STRATO_TARGET_LINUX_GBM)
 endif()
 
 # Wayland
-if(   STRATO_TARGET_LINUX_WAYLAND
+if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_FREEBSD_WAYLAND)
   find_package(PkgConfig REQUIRED)
   pkg_check_modules(WAYLAND REQUIRED wayland-client wayland-egl libdecor-0)
@@ -376,8 +382,26 @@ if(STRATO_TARGET_MACOS)
   )
 endif()
 
+# X11/Wayland Dual
+if(STRATO_TARGET_LINUX)
+  set(STRATO_SOURCES
+      src/image.c
+      src/glyph.c
+      src/wave.c
+      src/stdfile.c
+      src/glrender.c
+      src/asound.c
+      src/evgamepad.c
+      src/gstplay.c
+      src/wlx11main.c
+      src/wlmain.c
+      src/x11main.c
+      src/icon.c
+    )
+endif()
+
 # X11 OpenGL
-if(   STRATO_TARGET_LINUX
+if(   STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_NETBSD
    OR STRATO_TARGET_OPENBSD)
@@ -705,6 +729,16 @@ if(STRATO_TARGET_MACOS)
   endif()
 endif()
 
+# Linux X11-only
+if(STRATO_TARGET_LINUX_X11)
+  target_compile_definitions(strato PRIVATE HAL_USE_X11_ONLY)
+endif()
+
+# Linux Wayland-only
+if(STRATO_TARGET_LINUX_WAYLAND)
+  target_compile_definitions(strato PRIVATE HAL_USE_WAYLAND_ONLY)
+endif()
+
 # FreeBSD
 if(   STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_FREEBSD_WAYLAND
@@ -770,8 +804,9 @@ if(STRATO_TARGET_UNITY)
 endif()
 
 # GLES
-if(   STRATO_TARGET_LINUX_GBM
+if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_WAYLAND
+   OR STRATO_TARGET_LINUX_GBM
    OR STRATO_TARGET_FREEBSD_WAYLAND
    OR STRATO_TARGET_ANDROID
    OR STRATO_TARGET_OPENHARMONY)
@@ -780,7 +815,8 @@ if(   STRATO_TARGET_LINUX_GBM
 endif()
 
 # Wayland
-if(   STRATO_TARGET_LINUX_WAYLAND
+if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_FREEBSD_WAYLAND)
   target_compile_definitions(strato PRIVATE HAL_USE_WAYLAND)
 endif()
@@ -956,6 +992,7 @@ endif()
 
 # X11
 if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_LINUX_X11SOFT
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_FREEBSD_X11SOFT
@@ -971,6 +1008,7 @@ endif()
 
 # OpenGL
 if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_NETBSD
    OR STRATO_TARGET_OPENBSD)
@@ -979,6 +1017,7 @@ endif()
 
 # GLX
 if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_FREEBSD)
   target_link_libraries(strato PUBLIC ${GLX_LIBRARY})
 endif()
@@ -989,7 +1028,8 @@ if(STRATO_ENABLE_GST)
 endif()
 
 # Wayland
-if(   STRATO_TARGET_LINUX_WAYLAND
+if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_FREEBSD_WAYLAND)
   target_link_libraries(
     strato
@@ -1030,6 +1070,7 @@ endif()
 
 # Linux
 if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_LINUX_GBM
    OR STRATO_TARGET_LINUX_FBDEV
@@ -1165,7 +1206,8 @@ endif()
 # Wayland Custom Process
 #
 
-if(   STRATO_TARGET_LINUX_WAYLAND
+if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_FREEBSD_WAYLAND)
   find_program(WAYLAND_SCANNER NAMES wayland-scanner REQUIRED)
 

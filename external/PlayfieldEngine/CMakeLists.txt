@@ -11,7 +11,8 @@ option(PLAYFIELD_TARGET_WINDOWS95        "Build for Windows 95/98/Me/2000"      
 option(PLAYFIELD_TARGET_MACOS            "Build for macOS (app)"                      OFF)
 option(PLAYFIELD_TARGET_MACOS_CLI        "Build for macOS (CLI)"                      OFF)
 option(PLAYFIELD_TARGET_MACOS_LIB        "Build for macOS (library)"                  OFF)
-option(PLAYFIELD_TARGET_LINUX            "Build for Linux (X11, OpenGL)"              OFF)
+option(PLAYFIELD_TARGET_LINUX            "Build for Linux (Wayland/X11 Dual)"         OFF)
+option(PLAYFIELD_TARGET_LINUX_X11        "Build for Linux (X11, OpenGL)"              OFF)
 option(PLAYFIELD_TARGET_LINUX_WAYLAND    "Build for Linux (Wayland, OpenGL)"          OFF)
 option(PLAYFIELD_TARGET_LINUX_GBM        "Build for Linux (GBM, OpenGL ES)"           OFF)
 option(PLAYFIELD_TARGET_LINUX_FBDEV      "Build for Linux (fbdev, Soft3D)"            OFF)
@@ -70,6 +71,7 @@ if(   PLAYFIELD_TARGET_WINDOWS
    OR PLAYFIELD_TARGET_MACOS_CLI
    OR PLAYFIELD_TARGET_MACOS_LIB
    OR PLAYFIELD_TARGET_LINUX
+   OR PLAYFIELD_TARGET_LINUX_X11
    OR PLAYFIELD_TARGET_LINUX_WAYLAND
    OR PLAYFIELD_TARGET_LINUX_GBM
    OR PLAYFIELD_TARGET_LINUX_FBDEV
@@ -252,6 +254,8 @@ elseif(PLAYFIELD_TARGET_MACOS_LIB)
   set(STRATO_TARGET_MACOS ON)
 elseif(PLAYFIELD_TARGET_LINUX)
   set(STRATO_TARGET_LINUX ON)
+elseif(PLAYFIELD_TARGET_LINUX_X11)
+  set(STRATO_TARGET_LINUX_X11 ON)
 elseif(PLAYFIELD_TARGET_LINUX_WAYLAND)
   set(STRATO_TARGET_LINUX_WAYLAND ON)
 elseif(PLAYFIELD_TARGET_LINUX_GBM)
@@ -909,6 +913,7 @@ endif()
 #
 
 if(   PLAYFIELD_TARGET_LINUX
+   OR PLAYFIELD_TARGET_LINUX_X11
    OR PLAYFIELD_TARGET_LINUX_WAYLAND
    OR PLAYFIELD_TARGET_LINUX_GBM
    OR PLAYFIELD_TARGET_LINUX_FBDEV

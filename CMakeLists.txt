@@ -14,7 +14,8 @@ option(SUIKA_TARGET_WINDOWS95        "Build for Windows 95/98/Me"               
 option(SUIKA_TARGET_MACOS            "Build for macOS (App)"                          OFF)
 option(SUIKA_TARGET_MACOS_CLI        "Build for macOS (CLI)"                          OFF)
 option(SUIKA_TARGET_MACOS_LIB        "Build for macOS (Library)"                      OFF)
-option(SUIKA_TARGET_LINUX            "Build for Linux (X11, OpenGL)"                  OFF)
+option(SUIKA_TARGET_LINUX            "Build for Linux (Wayland/X11 Dual)"             OFF)
+option(SUIKA_TARGET_LINUX_X11        "Build for Linux (X11, OpenGL)"                  OFF)
 option(SUIKA_TARGET_LINUX_WAYLAND    "Build for Linux (Wayland, OpenGL ES)"           OFF)
 option(SUIKA_TARGET_LINUX_GBM        "Build for Linux (GBM, OpenGL ES)"               OFF)
 option(SUIKA_TARGET_LINUX_FBDEV      "Build for Linux (fbdev, Soft3D)"                OFF)
@@ -189,6 +190,7 @@ if(   SUIKA_TARGET_WINDOWS
    OR SUIKA_TARGET_MACOS_CLI
    OR SUIKA_TARGET_MACOS_LIB
    OR SUIKA_TARGET_LINUX
+   OR SUIKA_TARGET_LINUX_X11
    OR SUIKA_TARGET_LINUX_WAYLAND
    OR SUIKA_TARGET_LINUX_GBM
    OR SUIKA_TARGET_LINUX_FBDEV
@@ -369,6 +371,8 @@ elseif(SUIKA_TARGET_MACOS_LIB)
   set(PLAYFIELD_TARGET_MACOS_LIB ON)
 elseif(SUIKA_TARGET_LINUX)
   set(PLAYFIELD_TARGET_LINUX ON)
+elseif(SUIKA_TARGET_LINUX_X11)
+  set(PLAYFIELD_TARGET_LINUX_X11 ON)
 elseif(SUIKA_TARGET_LINUX_WAYLAND)
   set(PLAYFIELD_TARGET_LINUX_WAYLAND ON)
 elseif(SUIKA_TARGET_LINUX_GBM)

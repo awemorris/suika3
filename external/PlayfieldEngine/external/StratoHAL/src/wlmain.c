@@ -93,6 +93,8 @@ static float mouse_scale = 1.0f;
 static int mouse_ofs_x;
 static int mouse_ofs_y;
 static bool is_full_screen;
+static int last_mouse_x;
+static int last_mouse_y;
 
 /* Wayland */
 static struct wl_display *wl_dpy;
@@ -120,7 +122,7 @@ static struct timeval tv_start;
 static FILE *log_fp;
 
 /* Locale */
-const char *playfield_lang_code;
+static const char *lang_code;
 
 /* Close window flag. */
 static bool is_close_requested;
@@ -132,8 +134,8 @@ static bool is_gst_playing;
 static bool is_gst_skippable;
 
 /* forward declaration */
-static void init_locale(void);
 static bool init_hal(int argc, char *argv[]);
+static void init_locale(void);
 static bool open_log_file(void);
 static void close_log_file(void);
 static bool open_display(void);
@@ -218,6 +220,8 @@ static struct libdecor_interface decor_iface = {
 /*
  * Main
  */
+
+#if defined(HAL_USE_WAYLAND_ONLY)
 int main(int argc, char *argv[])
 {
 	/* Initialize HAL. */
@@ -239,44 +243,40 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
-
-/* Initialize the locale. */
-static void init_locale(void)
+#else
+bool main_init_wl(int argc, char *argv[])
 {
-	const char *locale;
+	/* Initialize HAL. */
+	if (!init_hal(argc, argv))
+		return false;
 
-	locale = setlocale(LC_ALL, "");
-
-	if (locale == NULL || locale[0] == '\0' || locale[1] == '\0')
-		playfield_lang_code = "en";
-	else if (strncmp(locale, "en", 2) == 0)
-		playfield_lang_code = "en";
-	else if (strncmp(locale, "fr", 2) == 0)
-		playfield_lang_code = "fr";
-	else if (strncmp(locale, "de", 2) == 0)
-		playfield_lang_code = "de";
-	else if (strncmp(locale, "it", 2) == 0)
-		playfield_lang_code = "it";
-	else if (strncmp(locale, "es", 2) == 0)
-		playfield_lang_code = "es";
-	else if (strncmp(locale, "el", 2) == 0)
-		playfield_lang_code = "el";
-	else if (strncmp(locale, "ru", 2) == 0)
-		playfield_lang_code = "ru";
-	else if (strncmp(locale, "zh_CN", 5) == 0)
-		playfield_lang_code = "zh";
-	else if (strncmp(locale, "zh_TW", 5) == 0)
-		playfield_lang_code = "tw";
-	else if (strncmp(locale, "ja", 2) == 0)
-		playfield_lang_code = "ja";
-	else
-		playfield_lang_code = "en";
-
-	setlocale(LC_ALL, "C");
+	return true;
 }
 
+bool main_run_wl(void)
+{
+	/* Do a start callback. */
+	if (!hal_callback_on_event_start())
+		return false;
+
+	/* Run game loop. */
+	run_game_loop();
+
+	/* Do a stop callback.. */
+	hal_callback_on_event_stop();
+
+	/* Cleanup HAL. */
+	cleanup_hal();
+
+	return true;
+}
+#endif
+
 /* Initialize HAL. */
-static bool init_hal(int argc, char *argv[])
+static bool
+init_hal(
+	int argc,
+	char *argv[])
 {
 	/* Initialize the locale. */
 	init_locale();
@@ -316,22 +316,130 @@ static bool init_hal(int argc, char *argv[])
 	return true;
 }
 
-/* Open a display. */
-static bool open_display(void)
+/* Initialize the locale. */
+static void
+init_locale(void)
 {
-	PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT;
-	static const EGLint cfg_attrs[] = {
+	const char *locale = setlocale(LC_MESSAGES, "");
+        if (locale == NULL || locale[0] == '\0') {
+		locale = getenv("LC_ALL");
+		if (locale == NULL || locale[0] == '\0') {
+			locale = getenv("LC_MESSAGES");
+			if (locale == NULL || locale[0] == '\0')
+				locale = getenv("LANG");
+		}
+	}
+	if (locale == NULL || locale[0] == '\0') {
+		lang_code = "en";
+		return;
+	}
+
+	/* English */
+	if (strncmp(locale, "en_AU", 5) == 0) {
+		lang_code = "en-au";
+		return;
+	}
+	if (strncmp(locale, "en_GB", 5) == 0) {
+		lang_code = "en-gb";
+		return;
+	}
+	if (strncmp(locale, "en_NZ", 5) == 0) {
+		lang_code = "en-nz";
+		return;
+	}
+	if (strncmp(locale, "en_US", 5) == 0) {
+		lang_code = "en-us";
+		return;
+	}
+	if (strncmp(locale, "en", 2) == 0) {
+		lang_code = "en";
+		return;
+	}
+
+	/* French */
+	if (strncmp(locale, "fr_CA", 5) == 0) {
+		lang_code = "fr-ca";
+		return;
+	}
+	if (strncmp(locale, "fr", 2) == 0) {
+		lang_code = "fr";
+		return;
+	}
+
+	/* Spanish */
+	if (strncmp(locale, "es_ES", 5) == 0) {
+		lang_code = "es";
+		return;
+	}
+	if (strncmp(locale, "es", 2) == 0) {
+		lang_code = "es-la";
+		return;
+	}
+
+	/* Chinese */
+	if (strncmp(locale, "zh_TW", 5) == 0 ||
+	    strncmp(locale, "zh_HK", 5) == 0) {
+		lang_code = "zh-tw";
+		return;
+	}
+	if (strncmp(locale, "zh", 2) == 0) {
+		lang_code = "zh-cn";
+		return;
+	}
+
+	/* Others */
+	if (strncmp(locale, "ja", 2) == 0) {
+		lang_code = "ja";
+		return;
+	}
+	if (strncmp(locale, "de", 2) == 0) {
+		lang_code = "de";
+		return;
+	}
+	if (strncmp(locale, "it", 2) == 0){
+		lang_code = "it";
+		return;
+	}
+	if (strncmp(locale, "el", 2) == 0) {
+		lang_code = "el";
+		return;
+	}
+	if (strncmp(locale, "ru", 2) == 0) {
+		lang_code = "ru";
+		return;
+	}
+	if (strncmp(locale, "ko", 2) == 0) {
+		lang_code = "ko";
+		return;
+	}
+
+	/* Fallback */
+	lang_code = "en";
+}
+
+/* Open a display. */
+static bool
+open_display(void)
+{
+	static const EGLint cfg_attr[] = {
+		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
 		EGL_RED_SIZE, 8,
 		EGL_GREEN_SIZE, 8,
 		EGL_BLUE_SIZE, 8,
 		EGL_ALPHA_SIZE, 0,
-		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+		EGL_DEPTH_SIZE, 0,
+		EGL_STENCIL_SIZE, 0,
 		EGL_NONE
 	};
+	static const EGLint ctx_attr[] = {
+		EGL_CONTEXT_CLIENT_VERSION, 2,
+		EGL_NONE
+	};
+	PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT;
 	struct wl_registry *reg;
-	EGLint ncfg;
 	EGLConfig configs[64];
+	EGLint ncfg;
 	int i;
 
 	/* Connect to Wayland display. */
@@ -348,8 +456,6 @@ static bool open_display(void)
 		return false;
 	}
 	wl_registry_add_listener(reg, &registry_listener, NULL);
-
-	/* Wait for registry_global(). */
 	wl_display_roundtrip(wl_dpy);
 
 	if (!wl_compositor) {
@@ -357,120 +463,135 @@ static bool open_display(void)
 		return false;
 	}
 
-	/* Create libdecor context. */
-	decor = libdecor_new(wl_dpy, &decor_iface);
-	if (!decor) {
-		hal_log_error("libdecor_new failed");
-		return false;
+	/* Create EGL display. Prefer explicit Wayland platform. */
+	eglGetPlatformDisplayEXT =
+		(PFNEGLGETPLATFORMDISPLAYEXTPROC)
+		eglGetProcAddress("eglGetPlatformDisplayEXT");
+
+	if (eglGetPlatformDisplayEXT) {
+		egl_dpy = eglGetPlatformDisplayEXT(
+			EGL_PLATFORM_WAYLAND_EXT,
+			(void *)wl_dpy,
+			NULL);
+	} else {
+		egl_dpy = eglGetDisplay((EGLNativeDisplayType)wl_dpy);
 	}
 
-	/*
-	 * Let libdecor do its initial handshake before creating the frame.
-	 * This keeps the state machine settled.
-	 */
-	wl_display_roundtrip(wl_dpy);
-
-	/* Create main surface. */
-	wl_surface = wl_compositor_create_surface(wl_compositor);
-	if (!wl_surface) {
-		hal_log_error("wl_compositor_create_surface failed");
-		return false;
-	}
-
-	/* Create libdecor frame. */
-	decor_frame = libdecor_decorate(decor, wl_surface, &decor_frame_iface, NULL);
-	if (!decor_frame) {
-		hal_log_error("libdecor_decorate failed");
-		return false;
-	}
-	libdecor_frame_set_title(decor_frame, window_title);
-
-	/*
-	 * Create wl_egl_window BEFORE mapping the frame.
-	 * handle_configure() may call wl_egl_window_resize(), so wlegl_win
-	 * must already exist by the time configure events start arriving.
-	 */
-	wlegl_win = wl_egl_window_create(wl_surface, screen_width, screen_height);
-	if (!wlegl_win) {
-		hal_log_error("wl_egl_window_create failed");
-		return false;
-	}
-
-	/* Create EGL display. */
-	egl_dpy = eglGetDisplay((EGLNativeDisplayType)wl_dpy);
 	if (egl_dpy == EGL_NO_DISPLAY) {
 		hal_log_error("eglGetDisplay failed");
 		return false;
 	}
 
 	if (!eglInitialize(egl_dpy, NULL, NULL)) {
-		hal_log_error("eglInitialize failed: 0x%04x\n", eglGetError());
+		hal_log_error("eglInitialize failed: 0x%04x", eglGetError());
 		return false;
 	}
 
 	if (!eglBindAPI(EGL_OPENGL_ES_API)) {
-		hal_log_error("eglBindAPI(EGL_OPENGL_ES_API) failed: 0x%04x\n", eglGetError());
+		hal_log_error("eglBindAPI(EGL_OPENGL_ES_API) failed: 0x%04x", eglGetError());
 		return false;
 	}
 
-	if (!eglChooseConfig(egl_dpy, cfg_attrs, configs, 64, &ncfg)) {
-		hal_log_error("eglChooseConfig() failed: 0x%04x\n", eglGetError());
+	if (!eglChooseConfig(egl_dpy, cfg_attr, configs, 64, &ncfg)) {
+		hal_log_error("eglChooseConfig failed: 0x%04x", eglGetError());
 		return false;
 	}
 	if (ncfg <= 0) {
-		hal_log_error("eglChooseConfig(count) failed.\n");
+		hal_log_error("No suitable EGL config.");
 		return false;
 	}
 
-	/* Pick a suitable config. */
+	/* Pick a suitable RGB888 window config. */
 	egl_cfg = configs[0];
-	for (int i = 0; i < ncfg; i++) {
-		EGLint surface_type = 0, r = 0, g = 0, b = 0, a = 0, depth = 0;
+	for (i = 0; i < ncfg; i++) {
+		EGLint surface_type = 0;
+		EGLint renderable_type = 0;
+		EGLint r = 0, g = 0, b = 0, a = 0;
 
 		eglGetConfigAttrib(egl_dpy, configs[i], EGL_SURFACE_TYPE, &surface_type);
+		eglGetConfigAttrib(egl_dpy, configs[i], EGL_RENDERABLE_TYPE, &renderable_type);
 		eglGetConfigAttrib(egl_dpy, configs[i], EGL_RED_SIZE, &r);
 		eglGetConfigAttrib(egl_dpy, configs[i], EGL_GREEN_SIZE, &g);
 		eglGetConfigAttrib(egl_dpy, configs[i], EGL_BLUE_SIZE, &b);
 		eglGetConfigAttrib(egl_dpy, configs[i], EGL_ALPHA_SIZE, &a);
-		eglGetConfigAttrib(egl_dpy, configs[i], EGL_DEPTH_SIZE, &depth);
 
 		if ((surface_type & EGL_WINDOW_BIT) &&
+		    (renderable_type & EGL_OPENGL_ES2_BIT) &&
 		    r == 8 && g == 8 && b == 8 && a == 0) {
 			egl_cfg = configs[i];
 			break;
 		}
 	}
 
-	/* Create EGL context. */
-	egl_ctx = eglCreateContext(egl_dpy, egl_cfg, EGL_NO_CONTEXT, (EGLint[]){EGL_CONTEXT_CLIENT_VERSION,2, EGL_NONE});
+	/* Create GLESv2 context before surface mapping. */
+	egl_ctx = eglCreateContext(
+		egl_dpy,
+		egl_cfg,
+		EGL_NO_CONTEXT,
+		ctx_attr);
+
 	if (egl_ctx == EGL_NO_CONTEXT) {
-		hal_log_error("eglCreateContext failed: 0x%04x\n", eglGetError());
+		hal_log_error("eglCreateContext failed: 0x%04x", eglGetError());
 		return false;
 	}
 
-	/* Create EGL surface. */
-	egl_surf = eglCreateWindowSurface(egl_dpy, egl_cfg, (EGLNativeWindowType)wlegl_win, NULL);
+	/* Create main Wayland surface. */
+	wl_surface = wl_compositor_create_surface(wl_compositor);
+	if (!wl_surface) {
+		hal_log_error("wl_compositor_create_surface failed");
+		return false;
+	}
+
+	/* Create wl_egl_window before creating EGLSurface. */
+	wlegl_win = wl_egl_window_create(wl_surface, screen_width, screen_height);
+	if (!wlegl_win) {
+		hal_log_error("wl_egl_window_create failed");
+		return false;
+	}
+
+	/* Create EGL window surface. */
+	egl_surf = eglCreateWindowSurface(
+		egl_dpy,
+		egl_cfg,
+		(EGLNativeWindowType)wlegl_win,
+		NULL);
+
 	if (egl_surf == EGL_NO_SURFACE) {
-		hal_log_error("eglCreateWindowSurface failed: 0x%04x\n", eglGetError());
+		hal_log_error("eglCreateWindowSurface failed: 0x%04x", eglGetError());
 		return false;
 	}
 
-	/* Make context current BEFORE libdecor starts sending configure events. */
 	if (!eglMakeCurrent(egl_dpy, egl_surf, egl_surf, egl_ctx)) {
-		hal_log_error("eglMakeCurrent failed: 0x%04x\n", eglGetError());
+		hal_log_error("eglMakeCurrent failed: 0x%04x", eglGetError());
 		return false;
 	}
 
-	/*
-	 * Initial viewport using the requested size.
-	 * Actual size will be updated by handle_configure().
-	 */
 	update_viewport_size(screen_width, screen_height);
-	
-	/*
-	 * Now it is safe to map the decorated frame.
-	 * From this point on, configure callbacks may resize the EGL window.
-	 */
+
+	/* Create libdecor context after EGL is ready. */
+	decor = libdecor_new(wl_dpy, &decor_iface);
+	if (!decor) {
+		hal_log_error("libdecor_new failed");
+		return false;
+	}
+
+	wl_display_roundtrip(wl_dpy);
+
+	/* Create libdecor frame. */
+	decor_frame = libdecor_decorate(
+		decor,
+		wl_surface,
+		&decor_frame_iface,
+		NULL);
+
+	if (!decor_frame) {
+		hal_log_error("libdecor_decorate failed");
+		return false;
+	}
+
+	libdecor_frame_set_title(decor_frame, window_title);
+
+	/* Now map the decorated frame. */
 	libdecor_frame_map(decor_frame);
 	wl_surface_commit(wl_surface);
 	wl_display_roundtrip(wl_dpy);
@@ -633,7 +754,8 @@ render_video_frame(void)
 }
 
 /* Wait for the next frame timing. */
-static bool wait_for_next_frame(void)
+static bool
+wait_for_next_frame(void)
 {
 	struct timeval tv_end;
 	uint32_t lap, wait, span;
@@ -700,692 +822,6 @@ static void update_viewport_size(int width, int height)
 	/* Update the screen offset and scale for drawing subsystem. */
 	opengl_set_screen(orig_x, orig_y, viewport_width, viewport_height);
 }
-
-/*
- * HAL
- */
-
-/*
- * Put an INFO log.
- */
-bool
-hal_log_info(
-	const char *s,
-	...)
-{
-	char buf[LOG_BUF_SIZE];
-	va_list ap;
-
-	va_start(ap, s);
-	vsnprintf(buf, sizeof(buf), s, ap);
-	va_end(ap);
-
-	printf("%s\n", buf);
-
-	open_log_file();
-	if (log_fp != NULL) {
-		fprintf(log_fp, "%s\n", buf);
-		fflush(log_fp);
-		if (ferror(log_fp))
-			return false;
-	}
-
-	return true;
-}
-
-/*
- * Put a WARN log.
- */
-bool
-hal_log_warn(
-	const char *s,
-	...)
-{
-	char buf[LOG_BUF_SIZE];
-	va_list ap;
-
-	va_start(ap, s);
-	vsnprintf(buf, sizeof(buf), s, ap);
-	va_end(ap);
-
-	printf("%s\n", buf);
-
-	open_log_file();
-	if (log_fp != NULL) {
-		fprintf(log_fp, "%s\n", buf);
-		fflush(log_fp);
-		if (ferror(log_fp))
-			return false;
-	}
-
-	return true;
-}
-
-/*
- * Put an ERROR log.
- */
-bool
-hal_log_error(
-	const char *s,
-	...)
-{
-	char buf[LOG_BUF_SIZE];
-	va_list ap;
-
-	va_start(ap, s);
-	vsnprintf(buf, sizeof(buf), s, ap);
-	va_end(ap);
-
-	printf("%s\n", buf);
-
-	open_log_file();
-	if (log_fp != NULL) {
-		fprintf(log_fp, "%s\n", buf);
-		fflush(log_fp);
-		if (ferror(log_fp))
-			return false;
-	}
-	
-	return true;
-}
-
-/*
- * Put an out-of-memory error.
- */
-bool
-hal_log_out_of_memory(void)
-{
-	hal_log_error(HAL_TR("Out of memory."));
-	return true;
-}
-
-/* Open the log file. */
-static bool
-open_log_file(void)
-{
-	if (log_fp == NULL) {
-		log_fp = fopen(LOG_FILE, "w");
-		if (log_fp == NULL) {
-			printf("Can't open log file.\n");
-			return false;
-		}
-	}
-	return true;
-}
-
-/*
- * Make a save directory.
- */
-bool
-hal_make_save_directory(void)
-{
-	struct stat st = {0};
-
-	if (stat(SAVE_DIR, &st) == -1)
-		mkdir(SAVE_DIR, 0700);
-
-	return true;
-}
-
-/*
- * Make an effective path from a directory name and a file name.
- */
-char *
-hal_make_real_path(const char *fname)
-{
-	char *buf;
-	size_t len;
-
-	/* Allocate a path buffer. */
-	len = strlen(fname) + 1;
-	buf = malloc(len);
-	if (buf == NULL) {
-		hal_log_out_of_memory();
-		return NULL;
-	}
-
-	/* Copy as is. */
-	snprintf(buf, len, "%s", fname);
-
-	return buf;
-}
-
-/*
- * Reset a timer.
- */
-void
-hal_reset_lap_timer(
-	uint64_t *t)
-{
-	struct timeval tv;
-
-	gettimeofday(&tv, NULL);
-
-	*t = (uint64_t)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
-}
-
-/*
- * Get a timer lap.
- */
-uint64_t
-hal_get_lap_timer_millisec(
-	uint64_t *t)
-{
-	struct timeval tv;
-	uint64_t end;
-	
-	gettimeofday(&tv, NULL);
-
-	end = (uint64_t)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
-
-	return (uint64_t)(end - *t);
-}
-
-/*
- * Notify an image update.
- */
-void
-hal_notify_image_update(
-	struct hal_image *img)
-{
-	opengl_notify_image_update(img);
-}
-
-/*
- * Notify an image free.
- */
-void
-hal_notify_image_free(
-	struct hal_image *img)
-{
-	opengl_notify_image_free(img);
-}
-
-/*
- * Render an image. (alpha blend)
- */
-void
-hal_render_image_normal(
-	int dst_left,
-	int dst_top,
-	int dst_width,
-	int dst_height,
-	struct hal_image *src_image,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha)
-{
-	opengl_render_image_normal(
-		dst_left,
-		dst_top,
-		dst_width,
-		dst_height,
-		src_image,
-		src_left,
-		src_top,
-		src_width,
-		src_height,
-		alpha
-	);
-}
-
-/*
- * Render an image. (add blend)
- */
-void
-hal_render_image_add(
-	int dst_left,
-	int dst_top,
-	int dst_width,
-	int dst_height,
-	struct hal_image *src_image,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha)
-{
-	opengl_render_image_add(
-		dst_left,
-		dst_top,
-		dst_width,
-		dst_height,
-		src_image,
-		src_left,
-		src_top,
-		src_width,
-		src_height,
-		alpha
-	);
-}
-
-/*
- * Render an image. (sub blend)
- */
-void
-hal_render_image_sub(
-	int dst_left,
-	int dst_top,
-	int dst_width,
-	int dst_height,
-	struct hal_image *src_image,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha)
-{
-	opengl_render_image_sub(
-		dst_left,
-		dst_top,
-		dst_width,
-		dst_height,
-		src_image,
-		src_left,
-		src_top,
-		src_width,
-		src_height,
-		alpha
-	);
-}
-
-/*
- * Render an image. (dim blend)
- */
-void
-hal_render_image_dim(
-	int dst_left,
-	int dst_top,
-	int dst_width,
-	int dst_height,
-	struct hal_image *src_image,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha)
-{
-	opengl_render_image_dim(
-		dst_left,
-		dst_top,
-		dst_width,
-		dst_height,
-		src_image,
-		src_left,
-		src_top,
-		src_width,
-		src_height,
-		alpha
-	);
-}
-
-/*
- * Render an image. (rule universal transition)
- */
-void
-hal_render_image_rule(
-	struct hal_image *src_img,
-	struct hal_image *rule_img,
-	int threshold)
-{
-	opengl_render_image_rule(src_img, rule_img, threshold);
-}
-
-/*
- * Render an image. (melt universal transition)
- */
-void
-hal_render_image_melt(
-	struct hal_image *src_img,
-	struct hal_image *rule_img,
-	int progress)
-{
-	opengl_render_image_melt(src_img, rule_img, progress);
-}
-
-/*
- * Render two images for a cross fading.
- */
-void
-hal_render_image_cross(
-	struct hal_image *src1_img,
-	struct hal_image *src2_img,
-	float src1_left,
-	float src1_top,
-	float src2_left,
-	float src2_top,
-	int alpha)
-{
-	opengl_render_image_cross(src1_img,
-				  src2_img,
-				  src1_left,
-				  src1_top,
-				  src2_left,
-				  src2_top,
-				  alpha);
-}
-
-/*
- * Render an image. (3d transform, alpha blending)
- */
-void
-hal_render_image_3d_normal(
-	float x1,
-	float y1,
-	float x2,
-	float y2,
-	float x3,
-	float y3,
-	float x4,
-	float y4,
-	struct hal_image *src_image,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha)
-{
-	opengl_render_image_3d_normal(
-		x1, y1, x2, y2, x3, y3, x4, y4,
-		src_image, src_left, src_top, src_width, src_height,
-		alpha);
-}
-
-/*
- * Render an image. (3d transform, alpha blending)
- */
-void
-hal_render_image_3d_add(
-	float x1,
-	float y1,
-	float x2,
-	float y2,
-	float x3,
-	float y3,
-	float x4,
-	float y4,
-	struct hal_image *src_image,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha)
-{
-	opengl_render_image_3d_add(
-		x1, y1, x2, y2, x3, y3, x4, y4,
-		src_image, src_left, src_top, src_width, src_height,
-		alpha);
-}
-
-/*
- * Render an image. (3d transform, sub blending)
- */
-void
-hal_render_image_3d_sub(
-	float x1,
-	float y1,
-	float x2,
-	float y2,
-	float x3,
-	float y3,
-	float x4,
-	float y4,
-	struct hal_image *src_image,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha)
-{
-	opengl_render_image_3d_sub(
-		x1, y1, x2, y2, x3, y3, x4, y4,
-		src_image, src_left, src_top, src_width, src_height,
-		alpha);
-}
-
-/*
- * Render an image. (3d transform, dim blending)
- */
-void
-hal_render_image_3d_dim(
-	float x1,
-	float y1,
-	float x2,
-	float y2,
-	float x3,
-	float y3,
-	float x4,
-	float y4,
-	struct hal_image *src_image,
-	int src_left,
-	int src_top,
-	int src_width,
-	int src_height,
-	int alpha)
-{
-	opengl_render_image_3d_dim(
-		x1, y1, x2, y2, x3, y3, x4, y4,
-		src_image, src_left, src_top, src_width, src_height,
-		alpha);
-}
-
-/*
- * Render two images for a cross fading.
- */
-void
-hal_render_image_3d_cross(
-	struct hal_image *src1_img,
-	struct hal_image *src2_img,
-	float src1_x1,
-	float src1_y1,
-	float src1_x2,
-	float src1_y2,
-	float src1_x3,
-	float src1_y3,
-	float src1_x4,
-	float src1_y4,
-	float src2_x1,
-	float src2_y1,
-	float src2_x2,
-	float src2_y2,
-	float src2_x3,
-	float src2_y3,
-	float src2_x4,
-	float src2_y4,
-	int alpha)
-{
-	opengl_render_image_cross_3d(src1_img,
-				     src2_img,
-				     src1_x1,
-				     src1_y1,
-				     src1_x2,
-				     src1_y2,
-				     src1_x3,
-				     src1_y3,
-				     src1_x4,
-				     src1_y4,
-				     src2_x1,
-				     src2_y1,
-				     src2_x2,
-				     src2_y2,
-				     src2_x3,
-				     src2_y3,
-				     src2_x4,
-				     src2_y4,
-				     alpha);
-}
-
-/*
- * Play a video.
- */
-bool
-hal_play_video(
-	const char *fname,
-	bool is_skippable)
-{
-	char *path;
-
-	path = hal_make_real_path(fname);
-
-	is_gst_playing = true;
-	is_gst_skippable = is_skippable;
-
-	gstplay_play(path);
-
-	free(path);
-
-	return true;
-}
-
-/*
- * Stop the video.
- */
-void
-hal_stop_video(void)
-{
-	gstplay_stop();
-
-	is_gst_playing = false;
-}
-
-/*
- * Check whether a video is playing.
- */
-bool
-hal_is_video_playing(void)
-{
-	return is_gst_playing;
-}
-
-/*
- * Check whether full screen mode is supported.
- */
-bool
-hal_is_full_screen_supported(void)
-{
-	return false;
-}
-
-/*
- * Check whether we are in full screen mode.
- */
-bool
-hal_is_full_screen_mode(void)
-{
-	return false;
-}
-
-/*
- * Enter full screen mode.
- */
-void
-hal_enter_full_screen_mode(void)
-{
-	if (is_full_screen)
-		return;
-
-	libdecor_frame_set_fullscreen(decor_frame, NULL);
-	is_full_screen = true;
-}
-
-/*
- * Leave full screen mode.
- */
-void
-hal_leave_full_screen_mode(void)
-{
-	if (!is_full_screen)
-		return;
-
-	libdecor_frame_unset_fullscreen(decor_frame);
-	is_full_screen = false;
-}
-
-/*
- * Get the system locale.
- */
-const char *
-hal_get_system_language(void)
-{
-	const char *locale = setlocale(LC_MESSAGES, "");
-        if (locale == NULL || locale[0] == '\0') {
-		locale = getenv("LC_ALL");
-		if (locale == NULL || locale[0] == '\0') {
-			locale = getenv("LC_MESSAGES");
-			if (locale == NULL || locale[0] == '\0')
-				locale = getenv("LANG");
-		}
-	}
-	if (locale == NULL || locale[0] == '\0')
-		return "en";
-
-	/* English */
-	if (strncmp(locale, "en_AU", 5) == 0)
-		return "en-au";
-	if (strncmp(locale, "en_GB", 5) == 0)
-		return "en-gb";
-	if (strncmp(locale, "en_NZ", 5) == 0)
-		return "en-nz";
-	if (strncmp(locale, "en_US", 5) == 0)
-		return "en-us";
-	if (strncmp(locale, "en", 2) == 0)
-		return "en";
-
-	/* French */
-	if (strncmp(locale, "fr_CA", 5) == 0)
-		return "fr-ca";
-	if (strncmp(locale, "fr", 2) == 0)
-		return "fr";
-
-	/* Spanish */
-	if (strncmp(locale, "es_ES", 5) == 0)
-		return "es";
-	if (strncmp(locale, "es", 2) == 0)
-		return "es-la";
-
-	/* Chinese */
-	if (strncmp(locale, "zh_TW", 5) == 0 ||
-	    strncmp(locale, "zh_HK", 5) == 0)
-		return "zh-tw";
-	if (strncmp(locale, "zh", 2) == 0)
-		return "zh-cn";
-
-	/* Others */
-	if (strncmp(locale, "ja", 2) == 0)
-		return "ja";
-	if (strncmp(locale, "de", 2) == 0)
-		return "de";
-	if (strncmp(locale, "it", 2) == 0)
-		return "it";
-	if (strncmp(locale, "el", 2) == 0)
-		return "el";
-	if (strncmp(locale, "ru", 2) == 0)
-		return "ru";
-	if (strncmp(locale, "ko", 2) == 0)
-		return "ko";
-
-	/* Fallback */
-	return "en";
-}
-
-/*
- * Enable/disable message skip by touch move.
- */
-void
-hal_set_continuous_swipe_enabled(
-	bool is_enabled)
-{
-	UNUSED_PARAMETER(is_enabled);
-}
-
-/*
- * Wayland
- */
-
-static int last_mouse_x;
-static int last_mouse_y;
 
 static void
 seat_capabilities(
@@ -1466,16 +902,19 @@ handle_configure(
 }
 
 static void
-handle_commit(struct libdecor_frame *frame, void *user_data)
+handle_commit(
+	struct libdecor_frame *frame,
+	void *user_data)
 {
 	UNUSED_PARAMETER(frame);
 	UNUSED_PARAMETER(user_data);
 }
 
 static void
-handle_dismiss_popup(struct libdecor_frame *frame,
-                     const char *seat_name,
-                     void *user_data)
+handle_dismiss_popup(
+	struct libdecor_frame *frame,
+        const char *seat_name,
+        void *user_data)
 {
 	UNUSED_PARAMETER(frame);
 	UNUSED_PARAMETER(seat_name);
@@ -1483,9 +922,10 @@ handle_dismiss_popup(struct libdecor_frame *frame,
 }
 
 static void
-handle_decor_error(struct libdecor *context,
-                   enum libdecor_error error,
-                   const char *message)
+handle_decor_error(
+	struct libdecor *context,
+        enum libdecor_error error,
+        const char *message)
 {
 	hal_log_error("libdecor error %d: %s", (int)error, message ? message : "(null)");
 }
@@ -1517,14 +957,25 @@ registry_global(
 	}
 }
 
-static void registry_remove(void *data, struct wl_registry *reg, uint32_t name)
+static void
+registry_remove(
+	void *data,
+	struct wl_registry *reg,
+	uint32_t name)
 {
 	UNUSED_PARAMETER(data);
 	UNUSED_PARAMETER(reg);
 	UNUSED_PARAMETER(name);
 }
 
-static void pointer_enter(void *data, struct wl_pointer *pointer, uint32_t serial, struct wl_surface *surface, wl_fixed_t sx, wl_fixed_t sy)
+static void
+pointer_enter(
+	void *data,
+	struct wl_pointer *pointer,
+	uint32_t serial,
+	struct wl_surface *surface,
+	wl_fixed_t sx,
+	wl_fixed_t sy)
 {
 	UNUSED_PARAMETER(data);
 	UNUSED_PARAMETER(pointer);
@@ -1532,7 +983,12 @@ static void pointer_enter(void *data, struct wl_pointer *pointer, uint32_t seria
 	UNUSED_PARAMETER(surface);
 }
 
-static void pointer_leave(void *data, struct wl_pointer *pointer, uint32_t serial, struct wl_surface *surface)
+static void
+pointer_leave(
+	void *data,
+	struct wl_pointer *pointer,
+	uint32_t serial,
+	struct wl_surface *surface)
 {
 	UNUSED_PARAMETER(data);
 	UNUSED_PARAMETER(pointer);
@@ -1540,7 +996,13 @@ static void pointer_leave(void *data, struct wl_pointer *pointer, uint32_t seria
 	UNUSED_PARAMETER(surface);
 }
 
-static void pointer_motion(void *data, struct wl_pointer *pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy)
+static void
+pointer_motion(
+	void *data,
+	struct wl_pointer *pointer,
+	uint32_t time,
+	wl_fixed_t sx,
+	wl_fixed_t sy)
 {
 	UNUSED_PARAMETER(data);
 	UNUSED_PARAMETER(pointer);
@@ -1552,7 +1014,14 @@ static void pointer_motion(void *data, struct wl_pointer *pointer, uint32_t time
 	hal_callback_on_event_mouse_move(last_mouse_x, last_mouse_y);
 }
 
-static void pointer_button(void *data, struct wl_pointer *pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state)
+static void
+pointer_button(
+	void *data,
+	struct wl_pointer *pointer,
+	uint32_t serial,
+	uint32_t time,
+	uint32_t button,
+	uint32_t state)
 {
 	UNUSED_PARAMETER(data);
 	UNUSED_PARAMETER(pointer);
@@ -1572,27 +1041,57 @@ static void pointer_button(void *data, struct wl_pointer *pointer, uint32_t seri
 	}
 }
 
-static void pointer_axis(void *data, struct wl_pointer *pointer, uint32_t time, uint32_t axis, wl_fixed_t value)
+static void
+pointer_axis(
+	void *data,
+	struct wl_pointer *pointer,
+	uint32_t time,
+	uint32_t axis,
+	wl_fixed_t value)
 {
 	UNUSED_PARAMETER(data);
 	UNUSED_PARAMETER(pointer);
 	UNUSED_PARAMETER(time);
 }
 
-static void keyboard_keymap(void *data, struct wl_keyboard *keyboard, uint32_t format, int fd, uint32_t size)
+static void
+keyboard_keymap(
+	void *data,
+	struct wl_keyboard *keyboard,
+	uint32_t format,
+	int fd,
+	uint32_t size)
 {
 	close(fd);
 }
 
-static void keyboard_enter(void *data, struct wl_keyboard *keyboard, uint32_t serial, struct wl_surface *surface, struct wl_array *keys)
+static void
+keyboard_enter(
+	void *data,
+	struct wl_keyboard *keyboard,
+	uint32_t serial,
+	struct wl_surface *surface,
+	struct wl_array *keys)
 {
 }
 
-static void keyboard_leave(void *data, struct wl_keyboard *keyboard, uint32_t serial, struct wl_surface *surface)
+static void
+keyboard_leave(
+	void *data,
+	struct wl_keyboard *keyboard,
+	uint32_t serial,
+	struct wl_surface *surface)
 {
 }
 
-static void keyboard_key(void *data, struct wl_keyboard *keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state)
+static void
+keyboard_key(
+	void *data,
+	struct wl_keyboard *keyboard,
+	uint32_t serial,
+	uint32_t time,
+	uint32_t key,
+	uint32_t state)
 {
 	static bool is_alt_pressed;
 
@@ -1621,34 +1120,33 @@ static void keyboard_key(void *data, struct wl_keyboard *keyboard, uint32_t seri
 		hal_callback_on_event_key_release(keycode);
 }
 
-static int get_keycode(int kc)
+static int get_keycode(
+	int kc)
 {
 	switch (kc) {
-	case 1:   return HAL_KEY_ESCAPE;    // HAL_KEY_ESC
-	case 28:  return HAL_KEY_RETURN;    // HAL_KEY_ENTER
-	case 96:  return HAL_KEY_RETURN;    // HAL_KEY_KPENTER
-	case 57:  return HAL_KEY_SPACE;     // HAL_KEY_SPACE
-	case 15:  return HAL_KEY_TAB;       // HAL_KEY_TAB
-	case 14:  return HAL_KEY_BACKSPACE; // HAL_KEY_BACKSPACE
-	case 111: return HAL_KEY_DELETE;    // HAL_KEY_DELETE
-	case 102: return HAL_KEY_HOME;      // HAL_KEY_HOME
-	case 107: return HAL_KEY_END;       // HAL_KEY_END
-	case 104: return HAL_KEY_PAGEUP;    // HAL_KEY_PAGEUP
-	case 109: return HAL_KEY_PAGEDOWN;  // HAL_KEY_PAGEDOWN
-	case 42:                        // HAL_KEY_LEFTSHIFT
-	case 54:  return HAL_KEY_SHIFT;     // HAL_KEY_RIGHTSHIFT
-	case 29:                        // HAL_KEY_LEFTCTRL
-	case 97:                        // HAL_KEY_RIGHTCTRL
-		return HAL_KEY_CONTROL;
-	case 56:                        // HAL_KEY_LEFTALT
-	case 100:                       // HAL_KEY_RIGHTALT
-		return HAL_KEY_ALT;
+	case 1:   return HAL_KEY_ESCAPE;
+	case 28:  return HAL_KEY_RETURN;
+	case 96:  return HAL_KEY_RETURN;
+	case 57:  return HAL_KEY_SPACE;
+	case 15:  return HAL_KEY_TAB;
+	case 14:  return HAL_KEY_BACKSPACE;
+	case 111: return HAL_KEY_DELETE;
+	case 102: return HAL_KEY_HOME;
+	case 107: return HAL_KEY_END;
+	case 104: return HAL_KEY_PAGEUP;
+	case 109: return HAL_KEY_PAGEDOWN;
+	case 42:  return HAL_KEY_SHIFT;
+	case 54:  return HAL_KEY_SHIFT;
+	case 29:  return HAL_KEY_CONTROL;
+	case 97:  return HAL_KEY_CONTROL;
+	case 56:  return HAL_KEY_ALT;
+	case 100: return HAL_KEY_ALT;
 	case 108: return HAL_KEY_DOWN;
 	case 103: return HAL_KEY_UP;
 	case 105: return HAL_KEY_LEFT;
 	case 106: return HAL_KEY_RIGHT;
 
-	// Letters (A=30 … Z=44)
+	/* Letters (A=30 … Z=44) */
 	case 30: return HAL_KEY_A;
 	case 48: return HAL_KEY_B;
 	case 46: return HAL_KEY_C;
@@ -1676,7 +1174,7 @@ static int get_keycode(int kc)
 	case 21: return HAL_KEY_Y;
 	case 44: return HAL_KEY_Z;
 
-	// Numbers (1=2 … 0=11)
+	/* Numbers (1=2 … 0=11) */
 	case 2:  return HAL_KEY_1;
 	case 3:  return HAL_KEY_2;
 	case 4:  return HAL_KEY_3;
@@ -1688,7 +1186,7 @@ static int get_keycode(int kc)
 	case 10: return HAL_KEY_9;
 	case 11: return HAL_KEY_0;
 
-	// Function keys
+	/* Function keys */
 	case 59: return HAL_KEY_F1;
 	case 60: return HAL_KEY_F2;
 	case 61: return HAL_KEY_F3;
@@ -1708,11 +1206,680 @@ static int get_keycode(int kc)
 	return 0;
 }
 
-static void keyboard_modifiers(void *data, struct wl_keyboard *keyboard, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked,
-                               uint32_t group)
+static void
+keyboard_modifiers(
+	void *data,
+	struct wl_keyboard *keyboard,
+	uint32_t serial,
+	uint32_t mods_depressed,
+	uint32_t mods_latched,
+	uint32_t mods_locked,
+	uint32_t group)
 {
 }
 
-static void keyboard_repeat_info(void *data, struct wl_keyboard *keyboard, int32_t rate, int32_t delay)
+static void
+keyboard_repeat_info(
+	void *data,
+	struct wl_keyboard *keyboard,
+	int32_t rate,
+	int32_t delay)
 {
+}
+
+/*
+ * HAL
+ */
+
+#if defined(HAL_USE_WAYLAND_ONLY)
+#define hal_log_info_wl				hal_log_info
+#define hal_log_warn_wl				hal_log_warn
+#define hal_log_error_wl			hal_log_error
+#define hal_log_out_of_memory_wl		hal_log_out_of_memory
+#define hal_make_save_directory_wl		hal_make_save_directory
+#define hal_make_real_path_wl			hal_make_real_path
+#define hal_reset_lap_timer_wl			hal_reset_lap_timer
+#define hal_get_lap_timer_millisec_wl		hal_get_lap_timer_millisec
+#define hal_notify_image_update_wl		hal_notify_image_update
+#define hal_notify_image_free_wl		hal_notify_image_free
+#define hal_render_image_normal_wl		hal_render_image_normal
+#define hal_render_image_add_wl			hal_render_image_add
+#define hal_render_image_sub_wl			hal_render_image_sub
+#define hal_render_image_dim_wl			hal_render_image_dim
+#define hal_render_image_rule_wl		hal_render_image_rule
+#define hal_render_image_melt_wl		hal_render_image_melt
+#define hal_render_image_cross_wl		hal_render_image_cross
+#define hal_render_image_3d_normal_wl		hal_render_image_3d_normal
+#define hal_render_image_3d_add_wl		hal_render_image_3d_add
+#define hal_render_image_3d_sub_wl		hal_render_image_3d_sub
+#define hal_render_image_3d_dim_wl		hal_render_image_3d_dim
+#define hal_render_image_3d_cross_wl		hal_render_image_3d_cross
+#define hal_play_video_wl			hal_play_video
+#define hal_stop_video_wl			hal_stop_video
+#define hal_is_video_playing_wl			hal_is_video_playing
+#define hal_is_full_screen_supported_wl		hal_is_full_screen_supported
+#define hal_is_full_screen_mode_wl		hal_is_full_screen_mode
+#define hal_enter_full_screen_mode_wl		hal_enter_full_screen_mode
+#define hal_leave_full_screen_mode_wl		hal_leave_full_screen_mode
+#define hal_get_system_language_wl		hal_get_system_language
+#define hal_set_continuous_swipe_enabled_wl	hal_set_continuous_swipe_enabled
+#endif
+
+/*
+ * Put an INFO log.
+ */
+bool
+hal_log_info_wl(
+	const char *s,
+	...)
+{
+	char buf[LOG_BUF_SIZE];
+	va_list ap;
+
+	va_start(ap, s);
+	vsnprintf(buf, sizeof(buf), s, ap);
+	va_end(ap);
+
+	printf("%s\n", buf);
+
+#if 0
+	open_log_file();
+	if (log_fp != NULL) {
+		fprintf(log_fp, "%s\n", buf);
+		fflush(log_fp);
+		if (ferror(log_fp))
+			return false;
+	}
+#endif
+
+	return true;
+}
+
+/*
+ * Put a WARN log.
+ */
+bool
+hal_log_warn_wl(
+	const char *s,
+	...)
+{
+	char buf[LOG_BUF_SIZE];
+	va_list ap;
+
+	va_start(ap, s);
+	vsnprintf(buf, sizeof(buf), s, ap);
+	va_end(ap);
+
+	printf("%s\n", buf);
+
+	open_log_file();
+	if (log_fp != NULL) {
+		fprintf(log_fp, "%s\n", buf);
+		fflush(log_fp);
+		if (ferror(log_fp))
+			return false;
+	}
+
+	return true;
+}
+
+/*
+ * Put an ERROR log.
+ */
+bool
+hal_log_error_wl(
+	const char *s,
+	...)
+{
+	char buf[LOG_BUF_SIZE];
+	va_list ap;
+
+	va_start(ap, s);
+	vsnprintf(buf, sizeof(buf), s, ap);
+	va_end(ap);
+
+	printf("%s\n", buf);
+
+	open_log_file();
+	if (log_fp != NULL) {
+		fprintf(log_fp, "%s\n", buf);
+		fflush(log_fp);
+		if (ferror(log_fp))
+			return false;
+	}
+	
+	return true;
+}
+
+/*
+ * Put an out-of-memory error.
+ */
+bool
+hal_log_out_of_memory_wl(void)
+{
+	hal_log_error(HAL_TR("Out of memory."));
+	return true;
+}
+
+/* Open the log file. */
+static bool
+open_log_file(void)
+{
+	if (log_fp == NULL) {
+		log_fp = fopen(LOG_FILE, "w");
+		if (log_fp == NULL) {
+			printf("Can't open log file.\n");
+			return false;
+		}
+	}
+	return true;
+}
+
+/*
+ * Make a save directory.
+ */
+bool
+hal_make_save_directory_wl(void)
+{
+	struct stat st = {0};
+
+	if (stat(SAVE_DIR, &st) == -1)
+		mkdir(SAVE_DIR, 0700);
+
+	return true;
+}
+
+/*
+ * Make an effective path from a directory name and a file name.
+ */
+char *
+hal_make_real_path_wl(const char *fname)
+{
+	char *buf;
+	size_t len;
+
+	/* Allocate a path buffer. */
+	len = strlen(fname) + 1;
+	buf = malloc(len);
+	if (buf == NULL) {
+		hal_log_out_of_memory();
+		return NULL;
+	}
+
+	/* Copy as is. */
+	snprintf(buf, len, "%s", fname);
+
+	return buf;
+}
+
+/*
+ * Reset a timer.
+ */
+void
+hal_reset_lap_timer_wl(
+	uint64_t *t)
+{
+	struct timeval tv;
+
+	gettimeofday(&tv, NULL);
+
+	*t = (uint64_t)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
+}
+
+/*
+ * Get a timer lap.
+ */
+uint64_t
+hal_get_lap_timer_millisec_wl(
+	uint64_t *t)
+{
+	struct timeval tv;
+	uint64_t end;
+	
+	gettimeofday(&tv, NULL);
+
+	end = (uint64_t)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
+
+	return (uint64_t)(end - *t);
+}
+
+/*
+ * Notify an image update.
+ */
+void
+hal_notify_image_update_wl(
+	struct hal_image *img)
+{
+	opengl_notify_image_update(img);
+}
+
+/*
+ * Notify an image free.
+ */
+void
+hal_notify_image_free_wl(
+	struct hal_image *img)
+{
+	opengl_notify_image_free(img);
+}
+
+/*
+ * Render an image. (alpha blend)
+ */
+void
+hal_render_image_normal_wl(
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_normal(
+		dst_left,
+		dst_top,
+		dst_width,
+		dst_height,
+		src_image,
+		src_left,
+		src_top,
+		src_width,
+		src_height,
+		alpha
+	);
+}
+
+/*
+ * Render an image. (add blend)
+ */
+void
+hal_render_image_add_wl(
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_add(
+		dst_left,
+		dst_top,
+		dst_width,
+		dst_height,
+		src_image,
+		src_left,
+		src_top,
+		src_width,
+		src_height,
+		alpha
+	);
+}
+
+/*
+ * Render an image. (sub blend)
+ */
+void
+hal_render_image_sub_wl(
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_sub(
+		dst_left,
+		dst_top,
+		dst_width,
+		dst_height,
+		src_image,
+		src_left,
+		src_top,
+		src_width,
+		src_height,
+		alpha
+	);
+}
+
+/*
+ * Render an image. (dim blend)
+ */
+void
+hal_render_image_dim_wl(
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_dim(
+		dst_left,
+		dst_top,
+		dst_width,
+		dst_height,
+		src_image,
+		src_left,
+		src_top,
+		src_width,
+		src_height,
+		alpha
+	);
+}
+
+/*
+ * Render an image. (rule universal transition)
+ */
+void
+hal_render_image_rule_wl(
+	struct hal_image *src_img,
+	struct hal_image *rule_img,
+	int threshold)
+{
+	opengl_render_image_rule(src_img, rule_img, threshold);
+}
+
+/*
+ * Render an image. (melt universal transition)
+ */
+void
+hal_render_image_melt_wl(
+	struct hal_image *src_img,
+	struct hal_image *rule_img,
+	int progress)
+{
+	opengl_render_image_melt(src_img, rule_img, progress);
+}
+
+/*
+ * Render two images for a cross fading.
+ */
+void
+hal_render_image_cross_wl(
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	float src1_left,
+	float src1_top,
+	float src2_left,
+	float src2_top,
+	int alpha)
+{
+	opengl_render_image_cross(src1_img,
+				  src2_img,
+				  src1_left,
+				  src1_top,
+				  src2_left,
+				  src2_top,
+				  alpha);
+}
+
+/*
+ * Render an image. (3d transform, alpha blending)
+ */
+void
+hal_render_image_3d_normal_wl(
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_3d_normal(
+		x1, y1, x2, y2, x3, y3, x4, y4,
+		src_image, src_left, src_top, src_width, src_height,
+		alpha);
+}
+
+/*
+ * Render an image. (3d transform, alpha blending)
+ */
+void
+hal_render_image_3d_add_wl(
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_3d_add(
+		x1, y1, x2, y2, x3, y3, x4, y4,
+		src_image, src_left, src_top, src_width, src_height,
+		alpha);
+}
+
+/*
+ * Render an image. (3d transform, sub blending)
+ */
+void
+hal_render_image_3d_sub_wl(
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_3d_sub(
+		x1, y1, x2, y2, x3, y3, x4, y4,
+		src_image, src_left, src_top, src_width, src_height,
+		alpha);
+}
+
+/*
+ * Render an image. (3d transform, dim blending)
+ */
+void
+hal_render_image_3d_dim_wl(
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_3d_dim(
+		x1, y1, x2, y2, x3, y3, x4, y4,
+		src_image, src_left, src_top, src_width, src_height,
+		alpha);
+}
+
+/*
+ * Render two images for a cross fading.
+ */
+void
+hal_render_image_3d_cross_wl(
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	float src1_x1,
+	float src1_y1,
+	float src1_x2,
+	float src1_y2,
+	float src1_x3,
+	float src1_y3,
+	float src1_x4,
+	float src1_y4,
+	float src2_x1,
+	float src2_y1,
+	float src2_x2,
+	float src2_y2,
+	float src2_x3,
+	float src2_y3,
+	float src2_x4,
+	float src2_y4,
+	int alpha)
+{
+	opengl_render_image_cross_3d(src1_img,
+				     src2_img,
+				     src1_x1,
+				     src1_y1,
+				     src1_x2,
+				     src1_y2,
+				     src1_x3,
+				     src1_y3,
+				     src1_x4,
+				     src1_y4,
+				     src2_x1,
+				     src2_y1,
+				     src2_x2,
+				     src2_y2,
+				     src2_x3,
+				     src2_y3,
+				     src2_x4,
+				     src2_y4,
+				     alpha);
+}
+
+/*
+ * Play a video.
+ */
+bool
+hal_play_video_wl(
+	const char *fname,
+	bool is_skippable)
+{
+	char *path;
+
+	path = hal_make_real_path(fname);
+
+	is_gst_playing = true;
+	is_gst_skippable = is_skippable;
+
+	gstplay_play(path);
+
+	free(path);
+
+	return true;
+}
+
+/*
+ * Stop the video.
+ */
+void
+hal_stop_video_wl(void)
+{
+	gstplay_stop();
+
+	is_gst_playing = false;
+}
+
+/*
+ * Check whether a video is playing.
+ */
+bool
+hal_is_video_playing_wl(void)
+{
+	return is_gst_playing;
+}
+
+/*
+ * Check whether full screen mode is supported.
+ */
+bool
+hal_is_full_screen_supported_wl(void)
+{
+	return false;
+}
+
+/*
+ * Check whether we are in full screen mode.
+ */
+bool
+hal_is_full_screen_mode_wl(void)
+{
+	return false;
+}
+
+/*
+ * Enter full screen mode.
+ */
+void
+hal_enter_full_screen_mode_wl(void)
+{
+	if (is_full_screen)
+		return;
+
+	libdecor_frame_set_fullscreen(decor_frame, NULL);
+	is_full_screen = true;
+}
+
+/*
+ * Leave full screen mode.
+ */
+void
+hal_leave_full_screen_mode_wl(void)
+{
+	if (!is_full_screen)
+		return;
+
+	libdecor_frame_unset_fullscreen(decor_frame);
+	is_full_screen = false;
+}
+
+/*
+ * Get the system locale.
+ */
+const char *
+hal_get_system_language_wl(void)
+{
+	return lang_code;
+}
+
+/*
+ * Enable/disable message skip by touch move.
+ */
+void
+hal_set_continuous_swipe_enabled_wl(
+	bool is_enabled)
+{
+	UNUSED_PARAMETER(is_enabled);
 }
