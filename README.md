@@ -133,6 +133,12 @@ then install it on VS Code.
 
 ## VS Code Integration
 
+### Copilot Completion
+
+You can write `NovelML` and `Ray` using Copilot Chat and/or Completion
+because the SDK contains the full documentation inside the project and
+Copilot can refer it.
+
 ### Desktop Execution
 
 Open the extracted folder by `Visual Studio Code`.
@@ -294,9 +300,9 @@ Suika3 is engineered with modern techniques, and delivers:
 
 ## Kanban (Status)
 
-**The current version is `26.04.x`:**
+**The current version is `26.05.x`:**
 
-- Quality is improving daily, and `26.04.23` is now considered stable.
+- Quality is improving daily, and `26.05.x` is now considered stable.
 - We are currently in the `Quality Stabilization Period` (April 1 - June 30, 2026)
   in preparation for the upcoming `Suika3 26.07 LTS` release (scheduled for July 1, 2026).
 - While some minor bugs may remain, they will be fully resolved by the LTS release.
@@ -316,7 +322,7 @@ Suika3 is engineered with modern techniques, and delivers:
 - ✅ GUI Animation Implementation (March 10, 2026)
 - ✅ Code Freeze (March 12, 2026)
 - ✅ Milestone: `Suika3 26.04 (=LTS RC1)` (April 1, 2026)
-- Milestone: `Suika3 26.05 (=LTS RC2)` (May 1, 2026)
+- ✅ Milestone: `Suika3 26.05 (=LTS RC2)` (May 1, 2026)
 - Milestone: `Suika3 26.06 (=LTS RC3/GM)` (June 1, 2026)
 - Goal: `Suika3 26.07 LTS` Public Release (July 1, 2026)
 
@@ -345,7 +351,7 @@ Let's get the engine running so you can see the magic happen!
 
 **macOS:**
 - **Download & Extract**
-    - Download Suika3-full.zip and extract it to your preferred folder.
+    - Download Suika3-SDK-Full.zip and extract it to your preferred folder.
 - **Mount the Disk Image**
     - Navigate to `SDK/macos/` and open `Suika3.dmg`.
 - **Setup the App Bundle**
@@ -1728,7 +1734,7 @@ respects existing engines as viable options.
 ### Is this okay to use for now?
 
 Stabilization for the first LTS release is progressing smoothly, and
-quality metrics are showing steady improvement. The 26.04 series is
+quality metrics are showing steady improvement. The 26.05 series is
 already stable enough for general use.
 
 While the user base is currently small, giving you the choice to adopt
