@@ -4,15 +4,17 @@ echo "iOS automation started!"
 echo
 
 echo "Packing assets..."
-PACK="$BASE/misc/macos/suika3-pack";
+PACK="./SDK/macos/suika3-pack";
 xattr -c "$PACK";
 chmod +x "$PACK";
-if "$PACK" $(ls -A | grep -vE '^(misc|suika3.exe|assets.arc|.vscode)$'); then
+if "$PACK" $(ls -A | grep -vE '^(SDK|assets.arc|suika3.exe|.vscode)$'); then
+    echo "assets.arc ok";
+else
     echo "Error: Failed to make assets.arc.";
     exit 1;
 fi;
-mv assets.arc misc/ios/
-cd misc/ios/
+mv assets.arc SDK/ios/
+cd SDK/ios/
 echo "Done."
 echo
 

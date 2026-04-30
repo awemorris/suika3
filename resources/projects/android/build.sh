@@ -12,7 +12,7 @@ SRC_DIR="../../"
 rm -rf "$TARGET_ASSETS_DIR"
 mkdir -p "$TARGET_ASSETS_DIR"
 find "$SRC_DIR" \
-    \( -name ".vscode" -o -name "misc" \) -prune -o \
+    \( -name ".vscode" -o -name "SDK" \) -prune -o \
     \( -name "suika3.exe" -o -name "assets.arc" \) -o \
     -type f -print | while read -r file; do
         rel_path="${file#$SRC_DIR}"
@@ -111,7 +111,7 @@ echo
 echo "If you want to change the package name, edit applicationId in $CUR_DIR/app/build.gradle"
 echo
 
-echo "Do you want to install the APK to your Android device via ADB? (y/N): "
+echo -n "Do you want to install the APK to your Android device via ADB? (y/N): "
 read s
 if [ "$s" == "y" ]; then
     echo
