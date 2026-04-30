@@ -1103,7 +1103,7 @@
         },
         {
             "name":           "freebsd",
-            "displayName":    "FreeBSD X11 OpenGL",
+            "displayName":    "FreeBSD Wayland/X11 Dual",
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-freebsd",
             "cacheVariables": {
@@ -1114,14 +1114,34 @@
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
                 "SUIKA_ENABLE_BYTECOMP":       "ON",
-                "SUIKA_ENABLE_AOTCOMP":        "ON"
+                "SUIKA_ENABLE_AOTCOMP":        "ON",
+                "SUIKA_ENABLE_UNSAFE":         "ON",
+                "SUIKA_ENABLE_GST":            "ON"
+            }
+        },
+        {
+            "name":           "freebsd-x11",
+            "displayName":    "FreeBSD X11 OpenGL",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-freebsd-x11",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
+                "SUIKA_TARGET_FREEBSD":        "ON",
+                "SUIKA_ENABLE_INSTALL":        "ON",
+                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
+                "SUIKA_ENABLE_JIT":            "ON",
+                "SUIKA_ENABLE_PACK":           "ON",
+                "SUIKA_ENABLE_BYTECOMP":       "ON",
+                "SUIKA_ENABLE_AOTCOMP":        "ON",
+                "SUIKA_ENABLE_UNSAFE":         "ON",
+                "SUIKA_ENABLE_GST":            "ON"
             }
         },
         {
             "name":           "freebsd-wayland",
             "displayName":    "FreeBSD Wayland",
             "generator":      "Unix Makefiles",
-            "binaryDir":      "${sourceDir}/build-freebsd",
+            "binaryDir":      "${sourceDir}/build-freebsd-wayland",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
                 "SUIKA_TARGET_FREEBSD":        "ON",
@@ -1130,7 +1150,9 @@
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
                 "SUIKA_ENABLE_BYTECOMP":       "ON",
-                "SUIKA_ENABLE_AOTCOMP":        "ON"
+                "SUIKA_ENABLE_AOTCOMP":        "ON",
+                "SUIKA_ENABLE_UNSAFE":         "ON",
+                "SUIKA_ENABLE_GST":            "ON"
             }
         },
         {
@@ -1146,7 +1168,8 @@
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_PACK":           "ON",
                 "SUIKA_ENABLE_BYTECOMP":       "ON",
-                "SUIKA_ENABLE_AOTCOMP":        "ON"
+                "SUIKA_ENABLE_AOTCOMP":        "ON",
+                "SUIKA_ENABLE_UNSAFE":         "ON"
             }
         },
         {
@@ -1530,6 +1553,10 @@
         {
             "name": "freebsd",
             "configurePreset": "freebsd"
+        },
+        {
+            "name": "freebsd-x11",
+            "configurePreset": "freebsd-x11"
         },
         {
             "name": "freebsd-wayland",

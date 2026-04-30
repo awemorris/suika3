@@ -26,7 +26,8 @@ option(SUIKA_TARGET_OPENHARMONY      "Build for HarmonyOS NEXT"                 
 option(SUIKA_TARGET_WASM             "Build for Emscripten"                           OFF)
 option(SUIKA_TARGET_WASM_LOCAL       "Build for Emscripten (Local files)"             OFF)
 option(SUIKA_TARGET_UNITY            "Build for Unity"                                OFF)
-option(SUIKA_TARGET_FREEBSD          "Build for FreeBSD (X11, OpenGL)"                OFF)
+option(SUIKA_TARGET_FREEBSD          "Build for FreeBSD (Wayland/X11 Dual)"           OFF)
+option(SUIKA_TARGET_FREEBSD_X11      "Build for FreeBSD (X11, OpenGL)"                OFF)
 option(SUIKA_TARGET_FREEBSD_WAYLAND  "Build for FreeBSD (Wayland, OpenGL ES)"         OFF)
 option(SUIKA_TARGET_FREEBSD_X11SOFT  "Build for FreeBSD (X11, Soft3D)"                OFF)
 option(SUIKA_TARGET_NETBSD           "Build for NetBSD (X11, OpenGL)"                 OFF)
@@ -208,6 +209,7 @@ if(   SUIKA_TARGET_WINDOWS
    OR SUIKA_TARGET_WASM_LOCAL
    OR SUIKA_TARGET_UNITY
    OR SUIKA_TARGET_FREEBSD
+   OR SUIKA_TARGET_FREEBSD_X11
    OR SUIKA_TARGET_FREEBSD_WAYLAND
    OR SUIKA_TARGET_FREEBSD_X11SOFT
    OR SUIKA_TARGET_NETBSD
@@ -256,7 +258,7 @@ else()
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
     # FreeBSD is detected.
-    set(SUIKA_TARGET_FREEBSD            ON)   # X11, OpenGL
+    set(SUIKA_TARGET_FREEBSD            ON)   # Wayland/X11 Dual
     set(SUIKA_ENABLE_JIT                ON)
     set(SUIKA_ENABLE_I18N               ON)
     set(SUIKA_ENABLE_PACK               ON)
@@ -401,6 +403,8 @@ elseif(SUIKA_TARGET_UNITY)
   set(PLAYFIELD_TARGET_UNITY ON)
 elseif(SUIKA_TARGET_FREEBSD)
   set(PLAYFIELD_TARGET_FREEBSD ON)
+elseif(SUIKA_TARGET_FREEBSD_X11)
+  set(PLAYFIELD_TARGET_FREEBSD_X11 ON)
 elseif(SUIKA_TARGET_FREEBSD_WAYLAND)
   set(PLAYFIELD_TARGET_FREEBSD_WAYLAND ON)
 elseif(SUIKA_TARGET_FREEBSD_X11SOFT)
@@ -1066,6 +1070,7 @@ if(SUIKA_ENABLE_INSTALL)
   #
 
   if(   SUIKA_TARGET_FREEBSD
+     OR SUIKA_TARGET_FREEBSD_X11
      OR SUIKA_TARGET_FREEBSD_WAYLAND
      OR SUIKA_TARGET_FREEBSD_X11SOFT
      OR SUIKA_TARGET_NETBSD

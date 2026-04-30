@@ -1536,7 +1536,6 @@ process_button_point(int index, bool key)
 
 	/* If it is a key operation. */
 	if (key) {
-		printf("key: %d\n", index);
 		if (index == pointed_index)
 			return false;
 
@@ -3247,7 +3246,6 @@ process_history_scroll_up(void)
 
 	/* Calculate the scroll position. */
 	pos = 1.0f - (float)(history_top - (history_slots - 1)) / (float)(history_count - 1 - (history_slots - 1));
-	printf("up pos=%f\n", pos);
 	if (pos < 0)
 		pos = 0;
 	if (pos > 1.0f)
@@ -3272,13 +3270,11 @@ static void process_history_scroll_down(void)
 	/* Calculate the top of the history. */
 	history_count = s3_get_history_count();
 	history_top--;
-	printf("top=%d\n", history_top);
 	if (history_top < history_slots - 1)
 		history_top = history_slots - 1;
 
 	/* Calculate the scroll position. */
 	pos = 1.0f - (float)(history_top - (history_slots - 1)) / (float)(history_count - 1 - (history_slots - 1));
-	printf("down pos=%f\n", pos);
 	if (pos < 0)
 		pos = 0;
 	if (pos > 1.0f)

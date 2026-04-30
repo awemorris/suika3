@@ -21,7 +21,8 @@ option(STRATO_TARGET_OPENHARMONY      "Build for OpenHarmony (OpenGL)"          
 option(STRATO_TARGET_WASM             "Build for Emscripten (WebGL)"            OFF)
 option(STRATO_TARGET_WASM_LOCAL       "Build for Emscripten Local (WebGL)"      OFF)
 option(STRATO_TARGET_UNITY            "Build for Unity"                         OFF)
-option(STRATO_TARGET_FREEBSD          "Build for FreeBSD (X11, OpenGL)"         OFF)
+option(STRATO_TARGET_FREEBSD          "Build for FreeBSD (Wayland/X11 Dual)"    OFF)
+option(STRATO_TARGET_FREEBSD_X11      "Build for FreeBSD (X11, OpenGL)"         OFF)
 option(STRATO_TARGET_FREEBSD_WAYLAND  "Build for FreeBSD (Wayland, OpenGL)"     OFF)
 option(STRATO_TARGET_FREEBSD_X11SOFT  "Build for FreeBSD (X11, Soft3D)"         OFF)
 option(STRATO_TARGET_NETBSD           "Build for NetBSD (X11, OpenGL)"          OFF)
@@ -71,6 +72,7 @@ if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_WASM_LOCAL
    OR STRATO_TARGET_UNITY
    OR STRATO_TARGET_FREEBSD
+   OR STRATO_TARGET_FREEBSD_X11
    OR STRATO_TARGET_FREEBSD_WAYLAND
    OR STRATO_TARGET_FREEBSD_X11SOFT
    OR STRATO_TARGET_NETBSD
@@ -107,7 +109,7 @@ else()
 
   elseif(CMAKE_SYSTEM_NAME STREQUAL "FreeBSD")
     message(STATUS "Targeting FreeBSD.")
-    set(STRATO_TARGET_FREEBSD_X11SOFT             ON)
+    set(STRATO_TARGET_FREEBSD                     ON)
     set(STRATO_ENABLE_SHARED                      ON)
     set(STRATO_ENABLE_DIST                        ON)
 
@@ -222,6 +224,7 @@ if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_LINUX_X11SOFT
    OR STRATO_TARGET_FREEBSD
+   OR STRATO_TARGET_FREEBSD_X11
    OR STRATO_TARGET_FREEBSD_X11SOFT
    OR STRATO_TARGET_NETBSD
    OR STRATO_TARGET_NETBSD_X11SOFT
@@ -237,7 +240,7 @@ endif()
 
 # libGL and libGLX
 if(   STRATO_TARGET_LINUX_X11
-   OR STRATO_TARGET_FREEBSD
+   OR STRATO_TARGET_FREEBSD_X11
    OR STRATO_TARGET_NETBSD
    OR STRATO_TARGET_OPENBSD
    OR STRATO_TARGET_GENERICUNIX)
@@ -246,7 +249,7 @@ endif()
 
 # GLX (for older Mesa on Linux and FreeBSD)
 if(   STRATO_TARGET_LINUX_X11
-   OR STRATO_TARGET_FREEBSD)
+   OR STRATO_TARGET_FREEBSD_X11)
   find_library(GLX_LIBRARY GLX)
 endif()
 
@@ -254,14 +257,17 @@ endif()
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_LINUX_GBM
+   OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_FREEBSD_WAYLAND)
   find_package(PkgConfig REQUIRED)
   pkg_check_modules(EGL REQUIRED egl)
 endif()
 
 # libGLESv2
-if(   STRATO_TARGET_LINUX_GBM
+if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_LINUX_GBM
    OR STRATO_TARGET_LINUX_WAYLAND
+   OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_FREEBSD_WAYLAND)
   pkg_check_modules(GLES2 REQUIRED glesv2)
 endif()
@@ -297,6 +303,7 @@ endif()
 # Wayland
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_WAYLAND
+   OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_FREEBSD_WAYLAND)
   find_package(PkgConfig REQUIRED)
   pkg_check_modules(WAYLAND REQUIRED wayland-client wayland-egl libdecor-0)
@@ -395,7 +402,8 @@ if(STRATO_ENABLE_PORTAL)
 endif()
 
 # X11/Wayland Dual, OpenGL ES 2.0
-if(STRATO_TARGET_LINUX)
+if(   STRATO_TARGET_LINUX
+   OR STRATO_TARGET_FREEBSD)
   set(STRATO_SOURCES
       src/image.c
       src/glyph.c
@@ -403,6 +411,7 @@ if(STRATO_TARGET_LINUX)
       src/stdfile.c
       src/glrender.c
       src/asound.c
+      src/bsdsound.c
       src/evgamepad.c
       src/gstplay.c
       src/wlx11main.c
@@ -415,7 +424,7 @@ endif()
 
 # X11-only, OpenGL 3.2
 if(   STRATO_TARGET_LINUX_X11
-   OR STRATO_TARGET_FREEBSD
+   OR STRATO_TARGET_FREEBSD_X11
    OR STRATO_TARGET_NETBSD
    OR STRATO_TARGET_OPENBSD)
   set(STRATO_SOURCES
@@ -754,7 +763,7 @@ endif()
 
 # X11-only
 if(   STRATO_TARGET_LINUX_X11
-   OR STRATO_TARGET_FREEBSD
+   OR STRATO_TARGET_FREEBSD_X11
    OR STRATO_TARGET_NETBSD
    OR STRATO_TARGET_OPENBSD
    OR STRATO_TARGET_SOLARIS10
@@ -776,6 +785,7 @@ endif()
 
 # FreeBSD
 if(   STRATO_TARGET_FREEBSD
+   OR STRATO_TARGET_FREEBSD_X11
    OR STRATO_TARGET_FREEBSD_WAYLAND
    OR STRATO_TARGET_FREEBSD_X11SOFT)
   target_include_directories(strato PUBLIC /usr/local/include)
@@ -842,6 +852,7 @@ endif()
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_WAYLAND
    OR STRATO_TARGET_LINUX_GBM
+   OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_FREEBSD_WAYLAND
    OR STRATO_TARGET_ANDROID
    OR STRATO_TARGET_OPENHARMONY)
@@ -852,6 +863,7 @@ endif()
 # Wayland
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_WAYLAND
+   OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_FREEBSD_WAYLAND)
   target_compile_definitions(strato PRIVATE HAL_USE_WAYLAND)
 endif()
@@ -1042,18 +1054,16 @@ if(   STRATO_TARGET_LINUX
 endif()
 
 # OpenGL
-if(   STRATO_TARGET_LINUX
-   OR STRATO_TARGET_LINUX_X11
-   OR STRATO_TARGET_FREEBSD
+if(   STRATO_TARGET_LINUX_X11
+   OR STRATO_TARGET_FREEBSD_X11
    OR STRATO_TARGET_NETBSD
    OR STRATO_TARGET_OPENBSD)
   target_link_libraries(strato PUBLIC GL ${GLX_LIBRARY})
 endif()
 
 # GLX
-if(   STRATO_TARGET_LINUX
-   OR STRATO_TARGET_LINUX_X11
-   OR STRATO_TARGET_FREEBSD)
+if(   STRATO_TARGET_LINUX_X11
+   OR STRATO_TARGET_FREEBSD_X11)
   target_link_libraries(strato PUBLIC ${GLX_LIBRARY})
 endif()
 
@@ -1070,6 +1080,7 @@ endif()
 # Wayland
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_WAYLAND
+   OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_FREEBSD_WAYLAND)
   target_link_libraries(
     strato
@@ -1125,6 +1136,7 @@ endif()
 
 # FreeBSD
 if(   STRATO_TARGET_FREEBSD
+   OR STRATO_TARGET_FREEBSD_X11
    OR STRATO_TARGET_FREEBSD_WAYLAND
    OR STRATO_TARGET_FREEBSD_X11SOFT)
   target_link_directories(strato PUBLIC /usr/local/lib /usr/X11R7/lib)
@@ -1248,11 +1260,16 @@ endif()
 
 if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_WAYLAND
+   OR STRATO_TARGET_FREEBSD
    OR STRATO_TARGET_FREEBSD_WAYLAND)
   find_program(WAYLAND_SCANNER NAMES wayland-scanner REQUIRED)
 
-  set(XDG_SHELL_XML
-      /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml)
+  if(   STRATO_TARGET_LINUX
+     OR STRATO_TARGET_LINUX_WAYLAND)
+    set(XDG_SHELL_XML /usr/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml)
+  else()
+    set(XDG_SHELL_XML /usr/local/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml)
+  endif()
 
   # generate xdg-shell sources
   set(GEN_SHELL_HDR ${CMAKE_CURRENT_BINARY_DIR}/xdg-shell-client-protocol.h)
