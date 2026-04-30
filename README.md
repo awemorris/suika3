@@ -1727,10 +1727,14 @@ respects existing engines as viable options.
 
 ### Is this okay to use for now?
 
-Since actual operational uptime is zero, quality metrics are still
-pending, it states honestly. Users can choose whether to "participate
-as an Early Adopter" or "wait several years" before making an
-adoption decision.
+Stabilization for the first LTS release is progressing smoothly, and
+quality metrics are showing steady improvement. The 26.04 series is
+already stable enough for general use.
+
+While the user base is currently small, giving you the choice to adopt
+early or wait for further maturity, GitHub issues are typically
+resolved within a day. This ensures a high level of community support
+for all users.
 
 ### Doesn't "over 25 years of maturity" contradict "zero operational use"?
 
