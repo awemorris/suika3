@@ -5,8 +5,8 @@ if [ -z "$1" ]; then
     LAUNCHER_DIR="";
     for base in /app /opt /usr/local /usr/pkg /usr; do
         for sub in "share/suika3/launcher" \
-                   "share/doc/suika3/launcher" \
-                   "share/docs/suika3/launcher"; do
+                   "share/doc/suika3/examples/launcher" \
+                   "share/examples/suika3/launcher"; do
             target="$base/$sub";
             if [ -d "$target" ]; then
                 LAUNCHER_DIR="$target";
