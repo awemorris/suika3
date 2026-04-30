@@ -257,14 +257,14 @@ If you want to debug Suika3 with LLDB, you can use the `macos-cli-debug` preset 
 
 * Pack assets into the `assets.arc` file.
 * Download [the official binary](https://github.com/suika3-community/suika/releases) and extract it.
-* Copy your `assets.arc` file into the `misc/ios/resources` folder.
-* Open the `misc/ios` folder in Xcode.
+* Copy your `assets.arc` file into the `SDK/ios/resources` folder.
+* Open the `SDK/ios` folder in Xcode.
 * Build and run.
 
 ### Build from Scratch
 
 If you want to build from scratch, use `cmake --preset ios-device` or `cmake --preset ios-simulator`,
-then copy the built `libsuika3.a` file into the `misc/ios/lib` folder, and open the `misc/ios` folder in Xcode.
+then copy the built `libsuika3.a` file into the `SDK/ios/lib` folder, and open the `SDK/ios` folder in Xcode.
 
 ---
 
@@ -277,12 +277,12 @@ then copy the built `libsuika3.a` file into the `misc/ios/lib` folder, and open 
 ### Steps
 
 * Download [the official binary](https://github.com/suika3-community/suika/releases) and extract it.
-* Copy your asset files into the `misc/android/app/src/main/assets` folder.
-* Open the `misc/android` folder in Android Studio.
+* Copy your asset files into the `SDK/android/app/src/main/assets` folder.
+* Open the `SDK/android` folder in Android Studio.
 
 ### Build from Scratch
 
-If you want to build from scratch, use `cmake --preset android-arm64`, then copy the built `libsuika3.so` file into the `misc/android/app/src/main/jniLibs/arm64-v8a` folder, and open the `misc/android` folder in Android Studio.
+If you want to build from scratch, use `cmake --preset android-arm64`, then copy the built `libsuika3.so` file into the `SDK/android/app/src/main/jniLibs/arm64-v8a` folder, and open the `SDK/android` folder in Android Studio.
 
 ---
 
@@ -295,15 +295,15 @@ If you want to build from scratch, use `cmake --preset android-arm64`, then copy
 ### Steps
 
 * Download [the official binary](https://github.com/awemorris/suika/releases) and extract it.
-* Copy your asset files into the `misc/openharmony/entry/src/main/resources/rawfile` folder.
-* Open the `misc/openharmony` folder in DevEco.
+* Copy your asset files into the `SDK/openharmony/entry/src/main/resources/rawfile` folder.
+* Open the `SDK/openharmony` folder in DevEco.
 * Build and run.
 
 ### Build from Scratch
 
 If you want to build from scratch, use `cmake --preset openharmony-arm64`,
-then copy the built `libsuika3.a` file into the `misc/openharmony/entry/libs/arm64-v8a` folder,
-and open the `misc/openharmony` folder in DevEco.
+then copy the built `libsuika3.a` file into the `SDK/openharmony/entry/libs/arm64-v8a` folder,
+and open the `SDK/openharmony` folder in DevEco.
 
 ---
 

@@ -20,7 +20,7 @@ Let's get the engine running so you can see the magic happen!
 - **Download & Extract**
     - Download Suika3-full.zip and extract it to your preferred folder.
 - **Mount the Disk Image**
-    - Navigate to `misc/macos/` and open `Suika3.dmg`.
+    - Navigate to `SDK/macos/` and open `Suika3.dmg`.
 - **Setup the App Bundle**
     - Copy the `Suika3` app from the DMG into the same folder where `suika3.exe` (and the data folder) is located.
     - Note: The app bundle must reside alongside your game data to function correctly.
@@ -32,12 +32,28 @@ Let's get the engine running so you can see the magic happen!
 - **Download & Extract**
     - Download Suika3-full.zip and extract it to your preferred directory.
 - **Install the Flatpak Package**
-    - Navigate to `misc/linux/` and open `Suika3.flatpak` (or run `flatpak install --user Suika3.flatpak`).
+    - Navigate to `SDK/linux/` and open `Suika3.flatpak` (or run `flatpak install --user Suika3.flatpak`).
     - This associates `.novel` and `.ray` files with the Suika3 engine.
 - **Launch**
     - Open the extracted folder, then double-click `start.novel` to launch the sample game!
 
-## 2. Personalize Your Story (`start.novel`)
+## 2. Visual Studio Code Integration
+
+VSCode Integration is available on Windows, macOS, and Linux!
+
+Also, [NovelML-Helper](https://github.com/lalalll-lalalll/NovelML-Helper) is available for syntax highlighting.
+
+- Open the extracted folder by `Visual Studio Code`.
+- Click the command palette.
+- Click `Run Task`.
+- Choose from:
+    - `Suika3: Run` (or `Ctrl+Shift+B`)
+    - `Suika3: Create a package`
+    - `Suika3: Build Android APK`
+    - `Suika3: Build iOS IPA`
+- Click `PROBLEMS` if an error occurred.
+
+## 3. Personalize Your Story (`start.novel`)
 
 Now, let's make the game say exactly what you want.
 
@@ -51,15 +67,6 @@ Now, let's make the game say exactly what you want.
 - **Test:**
     - Save the file and run Suika3 again.
     - You should see your new message on the screen!
-
-## 3. Visual Studio Code Integartion
-
-Note: currently this feature is for Windows only.
-It will be soon available on macOS and Linux.
-
-- Open the extracted folder by `Visual Studio Code`.
-- Press Ctrl+Shift+B to run the game.
-- Click `PROBLEMS` if an error occurred.
 
 ## 4. Customize the Screen (main.ray)
 

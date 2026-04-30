@@ -71,7 +71,7 @@
 
 ### Downloading Full SDK
 
-[Download Suika3-full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-full.zip)
+[Download Suika3-SDK-Full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-SDK-Full.zip)
 
 Please refer to [Getting Started](docs/mkdocs-en/docs/getting-started.md).
 
@@ -347,7 +347,7 @@ Let's get the engine running so you can see the magic happen!
 - **Download & Extract**
     - Download Suika3-full.zip and extract it to your preferred folder.
 - **Mount the Disk Image**
-    - Navigate to `misc/macos/` and open `Suika3.dmg`.
+    - Navigate to `SDK/macos/` and open `Suika3.dmg`.
 - **Setup the App Bundle**
     - Copy the `Suika3` app from the DMG into the same folder where `suika3.exe` (and the data folder) is located.
     - Note: The app bundle must reside alongside your game data to function correctly.
@@ -358,7 +358,7 @@ Let's get the engine running so you can see the magic happen!
 - **Download & Extract**
     - Download Suika3-full.zip and extract it to your preferred directory.
 - **Install the Flatpak Package**
-    - Navigate to `misc/linux/` and open `Suika3.flatpak` (or run `flatpak install --user Suika3.flatpak`).
+    - Navigate to `SDK/linux/` and open `Suika3.flatpak` (or run `flatpak install --user Suika3.flatpak`).
     - This associates `.novel` and `.ray` files with the Suika3 engine.
 - **Launch**
     - Open the extracted folder, then double-click `start.novel` to launch the sample game!
