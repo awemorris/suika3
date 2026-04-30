@@ -1095,9 +1095,9 @@ if(SUIKA_ENABLE_INSTALL)
     )
     if(SUIKA_ENABLE_FREEDESKTOP)
       install(
-        FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-run.1.mdoc"
+        FILES       "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-launcher.1.mdoc"
         DESTINATION share/man/man1
-        RENAME      "suika3-run.1"
+        RENAME      "suika3-launcher.1"
       )
     endif()
   elseif(NOT SUIKA_ENABLE_FLATPAK
@@ -1109,7 +1109,7 @@ if(SUIKA_ENABLE_INSTALL)
                   "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-pack.1"
                   "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-bcc.1"
                   "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-aotc.1"
-                  "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-run.1"
+                  "${CMAKE_CURRENT_SOURCE_DIR}/resources/manpage/suika3-launcher.1"
       DESTINATION share/man/man1
     )
   endif()
