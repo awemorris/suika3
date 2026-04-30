@@ -173,9 +173,7 @@ main(
 		}
 	}
 
-
 	return 0;
-
 }
 
 /* Initialize the locale. */
