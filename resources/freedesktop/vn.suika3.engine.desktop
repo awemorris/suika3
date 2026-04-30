@@ -7,5 +7,5 @@ Terminal=false
 Type=Application
 Categories=Game;
 MimeType=application/x-rayscript;application/x-novelml;
-StartupWMClass=Suika3
+StartupWMClass=vn.suika3.engine
 StartupNotify=true
