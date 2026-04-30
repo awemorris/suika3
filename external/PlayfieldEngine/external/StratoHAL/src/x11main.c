@@ -796,8 +796,8 @@ set_window_title(void)
 			(int)strlen(window_title));
 
 	/* Set WM_CLASS. */
-	ch.res_name = "suika3";
-	ch.res_class = "Suika3";
+	ch.res_name = "vn.suika3.engine";
+	ch.res_class = "vn.suika3.engine";
 	XSetClassHint(display, window, &ch);
 
 	return true;

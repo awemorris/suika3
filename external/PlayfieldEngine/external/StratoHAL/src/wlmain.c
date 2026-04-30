@@ -107,6 +107,7 @@ static struct wl_pointer *wl_pointer;
 static struct wl_keyboard *wl_keyboard;
 static struct libdecor *decor;
 static struct libdecor_frame *decor_frame;
+static struct xdg_toplevel *toplevel;
 
 /* EGL Objects */
 static EGLDisplay egl_dpy;
@@ -589,6 +590,8 @@ open_display(void)
 		return false;
 	}
 
+	toplevel = libdecor_frame_get_xdg_toplevel(decor_frame);
+	xdg_toplevel_set_app_id(toplevel, "vn.suika3.engine");
 	libdecor_frame_set_title(decor_frame, window_title);
 
 	/* Now map the decorated frame. */
