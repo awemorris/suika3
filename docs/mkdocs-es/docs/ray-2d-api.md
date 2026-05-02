@@ -1,12 +1,12 @@
-Ray Low Level API
+API de bajo nivel de rayos
 =================
 
-The `Low Level API (Engine.*)` is designed for versatile 2D game creation.
+El `Low Level API (Engine.*)` está diseñado para la creación versátil de juegos 2D.
 
-Every API function takes one parameter.
-The parameter must be a dictionary, and arguments must be stored as key-and-value pairs.
+Cada función API toma un parámetro.
+El parámetro debe ser un diccionario y los argumentos deben almacenarse como pares clave-valor.
 
-## Skelton
+## esqueleto
 
 ```
 // Do not define variables outside functions because it's a syntax error.
@@ -47,12 +47,12 @@ func render() {
 }
 ```
 
-## Debug
+## Depurar
 
 ### print()
 
-This API prints a string or dumps an object.
-Only takes a non-dictionary argument.
+Esta API imprime una cadena o vuelca un objeto.
+Sólo se necesita un argumento que no esté en el diccionario.
 
 ```
 func dumpEnemies() {
@@ -63,13 +63,13 @@ func dumpEnemies() {
 }
 ```
 
-## Time
+## Tiempo
 
-### Absolute Time
+### Tiempo absoluto
 
-|Variable                    |Description                                |
+|Variable |Description |
 |----------------------------|-------------------------------------------|
-|Engine.millisec             |Time in millisec.                          |
+|Engine.millisec |Tiempo en milisegundos.                          |
 
 ```
 func update() {
@@ -84,7 +84,7 @@ func update() {
 
 ### Engine.getDate()
 
-Returns a date dictionary.
+Devuelve un diccionario de fechas.
 
 ```
 func frame() {
@@ -99,97 +99,97 @@ func frame() {
 }
 ```
 
-## Input
+## Aporte
 
-These are variables, not functions.
+Estas son variables, no funciones.
 
-|Variable                        |Description                                |
+|Variable |Description |
 |--------------------------------|-------------------------------------------|
-|Engine.mousePosX                |Mouse position X.                          |
-|Engine.mousePosY                |Mouse position Y.                          |
-|Engine.isMouseLeftPressed       |Left mouse button state.                   |
-|Engine.isMouseRightPressed      |Right mouse button state.                  |
-|Engine.isEscapeKeyPressed       |Escape key state.                          |
-|Engine.isReturnKeyPressed       |Return key state.                          |
-|Engine.isSpaceKeyPressed        |Space key state.                           |
-|Engine.isTabKeyPressed          |Tab key state.                             |
-|Engine.isBackspaceKeyPressed    |Backspace key state.                       |
-|Engine.isDeleteKeyPressed       |Delete key state.                          |
-|Engine.isHomeKeyPressed         |Home key state.                            |
-|Engine.isEndKeyPressed          |End key state.                             |
-|Engine.isPageupKeyPressed       |PageUp key state.                          |
-|Engine.isPagedownKeyPressed     |PageDown key state.                        |
-|Engine.isShiftKeyPressed        |Shift key state.                           |
-|Engine.isControlKeyPressed      |Control key state.                         |
-|Engine.isAltKeyPressed          |Alt key state.                             |
-|Engine.isUpKeyPressed           |Up arrow key state.                        |
-|Engine.isDownKeyPressed         |Down arrow key state.                      |
-|Engine.isRightKeyPressed        |Right arrow key state.                     |
-|Engine.isLeftKeyPressed         |Left arrow key state.                      |
-|Engine.isAKeyPressed            |'A' key state.                             |
-|Engine.isBKeyPressed            |'B' key state.                             |
-|Engine.isCKeyPressed            |'C' key state.                             |
-|Engine.isDKeyPressed            |'D' key state.                             |
-|Engine.isEKeyPressed            |'E' key state.                             |
-|Engine.isFKeyPressed            |'F' key state.                             |
-|Engine.isGKeyPressed            |'G' key state.                             |
-|Engine.isHKeyPressed            |'H' key state.                             |
-|Engine.isIKeyPressed            |'I' key state.                             |
-|Engine.isJKeyPressed            |'J' key state.                             |
-|Engine.isKKeyPressed            |'K' key state.                             |
-|Engine.isLKeyPressed            |'L' key state.                             |
-|Engine.isMKeyPressed            |'M' key state.                             |
-|Engine.isNKeyPressed            |'N' key state.                             |
-|Engine.isOKeyPressed            |'O' key state.                             |
-|Engine.isPKeyPressed            |'P' key state.                             |
-|Engine.isQKeyPressed            |'Q' key state.                             |
-|Engine.isRKeyPressed            |'R' key state.                             |
-|Engine.isSKeyPressed            |'S' key state.                             |
-|Engine.isTKeyPressed            |'T' key state.                             |
-|Engine.isUKeyPressed            |'U' key state.                             |
-|Engine.isVKeyPressed            |'V' key state.                             |
-|Engine.isWKeyPressed            |'W' key state.                             |
-|Engine.isXKeyPressed            |'X' key state.                             |
-|Engine.isYKeyPressed            |'Y' key state.                             |
-|Engine.isZKeyPressed            |'Z' key state.                             |
-|Engine.is1KeyPressed            |'1' key state.                             |
-|Engine.is2KeyPressed            |'2' key state.                             |
-|Engine.is3KeyPressed            |'3' key state.                             |
-|Engine.is4KeyPressed            |'4' key state.                             |
-|Engine.is5KeyPressed            |'5' key state.                             |
-|Engine.is6KeyPressed            |'6' key state.                             |
-|Engine.is7KeyPressed            |'7' key state.                             |
-|Engine.is8KeyPressed            |'8' key state.                             |
-|Engine.is9KeyPressed            |'9' key state.                             |
-|Engine.is0KeyPressed            |'0' key state.                             |
-|Engine.isF1KeyPressed           |F1 key state.                              |
-|Engine.isF2KeyPressed           |F2 key state.                              |
-|Engine.isF3KeyPressed           |F3 key state.                              |
-|Engine.isF4KeyPressed           |F4 key state.                              |
-|Engine.isF5KeyPressed           |F5 key state.                              |
-|Engine.isF6KeyPressed           |F6 key state.                              |
-|Engine.isF7KeyPressed           |F7 key state.                              |
-|Engine.isF8KeyPressed           |F8 key state.                              |
-|Engine.isF9KeyPressed           |F9 key state.                              |
-|Engine.isF10KeyPressed          |F10 key state.                             |
-|Engine.isF11KeyPressed          |F11 key state.                             |
-|Engine.isF12KeyPressed          |F12 key state.                             |
-|Engine.isGamepadUpPressed       |Gamepad up arrow state.                    |
-|Engine.isGamepadDownPressed     |Gamepad down arrow state.                  |
-|Engine.isGamepadLeftPressed     |Gamepad left arrow state.                  |
-|Engine.isGamepadRightPressed    |Gamepad right arrow state.                 |
-|Engine.isGamepadAPressed        |Gamepad A button state.                    |
-|Engine.isGamepadBPressed        |Gamepad B button state.                    |
-|Engine.isGamepadXPressed        |Gamepad X button state.                    |
-|Engine.isGamepadYPressed        |Gamepad Y button state.                    |
-|Engine.isGamepadLPressed        |Gamepad L button state.                    |
-|Engine.isGamepadRPressed        |Gamepad R button state.                    |
-|Engine.gamepadAnalogX1          |Gamepad analog 1 X (-32768, 32767)         |
-|Engine.gamepadAnalogY1          |Gamepad analog 1 Y (-32768, 32767)         |
-|Engine.gamepadAnalogX2          |Gamepad analog 2 X (-32768, 32767)         |
-|Engine.gamepadAnalogY2          |Gamepad analog 2 Y (-32768, 32767)         |
-|Engine.gamepadAnalogL           |Gamepad analog L (-32768, 32767)           |
-|Engine.gamepadAnalogR           |Gamepad analog R (-32768, 32767)           |
+|Engine.mousePosX |Posición del ratón X. |
+|Engine.mousePosY |Posición del ratón Y. |
+|Engine.isMouseLeftPressed |Estado del botón izquierdo del ratón.                   |
+|Engine.isMouseRightPressed |Estado del botón derecho del ratón.                  |
+|Engine.isEscapeKeyPressed |Estado de la clave de escape.                          |
+|Engine.isReturnKeyPressed |Regresar estado de clave.                          |
+|Engine.isSpaceKeyPressed |Estado de la clave de espacio.                           |
+|Engine.isTabKeyPressed |Estado de la tecla Tab.                             |
+|Engine.isBackspaceKeyPressed |Estado de la tecla de retroceso.                       |
+|Engine.isDeleteKeyPressed |Eliminar estado de clave.                          |
+|Engine.isHomeKeyPressed |Estado de la clave de inicio.                            |
+|Engine.isEndKeyPressed |Fin del estado de la clave.                             |
+|Engine.isPageupKeyPressed |Estado de la clave Re Pág.                          |
+|Engine.isPagedownKeyPressed |Estado de la clave PageDown.                        |
+|Engine.isShiftKeyPressed |Estado de la tecla Shift.                           |
+|Engine.isControlKeyPressed |Estado de la clave de control.                         |
+|Engine.isAltKeyPressed |Estado de la tecla Alt.                             |
+|Engine.isUpKeyPressed |Estado de la tecla de flecha hacia arriba.                        |
+|Engine.isDownKeyPressed |Estado de la tecla de flecha hacia abajo.                      |
+|Engine.isRightKeyPressed |Estado de la tecla de flecha derecha.                     |
+|Engine.isLeftKeyPressed |Estado de la tecla de flecha izquierda.                      |
+|Engine.isAKeyPressed |Estado de clave 'A'.                             |
+|Engine.isBKeyPressed |Estado de clave 'B'.                             |
+|Engine.isCKeyPressed |Estado de clave 'C'.                             |
+|Engine.isDKeyPressed |Estado de clave 'D'.                             |
+|Engine.isEKeyPressed |Estado de clave 'E'.                             |
+|Engine.isFKeyPressed |Estado de clave 'F'.                             |
+|Engine.isGKeyPressed |Estado de clave 'G'.                             |
+|Engine.isHKeyPressed |Estado de clave 'H'.                             |
+|Engine.isIKeyPressed |Estado clave 'I'.                             |
+|Engine.isJKeyPressed |Estado de clave 'J'.                             |
+|Engine.isKKeyPressed |Estado de clave 'K'.                             |
+|Engine.isLKeyPressed |Estado de clave 'L'.                             |
+|Engine.isMKeyPressed |Estado de clave 'M'.                             |
+|Engine.isNKeyPressed |Estado de clave 'N'.                             |
+|Engine.isOKeyPressed |Estado de clave 'O'.                             |
+|Engine.isPKeyPressed |Estado de la clave 'P'.                             |
+|Engine.isQKeyPressed |Estado de la clave 'Q'.                             |
+|Engine.isRKeyPressed |Estado de la clave 'R'.                             |
+|Engine.isSKeyPressed |Estado de clave 'S'.                             |
+|Engine.isTKeyPressed |Estado de clave 'T'.                             |
+|Engine.isUKeyPressed |Estado de clave 'U'.                             |
+|Engine.isVKeyPressed |Estado de clave 'V'.                             |
+|Engine.isWKeyPressed |Estado de clave 'W'.                             |
+|Engine.isXKeyPressed |Estado de clave 'X'.                             |
+|Engine.isYKeyPressed |Estado de clave 'Y'.                             |
+|Engine.isZKeyPressed |Estado de clave 'Z'.                             |
+|Engine.is1KeyPressed |Estado clave '1'.                             |
+|Engine.is2KeyPressed |Estado clave '2'.                             |
+|Engine.is3KeyPressed |Estado clave '3'.                             |
+|Engine.is4KeyPressed |Estado clave '4'.                             |
+|Engine.is5KeyPressed |Estado clave '5'.                             |
+|Engine.is6KeyPressed |Estado clave '6'.                             |
+|Engine.is7KeyPressed |Estado clave '7'.                             |
+|Engine.is8KeyPressed |Estado de clave '8'.                             |
+|Engine.is9KeyPressed |Estado clave '9'.                             |
+|Engine.is0KeyPressed |Estado de clave '0'.                             |
+|Engine.isF1KeyPressed |Estado de la tecla F1.                              |
+|Engine.isF2KeyPressed |Estado de la tecla F2.                              |
+|Engine.isF3KeyPressed |Estado de la tecla F3.                              |
+|Engine.isF4KeyPressed |Estado de la tecla F4.                              |
+|Engine.isF5KeyPressed |Estado de la clave F5.                              |
+|Engine.isF6KeyPressed |Estado de la clave F6.                              |
+|Engine.isF7KeyPressed |Estado de la tecla F7.                              |
+|Engine.isF8KeyPressed |Estado de la tecla F8.                              |
+|Engine.isF9KeyPressed |Estado de la clave F9.                              |
+|Engine.isF10KeyPressed |Estado de la tecla F10.                             |
+|Engine.isF11KeyPressed |Estado de la clave F11.                             |
+|Engine.isF12KeyPressed |Estado de la clave F12.                             |
+|Engine.isGamepadUpPressed |Estado de flecha hacia arriba del gamepad.                    |
+|Engine.isGamepadDownPressed |Estado de flecha hacia abajo del gamepad.                  |
+|Engine.isGamepadLeftPressed |Estado de la flecha izquierda del gamepad.                  |
+|Engine.isGamepadRightPressed |Estado de la flecha derecha del gamepad.                 |
+|Engine.isGamepadAPressed |Gamepad Estado del botón A.                    |
+|Engine.isGamepadBPressed |Estado del botón B del gamepad.                    |
+|Engine.isGamepadXPressed |Estado del botón X del gamepad.                    |
+|Engine.isGamepadYPressed |Estado del botón Y del gamepad.                    |
+|Engine.isGamepadLPressed |Estado del botón L del gamepad.                    |
+|Engine.isGamepadRPressed |Estado del botón R del gamepad.                    |
+|Engine.gamepadAnalogX1 |Gamepad analógico 1 X (-32768, 32767) |
+|Engine.gamepadAnalogY1 |Gamepad analógico 1 Y (-32768, 32767) |
+|Engine.gamepadAnalogX2 |Gamepad analógico 2 X (-32768, 32767) |
+|Engine.gamepadAnalogY2 |Gamepad analógico 2 Y (-32768, 32767) |
+|Engine.gamepadAnalogL |Gamepad analógico L (-32768, 32767) |
+|Engine.gamepadAnalogR |Gamepad analógico R (-32768, 32767) |
 
 ```
 func update() {
@@ -199,20 +199,20 @@ func update() {
 }
 ```
 
-## Rendering
+## Representación
 
 ### Engine.createColorTexture()
 
-This API creates a texture with the specified color, and returns a texture.
+Esta API crea una textura con el color especificado y devuelve una textura.
 
-|Argument Name       |Description                                                   |
+|Nombre del argumento |Description |
 |--------------------|--------------------------------------------------------------|
-|width               |Texture width.                                                |
-|height              |Texture height.                                               |
-|r                   |Red color.                                                    |
-|g                   |Green color.                                                  |
-|b                   |Blue color.                                                   |
-|a                   |Alpha color.                                                  |
+|width |Ancho de textura.                                                |
+|height |Altura de textura.                                               |
+|r |Color rojo.                                                    |
+|g |Color verde.                                                  |
+|b |Color azul.                                                   |
+|a |Color alfa.                                                  |
 
 ```
 func createBlockTexture() {
@@ -229,11 +229,11 @@ func createBlockTexture() {
 
 ### Engine.loadTexture()
 
-This API loads a texture from assets, and returns a texture.
+Esta API carga una textura a partir de activos y devuelve una textura.
 
-|Argument Name       |Description                                                   |
+|Nombre del argumento |Description |
 |--------------------|--------------------------------------------------------------|
-|file                |File name to load.                                            |
+|file |Nombre del archivo a cargar.                                            |
 
 ```
 func loadPlayerTexture() {
@@ -248,11 +248,11 @@ func loadPlayerTexture() {
 
 ### Engine.destroyTexture()
 
-This API destroys a texture.
+Esta API destruye una textura.
 
-|Argument Name       |Description                                                   |
+|Nombre del argumento |Description |
 |--------------------|--------------------------------------------------------------|
-|texture             |Texture.                                                      |
+|texture |Texture. |
 
 ```
 func destroyPlayerTexture() {
@@ -264,20 +264,20 @@ func destroyPlayerTexture() {
 
 ### Engine.renderTexture()
 
-This API renders a texture to the screen.
+Esta API representa una textura en la pantalla.
 
-|Argument Name       |Description                                                   |
+|Nombre del argumento |Description |
 |--------------------|--------------------------------------------------------------|
-|dstLeft             |Screen coordinate X.                                          |
-|dstTop              |Screen coordinate Y.                                          |
-|dstWidth            |Width in screen.                                              |
-|dstHeight           |Height in screen.                                             |
-|texture             |Texture.                                                      |
-|srcLeft             |Texture top left X.                                           |
-|srcTop              |Texture top left Y.                                           |
-|srcWidth            |Texture rectangle width.                                      |
-|srcHeight           |Texture rectangle height.                                     |
-|alpha               |Alpha value (0-255)                                           |
+|dstLeft |Coordenada de pantalla X. |
+|dstTop |Coordenada de pantalla Y. |
+|dstWidth |Ancho en pantalla.                                              |
+|dstHeight |Altura en pantalla.                                             |
+|texture |Texture. |
+|srcLeft |Textura arriba izquierda X. |
+|srcTop |Textura arriba izquierda Y. |
+|srcWidth |Ancho del rectángulo de textura.                                      |
+|srcHeight |Altura del rectángulo de textura.                                     |
+|alpha |Valor alfa (0-255) |
 
 ```
 func renderPlayer() {
@@ -298,13 +298,13 @@ func renderPlayer() {
 
 ### Engine.draw()
 
-This API renders a texture to the screen (a simpler version of `Engine.renderTexture()`.)
+Esta API representa una textura en la pantalla (una versión más simple de `Engine.renderTexture()`).
 
-|Argument Name       |Description                                                   |
+|Nombre del argumento |Description |
 |--------------------|--------------------------------------------------------------|
-|texture             |Texture.                                                      |
-|x                   |Screen coordinate X.                                          |
-|y                   |Screen coordinate Y.                                          |
+|texture |Texture. |
+|x |Coordenada de pantalla X. |
+|y |Coordenada de pantalla Y. |
 
 ```
 func renderPlayer() {
@@ -318,24 +318,24 @@ func renderPlayer() {
 
 ### Engine.renderTexture3D()
 
-This API renders a texture to the screen.
+Esta API representa una textura en la pantalla.
 
-|Argument Name       |Description                                                   |
+|Nombre del argumento |Description |
 |--------------------|--------------------------------------------------------------|
-|x1                  |Screen coordinate X1.                                         |
-|y1                  |Screen coordinate Y1.                                         |
-|x2                  |Screen coordinate X2.                                         |
-|y2                  |Screen coordinate Y2.                                         |
-|x3                  |Screen coordinate X3.                                         |
-|y3                  |Screen coordinate Y3.                                         |
-|x4                  |Screen coordinate X4.                                         |
-|y4                  |Screen coordinate Y4.                                         |
-|texture             |Texture.                                                      |
-|srcLeft             |Texture top left X.                                           |
-|srcTop              |Texture top left Y.                                           |
-|srcWidth            |Texture rectangle width.                                      |
-|srcHeight           |Texture rectangle height.                                     |
-|alpha               |Alpha value (0-255)                                           |
+|x1 |Coordenada de pantalla X1.                                         |
+|y1 |Coordenada de pantalla Y1.                                         |
+|x2 |Coordenada de pantalla X2.                                         |
+|y2 |Coordenada de pantalla Y2.                                         |
+|x3 |Coordenada de pantalla X3.                                         |
+|y3 |Coordenada de pantalla Y3.                                         |
+|x4 |Coordenada de pantalla X4.                                         |
+|y4 |Coordenada de pantalla Y4.                                         |
+|texture |Texture. |
+|srcLeft |Textura arriba izquierda X. |
+|srcTop |Textura arriba izquierda Y. |
+|srcWidth |Ancho del rectángulo de textura.                                      |
+|srcHeight |Altura del rectángulo de textura.                                     |
+|alpha |Valor alfa (0-255) |
 
 ```
 func renderPlayer() {
@@ -356,12 +356,12 @@ func renderPlayer() {
 
 ### Engine.loadFont()
 
-This API loads an asset font file to a specified font slot.
+Esta API carga un archivo de fuente de recurso en una ranura de fuente especificada.
 
-|Argument Name       |Description                                                   |
+|Nombre del argumento |Description |
 |--------------------|--------------------------------------------------------------|
-|slot                |Font slot index. (0-3)                                        |
-|file                |File name to load.                                            |
+|slot |Índice de ranura de fuente. (0-3) |
+|file |Nombre del archivo a cargar.                                            |
 
 ```
 func loadNotoSansFont() {
@@ -371,17 +371,17 @@ func loadNotoSansFont() {
 
 ### Engine.createTextTexture()
 
-This API creates a texture and draws a text on it.
+Esta API crea una textura y dibuja un texto sobre ella.
      	 	 
-|Argument Name       |Description                                                   |
+|Nombre del argumento |Description |
 |--------------------|--------------------------------------------------------------|
-|slot                |Font slot index. (0-3)                                        |
-|text                |Text to draw.                                                 |
-|size                |Font size.                                                    |
-|r                   |Red color.                                                    |
-|g                   |Green color.                                                  |
-|b                   |Blue color.                                                   |
-|a                   |Alpha color.                                                  |
+|slot |Índice de ranura de fuente. (0-3) |
+|text |Texto a dibujar.                                                 |
+|size |Tamaño de fuente.                                                    |
+|r |Color rojo.                                                    |
+|g |Color verde.                                                  |
+|b |Color azul.                                                   |
+|a |Color alfa.                                                  |
 
 ```
 func createScoreTexture() {
@@ -397,16 +397,16 @@ func createScoreTexture() {
 }
 ```
 
-## Sound
+## Sonido
 
 ### Engine.playSound()
 
-This API starts playing a sound asset file on a specified sound track.
+Esta API comienza a reproducir un archivo de recursos de sonido en una pista de sonido específica.
 
-|Argument Name       |Description                                                   |
+|Nombre del argumento |Description |
 |--------------------|--------------------------------------------------------------|
-|stream              |Track index. (0-3)                                            |
-|file                |File to play.                                                 |
+|stream |Índice de pistas. (0-3) |
+|file |Archivo para reproducir.                                                 |
 
 ```
 func playJumpSound() {
@@ -416,12 +416,12 @@ func playJumpSound() {
 
 ### Engine.playSoundLoop()
 
-This API starts playing a sound asset file on a specified sound track.
+Esta API comienza a reproducir un archivo de recursos de sonido en una pista de sonido específica.
 
-|Argument Name       |Description                                                   |
+|Nombre del argumento |Description |
 |--------------------|--------------------------------------------------------------|
-|stream              |Track index. (0-3)                                            |
-|file                |File to play.                                                 |
+|stream |Índice de pistas. (0-3) |
+|file |Archivo para reproducir.                                                 |
 
 ```
 func playBGM() {
@@ -431,11 +431,11 @@ func playBGM() {
 
 ### Engine.stopSound()
 
-This API stops a sound playback on a specified sound track.
+Esta API detiene la reproducción de sonido en una pista de sonido específica.
 
-|Argument Name       |Description                                                   |
+|Nombre del argumento |Description |
 |--------------------|--------------------------------------------------------------|
-|stream              |Track index. (0-3)                                            |
+|stream |Índice de pistas. (0-3) |
 
 ```
 func playJumpSound() {
@@ -445,12 +445,12 @@ func playJumpSound() {
 
 ### Engine.setSoundVolume()
 
-This API sets a sound volume on a specified sound track.
+Esta API establece un volumen de sonido en una pista de sonido específica.
 
-|Argument Name       |Description                                                   |
+|Nombre del argumento |Description |
 |--------------------|--------------------------------------------------------------|
-|stream              |Track index. (0-3, -1 for master)                             |
-|volume              |Volume value. (0-1.0)                                         |
+|stream |Índice de pistas. (0-3, -1 para maestro) |
+|volume |Valor de volumen. (0-1,0) |
 
 ```
 func playJumpSound() {
@@ -461,33 +461,33 @@ func playJumpSound() {
 }
 ```
 
-## Save Data
+## Guardar datos
 
 ### Engine.writeSaveData()
 
-This API writes a save data value that corresponds to a key string.
-If the save data value is too large, this API will fail.
+Esta API escribe un valor de datos guardados que corresponde a una cadena de clave.
+Si el valor de los datos guardados es demasiado grande, esta API fallará.
 
-|Argument Name       |Description                                                   |
+|Nombre del argumento |Description |
 |--------------------|--------------------------------------------------------------|
-|key                 |Key string.                                                   |
-|value               |Value. (integer, floating point, array, or dictionary)        |
+|key |Cadena de claves.                                                   |
+|value |Valor. (entero, coma flotante, matriz o diccionario) |
 
 ### Engine.readSaveData()
 
-This API reads save data value that corresponds to a key string.
-The return value will be an object that represents a save data value.
-This API will fail when the specified key is not available.
+Esta API lee el valor de los datos guardados que corresponde a una cadena de clave.
+El valor de retorno será un objeto que representa un valor de datos guardados.
+Esta API fallará cuando la clave especificada no esté disponible.
 
-|Argument Name       |Description                                                   |
+|Nombre del argumento |Description |
 |--------------------|--------------------------------------------------------------|
-|key                 |Key string.                                                   |
+|key |Cadena de claves.                                                   |
 
 ### Engine.checkSaveData()
 
-This API checks whether the save data exists for a key string or not.
-The return value is a boolean.
+Esta API comprueba si los datos guardados existen para una cadena de clave o no.
+El valor de retorno es booleano.
 
-|Argument Name       |Description                                                   |
+|Nombre del argumento |Description |
 |--------------------|--------------------------------------------------------------|
-|key                 |Key string.                                                   |
+|key |Cadena de claves.                                                   |

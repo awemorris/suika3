@@ -1,131 +1,131 @@
-Suika3: Getting Started Guide
-=============================
+Suika3: Einführungsanleitung
+============================
 
-Welcome to Suika3! This guide will help you jump-start your very first
-visual novel project in just a few easy steps.
+Willkommen bei Suika3! Diese Anleitung hilft dir, dein allererstes
+Visual-Novel-Projekt in nur wenigen einfachen Schritten zu starten.
 
 ## 1. Installation
 
-Let's get the engine running so you can see the magic happen!
+Bringen wir die Engine zum Laufen, damit du die Magie sehen kannst!
 
 ### Windows
 
-- **Download & Extract**
-    - Download [Suika3-SDK-Full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-SDK-Full.zip) and extract it to your preferred folder.
-- **Launch**
-    - Open the folder and run `suika3.exe` to start to the sample game!
+- **Herunterladen und entpacken**
+    - Lade [Suika3-SDK-Full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-SDK-Full.zip) herunter und entpacke es in einen Ordner deiner Wahl.
+- **Starten**
+    - Öffne den Ordner und starte `suika3.exe`, um das Beispielspiel zu öffnen!
 
 ### macOS
 
-- **Download & Extract**
-    - Download Suika3-full.zip and extract it to your preferred folder.
-- **Mount the Disk Image**
-    - Navigate to `SDK/macos/` and open `Suika3.dmg`.
-- **Setup the App Bundle**
-    - Copy the `Suika3` app from the DMG into the same folder where `suika3.exe` (and the data folder) is located.
-    - Note: The app bundle must reside alongside your game data to function correctly.
-- **Launch**
-    - Double-click the `Suika3` app to start the sample game!
+- **Herunterladen und entpacken**
+    - Lade `Suika3-full.zip` herunter und entpacke es in einen Ordner deiner Wahl.
+- **Disk-Image einbinden**
+    - Wechsle zu `SDK/macos/` und öffne `Suika3.dmg`.
+- **App-Bundle einrichten**
+    - Kopiere die App `Suika3` aus dem DMG in denselben Ordner, in dem `suika3.exe` und der Datenordner liegen.
+    - Hinweis: Das App-Bundle muss sich zusammen mit deinen Spieldaten befinden, damit es korrekt funktioniert.
+- **Starten**
+    - Doppelklicke auf die App `Suika3`, um das Beispielspiel zu starten!
 
 ### Linux
 
-- **Download & Extract**
-    - Download Suika3-full.zip and extract it to your preferred directory.
-- **Install the Flatpak Package**
-    - Navigate to `SDK/linux/` and open `Suika3.flatpak` (or run `flatpak install --user Suika3.flatpak`).
-    - This associates `.novel` and `.ray` files with the Suika3 engine.
-- **Launch**
-    - Open the extracted folder, then double-click `start.novel` to launch the sample game!
+- **Herunterladen und entpacken**
+    - Lade `Suika3-full.zip` herunter und entpacke es in ein Verzeichnis deiner Wahl.
+- **Flatpak-Paket installieren**
+    - Wechsle zu `SDK/linux/` und öffne `Suika3.flatpak` (oder führe `flatpak install --user Suika3.flatpak` aus).
+    - Dadurch werden `.novel`- und `.ray`-Dateien mit der Suika3-Engine verknüpft.
+- **Starten**
+    - Öffne den entpackten Ordner und doppelklicke auf `start.novel`, um das Beispielspiel zu starten!
 
-## 2. Visual Studio Code Integration
+## 2. Integration in Visual Studio Code
 
-VSCode Integration is available on Windows, macOS, and Linux!
+Die VSCode-Integration ist unter Windows, macOS und Linux verfügbar!
 
-Also, [NovelML-Helper](https://github.com/lalalll-lalalll/NovelML-Helper) is available for syntax highlighting.
+Außerdem ist [NovelML-Helper](https://github.com/lalalll-lalalll/NovelML-Helper) für Syntaxhervorhebung verfügbar.
 
-- Open the extracted folder by `Visual Studio Code`.
-- Click the command palette.
-- Click `Run Task`.
-- Choose from:
-    - `Suika3: Run` (or `Ctrl+Shift+B`)
+- Öffne den entpackten Ordner in `Visual Studio Code`.
+- Klicke auf die Befehls-Palette.
+- Klicke auf `Run Task`.
+- Wähle aus:
+    - `Suika3: Run` (oder `Ctrl+Shift+B`)
     - `Suika3: Create a package`
     - `Suika3: Build Android APK`
     - `Suika3: Build iOS IPA`
-- Click `PROBLEMS` if an error occurred.
+- Klicke auf `PROBLEMS`, wenn ein Fehler aufgetreten ist.
 
-## 3. Personalize Your Story (`start.novel`)
+## 3. Deine Geschichte anpassen (`start.novel`)
 
-Now, let's make the game say exactly what you want.
+Jetzt sorgen wir dafür, dass das Spiel genau das sagt, was du möchtest.
 
-- **Open:**
-    - Find the `start.novel` file in your project folder and open it with your favorite text editor.
-- **Edit:**
-    - Add the following tag at the beginning of the file:
+- **Öffnen:**
+    - Finde die Datei `start.novel` in deinem Projektordner und öffne sie mit deinem bevorzugten Texteditor.
+- **Bearbeiten:**
+    - Füge am Anfang der Datei den folgenden Tag ein:
     ```
-    [text text="Hello, world! This is my first game."]
+    [text text="Hallo, Welt! Das ist mein erstes Spiel."]
     ```
-- **Test:**
-    - Save the file and run Suika3 again.
-    - You should see your new message on the screen!
+- **Testen:**
+    - Speichere die Datei und starte Suika3 erneut.
+    - Du solltest deine neue Nachricht auf dem Bildschirm sehen!
 
-## 4. Customize the Screen (main.ray)
+## 4. Den Bildschirm anpassen (`main.ray`)
 
-You can easily change the look and feel of your game window.
+Du kannst das Aussehen und die Wirkung deines Spielfensters ganz einfach ändern.
 
-- **Locate:**
-    - Open the `main.ray` file in your editor.
-- **Modify:**
-    - Look for the `func setup()` section.
-    - You can change the resolution and the title of your window here:
+- **Auffinden:**
+    - Öffne die Datei `main.ray` in deinem Editor.
+- **Ändern:**
+    - Suche den Abschnitt `func setup()`.
+    - Hier kannst du die Auflösung und den Titel deines Fensters ändern:
     ```
-    // Called when the window is opened.
+    // Wird beim Öffnen des Fensters aufgerufen.
     func setup() {
         return {
-            width:      1280,            // The width of your game
-            height:     720,             // The height of your game
-            title:      "My First Game", // Your game's title
-            fullscreen: false            // Set to true for full-screen mode
+            width:      1280,            // Die Breite deines Spiels
+            height:     720,             // Die Höhe deines Spiels
+            title:      "Mein erstes Spiel", // Der Titel deines Spiels
+            fullscreen: false            // Für den Vollbildmodus auf true setzen
         };
     }
     ```
 
-## 5. Under the Hood (Advanced Tips)
+## 5. Unter der Haube (erweiterte Tipps)
 
-The bottom part of your `main.ray` file contains the core engine
-logic. It's best to leave these functions as they are unless you are
-doing advanced customization:
+Der untere Teil deiner Datei `main.ray` enthält die Kernlogik der Engine.
+Diese Funktionen lässt man am besten unverändert, sofern man keine
+erweiterte Anpassung vornimmt:
 
 - `func start()`:
-    - This is called once when your game launches.
+    - Wird einmal aufgerufen, wenn dein Spiel startet.
 - `func update()`:
-    - This runs every single frame to handle game logic.
+    - Läuft in jedem einzelnen Frame, um die Spiellogik zu verarbeiten.
 - `func render()`:
-    - This draws everything on the screen after the update is done.
+    - Zeichnet nach Abschluss des Updates alles auf dem Bildschirm.
 
 ```
-// Called before the game starts.
+// Wird vor dem Spielstart aufgerufen.
 func start() {
-    // Load plugins here.
+    // Hier Plugins laden.
     // Suika.loadPlugin("testplugin");
 
-    // Do not delete the following line.
+    // Die folgende Zeile nicht löschen.
     Suika.start();
 }
 
-// Called before a frame rendering.
+// Wird vor dem Rendern eines Frames aufgerufen.
 func update() {
-    // Do not delete the following line.
+    // Die folgende Zeile nicht löschen.
     Suika.update();
 }
 
-// Called every frame rendering.
+// Wird bei jedem Frame-Rendern aufgerufen.
 func render() {
-    // Do not delete the following line.
+    // Die folgende Zeile nicht löschen.
     Suika.render();
 }
 ```
 
 > [!TIPS]
-> These functions are the core mechanism of the `Playfield Engine` that
-> powers Suika3. Suika.start(), Suika.update(), and Suika.render() must
-> remain in place for the game to function properly.
+> Diese Funktionen sind der Kernmechanismus der `Playfield Engine`, die
+> Suika3 antreibt. `Suika.start()`, `Suika.update()` und `Suika.render()`
+> müssen an Ort und Stelle bleiben, damit das Spiel korrekt funktioniert.

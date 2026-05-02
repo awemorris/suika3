@@ -1,31 +1,31 @@
-Eye Blinking
+Мигание глаз
 ============
 
-An eye blinking image must be stored in the "eye" folder that is
-located in the same folder as the character's image(s).
+Изображение для мигания глаз должно храниться в папке "eye",
+расположенной в той же папке, что и изображение или изображения персонажа.
 
-- happy.png (main character file)
+- happy.png (основной файл персонажа)
 - eye/
-    - happy.png (eye blinking file)
+    - happy.png (файл мигания глаз)
 
-An eye blinking image consists of frame(s) of eye blinking difference(s). 
-A frame must be the same size as the character's image is. 
-Frames must be stored horizontally in the left to right order. See the sample game for the actual image.
+Изображение для мигания глаз состоит из одного или нескольких кадров различий мигания.
+Кадр должен иметь тот же размер, что и изображение персонажа.
+Кадры должны располагаться горизонтально слева направо. Фактическое изображение см. в демонстрационной игре.
 
-Alpha values on borders must be smoothed.
-Please use "Blur Selection" and "Delete Selection" in an image editing software.
+Значения альфа-канала на границах должны быть сглажены.
+Используйте функции "Blur Selection" и "Delete Selection" в графическом редакторе.
 
-The eye blinking interval may be specified in the `config.ini` file.
-Intervals are slightly randomized, and sometimes double-blinkings occur.
+Интервал мигания глаз можно задать в файле `config.ini`.
+Интервалы слегка рандомизируются, поэтому иногда происходит двойное мигание.
 
 ```
 #
-# Eye blinking interval (seconds)
+# Интервал мигания глаз (секунды)
 #
 character.eyeblink.interval=4.0
 
 #
-# Eye blining frame length (seconds per frame)
+# Длительность кадра мигания глаз (секунд на кадр)
 #
 character.eyeblink.frame=0.15
 ```

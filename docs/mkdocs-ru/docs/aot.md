@@ -1,76 +1,76 @@
-How to Use AOT
-==============
+Как использовать AOT
+====================
 
-Suika3 supports **Ahead-of-Time (AOT) compilation** of scripts.
-That is, an app may run completely native code instead of as a bytecode interpreter.
+Suika3 поддерживает **Ahead-of-Time (AOT) compilation** для скриптов.
+Это означает, что приложение может выполнять полностью нативный код вместо интерпретатора байткода.
 
-The `suika3-aotcomp` command converts `.ray` scripts into **ANSI C source code**.
-The generated `library.c` file will be compiled with the entire engine.
+Команда `suika3-aotcomp` преобразует скрипты `.ray` в **исходный код ANSI C**.
+Сгенерированный файл `library.c` будет скомпилирован вместе со всем движком.
 
 ---
 
-## 1. Modify `main.ray`
+## 1. Измените `main.ray`
 
-Because the scripts will be compiled into native code,
-loading the runtime library is no longer needed.
+Поскольку скрипты будут скомпилированы в нативный код, загрузка библиотеки
+во время выполнения больше не нужна.
 
-Open `main.ray` and comment out the loadLibrary() calls.
+Откройте `main.ray` и закомментируйте вызовы loadLibrary().
 
-Example:
+Пример:
 ```
 // Suika.loadPlugin("system")
 ```
 
-Please note that you should not call `Suika.loadPlugin()` outside the
-`main.ray` file.
+Обратите внимание: не следует вызывать `Suika.loadPlugin()` вне файла
+`main.ray`.
 
 ---
 
-## 2. Generate C Source
+## 2. Сгенерируйте исходный код C
 
-To compile scripts into C source code, run:
+Чтобы скомпилировать скрипты в исходный код C, выполните:
 
 ```sh
 suika3-aotcomp main.ray script1.ray script2.ray ...
 ```
 
-This command generates the following file:
+Эта команда создает следующий файл:
 ```
 library.c
 ```
 
-The generated file contains the compiled script library.
+Сгенерированный файл содержит скомпилированную библиотеку скриптов.
 
 > [!TIPS]
-> Specify all script files in the command line, including `main.ray`.
+> Укажите в командной строке все файлы скриптов, включая `main.ray`.
 
-Example:
+Пример:
 ```
 suika3-aotcomp main.ray system.ray scenario1.ray scenario2.ray
 ```
 
 --
 
-## 3. Replace the Engine Library
+## 3. Замените библиотеку движка
 
-Copy the generated `library.c` file to the engine source tree:
+Скопируйте сгенерированный файл `library.c` в дерево исходного кода движка:
 ```
 external/PlayfieldEngine/src/library.c
 ```
 
-Overwrite the existing file.
+Перезапишите существующий файл.
 
 ---
 
-## 4. Build the Engine
+## 4. Соберите движок
 
-Build the Suika3 project using CMake as usual.
+Соберите проект Suika3 с помощью CMake как обычно.
 
-The compiled scripts will now be linked into the engine binary.
+Скомпилированные скрипты теперь будут связаны с бинарным файлом движка.
 
 ### iOS
 
-To build static binaries, type:
+Чтобы собрать статические бинарные файлы, выполните:
 ```
 cmake --preset ios-device
 cmake --preset ios-simulator
@@ -78,15 +78,15 @@ cmake --build --preset ios-device
 cmake --build --preset ios-simulator
 ```
 
-After that, copy the static libraries to your iOS project:
-* Copy `build-ios-device/libsuika3.a` to `Suika3.xcframework/ios-arm64/libsuika3.a`
-* Copy `build-ios-simulator/libsuika3.a` to `Suika3.xcframework/ios-arm64_x86_64-simulator/libsuika3.a`
+После этого скопируйте статические библиотеки в свой iOS-проект:
+* Скопируйте `build-ios-device/libsuika3.a` в `Suika3.xcframework/ios-arm64/libsuika3.a`
+* Скопируйте `build-ios-simulator/libsuika3.a` в `Suika3.xcframework/ios-arm64_x86_64-simulator/libsuika3.a`
 
-Overwrite the existing file.
+Перезапишите существующий файл.
 
 ### Android
 
-To build shared binaries, type:
+Чтобы собрать динамические бинарные файлы, выполните:
 ```
 cmake --preset android-arm64
 cmake --preset android-arvm7
@@ -98,17 +98,17 @@ cmake --build --preset android-x86
 cmake --build --preset android-x86_64
 ```
 
-After that, copy the shared libraries to your Android project:
-* Copy `build-android-arm64/libsuika3.so` to `app/src/main/jniLibs/arm64-v8a/libplayfield.so`
-* Copy `build-android-armv7/libsuika3.so` to `app/src/main/jniLibs/armeabi-v7a/libplayfield.so`
-* Copy `build-android-x86/libsuika3.so` to `app/src/main/jniLibs/x86/libplayfield.so`
-* Copy `build-android-x86_64/libsuika3.so` to `app/src/main/jniLibs/x86_64/libplayfield.so`
+После этого скопируйте динамические библиотеки в свой Android-проект:
+* Скопируйте `build-android-arm64/libsuika3.so` в `app/src/main/jniLibs/arm64-v8a/libplayfield.so`
+* Скопируйте `build-android-armv7/libsuika3.so` в `app/src/main/jniLibs/armeabi-v7a/libplayfield.so`
+* Скопируйте `build-android-x86/libsuika3.so` в `app/src/main/jniLibs/x86/libplayfield.so`
+* Скопируйте `build-android-x86_64/libsuika3.so` в `app/src/main/jniLibs/x86_64/libplayfield.so`
 
-Overwrite the existing file.
+Перезапишите существующий файл.
 
 ### HarmonyOS NEXT
 
-To build shared binaries, type:
+Чтобы собрать динамические бинарные файлы, выполните:
 ```
 cmake --preset openharmony-arm64
 cmake --preset openharmony-x86_64
@@ -116,31 +116,31 @@ cmake --build --preset openharmony-x86
 cmake --build --preset openharmony-x86_64
 ```
 
-After that, copy the shared libraries to your HarmonyOS NEXT project:
-* Copy `build-openharmony-arm64/libsuika3.a` to `entry/libs/arm64-v8a/libsuika3.a`
-* Copy `build-openharmony-x86_64/libsuika3.a` to `entry/libs/x86_64/libsuika3.a`
+После этого скопируйте динамические библиотеки в свой проект HarmonyOS NEXT:
+* Скопируйте `build-openharmony-arm64/libsuika3.a` в `entry/libs/arm64-v8a/libsuika3.a`
+* Скопируйте `build-openharmony-x86_64/libsuika3.a` в `entry/libs/x86_64/libsuika3.a`
 
-Overwrite the existing file.
+Перезапишите существующий файл.
 
 ### Unity Plugin
 
-To build shared binaries, type:
+Чтобы собрать динамические бинарные файлы, выполните:
 ```
 cmake --preset unity-win64
 cmake --build --preset unity-win64
 ```
 
-After that, copy the libraries to your Unity project:
-* Copy `build-unity-win64/libsuika3.dll` to `Assets/Plugins/x86_64/libplayfield.dll`
+После этого скопируйте библиотеки в свой Unity-проект:
+* Скопируйте `build-unity-win64/libsuika3.dll` в `Assets/Plugins/x86_64/libplayfield.dll`
 
-Overwrite the existing file.
+Перезапишите существующий файл.
 
 ---
 
-## Results
+## Результаты
 
-Scripts are embedded directly into the executable, providing:
+Скрипты встраиваются непосредственно в исполняемый файл, что дает:
 
-* No JIT (for store review)
-* No runtime script loading
-* Faster startup
+* Отсутствие JIT (для проверки в магазинах приложений)
+* Отсутствие загрузки скриптов во время выполнения
+* Более быстрый запуск

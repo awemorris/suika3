@@ -1,16 +1,17 @@
-Ray High Level API Reference
-============================
+Referencia de la API de Ray VN
+====================
 
-The `High Level API (Engine.*)` is designed for Visual Novel creation.
+El `VN API (Suika.*)` está diseñado para la creación de novelas visuales.
 
-Every API function takes one parameter.
-The parameter must be a dictionary and arguments must be stored as key-and-value pairs.
+Cada función API `Suika.*` toma solo un argumento.
+El argumento debe ser un diccionario y las opciones de una función deben almacenarse como pares clave-valor en el diccionario.
+En este documento, "parámetro" significa un par clave-valor en ese diccionario.
 
-## Index
+## Índice
 
-* Fundamental
+* Fundamentales
     * [Suika.loadPlugin()](#suikaloadplugin)
-* Config
+* Configuración
     * [Suika.setConfig()](#suikasetconfig)
     * [Suika.getConfigCount()](#suikagetconfigcount)
     * [Suika.getConfigKey()](#suikagetconfigkey)
@@ -23,7 +24,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.getFloatConfig()](#suikagetfloatconfig)
     * [Suika.getConfigAsString()](#suikagetconfigasstring)
     * [Suika.compareLocale()](#suikacomparelocale)
-* Input
+* Entrada
     * [Suika.getMousePosX()](#suikagetmouseposx)
     * [Suika.getMousePosY()](#suikagetmouseposy)
     * [Suika.isMouseLeftPressed()](#suikaismouseleftpressed)
@@ -47,14 +48,14 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.isTouchCanceled()](#suikaistouchcanceled)
     * [Suika.isSwiped()](#suikaisswiped)
     * [Suika.clearInputState()](#suikaclearinputstate)
-* Game
+* Juego
     * [Suika.startCommandRepetition()](#suikastartcommandrepetition)
     * [Suika.stopCommandRepetition()](#suikastopcommandrepetition)
     * [Suika.isInCommandRepetition()](#suikaisincommandrepetition)
     * [Suika.setMessageActive()](#suikasetmessageactive)
     * [Suika.clearMessageActive()](#suikaclearmessageactive)
     * [Suika.isMessageActive()](#suikaismessageactive)
-    * [Suika.startAutoMode()](#suikastartautomode)
+* [Suika.startAutoMode()](#suikastartautomode)
     * [Suika.stopAutoMode()](#suikastopautomode)
     * [Suika.isAutoMode()](#suikaisautomode)
     * [Suika.startSkipMode()](#suikastartskipmode)
@@ -96,17 +97,17 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.getLastEnglishTagIndex()](#suikagetlastenglishtagindex)
     * [Suika.clearLastEnglishTagIndex()](#suikaclearlastenglishtagindex)
     * [Suika.getLastTagName()](#suikagetlasttagname)
-* Image
+* Imagen
     * [Suika.createImageFromFile()](#suikacreateimagefromfile)
     * [Suika.createImage()](#suikacreateimage)
-    * [Suika.getImageWidth()](#suikagetimagewidth)
+* [Suika.getImageWidth()](#suikagetimagewidth)
     * [Suika.getImageHeight()](#suikagetimageheight)
     * [Suika.destroyImage()](#suikadestroyimage)
     * [Suika.drawImage()](#suikadrawimage)
     * [Suika.drawImage3D()](#suikadrawimage3d)
     * [Suika.makeColor()](#suikamakecolor)
     * [Suika.fillImageRect()](#suikafillimagerect)
-* Stage
+* Etapa
     * [Suika.reloadStageImages()](#suikareloadstageimages)
     * [Suika.reloadStagePositions()](#suikareloadstagepositions)
     * [Suika.getLayerX()](#suikagetlayerx)
@@ -146,7 +147,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.finishFade()](#suikafinishfade)
     * [Suika.setChNameMapping()](#suikasetchnamemapping)
     * [Suika.getTalkingChpos()](#suikagettalkingchpos)
-    * [Suika.setChTalking()](#suikasetchtalking)
+* [Suika.setChTalking()](#suikasetchtalking)
     * [Suika.getTalkingChpos()](#suikagettalkingchpos)
     * [Suika.updateChDimByTalkingCh()](#suikaupdatechdimbytalkingch)
     * [Suika.forceChDim()](#suikaforcechdim)
@@ -172,7 +173,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.getChooseBoxRect()](#suikagetchooseboxrect)
     * [Suika.startKirakira()](#suikastartkirakira)
     * [Suika.renderKirakira()](#suikarenderkirakira)
-* Mixer
+* Mezclador
     * [Suika.setMixerInputFile()](#suikasetmixerinputfile)
     * [Suika.setMixerVolume()](#suikasetmixervolume)
     * [Suika.getMixerVolume()](#suikagetmixervolume)
@@ -190,8 +191,8 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.isSysBtnVisible()](#suikaisysbtnvisible)
     * [Suika.updateSysBtnState()](#suikaupdatesysbtnstate)
     * [Suika.isSysBtnPointed()](#suikaisysbtnpointed)
-    * [Suika.isSysBtnClicked()](#suikaisysbtnclicked)
-* Text
+* [Suika.isSysBtnClicked()](#suikaisysbtnclicked)
+* Texto
     * [Suika.drawTextOnLayer()](#suikadrawtextonlayer)
     * [Suika.getStringWidth()](#suikagetstringwidth)
     * [Suika.getStringHeight()](#suikagetstringheight)
@@ -202,7 +203,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.drawMessage()](#suikadrawmsgcommon)
     * [Suika.getDrawMsgPenPosition()](#suikagetpenpositioncommon)
     * [Suika.isEscapeSequenceChar()](#suikaisescapesequencechar)
-* Tag
+* Etiqueta
     * [Suika.getTagCount()](#suikagettagcount)
     * [Suika.moveToTagFile()](#suikamovetotagfile)
     * [Suika.moveToTagIndex()](#suikamovetotagindex)
@@ -226,7 +227,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.popTagStackIf()](#suikapoptagstackif)
     * [Suika.pushTagStackWhile()](#suikapushtagstackwhile)
     * [Suika.pushTagStackFor()](#suikapushtagstackfor)
-* Anime
+* animado
     * [Suika.loadAnimeFromFile()](#suikaloadanimefromfile)
     * [Suika.newAnimeSequence()](#suikanewanimesequence)
     * [Suika.addAnimeSequencePropertyF()](#suikaaddanimesequencepropertyf)
@@ -235,13 +236,13 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.isAnimeRunning()](#suikaisanimerunning)
     * [Suika.isAnimeFinishedForLayer()](#suikaisanimefinishedforlayer)
     * [Suika.updateAnimeFrame()](#suikaupdateanimeframe)
-    * [Suika.loadEyeImageIfExists()](#suikaloadeyeimageifexists)
+* [Suika.loadEyeImageIfExists()](#suikaloadeyeimageifexists)
     * [Suika.reloadEyeAnime()](#suikareloadeyeanime)
     * [Suika.runLipAnime()](#suikarunlipanime)
     * [Suika.stopLipAnime()](#suikastoplipanime)
     * [Suika.clearLayerAnimeSequence()](#suikaclearlayeranimesequence)
     * [Suika.clearAllAnimeSequence()](#suikaclearallanimesequnce)
-* Variable
+* variables
     * [Suika.setVariableInt()](#suikasetvariableint)
     * [Suika.setVariableFloat()](#suikasetvariablefloat)
     * [Suika.setVariableString()](#suikasetvariablestring)
@@ -256,7 +257,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.getVariableName()](#suikagetvariablename)
     * [Suika.checkVariableExists()](#suikacheckvariableexists)
     * [Suika.expandStringWithVariable()](#suikaexpandstringwithvariable)
-* Save
+* Guardar
     * [Suika.executeSaveGlobal()](#suikaexecutesaveglobal)
     * [Suika.executeLoadGlobal()](#suikaexecuteloadglobal)
     * [Suika.executeSaveLocal()](#suikaexecutesavelocal)
@@ -270,17 +271,17 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.getSaveChapterName()](#suikagetsavechaptername)
     * [Suika.getSaveLastMessage()](#suikagetsavelastmessage)
     * [Suika.getSaveThumbnail()](#suikagetsavethumbnail)
-* History
+* Historia
     * [Suika.clearHistory()](#suikaclearhistory)
     * [Suika.addHistory()](#suikaaddhistory)
     * [Suika.getHistoryCount()](#suikagethistorycount)
     * [Suika.getHistoryName()](#suikagethistoryname)
     * [Suika.getHistoryMessage()](#suikagethistorymessage)
     * [Suika.getHistoryVoice()](#suikagethistoryvoice)
-* Seen
+* Visto
     * [Suika.loadSeen()](#suikaloadseen)
     * [Suika.saveSeen()](#suikasaveseen)
-    * [Suika.getSeenFlags()](#suikagetseenflags)
+* [Suika.getSeenFlags()](#suikagetseenflags)
     * [Suika.setSeenFlags()](#suikasetseenflags)
 * GUI
     * [Suika.loadGUIFile()](#suikaloadguifile)
@@ -293,7 +294,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.checkIfSavedInGUI()](#suikacheckifsavedingui)
     * [Suika.checkIfLoadedInGui()](#suikacheckifloadedingui)
     * [Suika.checkRightAfterSysGUI()](#suikacheckrightaftersysgui)
-* HAL
+*hal
     * [Suika.getMillisec()](#suikagetmillisec)
     * [Suika.checkFileExists()](#suikacheckfileexists)
     * [Suika.readFileContent()](#suikareadfilecontent)
@@ -318,2251 +319,2251 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
 
 ## Suika.loadPlugin()
 
-Loads a plugin.
+Carga un complemento.
 
-Only this API takes a non-dictionary argument.
+Sólo esta API toma un argumento que no está en el diccionario.
 
-### Parameters (Direct)
+### Parámetros (Directo)
 
-| Parameter | Type   | Description     |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|-----------------|
-| name      | String | Plugin name.    |
+| name | String | Nombre del complemento.    |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.setConfig()
 
-Set a config.
+Establecer una configuración.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key of the config.                         |
-| value     | String | Value of the config.                       |
+| key | String | Clave de la configuración.                         |
+| value | String | Valor de la configuración.                       |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getConfigCount()
 
-Get the number of the config keys.
+Obtenga el número de claves de configuración.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Integer that represents a number of config keys.
+Número entero que representa una cantidad de claves de configuración.
 
 ---
 
 ## Suika.getConfigKey()
 
-Get a config key's index.
+Obtenga el índice de una clave de configuración.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| index     | Integer | Index of a config.                         |
+| index | Integer | Índice de una configuración.                         |
 
-### Return
+### Devolver
 
-String that represents a key of the config at the specified index.
+Cadena que representa una clave de la configuración en el índice especificado.
 
 ---
 
 ## Suika.isGlobalSaveConfig()
 
-Check if a config key is stored to global save data.
+Compruebe si hay una clave de configuración almacenada en los datos guardados globales.
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| key | String | Nombre clave.                                  |
 
-### Return
+### Devolver
 
-Boolean that represents whether the config is global-saved or not.
+Booleano que representa si la configuración se guarda globalmente o no.
 
 ---
 
 ## Suika.isLocalSaveConfig()
 
-Check if a config key is stored to local save data.
+Compruebe si una clave de configuración está almacenada en los datos guardados locales.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| key | String | Nombre clave.                                  |
 
-### Return
+### Devolver
 
-Boolean that represents whether the config is local-saved or not.
+Booleano que representa si la configuración se guarda localmente o no.
 
 ---
 
 ## Suika.getConfigType()
 
-Get a config value type. ("s", "b", "i", "f")
+Obtenga un tipo de valor de configuración. ("s", "b", "i", "f")
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| key | String | Nombre clave.                                  |
 
-### Return
+### Devolver
 
-One of the following strings.
+Una de las siguientes cadenas.
 
-| Value      | Meaning                  |
+| Value | Meaning |
 |------------|--------------------------|
-| "s"        | Config is string.        |
-| "b"        | Config is boolean.       |
-| "i"        | Config is integer.       |
-| "f"        | Config is float.         |
+| "s" | La configuración es una cadena.        |
+| "b" | La configuración es booleana.       |
+| "yo" | La configuración es un número entero.       |
+| "f" | La configuración es flotante.         |
 
 ---
 
 ## Suika.getStringConfig()
 
-Get a string config value.
+Obtenga un valor de configuración de cadena.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| key | String | Nombre clave.                                  |
 
-### Return
+### Devolver
 
-String value of the config.
+Valor de cadena de la configuración.
 
 ---
 
 ## Suika.getBoolConfig()
 
-Get a boolean config value.
+Obtenga un valor de configuración booleano.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| key | String | Nombre clave.                                  |
 
-### Return
+### Devolver
 
-Boolean value of the config.
+Valor booleano de la configuración.
 
 ---
 
 ## Suika.getIntConfig()
 
-Get an integer config value.
+Obtenga un valor de configuración entero.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| key | String | Nombre clave.                                  |
 
-### Return
+### Devolver
 
-Integer value of the config.
+Valor entero de la configuración.
 
 ---
 
 ## Suika.getFloatConfig()
 
-Get a float config value.
+Obtenga un valor de configuración flotante.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| key | String | Nombre clave.                                  |
 
-### Return
+### Devolver
 
-Float value of the config.
+Valor flotante de la configuración.
 
 ---
 
 ## Suika.getConfigAsString()
 
-Get a config value as a string.
+Obtenga un valor de configuración como una cadena.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| key | String | Nombre clave.                                  |
 
-### Return
+### Devolver
 
-Stringified value of the config.
+Valor stringificado de la configuración.
 
 ---
 
 ## Suika.compareLocale()
 
-Check if the specified locale is same as the current locale.
+Compruebe si la configuración regional especificada es la misma que la configuración regional actual.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| locale    | String | Locale name.                               |
+| locale | String | Nombre de la configuración regional.                               |
 
 
-### Return
+### Devolver
 
-Bolean that represents whether the specified locale is matched to the
-current one.
+Bolean que representa si la configuración regional especificada coincide con el
+el actual.
 
 ---
 
 ## Suika.getMousePosX()
 
-Get the mouse X position.
+Obtenga la posición X del mouse.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Integer that represents the current mouse X coordinate.
+Entero que representa la coordenada X actual del mouse.
 
 ---
 
 ## Suika.getMousePosY()
 
-Get the mouse Y position.
+Obtenga la posición Y del mouse.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Integer that represents the current mouse Y coordinate.
+Entero que representa la coordenada Y actual del mouse.
 
 ---
 
 ## Suika.isMouseLeftPressed()
 
-Check if mouse left button is pressed.
+Compruebe si el botón izquierdo del ratón está presionado.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean that represents whether the left button is currently held down.
+Booleano que representa si el botón izquierdo está presionado actualmente.
 
 ---
 
 ## Suika.isMouseRightPressed()
 
-Check if mouse right button is pressed.
+Compruebe si se presiona el botón derecho del mouse.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean that represents whether the right button is currently held down.
+Booleano que representa si el botón derecho está presionado actualmente.
 
 ---
 
 ## Suika.isMouseLeftClicked()
 
-Check if mouse left button is pressed then released.
+Compruebe si se presiona el botón izquierdo del mouse y luego se suelta.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean that represents whether a left-click occurred in the current frame.
+Booleano que representa si se produjo un clic izquierdo en el fotograma actual.
 
 ---
 
 ## Suika.isMouseRightClicked()
 
-Check if mouse right button is pressed then released.
+Compruebe si se presiona el botón derecho del mouse y luego se suelta.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean that represents whether a right-click occurred in the current frame.
+Booleano que representa si se produjo un clic derecho en el fotograma actual.
 
 ---
 
 ## Suika.isMouseDragging()
 
-Check if mouse is dragging.
+Compruebe si el mouse se arrastra.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean that represents whether the mouse is being moved while a button is pressed.
+Booleano que representa si el mouse se mueve mientras se presiona un botón.
 
 ---
 
 ## Suika.isReturnKeyPressed()
 
-Check if return key is pressed.
+Compruebe si se presiona la tecla de retorno.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isSpaceKeyPressed()
 
-Check if space key is pressed.
+Compruebe si se presiona la tecla espacio.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isEscapeKeyPressed()
 
-Check if escape key is pressed.
+Compruebe si la tecla Escape está presionada.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isUpKeyPressed()
 
-Check if up key is pressed.
+Compruebe si se pulsa la tecla arriba.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isDownKeyPressed()
 
-Check if down key is pressed.
+Compruebe si se presiona la tecla hacia abajo.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isLeftKeyPressed()
 
-Check if left key is pressed.
+Compruebe si se presiona la tecla izquierda.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isRightKeyPressed()
 
-Check if right key is pressed.
+Compruebe si se presiona la tecla derecha.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isPageUpKeyPressed()
 
-Check if pageup key is pressed.
+Compruebe si se ha pulsado la tecla de avance de página.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isPageDownKeyPressed()
 
-Check if pagedown key is pressed.
+Compruebe si se ha pulsado la tecla de avance de página.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isControlKeyPressed()
 
-Check if control key is pressed.
+Compruebe si se pulsa la tecla de control.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isSKeyPressed()
 
-Check if S key is pressed.
+Compruebe si se pulsa la tecla S.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isLKeyPressed()
 
-Check if L key is pressed.
+Compruebe si se pulsa la tecla L.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isHKeyPressed()
 
-Check if H key is pressed.
+Compruebe si se pulsa la tecla H.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isTouchCanceled()
 
-Check if touch is canceled.
+Compruebe si el toque está cancelado.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isSwiped()
 
-Check if swiped.
+Compruebe si lo han robado.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.clearInputState()
 
-Clear input states to avoid further input processing in the current frame.
+Borre los estados de entrada para evitar un mayor procesamiento de entrada en el cuadro actual.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 
 ---
 
 ## Suika.startCommandRepetition()
 
-Start a multiple-frame command execution.
+Inicie la ejecución de un comando de varios fotogramas.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.stopCommandRepetition()
 
-Stop a multiple-frame command execution.
+Detener la ejecución de un comando de varios fotogramas.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.isInCommandRepetition()
 
-Check whether we are in a multiple-frame command execution or not.
+Compruebe si estamos en una ejecución de comando de múltiples cuadros o no.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.setMessageActive()
 
-Set the message showing state to active.
+Establezca el estado de visualización del mensaje en activo.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.clearMessageActive()
 
-Reset the message showing state.
+Restablezca el mensaje que muestra el estado.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.isMessageActive()
 
-Check whether the message showing state is set or not.
+Compruebe si el mensaje que muestra el estado está configurado o no.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.startAutoMode()
 
-Start the auto-mode.
+Inicie el modo automático.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.stopAutoMode()
 
-Stop the auto-mode.
+Detenga el modo automático.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.isAutoMode()
 
-Check whether we are in the auto-mode or not.
+Comprobar si estamos en modo automático o no.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.startSkipMode()
 
-Start the skip-mode.
+Inicie el modo de salto.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.stopSkipMode()
 
-Stop the skip-mode.
+Detenga el modo de salto.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.isSkipMode()
 
-Check whether we are in the skip-mode or not.
+Compruebe si estamos en modo de salto o no.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.setSaveLoad()
 
-Set the save/load enable setting.
+Establezca la configuración de habilitar guardar/cargar.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                       |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------------------|
-| enable    | Boolean | Whether to enable save and load.  |
+| enable | Boolean | Ya sea para habilitar guardar y cargar.  |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.isSaveLoadEnabled()
 
-Get the save/load enable setting.
+Obtenga la configuración de habilitar guardar/cargar.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.setNonInterruptible()
 
-Set the non-interruptible mode setting.
+Establezca la configuración del modo no interrumpible.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| enable    | Boolean | Non-interruptible mode.    |
+| enable | Boolean | Modo no interrumpible.    |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.isNonInterruptible()
 
-Get the non-interruptible mode setting.
+Obtenga la configuración del modo no interrumpible.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.setPenPosition()
 
-Set the pen position for text drawing.
+Establezca la posición del lápiz para dibujar texto.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| x         | Integer | X coordinate.         |
-| y         | Integer | Y coordinate.         |
+| x | Integer | Coordenada X.         |
+| y | Integer | Coordenada Y.         |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getPenPositionX()
 
-Get the pen X position.
+Obtenga la posición X del lápiz.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Integer value.
+Valor entero.
 
 ---
 
 ## Suika.getPenPositionY()
 
-Get the pen Y position.
+Obtenga la posición Y del bolígrafo.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Integer value.
+Valor entero.
 
 ---
 
 ## Suika.pushForCall()
 
-Push the return point to the call stack.
+Empuje el punto de retorno a la pila de llamadas.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| file      | String  | Script file name.     |
-| index     | Integer | Command index.        |
+| file | String | Nombre del archivo de secuencia de comandos.     |
+| index | Integer | Índice de comando.        |
 
-### Return
+### Devolver
 
-Boolean that represents success or failure.
+Booleano que representa el éxito o el fracaso.
 
 ---
 
 ## Suika.popForReturn()
 
-Pop the return point from the call stack.
+Extraiga el punto de retorno de la pila de llamadas.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns a dictionary that contains:
+Devuelve un diccionario que contiene:
 
-* obj.file: File name
-* obj.index: Tag index
+* obj.file: nombre del archivo
+* obj.index: Índice de etiquetas
 
 ---
 
 ## Suika.readCallStack()
 
-Read the call stack element at the specified index.
+Lea el elemento de la pila de llamadas en el índice especificado.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| sp        | Integer | Stack element index.  |
+| sp | Integer | Índice de elementos de pila.  |
 
-### Return
+### Devolver
 
-Returns a dictionary that contains:
+Devuelve un diccionario que contiene:
 
-* obj.file: File name
-* obj.index: Tag index
+* obj.file: nombre del archivo
+* obj.index: Índice de etiquetas
 
 ---
 
 ## Suika.writeCallStack()
 
-Write the call stack element at the specified index.
+Escriba el elemento de la pila de llamadas en el índice especificado.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| sp        | Integer | Stack element index.  |
-| file      | String  | Script file name.     |
-| index     | Integer | Tag index.            |
+| sp | Integer | Índice de elementos de pila.  |
+| file | String | Nombre del archivo de secuencia de comandos.     |
+| index | Integer | Índice de etiquetas.            |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.setCallArgument()
 
-Set a calling argument for GUI or anime.
+Establezca un argumento de llamada para GUI o anime.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| index     | Integer | Argument index.       |
-| value     | String  | Argument value.       |
+| index | Integer | Índice de argumentos.       |
+| value | String | Valor del argumento.       |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.getCallArgument()
 
-Get a calling argument.
+Obtenga un argumento de llamada.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| index     | Integer | Argument index.       |
+| index | Integer | Índice de argumentos.       |
 
-### Return
+### Devolver
 
-String value.
+Valor de cadena.
 
 ---
 
 ## Suika.isPageMode()
 
-Check if the script page mode is enabled.
+Compruebe si el modo de página de secuencia de comandos está habilitado.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns boolean.
+Devuelve booleano.
 
 ---
 
 ## Suika.appendBufferedMessage()
 
-Append a string to the page mode buffer string.
+Agregue una cadena a la cadena del búfer del modo de página.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| message   | String  | Message.              |
+| message | String | Message. |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getBufferedMessage()
 
-Get the page mode buffer string.
+Obtenga la cadena del búfer del modo de página.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns a string.
+Devuelve una cadena.
 
 ---
 
 ## Suika.clearBufferedMessage()
 
-Clear the page mode buffer string.
+Borre la cadena del búfer del modo de página.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.resetPageLine()
 
-Reset the message line count in a page.
+Restablecer el recuento de líneas de mensajes en una página.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.incPageLine()
 
-Increment the line count in a page.
+Incrementar el recuento de líneas en una página.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.isPageTop()
 
-Check if we are at the first line in a page.
+Comprobar si estamos en la primera línea de una página.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.registerBGVoice()
 
-Register a BGVoice.
+Registre una BGVoice.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| file      | String  | BGVoice file.         |
+| file | String | Archivo BGVoice.         |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getBVoice()
 
-Get the BGVoice.
+Obtenga BGVoice.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns a file name string.
+Devuelve una cadena de nombre de archivo.
 
 ---
 
 ## Suika.setBGVoicePlaying()
 
-Set the BGVoice state playing.
+Configure el estado de reproducción de BGVoice.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| isPlaying | Boolean | State.                |
+| isPlaying | Boolean | State. |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.isBGVoicePlaying()
 
-Check if the BGVoice is playing.
+Compruebe si BGVoice se está reproduciendo.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns boolean.
+Devuelve booleano.
 
 ---
 
 ## Suika.setChapterName()
 
-Set the chapter name.
+Establezca el nombre del capítulo.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| name      | String  | Chapter name.         |
+| name | String | Nombre del capítulo.         |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getChapterName()
 
-Get the chapter name.
+Obtenga el nombre del capítulo.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns a string.
+Devuelve una cadena.
 
 ---
 
 ## Suika.setLastMessage()
 
-Set the last message.
+Establecer el último mensaje.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| message   | String  | Message.              |
-| isAppend  | Boolean | Append or replace.    |
+| message | String | Message. |
+| isAppend | Boolean | Agregar o reemplazar.    |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getLastMessage()
 
-Get the last message.
+Recibe el último mensaje.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns a string.
+Devuelve una cadena.
 
 ---
 
 ## Suika.setTextSpeed()
 
-Set the text speed.
+Establece la velocidad del texto.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| speed     | Float   | Text speed.           |
+| speed | Float | Velocidad del texto.           |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getTextSpeed()
 
-Get the text speed.
+Obtenga la velocidad del texto.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns a float.
+Devuelve un flotador.
 
 ---
 
 ## Suika.setAutoSpeed()
 
-Set the auto mode speed.
+Configure la velocidad del modo automático.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| speed     | Float   | Auto speed.           |
+| speed | Float | Velocidad automática.           |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getAutoSpeed()
 
-Get the auto speed.
+Obtenga la velocidad automática.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns a float.
+Devuelve un flotador.
 
 ---
 
 ## Suika.markLastEnglishTagIndex()
 
-Mark the last English index.
+Marque el último índice en inglés.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getLastEnglishTagIndex()
 
-Get the last English index.
+Obtenga el último índice en inglés.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns an integer.
+Devuelve un número entero.
 
 ---
 
 ## Suika.clearLastEnglishTagIndex()
 
-Clear the last English index.
+Borre el último índice en inglés.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getLastTagName()
 
-Get the last tag name.
+Obtenga el último nombre de la etiqueta.
 
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns a string.
+Devuelve una cadena.
 
 ---
 
 ## Suika.createImageFromFile()
 
-Load an image from a file.
+Cargue una imagen desde un archivo.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                   |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|-------------------------------|
-| file      | String | Path to the image file.       |
+| file | String | Ruta al archivo de imagen.       |
 
-### Return
+### Devolver
 
-An image object, or null on failure.
+Un objeto de imagen, o nulo en caso de error.
 
 ---
 
 ## Suika.createImage()
 
-Create a new blank image.
+Crea una nueva imagen en blanco.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                   |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-------------------------------|
-| width     | Integer | Width of the image.           |
-| height    | Integer | Height of the image.          |
+| width | Integer | Ancho de la imagen.           |
+| height | Integer | Altura de la imagen.          |
 
-### Return
+### Devolver
 
-An image object.
+Un objeto de imagen.
 
 ---
 
 ## Suika.getImageWidth()
 
-Get the width of an image.
+Obtenga el ancho de una imagen.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                   |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|-------------------------------|
-| img       | Object | Image object.                 |
+| img | Object | Objeto de imagen.                 |
 
-### Return
+### Devolver
 
-Integer that represents the width.
+Entero que representa el ancho.
 
 ---
 
 ## Suika.getImageHeight()
 
-Get the height of an image.
+Obtener la altura de una imagen.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                   |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|-------------------------------|
-| image     | Object | Image object.                 |
+| image | Object | Objeto de imagen.                 |
 
-### Return
+### Devolver
 
-Integer that represents the height.
+Entero que representa la altura.
 
 ---
 
 ## Suika.destroyImage()
 
-Destroy an image and free its memory.
+Destruye una imagen y libera su memoria.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                   |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|-------------------------------|
-| image     | Object | Image object to destroy.      |
+| image | Object | Objeto de imagen para destruir.      |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.drawImage()
 
-Copy an image to another image (no blending).
+Copie una imagen a otra imagen (sin mezclar).
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter  | Type    | Description                      |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |------------|---------|----------------------------------|
-| dstImage   | Object  | Destination image.               |
-| dstLeft    | Integer | X coordinate in destination.     |
-| dstTop     | Integer | Y coordinate in destination.     |
-| srcImage   | Object  | Source image.                    |
-| dstWidth   | Integer | Width to draw.                   |
-| dstHeight  | Integer | Height to draw.                  |
-| srcLeft    | Integer | X coordinate in source.          |
-| srcTop     | Integer | Y coordinate in source.          |
-| alpha      | Integer | 0-255                            |
-| blend      | Integer | Blending type.                   |
+| dstImage | Object | Imagen de destino.               |
+| dstLeft | Integer | Coordenada X en destino.     |
+| dstTop | Integer | Coordenada Y en destino.     |
+| srcImage | Object | Imagen fuente.                    |
+| dstWidth | Integer | Ancho para dibujar.                   |
+| dstHeight | Integer | Altura para dibujar.                  |
+| srcLeft | Integer | Coordenada X en la fuente.          |
+| srcTop | Integer | Coordenada Y en fuente.          |
+| alpha | Integer | 0-255 |
+| blend | Integer | Tipo de mezcla.                   |
 
-### Blending Types
+### Tipos de mezcla
 
-| Type                | Description                        |
+| Tipo | Descripciﾃｳn |
 |---------------------|------------------------------------|
-| Suika.BLEND_COPY    | Copy.                              |
-| Suika.BLEND_ALPHA   | Alpha blending.                    |
-| Suika.BLEND_ADD     | Add blending.                      |
-| Suika.BLEND_SUB     | Sub blending.                      |
-| Suika.BLEND_DIM     | RGB 50% alpha blending.            |
-| Suika.BLEND_GLYPH   | Alpha blending for normal glyphs.  |
-| Suika.BLEND_EMOJI   | Alpha blending for emoji glyphs.   |
+| Suika.BLEND_COPY | Copy. |
+| Suika.BLEND_ALPHA | Mezcla alfa.                    |
+| Suika.BLEND_ADD | Agrega la mezcla.                      |
+| Suika.BLEND_SUB | Submezcla.                      |
+| Suika.BLEND_DIM | Mezcla RGB 50% alfa.            |
+| Suika.BLEND_GLYPH | Mezcla alfa para glifos normales.  |
+| Suika.BLEND_EMOJI | Mezcla alfa para glifos emoji.   |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.drawImage3D()
 
-Copy an image to another image (no blending).
+Copie una imagen a otra imagen (sin mezclar).
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter  | Type    | Description                      |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |------------|---------|----------------------------------|
-| dstImage   | Object  | Destination image.               |
-| x1         | Integer | x1 coordinate in destination.    |
-| y1         | Integer | y1 coordinate in destination.    |
-| x2         | Integer | x2 coordinate in destination.    |
-| y2         | Integer | y2 coordinate in destination.    |
-| x3         | Integer | x3 coordinate in destination.    |
-| y3         | Integer | y3 coordinate in destination.    |
-| x4         | Integer | x4 coordinate in destination.    |
-| y5         | Integer | y4 coordinate in destination.    |
-| srcImage   | Object  | Source image.                    |
-| srcLeft    | Integer | X coordinate in source.          |
-| srcTop     | Integer | Y coordinate in source.          |
-| srcWidth   | Integer | Width in source.                 |
-| srcHeight  | Integer | Height in source.                |
-| alpha      | Integer | 0-255                            |
-| blend      | Integer | Blending type.                   |
+| dstImage | Object | Imagen de destino.               |
+| x1 | Integer | Coordenada x1 en destino.    |
+| y1 | Integer | Coordenada y1 en destino.    |
+| x2 | Integer | Coordenada x2 en destino.    |
+| y2 | Integer | Coordenada y2 en destino.    |
+| x3 | Integer | Coordenada x3 en destino.    |
+| y3 | Integer | Coordenada y3 en destino.    |
+| x4 | Integer | Coordenada x4 en destino.    |
+| y5 | Integer | Coordenada y4 en destino.    |
+| srcImage | Object | Imagen fuente.                    |
+| srcLeft | Integer | Coordenada X en la fuente.          |
+| srcTop | Integer | Coordenada Y en fuente.          |
+| srcWidth | Integer | Ancho en fuente.                 |
+| srcHeight | Integer | Altura en fuente.                |
+| alpha | Integer | 0-255 |
+| blend | Integer | Tipo de mezcla.                   |
 
-### Blending Types
+### Tipos de mezcla
 
-| Type                | Description                        |
+| Tipo | Descripciﾃｳn |
 |---------------------|------------------------------------|
-| Suika.BLEND_ALPHA   | Alpha blending.                    |
-| Suika.BLEND_ADD     | Add blending.                      |
-| Suika.BLEND_SUB     | Sub blending.                      |
-| Suika.BLEND_DIM     | RGB 50% alpha blending.            |
+| Suika.BLEND_ALPHA | Mezcla alfa.                    |
+| Suika.BLEND_ADD | Agrega la mezcla.                      |
+| Suika.BLEND_SUB | Submezcla.                      |
+| Suika.BLEND_DIM | Mezcla RGB 50% alfa.            |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.drawImageAlpha()
 
-Draw an image with alpha blending.
+Dibuja una imagen con fusión alfa.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                      |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------------|
-| dstImage  | Object  | Destination image.               |
-| dstLeft   | Integer | X coordinate in destination.     |
-| dstTop    | Integer | Y coordinate in destination.     |
-| dstWidth  | Integer | Width to draw.                   |
-| dstHeight | Integer | Height to draw.                  |
-| srcImage  | Object  | Source image.                    |
-| srcLeft   | Integer | X coordinate in source.          |
-| srcTop    | Integer | Y coordinate in source.          |
-| alpha     | Integer | Alpha value (`0`-`255`).         |
+| dstImage | Object | Imagen de destino.               |
+| dstLeft | Integer | Coordenada X en destino.     |
+| dstTop | Integer | Coordenada Y en destino.     |
+| dstWidth | Integer | Ancho para dibujar.                   |
+| dstHeight | Integer | Altura para dibujar.                  |
+| srcImage | Object | Imagen fuente.                    |
+| srcLeft | Integer | Coordenada X en la fuente.          |
+| srcTop | Integer | Coordenada Y en fuente.          |
+| alpha | Integer | Valor alfa (`0`-`255`).         |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.drawImageAdd()
 
-Draw an image with additive blending.
+Dibuja una imagen con mezcla aditiva.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                      |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------------|
-| dstImage  | Object  | Destination image.               |
-| dstLeft   | Integer | X coordinate in destination.     |
-| dstTop    | Integer | Y coordinate in destination.     |
-| dstWidth  | Integer | Width to draw.                   |
-| dstHeight | Integer | Height to draw.                  |
-| srcImage  | Object  | Source image.                    |
-| srcLeft   | Integer | X coordinate in source.          |
-| srcTop    | Integer | Y coordinate in source.          |
-| alpha     | Integer | Alpha value (`0`-`255`).         |
+| dstImage | Object | Imagen de destino.               |
+| dstLeft | Integer | Coordenada X en destino.     |
+| dstTop | Integer | Coordenada Y en destino.     |
+| dstWidth | Integer | Ancho para dibujar.                   |
+| dstHeight | Integer | Altura para dibujar.                  |
+| srcImage | Object | Imagen fuente.                    |
+| srcLeft | Integer | Coordenada X en la fuente.          |
+| srcTop | Integer | Coordenada Y en fuente.          |
+| alpha | Integer | Valor alfa (`0`-`255`).         |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.drawImageSub()
 
-Draw an image with subtractive blending.
+Dibuja una imagen con fusión sustractiva.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                      |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------------|
-| dstImage  | Object  | Destination image.               |
-| dstLeft   | Integer | X coordinate in destination.     |
-| dstTop    | Integer | Y coordinate in destination.     |
-| dstWidth  | Integer | Width to draw.                   |
-| dstHeight | Integer | Height to draw.                  |
-| srcImage  | Object  | Source image.                    |
-| srcLeft   | Integer | X coordinate in source.          |
-| srcTop    | Integer | Y coordinate in source.          |
-| alpha     | Integer | Alpha value (`0`-`255`).         |
+| dstImage | Object | Imagen de destino.               |
+| dstLeft | Integer | Coordenada X en destino.     |
+| dstTop | Integer | Coordenada Y en destino.     |
+| dstWidth | Integer | Ancho para dibujar.                   |
+| dstHeight | Integer | Altura para dibujar.                  |
+| srcImage | Object | Imagen fuente.                    |
+| srcLeft | Integer | Coordenada X en la fuente.          |
+| srcTop | Integer | Coordenada Y en fuente.          |
+| alpha | Integer | Valor alfa (`0`-`255`).         |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.makeColor()
 
-Create a pixel value from RGBA components.
+Cree un valor de píxel a partir de componentes RGBA.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description      |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|------------------|
-| r         | Integer | Red (0-255).     |
-| g         | Integer | Green (0-255).   |
-| b         | Integer | Blue (0-255).    |
-| a         | Integer | Alpha (0-255).   |
+| r | Integer | Rojo (0-255).     |
+| g | Integer | Verde (0-255).   |
+| b | Integer | Azul (0-255).    |
+| a | Integer | Alfa (0-255).   |
 
-### Return
+### Devolver
 
-A pixel value.
+Un valor de píxel.
 
 ---
 
 ## Suika.fillImageRect()
 
-Fill a rectangular area on an image with a color.
+Rellena un área rectangular en una imagen con un color.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                         |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-------------------------------------|
-| image     | Object  | Target image.                       |
-| left      | Integer | X coordinate.                       |
-| top       | Integer | Y coordinate.                       |
-| width     | Integer | Width.                              |
-| height    | Integer | Height.                             |
-| color     | Integer | Color created by Suika.makeColor(). |
+| image | Object | Imagen de destino.                       |
+| left | Integer | Coordenada X.                       |
+| top | Integer | Coordenada Y.                       |
+| width | Integer | Width. |
+| height | Integer | Height. |
+| color | Integer | Color creado por Suika.makeColor(). |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.reloadStageImages()
 
-Reload the stage images by the config.
+Vuelva a cargar las imágenes del escenario mediante la configuración.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean that represents success or failure.
+Booleano que representa el éxito o el fracaso.
 
 ---
 
 ## Suika.reloadStagePositions()
 
-Reload the stage positions by the config.
+Vuelva a cargar las posiciones del escenario mediante la configuración.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getLayerX()
 
-Get the current position of a specific layer.
+Obtenga la posición actual de una capa específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer | Integer | Índice de la capa del escenario.  |
 
-### Return
+### Devolver
 
-Integer value of the coordinate.
+Valor entero de la coordenada.
 
 ---
 
 ## Suika.getLayerY()
 
-Get the current position of a specific layer.
+Obtenga la posición actual de una capa específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer | Integer | Índice de la capa del escenario.  |
 
-### Return
+### Devolver
 
-Integer value of the coordinate.
+Valor entero de la coordenada.
 
 ---
 
 ## Suika.setLayerPosition()
 
-Set the position of a specific layer.
+Establece la posición de una capa específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| x         | Integer | X coordinate.              |
-| y         | Integer | Y coordinate.              |
+| layer | Integer | Índice de la capa del escenario.  |
+| x | Integer | Coordenada X.              |
+| y | Integer | Coordenada Y.              |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getLayerScaleX()
 
-Get the X scaling factor of a specific layer.
+Obtenga el factor de escala X de una capa específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer | Integer | Índice de la capa del escenario.  |
 
-### Return
+### Devolver
 
-Float value of the scale.
+Valor flotante de la escala.
 
 ---
 
 ## Suika.getLayerScaleY()
 
-Get the Y scaling factor of a specific layer.
+Obtenga el factor de escala Y de una capa específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer | Integer | Índice de la capa del escenario.  |
 
-### Return
+### Devolver
 
-Float value of the scale.
+Valor flotante de la escala.
 
 ---
 
 ## Suika.setLayerScale()
 
-Set the scaling factor of a specific layer.
+Establece el factor de escala de una capa específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| scale_x   | Float   | Horizontal scale.          |
-| scale_y   | Float   | Vertical scale.            |
+| layer | Integer | Índice de la capa del escenario.  |
+| scale_x | Float | Escala horizontal.          |
+| scale_y | Float | Escala vertical.            |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getLayerRotate()
 
-Get the rotation angle of a specific layer.
+Obtenga el ángulo de rotación de una capa específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer | Integer | Índice de la capa del escenario.  |
 
-### Return
+### Devolver
 
-Returns float.
+Las devoluciones flotan.
 
 ---
 
 ## Suika.setLayerRotate()
 
-Set the rotation angle of a specific layer.
+Establece el ángulo de rotación de una capa específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| rot       | Float   | Rotation angle in radians. |
+| layer | Integer | Índice de la capa del escenario.  |
+| rot | Float | Ángulo de rotación en radianes. |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getLayerDim()
 
-Get the dimming state of a specific layer.
+Obtenga el estado de atenuación de una capa específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer | Integer | Índice de la capa del escenario.  |
 
-### Return
+### Devolver
 
-Returns boolean.
+Devuelve booleano.
 
 ---
 
 ## Suika.setLayerDim()
 
-Set the dimming state of a specific layer.
+Establece el estado de atenuación de una capa específica.
 
-### Parameters (Dictionary) (Set)
+### Parámetros (Diccionario) (Establecer)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| dim       | Boolean | Whether to dim the layer.  |
+| layer | Integer | Índice de la capa del escenario.  |
+| dim | Boolean | Ya sea para atenuar la capa.  |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getLayerAlpha()
 
-Get the transparency of a specific layer.
+Consigue la transparencia de una capa específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer | Integer | Índice de la capa del escenario.  |
 
-### Return
+### Devolver
 
-Returns integer.
+Devuelve un número entero.
 
 ---
 
 ## Suika.setLayerAlpha()
 
-Set the transparency of a specific layer.
+Establece la transparencia de una capa específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| alpha     | Integer | Alpha value (0-255).       |
+| layer | Integer | Índice de la capa del escenario.  |
+| alpha | Integer | Valor alfa (0-255).       |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.setLayerBlend()
 
-Set the blending mode for a layer.
+Establece el modo de fusión para una capa.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| blend     | Integer | Blend mode (Alpha, Add, Sub). |
+| layer | Integer | Índice de la capa del escenario.  |
+| blend | Integer | Modo de fusión (Alfa, Agregar, Sub). |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.setLayerFile()
 
-Set a file to be displayed on a layer.
+Configure un archivo para que se muestre en una capa.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| file_name | String  | Path to the image file.    |
+| layer | Integer | Índice de la capa del escenario.  |
+| file_name | String | Ruta al archivo de imagen.    |
 
-### Return
+### Devolver
 
-Boolean that represents success or failure.
+Booleano que representa el éxito o el fracaso.
 
 ---
 
 ## Suika.setLayerFrame()
 
-Set the frame index for eye blinking and lip synchronization.
+Establezca el índice de cuadros para el parpadeo y la sincronización de labios.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| frame     | Integer | Frame index.               |
+| layer | Integer | Índice de la capa del escenario.  |
+| frame | Integer | Índice de cuadros.               |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getLayerText()
 
-Get the string displayed on a text layer.
+Obtenga la cadena mostrada en una capa de texto.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the text layer.   |
+| index | Integer | Índice de la capa de texto.   |
 
-### Return
+### Devolver
 
-Returns string.
+Devuelve una cadena.
 
 ---
 
 ## Suika.setLayerText()
 
-Set the string displayed on a text layer.
+Establece la cadena que se muestra en una capa de texto.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the text layer.   |
-| text      | String  | Text message to set.       |
+| index | Integer | Índice de la capa de texto.   |
+| text | String | Mensaje de texto para configurar.       |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getSysBtnIdleImage()
 
-Get the sysbtn idle image.
+Obtenga la imagen inactiva de sysbtn.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns an image object.
+Devuelve un objeto de imagen.
 
 ---
 
 ## Suika.getSysBtnHoverImage()
 
-Get the sysbtn hover image.
+Obtenga la imagen flotante de sysbtn.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns an image object.
+Devuelve un objeto de imagen.
 
 ---
 
 ## Suika.clearStageBasic()
 
-Clear the basic layers.
+Limpia las capas básicas.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns an image object.
+Devuelve un objeto de imagen.
 
 ---
 
 ## Suika.clearStage()
 
-Clear the stage and make it initial state.
+Despeja el escenario y conviértelo en estado inicial.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns an image object.
+Devuelve un objeto de imagen.
 
 ---
 
 ## Suika.chposToLayer()
 
-Convert a character position to a stage layer index.
+Convierta la posición de un carácter en un índice de capa de escenario.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| chpos     | Integer | Character position.   |
+| chpos | Integer | Posición del personaje.   |
 
-### Return
+### Devolver
 
-Returns an integer.
+Devuelve un número entero.
 
 ---
 
 ## Suika.chposToEyeLayer()
 
-Convert a character position to a stage layer index (character eye).
+Convierte la posición de un personaje en un índice de capa de escenario (ojo de personaje).
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| chpos     | Integer | Character position.   |
+| chpos | Integer | Posición del personaje.   |
 
-### Return
+### Devolver
 
-Returns an integer.
+Devuelve un número entero.
 
 ---
 
 ## Suika.chposToLipLayer()
 
-Convert a character position to a stage layer index (character lip).
+Convierte la posición de un personaje en un índice de capa de escenario (labio del personaje).
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| chpos     | Integer | Character position.   |
+| chpos | Integer | Posición del personaje.   |
 
-### Return
+### Devolver
 
-Returns an integer.
+Devuelve un número entero.
 
 ---
 
 ## Suika.layerToChpos()
 
-Convert a stage layer index to a character position.
+Convierta un índice de capa de escenario en una posición de carácter.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description           |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------|
-| layer     | Integer | Layer index.          |
+| layer | Integer | Índice de capas.          |
 
-### Return
+### Devolver
 
-Returns an integer.
+Devuelve un número entero.
 
 ---
 
 ## Suika.renderStage()
 
-Render the stage with all stage layers.
+Renderiza el escenario con todas las capas del escenario.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.startFade()
 
-Start a transition effect.
+Inicia un efecto de transición.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                  |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------------------------|
-| desc      | Array   | Fade descriptor.                             |
-| method    | String  | Fading method.                               |
-| time      | Float   | Duration in seconds.                         |
-| ruleImage | Object  | Rule image object (optional).                |
+| desc | Array | Descriptor de desvanecimiento.                             |
+| method | String | Método de desvanecimiento.                               |
+| time | Float | Duración en segundos.                         |
+| ruleImage | Object | Objeto de imagen de regla (opcional).                |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.getShakeOffset()
 
-Get the offset for the shake command.
+Obtenga el desplazamiento para el comando de agitación.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-An object that contains:
-* x
+Un objeto que contiene:
+*x
 * y
 
 ---
 
 ## Suika.setShakeOffset()
 
-Set the offset for the shake command.
+Establezca el desplazamiento para el comando de agitación.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description    |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------|
-| x         | Integer | X offset.      |
-| y         | Integer | Y offset.      |
+| x | Integer | Desplazamiento X.      |
+| y | Integer | Desplazamiento Y.      |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.isFadeRunning()
 
-Check if the fading is running.
+Compruebe si el desvanecimiento se está ejecutando.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.finishFade()
 
-Immediately end the fading effect.
+Termine inmediatamente el efecto de desvanecimiento.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.setChNameMapping()
 
-Specify a character name index for a character position.
+Especifique un índice de nombre de carácter para una posición de carácter.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter   | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-------------|---------|----------------------------|
-| chpos       | Integer | Character position.        |
-| chNameIndex | Integer | Character name index.      |
+| chpos | Integer | Posición del personaje.        |
+| chNameIndex | Integer | Índice de nombres de personajes.      |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getTalkingChpos()
 
-Get the position of the character currently speaking.
+Obtén la posición del personaje que habla actualmente.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns an integer.
+Devuelve un número entero.
 
 ---
 
 ## Suika.setChTalking()
 
-Set the talking character.
+Establece el personaje parlante.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| chpos     | Integer | Character position.        |
+| chpos | Integer | Posición del personaje.        |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getTalkingChpos()
 
-Get the talker character position.
+Consigue la posición del personaje hablador.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns an integer.
+Devuelve un número entero.
 
 ---
 
 ## Suika.updateChDimByTalkingCh()
 
-Automatically update character dimming based on who is speaking.
+Actualice automáticamente la atenuación de caracteres según quién esté hablando.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.forceChDim()
 
-Update the character dimming manually.
+Actualice el carácter atenuando manualmente.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| chpos     | Integer | Character position.        |
-| dim       | Boolean | Dim or not.                |
+| chpos | Integer | Posición del personaje.        |
+| dim | Boolean | Oscuro o no.                |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getChDim()
 
-Get the dimming state.
+Obtenga el estado de atenuación.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| chpos     | Integer | Character position.        |
+| chpos | Integer | Posición del personaje.        |
 
-### Return
+### Devolver
 
-Returns a boolean.
+Devuelve un valor booleano.
 
 ---
 
 ## Suika.fillNameBox()
 
-Fill the name box by the name box image.
+Complete el cuadro de nombre con la imagen del cuadro de nombre.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getNameBoxRect()
 
-Get the name box position and size.
+Obtenga la posición y el tamaño del cuadro de nombre.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Object.
+Objeto.
 
-* x
+*x
 * y
-* w
-* h
+*w
+*h
 
 ---
 
 ## Suika.showNameBox()
 
-Show or hides the name box.
+Muestra u oculta el cuadro de nombre.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| show      | Boolean | Show or hide.              |
+| show | Boolean | Mostrar u ocultar.              |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.fillMessageBox()
 
-Fill the message box by the message box image.
+Complete el cuadro de mensaje con la imagen del cuadro de mensaje.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.showMessageBox()
 
-Show or hide the message box.
+Mostrar u ocultar el cuadro de mensaje.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| show      | Boolean | Whether to show the box.   |
+| show | Boolean | Si mostrar la caja.   |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getMessageBoxRect()
 
-Get the message box rect.
+Obtenga el cuadro de mensaje correcto.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-An object that contains:
+Un objeto que contiene:
 * `x`
 * `y`
 * `w`
@@ -2572,64 +2573,64 @@ An object that contains:
 
 ## Suika.setClickPosition()
 
-Set the click animation position.
+Establezca la posición de la animación del clic.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| x         | Integer | X position.                |
-| y         | Integer | Y position.                |
+| x | Integer | Posición X.                |
+| y | Integer | Posición Y.                |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.showClick()
 
-Show or hide the click animation.
+Muestra u oculta la animación del clic.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| show      | Boolean | Show or hide.              |
+| show | Boolean | Mostrar u ocultar.              |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.setClickIndex()
 
-Set the index of the click animation frame.
+Establezca el índice del cuadro de animación del clic.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Frame index.               |
+| index | Integer | Índice de cuadros.               |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getClickRect()
 
-Get the click animation rect.
+Obtenga la animación de clic correcta.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-An object that contains:
+Un objeto que contiene:
 * `x`
 * `y`
 * `w`
@@ -2639,65 +2640,65 @@ An object that contains:
 
 ## Suika.fillChooseBoxIdleImage()
 
-Fill a choose box idle layer by the choose box idle image.
+Rellene una capa inactiva del cuadro de elección con la imagen inactiva del cuadro de elección.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Choose box index.          |
+| index | Integer | Elija el índice del cuadro.          |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.fillChooseBoxHoverImage()
 
-Fill a choose box hover layer by the choose box hover image.
+Rellene una capa de selección de cuadro de desplazamiento con la imagen de selección de cuadro de desplazamiento.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Choose box index.          |
+| index | Integer | Elija el índice del cuadro.          |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.showChoosebox()
 
-Show or hide a choice box.
+Mostrar u ocultar un cuadro de elección.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter  | Type    | Description                 |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |------------|---------|-----------------------------|
-| index      | Integer | Choice box index. (`0`-`7`) |
-| showIdle   | Boolean | Show idle state.            |
-| showHover  | Boolean | Show hover state.           |
+| index | Integer | Índice del cuadro de elección. (`0`-`7`) |
+| showIdle | Boolean | Mostrar estado inactivo.            |
+| showHover | Boolean | Mostrar estado de desplazamiento.           |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getChooseBoxRect()
 
-Get the choose box rect.
+Obtenga el cuadro de elección correcto.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-An object that contains:
+Un objeto que contiene:
 * `x`
 * `y`
 * `w`
@@ -2707,2167 +2708,2167 @@ An object that contains:
 
 ## Suika.showAutoModeBanner()
 
-Show or hide the auto mode banner.
+Muestra u oculta el banner del modo automático.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter  | Type    | Description                 |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |------------|---------|-----------------------------|
-| show       | Boolean | Show or hide.               |
+| show | Boolean | Mostrar u ocultar.               |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.showSkipModeBanner()
 
-Show or hide the skip mode banner.
+Muestra u oculta el banner del modo de omisión.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter  | Type    | Description                 |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |------------|---------|-----------------------------|
-| show       | Boolean | Show or hide.               |
+| show | Boolean | Mostrar u ocultar.               |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.renderImage()
 
-Perform direct rendering of an image to the screen.
+Realice la representación directa de una imagen en la pantalla.
 
-Note that you should consider using the stage layers for normal rendering.
-This API is useful for effects.
+Tenga en cuenta que debería considerar el uso de las capas del escenario para el renderizado normal.
+Esta API es útil para efectos.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Omissible    | Type    | Description                                |
+| Parﾃ｡metro | Omisible | Tipo | Descripciﾃｳn |
 |-----------|--------------|---------|--------------------------------------------|
-| dstLeft   | No           | Integer | Destination top-left X position.           |
-| dstTop    | No           | Integer | Destination top-left Y position.           |
-| image     | No           | Object  | Image.                                     |
-| srcLeft   | No           | Integer | Source top-left X position.                |
-| srcTop    | No           | Integer | Source top-left Y position.                |
-| srcWidth  | No           | Integer | Source width.                              |
-| srcHeight | No           | Integer | Source height.                             |
-| alpha     | No           | Integer | Alpha value. (`0`-`255`)                   |
-| blend     | No           | Integer | Blend type.                                |
+| dstLeft | No | Integer | Posición X superior izquierda de destino.           |
+| dstTop | No | Integer | Posición Y superior izquierda de destino.           |
+| image | No | Object | Image. |
+| srcLeft | No | Integer | Fuente de la posición X superior izquierda.                |
+| srcTop | No | Integer | Fuente de la posición Y superior izquierda.                |
+| srcWidth | No | Integer | Ancho de fuente.                              |
+| srcHeight | No | Integer | Altura de la fuente.                             |
+| alpha | No | Integer | Valor alfa. (`0`-`255`) |
+| blend | No | Integer | Tipo de mezcla.                                |
 
-### Blend Types
+### Tipos de mezcla
 
-| Name                 | Description       |
+| Nombre | Descripciﾃｳn |
 |----------------------|-------------------|
-| Suika.BLEND_ALPHA    | Alpha blending.   |
-| Suika.BLEND_ADD      | Add blending.     |
-| Suika.BLEND_SUB      | Sub blending.     |
+| Suika.BLEND_ALPHA | Mezcla alfa.   |
+| Suika.BLEND_ADD | Agrega la mezcla.     |
+| Suika.BLEND_SUB | Submezcla.     |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.renderImage3d()
 
-Perform direct rendering of an image to the screen with 3D transformation.
+Realice una representación directa de una imagen en la pantalla con transformación 3D.
 
-Note that you should consider using the stage layers for normal rendering.
-This API is useful for effects.
+Tenga en cuenta que debería considerar el uso de las capas del escenario para el renderizado normal.
+Esta API es útil para efectos.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Omissible    | Type    | Description                                |
+| Parﾃ｡metro | Omisible | Tipo | Descripciﾃｳn |
 |-----------|--------------|---------|--------------------------------------------|
-| x1        | No           | Integer | Destination vertex 1 X position.           |
-| y1        | No           | Integer | Destination vertex 1 Y position.           |
-| x2        | No           | Integer | Destination vertex 2 X position.           |
-| y2        | No           | Integer | Destination vertex 2 Y position.           |
-| x3        | No           | Integer | Destination vertex 3 X position.           |
-| y3        | No           | Integer | Destination vertex 3 Y position.           |
-| x4        | No           | Integer | Destination vertex 4 X position.           |
-| y4        | No           | Integer | Destination vertex 4 Y position.           |
-| tex       | No           | Object  | Image.                                     |
-| srcLeft   | No           | Integer | Source top-left X position.                |
-| srcTop    | No           | Integer | Source top-left Y position.                |
-| srcWidth  | No           | Integer | Source width.                              |
-| srcHeight | No           | Integer | Source height.                             |
-| alpha     | No           | Integer | Alpha value. (`0`-`255`)                   |
+| x1 | No | Integer | Vértice de destino 1 posición X.           |
+| y1 | No | Integer | Vértice de destino 1 posición Y.           |
+| x2 | No | Integer | Vértice de destino 2 posición X.           |
+| y2 | No | Integer | Vértice de destino 2 Posición Y.           |
+| x3 | No | Integer | Posición del vértice de destino 3 X.           |
+| y3 | No | Integer | Vértice de destino 3 Posición Y.           |
+| x4 | No | Integer | Posición del vértice de destino 4 X.           |
+| y4 | No | Integer | Vértice de destino 4 posición Y.           |
+| tex | No | Object | Image. |
+| srcLeft | No | Integer | Fuente de la posición X superior izquierda.                |
+| srcTop | No | Integer | Fuente de la posición Y superior izquierda.                |
+| srcWidth | No | Integer | Ancho de fuente.                              |
+| srcHeight | No | Integer | Altura de la fuente.                             |
+| alpha | No | Integer | Valor alfa. (`0`-`255`) |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.startKirakira()
 
-Start Kirakira effect.
+Inicia el efecto Kirakira.
 
-Kirakira effect is an animation that is shown at the screen position where the mouse cursor is clicked.
+El efecto Kirakira es una animación que se muestra en la posición de la pantalla donde se hace clic con el cursor del mouse.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.renderKirakira()
 
-Render Kirakira effect.
+Renderiza el efecto Kirakira.
 
 ---
 
 ## Suika.setMixerInputFile()
 
-Play a sound file on a specific mixer track.
+Reproduce un archivo de sonido en una pista del mezclador específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Omissible    | Type    | Description                                |
+| Parﾃ｡metro | Omisible | Tipo | Descripciﾃｳn |
 |-----------|--------------|---------|--------------------------------------------|
-| track     | No           | String  | Mixer track name.                          |
-| file      | No           | String  | Path to the sound file.                    |
-| isLooped  | Yes(`false`) | Boolean | Whether to loop the playback.              |
+| track | No | String | Nombre de la pista del mezclador.                          |
+| file | No | String | Ruta al archivo de sonido.                    |
+| isLooped | Yes(__PH8__) | Boolean | Ya sea para repetir la reproducción.              |
 
-### Track Names
+### Nombres de pistas
 
-| Name   | Description              |
+| Nombre | Descripciﾃｳn |
 |--------|--------------------------|
-| bgm    | Background music track.  |
-| se     | Sound effect track.      |
-| voice  | Character voice track.   |
-| sys    | System sound track.      |
+| bgm | Pista de música de fondo.  |
+| se | Pista de efectos de sonido.      |
+| voice | Pista de voz del personaje.   |
+| sys | Pista de sonido del sistema.      |
 
-### Return
+### Devolver
 
-Boolean that represents whether the file was opened successfully.
+Booleano que representa si el archivo se abrió correctamente.
 
 ---
 
 ## Suika.setMixerVolume()
 
-Set the volume for a specific mixer track.
+Establezca el volumen para una pista del mezclador específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| track     | String  | Mixer track name.                          |
-| vol       | Float   | Volume level (0.0 to 1.0).                 |
-| span      | Float   | Fade duration in seconds.                  |
+| track | String | Nombre de la pista del mezclador.                          |
+| vol | Float | Nivel de volumen (0,0 a 1,0).                 |
+| span | Float | Duración del desvanecimiento en segundos.                  |
 
-### Track Names
+### Nombres de pistas
 
-| Name   | Description              |
+| Nombre | Descripciﾃｳn |
 |--------|--------------------------|
-| bgm    | Background music track.  |
-| se     | Sound effect track.      |
-| voice  | Character voice track.   |
-| sys    | System sound track.      |
+| bgm | Pista de música de fondo.  |
+| se | Pista de efectos de sonido.      |
+| voice | Pista de voz del personaje.   |
+| sys | Pista de sonido del sistema.      |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getMixerVolume()
 
-Get the volume for a specific mixer track.
+Obtenga el volumen de una pista del mezclador específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| track     | String  | Mixer track name.                          |
-| volume    | Float   | Volume level (0.0 to 1.0).                 |
-| span      | Float   | Fade duration in seconds.                  |
+| track | String | Nombre de la pista del mezclador.                          |
+| volume | Float | Nivel de volumen (0,0 a 1,0).                 |
+| span | Float | Duración del desvanecimiento en segundos.                  |
 
-### Track Names
+### Nombres de pistas
 
-| Name   | Description              |
+| Nombre | Descripciﾃｳn |
 |--------|--------------------------|
-| bgm    | Background music track.  |
-| se     | Sound effect track.      |
-| voice  | Character voice track.   |
-| sys    | System sound track.      |
+| bgm | Pista de música de fondo.  |
+| se | Pista de efectos de sonido.      |
+| voice | Pista de voz del personaje.   |
+| sys | Pista de sonido del sistema.      |
 
-### Return
+### Devolver
 
-Returns float.
+Las devoluciones flotan.
 
 ---
 
 ## Suika.setMasterVolume()
 
-Set the master volume affecting all tracks.
+Establece el volumen maestro que afecta a todas las pistas.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| volume    | Float   | Master volume level (0.0 to 1.0).          |
+| volume | Float | Nivel de volumen maestro (0,0 a 1,0).          |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getMasterVolume()
 
-Get the master volume affecting all tracks.
+Obtén el volumen maestro que afecta a todas las pistas.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns float.
+Las devoluciones flotan.
 
 ---
 
 ## Suika.setMixerGlobalVolume()
 
-Set the global volume for a track (often used for config settings).
+Establece el volumen global de una pista (a menudo se utiliza para ajustes de configuración).
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| track     | String  | Mixer track name.                          |
-| vol       | Float   | Global volume level.                       |
+| track | String | Nombre de la pista del mezclador.                          |
+| vol | Float | Nivel de volumen global.                       |
 
-### Track Names
+### Nombres de pistas
 
-| Name   | Description              |
+| Nombre | Descripciﾃｳn |
 |--------|--------------------------|
-| bgm    | Background music track.  |
-| se     | Sound effect track.      |
-| voice  | Character voice track.   |
-| sys    | System sound track.      |
+| bgm | Pista de música de fondo.  |
+| se | Pista de efectos de sonido.      |
+| voice | Pista de voz del personaje.   |
+| sys | Pista de sonido del sistema.      |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getMixerGlobalVolume()
 
-Get the global volume for a track (often used for config settings).
+Obtenga el volumen global de una pista (a menudo utilizado para ajustes de configuración).
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| track     | String  | Mixer track name.                          |
+| track | String | Nombre de la pista del mezclador.                          |
 
-### Track Names
+### Nombres de pistas
 
-| Name   | Description              |
+| Nombre | Descripciﾃｳn |
 |--------|--------------------------|
-| bgm    | Background music track.  |
-| se     | Sound effect track.      |
-| voice  | Character voice track.   |
-| sys    | System sound track.      |
+| bgm | Pista de música de fondo.  |
+| se | Pista de efectos de sonido.      |
+| voice | Pista de voz del personaje.   |
+| sys | Pista de sonido del sistema.      |
 
-### Return
+### Devolver
 
-Returns float.
+Las devoluciones flotan.
 
 ---
 
 ## Suika.setCharacterVolume()
 
-Set the volume for a specific character's voice.
+Establece el volumen de la voz de un personaje específico.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| index     | Integer | Character name index.                      |
-| vol       | Float   | Volume level.                              |
+| index | Integer | Índice de nombres de personajes.                      |
+| vol | Float | Nivel de volumen.                              |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getCharacterVolume()
 
-Get the volume for a specific character's voice.
+Obtén el volumen de la voz de un personaje específico.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| ch_index  | Integer | Character name index.                      |
+| ch_index | Integer | Índice de nombres de personajes.                      |
 
-### Return
+### Devolver
 
-Get returns float.
+Obtenga retornos flotantes.
 
 ---
 
 ## Suika.isMixerSoundFinished()
 
-Check if the playback on a specific track is finished.
+Compruebe si ha finalizado la reproducción de una pista específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| track     | Integer | Mixer track index.                         |
+| track | Integer | Índice de pistas del mezclador.                         |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.getTrackFileName()
 
-Get the file name of the sound currently loaded in a track.
+Obtenga el nombre del archivo del sonido cargado actualmente en una pista.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| track     | Integer | Mixer track index.                         |
+| track | Integer | Índice de pistas del mezclador.                         |
 
-### Return
+### Devolver
 
-String representing the file path.
+Cadena que representa la ruta del archivo.
 
 ---
 
 ## Suika.applyCharacterVolume()
 
-Apply a character's specific volume setting to the VOICE track.
+Aplique la configuración de volumen específica de un personaje a la pista de VOZ.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| ch        | Integer | Character name index.                      |
+| ch | Integer | Índice de nombres de personajes.                      |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.enableSysBtn()
 
-Control the system button.
+Controla el botón del sistema.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| isEnabled | Boolean | Enable the system button or not.           |
+| isEnabled | Boolean | Habilite el botón del sistema o no.           |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.isSysBtnEnabled()
 
-Check if the system button is enabled.
+Compruebe si el botón del sistema está habilitado.
 
-### Parameters
+### Parámetros
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns a boolean value. 
+Devuelve un valor booleano.
 
 ---
 
 ## Suika.updateSysBtnState()
 
-Update the mouse tracking for the system button.
+Actualice el seguimiento del mouse para el botón del sistema.
 
-### Parameters
+### Parámetros
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.isSysBtnPointed()
 
-Check if the system button is pointed.
+Compruebe si el botón del sistema apunta.
 
-### Parameters
+### Parámetros
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns a boolean value.
+Devuelve un valor booleano.
 
 ---
 
 ## Suika.isSysBtnClicked()
 
-Check if the system button is clicked.
+Compruebe si se hace clic en el botón del sistema.
 
-### Parameters
+### Parámetros
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns a boolean value.
+Devuelve un valor booleano.
 
 ---
 
 ## Suika.drawTextOnLayer()
 
-Draw a text on a specified layer.
+Dibuja un texto en una capa específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter    | Type    | Description               |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |--------------|---------|---------------------------|
-| layer        | Integer | Target stage layer index. |
-| fontType     | Integer | Font selection index.     |
-| fontSize     | Integer | Size of the font.         |
-| color        | Integer | Color.                    |
-| outlineWidth | Integer | Outline width.            |
-| outlineColor | Integer | Outline color.            |
-| lineMargin   | Integer | Line margin.              |
-| charMargin   | Integer | Character margin.         |
-| x            | Integer | Bounding box X position.  |
-| y            | Integer | Bounding box Y position.  |
-| width        | Integer | Bounding box width.       |
-| height       | Integer | Bounding box height.      |
-| text         | String  | Text.                     |
+| layer | Integer | Índice de capa de etapa de destino. |
+| fontType | Integer | Índice de selección de fuentes.     |
+| fontSize | Integer | Tamaño de la fuente.         |
+| color | Integer | Color. |
+| outlineWidth | Integer | Ancho del contorno.            |
+| outlineColor | Integer | Color del contorno.            |
+| lineMargin | Integer | Margen de línea.              |
+| charMargin | Integer | Margen de carácter.         |
+| x | Integer | Posición X del cuadro delimitador.  |
+| y | Integer | Posición Y del cuadro delimitador.  |
+| width | Integer | Ancho del cuadro delimitador.       |
+| height | Integer | Altura del cuadro delimitador.      |
+| text | String | Text. |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.getStringWidth()
 
-Get the total width of a UTF-8 string.
+Obtenga el ancho total de una cadena UTF-8.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description            |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|------------------------|
-| fontType  | Integer | Font selection index.  |
-| fontSize  | Integer | Size of the font.      |
-| text      | String  | Text.                  |
+| fontType | Integer | Índice de selección de fuentes.  |
+| fontSize | Integer | Tamaño de la fuente.      |
+| text | String | Text. |
 
-### Return
+### Devolver
 
-Integer value of the width in pixels.
+Valor entero del ancho en píxeles.
 
 ---
 
 ## Suika.getStringHeight()
 
-Get the total height of a UTF-8 string.
+Obtenga la altura total de una cadena UTF-8.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description            |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|------------------------|
-| fontType  | Integer | Font selection index.  |
-| fontSize  | Integer | Size of the font.      |
-| text      | String  | Text.                  |
+| fontType | Integer | Índice de selección de fuentes.  |
+| fontSize | Integer | Tamaño de la fuente.      |
+| text | String | Text. |
 
-### Return
+### Devolver
 
-Integer value of the height in pixels.
+Valor entero de la altura en píxeles.
 
 ---
 
 ## Suika.drawGlyph()
 
-Draw a single glyph onto an image.
+Dibuja un solo glifo en una imagen.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter     | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |---------------|---------|--------------------------------------------|
-| img           | Object  | Target image.                              |
-| font_type     | Integer | Font selection index.                      |
-| font_size     | Integer | Rendering font size.                       |
-| base_font_size| Integer | Base font size for metrics.                |
-| outline_size  | Integer | Width of the outline.                      |
-| x             | Integer | X coordinate.                              |
-| y             | Integer | Y coordinate.                              |
-| color         | Pixel   | Main text color.                           |
-| outline_color | Pixel   | Outline color.                             |
-| codepoint     | Integer | UTF-32 code point.                         |
-| is_dim        | Boolean | Whether to apply dimming.                  |
+| img | Object | Imagen de destino.                              |
+| font_type | Integer | Índice de selección de fuentes.                      |
+| font_size | Integer | Tamaño de fuente de renderizado.                       |
+| base_font_size| Integer | Tamaño de fuente base para métricas.                |
+| outline_size | Integer | Ancho del contorno.                      |
+| x | Integer | Coordenada X.                              |
+| y | Integer | Coordenada Y.                              |
+| color | Pixel | Color del texto principal.                           |
+| outline_color | Pixel | Color del contorno.                             |
+| codepoint | Integer | Punto de código UTF-32.                         |
+| is_dim | Boolean | Ya sea para aplicar atenuación.                  |
 
-### Return
+### Devolver
 
-Boolean that represents success.
+Booleano que representa el éxito.
 
 ---
 
 ## Suika.createDrawMsg()
 
-Create a complex message drawing context for high-level text rendering.
+Cree un contexto de dibujo de mensajes complejo para la representación de texto de alto nivel.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter      | Type     | Description            |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |----------------|----------|------------------------|
-| image          | Integer  | Destination image.     |
-| text           | String   | Message to draw.       |
-| fontType       | Integer  | Font selection.        |
-| fontSize       | Integer  | Font size.             |
-| baseFontSize   | Integer  | Base font size.        |
-| rubySize       | Integer  | Ruby size.             |
-| outlineSize    | Integer  | Outline width.         |
-| penX           | Integer  | Pen X position.        |
-| penY           | Integer  | Pen Y position.        |
-| areaWidth      | Integer  | Draw area width.       |
-| areaHeight     | Integer  | Draw area height.      |
-| leftMargin     | Integer  | Left margin.           |
-| rightMargin    | Integer  | Right margin.          |
-| topMargin      | Integer  | Top margin.            |
-| bottomMargin   | Integer  | Bottom margin.         |
-| lineMargin     | Integer  | Line margin.           |
-| charMargin     | Integer  | Character margin.      |
-| color          | Integer  | Color.                 |
-| outlineColor   | Integer  | Outline color.         |
-| bgColor        | Integer  | Background color.      |
-| fillBg         | Boolean  | Fill background?       |
-| dim            | Boolean  | Dim?                   |
-| ignoreLF       | Boolean  | Ignore LF?             |
-| ignoreFont     | Boolean  | Ignore font change?    |
-| ignoreOutline  | Boolean  | Ignore outline change? |
-| ignoreColor    | Boolean  | Ignore color change?   |
-| ignoreSize     | Boolean  | Ignore size change?    |
-| ignorePosition | Boolean  | Ignore cursor change?  |
-| ignoreRuby     | Boolean  | Ignore ruby?           |
-| ignoreWait     | Boolean  | Ignore inline wait?    |
-| inlineWaitHook | Function | Inline wait hook.      |
-| tategaki       | Boolean  | Use tategaki?          |
+| image | Integer | Imagen de destino.     |
+| text | String | Mensaje para dibujar.       |
+| fontType | Integer | Selección de fuentes.        |
+| fontSize | Integer | Tamaño de fuente.             |
+| baseFontSize | Integer | Tamaño de fuente base.        |
+| rubySize | Integer | Tamaño rubí.             |
+| outlineSize | Integer | Ancho del contorno.         |
+| penX | Integer | Posición del bolígrafo X.        |
+| penY | Integer | Posición del bolígrafo Y.        |
+| areaWidth | Integer | Dibujar el ancho del área.       |
+| areaHeight | Integer | Dibujar la altura del área.      |
+| leftMargin | Integer | Margen izquierdo.           |
+| rightMargin | Integer | Margen derecho.          |
+| topMargin | Integer | Margen superior.            |
+| bottomMargin | Integer | Margen inferior.         |
+| lineMargin | Integer | Margen de línea.           |
+| charMargin | Integer | Margen de carácter.      |
+| color | Integer | Color. |
+| outlineColor | Integer | Color del contorno.         |
+| bgColor | Integer | Color de fondo.      |
+| fillBg | Boolean | ¿Rellenar fondo?       |
+| dim | Boolean | ¿Oscuro?                   |
+| ignoreLF | Boolean | ¿Ignorar LF?             |
+| ignoreFont | Boolean | ¿Ignorar el cambio de fuente?    |
+| ignoreOutline | Boolean | ¿Ignorar el cambio de esquema? |
+| ignoreColor | Boolean | ¿Ignorar el cambio de color?   |
+| ignoreSize | Boolean | ¿Ignorar el cambio de tamaño?    |
+| ignorePosition | Boolean | ¿Ignorar el cambio de cursor?  |
+| ignoreRuby | Boolean | ¿Ignorar a Ruby?           |
+| ignoreWait | Boolean | ¿Ignorar la espera en línea?    |
+| inlineWaitHook | Function | Gancho de espera en línea.      |
+| tategaki | Boolean | ¿Usar tategaki?          |
 
-### Return
+### Devolver
 
-A message drawing context object.
+Un objeto de contexto de dibujo de mensaje.
 
 ---
 
 ## Suika.destroyDrawMsg()
 
-Destroy a message drawing context.
+Destruir un contexto de dibujo de mensaje.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter      | Type     | Description            |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |----------------|----------|------------------------|
-| context        | Object   | Draw message context.  |
+| context | Object | Dibujar el contexto del mensaje.  |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.countDrawMsgChars()
 
-Count the remaining characters excluding escape sequences.
+Cuente los caracteres restantes excluyendo las secuencias de escape.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter      | Type     | Description            |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |----------------|----------|------------------------|
-| context        | Object   | Draw message context.  |
+| context | Object | Dibujar el contexto del mensaje.  |
 
-### Return
+### Devolver
 
-Returns an integer.
+Devuelve un número entero.
 
 ---
 
 ## Suika.drawMessage()
 
-Draw characters in a message up to (maxChars) characters.
+Dibuja caracteres en un mensaje hasta (maxChars) caracteres.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter      | Type     | Description            |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |----------------|----------|------------------------|
-| context        | Object   | Draw message context.  |
-| maxChars       | Integer  | Max chars.             |
+| context | Object | Dibujar el contexto del mensaje.  |
+| maxChars | Integer | Máximo de caracteres.             |
 
-### Return
+### Devolver
 
-Returns an integer that indicates the count of characters drawn in the call.
+Devuelve un número entero que indica el recuento de caracteres dibujados en la llamada.
 
 ---
 
 ## Suika.getDrawMsgPenPosition()
 
-Get the current pen position from a drawing context.
+Obtenga la posición actual del lápiz a partir de un contexto de dibujo.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| context   | Object  | Drawing context.                           |
+| context | Object | Contexto del dibujo.                           |
 
-### Return
+### Devolver
 
-An object containing `x` and `y`.
+Un objeto que contiene `x` y `y`.
 
 ---
 
 ## Suika.isEscapeSequenceChar()
 
-Check if a character is part of an escape sequence.
+Comprueba si un personaje es parte de una secuencia de escape.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| c         | String | Character to check.                        |
+| c | String | Carácter a comprobar.                        |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.moveToTagFile()
 
-Load a new tag file and move the execution point to its beginning.
+Cargue un nuevo archivo de etiquetas y mueva el punto de ejecución al principio.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| file      | String | Path to the .novel or script file. |
+| file | String | Ruta al archivo .novel o script. |
 
-### Return
+### Devolver
 
-Boolean that represents success or failure.
+Booleano que representa el éxito o el fracaso.
 
 ---
 
 ## Suika.getTagCount()
 
-Get the total number of tags in the current script file.
+Obtenga el número total de etiquetas en el archivo de script actual.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Integer representing the tag count.
+Entero que representa el recuento de etiquetas.
 
 ---
 
 ## Suika.moveToTagIndex()
 
-Move the execution pointer to a specific tag index.
+Mueva el puntero de ejecución a un índice de etiqueta específico.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Target tag index. |
+| index | Integer | Índice de etiquetas de destino. |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.moveToNextTag()
 
-Move the execution pointer to the very next tag.
+Mueva el puntero de ejecución a la siguiente etiqueta.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.moveToLabelTag()
 
-Jump to a specific label.
+Saltar a una etiqueta específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description             |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|-------------------------|
-| name      | String | Target label name.      |
+| name | String | Nombre de la etiqueta de destino.      |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.moveToMacroTag()
 
-Jump to a specific macro by name.
+Salta a una macro específica por nombre.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description             |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|-------------------------|
-| name      | String | Target macro name.      |
+| name | String | Nombre de la macro de destino.      |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.moveToElseTag()
 
-Jump to a correspoinding else/elseif/endif tag.
+Salta a la etiqueta else/elseif/endif correspondiente.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description             |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|-------------------------|
-| name      | String | Target macro name.      |
+| name | String | Nombre de la macro de destino.      |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.moveToEndIfTag()
 
-Jump to a correspoinding endif tag.
+Salta a la etiqueta endif correspondiente.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description             |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|-------------------------|
-| name      | String | Target macro name.      |
+| name | String | Nombre de la macro de destino.      |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.moveToEndMacroTag()
 
-Jump to a correspoinding endmacro tag.
+Salta a la etiqueta de macro final correspondiente.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description             |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|-------------------------|
-| name      | String | Target macro name.      |
+| name | String | Nombre de la macro de destino.      |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.getTagFileName()
 
-Get the current script file name current tag.
+Obtenga la etiqueta actual del nombre del archivo de script actual.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-String representing the file name.
+Cadena que representa el nombre del archivo.
 
 ---
 
 ## Suika.getTagName()
 
-Get the name of the current tag.
+Obtenga el nombre de la etiqueta actual.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-String representing the tag name.
+Cadena que representa el nombre de la etiqueta.
 
 ---
 
 ## Suika.getTagPropertyCount()
 
-Get the number of the properties of the current tag.
+Obtenga el número de propiedades de la etiqueta actual.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-String representing the name or value.
+Cadena que representa el nombre o valor.
 
 ---
 
 ## Suika.getTagPropertyName()
 
-Iterate through and retrieve the properties (arguments) of the current
-tag.
+Iterar y recuperar las propiedades (argumentos) del actual
+etiqueta.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description       |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-------------------|
-| index     | Integer | Property index.   |
+| index | Integer | Índice de propiedad.   |
 
-### Return
+### Devolver
 
-String representing the name.
+Cadena que representa el nombre.
 
 ---
 
 ## Suika.getTagPropertyValue()
 
-Iterate through and retrieve the properties (arguments) of the current
-tag.
+Iterar y recuperar las propiedades (argumentos) del actual
+etiqueta.
 
-### Parameters (Dictionary) (for PropertyName/Value)
+### Parámetros (Diccionario) (para Nombre/Valor de propiedad)
 
-| Parameter | Type    | Description       |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-------------------|
-| index     | Integer | Property index.   |
+| index | Integer | Índice de propiedad.   |
 
-### Return
+### Devolver
 
-String representing the value.
+Cadena que representa el valor.
 
 ---
 
 ## Suika.getTagArgBool()
 
-Get a specific argument of the current tag, with support for default
-values and optionality.
+Obtenga un argumento específico de la etiqueta actual, compatible con el valor predeterminado
+Valores y opcionalidad.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                       |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------------------|
-| name      | String  | Name of the argument.             |
-| omissible | Boolean | Whether the argument is optional. |
-| defVal    | Boolean | Default value if missing.         |
+| name | String | Nombre del argumento.             |
+| omissible | Boolean | Si el argumento es opcional. |
+| defVal | Boolean | Valor predeterminado si falta.         |
 
-### Return
+### Devolver
 
-The value of the argument in the requested type.
+El valor del argumento en el tipo solicitado.
 
 ---
 
 ## Suika.getTagArgInt()
 
-Get a specific argument of the current tag, with support for default
-values and optionality.
+Obtenga un argumento específico de la etiqueta actual, compatible con el valor predeterminado
+Valores y opcionalidad.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                       |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------------------|
-| name      | String  | Name of the argument.             |
-| omissible | Boolean | Whether the argument is optional. |
-| defVal    | Integer | Default value if missing.         |
+| name | String | Nombre del argumento.             |
+| omissible | Boolean | Si el argumento es opcional. |
+| defVal | Integer | Valor predeterminado si falta.         |
 
-### Return
+### Devolver
 
-The value of the argument in the requested type.
+El valor del argumento en el tipo solicitado.
 
 ---
 
 ## Suika.getTagArgFloat()
 
-Get a specific argument of the current tag, with support for default
-values and optionality.
+Obtenga un argumento específico de la etiqueta actual, compatible con el valor predeterminado
+Valores y opcionalidad.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                       |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------------------|
-| name      | String  | Name of the argument.             |
-| omissible | Boolean | Whether the argument is optional. |
-| defVal    | Float   | Default value if missing.         |
+| name | String | Nombre del argumento.             |
+| omissible | Boolean | Si el argumento es opcional. |
+| defVal | Float | Valor predeterminado si falta.         |
 
-### Return
+### Devolver
 
-The value of the argument in the requested type.
+El valor del argumento en el tipo solicitado.
 
 ---
 
 ## Suika.getTagArgString()
 
-Get a specific argument of the current tag, with support for default
-values and optionality.
+Obtenga un argumento específico de la etiqueta actual, compatible con el valor predeterminado
+Valores y opcionalidad.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                       |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-----------------------------------|
-| name      | String  | Name of the argument.             |
-| omissible | Boolean | Whether the argument is optional. |
-| defVal    | String  | Default value if missing.         |
+| name | String | Nombre del argumento.             |
+| omissible | Boolean | Si el argumento es opcional. |
+| defVal | String | Valor predeterminado si falta.         |
 
-### Return
+### Devolver
 
-The value of the argument in the requested type.
+El valor del argumento en el tipo solicitado.
 
 ---
 
 ## Suika.evaluateTag()
 
-Evaluate the property values of the current tag to expand inline
-variables. (`${varname}` form)
+Evaluar los valores de propiedad de la etiqueta actual para expandirla en línea
+variables. (formulario `${varname}`)
 
-Calling this API updates the cache for the property values.
+Llamar a esta API actualiza la caché de los valores de propiedad.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.pushTagStackIf()
 
-Manage the internal stack for `[if]` conditional blocks.
+Administre la pila interna para `[if]` bloques condicionales.
 
-This API marks the `if` block position for nested block processing.
+Esta API marca la posición del bloque `if` para el procesamiento de bloques anidados.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.popTagStackIf()
 
-Manage the internal stack for `if` conditional blocks.
+Administre la pila interna para `if` bloques condicionales.
 
-This API marks the end of `if` block for nested block processing.
+Esta API marca el final del bloque `if` para el procesamiento de bloques anidados.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.pushTagStackWhile()
 
-Manage the internal stack for loops (`while`).
+Administre la pila interna para bucles (`while`).
 
-This API marks the `while` block for nested block processing.
+Esta API marca el bloque `while` para el procesamiento de bloques anidados.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.popTagStackWhile()
 
-Manage the internal stack for loops (`while`).
+Administre la pila interna para bucles (`while`).
 
-This API marks the end of `while` block for nested block processing.
+Esta API marca el final del bloque `while` para el procesamiento de bloques anidados.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.pushTagStackFor()
 
-Manage the internal stack for loops (`for`).
+Administre la pila interna para bucles (`for`).
 
-This API marks the `for` block for nested block processing.
+Esta API marca el bloque `for` para el procesamiento de bloques anidados.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.popTagStackFor()
 
-Manage the internal stack for loops (`for`).
+Administre la pila interna para bucles (`for`).
 
-This API marks the end of `for` block for nested block processing.
+Esta API marca el final del bloque `for` para el procesamiento de bloques anidados.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.loadAnimeFromFile()
 
-Load an animation definition from a file and register it.
+Cargue una definición de animación desde un archivo y regístrela.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| file      | String  | Path to the anime file.                    |
-| reg_name  | String  | Registration name for the anime.           |
+| file | String | Ruta al archivo de anime.                    |
+| reg_name | String | Nombre de registro del anime.           |
 
-### Return
+### Devolver
 
-An array of boolean that indicate each layer is loaded or not.
+Una matriz de valores booleanos que indican que cada capa está cargada o no.
 
 ---
 
 ## Suika.newAnimeSequence()
 
-Begin describing a new animation sequence for a specific layer.
-This API is used for manually generated animations.
+Comience a describir una nueva secuencia de animación para una capa específica.
+Esta API se utiliza para animaciones generadas manualmente.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| layer     | Integer | Target stage layer index.                  |
+| layer | Integer | Índice de capa de etapa de destino.                  |
 
-### Return
+### Devolver
 
-Boolean that represents success.
+Booleano que representa el éxito.
 
 ---
 
 ## Suika.addAnimeSequencePropertyF()
 
-Add a float property (e.g., position, alpha) to the current anime sequence.
-This API is used for manually generated animations.
+Agregue una propiedad flotante (por ejemplo, posición, alfa) a la secuencia de anime actual.
+Esta API se utiliza para animaciones generadas manualmente.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| key       | String  | Property key (e.g., "x", "y", "a").        |
-| val       | Float   | Target value.                              |
+| key | String | Clave de propiedad (por ejemplo, "x", "y", "a").        |
+| val | Float | Valor objetivo.                              |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.addAnimeSequencePropertyI()
 
-Add an integer property (e.g., position, alpha) to the current anime sequence.
-This API is used for manually generated animations.
+Agregue una propiedad entera (por ejemplo, posición, alfa) a la secuencia de anime actual.
+Esta API se utiliza para animaciones generadas manualmente.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| key       | String  | Property key (e.g., "x", "y", "a").        |
-| val       | Integer | Target value.                              |
+| key | String | Clave de propiedad (por ejemplo, "x", "y", "a").        |
+| val | Integer | Valor objetivo.                              |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.startLayerAnime()
 
-Start the registered animation sequence for a specific layer.
+Inicie la secuencia de animación registrada para una capa específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| layer     | Integer | Target stage layer index.                  |
+| layer | Integer | Índice de capa de etapa de destino.                  |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isAnimeRunning()
 
-Check the overall animation status.
+Verifique el estado general de la animación.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isAnimeFinishedForLayer()
 
-Check if a specific layer's animation has ended.
+Compruebe si la animación de una capa específica ha finalizado.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Target stage layer index.  |
+| layer | Integer | Índice de capa de etapa de destino.  |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.updateAnimeFrame()
 
-Update the animation frame state. Usually called once per frame.
+Actualiza el estado del cuadro de animación. Generalmente se llama una vez por cuadro.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.loadEyeImageIfExists()
 
-Manage eye-blinking (eye-patch) image and animation for a character position.
+Administre imágenes y animaciones que parpadean (parche en el ojo) para la posición de un personaje.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| chpos     | Integer | Character position (Left, Center, etc.).   |
-| file      | String  | Path to the eye image file.                |
+| chpos | Integer | Posición del personaje (izquierda, centro, etc.).   |
+| file | String | Ruta al archivo de imagen del ojo.                |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.reloadEyeAnime()
 
-Restart the eye-blinking (eye-patch) animation for a character position.
+Reinicie la animación de parpadeo (parche) para la posición de un personaje.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| chpos     | Integer | Character position (Left, Center, etc.).   |
+| chpos | Integer | Posición del personaje (izquierda, centro, etc.).   |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.runLipAnime()
 
-Start lip-sync animation based on the message content for a character.
+Inicie una animación de sincronización de labios basada en el contenido del mensaje de un personaje.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| chpos     | Integer | Character position.                        |
-| text      | String  | The message text to sync with.             |
+| chpos | Integer | Posición del personaje.                        |
+| text | String | El texto del mensaje para sincronizar.             |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.stopLipAnime()
 
-Stop lip-sync animation.
+Detener la animación de sincronización de labios.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| chpos     | Integer | Character position.                        |
+| chpos | Integer | Posición del personaje.                        |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.clearLayerAnimeSequence()
 
-Clear animation sequences for a specific layer.
+Borrar secuencias de animación para una capa específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| layer     | Integer | Target stage layer index.  |
+| layer | Integer | Índice de capa de etapa de destino.  |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.clearAllAnimeSequence()
 
-Clear animation sequences for all layers.
+Borrar secuencias de animación para todas las capas.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.setVariableInt()
 
-Set a value to a local or global variable.
+Establezca un valor para una variable local o global.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description            |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|------------------------|
-| name      | String  | Name of the variable.  |
-| value     | Integer | Value to set           |
+| name | String | Nombre de la variable.  |
+| value | Integer | Valor a establecer |
 
-### Return
+### Devolver
 
-Boolean that represents success or failure.
+Booleano que representa el éxito o el fracaso.
 
 ---
 
 ## Suika.setVariableFloat()
 
-Set a value to a local or global variable.
+Establezca un valor para una variable local o global.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description             |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-------------------------|
-| name      | String  | Name of the variable.   |
-| value     | Float   | Value to set            |
+| name | String | Nombre de la variable.   |
+| value | Float | Valor a establecer |
 
-### Return
+### Devolver
 
-Boolean that represents success or failure.
+Booleano que representa el éxito o el fracaso.
 
 ---
 
 ## Suika.setVariableString()
 
-Set a value to a local or global variable.
+Establezca un valor para una variable local o global.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description             |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|-------------------------|
-| name      | String  | Name of the variable.   |
-| value     | String  | Value to set            |
+| name | String | Nombre de la variable.   |
+| value | String | Valor a establecer |
 
-### Return
+### Devolver
 
-Boolean that represents success or failure.
+Booleano que representa el éxito o el fracaso.
 
 ---
 
 ## Suika.getVariableInt()
 
-Get the current value of a variable.
+Obtener el valor actual de una variable.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| name      | String | Name of the variable.                      |
+| name | String | Nombre de la variable.                      |
 
-### Return
+### Devolver
 
-The value of the variable in integer.
+El valor de la variable en número entero.
 
 ---
 
 ## Suika.getVariableFloat()
 
-Get the current value of a variable.
+Obtener el valor actual de una variable.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| name      | String | Name of the variable.                      |
+| name | String | Nombre de la variable.                      |
 
-### Return
+### Devolver
 
-The value of the variable in float.
+El valor de la variable en float.
 
 ---
 
 ## Suika.getVariableString()
 
-Get the current value of a variable.
+Obtener el valor actual de una variable.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| name      | String | Name of the variable.                      |
+| name | String | Nombre de la variable.                      |
 
-### Return
+### Devolver
 
-The value of the variable in string
+El valor de la variable en cadena.
 
 ---
 
 ## Suika.unsetVariable()
 
-Unset (delete) a specific variable.
+Desarmar (eliminar) una variable específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| name      | String | Name of the variable to unset.             |
+| name | String | Nombre de la variable a desarmar.             |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.unsetLocalVariables()
 
-Unset (delete) all local variables.
+Desarmar (eliminar) todas las variables locales.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.makeVariableGlobal()
 
-Set a variable to be global (persistent across saves).
+Establezca una variable para que sea global (persistente entre guardados).
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| name      | String  | Name of the variable.                      |
-| is_global | Boolean | Whether to make it global.                 |
+| name | String | Nombre de la variable.                      |
+| is_global | Boolean | Si hacerlo global.                 |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isGlobalVariable()
 
-Check the variable's global status.
+Verifique el estado global de la variable.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| name      | String  | Name of the variable.                      |
+| name | String | Nombre de la variable.                      |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.getVariableCount()
 
-Get the number of variables.
+Obtenga el número de variables.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Integer for count.
+Entero para contar.
 
 ---
 
 ## Suika.getVariableName()
 
-Iterate through the registered variables.
+Iterar a través de las variables registradas.
 
-### Parameters (Dictionary) (for getVariableName)
+### Parámetros (Diccionario) (para getVariableName)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the variable.     |
+| index | Integer | Índice de la variable.     |
 
-### Return
+### Devolver
 
-String for name.
+Cadena para nombre.
 
 ---
 
 ## Suika.checkVariableExists()
 
-Check if a variable with the specified name exists.
+Compruebe si existe una variable con el nombre especificado.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| name      | String | Name to check.                             |
+| name | String | Nombre para comprobar.                             |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.executeSaveGlobal()
 
-Execute a global save.
-Global data typically includes persistent settings.
+Ejecute un guardado global.
+Los datos globales normalmente incluyen configuraciones persistentes.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean that represents success or failure.
+Booleano que representa el éxito o el fracaso.
 
 ---
 
 ## Suika.executeLoadGlobal()
 
-Execute a global load.
-Global data typically includes persistent settings.
+Ejecutar una carga global.
+Los datos globales normalmente incluyen configuraciones persistentes.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean that represents success or failure.
+Booleano que representa el éxito o el fracaso.
 
 ---
 
 ## Suika.executeSaveLocal()
 
-Save the game progress to a specific slot.
+Guarde el progreso del juego en una ranura específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| index | Integer | Índice de la ranura para guardar.    |
 
-### Return
+### Devolver
 
-Boolean that represents success or failure.
+Booleano que representa el éxito o el fracaso.
 
 ---
 
 ## Suika.executeLoadLocal()
 
-Load game progress from a specific slot.
+Carga el progreso del juego desde una ranura específica.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| index | Integer | Índice de la ranura para guardar.    |
 
-### Return
+### Devolver
 
-Boolean that represents success or failure.
+Booleano que representa el éxito o el fracaso.
 
 ---
 
 ## Suika.checkSaveExists()
 
-Check if the save data exists for the specified slot index.
+Compruebe si existen datos guardados para el índice de ranura especificado.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| index | Integer | Índice de la ranura para guardar.    |
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.deleteLocalSave()
 
-Delete a local save slot.
+Elimine una ranura de guardado local.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| index | Integer | Índice de la ranura para guardar.    |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.deleteGlobalSave()
 
-Delete the entire global save data.
+Elimina todos los datos guardados globales.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.checkRightAfterLoad()
 
-Check if the current frame is immediately following a successful load operation.
+Compruebe si el cuadro actual sigue inmediatamente a una operación de carga exitosa.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.getSaveTimestamp()
 
-Get the timestamp (Unix time) when the save data was created.
+Obtenga la marca de tiempo (hora Unix) cuando se crearon los datos guardados.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| index | Integer | Índice de la ranura para guardar.    |
 
-### Return
+### Devolver
 
-Integer (timestamp).
+Entero (marca de tiempo).
 
 ---
 
 ## Suika.getLatestSaveIndex()
 
-Get the index of the most recently updated save slot.
+Obtenga el índice del espacio para guardar actualizado más recientemente.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Integer representing the slot index.
+Número entero que representa el índice de ranura.
 
 ---
 
 ## Suika.getSaveChapterName()
 
-Retrieve the chapter title stored in a save slot.
+Recupere el título del capítulo almacenado en una ranura para guardar.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| index | Integer | Índice de la ranura para guardar.    |
 
-### Return
+### Devolver
 
-String representing the chapter name.
+Cadena que representa el nombre del capítulo.
 
 ---
 
 ## Suika.getSaveLastMessage()
 
-Retrieve the last displayed message stored in a save slot.
+Recupere el último mensaje mostrado almacenado en una ranura para guardar.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| index | Integer | Índice de la ranura para guardar.    |
 
-### Return
+### Devolver
 
-String representing the message.
+Cadena que representa el mensaje.
 
 ---
 
 ## Suika.getSaveThumbnail()
 
-Get the thumbnail image associated with a save slot.
+Obtenga la imagen en miniatura asociada con un espacio para guardar.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| index | Integer | Índice de la ranura para guardar.    |
 
-### Return
+### Devolver
 
-An image object.
+Un objeto de imagen.
 
 ---
 
 ## Suika.clearHistory()
 
-Clear all messages from the history (backlog).
+Borrar todos los mensajes del historial (atrasos).
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.addHistory()
 
-Add a new entry to the history.
+Añade una nueva entrada al historial.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter        | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |------------------|---------|--------------------------------------------|
-| name             | String  | Character name.                            |
-| msg              | String  | Message text.                              |
-| voice            | String  | Path to the voice file.                    |
-| bodyColor        | Integer | Body color.                                |
-| bodyOutlineColor | Integer | Body outline color.                        |
-| nameColor        | Integer | Name color.                                |
-| nameOutlineColor | Integer | Name outline color.                        |
+| name | String | Nombre del personaje.                            |
+| msg | String | Texto del mensaje.                              |
+| voice | String | Ruta al archivo de voz.                    |
+| bodyColor | Integer | Color del cuerpo.                                |
+| bodyOutlineColor | Integer | Color del contorno del cuerpo.                        |
+| nameColor | Integer | Color del nombre.                                |
+| nameOutlineColor | Integer | Color del contorno del nombre.                        |
 
-### Return
+### Devolver
 
-Boolean that represents success.
+Booleano que representa el éxito.
 
 ---
 
 ## Suika.getHistoryCount()
 
-Get the total number of entries currently in the history.
+Obtenga el número total de entradas actualmente en el historial.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Integer representing the history count.
+Entero que representa el recuento del historial.
 
 ---
 
 ## Suika.getHistoryName()
 
-Retrieve the name at a specific history index.
+Recupera el nombre en un índice de historial específico.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Index in the history.      |
+| index | Integer | Índice en la historia.      |
 
-### Return
+### Devolver
 
-String value.
+Valor de cadena.
 
 ---
 
 ## Suika.getHistoryMessage()
 
-Retrieve the message at a specific history index.
+Recupera el mensaje en un índice de historial específico.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Index in the history.      |
+| index | Integer | Índice en la historia.      |
 
-### Return
+### Devolver
 
-String value.
+Valor de cadena.
 
 ---
 
 ## Suika.getHistoryVoice()
 
-Retrieve the voice path at a specific history index.
+Recupera la ruta de voz en un índice de historial específico.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| index     | Integer | Index in the history.      |
+| index | Integer | Índice en la historia.      |
 
-### Return
+### Devolver
 
-String value.
+Valor de cadena.
 
 ---
 
 ## Suika.loadSeen()
 
-Load the seen (read) flags for the current script file.
+Cargue los indicadores vistos (leídos) para el archivo de script actual.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean that represents success.
+Booleano que representa el éxito.
 
 ---
 
 ## Suika.saveSeen()
 
-Save the seen (read) flags for the current script file.
+Guarde los indicadores vistos (leídos) para el archivo de script actual.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean that represents success.
+Booleano que representa el éxito.
 
 ---
 
 ## Suika.getSeenFlags()
 
-Get the seen status for the current tag.
+Obtenga el estado visto de la etiqueta actual.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Get returns Integer.
+Obtener devuelve un número entero.
 
-For a `[text]` tag, `0` means unread and `1` means read.
+Para una etiqueta `[text]`, `0` significa no leído y `1` significa leído.
 
-For a `[choose]` tag, each bit indicates the option is selected before.
+Para una etiqueta `[choose]`, cada bit indica que la opción se seleccionó antes.
 
 ---
 
 ## Suika.setSeenFlags()
 
-Set the seen status for the current tag.
+Establezca el estado visto para la etiqueta actual.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|----------------------------|
-| flag      | Integer | Seen status flag.          |
+| flag | Integer | Bandera de estado vista.          |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.loadGUIFile()
 
-Load a GUI definition file and prepare it for execution.
+Cargue un archivo de definición de GUI y prepárelo para su ejecución.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type    | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|---------|--------------------------------------------|
-| file      | String  | Path to the .gui file.                     |
-| sys       | Boolean | Whether it's a system GUI (Save/Load/etc). |
+| file | String | Ruta al archivo .gui.                     |
+| sys | Boolean | Ya sea una GUI del sistema (Guardar/Cargar/etc.). |
 
-### What is System GUI
+### ¿Qué es la GUI del sistema?
 
-System GUI is typically called when `[text]` or `[choose]` is running,
-and the control will return to the interrupted tag.
+La GUI del sistema normalmente se llama cuando se está ejecutando `[text]` o `[choose]`,
+y el control volverá a la etiqueta interrumpida.
 
-### Return
+### Devolver
 
-Boolean that represents success or failure.
+Booleano que representa el éxito o el fracaso.
 
 ---
 
 ## Suika.startGUI()
 
-Start the loaded GUI.
+Inicie la GUI cargada.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.stopGUI()
 
-Stop the currently running GUI.
+Detenga la GUI actualmente en ejecución.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.isGUIRunning()
 
-Check if a GUI is currently active.
+Compruebe si hay una GUI actualmente activa.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.isGUIFinished()
 
-Check if a GUI has completed its operation.
+Compruebe si una GUI ha completado su operación.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.getGUIResultLabel()
 
-Get the label of the button that was selected to finish the GUI.
+Obtenga la etiqueta del botón que se seleccionó para finalizar la GUI.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-String representing the result label.
+Cadena que representa la etiqueta del resultado.
 
 ---
 
 ## Suika.isGUIResultTitle()
 
-Check if the GUI was closed with a "back to title" action.
+Compruebe si la GUI se cerró con una acción de "volver al título".
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.checkIfSavedInGUI()
 
-Check if a save operation was performed while the GUI was active.
+Compruebe si se realizó una operación de guardado mientras la GUI estaba activa.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.checkIfLoadedInGUI()
 
-Check if a load operation was performed while the GUI was active.
+Compruebe si se realizó una operación de carga mientras la GUI estaba activa.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.checkRightAfterSysGUI()
 
-Check if the current frame is immediately following a return from a system GUI.
+Compruebe si el fotograma actual sigue inmediatamente a un retorno desde una GUI del sistema.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean value.
+Valor booleano.
 
 ---
 
 ## Suika.getMillisec()
 
-Get a lap time since the time origin in milliseconds.
+Obtenga un tiempo de vuelta desde el origen del tiempo en milisegundos.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Integer in milliseconds.
+Entero en milisegundos.
 
 ---
 
 ## Suika.checkFileExists()
 
-Check if a file exists.
+Compruebe si existe un archivo.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| file      | String | Path to the file.                          |
+| file | String | Ruta al archivo.                          |
 
-### Return
+### Devolver
 
-Returns boolean.
+Devuelve booleano.
 
 ---
 
 ## Suika.readFileContent()
 
-Read an entire file content.
+Leer el contenido completo de un archivo.
 
-### Parameters (Dictionary) (for readFileContent)
+### Parámetros (Diccionario) (para readFileContent)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| file      | String | Path to the file.                          |
+| file | String | Ruta al archivo.                          |
 
-### Return
+### Devolver
 
-Returns a string.
+Devuelve una cadena.
 
 ---
 
 ## Suika.writeSaveData()
 
-Directly write raw save data associated with a key.
+Escriba directamente datos guardados sin procesar asociados con una clave.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| key       | String | Unique key for the data.                   |
-| data      | String | Data to write/read.                        |
+| key | String | Clave única para los datos.                   |
+| data | String | Datos para escribir/leer.                        |
 
-### Return
+### Devolver
 
-Boolean that represents success or failure.
+Booleano que representa el éxito o el fracaso.
 
 ---
 
 ## Suika.readSaveData()
 
-Directly read raw save data associated with a key.
+Lea directamente los datos guardados sin procesar asociados con una clave.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| key       | String | Unique key for the data.                   |
+| key | String | Clave única para los datos.                   |
 
-### Return
+### Devolver
 
-Boolean that represents success or failure.
+Booleano que representa el éxito o el fracaso.
 
 ---
 
 ## Suika.playVideo()
 
-Control video playback.
+Controlar la reproducción de vídeo.
 
-### Parameters (Dictionary) (for playVideo)
+### Parámetros (Diccionario) (para reproducirVideo)
 
-| Parameter    | Type    | Description                          |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |--------------|---------|--------------------------------------|
-| file         | String  | Path to the video file.              |
-| is_skippable | Boolean | Whether the user can skip the video. |
+| file | String | Ruta al archivo de vídeo.              |
+| is_skippable | Boolean | Si el usuario puede omitir el video. |
 
-### Return
+### Devolver
 
-Play returns Boolean; IsPlaying returns Boolean.
+La reproducción devuelve booleano; IsPlaying devuelve booleano.
 
 ---
 
 ## Suika.stopVideo()
 
-Stop the video playback.
+Detenga la reproducción del vídeo.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.isVideoPlaying()
 
-Check if a video is playing back.
+Compruebe si se está reproduciendo un vídeo.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Returns boolean.
+Devuelve booleano.
 
 ---
 
 ## Suika.isFullScreenSupported()
 
-Check for full-screen mode ability.
+Verifique la capacidad del modo de pantalla completa.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-Boolean.
+Booleano.
 
 ---
 
 ## Suika.enterFullScreenMode()
 
-Enter the full-screen mode.
+Ingrese al modo de pantalla completa.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-No parameters.
+Sin parámetros.
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.
 
 ---
 
 ## Suika.speakText()
 
-Execute Text-to-Speech (TTS) for the given message.
+Ejecute Texto a voz (TTS) para el mensaje dado.
 
-### Parameters (Dictionary)
+### Parámetros (Diccionario)
 
-| Parameter | Type   | Description                                |
+| Parﾃ｡metro | Tipo | Descripciﾃｳn |
 |-----------|--------|--------------------------------------------|
-| msg       | String | Text to be spoken.                         |
+| msg | String | Texto a pronunciar.                         |
 
-### Return
+### Devolver
 
-No return.
+Sin retorno.

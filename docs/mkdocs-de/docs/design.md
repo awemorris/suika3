@@ -1,20 +1,20 @@
 Suika3 Design
 =============
 
-## Layered Component Model
+## Geschichtetes Komponentenmodell
 
-Suika3 is not a monolithic design, but is separated into small libraries and parts, with an overall hierarchical structure stacked on top of each other.
+Suika3 ist kein monolithisches Design, sondern in kleine Bibliotheken und Teile aufgeteilt und besitzt insgesamt eine hierarchische Struktur, die aufeinander aufbaut.
 
-- Each layer implements only one feature.
-- Each layer provides a public C language API to the layer one level above it.
-- Each layer can only use the public C language API provided by the layer one level below it.
+- Jede Schicht implementiert nur eine Funktion.
+- Jede Schicht stellt der Schicht eine Ebene darüber eine öffentliche C-API bereit.
+- Jede Schicht darf nur die öffentliche C-API der Schicht eine Ebene darunter verwenden.
 
-This type of structure is called the "Layered Component Model" in Suika3.
+Diese Art von Struktur wird in Suika3 als "Layered Component Model" bezeichnet.
 
-The advantage of this approach is that while classes in object-oriented languages like C++ must consider many-to-many dependency relationships with inherent complexity, the Layered Component Model only needs to consider relationships with the layers one level above and one level below, making design, implementation, modification, and extension simpler.
-A full-stack game engine is complex and large software, but by assembling it through one-to-one relationships of simple components, it becomes easier to build as a whole, resulting in improved portability.
+Der Vorteil dieses Ansatzes besteht darin, dass Klassen in objektorientierten Sprachen wie C++ viele-zu-viele-Abhängigkeiten mit ihrer inhärenten Komplexität berücksichtigen müssen, während das Layered Component Model nur die Beziehungen zur jeweils darüber- und darunterliegenden Schicht beachten muss, was Entwurf, Implementierung, Änderung und Erweiterung vereinfacht.
+Eine Full-Stack-Spiel-Engine ist komplexe und große Software, doch wenn sie über Eins-zu-eins-Beziehungen einfacher Komponenten zusammengesetzt wird, lässt sie sich als Ganzes leichter bauen, was zu besserer Portabilität führt.
 
-The reason for improved portability is that the bottom layer is a "hardware abstraction layer" that absorbs OS differences, and the layers above it can be designed and implemented without any concern for OS differences.
+Der Grund für die verbesserte Portabilität ist, dass die unterste Schicht eine "Hardware-Abstraktionsschicht" ist, die Betriebssystemunterschiede abfedert, und die darüberliegenden Schichten ohne Rücksicht auf OS-Unterschiede entworfen und implementiert werden können.
 
 ```
 +-----------------------------------+

@@ -1,49 +1,48 @@
-NovelML Syntax Reference
+NovelML 語法參考
 ========================
 
-This document explains the basic syntax of NovelML and how it runs.
+這份檔案說明 NovelML 的基本語法，以及它的執行方式。
 
-For the detailed explanation of each tag, please see "Suika3 Tag Reference".
-
----
-
-## 1. NovelML is a list of engine commands called “tags”
-
-NovelML is a list of **tags**. A tag is a **command for the engine**.
-
-- Each tag tells the engine to do something
-- Tags run **one by one**, in the order they appear
-- After a tag runs, it is "done" and the "execution position" moves on
-
-If you write the same tag again, it will do the same thing **each time it runs**.
+每個標籤的詳細說明，請參閱「Suika3 標籤參考」。
 
 ---
 
-## 2. Execution goes from top to bottom
+## 1. NovelML 是由稱為「標籤」的引擎命令所組成
+NovelML 是一串 **標籤**。標籤是 **給引擎的命令**。
 
-NovelML runs from the top of the file to the bottom, one tag at a time.
+- 每個標籤都會告訴引擎要做什麼
+- 標籤會依照出現順序 **逐一** 執行
+- 標籤執行完後就會視為「完成」，「執行位置」會往下移動
 
-- Execution normally moves forward
-- There is only one current **execution position**
+如果你再次寫出同一個標籤，它在 **每次執行時** 都會做同樣的事。
+
+---
+
+## 2. 執行會從上往下進行
+
+NovelML 會從檔案上方一路執行到下方，一次處理一個標籤。
+
+- 執行通常只會往前推進
+- 同一時間只有一個目前的 **執行位置**
 
 ```PlainText
 [text text="Hello"]
 [text text="World"]
 ```
 
-In this case:
+在這個例子中：
 
-1. `Hello` is shown
-2. Then `World` is shown
+1. 先顯示 `Hello`
+2. 再顯示 `World`
 
 ---
 
-## 3. Everything must be written as tags
+## 3. 所有內容都必須寫成標籤
 
-In NovelML, **every line must be a tag**.
+在 NovelML 中，**每一行都必須是標籤**。
 
-- The whole scenario is written using tags
-- Even text must use the `[text]` tag
+- 整個劇本都要用標籤撰寫
+- 就連文字也必須使用 `[text]` 標籤
 
 ```PlainText
 [text text="It's a beautiful day."]
@@ -51,59 +50,59 @@ In NovelML, **every line must be a tag**.
 
 ---
 
-## 4. Tags that wait, and tags that do not wait
+## 4. 會等待的標籤與不會等待的標籤
 
-There are two main kinds of tags:
+標籤主要分成兩種：
 
-- **Tags that run and immediately move to the next tag**
-- **Tags that wait** for user input or for something to finish
+- **執行後立即進入下一個標籤的標籤**
+- **會等待** 使用者輸入或某件事完成的標籤
 
-Common "wait' tags include:
+常見的「等待」標籤包含：
 
-- `text` (waits for a click)
-- `click` (waits for a click)
-- `wait` (waits for a specified time)
-- `video` (waits until playback finishes)
+- `text`（等待點選）
+- `click`（等待點選）
+- `wait`（等待指定時間）
+- `video`（等待播放結束）
 
-These tags pause execution **without any special syntax**.
+這些標籤會讓執行暫停，**不需要任何特殊語法**。
 
-### 4.1 Tags that run in the background (asynchronously)
+### 4.1 在背景執行的標籤（非同步）
 
-Some tags may **run in the background**  (asynchronously).
+有些標籤可以 **在背景執行**（非同步）。
 
-Typical examples:
+常見例子：
 
 - `anime`
 - `move`
 
-These tags:
+這些標籤會：
 
-- Create and start an animation or movement
-- If `async="true"` is specified, the engine **does not wait** for it to finish and immediately continue to the next tag
+- 建立並開始動畫或移動
+- 如果指定 `async="true"`，引擎 **不會等待** 它結束，而是立刻接著執行下一個標籤
 
-Because of this, tags after an `async="true"` tag may run **while the animation is still playing**.
+因此，`async="true"` 標籤後面的內容，可能會在動畫仍在播放時就開始執行。
 
-This lets you do things like:
+這樣就能做出像這樣的效果：
 
-- Move a background or character
-- While also showing text or running other effects
+- 移動背景或角色
+- 同時顯示文字或執行其他效果
 
 ---
 
-## 5. Tags that change the flow of execution
+## 5. 會改變執行流程的標籤
 
-Normally execution goes from top to bottom, but some tags **change where execution continues**.
+一般來說，執行會從上到下進行，但有些標籤會 **改變後續的執行位置**。
 
-### 5.1 Labels
+### 5.1 標籤
 
 ```PlainText
 [label start]
 ```
 
-- A label marks a named position in the scenario
-- Running a label does not do anything by itself
+- 標籤會在劇本中標記一個命名位置
+- 執行 `label` 本身不會做任何事
 
-### 5.2 Jumps
+### 5.2 跳轉
 
 ```PlainText
 [goto name="start"]
@@ -111,7 +110,7 @@ Normally execution goes from top to bottom, but some tags **change where executi
 
 ---
 
-## 6. Conditional branching (if / elseif / else)
+## 6. 條件分支（if / elseif / else）
 
 ```PlainText
 [if ...]
@@ -123,36 +122,36 @@ Normally execution goes from top to bottom, but some tags **change where executi
 [endif]
 ```
 
-- Only the first matching block is executed
-- Blocks that are not chosen are **skipped completely**
-- You can write `elseif` zero or more times
-- `else` is optional
+- 只會執行第一個符合條件的區塊
+- 沒被選到的區塊會 **完全跳過**
+- `elseif` 可以寫零次或多次
+- `else` 是可選的
 
 ---
 
-## 7. Variables and variable expansion
+## 7. 變數與變數展開
 
-### 7.1 Setting variables
+### 7.1 設定變數
 
-Use the `[set]` tag to set a variable.
+使用 `[set]` 標籤來設定變數。
 
 ```PlainText
 [set name="player_name" value="Alice"]
 ```
 
-- All variables are **strings**
-- Numbers and booleans are also stored as strings
+- 所有變數都是 **字串**
+- 數字與布林值也會以字串形式儲存
 
-### 7.2 Variable expansion
+### 7.2 變數展開
 
-You can use variable expansion inside tag values and text.
+你可以在標籤值與文字中使用變數展開。
 
 ```PlainText
 [text text="${player_name} stands up"]
 ```
 
-- `${...}` is replaced with the variable value at runtime
-- Expansion happens **when the tag is executed**
+- `${...}` 會在執行時被替換成變數值
+- 展開會發生在 **標籤執行時**
 
 ```PlainText
 [set name="x" value="1"]
@@ -161,13 +160,13 @@ You can use variable expansion inside tag values and text.
 [text text="${x}"]
 ```
 
-In this example, the output is `1` and then `2`.
+這個例子中的輸出會先是 `1`，再是 `2`。
 
 ---
 
-## 8. Macros are blocks you can run as a unit
+## 8. 巨集是可以整體執行的區塊
 
-Macros let you group several tags and run them together.
+巨集可以把數個標籤分組，並一起執行。
 
 ```PlainText
 [defmacro name="greet"]
@@ -179,41 +178,41 @@ Macros let you group several tags and run them together.
 
 ---
 
-## 9. Switching files (load)
+## 9. 切換檔案（load）
 
 ```PlainText
 [load file="scene2.txt" label="start"]
 ```
 
-`file=` is mandatory and `label=` is optional.
+`file=` 是必填，`label=` 是選填。
 
 ---
 
-## 10. What happens at the end of a file
+## 10. 到了檔案結尾會發生什麼事
 
-If executed:
+如果執行流程：
 
-- Reaches the end of the file, and
-- No more `goto` or `load` tags happen
+- 到達檔案結尾，而且
+- 沒有再發生任何 `goto` 或 `load` 標籤
 
-Then the **scenario execution ends**.
+那麼 **劇本執行就會結束**。
 
-However, on some platforms (for example iOS or game consoles), the app is not allowed to quit.
+不過，在某些平臺上（例如 iOS 或遊戲主機），應用程式不被允許直接結束。
 
-So it is recommended that your scenario **explicitly**:
+因此建議你的劇本 **明確地**：
 
-- Jumps back to the title using `goto`, or
-- Loads a title scene using `load`
+- 用 `goto` 跳回標題畫面，或
+- 用 `load` 載入標題場景
 
-instead of ending automatically.
+而不要讓它自動結束。
 
 ---
 
-## 11. How this document fits with other docs
+## 11. 這份檔案和其他檔案的關係
 
-This document is meant to go with:
+這份檔案是搭配以下內容使用的：
 
-- Tag Reference: explains what each tag does
-- This document: explains how a scenario runs
+- 標籤參考：說明每個標籤的用途
+- 這份檔案：說明劇本如何執行
 
-For details on individual tags, see the "Tag Reference".
+各個標籤的細節請參閱「標籤參考」。

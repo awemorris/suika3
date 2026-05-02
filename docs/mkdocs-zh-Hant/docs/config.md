@@ -1,12 +1,12 @@
-WIP
+施工中
 
-## Game Settings
+## 遊戲設定
 
-| Name                       | Type       | Description                                                   |
+|名稱 |型別 |描述 |
 |----------------------------|------------|---------------------------------------------------------------|
-| game.title.en              | String     | Game title in English.                                        |
-| game.novel                 | Boolean    | Enable novel mode.                                            |
-| game.locale                | String     | Force the language over the system locale setting.            |
+| game.title.en |字串|遊戲標題為英文。                                        |
+| game.novel |布林 |啟用小說模式。                                            |
+| game.locale |字串|強制使用指定語言，不採用系統區域設定。            |
 
 ### game.title.en
 
@@ -14,59 +14,59 @@ WIP
 
 ### game.local
 
-Language setting.
+語言設定。
 
-- "":   Use the system setting
-- "ja": Fix to Japanese
-- "en": Fix to English
+- “”：使用系統設定
+- “ja”：固定為日語
+- “en”：固定為英語
 
 --
 
-## Font File Settings
+## 字型檔案設定
 
-# Font 1
-#  - Default font
-#  - You can choose this font by adding \f{1} to a message
+# 字型 1
+# - 預設字型
+# - 您可以在訊息中加入 \f{1} 來選用此字型
 font.ttf1=system/font/rounded-l-mplus-1c-bold.ttf
 
-# Font 2
-#  - You can choose this font by adding \f{2} to a message
+# 字型 2
+# - 您可以在訊息中加入 \f{2} 來選用此字型
 #font.ttf2=
 
-# Font 3
-#  - You can choose this font by adding \f{3} to a message
+# 字型 3
+# - 您可以在訊息中加入 \f{3} 來選用此字型
 #font.ttf3=
 
-# Font 4
-#  - You can choose this font by adding \f{4} to a message
+# 字型 4
+# - 您可以在訊息中加入 \f{4} 來選用此字型
 #font.ttf4=
 
 
 ############################################################
-## Message Box Settings
+## 訊息框設定
 
 #
-# Image of the message box
+# 訊息框的影象
 #
 
 msgbox.image=system/message/msgbox.png
 
 #
-# Animation
+＃ 動畫片
 #
 
 msgbox.anime.hide=system/message/msgbox-hide.anime
 msgbox.anime.show=system/message/msgbox-show.anime
 
 #
-# Position of the message box
+# 訊息框的位置
 #
 
 msgbox.x=0
 msgbox.y=520
 
 #
-# Margins for message box text in pixels
+# 訊息框文字的邊距（以畫素為單位）
 #
 
 msgbox.margin.left=200
@@ -75,32 +75,32 @@ msgbox.margin.right=200
 msgbox.margin.bottom=30
 
 #
-# Line margin for message box text in pixels
-# (including character height)
+# 訊息框文字的行邊距（以畫素為單位）
+#（包括字元高度）
 #
 
 msgbox.margin.line=40
 
 #
-# Character margin for message box text in pixels
+# 訊息框文字的字元邊距（以畫素為單位）
 #
 
 msgbox.margin.char=0
 
 #
-# Font selection for the message box text (1,2,3,4)
+# 訊息框文字的字型選擇 (1,2,3,4)
 #
 
 msgbox.font.select=1
 
 #
-# Font size of the message box text
+# 訊息框文字的字型大小
 #
 
 msgbox.font.size=36
 
 #
-# Font color of the message box text
+# 訊息框文字的字型顏色
 #
 
 msgbox.font.r=255
@@ -108,7 +108,7 @@ msgbox.font.g=255
 msgbox.font.b=255
 
 #
-# Font outline width and color of the text of the message box
+# 訊息框文字的字型輪廓寬度和顏色
 #
 
 msgbox.font.outline.width=0
@@ -117,19 +117,19 @@ msgbox.font.outline.g=0
 msgbox.font.outline.b=0
 
 #
-# Ruby size of the text of the message box
+# 訊息框文字的 Ruby 大小
 #
 
 msgbox.font.ruby=10
 
 #
-# Enable vertical writing of the text of the message box
+# 啟用訊息框文字的垂直書寫
 #
 
 msgbox.font.tategaki=false
 
 #
-# Enable character backgroun fill
+# 啟用字元背景填充
 #
 
 msgbox.fill.enable=false
@@ -138,13 +138,13 @@ msgbox.fill.g=255
 msgbox.fill.b=255
 
 #
-# Enable dimming for the previous paragpaphs of the text of the message box
+# 為訊息框文字的前面段落啟用變暗
 #
 
 msgbox.dim.enable=false
 
 #
-# Dimming color of the text of the message box
+# 訊息框文字顏色變暗
 #
 
 msgbox.dim.r=0
@@ -152,7 +152,7 @@ msgbox.dim.g=0
 msgbox.dim.b=0
 
 #
-# Dimming outline width and color of the text of the message box
+# 調暗訊息框文字的輪廓寬度和顏色
 #
 msgbox.dim.outline.width=0
 msgbox.dim.outline.r=0
@@ -160,13 +160,13 @@ msgbox.dim.outline.g=0
 msgbox.dim.outline.b=0
 
 #
-# Enable font color change of the seen messages of the message box
+# 啟用訊息框看到的訊息的字型顏色更改
 #
 
 msgbox.seen.enable=false
 
 #
-# Font color of the seen messages of the message box
+# 訊息框看到的訊息的字型顏色
 #
 
 msgbox.seen.r=0
@@ -174,7 +174,7 @@ msgbox.seen.g=0
 msgbox.seen.b=0
 
 #
-# Font outline width and color of the seen messages of the message box
+# 訊息框看到的訊息的字型輪廓寬度和顏色
 #
 
 msgbox.seen.outline.width=0
@@ -183,68 +183,68 @@ msgbox.seen.outline.g=0
 msgbox.seen.outline.b=0
 
 #
-# Enable skip for unseen messages
+# 啟用跳過未見訊息的功能
 #
 
 msgbox.skip_unseen=false
 
 ############################################################
-## Name Box Settings
+## 名稱框設定
 
 #
-# Enable the name box
-#  - Disable the name box if you need the full screen novel style
+# 啟用名稱框
+# - 如果您需要全屏小說風格，請禁用名稱框
 #
 
 namebox.enable=true
 
 #
-# Image of the name box
+# 名稱框的影象
 #
 
 namebox.image=system/message/namebox.png
 
 #
-# Animation
+＃ 動畫片
 #
 
 namebox.anime.hide=system/message/namebox-hide.anime
 namebox.anime.show=system/message/namebox-show.anime
 
 #
-# Position of the name box
+# 名稱框的位置
 #
 
 namebox.x=80
 namebox.y=450
 
 #
-# Margins of the text of the name box in pixel
+# 名稱框文字的邊距（以畫素為單位）
 #
 
 namebox.margin.top=5
 namebox.margin.left=0
 
 #
-# Enable centering of the text of the name box
+# 啟用名稱框文字居中
 #
 
 namebox.centering=true
 
 #
-# Font selection of the text of the name box (1,2,3,4)
+# 名稱框文字的字型選擇（1,2,3,4）
 #
 
 namebox.font.select=1
 
 #
-# Font size of the text of the name box
+# 名稱框文字的字型大小
 #
 
 namebox.font.size=36
 
 #
-# Font color of the text of the name box
+# 名稱框文字的字型顏色
 #
 
 namebox.font.r=255
@@ -252,7 +252,7 @@ namebox.font.g=255
 namebox.font.b=255
 
 #
-# Font outline width and color of the text of the name box
+# 名稱框文字的字型輪廓寬度和顏色
 #
 
 namebox.font.outline.width=0
@@ -261,36 +261,36 @@ namebox.font.outline.g=255
 namebox.font.outline.b=255
 
 #
-# Ruby size of the text of the name box
+# 名稱框文字的 Ruby 大小
 #
 
 namebox.font.ruby=10
 
 #
-# Enable vertical writing of the text of the name box
+# 啟用名稱框文字的垂直書寫
 #
 
 namebox.font.tategaki=false
 
 
 ############################################################
-## Click Animation Settings
+## 單擊動畫設定
 
 #
-# Position of the click animation
+# 點選動畫的位置
 #
 
 click.x=1060
 click.y=660
 
 #
-# Interval of the click animation
+# 點選動畫的間隔
 #
 
 click.interval=1.0
 
 #
-# Images of the click animation
+# 點選動畫的影象
 #
 
 click.image1=system/message/click1.png
@@ -311,29 +311,29 @@ click.image2=system/message/click2.png
 #click.image16=
 
 #
-# Enable auto move of the click animation
+# 啟用點選動畫的自動移動
 #
 
 click.move=false
 
 
 ############################################################
-## Choose Box Settings
+## 選擇框設定
 
 #
-# Font selection of the text of the choose boxes
+# 選擇框文字的字型選擇
 #
 
 choose.font.select=1
 
 #
-# Font size of the the text of the choose boxes
+# 選擇框文字的字型大小
 #
 
 choose.font.size=36
 
 #
-# Font color of the text of the non-pointed choose box
+# 非尖頭選擇框文字的字型顏色
 #
 
 choose.font.idle.r=255
@@ -341,7 +341,7 @@ choose.font.idle.g=255
 choose.font.idle.b=255
 
 #
-# Font outline width and color of the text of the non-pointed choose box
+# 非尖頭選擇框文字的字型輪廓寬度和顏色
 #
 
 choose.font.idle.outline.width=0
@@ -350,7 +350,7 @@ choose.font.idle.outline.g=255
 choose.font.idle.outline.b=255
 
 #
-# Font color of the text of the pointed choose box
+# 尖頭選擇框文字的字型顏色
 #
 
 choose.font.hover.r=255
@@ -358,7 +358,7 @@ choose.font.hover.g=0
 choose.font.hover.b=0
 
 #
-# Font outline width and color of the text of the pointed choose box
+# 尖頭選擇框文字的字型輪廓寬度和顏色
 #
 
 choose.font.hover.outline.width=0
@@ -367,31 +367,31 @@ choose.font.hover.outline.g=255
 choose.font.hover.outline.b=255
 
 #
-# Ruby size of the text of the choose boxes
+# 選擇框文字的 Ruby 大小
 #
 
 choose.font.ruby=10
 
 #
-# Enable vertical writing of the text of the choose boxes
+# 啟用選擇框文字的垂直書寫
 #
 
 choose.font.tategaki=false
 
 #
-# Sound effect for when the pointed choose box is changed
+# 尖頭選擇框改變時的音效
 #
 
 choose.change_se=system/choose/button.ogg
 
 #
-# Sound effect for when a choose box is selected
+# 選擇選擇框時的音效
 #
 
 choose.click_se=system/choose/button.ogg
 
 #
-# Settings for the choose box 1
+# 選擇框 1 的設定
 #
 
 choose.box1.idle=system/choose/idle.png
@@ -403,7 +403,7 @@ choose.box1.idle_anime=system/choose/idle.anime
 choose.box1.hover_anime=system/choose/hover.anime
 
 #
-# Settings for the choose box 2
+# 選擇框 2 的設定
 #
 
 choose.box2.idle=system/choose/idle.png
@@ -415,7 +415,7 @@ choose.box2.idle_anime=system/choose/idle.anime
 choose.box2.hover_anime=system/choose/hover.anime
 
 #
-# Settings for the choose box 3
+# 選擇框 3 的設定
 #
 
 choose.box3.idle=system/choose/idle.png
@@ -427,7 +427,7 @@ choose.box3.idle_anime=system/choose/idle.anime
 choose.box3.hover_anime=system/choose/hover.anime
 
 #
-# Settings for the choose box 4
+# 選擇框 4 的設定
 #
 
 choose.box4.idle=system/choose/idle.png
@@ -439,7 +439,7 @@ choose.box4.idle_anime=system/choose/idle.anime
 choose.box4.hover_anime=system/choose/hover.anime
 
 #
-# Settings for the choose box 5
+# 選擇框5的設定
 #
 
 choose.box5.idle=system/choose/idle.png
@@ -451,7 +451,7 @@ choose.box5.idle_anime=system/choose/idle.anime
 choose.box5.hover_anime=system/choose/hover.anime
 
 #
-# Settings for the choose box 6
+# 選擇框 6 的設定
 #
 
 choose.box6.idle=system/choose/idle.png
@@ -463,7 +463,7 @@ choose.box6.idle_anime=system/choose/idle.anime
 choose.box6.hover_anime=system/choose/hover.anime
 
 #
-# Settings for the choose box 7
+# 選擇框7的設定
 #
 
 choose.box7.idle=system/choose/idle.png
@@ -475,7 +475,7 @@ choose.box7.idle_anime=system/choose/idle.anime
 choose.box7.hover_anime=system/choose/hover.anime
 
 #
-# Settings for the choose box 8
+# 選擇框8的設定
 #
 
 choose.box8.idle=system/choose/idle.png
@@ -488,60 +488,60 @@ choose.box8.hover_anime=system/choose/hover.anime
 
 
 ############################################################
-## Save Data Settings
+## 儲存資料設定
 ############################################################
 
 #
-# Size of the save thumbnail
+# 儲存縮圖的大小
 #
 
 save.thumb.width=213
 save.thumb.height=120
 
 #
-# "New" mark image
+#“新”標記影象
 #
 
 #save.new_image=system/save/new.png
 
 
 ############################################################
-## System Button Settings
+## 系統按鈕設定
 
 #
-# Enable the system button
+# 啟用系統按鈕
 #
 
 sysbtn.enable=true
 
 #
-# Images of the system button
+# 系統按鈕的影象
 #
 
 sysbtn.idle=system/sysbtn/sysbtn-idle.png
 sysbtn.hover=system/sysbtn/sysbtn-hover.png
 
 #
-# Anime
+＃ 日本動畫片
 #
 
-# Hidden.
+# 隱藏。
 sysbtn.anime.out=system/sysbtn/anime-out.anime
 
-# Appearing.
+# 出現。
 sysbtn.anime.fadein=system/sysbtn/anime-fadein.anime
 
-# Appeared but not pointed.
+# 出現但未指出。
 sysbtn.anime.appear=system/sysbtn/anime-appear.anime
 
-# Hovered.
+# 懸停。
 sysbtn.anime.hover=system/sysbtn/anime-hover.anime
 
-# Disappearing.
+# 消失。
 sysbtn.anime.fadeout=system/sysbtn/anime-fadeout.anime
 
 #
-# Position of the system button
+# 系統按鈕的位置
 #
 
 sysbtn.x=1183
@@ -550,7 +550,7 @@ sysbtn.width=100
 sysbtn.height=100
 
 #
-# Sound effects of the system button
+# 系統按鈕音效
 #
 
 #sysbtn.enter_se=se/click.ogg
@@ -559,82 +559,82 @@ sysbtn.height=100
 
 
 ############################################################
-## Auto Mode Settings
+## 自動模式設定
 
 #
-# Image of the auto mode banner
+# 自動模式橫幅影象
 #
 
 automode.image=system/message/auto.png
 
 #
-# Animation
+＃ 動畫片
 #
 
 automode.anime.hide=system/message/auto-hide.anime
 automode.anime.show=system/message/auto-show.anime
 
 #
-# Position of the auto mode banner
+# 自動模式橫幅的位置
 #
 
 automode.x=0
 automode.y=126
 
 #
-# Sound effect for when entering the auto mode
+# 進入自動模式時的音效
 #
 
 #automode.enter_se=
 
 #
-# Sound effect for when leaving the auto mode
+# 退出自動模式時的音效
 #
 
 #automode.leave_se=
 
 
 ############################################################
-## Skip Mode Settings
+## 跳過模式設定
 
 #
-# Image of the skip mode banner
+# 跳過模式橫幅的影象
 #
 
 skipmode.image=system/message/skip.png
 
 #
-# Animation
+＃ 動畫片
 #
 
 skipmode.anime.hide=system/message/skip-hide.anime
 skipmode.anime.show=system/message/skip-show.anime
 
 #
-# Position of the auto mode banner
+# 自動模式橫幅的位置
 #
 
 skipmode.x=0
 skipmode.y=126
 
 #
-# Sound effect for when entering the skip mode
+# 進入跳過模式時的音效
 #
 
 #skipmode.enter_se=
 
 #
-# Sound effect for when leaving the auto mode
+# 退出自動模式時的音效
 #
 
 #skipmode.leave_se=
 
 
 ############################################################
-## GUI Settings
+## 圖形使用者介面設定
 
 #
-# Font selection for the slot index text of the save/load GUI items
+# save/load GUI 項的槽索引文字的字型選擇
 #
 gui.save.index.font.select=1
 gui.save.index.font.size=30
@@ -650,7 +650,7 @@ gui.save.index.font.tategaki=false
 gui.save.index.margin.char=3
 
 #
-# Font selection for the date text of the save/load GUI items
+# save/load GUI 專案的日期文字的字型選擇
 #
 gui.save.date.font.select=1
 gui.save.date.font.size=30
@@ -666,7 +666,7 @@ gui.save.date.font.tategaki=false
 gui.save.date.margin.char=5
 
 #
-# Font selection for the chapter text of the save/load GUI items
+# save/load GUI 專案的章節文字的字型選擇
 #
 gui.save.chapter.font.select=1
 gui.save.chapter.font.size=32
@@ -682,7 +682,7 @@ gui.save.chapter.font.tategaki=false
 gui.save.chapter.margin.char=5
 
 #
-# Font selection for the message text of the save/load GUI items
+# save/load GUI 項的訊息文字的字型選擇
 #
 gui.save.msg.font.select=1
 gui.save.msg.font.size=22
@@ -700,7 +700,7 @@ gui.save.msg.margin.char=0
 gui.save.msg.multiline=true
 
 #
-# Font selection of the name and the text of the history GUI items
+# 歷史 GUI 專案的名稱和文字的字型選擇
 #
 
 gui.history.name.font.select=1
@@ -732,7 +732,7 @@ gui.history.text.margin.line=40
 gui.history.text.margin.char=0
 
 #
-# Line quotation of the text of the history GUI items
+#歷史GUI專案文字的行引用
 #
 
 gui.history.quote.name_separator=\n
@@ -740,25 +740,25 @@ gui.history.quote.start="
 gui.history.quote.end="
 
 #
-# Hide the last history item
+# 隱藏最後一條歷史記錄
 #
 
 gui.history.hide_last=false
 
 #
-# Font selection of the text of the text preview GUI item (1,2,3,4)
+# 文字預覽 GUI 項的文字字型選擇 (1,2,3,4)
 #
 
 gui.preview.font.select=1
 
 #
-# Font size of the text of the text preview GUI item
+# 文字預覽 GUI 項的文字字型大小
 #
 
 gui.preview.font.size=36
 
 #
-# Font color of the text of the text preview GUI item
+# 文字預覽 GUI 項的文字的字型顏色
 #
 
 gui.preview.font.r=255
@@ -766,7 +766,7 @@ gui.preview.font.g=255
 gui.preview.font.b=255
 
 #
-# Font outline width and color of the text of the text preview GUI item
+# 文字預覽 GUI 項的文字的字型輪廓寬度和顏色
 #
 
 gui.preview.font.outline.width=0
@@ -775,52 +775,52 @@ gui.preview.font.outline.g=255
 gui.preview.font.outline.b=255
 
 #
-# Ruby size of the text of the text preview GUI item
+# 文字預覽 GUI 專案的文字的 Ruby 大小
 #
 
 gui.preview.font.ruby=10
 
 #
-# Enable vertical writing of the text of the text preview GUI item
+# 啟用文字預覽 GUI 項的文字垂直書寫
 #
 
 gui.preview.font.tategaki=false
 
 
 ############################################################
-## Sound Settings
+## 聲音設定
 
 #
-# Initial value of the BGM track volume
+# BGM曲目音量的初始值
 #
 
 sound.vol.bgm=1.0
 
 #
-# Initial value of the voice track volume
+# 音軌音量初始值
 #
 
 sound.vol.voice=1.0
 
 #
-# Initial value of the SE track volume
+# SE軌道音量的初始值
 #
 
 sound.vol.se=1.0
 
 #
-# Initial value of the per-character volumes
+# 每個字元體積的初始值
 #
 
 sound.vol.per_character=1.0
 
 
 ############################################################
-## Character Settings
+## 角色設定
 
 #
-# Character names
-#  - for name translation, lip sync, auto focus, etc.
+# 角色名稱
+# - 用於名稱翻譯、口型同步、自動對焦等。
 #
 
 character.name1=Midori
@@ -867,7 +867,7 @@ character.name2.ja=シャオリン
 #character.name32=
 
 #
-# Character image sub-folders (for lip sync and automatic focus)
+# 角色影象子資料夾（用於唇形同步和自動對焦）
 #
 
 character.folder1=ch/midori/
@@ -904,60 +904,60 @@ character.folder2=ch/xiaoling/
 #character.folder32=
 
 #
-# Eye blinking interval in seconds
+# 眨眼間隔（以秒為單位）
 #
 
 character.eyeblink.interval=4.0
 
 #
-# Eye blinking frame length in seconds
+# 眨眼幀長度（以秒為單位）
 #
 
 character.eyeblink.frame=0.05
 
 #
-# Lip synchronization frame length in seconds
+# 唇形同步幀長度（以秒為單位）
 #
 
 character.lipsync.frame=0.04
 
 #
-# Lip synchronization frame per characters
+# 每個字元的唇形同步幀
 #
 
 character.lipsync.chars=14
 
 ############################################################
-## Auto focus settings
+## 自動對焦設定
 ##
-## Note: Not working yet on RC1
+## 注意：尚未在 RC1 上執行
 
 #
-# Auto focus on speaker / unfocus non-speakers on [text] with name
+# 自動聚焦於發言者/將非發言者取消聚焦於帶有名稱的 [文字]
 #
 #autofocus.on_text_name=true
 
 #
-# Auto unfocus all characters on [text] without name
+# 自動取消對[文字]上沒有名稱的所有字元的聚焦
 #
 #autofocus.on_text_no_name=true
 
 #
-# Auto unfocus non-speakers on [ch]
+# 自動取消對 [ch] 上非發言者的關注
 #
 #autofocus.on_ch=true
 
 #
-# Auto unfocus all characters on [choose]
+# 自動取消所有角色對[選擇]的聚焦
 #
 #autofocus.on_choose=true
 
 
 ############################################################
-## Stage Settings
+## 舞臺設定
 
 #
-# Character margins in pixels
+# 字元邊距（以畫素為單位）
 #
 
 stage.ch_margin.bottom=0
@@ -966,28 +966,28 @@ stage.ch_margin.right=0
 
 
 ############################################################
-## Kira Kira Effect Settings
+## Kira Kira 效果設定
 
 #
-# Enable Kira Kira Effect (click effect animation)
+# 啟用 Kira Kira Effect（點選效果動畫）
 #
 
 kirakira.enable=false
 
 #
-# Enable add-blend for Kira Kira Effect
+# 為 Kira Kira 效果啟用新增混合
 #
 
 kirakira.add_blend=false
 
 #
-# Frame length for Kira Kira Effect in seconds
+# Kira Kira Effect 的幀長度（以秒為單位）
 #
 
 kirakira.frame=0.333
 
 #
-# Images for Kira Kira Effect
+# 基拉基拉效應的圖片
 #
 
 #kirakira.image1=kira1.png
@@ -1009,10 +1009,10 @@ kirakira.frame=0.333
 
 
 ############################################################
-## Emoji
+## 表情符號
 
 #
-# Emojis (1 to 32)
+# 表情符號（1 到 32）
 #
 
 emoji.name1=heart
@@ -1023,20 +1023,20 @@ emoji.image2=system/emoji/sweat.png
 
 
 ############################################################
-## Text-To-Speech
+## 文字轉語音
 
 #
-# Enable TTS
+# 啟用語音合成
 #
 
 tts.enable=false
 
 
 ############################################################
-## Release Mode (Install App Mode)
+## 釋出模式（安裝應用模式）
 
 #
-# Enable Release Mode (writes save data to AppData)
+# 啟用Release模式（將儲存資料寫入AppData）
 #
 
 release_mode.enable=false

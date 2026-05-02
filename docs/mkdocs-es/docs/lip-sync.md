@@ -1,21 +1,21 @@
-Lip Synchronization
+Sincronización de labios
 ===================
 
-An lip synchronization image must be stored in the "lip" folder folder that is
-located in the same folder as the character's image(s).
+Una imagen de sincronización de labios debe almacenarse en la carpeta "lip" que está
+ubicado en la misma carpeta que el image(s) del personaje.
 
-* happy.png (main character file)
-* lip/
-    * happy.png (lip synchronization file)
+* happy.png (archivo del personaje principal)
+* labio/
+    * happy.png (archivo de sincronización de labios)
 
-A lip synchronization image consists of frame(s) of lip synchronization difference(s).
-A frame must be the same size as the character's image is.
-Frames must be stored horizontally in the left to right order.
+Una imagen de sincronización de labios consta de frame(s) de sincronización de labios difference(s).
+Un marco debe tener el mismo tamaño que la imagen del personaje.
+Los fotogramas deben almacenarse horizontalmente en orden de izquierda a derecha.
 
-Alpha values on borders must be smoothed.
-Please use "Blur Selection" and "Delete Selection" in an image editing software.
+Se deben suavizar los valores alfa en los bordes.
+Utilice "Desenfocar selección" y "Eliminar selección" en un software de edición de imágenes.
 
-The lip synchronization interval may be specified in the `project.txt` file.
+El intervalo de sincronización de labios se puede especificar en el archivo `project.txt`.
 
 ```
 #

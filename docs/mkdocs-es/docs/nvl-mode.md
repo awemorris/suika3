@@ -1,9 +1,9 @@
-NVL Mode Reference
+Referencia del modo NVL
 ==================
 
-Suika3 support the full screen novel style, so called NVL mode.
+Suika3 admite el estilo novedoso de pantalla completa, llamado modo NVL.
 
-## Overview
+## Descripción general
 
 ```
 # New page.
@@ -33,9 +33,9 @@ Suika3 support the full screen novel style, so called NVL mode.
 [text text="This is why NVL is called Page Mode in Suika3!"]
 ```
 
-## Switch
+## Cambiar
 
-Add two macros at the end of your `start.novel`:
+Agregue dos macros al final de su `start.novel`:
 ```
 #
 # Macro to start NVL mode.
@@ -93,12 +93,12 @@ Add two macros at the end of your `start.novel`:
 [endmacro]
 ```
 
-Then call the `nvl-mode` macro to switch to NVL mode.
+Luego llame a la macro `nvl-mode` para cambiar al modo NVL.
 ```
 [callmacro name="nvl-mode"]
 ```
 
-If you want to switch back to ADV mode (normal message mode), call the `adv-mode` macro:
+Si desea volver al modo ADV (modo de mensaje normal), llame a la macro `adv-mode`:
 ```
 [callmacro name="adv-mode"]
 ```

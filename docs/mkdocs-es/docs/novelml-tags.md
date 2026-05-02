@@ -1,51 +1,51 @@
-Suika3 Tag Reference
+Referencia de etiqueta Suika3
 ====================
 
-## Index
+## Índice
 
-| Tag Name                    | Description                                                        |
+| Nombre de etiqueta | Descripciﾃｳn |
 |-----------------------------|--------------------------------------------------------------------|
-| [anime](#anime)             | Loads and runs an animation file.                                  |
-| [bg](#bg)                   | Changes the background image with a fading effect.                 |
-| [bgm](#bgm)                 | Plays a background music file (Ogg Vorbis format).                 |
-| [callmacro](#callmacro)     | Calls a defined macro.                                             |
-| [ch](#ch)                   | Shows or hides characters with detailed layer parameters.          |
-| [chapter](#chapter)         | Sets a chapter name.                                               |
-| [choose](#choose)           | Displays options and stores the selection or jumps to a label.     |
-| [click](#click)             | Waits for a user click.                                            |
-| [config](#config)           | Sets a configuration value for the game system.                    |
-| [defmacro](#defmacro)       | Starts a macro definition.                                         |
-| [else](#else)               | Part of the if/elseif branch for when no conditions are met.       |
-| [elseif](#elseif)           | Specifies an additional condition in a branch.                     |
-| [endif](#endif)             | Ends a conditional branch.                                         |
-| [endmacro](#endmacro)       | Ends a macro definition.                                           |
-| [goto](#goto)               | Jumps to a specified label tag.                                    |
-| [gui](#gui)                 | Shows a GUI from a specified file.                                 |
-| [if](#if)                   | Branches the process based on a specified condition.               |
-| [label](#label)             | Defines a label for jump targets.                                  |
-| [layer](#layer)             | Loads/unloads images or sets parameters for specific layers.       |
-| [load](#load)               | Loads a NovelML file and can jump to a specific label.             |
-| [move](#move)               | Animates character layers over a specified time.                   |
-| [pencil](#pencil)           | Draw a text on a layer.                                            |
-| [returnmacro](#returnmacro) | Returns from a macro execution.                                    |
-| [se](#se)                   | Plays a sound effect file (Ogg Vorbis format).                     |
-| [set](#set)                 | Sets a variable value (all variables are treated as text).         |
-| [skip](#skip)               | Enables or disables the skip status.                               |
-| [text](#text)               | Displays text in the message box, optionally with a name.          |
-| [video](#video)             | Plays a video file (supports skippable settings).                  |
-| [volume](#volume)           | Sets the sound volume for BGM, SE, or Voice tracks.                |
-| [wait](#wait)               | Waits for a specified number of seconds.                           |
+| [anime](#anime) | Carga y ejecuta un archivo de animación.                                  |
+| [bg](#bg) | Cambia la imagen de fondo con un efecto de desvanecimiento.                 |
+| [bgm](#bgm) | Reproduce un archivo de música de fondo (formato Ogg Vorbis).                 |
+| [callmacro](#callmacro) | Llama a una macro definida.                                             |
+| [ch](#ch) | Muestra u oculta caracteres con parámetros de capa detallados.          |
+| [capítulo](#chapter) | Establece un nombre de capítulo.                                               |
+| [choose](#choose) | Muestra opciones y almacena la selección o salta a una etiqueta.     |
+| [click](#click) | Espera un clic del usuario.                                            |
+| [config](#config) | Establece un valor de configuración para el sistema de juego.                    |
+| [defmacro](#defmacro) | Inicia una definición de macro.                                         |
+| [else](#else) | Parte de la rama if/elseif para cuando no se cumplen condiciones.       |
+| [elseif](#elseif) | Especifica una condición adicional en una rama.                     |
+| [endif](#endif) | Finaliza una rama condicional.                                         |
+| [endmacro](#endmacro) | Finaliza una definición de macro.                                           |
+| [goto](#goto) | Salta a una etiqueta de etiqueta especificada.                                    |
+| [gui](#gui) | Muestra una GUI de un archivo específico.                                 |
+| [si](#if) | Bifurca el proceso según una condición específica.               |
+| [label](#label) | Define una etiqueta para los objetivos de salto.                                  |
+| [layer](#layer) | Carga/descarga imágenes o establece parámetros para capas específicas.       |
+| [load](#load) | Carga un archivo NovelML y puede saltar a una etiqueta específica.             |
+| [move](#move) | Anima capas de personajes durante un tiempo específico.                   |
+| [lápiz](#pencil) | Dibuja un texto en una capa.                                            |
+| [returnmacro](#returnmacro) | Devuelve una ejecución de macro.                                    |
+| [se](#se) | Reproduce un archivo de efectos de sonido (formato Ogg Vorbis).                     |
+| [establecer](#set) | Establece un valor de variable (todas las variables se tratan como texto).         |
+| [skip](#skip) | Activa o desactiva el estado de omisión.                               |
+| [texto](#text) | Muestra texto en el cuadro de mensaje, opcionalmente con un nombre.          |
+| [vídeo](#video) | Reproduce un archivo de vídeo (admite configuraciones que se pueden omitir).                  |
+| [volumen](#volume) | Establece el volumen del sonido para las pistas BGM, SE o Voice.                |
+| [espera](#wait) | Espera un número específico de segundos.                           |
 
 ---
 
 ## `anime`
 
-Run Animation
+Ejecutar animación
 
-The `anime` tag loads and executes an animation definition from a file. 
-It allows for complex visual effects, character movements, or looping environmental animations beyond simple transitions.
+La etiqueta `anime` carga y ejecuta una definición de animación desde un archivo. 
+Permite efectos visuales complejos, movimientos de personajes o animaciones ambientales en bucle más allá de simples transiciones.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Run a synchronous animation (waits for completion)
@@ -58,41 +58,41 @@ It allows for complex visual effects, character movements, or looping environmen
 [anime stop="true" register="my_loop"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument      | Omissible      | Description                                        | Notes                                                             |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |---------------|----------------|----------------------------------------------------|-------------------------------------------------------------------|
-| `file`        | Yes            | The filename of the animation definition.          | *Required unless `stop="true"` is used.                           |
-| `async`       | Yes (`false`)  | Whether to run the animation asynchronously.       | If `false`, the script waits until the animation finishes.        |
-| `register`    | Yes            | A unique name to identify this animation instance. | Required for controlling or stopping async animations later.      |
-| `stop`        | Yes (`false`)  | Stops a registered animation if set to `true`.     | Requires the `register` argument.                                 |
-| `showsysbtn`  | Yes (`true`)   | Whether to show system buttons during playback.    | Only valid for synchronous animations.                            |
-| `showmsgbox`  | Yes (`true`)   | Whether to show the message box during playback.   | Only valid for synchronous animations.                            |
-| `shownamebox` | Yes (`true`)   | Whether to show the name box during playback.      | Only valid for synchronous animations.                            |
+| `file` | Yes | El nombre de archivo de la definición de animación.          | *Obligatorio a menos que se utilice `stop="true"`.                           |
+| `async` | Sí (`false`) | Si se debe ejecutar la animación de forma asincrónica.       | Si es `false`, el script espera hasta que finalice la animación.        |
+| `register` | Yes | Un nombre único para identificar esta instancia de animación. | Requerido para controlar o detener animaciones asíncronas más adelante.      |
+| `stop` | Sí (`false`) | Detiene una animación registrada si se establece en `true`.     | Requiere el argumento `register`.                                 |
+| `showsysbtn` | Sí (`true`) | Si se muestran los botones del sistema durante la reproducción.    | Sólo válido para animaciones sincrónicas.                            |
+| `showmsgbox` | Sí (`true`) | Si se debe mostrar el cuadro de mensaje durante la reproducción.   | Sólo válido para animaciones sincrónicas.                            |
+| `shownamebox` | Sí (`true`) | Si se muestra el cuadro de nombre durante la reproducción.      | Sólo válido para animaciones sincrónicas.                            |
 
-### Tips
+### Consejos
 
-**Synchronous vs. Asynchronous**:
-* **Synchronous (`async="false"`)**: Great for cutscenes where you want the player to watch the animation before any text or choices appear.
-* **Asynchronous (`async="true"`)**: Perfect for background effects (like falling snow or a flickering light) that should continue while the story progresses.
+**Síncrono versus asíncrono**:
+* **Sincrónico (`async="false"`)**: Ideal para escenas en las que desea que el jugador vea la animación antes de que aparezca cualquier texto u opciones.
+* **Asincrónico (`async="true"`)**: Perfecto para efectos de fondo (como nieve que cae o una luz parpadeante) que deben continuar mientras avanza la historia.
 
-**Managing Instances**:
-* By using the `register` argument, you can label a specific animation.
-* This is how you tell the engine exactly which animation to stop when you use `stop="true"`.
+**Gestión de instancias**:
+* Al utilizar el argumento `register`, puedes etiquetar una animación específica.
+* Así es como le dices al motor exactamente qué animación detener cuando usas `stop="true"`.
 
-**UI Control**:
-* Use `showmsgbox="false"` if your animation is meant to take up the full screen and you want the dialogue window to disappear temporarily for a cleaner look.
+**Control de interfaz de usuario**:
+* Utilice `showmsgbox="false"` si su animación debe ocupar toda la pantalla y desea que la ventana de diálogo desaparezca temporalmente para una apariencia más limpia.
 
 ---
 
 ## `bg`
 
-Change Background
+Cambiar fondo
 
-The `bg` tag changes the background image with a smooth fading effect.
-It's the primary way to set the scene in your visual novel.
+La etiqueta `bg` cambia la imagen de fondo con un efecto de desvanecimiento suave.
+Es la forma principal de preparar el escenario de tu novela visual.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Transition to background.png over 1.0 second
@@ -102,51 +102,51 @@ It's the primary way to set the scene in your visual novel.
 [bg file="none" time="1.0"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument   | Omissible      | Description                                   | Notes                                                                        |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |------------|----------------|-----------------------------------------------|------------------------------------------------------------------------------|
-| `file`     | No             | The filename of the new background image.     | Set to `none` to remove the background.                                      |
-| `time`     | Yes (`0`)      | The duration of the fading effect in seconds. | Default is `0.0` (instant change).                                           |
-| `method`   | Yes (`normal`) | The fading method/style.                      | Choose from `normal`, `rule`, or `melt`.                                     |
-| `rule`     | Yes            | The rule image file for specific transitions. | Required when `method` is set to `rule` or `melt`.                           |
-| `x`        | Yes (`0`)      | The X-axis offset for the background image.   | Supports absolute values (e.g., `100`) or relative values (e.g., `r100`).    |
-| `y`        | Yes (`0`)      | The Y-axis offset for the background image.   | Supports absolute values (e.g., `100`) or relative values (e.g., `r-100`).   |
-| `alpha`    | Yes (`255`)    | The alpha value of the background image.      | `0` to `255`.                                                                |
-| `clear`    | Yes (`false`)  | Whether to vanish the characters or not.      | If `true`, all characters will be vanished.                                  |
+| `file` | No | El nombre de archivo de la nueva imagen de fondo.     | Establezca en `none` para eliminar el fondo.                                      |
+| `time` | Sí (`0`) | La duración del efecto de desvanecimiento en segundos. | El valor predeterminado es `0.0` (cambio instantáneo).                                           |
+| `method` | Sí (`normal`) | El método/estilo de desvanecimiento.                      | Elija entre `normal`, `rule` o `melt`.                                     |
+| `rule` | Yes | El archivo de imagen de regla para transiciones específicas. | Requerido cuando `method` está configurado en `rule` o `melt`.                           |
+| `x` | Sí (`0`) | El desplazamiento del eje X para la imagen de fondo.   | Admite valores absolutos (p. ej., `100`) o valores relativos (p. ej., `r100`).    |
+| `y` | Sí (`0`) | El desplazamiento del eje Y de la imagen de fondo.   | Admite valores absolutos (p. ej., `100`) o valores relativos (p. ej., `r-100`).   |
+| `alpha` | Sí (`255`) | El valor alfa de la imagen de fondo.      | `0` a `255`.                                                                |
+| `clear` | Sí (`false`) | Si desaparecer los personajes o no.      | Si es `true`, todos los caracteres desaparecerán.                                  |
 
-### Transition Methods (`method`)
+### Métodos de transición (`method`)
 
-You can create different atmospheres by choosing the right transition style:
+Puedes crear diferentes atmósferas eligiendo el estilo de transición adecuado:
 
-| Type     | Description                                                                                                                          |
+| Tipo | Descripciﾃｳn |
 |----------|--------------------------------------------------------------------------------------------------------------------------------------|
-| `normal` | Alpha Blending. The default method. Performs a smooth cross-fade between the old and new images.                                     |
-| `rule`   | 1-bit Universal Transition. Uses a grayscale "rule" image to determine the switching order.                                          |
-| `melt`   | 8-bit Universal Transition. Similar to `rule`, but with soft, blurred edges at the transition boundary, creating a "melting" effect. |
+| `normal` | Mezcla alfa. El método predeterminado. Realiza un fundido cruzado suave entre las imágenes antiguas y nuevas.                                     |
+| `rule` | Transición universal de 1 bit. Utiliza una imagen de "regla" en escala de grises para determinar el orden de cambio.                                          |
+| `melt` | Transición universal de 8 bits. Similar a `rule`, pero con bordes suaves y borrosos en el límite de transición, creando un efecto de "fusión". |
 
-For `rule` and `melt`, the image switches pixel-by-pixel from the darkest to the lightest areas of the rule map.
+Para `rule` y `melt`, la imagen cambia píxel a píxel desde las áreas más oscuras a las más claras del mapa de reglas.
 
-### Tips
+### Consejos
 
-**Relative Positioning**: 
-* If you want to nudge the background from its current position, use the `r` prefix.
-* For example, `x="r50"` moves the image 50 pixels to the right of its current X coordinate.
+**Posicionamiento relativo**: 
+* Si desea mover el fondo desde su posición actual, use el prefijo `r`.
+* Por ejemplo, `x="r50"` mueve la imagen 50 píxeles a la derecha de su coordenada X actual.
 
-**What is a Rule Image?**:
-* It's a grayscale image where black areas transition first and white areas transition last.
-* By creating custom rule images, you can achieve effects like horizontal wipes, circular reveals, or even more artistic patterns!
+**¿Qué es una imagen de regla?**:
+* Es una imagen en escala de grises donde las áreas negras pasan primero y las áreas blancas pasan al final.
+* Al crear imágenes de reglas personalizadas, puedes lograr efectos como barridos horizontales, revelaciones circulares o incluso patrones más artísticos.
 
 ---
 
 ## `bgm`
 
-Play Background Music
+Reproducir música de fondo
 
-The `bgm` tag plays a background music track. 
-Music is an essential tool for setting the mood of your scene, and it will continue to loop automatically until stopped or changed.
+La etiqueta `bgm` reproduce una pista de música de fondo. 
+La música es una herramienta esencial para establecer el ambiente de su escena y continuará reproduciéndose automáticamente hasta que se detenga o cambie.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Start playing a BGM track
@@ -156,39 +156,39 @@ Music is an essential tool for setting the mood of your scene, and it will conti
 [bgm file="none"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument | Omissible     | Description                        | Notes                                  |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|---------------|------------------------------------|----------------------------------------|
-| `file`   | No            | The filename of the music to play. | Set to `none` to stop the current BGM. |
-| `once`   | Yes (`false`) | Don't loop.                        |                                        |
+| `file` | No | El nombre del archivo de la música a reproducir. | Configúrelo en `none` para detener la BGM actual. |
+| `once` | Sí (`false`) | No hagas bucles.                        |                                        |
 
-### Tips
+### Consejos
 
-**Required Format**:
-* For compatibility and performance, Suika3 requires BGM files to be in **Ogg Vorbis** format.
-* The sampling rate MUST be **44,100Hz**.
+**Formato requerido**:
+* Por compatibilidad y rendimiento, Suika3 requiere que los archivos BGM estén en formato **Ogg Vorbis**.
+* La frecuencia de muestreo DEBE ser **44.100 Hz**.
 
-**Looping**:
-* Background music is designed to loop by default, so you don't need to worry about the music ending abruptly during a long dialogue scene.
+**Bucle**:
+* La música de fondo está diseñada para reproducirse en bucle de forma predeterminada, por lo que no necesita preocuparse de que la música termine abruptamente durante una escena de diálogo larga.
 
-**Smooth Transitions**:
-* If you call `[bgm]` while another track is already playing, the engine will typically handle the transition. 
-* To adjust the loudness of the music, you'll want to use the `[volume]` tag.
+**Transiciones suaves**:
+* Si llamas a `[bgm]` mientras ya se está reproduciendo otra pista, el motor normalmente manejará la transición. 
+* Para ajustar el volumen de la música, querrás usar la etiqueta `[volume]`.
 
-**Stopping Music**:
-* When a scene ends or the mood changes to silence, remember to use `[bgm file="none"]` to give the player's ears a rest!
+**Detener música**:
+* Cuando una escena termina o el ambiente cambia a silencio, ¡recuerda usar `[bgm file="none"]` para darle un descanso a los oídos del jugador!
 
 ---
 
 ## `callmacro`
 
-Call Macro
+Llamar macro
 
-The `callmacro` tag executes a previously defined macro.
-It allows you to trigger a specific sequence of commands, such as character entrances or UI animations, multiple times throughout your script without rewriting the original code.
+La etiqueta `callmacro` ejecuta una macro previamente definida.
+Le permite activar una secuencia específica de comandos, como entradas de personajes o animaciones de la interfaz de usuario, varias veces a lo largo de su secuencia de comandos sin tener que reescribir el código original.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Call a macro named "kaito_entrance"
@@ -198,36 +198,36 @@ It allows you to trigger a specific sequence of commands, such as character entr
 [callmacro name="fade_to_white"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument | Omissible | Description                               | Notes                                              |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|-----------|-------------------------------------------|----------------------------------------------------|
-| `name`   | No        | The name of the macro to execute.         | Must match a name defined by a `[defmacro]` tag.   |
-| `file`   | Yes       | The file name where the macro is defined. | Omit this to call a macro inside the current file. |
+| `name` | No | El nombre de la macro a ejecutar.         | Debe coincidir con un nombre definido por una etiqueta `[defmacro]`.   |
+| `file` | Yes | El nombre del archivo donde se define la macro. | Omita esto para llamar a una macro dentro del archivo actual. |
 
-### Tips
+### Consejos
 
-**Efficiency**:
-* By using `[callmacro]`, you can keep your main story script focused and readable.
-* Instead of seeing 10 lines of animation code, you'll just see one clear command.
+**Eficiencia**:
+* Al usar `[callmacro]`, puedes mantener el guión de tu historia principal enfocado y legible.
+* En lugar de ver 10 líneas de código de animación, solo verás un comando claro.
 
-**Execution Flow**:
-* When the engine hits `[callmacro]`, it immediately jumps to the defined macro, runs all the tags inside it, and then automatically returns to the very next line after the `[callmacro]` tag.
+**Flujo de ejecución**:
+* Cuando el motor llega a `[callmacro]`, salta inmediatamente a la macro definida, ejecuta todas las etiquetas dentro de ella y luego regresa automáticamente a la siguiente línea después de la etiqueta `[callmacro]`.
 
-**Modular Design**:
-* Think of macros as "custom tags" for your game.
-* If you decide to change how a character enters a scene, you only need to update the code once in the `[defmacro]` block, and every `[callmacro]` will reflect that change!
+**Diseño modular**:
+* Piensa en las macros como "etiquetas personalizadas" para tu juego.
+* Si decides cambiar la forma en que un personaje ingresa a una escena, solo necesitas actualizar el código una vez en el bloque `[defmacro]`, ¡y cada `[callmacro]` reflejará ese cambio!
 
 ---
 
 ## `ch`
 
-Character Display
+Visualización de caracteres
 
-The `ch` tag shows, hides, or updates character images on various layers.
-It allows for detailed control over positioning, scaling, and rotations for multiple characters and background at once.
+La etiqueta `ch` muestra, oculta o actualiza imágenes de personajes en varias capas.
+Permite un control detallado sobre el posicionamiento, la escala y las rotaciones de varios personajes y fondos a la vez.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Show a character at the center
@@ -240,64 +240,64 @@ It allows for detailed control over positioning, scaling, and rotations for mult
 [ch center="none" time="1.0"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument  | Omissible      | Description                            | Notes                                                 |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |-----------|----------------|----------------------------------------|-------------------------------------------------------|
-| `time`    | Yes (`0`)      | Duration of the transition in seconds. | Affects all layer changes within this tag.            |
-| `method`  | Yes (`normal`) | The fading method/style.               | `normal`, `rule`, or `melt`.                          |
-| `rule`    | Yes            | The rule image file for transitions.   | Required when `method` is `rule` or `melt`.           |
+| `time` | Sí (`0`) | Duración de la transición en segundos. | Afecta a todos los cambios de capa dentro de esta etiqueta.            |
+| `method` | Sí (`normal`) | El método/estilo de desvanecimiento.               | `normal`, `rule` o `melt`.                          |
+| `rule` | Yes | El archivo de imagen de regla para transiciones.   | Requerido cuando `method` es `rule` o `melt`.           |
 
-#### Layer File Arguments
+#### Argumentos del archivo de capa
 
-Specify a filename to load an image onto a layer. Set to `none` to unload (hide) the image.
+Especifique un nombre de archivo para cargar una imagen en una capa. Establezca en `none` para descargar (ocultar) la imagen.
 
-| Argument       | Description                               |
+| Argumento | Descripciﾃｳn |
 |----------------|-------------------------------------------|
-| `bg`           | Background layer.                         |
-| `back          | Back-Center character.                    |
-| `left`         | Left character.                           |
-| `right`        | Right character.                          |
-| `center`       | Center character.                         |
-| `left-center`  | Left-Center character.                    |
-| `right-center` | Intermediate character.                   |
-| `face`         | Face character.                           |
+| `bg` | Capa de fondo.                         |
+| `volver | Carácter del centro trasero.                    |
+| `left` | Carácter izquierdo.                           |
+| `right` | Carácter correcto.                          |
+| `center` | Carácter central.                         |
+| `left-center` | Carácter del centro izquierdo.                    |
+| `right-center` | Carácter intermedio.                   |
+| `face` | Carácter facial.                           |
 
-#### Layer Parameter Arguments
+#### Argumentos de parámetros de capa
 
-Each layer above (e.g., `center`) can be customized using the following suffixes (e.g., `center-x`, `center-rotate`).
+Cada capa superior (por ejemplo, `center`) se puede personalizar utilizando los siguientes sufijos (por ejemplo, `center-x`, `center-rotate`).
 
-| Suffix      | Omissible     | Description                | Notes                                                         |
+| Sufijo | Omisible | Descripciﾃｳn | Notas |
 |-------------|---------------|----------------------------|---------------------------------------------------------------|
-| `-x`        | Yes (`0`)     | X position.                | Supports absolute (e.g., `100`) or relative (e.g., `r50`).    |
-| `-y`        | Yes (`0`)     | Y position.                | Supports absolute (e.g., `100`) or relative (e.g., `r-50`).   |
-| `-a`        | Yes (`255`)   | Alpha value. (opacity)     | `0` (transparent) to `255` (opaque).                          |
-| `-scale-x`  | Yes (`1.0`)   | X scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `-scale-y`  | Yes (`1.0`)   | Y scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `-center-x` | Yes (`0`)     | X center for rotation.     | Pivot point for the rotation effect.                          |
-| `-center-y` | Yes (`0`)     | Y center for rotation.     | Pivot point for the rotation effect.                          |
-| `-rotate`   | Yes (`0`)     | Rotation in degrees.       | Positive for clockwise. Supports `r` prefix.                  |
-| `-dim`      | Yes (`false`) | Dimming status.            | If `true`, the layer is rendered 50% darker.                  |
+| `-x` | Sí (`0`) | Posición X.                | Admite absoluto (p. ej., `100`) o relativo (p. ej., `r50`).    |
+| `-y` | Sí (`0`) | Posición Y.                | Admite absoluto (p. ej., `100`) o relativo (p. ej., `r-50`).   |
+| `-a` | Sí (`255`) | Valor alfa. (opacidad) | `0` (transparente) a `255` (opaco).                          |
+| `-scale-x` | Sí (`1.0`) | factor de escala X.          | `1.0` es el tamaño original. Admite el prefijo `r`.                  |
+| `-scale-y` | Sí (`1.0`) | Factor de escala Y.          | `1.0` es el tamaño original. Admite el prefijo `r`.                  |
+| `-center-x` | Sí (`0`) | Centro X para rotación.     | Punto de pivote para el efecto de rotación.                          |
+| `-center-y` | Sí (`0`) | Centro Y para rotación.     | Punto de pivote para el efecto de rotación.                          |
+| `-rotate` | Sí (`0`) | Rotación en grados.       | Positivo para el sentido de las agujas del reloj. Admite el prefijo `r`.                  |
+| `-dim` | Sí (`false`) | Estado de atenuación.            | Si es `true`, la capa se oscurece un 50%.                  |
 
-### Tips
+### Consejos
 
-**Batch Updates**:
-* You can update multiple characters and the background simultaneously in a single `[ch]` tag to ensure they animate together perfectly.
+**Actualizaciones por lotes**:
+* Puedes actualizar varios personajes y el fondo simultáneamente en una sola etiqueta `[ch]` para asegurar que se animen juntos perfectamente.
 
-**Relative Transformation**:
-* Like the `bg` tag, all numeric parameters support the `r` prefix.
-* For example, `center-y="r-50"` will hop the center character 50 pixels upward from its current position.
+**Transformación relativa**:
+* Al igual que la etiqueta `bg`, todos los parámetros numéricos admiten el prefijo `r`.
+* Por ejemplo, `center-y="r-50"` saltará el carácter central 50 píxeles hacia arriba desde su posición actual.
 
 ---
 
 ## `chapter`
 
-Set Chapter Name
+Establecer nombre del capítulo
 
-The `chapter` tag sets the name of the current chapter. 
-This name is typically used by the game system to display progress in the save/load menu or on the game screen, helping players keep track of their journey.
+La etiqueta `chapter` establece el nombre del capítulo actual. 
+El sistema de juego suele utilizar este nombre para mostrar el progreso en el menú guardar/cargar o en la pantalla del juego, lo que ayuda a los jugadores a realizar un seguimiento de su viaje.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Set the chapter name at the beginning of a story segment
@@ -307,35 +307,35 @@ This name is typically used by the game system to display progress in the save/l
 [chapter name="Intermission: A Quiet Night"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument | Omissible | Description                        | Notes                                                      |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|-----------|------------------------------------|------------------------------------------------------------|
-| `name`   | No        | The name of the chapter to be set. | This string will be stored in the game's system variables. |
+| `name` | No | El nombre del capítulo que se establecerá. | Esta cadena se almacenará en las variables del sistema del juego. |
 
-### Tips
+### Consejos
 
-**Save Data Visibility**:
-* In many Suika3 configurations, the string you set here is what appears on the "Save" and "Load" slots.
-* Choose a name that helps the player remember exactly where they were in the story!
+**Guardar visibilidad de datos**:
+* En muchas configuraciones de Suika3, la cadena que configuras aquí es la que aparece en las ranuras "Guardar" y "Cargar".
+* ¡Elige un nombre que ayude al jugador a recordar exactamente dónde se encontraba en la historia!
 
-**Consistency**:
-* It's a good practice to call the `[chapter]` tag immediately after a `[label]` that starts a new major scene or chapter. 
+**Consistencia**:
+* Es una buena práctica llamar a la etiqueta `[chapter]` inmediatamente después de un `[label]` que inicia una nueva escena o capítulo importante.
 
-**Updating Names**:
-* You can call `[chapter]` as many times as you like.
-* Every time you do, the old chapter name is overwritten by the new one.
+**Actualización de nombres**:
+* Puedes llamar a `[chapter]` tantas veces como quieras.
+* Cada vez que lo hace, el nombre del capítulo anterior se sobrescribe con el nuevo.
 
 ---
 
 ## `choose`
 
-Display Selection Options
+Opciones de selección de pantalla
 
-The `choose` tag displays up to 8 interactive buttons for the player. 
-It stores the text of the chosen item in a variable.
+La etiqueta `choose` muestra hasta 8 botones interactivos para el jugador. 
+Almacena el texto del elemento elegido en una variable.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Store selection in a variable
@@ -350,90 +350,90 @@ It stores the text of the chosen item in a variable.
 ]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument         | Omissible | Description                                    | Notes                                              |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |------------------|-----------|------------------------------------------------|--------------------------------------------------- |
-| `text1`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text2`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text3`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text4`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text5`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text6`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text7`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text8`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text<N>-locale` | Yes       | The text displayed on each button. (localized) | At least one option are typically required.        |
-| `name`           | No        | The variable name to store the result.         | Stores the text of the selected option.            |
-| `value1`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value2`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value3`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value4`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value5`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value6`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value7`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value8`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `time`           | Yes (`0`) | Timer in seconds.                              | If `0`, no timer is enabled.                       |
+| `text1` | Yes | El texto que se muestra en cada botón.             | Normalmente se requiere al menos una opción.        |
+| `text2` | Yes | El texto que se muestra en cada botón.             | Normalmente se requiere al menos una opción.        |
+| `text3` | Yes | El texto que se muestra en cada botón.             | Normalmente se requiere al menos una opción.        |
+| `text4` | Yes | El texto que se muestra en cada botón.             | Normalmente se requiere al menos una opción.        |
+| `text5` | Yes | El texto que se muestra en cada botón.             | Normalmente se requiere al menos una opción.        |
+| `text6` | Yes | El texto que se muestra en cada botón.             | Normalmente se requiere al menos una opción.        |
+| `text7` | Yes | El texto que se muestra en cada botón.             | Normalmente se requiere al menos una opción.        |
+| `text8` | Yes | El texto que se muestra en cada botón.             | Normalmente se requiere al menos una opción.        |
+| `text<N>-locale` | Yes | El texto que se muestra en cada botón. (localizado) | Normalmente se requiere al menos una opción.        |
+| `name` | No | El nombre de la variable para almacenar el resultado.         | Almacena el texto de la opción seleccionada.            |
+| `value1` | Yes | El valor asignado a la variable de resultado.     | Normalmente se requiere al menos una opción.        |
+| `value2` | Yes | El valor asignado a la variable de resultado.     | Normalmente se requiere al menos una opción.        |
+| `value3` | Yes | El valor asignado a la variable de resultado.     | Normalmente se requiere al menos una opción.        |
+| `value4` | Yes | El valor asignado a la variable de resultado.     | Normalmente se requiere al menos una opción.        |
+| `value5` | Yes | El valor asignado a la variable de resultado.     | Normalmente se requiere al menos una opción.        |
+| `value6` | Yes | El valor asignado a la variable de resultado.     | Normalmente se requiere al menos una opción.        |
+| `value7` | Yes | El valor asignado a la variable de resultado.     | Normalmente se requiere al menos una opción.        |
+| `value8` | Yes | El valor asignado a la variable de resultado.     | Normalmente se requiere al menos una opción.        |
+| `time` | Sí (`0`) | Temporizador en segundos.                              | Si `0`, no hay ningún temporizador habilitado.                       |
 
-### Localization
+### Localización
 
-For example, if the user OS environment is set to Japanese, `text1-ja` is preferred instead of `text1`.
+Por ejemplo, si el entorno del sistema operativo del usuario está configurado en japonés, se prefiere `text1-ja` en lugar de `text1`.
 
-| Suffix      | Language                                 |
+| Sufijo | Idioma |
 |-------------|------------------------------------------|
-| -en         | English (Fallback)                       |
-| -en-us      | English (America)                        |
-| -en-gb      | English (British)                        |
-| -en-au      | English (Austraria)                      |
-| -en-nz      | English (New Zealand)                    |
-| -fr         | French (Fallback)                        |
-| -fr-fr      | French (France)                          |
-| -fr-ca      | French (Canada)                          |
-| -es         | Spanish (Spain, Fallback)                |
-| -es-la      | Spanish (Latin America)                  |
-| -de         | German                                   |
-| -it         | Italian                                  |
-| -ru         | Russian                                  |
-| -el         | Greek                                    |
-| -zh         | Chinese (Simplified)                     |
-| -zh-tw      | Chinese (Traditional, Taiwan)            |
-| -ja         | Japanese                                 |
-| (no suffix) | Fallback (developer decides)             |
+| -en | Inglés (alternativa) |
+| -en-us | Inglés (América) |
+| -en-gb | Inglés (británico) |
+| -en-au | Inglés (Austraria) |
+| -en-nz | Inglés (Nueva Zelanda) |
+| -fr | Francés (alternativo) |
+| -fr-fr | Francés (Francia) |
+| -fr-ca | Francés (Canadá) |
+| -es | Español (España, Reserva) |
+| -es-la | Español (Latinoamérica) |
+| -de | German |
+| -it | Italian |
+| -ru | Russian |
+| -el | Greek |
+| -zh | Chino (simplificado) |
+| -zh-tw | Chino (tradicional, Taiwán) |
+| -ja | Japanese |
+| (sin sufijo) | Respaldo (el desarrollador decide) |
 
-For English OS locales including all regions, `-en` is used as the
-default fallback.  If a more specific variant such as `-en-gb` is
-specified in a tag and best matches with the user region, it will be
-preferred. The same mechanism is applied to Spanish and French. Note
-that there is no fallback from Traditional Chinese to Simplified
-Chinese.
+Para las configuraciones regionales del sistema operativo en inglés, incluidas todas las regiones, `-en` se utiliza como
+respaldo predeterminado.  Si una variante más específica como `-en-gb` es
+especificado en una etiqueta y que mejor coincida con la región del usuario, será
+preferido. El mismo mecanismo se aplica al español y al francés. Nota
+que no hay alternativa del chino tradicional al simplificado
+Chino.
 
-For example, if the user locale is `en-AU`, the following priority is applied:
-* 1. text1-en-au
-* 2. text1-en
-* 3. text1
+Por ejemplo, si la configuración regional del usuario es `en-AU`, se aplica la siguiente prioridad:
+* 1. texto1-en-au
+* 2. texto1-es
+* 3. texto1
 
-The following are currently not supported but planned to be supported.
+Los siguientes no son actualmente compatibles, pero está previsto que lo sean.
 
-| Suffix      | Language                                 |
+| Sufijo | Idioma |
 |-------------|------------------------------------------|
-| -ko         | Korean                                   |
-| -vi         | Vietnamese                               |
-| -id         | Indonesia                                |
-| -zh-hk      | Traditional Chinese (Hong Kong)          |
-| -pt         | Portuguese (Fallback)                    |
-| -pt-br      | Portuguese (Brazil)                      |
-| -pl         | Polish                                   |
-| -tr         | Turkish                                  |
-| -ta         | Tamil                                    |
-| -te         | Telugu                                   |
-| -kn         | Kannada                                  |
-| -si         | Sinhala                                  |
-| -ar         | Arabic (RTL)                             |
-| -fa         | Persian (RTL)                            |
+| -ko | Korean |
+| -vi | Vietnamese |
+| -id | Indonesia |
+| -zh-hk | Chino tradicional (Hong Kong) |
+| -pt | Portugués (alternativo) |
+| -pt-br | Portugués (Brasil) |
+| -pl | Polish |
+| -tr | Turkish |
+| -ta | Tamil |
+| -te | Telugu |
+| -kn | Kannada |
+| -si | Sinhala |
+| -ar | Árabe (RTL) |
+| -fa | Persa (RTL) |
 
-### Tips
+### Consejos
 
-**Branching Logic**:
-* You can use the `[if]` tag to check the stored value and create complex branches.
+**Lógica de ramificación**:
+* Puede usar la etiqueta `[if]` para verificar el valor almacenado y crear ramas complejas.
 
 ```
 [choose
@@ -450,20 +450,20 @@ The following are currently not supported but planned to be supported.
 [endif]
 ```
 
-**Variable Persistence**:
-* Since everything is a string, remember that even numbers like "100" are stored as text.
-* Suika3's logic tags (like `if`) can handle these strings for comparisons.
+**Persistencia variable**:
+* Como todo es una cadena, recuerda que incluso los números como "100" se almacenan como texto.
+* Las etiquetas lógicas de Suika3 (como `if`) pueden manejar estas cadenas para realizar comparaciones.
 
 ---
 
 ## `set`
 
-Set Variable
+Establecer variable
 
-The `set` tag assigns a value to a variable name. 
-In Suika3, **all variables are treated as text strings**, but they can be compared numerically in other tags like `[if]`.
+La etiqueta `set` asigna un valor a un nombre de variable. 
+En Suika3, **todas las variables se tratan como cadenas de texto**, pero se pueden comparar numéricamente en otras etiquetas como `[if]`.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Assign a simple string to a variable
@@ -480,40 +480,40 @@ In Suika3, **all variables are treated as text strings**, but they can be compar
 
 ```
 
-### Arguments
+### Argumentos
 
-| Argument | Omissible     | Description                                 | Notes                                                               |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|---------------|---------------------------------------------|---------------------------------------------------------------------|
-| `name`   | No            | The unique name of the variable.            | Use alphanumeric characters and underscores for best compatibility. |
-| `value`  | Yes           | The content to store in the variable.       | Remember: everything is stored as a string!                         |
-| `value1` | Yes           | The operand 1 for opcode.                   |                                                                     |
-| `value2` | Yes           | The operand 2 for opcode.                   |                                                                     |
-| `op`     | Yes           | The opcode. (`+`, `-`, `*`, `/`, `//`, `%`) |                                                                     |
-| `global` | Yes (`false`) | Make the flag global.                       | Global variables are for achievement flags e.g., "Saw ED1".         |
+| `name` | No | El nombre único de la variable.            | Utilice caracteres alfanuméricos y guiones bajos para una mejor compatibilidad. |
+| `value` | Yes | El contenido a almacenar en la variable.       | Recuerde: ¡todo se almacena como una cadena!                         |
+| `value1` | Yes | El operando 1 para el código de operación.                   |                                                                     |
+| `value2` | Yes | El operando 2 para el código de operación.                   |                                                                     |
+| `op` | Yes | El código de operación. (`+`, `-`, `*`, `/`, `//`, `%`) |                                                                     |
+| `global` | Sí (`false`) | Haz que la bandera sea global.                       | Las variables globales son para indicadores de logros, por ejemplo, "Saw ED1".         |
 
-### Tips
+### Consejos
 
-**String Handling**:
-* Since Suika3 treats everything as text, `value="100"` and `value="May"` are handled the same way internally.
-* You can reference these variables in other tags (like `text` or `if`) using the `${variable_name}` syntax.
+**Manejo de cadenas**:
+* Dado que Suika3 trata todo como texto, `value="100"` y `value="May"` se manejan de la misma manera internamente.
+* Puede hacer referencia a estas variables en otras etiquetas (como `text` o `if`) usando la sintaxis `${variable_name}`.
 
-**Flag Management**:
-* For game flags (like "has met the hero"), it's a common practice to use `"true"` and `"false"` or `"1"` and `"0"`. 
-* Consistency is key! If you start using `"1"`, stick with it so your `[if]` checks don't get confused.
+**Gestión de banderas**:
+* Para indicadores de juego (como "ha conocido al héroe"), es una práctica común usar `"true"` y `"false"` o `"1"` y `"0"`. 
+* ¡La consistencia es clave! Si comienza a usar `"1"`, continúe con él para que sus comprobaciones de `[if]` no se confundan.
 
-**Variable Naming**:
-* Avoid using spaces or special symbols in your variable names. `my_variable` is much safer than `my variable!`.
+**Nombres de variables**:
+* Evite el uso de espacios o símbolos especiales en los nombres de sus variables. `my_variable` es mucho más seguro que `my variable!`.
 
 ---
 
 ## `click`
 
-Wait for Click
+Espere el clic
 
-The `click` tag pauses the script execution and waits for the player to click the mouse or press a key.
-It is commonly used to create pauses between visual changes or before a major transition.
+La etiqueta `click` pausa la ejecución del script y espera a que el jugador haga clic con el mouse o presione una tecla.
+Se utiliza comúnmente para crear pausas entre cambios visuales o antes de una transición importante.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Change the background, then wait for the player to click
@@ -524,38 +524,38 @@ It is commonly used to create pauses between visual changes or before a major tr
 [ch center="chara01.png" time="1.0"]
 ```
 
-### Arguments
+### Argumentos
 
-This tag does not take any arguments.
+Esta etiqueta no acepta ningún argumento.
 
-| Argument | Omissible | Description | Notes           |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|-----------|-------------|-----------------|
 | -        | -         | -           | -               |
 
-### Tips
+### Consejos
 
-**Timing and Pacing**:
-* Use `[click]` when you want to give the player a moment to look at a new background or a specific character expression before the dialogue continues.
-* Unlike the `[text]` tag, which waits for a click automatically after displaying a message, `[click]` is used for manual flow control during non-dialogue sequences.
+**Tiempo y ritmo**:
+* Usa `[click]` cuando quieras darle al jugador un momento para mirar un nuevo fondo o una expresión de personaje específica antes de que continúe el diálogo.
+* A diferencia de la etiqueta `[text]`, que espera un clic automáticamente después de mostrar un mensaje, `[click]` se utiliza para el control de flujo manual durante secuencias sin diálogo.
 
-**Visual Feedback**:
-* When the script hits a `[click]` tag, the game will remain still. Ensure that any preceding animations (like `[bg]` or `[ch]`) have a `time` set, or the screen might feel static too abruptly.
+**Comentarios visuales**:
+* Cuando el script llegue a una etiqueta `[click]`, el juego permanecerá quieto. Asegúrese de que cualquier animación anterior (como `[bg]` o `[ch]`) tenga un `time` configurado, o la pantalla podría sentirse estática de manera demasiado abrupta.
 
-**For timed waits:**
-* Use `[wait]` for timed waits.
+**Para esperas cronometradas:**
+* Utilice `[wait]` para esperas cronometradas.
 
 ---
 
 ## `goto`
 
-Jump to Label
+Saltar a la etiqueta
 
-The `goto` tag immediately moves the NovelML execution to a specified label. 
-It is useful tool for controlling the flow of your story, allowing you to skip sections or loop back to previous parts.
+La etiqueta `goto` mueve inmediatamente la ejecución de NovelML a una etiqueta especificada. 
+Es una herramienta útil para controlar el flujo de su historia, permitiéndole saltar secciones o volver a partes anteriores.
 
-Please note that small branches should be realized by `[if]`.
+Tenga en cuenta que las sucursales pequeñas deben realizarse antes del `[if]`.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Jump to the beginning of the morning scene
@@ -567,35 +567,35 @@ Please note that small branches should be realized by `[if]`.
 [text text="The sun rises over the horizon."]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument | Omissible | Description                       | Notes                                         |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|-----------|-----------------------------------|-----------------------------------------------|
-| `name`   | No        | The target label name to jump to. | Must match a name defined by a `[label]` tag. |
+| `name` | No | El nombre de la etiqueta de destino a la que saltar. | Debe coincidir con un nombre definido por una etiqueta `[label]`. |
 
-### Tips
+### Consejos
 
-**Unconditional Jump**:
-* Unlike `[if]`, `[goto]` always jumps to the target label as soon as the engine hits the tag.
+**Salto incondicional**:
+* A diferencia de `[if]`, `[goto]` siempre salta a la etiqueta de destino tan pronto como el motor llega a la etiqueta.
 
-**Flow Management**:
-* Use `[goto]` at the end of a branching path to bring the story back to a "common" route. 
-* It's also great for creating loops (like a "Return to Title" sequence) when combined with other logic.
+**Gestión de flujo**:
+* Utilice `[goto]` al final de una ruta de bifurcación para devolver la historia a una ruta "común". 
+* También es excelente para crear bucles (como una secuencia de "Volver al título") cuando se combina con otra lógica.
 
-**Across Files?**:
-* Remember that `[goto]` typically works within the current script file.
-* If you want to jump to a different file entirely, you'll want to look at the `[load]` tag!
+**¿Entre archivos?**:
+* Recuerde que `[goto]` normalmente funciona dentro del archivo de script actual.
+* Si desea saltar a un archivo completamente diferente, querrá mirar la etiqueta `[load]`.
 
 ---
 
 ## `defmacro`
 
-Define Macro
+Definir macro
 
-The `defmacro` tag starts the definition of a macro. 
-A macro allows you to group multiple tags and commands into a single named block, which can be reused throughout your script using the `[callmacro]` tag.
+La etiqueta `defmacro` inicia la definición de una macro. 
+Una macro le permite agrupar varias etiquetas y comandos en un único bloque con nombre, que se puede reutilizar en todo el script utilizando la etiqueta `[callmacro]`.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Define a macro for a specific character's entrance
@@ -608,36 +608,36 @@ A macro allows you to group multiple tags and commands into a single named block
 [callmacro name="enter_kaito"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument | Omissible | Description                     | Notes                                             |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|-----------|---------------------------------|---------------------------------------------------|
-| `name`   | No        | The unique name for this macro. | Used to identify the macro when calling it later. |
+| `name` | No | El nombre único de esta macro. | Se utiliza para identificar la macro cuando se llama más tarde. |
 
-### Tips
+### Consejos
 
-**Closing the Definition**:
-* Every `[defmacro]` must be paired with an `[endmacro]` tag to mark the end of the definition.
+**Cerrando la definición**:
+* Cada `[defmacro]` debe combinarse con una etiqueta `[endmacro]` para marcar el final de la definición.
 
-**Code Reusability**:
-* Macros are perfect for repetitive sequences, such as specific UI transitions, character-specific visual setups, or complex sound and visual combinations.
+**Reutilización del código**:
+* Las macros son perfectas para secuencias repetitivas, como transiciones de interfaz de usuario específicas, configuraciones visuales específicas de personajes o combinaciones complejas de sonido y imágenes.
 
-**Organization**:
-* It is a common practice to define all your macros at the very beginning of your main script file or in a separate file that you load at the start.
+**Organización**:
+* Es una práctica común definir todas sus macros al principio de su archivo de script principal o en un archivo separado que carga al principio.
 
-**Nesting and Logic**:
-* You can include almost any other tag inside a macro, including `[if]` statements and even `[returnmacro]` to exit the macro early based on certain conditions.
+**Anidamiento y Lógica**:
+* Puede incluir casi cualquier otra etiqueta dentro de una macro, incluidas declaraciones `[if]` e incluso `[returnmacro]` para salir de la macro antes de tiempo según ciertas condiciones.
 
 ---
 
 ## `gui`
 
-Show GUI
+Mostrar interfaz gráfica de usuario
 
-The `gui` tag loads and displays a Graphical User Interface (GUI) definition from a specified file. 
-It is used to display menus, title screens, or custom interaction panels.
+La etiqueta `gui` carga y muestra una definición de interfaz gráfica de usuario (GUI) de un archivo específico. 
+Se utiliza para mostrar menús, pantallas de título o paneles de interacción personalizados.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Display the main menu GUI
@@ -647,34 +647,34 @@ It is used to display menus, title screens, or custom interaction panels.
 [gui file="save_screen.txt"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument | Omissible | Description                                 | Notes                                               |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|-----------|---------------------------------------------|-----------------------------------------------------|
-| `file`   | No        | The filename of the GUI definition to load. | The file must exist in the project's GUI directory. |
+| `file` | No | El nombre de archivo de la definición de GUI que se va a cargar. | El archivo debe existir en el directorio GUI del proyecto. |
 
-### Tips
+### Consejos
 
-**GUI Definitions**:
-* The `file` argument points to a text file that defines the layout, buttons, and actions of your interface.
-* These files specify where images are placed and what happens (like jumping to a label or quitting) when a user interacts with them.
+**Definiciones de GUI**:
+* El argumento `file` apunta a un archivo de texto que define el diseño, los botones y las acciones de su interfaz.
+* Estos archivos especifican dónde se colocan las imágenes y qué sucede (como saltar a una etiqueta o salir) cuando un usuario interactúa con ellas.
 
-**Usage in Flow**:
-* Typically, a `[gui]` tag is used for a graphical menu such as title screen.
+**Uso en flujo**:
+* Normalmente, se utiliza una etiqueta `[gui]` para un menú gráfico como la pantalla de título.
 
-**Customization**:
-* Since the GUI is defined in an external file, you can create multiple looks for your game and switch between them just by calling different files with this tag.
+**Personalización**:
+* Dado que la GUI está definida en un archivo externo, puedes crear múltiples estilos para tu juego y cambiar entre ellos simplemente llamando a diferentes archivos con esta etiqueta.
 
 ---
 
 ## `label`
 
-Define Label
+Definir etiqueta
 
-The `label` tag defines a specific point in the script that can be targeted by jump commands like `[goto]` or `[load]`.
-It acts as a bookmark for navigation within your story.
+La etiqueta `label` define un punto específico en el script al que se pueden dirigir comandos de salto como `[goto]` o `[load]`.
+Actúa como un marcador para la navegación dentro de su historia.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Define a label for the start of a new chapter
@@ -684,36 +684,36 @@ It acts as a bookmark for navigation within your story.
 [goto name="chapter_01_start"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument | Omissible | Description                     | Notes                                                  |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|-----------|---------------------------------|--------------------------------------------------------|
-| `name`   | No        | The unique name for this label. | Case-sensitive. Avoid using spaces or special symbols. |
+| `name` | No | El nombre exclusivo de esta etiqueta. | Distingue mayúsculas y minúsculas. Evite el uso de espacios o símbolos especiales. |
 
-### Tips
+### Consejos
 
-**Navigation Control**:
-* Labels are useful for creating branching paths.
-* For example, you can put a `label` at the begining of the section of your story for a long jump.
+**Control de navegación**:
+* Las etiquetas son útiles para crear rutas de ramificación.
+* Por ejemplo, puedes poner un `label` al principio de la sección de tu historia para un salto de longitud.
 
-**Unique Naming**:
-* Every label name within a single script file must be unique.
-* If you have two labels with the same name, the engine might not know where to jump, and that's no fun for anyone!
+**Nombre único**:
+* Cada nombre de etiqueta dentro de un único archivo de script debe ser único.
+* Si tienes dos etiquetas con el mismo nombre, es posible que el motor no sepa dónde saltar, ¡y eso no es divertido para nadie!
 
-**Organization**:
-* It's a good habit to use descriptive names like `label_evening_park` instead of `label1`.
-* It makes it much easier for you (and me!) to read the script later and understand what's happening.
+**Organización**:
+* Es un buen hábito utilizar nombres descriptivos como `label_evening_park` en lugar de `label1`.
+* Hace que sea mucho más fácil para ti (¡y para mí!) leer el guión más tarde y comprender lo que está sucediendo.
 
 ---
 
 ## `text`
 
-Display Text
+Mostrar texto
 
-The `text` tag displays a message in the message box. 
-It can show the main dialogue or narration, and optionally display a character's name in the name box.
+La etiqueta `text` muestra un mensaje en el cuadro de mensaje. 
+Puede mostrar el diálogo o la narración principal y, opcionalmente, mostrar el nombre de un personaje en el cuadro de nombre.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Narration style (no name displayed)
@@ -723,78 +723,78 @@ It can show the main dialogue or narration, and optionally display a character's
 [text name="Keith" text="I've been waiting for you here in the small room."]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument         | Omissible | Description                                      | Notes                                            |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |------------------|-----------|--------------------------------------------------|--------------------------------------------------|
-| `text`           | No        | The message content to be displayed.             |                                                  |
-| `text-<locale>`  | Yes       | The message content to be displayed. (localized) |                                                  |
-| `voice`          | Yes       | The voice file.                                  |                                                  |
-| `voice-<locale>` | Yes       | The voice file. (localized)                      |                                                  |
-| `name`           | Yes       | The character's name to display in the name box. | If omitted, the name box will usually be hidden. |
-| `action`         | Yes       | For NVL mode and manual show/hide.               |                                                  |
-| `space`          | Yes       | For NVL mode.                                    |                                                  |
+| `text` | No | El contenido del mensaje que se mostrará.             |                                                  |
+| `text-<locale>` | Yes | El contenido del mensaje que se mostrará. (localizado) |                                                  |
+| `voice` | Yes | El archivo de voz.                                  |                                                  |
+| `voice-<locale>` | Yes | El archivo de voz. (localizado) |                                                  |
+| `name` | Yes | El nombre del personaje que se mostrará en el cuadro de nombre. | Si se omite, el cuadro de nombre normalmente estará oculto. |
+| `action` | Yes | Para modo NVL y mostrar/ocultar manualmente.               |                                                  |
+| `space` | Yes | Para modo NVL.                                    |                                                  |
 
-### Localization
+### Localización
 
-For example, if the user OS environment is set to Japanese, `text-ja` is preferred instead of `text`.
+Por ejemplo, si el entorno del sistema operativo del usuario está configurado en japonés, se prefiere `text-ja` en lugar de `text`.
 
-| Suffix      | Language                                 |
+| Sufijo | Idioma |
 |-------------|------------------------------------------|
-| -en         | English (Fallback)                       |
-| -en-us      | English (America)                        |
-| -en-gb      | English (British)                        |
-| -en-au      | English (Austraria)                      |
-| -en-nz      | English (New Zealand)                    |
-| -fr         | French (Fallback)                        |
-| -fr-fr      | French (France)                          |
-| -fr-ca      | French (Canada)                          |
-| -es         | Spanish (Spain, Fallback)                |
-| -es-es      | Spanish (Spain, Fallback)                |
-| -es-la      | Spanish (Latin America)                  |
-| -de         | German                                   |
-| -it         | Italian                                  |
-| -ru         | Russian                                  |
-| -el         | Greek                                    |
-| -zh-cn      | Chinese (Simplified)                     |
-| -zh-tw      | Chinese (Traditional, Taiwan)            |
-| -ja         | Japanese                                 |
-| (no suffix) | Fallback (developer decides)             |
+| -en | Inglés (alternativa) |
+| -en-us | Inglés (América) |
+| -en-gb | Inglés (británico) |
+| -en-au | Inglés (Austraria) |
+| -en-nz | Inglés (Nueva Zelanda) |
+| -fr | Francés (alternativo) |
+| -fr-fr | Francés (Francia) |
+| -fr-ca | Francés (Canadá) |
+| -es | Español (España, Reserva) |
+| -es-es | Español (España, Reserva) |
+| -es-la | Español (Latinoamérica) |
+| -de | German |
+| -it | Italian |
+| -ru | Russian |
+| -el | Greek |
+| -zh-cn | Chino (simplificado) |
+| -zh-tw | Chino (tradicional, Taiwán) |
+| -ja | Japanese |
+| (sin sufijo) | Respaldo (el desarrollador decide) |
 
-For English OS locales including all regions, `-en` is used as the
-default fallback.  If a more specific variant such as `-en-gb` is
-specified in a tag and best matches with the user region, it will be
-preferred. The same mechanism is applied to Spanish and French. Note
-that there is no fallback from Traditional Chinese to Simplified
-Chinese.
+Para las configuraciones regionales del sistema operativo en inglés, incluidas todas las regiones, `-en` se utiliza como
+respaldo predeterminado.  Si una variante más específica como `-en-gb` es
+especificado en una etiqueta y que mejor coincida con la región del usuario, será
+preferido. El mismo mecanismo se aplica al español y al francés. Nota
+que no hay alternativa del chino tradicional al simplificado
+Chino.
 
-For example, if the user locale is `en-GB`, the following priority is applied:
-* 1. text-en-gb
-* 2. text-en
-* 3. text
+Por ejemplo, si la configuración regional del usuario es `en-GB`, se aplica la siguiente prioridad:
+* 1. texto-es-es
+* 2. texto-en
+* 3. texto
 
-The following are currently not supported but planned to be supported.
+Los siguientes no son actualmente compatibles, pero está previsto que lo sean.
 
-| Suffix      | Language                                 |
+| Sufijo | Idioma |
 |-------------|------------------------------------------|
-| -ko         | Korean                                   |
-| -vi         | Vietnamese                               |
-| -id         | Indonesia                                |
-| -zh-hk      | Traditional Chinese (Hong Kong)          |
-| -pt         | Portuguese (Fallback)                    |
-| -pt-br      | Portuguese (Brazil)                      |
-| -pl         | Polish                                   |
-| -tr         | Turkish                                  |
-| -ta         | Tamil                                    |
-| -te         | Telugu                                   |
-| -kn         | Kannada                                  |
-| -si         | Sinhala                                  |
-| -ar         | Arabic (RTL)                             |
-| -fa         | Persian (RTL)                            |
+| -ko | Korean |
+| -vi | Vietnamese |
+| -id | Indonesia |
+| -zh-hk | Chino tradicional (Hong Kong) |
+| -pt | Portugués (alternativo) |
+| -pt-br | Portugués (Brasil) |
+| -pl | Polish |
+| -tr | Turkish |
+| -ta | Tamil |
+| -te | Telugu |
+| -kn | Kannada |
+| -si | Sinhala |
+| -ar | Árabe (RTL) |
+| -fa | Persa (RTL) |
 
-### Actions
+### Acciones
 
-You can use special parameters in the `text` tag.
+Puede utilizar parámetros especiales en la etiqueta `text`.
 
 ```
 # Clear the message box.
@@ -810,9 +810,9 @@ You can use special parameters in the `text` tag.
 [text action="hide"]
 ```
 
-### NVL Mode
+### Modo NVL
 
-You can enter the NVL mode by setting some config.
+Puede ingresar al modo NVL configurando alguna configuración.
 
 ```
 [text action="hide"]
@@ -839,7 +839,7 @@ You can enter the NVL mode by setting some config.
 [text action="clear"]
 ```
 
-You can go back to ADV mode by resetting the config.
+Puede volver al modo ADV restableciendo la configuración.
 
 ```
 [text action="hide"]
@@ -865,7 +865,7 @@ You can go back to ADV mode by resetting the config.
 [config name="click.move" value="false"]
 ```
 
-In NVM mode, you can control text messages like this:
+En el modo NVM, puedes controlar mensajes de texto como este:
 
 ```
 # New page.
@@ -881,46 +881,46 @@ In NVM mode, you can control text messages like this:
 [text text="Please clear the message box explicitly."]
 ```
 
-### Voice
+### Voz
 
-If the current language is `en-us`, a voice file will resolved in the following order:
+Si el idioma actual es `en-us`, un archivo de voz se resolverá en el siguiente orden:
 
-1. `voice-en-us` parameter
-2. `voice/en-us/` + `voice` parameter
-3. `voice-en` parameter
-4. `voice/en/` + `voice` parameter
-5. `voice` parameter
+1. parámetro `voice-en-us`
+2. Parámetro `voice/en-us/` + `voice`
+3. parámetro `voice-en`
+4. Parámetro `voice/en/` + `voice`
+5. Parámetro `voice`
 
-If the current language is `ja`, a voice file will resolved in the following order:
+Si el idioma actual es `ja`, un archivo de voz se resolverá en el siguiente orden:
 
-1. `voice-ja` parameter
-2. `voice/ja/` + `voice` parameter
-3. `voice` parameter
+1. parámetro `voice-ja`
+2. Parámetro `voice/ja/` + `voice`
+3. parámetro `voice`
 
-### Tips
+### Consejos
 
-**Automatic Waiting**:
-* Unlike other tags, the `text` tag automatically waits for a player's click after the message is fully displayed.
-* You don't need to add a `[click]` tag after every line of dialogue!
+**Espera automática**:
+* A diferencia de otras etiquetas, la etiqueta `text` espera automáticamente el clic del jugador después de que el mensaje se muestra por completo.
+* ¡No es necesario agregar una etiqueta `[click]` después de cada línea de diálogo!
 
-**Using Variables**:
-* You can include variables within your text by using the `${variable_name}` syntax. 
-* Example: `[text text="Hello, ${player_name}!"]` will greet the player using whatever name is stored in that variable.
+**Usando variables**:
+* Puedes incluir variables dentro de tu texto usando la sintaxis `${variable_name}`. 
+* Ejemplo: `[text text="Hello, ${player_name}!"]` saludará al jugador usando cualquier nombre almacenado en esa variable.
 
-**Line Breaks**:
-* Check your project's configuration for how long a single line can be.
-* If your text is too long, it might overflow the message box, so keep an eye on the length of your `text` argument!
+**Saltos de línea**:
+* Verifique la configuración de su proyecto para saber cuánto tiempo puede tener una sola línea.
+* Si su texto es demasiado largo, podría desbordar el cuadro de mensaje, ¡así que esté atento a la longitud de su argumento `text`!
 
 ---
 
 ## `if`
 
-Conditional Branching
+Ramificación condicional
 
-The `if` tag allows the NovelML to branch based on a specific condition. 
-By comparing variables or values, you can create unique story paths or react to previous player choices.
+La etiqueta `if` permite que NovelML se bifurque según una condición específica. 
+Al comparar variables o valores, puedes crear historias únicas o reaccionar a elecciones anteriores de los jugadores.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Check if a variable equals a certain value
@@ -933,54 +933,54 @@ By comparing variables or values, you can create unique story paths or react to 
 [endif]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument | Omissible | Description                            | Notes                                          |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|-----------|----------------------------------------|------------------------------------------------|
-| `lhs`    | No        | The Left-Hand Side of the condition.   | Usually a variable like `${var_name}`.         |
-| `op`     | No        | The operator used for comparison.      | See the "Operators" table below.               |
-| `rhs`    | No        | The Right-Hand Side of the condition.  | The value or variable to compare against.      |
+| `lhs` | No | El lado izquierdo de la condición.   | Generalmente una variable como `${var_name}`.         |
+| `op` | No | El operador utilizado para la comparación.      | Consulte la tabla "Operadores" a continuación.               |
+| `rhs` | No | El lado derecho de la condición.  | El valor o variable con el que comparar.      |
 
-### Comparison Operators (`op`)
+### Operadores de comparación (`op`)
 
-You can use these operators to define how the two sides are compared:
+Puede utilizar estos operadores para definir cómo se comparan los dos lados:
 
-| Operator   | Description                |
+| Operador | Descripciﾃｳn |
 |------------|----------------------------|
-| `===`      | Equal (String)             |
-| `==`       | Equal (Numeric)            |
-| `>`        | Greater Than (Numeric)     |
-| `>=`       | Greater Or Equal (Numeric) |
-| `<`        | Less Than (Numeric)        |
-| `<=`       | Less Or Equal (Numeric)    |
+| `===` | Igual (cadena) |
+| `==` | Igual (Numérico) |
+| `>` | Mayor que (numérico) |
+| `>=` | Mayor o igual (numérico) |
+| `<` | Menor que (numérico) |
+| `<=` | Menor o igual (numérico) |
 
-### Tips
+### Consejos
 
-**Closing the Block**:
-* Every `[if]` block MUST end with an `[endif]` tag.
-* If you forget it, the engine might get confused about where the condition ends!
+**Cerrando el bloque**:
+* Cada bloque `[if]` DEBE terminar con una etiqueta `[endif]`.
+* ¡Si lo olvida, el motor podría confundirse acerca de dónde termina la condición!
 
-**Variable Syntax**:
-* When using a variable as the `lhs`, always wrap it in `${}`.
-* For example, use `lhs="${flag_01}"` instead of just `lhs="flag_01"`.
+**Sintaxis variable**:
+* Cuando utilice una variable como `lhs`, siempre envuélvala en `${}`.
+* Por ejemplo, utilice `lhs="${flag_01}"` en lugar de solo `lhs="flag_01"`.
 
-**Handling Strings vs. Numbers**:
-* Suika3 treats variable values as strings, but these operators allow you to perform numeric-style comparisons.
-* Just be consistent with your values (e.g., using "1" for true and "0" for false).
+**Manejo de cadenas frente a números**:
+* Suika3 trata los valores de las variables como cadenas, pero estos operadores le permiten realizar comparaciones de estilo numérico.
+* Simplemente sea coherente con sus valores (por ejemplo, utilice "1" para verdadero y "0" para falso).
 
-**Multiple Branches**:
-* You can use as many `[elseif]` tags as you need between `[if]` and `[endif]` to check for multiple specific conditions.
+**Múltiples sucursales**:
+* Puede usar tantas etiquetas `[elseif]` como necesite entre `[if]` y `[endif]` para verificar múltiples condiciones específicas.
 
 ---
 
 ## `elseif`
 
-Additional Conditional Branching
+Ramificación condicional adicional
 
-The `elseif` tag specifies an additional condition within an `[if]` block. 
-It is only evaluated if the preceding `[if]` and any previous `[elseif]` conditions were false.
+La etiqueta `elseif` especifica una condición adicional dentro de un bloque `[if]`. 
+Solo se evalúa si las condiciones `[if]` anteriores y cualquier condición `[elseif]` anterior eran falsas.
 
-### Basic Usage
+### Uso básico
 
 ```
 [if lhs="${rank}" op="==" rhs="A"]
@@ -994,33 +994,33 @@ It is only evaluated if the preceding `[if]` and any previous `[elseif]` conditi
 [endif]
 ```
 
-### Arguments
+### Argumentos
 
-Same as `[if]`. See also [if](#if).
+Igual que `[if]`. Véase también [if](#if).
 
-### Tips
+### Consejos
 
-**Sequential Evaluation**:
-* The engine checks conditions from top to bottom.
-* As soon as one `[if]` or `[elseif]` condition is met, its block is executed, and the rest of the branch (including other `[elseif]`s and the `[else]`) is skipped.
+**Evaluación secuencial**:
+* El motor comprueba las condiciones de arriba a abajo.
+* Tan pronto como se cumple una condición `[if]` o `[elseif]`, su bloque se ejecuta y el resto de la rama (incluidos otros `[elseif]` y `[else]`) se omite.
 
-**Placement**:
-* `[elseif]` must always be placed between an `[if]` tag and an `[else]` or `[endif]` tag.
-* You can use as many `[elseif]` tags as you need to cover all your bases!
+**Ubicación**:
+* `[elseif]` siempre debe colocarse entre una etiqueta `[if]` y una etiqueta `[else]` o `[endif]`.
+* ¡Puedes usar tantas etiquetas `[elseif]` como necesites para cubrir todas tus bases!
 
-**Efficiency**:
-* If you have a lot of conditions that check the same variable, using multiple `[elseif]` tags is much cleaner and more efficient than nesting multiple `[if]` blocks inside each other.
+**Eficiencia**:
+* Si tiene muchas condiciones que verifican la misma variable, usar múltiples etiquetas `[elseif]` es mucho más limpio y eficiente que anidar múltiples bloques `[if]` uno dentro de otro.
 
 ---
 
 ## `else`
 
-Default Conditional Branch
+Rama condicional predeterminada
 
-The `else` tag defines a block of code to be executed if none of the preceding `[if]` or `[elseif]` conditions were met. 
-It acts as the "default" path for your branching logic.
+La etiqueta `else` define un bloque de código que se ejecutará si no se cumple ninguna de las condiciones `[if]` o `[elseif]` anteriores. 
+Actúa como la ruta "predeterminada" para su lógica de ramificación.
 
-### Basic Usage
+### Uso básico
 
 ```
 [if lhs="${weather}" op="==" rhs="sunny"]
@@ -1033,38 +1033,38 @@ It acts as the "default" path for your branching logic.
 [endif]
 ```
 
-### Arguments
+### Argumentos
 
-This tag does not take any arguments.
+Esta etiqueta no acepta ningún argumento.
 
-| Argument | Omissible | Description | Notes |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|-----------|-------------|-------|
 | -        | -         | -           | -     |
 
-### Tips
+### Consejos
 
-**Final Catch-all**:
-* Use `[else]` to handle any scenarios you didn't explicitly cover in your `[if]` or `[elseif]` checks.
-* It ensures the game always has a valid path to follow.
+**Último comodín**:
+* Utilice `[else]` para manejar cualquier escenario que no haya cubierto explícitamente en sus comprobaciones `[if]` o `[elseif]`.
+* Garantiza que el juego siempre tenga un camino válido a seguir.
 
-**Placement**:
-* `[else]` must be placed after all `[elseif]` tags (if any) and immediately before the `[endif]` tag.
-* You can only have one `[else]` per `[if]` block.
+**Ubicación**:
+* `[else]` debe colocarse después de todas las etiquetas `[elseif]` (si las hay) e inmediatamente antes de la etiqueta `[endif]`.
+* Solo puedes tener un `[else]` por bloque `[if]`.
 
-**Optional Nature**:
-* You don't *have* to include an `[else]` block.
-* If no conditions are met and there is no `[else]`, the engine will simply skip everything and continue after the `[endif]`.
+**Naturaleza Opcional**:
+* No *tienes* que incluir un bloque `[else]`.
+* Si no se cumplen ningunas condiciones y no hay `[else]`, el motor simplemente omitirá todo y continuará después de `[endif]`.
 
 ---
 
 ## `endif`
 
-End Conditional Branch
+Finalizar rama condicional
 
-The `endif` tag marks the end of a conditional block started by an `[if]` tag. 
-It tells the engine to resume normal script execution after the branching logic is complete.
+La etiqueta `endif` marca el final de un bloque condicional iniciado por una etiqueta `[if]`. 
+Le indica al motor que reanude la ejecución normal del script una vez completada la lógica de bifurcación.
 
-### Basic Usage
+### Uso básico
 
 ```
 [if lhs="${love_points}" op=">=" rhs="50"]
@@ -1077,37 +1077,37 @@ It tells the engine to resume normal script execution after the branching logic 
 [text text="The day continues..."]
 ```
 
-### Arguments
+### Argumentos
 
-This tag does not take any arguments.
+Esta etiqueta no acepta ningún argumento.
 
-| Argument | Omissible | Description | Notes |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|-----------|-------------|-------|
 | -        | -         | -           | -     |
 
-### Tips
+### Consejos
 
-**Mandatory Closing**:
-* Every single `[if]` tag must have a corresponding `[endif]`.
-* Think of them like a pair of brackets that keep your story's logic organized.
+**Cierre Obligatorio**:
+* Cada etiqueta `[if]` debe tener un `[endif]` correspondiente.
+* Piense en ellos como un par de corchetes que mantienen organizada la lógica de su historia.
 
-**Placement**:
-* Always place `[endif]` at the very end of your conditional sequence, following any `[elseif]` or `[else]` blocks. 
+**Ubicación**:
+* Coloque siempre `[endif]` al final de su secuencia condicional, después de cualquier bloque `[elseif]` o `[else]`.
 
-**Nesting**:
-* If you put an `[if]` inside another `[if]`, make sure each one has its own `[endif]`.
-* Proper nesting is the secret to complex, bug-free story flags!
+**Anidación**:
+* Si pones un `[if]` dentro de otro `[if]`, asegúrate de que cada uno tenga su propio `[endif]`.
+* ¡El anidamiento adecuado es el secreto para lograr banderas de historias complejas y sin errores!
 
 ---
 
 ## `load`
 
-Load Script File
+Cargar archivo de secuencia de comandos
 
-The `load` tag switches the current script to a different NovelML file.
-It is primarily used to organize large stories into multiple chapters or to transition between different game parts like a title screen and the main story.
+La etiqueta `load` cambia el script actual a un archivo NovelML diferente.
+Se utiliza principalmente para organizar historias grandes en múltiples capítulos o para hacer transiciones entre diferentes partes del juego, como la pantalla de título y la historia principal.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Load and start from the beginning of scene02.novel
@@ -1117,35 +1117,35 @@ It is primarily used to organize large stories into multiple chapters or to tran
 [load file="scene02.novel" label="chapter2_start"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument | Omissible | Description                                      | Notes                                                   |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|-----------|--------------------------------------------------|---------------------------------------------------------|
-| `file`   | No        | The filename of the NovelML script to load.      | Must be a valid file in the project's script directory. |
-| `label`  | Yes       | The target label to jump to within the new file. | If omitted, the script starts from the very first line. |
+| `file` | No | El nombre de archivo del script NovelML que se cargará.      | Debe ser un archivo válido en el directorio de secuencias de comandos del proyecto. |
+| `label` | Yes | La etiqueta de destino a la que saltar dentro del nuevo archivo. | Si se omite, el guión comienza desde la primera línea. |
 
-### Tips
+### Consejos
 
-**Project Organization**:
-* Instead of writing your entire game in one giant file, use `[load]` to break it down into manageable chunks like `chapter1.novel`, `chapter2.novel`, and so on.
+**Organización del proyecto**:
+* En lugar de escribir todo el juego en un archivo gigante, usa `[load]` para dividirlo en partes manejables como `chapter1.novel`, `chapter2.novel`, etc.
 
-**Immediate Transition**:
-* When the engine hits a `[load]` tag, it stops executing the current NovelML file immediately and switches to the new one.
-* Any commands placed after `[load]` in the original file will not be executed.
+**Transición Inmediata**:
+* Cuando el motor encuentra una etiqueta `[load]`, deja de ejecutar el archivo NovelML actual inmediatamente y cambia al nuevo.
+* Cualquier comando colocado después de `[load]` en el archivo original no se ejecutará.
 
-**Global Flags**:
-* Don't worry about your variables — any values you've set with the `[set]` tag will persist even after you load a new script file!
+**Banderas globales**:
+* No se preocupe por sus variables: cualquier valor que haya establecido con la etiqueta `[set]` persistirá incluso después de cargar un nuevo archivo de script.
 
 ---
 
 ## `se`
 
-Play Sound Effect
+Reproducir efecto de sonido
 
-The `se` tag plays a sound effect (SE). 
-Sound effects are used for short audio cues like door knocks, footsteps, or UI feedback, adding a layer of immersion and realism to your scenes.
+La etiqueta `se` reproduce un efecto de sonido (SE). 
+Los efectos de sonido se utilizan para señales de audio breves, como golpes de puerta, pasos o comentarios de la interfaz de usuario, lo que agrega una capa de inmersión y realismo a sus escenas.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Play a sound effect once
@@ -1155,40 +1155,40 @@ Sound effects are used for short audio cues like door knocks, footsteps, or UI f
 [se file="none"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument | Omissible     | Description                               | Notes                                        |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|---------------|-------------------------------------------|----------------------------------------------|
-| `file`   | No            | The filename of the sound effect to play. | Set to `none` to stop sound effect playback. |
-| `loop`   | Yes (`false`) | Whether to loop the sound effect or not.  |                                              |
+| `file` | No | El nombre de archivo del efecto de sonido que se reproducirá. | Establezca en `none` para detener la reproducción del efecto de sonido. |
+| `loop` | Sí (`false`) | Ya sea para repetir el efecto de sonido o no.  |                                              |
 
-### Tips
+### Consejos
 
-**Required Format**:
-* Like BGM, Suika3 requires SE files to be in **Ogg Vorbis** format.
-* The sampling rate MUST be **44,100Hz** to ensure high fidelity and compatibility.
+**Formato requerido**:
+* Al igual que BGM, Suika3 requiere que los archivos SE estén en formato **Ogg Vorbis**.
+* La frecuencia de muestreo DEBE ser **44,100 Hz** para garantizar alta fidelidad y compatibilidad.
 
-**Layering Sounds**:
-* Sound effects can usually be played while BGM is running.
-* They occupy their own audio track so they won't interrupt your music.
+**Superposición de sonidos**:
+* Los efectos de sonido normalmente se pueden reproducir mientras se ejecuta BGM.
+* Ocupan su propia pista de audio para no interrumpir tu música.
 
-**Volume Control**:
-* To adjust the loudness of your sound effects without changing the BGM volume, use the `[volume]` tag with `track="se"`.
+**Control de volumen**:
+* Para ajustar el volumen de sus efectos de sonido sin cambiar el volumen de BGM, use la etiqueta `[volume]` con `track="se"`.
 
-**Usage for Ambience**:
-* While SE is often used for short sounds, you can also use it for looping ambient sounds (like wind or rain).
-* A looped SE is restored when a save data file is loaded.
+**Uso para ambiente**:
+* Si bien SE se usa a menudo para sonidos cortos, también puedes usarlo para bucles de sonidos ambientales (como el viento o la lluvia).
+* Un SE en bucle se restaura cuando se carga un archivo de datos guardados.
 
 ---
 
 ## `volume`
 
-Set Audio Volume
+Establecer volumen de audio
 
-The `volume` tag sets the sound volume for a specific audio track. 
-It's perfect for ensuring that your background music doesn't drown out important sound effects or character voices.
+La etiqueta `volume` establece el volumen del sonido para una pista de audio específica. 
+Es perfecto para garantizar que la música de fondo no ahogue efectos de sonido importantes o voces de personajes.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Set BGM volume to 50%
@@ -1201,42 +1201,42 @@ It's perfect for ensuring that your background music doesn't drown out important
 [volume track="voice" volume="0.0"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument | Omissible | Description                           | Notes                                     |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|-----------|---------------------------------------|-------------------------------------------|
-| `track`  | No        | The audio track to adjust.            | See the "Tracks" table below.             |
-| `volume` | No        | The volume level from `0.0` to `1.0`. | `0.0` is silent, `1.0` is maximum volume. |
-| `time`   | Yes (`0`) | Fading time in seconds.               | `0` means instant change.                 |
-### Track Types (`track`)
+| `track` | No | La pista de audio para ajustar.            | Consulte la tabla "Pistas" a continuación.             |
+| `volume` | No | El nivel de volumen de `0.0` a `1.0`. | `0.0` está en silencio, `1.0` es el volumen máximo. |
+| `time` | Sí (`0`) | Tiempo de desvanecimiento en segundos.               | `0` significa cambio instantáneo.                 |
+### Tipos de pistas (`track`)
 
-Suika3 categorizes audio into three main tracks:
+Suika3 clasifica el audio en tres pistas principales:
 
-| Track Name | Description                      |
+| Nombre de la pista | Descripciﾃｳn |
 |------------|----------------------------------|
-| `bgm`      | Background Music.                |
-| `se`       | Sound Effects and system sounds. |
-| `voice`    | Character voice files.           |
+| `bgm` | Música de fondo.                |
+| `se` | Efectos de sonido y sonidos del sistema. |
+| `voice` | Archivos de voz de personajes.           |
 
-### Tips
+### Consejos
 
-**Immediate Change**:
-* The volume change happens gradually when `time` is greater than `0`.
-* `time="0"` means an immediate change.
+**Cambio inmediato**:
+* El cambio de volumen ocurre gradualmente cuando `time` es mayor que `0`.
+* `time="0"` significa un cambio inmediato.
 
-**Default Levels**:
-* It's a good idea to set your preferred volume levels at the start of your game (e.g., in a `start` label) so the player has a consistent experience from the beginning.
+**Niveles predeterminados**:
+* Es una buena idea establecer tus niveles de volumen preferidos al comienzo del juego (por ejemplo, en una etiqueta `start`) para que el jugador tenga una experiencia consistente desde el principio.
 
 ---
 
 ## `skip`
 
-Set Skip Status
+Establecer estado de omisión
 
-The `skip` tag enables or disables the skipping function within the game. 
-It is useful for preventing players from skipping through important cinematic sequences or ensuring that certain scenes are experienced at the intended pace.
+La etiqueta `skip` habilita o deshabilita la función de omisión dentro del juego. 
+Es útil para evitar que los jugadores se salten secuencias cinematográficas importantes o para garantizar que ciertas escenas se experimenten al ritmo previsto.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Enable the skip function
@@ -1246,35 +1246,35 @@ It is useful for preventing players from skipping through important cinematic se
 [skip enable="false"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument | Omissible | Description                                  | Notes                                                 |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|-----------|----------------------------------------------|-------------------------------------------------------|
-| `enable` | No        | Whether the skip function is enabled or not. | Set to `true` to allow skipping, `false` to block it. |
+| `enable` | No | Si la función de salto está habilitada o no. | Establezca en `true` para permitir omitir, `false` para bloquearlo. |
 
-### Tips
+### Consejos
 
-**Cinematic Control**:
-* Skip feature is typically disabled before the title logo at startup.
+**Control cinematográfico**:
+* La función de omitir normalmente está deshabilitada antes del logotipo del título al inicio.
 
-**Restoring Settings**:
-* Don't forget to set `[skip enable="true"]` once the critical scene is over.
-* Players usually appreciate having the freedom to skip through text they've already seen.
+**Restaurar configuración**:
+* No olvides configurar `[skip enable="true"]` una vez que termine la escena crítica.
+* Los jugadores normalmente aprecian tener la libertad de saltar el texto que ya han visto.
 
-**System Behavior**:
-* This tag controls the overall "Skip" state of the engine.
-* Even if the player presses a skip hotkey, the engine will ignore it if `enable` is set to `false`.
+**Comportamiento del sistema**:
+* Esta etiqueta controla el estado general de "Saltar" del motor.
+* Incluso si el jugador presiona una tecla de acceso rápido para omitir, el motor la ignorará si `enable` está configurado en `false`.
 
 ---
 
 ## `config`
 
-Set Configuration Value
+Establecer valor de configuración
 
-The `config` tag allows you to modify the game system's configuration settings directly from the markup. 
-It is essential for dynamically adjusting the game's UI, such as moving the message box or changing system-level parameters on the fly.
+La etiqueta `config` te permite modificar los ajustes de configuración del sistema de juego directamente desde el marcado. 
+Es esencial para ajustar dinámicamente la interfaz de usuario del juego, como mover el cuadro de mensaje o cambiar los parámetros a nivel del sistema sobre la marcha.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Change the position of the message box
@@ -1285,37 +1285,37 @@ It is essential for dynamically adjusting the game's UI, such as moving the mess
 [config name="msgbox.font.size" value="24"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument | Omissible | Description                                        | Notes                                                    |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|-----------|----------------------------------------------------|----------------------------------------------------------|
-| `name`   | No        | The name of the configuration parameter to change. | Refer to the system's config list for valid names.       |
-| `value`  | No        | The new value to assign to the parameter.          | Values are handled as strings but may represent numbers. |
+| `name` | No | El nombre del parámetro de configuración que se va a cambiar. | Consulte la lista de configuración del sistema para obtener nombres válidos.       |
+| `value` | No | El nuevo valor que se asignará al parámetro.          | Los valores se manejan como cadenas pero pueden representar números. |
 
-### Tips
+### Consejos
 
-**UI Customization**:
-* You can use `[config]` to reposition the message box during specific scenes to create a more cinematic feel.
+**Personalización de la interfaz de usuario**:
+* Puedes usar `[config]` para reposicionar el cuadro de mensaje durante escenas específicas para crear una sensación más cinematográfica.
 
-**Dynamic Adjustments**:
-* Since this tag can be called anywhere in your script, you can change the game's "look and feel" as the story progresses.
-* For example, shifting the UI for a "flashback" sequence.
+**Ajustes dinámicos**:
+* Dado que esta etiqueta se puede invocar en cualquier parte del guión, puedes cambiar la "apariencia" del juego a medida que avanza la historia.
+* Por ejemplo, cambiar la interfaz de usuario para una secuencia de "flashback".
 
-**Parameter Names**:
-* Be careful with the `name` argument!
-* It must exactly match the internal configuration keys defined in your Suika3 project settings.
-* See also [the complete list of the configurations](config.md)
+**Nombres de parámetros**:
+* ¡Cuidado con el argumento `name`!
+* Debe coincidir exactamente con las claves de configuración interna definidas en la configuración de su proyecto Suika3.
+* Ver también [la lista completa de las configuraciones](config.md)
 
 ---
 
 ## `layer`
 
-Direct Layer Manipulation
+Manipulación directa de capas
 
-The `layer` tag allows for direct control over specific image and text layers. 
-While tags like `[bg]` and `[ch]` are easier for standard scenes, `[layer]` gives you the precision to modify any individual layer's position, scale, and rotation independently.
+La etiqueta `layer` permite el control directo sobre capas de texto e imágenes específicas. 
+Si bien etiquetas como `[bg]` y `[ch]` son más fáciles para escenas estándar, `[layer]` le brinda la precisión para modificar la posición, escala y rotación de cualquier capa individual de forma independiente.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Load an image directly onto the center character layer (chc)
@@ -1328,135 +1328,135 @@ While tags like `[bg]` and `[ch]` are easier for standard scenes, `[layer]` give
 [layer name="chf" rotate="45.0" center-x="100" center-y="100"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument  | Omissible   | Description                          | Notes                              |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |-----------|-------------|--------------------------------------|------------------------------------|
-| `name`    | No          | The target layer name.               | See the "Layer Names" table below. |
-| `file`    | Yes         | The filename to load onto the layer. | Use `none` to clear the layer.     |
-| `x`       | Yes (`0`)   | The layer's X position.              |                                    |
-| `y`       | Yes (`0`)   | The layer's Y position.              |                                    |
-| `alpha`   | Yes (`255`) | The layer's opacity level.           | `0` to `255`.                      |
-| `scale-x` | Yes (`1.0`) | X-axis scaling factor.               | `1.0` is original size.            |
-| `scale-y` | Yes (`1.0`) | Y-axis scaling factor.               | `1.0` is original size.            |
-| `center-x`| Yes (`0`)   | Rotation center (X).                 | Pivot point for rotation.          |
-| `center-y`| Yes (`0`)   | Rotation center (Y).                 | Pivot point for rotation.          |
-| `rotate`  | Yes (`0.0`) | Rotation in degrees.                 | Positive for clockwise.            |
+| `name` | No | El nombre de la capa de destino.               | Consulte la tabla "Nombres de capas" a continuación. |
+| `file` | Yes | El nombre del archivo que se cargará en la capa. | Utilice `none` para borrar la capa.     |
+| `x` | Sí (`0`) | La posición X de la capa.              |                                    |
+| `y` | Sí (`0`) | La posición Y de la capa.              |                                    |
+| `alpha` | Sí (`255`) | El nivel de opacidad de la capa.           | `0` a `255`.                      |
+| `scale-x` | Sí (`1.0`) | Factor de escala del eje X.               | `1.0` es el tamaño original.            |
+| `scale-y` | Sí (`1.0`) | Factor de escala del eje Y.               | `1.0` es el tamaño original.            |
+| `center-x`| Sí (`0`) | Centro de rotación (X).                 | Punto de pivote para rotación.          |
+| `center-y`| Sí (`0`) | Centro de rotación (Y).                 | Punto de pivote para rotación.          |
+| `rotate` | Sí (`0.0`) | Rotación en grados.                 | Positivo para el sentido de las agujas del reloj.            |
 
-### Common Layer Names (`name`)
+### Nombres de capas comunes (`name`)
 
-Suika3 has a rich set of predefined layers.
+Suika3 tiene un rico conjunto de capas predefinidas.
 
-Here are the complete list of the layers:
+Aquí está la lista completa de las capas:
 
-|Layer Name       |Description                              |
+| Nombre de capa | Descripciﾃｳn |
 |-----------------|-----------------------------------------|
-|bg               |Background Image                         |
-|bg2              |Background Image 2                       |
-|efb1             |Back Effect 1                            |
-|efb2             |Back Effect 2                            |
-|efb3             |Back Effect 3                            |
-|efb4             |Back Effect 4                            |
-|chb              |Center-Back Character                    |
-|chb-eye          |Center-Back Character's Eyes             |
-|chb-lip          |Center-Back Character's Lips             |
-|chb-fo           |Fading-Out Center-Back Character         |
-|chl              |Left Character                           |
-|chl-eye          |Left Character's Eyes                    |
-|chl-lip          |Left Character's Lips                    |
-|chl-fo           |Fading-Out Left Character                |
-|chlc             |Left-Center Character                    |
-|chlc-eye         |Left-Center Character's Eyes             |
-|chlc-lip         |Left-Center Character's Lips             |
-|chlc-fo          |Fading-Out Left-Center Character         |
-|chr              |Right Character                          |
-|chr-eye          |Right Character's Eyes                   |
-|chr-lip          |Right Character's Lips                   |
-|chr-fo           |Fading-Out Right Character               |
-|chrc             |Right-Center Character                   |
-|chrc-eye         |Right-Center Character's Eyes            |
-|chrc-lip         |Right-Center Character's Lips            |
-|chrc-fo          |Fading-Out Right-Center Character        |
-|chc              |Center Character                         |
-|chc-eye          |Center Character's Eyes                  |
-|chc-lip          |Center Character's Lips                  |
-|chc-fo           |Fading-Out Center Character              |
-|msgbox           |Message box (Invisible to `[layer]`)     |
-|namebox          |Name box (Invisible to `[layer]`)        |
-|click            |Click animation (Invisible to `[layer]`) |
-|eff1             |Front Effect 1                           |
-|eff2             |Front Effect 2                           |
-|eff3             |Front Effect 3                           |
-|eff4             |Front Effect 4                           |
-|chf              |Face Character                           |
-|chf-eye          |Face Character's Eyes                    |
-|chf-lip          |Face Character's Lips                    |
-|chf-fo           |Fading-Out Face Character                |
-|text1            |Text Layer 1                             |
-|text2            |Text Layer 2                             |
-|text3            |Text Layer 3                             |
-|text4            |Text Layer 4                             |
-|text5            |Text Layer 5                             |
-|text6            |Text Layer 6                             |
-|text7            |Text Layer 7                             |
-|text8            |Text Layer 8                             |
-|gui1             |GUI Button 1 (Invisible to `[layer]`)    |
-|gui2             |GUI Button 2 (Invisible to `[layer]`)    |
-|gui3             |GUI Button 3 (Invisible to `[layer]`)    |
-|gui4             |GUI Button 4 (Invisible to `[layer]`)    |
-|gui5             |GUI Button 5 (Invisible to `[layer]`)    |
-|gui6             |GUI Button 6 (Invisible to `[layer]`)    |
-|gui7             |GUI Button 7 (Invisible to `[layer]`)    |
-|gui8             |GUI Button 8 (Invisible to `[layer]`)    |
-|gui9             |GUI Button 9 (Invisible to `[layer]`)    |
-|gui10            |GUI Button 10 (Invisible to `[layer]`)   |
-|gui11            |GUI Button 11 (Invisible to `[layer]`)   |
-|gui12            |GUI Button 12 (Invisible to `[layer]`)   |
-|gui13            |GUI Button 13 (Invisible to `[layer]`)   |
-|gui14            |GUI Button 14 (Invisible to `[layer]`)   |
-|gui15            |GUI Button 15 (Invisible to `[layer]`)   |
-|gui16            |GUI Button 16 (Invisible to `[layer]`)   |
-|gui17            |GUI Button 17 (Invisible to `[layer]`)   |
-|gui18            |GUI Button 18 (Invisible to `[layer]`)   |
-|gui19            |GUI Button 19 (Invisible to `[layer]`)   |
-|gui20            |GUI Button 20 (Invisible to `[layer]`)   |
-|gui21            |GUI Button 21 (Invisible to `[layer]`)   |
-|gui22            |GUI Button 22 (Invisible to `[layer]`)   |
-|gui23            |GUI Button 23 (Invisible to `[layer]`)   |
-|gui24            |GUI Button 24 (Invisible to `[layer]`)   |
-|gui25            |GUI Button 25 (Invisible to `[layer]`)   |
-|gui26            |GUI Button 26 (Invisible to `[layer]`)   |
-|gui27            |GUI Button 27 (Invisible to `[layer]`)   |
-|gui28            |GUI Button 28 (Invisible to `[layer]`)   |
-|gui29            |GUI Button 29 (Invisible to `[layer]`)   |
-|gui30            |GUI Button 30 (Invisible to `[layer]`)   |
-|gui31            |GUI Button 31 (Invisible to `[layer]`)   |
-|gui32            |GUI Button 32 (Invisible to `[layer]`)   |
+|bg |Imagen de fondo |
+|bg2 |Imagen de fondo 2 |
+|efb1 |Efecto espalda 1 |
+|efb2 |Efecto espalda 2 |
+|efb3 |Efecto espalda 3 |
+|efb4 |Efecto espalda 4 |
+|chb |Personaje de defensa central |
+|chb-eye |Ojos del personaje central |
+|chb-lip |Labios del personaje central |
+|chb-fo |Personaje de defensa central que se desvanece |
+|chl |Carácter izquierdo |
+|chl-eye |Ojos del personaje izquierdo |
+|chl-lip |Labios del personaje izquierdo |
+|chl-fo |Carácter izquierdo que desaparece |
+|chlc |Carácter del centro izquierdo |
+|chlc-eye |Ojos del personaje del centro izquierdo |
+|chlc-lip |Labios del personaje central izquierdo |
+|chlc-fo |Carácter central izquierdo que se desvanece |
+|chr |Carácter correcto |
+|chr-eye |Ojos del personaje derecho |
+|chr-lip |Labios del personaje correcto |
+|chr-fo |Carácter derecho que desaparece gradualmente |
+|chrc |Carácter del centro derecho |
+|chrc-eye |Ojos del personaje del centro derecho |
+|chrc-lip |Labios del personaje central derecho |
+|chrc-fo |Carácter central derecho que se desvanece |
+|chc |Carácter central |
+|chc-eye |Ojos del personaje central |
+|chc-lip |Labios del personaje central |
+|chc-fo |Carácter central que se desvanece |
+|msgbox |Cuadro de mensaje (Invisible para `[layer]`) |
+|namebox |Cuadro de nombre (Invisible para `[layer]`) |
+|click |Haga clic en animación (Invisible para `[layer]`) |
+|eff1 |Efecto frontal 1 |
+|eff2 |Efecto frontal 2 |
+|eff3 |Efecto frontal 3 |
+|eff4 |Efecto frontal 4 |
+|chf |Personaje facial |
+|chf-eye |Ojos del personaje de la cara |
+|chf-lip |Labios del personaje de la cara |
+|chf-fo |Carácter de cara que se desvanece |
+|text1 |Capa de texto 1 |
+|text2 |Capa de texto 2 |
+|text3 |Capa de texto 3 |
+|text4 |Capa de texto 4 |
+|text5 |Capa de texto 5 |
+|text6 |Capa de texto 6 |
+|text7 |Capa de texto 7 |
+|text8 |Capa de texto 8 |
+|gui1 |Botón GUI 1 (Invisible para `[layer]`) |
+|gui2 |Botón GUI 2 (Invisible para `[layer]`) |
+|gui3 |Botón GUI 3 (Invisible para `[layer]`) |
+|gui4 |Botón GUI 4 (Invisible para `[layer]`) |
+|gui5 |Botón GUI 5 (Invisible para `[layer]`) |
+|gui6 |Botón GUI 6 (Invisible para `[layer]`) |
+|gui7 |Botón GUI 7 (Invisible para `[layer]`) |
+|gui8 |Botón GUI 8 (Invisible para `[layer]`) |
+|gui9 |Botón GUI 9 (Invisible para `[layer]`) |
+|gui10 |Botón GUI 10 (Invisible para `[layer]`) |
+|gui11 |Botón GUI 11 (Invisible para `[layer]`) |
+|gui12 |Botón GUI 12 (Invisible para `[layer]`) |
+|gui13 |Botón GUI 13 (Invisible para `[layer]`) |
+|gui14 |Botón GUI 14 (Invisible para `[layer]`) |
+|gui15 |Botón GUI 15 (Invisible para `[layer]`) |
+|gui16 |Botón GUI 16 (Invisible para `[layer]`) |
+|gui17 |Botón GUI 17 (Invisible para `[layer]`) |
+|gui18 |Botón GUI 18 (Invisible para `[layer]`) |
+|gui19 |Botón GUI 19 (Invisible para `[layer]`) |
+|gui20 |Botón GUI 20 (Invisible para `[layer]`) |
+|gui21 |Botón GUI 21 (Invisible para `[layer]`) |
+|gui22 |Botón GUI 22 (Invisible para `[layer]`) |
+|gui23 |Botón GUI 23 (Invisible para `[layer]`) |
+|gui24 |Botón GUI 24 (Invisible para `[layer]`) |
+|gui25 |Botón GUI 25 (Invisible para `[layer]`) |
+|gui26 |Botón GUI 26 (Invisible para `[layer]`) |
+|gui27 |Botón GUI 27 (Invisible para `[layer]`) |
+|gui28 |Botón GUI 28 (Invisible para `[layer]`) |
+|gui29 |Botón GUI 29 (Invisible para `[layer]`) |
+|gui30 |Botón GUI 30 (Invisible para `[layer]`) |
+|gui31 |Botón GUI 31 (Invisible para `[layer]`) |
+|gui32 |Botón GUI 32 (Invisible para `[layer]`) |
 
-### Tips
+### Consejos
 
-**Precision Control**:
-* Use `[layer]` when you want to load an image to a layer manually when you're working with custom effect layers (`eff1` etc.) that don't have dedicated tags.
+**Control de precisión**:
+* Utilice `[layer]` cuando desee cargar una imagen en una capa manualmente cuando esté trabajando con capas de efectos personalizados (`eff1`, etc.) que no tienen etiquetas dedicadas.
 
-**Instant Updates**:
-* Unlike `[ch]` or `[bg]`, the `layer` tag usually updates the screen instantly.
-* If you want to animate these changes over time, you should use the `[move]` tag instead!
+**Actualizaciones instantáneas**:
+* A diferencia de `[ch]` o `[bg]`, la etiqueta `layer` generalmente actualiza la pantalla al instante.
+* Si desea animar estos cambios a lo largo del tiempo, ¡debe usar la etiqueta `[move]` en su lugar!
 
-**Layer Hierarchy**:
-* Remember that layers are stacked.
-* For example, `chf` (Face Character) is always rendered in front of `chc` (Center Character).
-* Understanding this "Z-order" is key to complex visual compositions.
+**Jerarquía de capas**:
+*Recuerda que las capas se apilan.
+* Por ejemplo, `chf` (carácter de la cara) siempre se representa delante de `chc` (carácter central).
+* Comprender este "orden Z" es clave para composiciones visuales complejas.
 
 ---
 
 ## `move`
 
-Animate Layer
+Animar capa
 
-The `move` tag animates specific layers over a set duration.
-It is perfect for creating sliding effects, zooming in on characters, or rotating screen elements to add dynamic energy to your scenes.
+La etiqueta `move` anima capas específicas durante un período determinado.
+Es perfecto para crear efectos deslizantes, hacer zoom en personajes o rotar elementos de la pantalla para agregar energía dinámica a sus escenas.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Move the center character to a new position over 2.0 seconds
@@ -1469,127 +1469,127 @@ It is perfect for creating sliding effects, zooming in on characters, or rotatin
 [move time="3.0" face-alpha="0" face-rotate="r360"]
 ```
 
-### Arguments
+### Argumentos
 
-**Common:**
-| Argument         | Omissible     | Description                               | Notes                                      |
+**Común:**
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |------------------|---------------|-------------------------------------------|--------------------------------------------|
-| `name`           | No            | The target layer to animate.              | See the "Moveable Layers" table below.     |
-| `time`           | No            | The duration of the animation in seconds. | Supports decimal values (e.g., `0.5`).     |
-| `async`          | Yes (`false`) | If `true`, do non-blocking animation.     |                                            |
-| `accel`          | Yes (`normal`)| Acceleration type.                        | One of                                     |
-| (layer)-(suffix) | Yes           |                                           |                                            |
+| `name` | No | La capa de destino a animar.              | Consulte la tabla "Capas móviles" a continuación.     |
+| `time` | No | La duración de la animación en segundos. | Admite valores decimales (por ejemplo, `0.5`).     |
+| `async` | Sí (`false`) | Si `true`, haz una animación sin bloqueo.     |                                            |
+| `accel` | Sí (`normal`)| Tipo de aceleración.                        | Uno de |
+| (capa)-(sufijo) | Yes |                                           |                                            |
 
-**(layer):**
-| Argument       | Description                               |
+**(capa):**
+| Argumento | Descripciﾃｳn |
 |----------------|-------------------------------------------|
-| `bg`           | Background layer.                         |
-| `bg2`          | Background 2.                             |
-| `back          | Back-Center character.                    |
-| `left`         | Left character.                           |
-| `right`        | Right character.                          |
-| `center`       | Center character.                         |
-| `left-center`  | Left-Center character.                    |
-| `right-center` | Intermediate character.                   |
-| `face`         | Face character.                           |
+| `bg` | Capa de fondo.                         |
+| `bg2` | Antecedentes 2. |
+| `volver | Carácter del centro trasero.                    |
+| `left` | Carácter izquierdo.                           |
+| `right` | Carácter correcto.                          |
+| `center` | Carácter central.                         |
+| `left-center` | Carácter del centro izquierdo.                    |
+| `right-center` | Carácter intermedio.                   |
+| `face` | Carácter facial.                           |
 
-**(suffix):**
-| Suffix      | Omissible     | Description                | Notes                                                         |
+**(sufijo):**
+| Sufijo | Omisible | Descripciﾃｳn | Notas |
 |-------------|---------------|----------------------------|---------------------------------------------------------------|
-| `-x`        | Yes (`0`)     | X position.                | Supports absolute (e.g., `100`) or relative (e.g., `r50`).    |
-| `-y`        | Yes (`0`)     | Y position.                | Supports absolute (e.g., `100`) or relative (e.g., `r-50`).   |
-| `-a`        | Yes (`255`)   | Alpha value. (opacity)     | `0` (transparent) to `255` (opaque).                          |
-| `-scale-x`  | Yes (`1.0`)   | X scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `-scale-y`  | Yes (`1.0`)   | Y scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `-center-x` | Yes (`0`)     | X center for rotation.     | Pivot point for the rotation effect.                          |
-| `-center-y` | Yes (`0`)     | Y center for rotation.     | Pivot point for the rotation effect.                          |
-| `-rotate`   | Yes (`0`)     | Rotation in degrees.       | Positive for clockwise. Supports `r` prefix.                  |
-| `-dim`      | Yes (`false`) | Dimming status.            | If `true`, the layer is rendered 50% darker.                  |
+| `-x` | Sí (`0`) | Posición X.                | Admite absoluto (p. ej., `100`) o relativo (p. ej., `r50`).    |
+| `-y` | Sí (`0`) | Posición Y.                | Admite absoluto (p. ej., `100`) o relativo (p. ej., `r-50`).   |
+| `-a` | Sí (`255`) | Valor alfa. (opacidad) | `0` (transparente) a `255` (opaco).                          |
+| `-scale-x` | Sí (`1.0`) | factor de escala X.          | `1.0` es el tamaño original. Admite el prefijo `r`.                  |
+| `-scale-y` | Sí (`1.0`) | Factor de escala Y.          | `1.0` es el tamaño original. Admite el prefijo `r`.                  |
+| `-center-x` | Sí (`0`) | Centro X para rotación.     | Punto de pivote para el efecto de rotación.                          |
+| `-center-y` | Sí (`0`) | Centro Y para rotación.     | Punto de pivote para el efecto de rotación.                          |
+| `-rotate` | Sí (`0`) | Rotación en grados.       | Positivo para el sentido de las agujas del reloj. Admite el prefijo `r`.                  |
+| `-dim` | Sí (`false`) | Estado de atenuación.            | Si es `true`, la capa se oscurece un 50%.                  |
 
-### Tips
+### Consejos
 
-**Non-blocking Animation (`async="true")`**:
-* The script continues to the next command immediately after starting a `[move]`.
-* If you want the script to wait until the animation finishes, follow it with a `[wait]` tag using the same `time` value.
+**Animación sin bloqueo (`async="true")`**:
+* El script continúa con el siguiente comando inmediatamente después de iniciar `[move]`.
+* Si desea que el script espere hasta que finalice la animación, sígalo con una etiqueta `[wait]` usando el mismo valor `time`.
 
-**Relative Transformations**:
-* Using the `r` prefix (e.g., `x="r100"`) is incredibly useful for repetitive motions, like making a character "jump" or "shake" without calculating absolute coordinates.
+**Transformaciones relativas**:
+* Usar el prefijo `r` (por ejemplo, `x="r100"`) es increíblemente útil para movimientos repetitivos, como hacer que un personaje "salte" o "sacuda" sin calcular coordenadas absolutas.
 
-**Visual Polish**:
-* Combine `scale-x` and `scale-y` with `move` to create "zoom-in" effects on a character's face for dramatic close-ups!
+**Pulido visual**:
+* ¡Combina `scale-x` y `scale-y` con `move` para crear efectos de "acercamiento" en la cara de un personaje para primeros planos dramáticos!
 
 ---
 
 ## `pencil`
 
-Pencil
+Lápiz
 
-Draw a text on a layer.
+Dibuja un texto en una capa.
 
-### Basic Usage
+### Uso básico
 
 ```
 [pencil layer="bg" font-size="30" text="Hello, World!"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument      | Omissible        | Description              |
+| Argumento | Omisible | Descripciﾃｳn |
 |---------------|------------------|--------------------------|
-| text          | No               | Text to draw.            |
-| layer         | Yes (`text1`)    | Layer name.              |
-| font-type     | Yes (`0`)        | Font selection. (0-3)    |
-| font-size     | Yes (`16`)       | Font size.               |
-| color         | Yes (`#000000`)  | Font color.              |
-| outline-width | Yes (`0`)        | Font outline width.      |
-| outline-color | Yes (`#ffffff`)  | Font outline color.      |
-| line-margin   | Yes              | Line margin.             |
-| char-margin   | Yes (`0`)        | Character margin.        |
-| x             | Yes (`0`)        | Drawing area X position. |
-| y             | Yes (`0`)        | Drawing area Y position. |
-| width         | Yes              | Drawing area width.      |
-| height        | Yes              | Drawing area height.     |
+| text | No | Texto para dibujar.            |
+| layer | Sí (`text1`) | Nombre de la capa.              |
+| font-type | Sí (`0`) | Selección de fuentes. (0-3) |
+| font-size | Sí (`16`) | Tamaño de fuente.               |
+| color | Sí (`#000000`) | Color de fuente.              |
+| outline-width | Sí (`0`) | Ancho del contorno de la fuente.      |
+| outline-color | Sí (`#ffffff`) | Color del contorno de la fuente.      |
+| line-margin | Yes | Margen de línea.             |
+| char-margin | Sí (`0`) | Margen de carácter.        |
+| x | Sí (`0`) | Posición X del área de dibujo. |
+| y | Sí (`0`) | Posición Y del área de dibujo. |
+| width | Yes | Ancho del área de dibujo.      |
+| height | Yes | Altura del área de dibujo.     |
 
-## Supported Layer Name
+## Nombre de capa admitida
 
-|Layer Name       |Description                              |
+| Nombre de capa | Descripciﾃｳn |
 |-----------------|-----------------------------------------|
-|bg               |Background Image                         |
-|bg2              |Background Image 2                       |
-|efb1             |Back Effect 1                            |
-|efb2             |Back Effect 2                            |
-|efb3             |Back Effect 3                            |
-|efb4             |Back Effect 4                            |
-|chb              |Center-Back Character                    |
-|chl              |Left Character                           |
-|chlc             |Left-Center Character                    |
-|chr              |Right Character                          |
-|chrc             |Right-Center Character                   |
-|chc              |Center Character                         |
-|eff1             |Front Effect 1                           |
-|eff2             |Front Effect 2                           |
-|eff3             |Front Effect 3                           |
-|eff4             |Front Effect 4                           |
-|chf              |Face Character                           |
-|text1            |Text Layer 1                             |
-|text2            |Text Layer 2                             |
-|text3            |Text Layer 3                             |
-|text4            |Text Layer 4                             |
-|text5            |Text Layer 5                             |
-|text6            |Text Layer 6                             |
-|text7            |Text Layer 7                             |
-|text8            |Text Layer 8                             |
+|bg |Imagen de fondo |
+|bg2 |Imagen de fondo 2 |
+|efb1 |Efecto espalda 1 |
+|efb2 |Efecto espalda 2 |
+|efb3 |Efecto espalda 3 |
+|efb4 |Efecto espalda 4 |
+|chb |Personaje de defensa central |
+|chl |Carácter izquierdo |
+|chlc |Carácter central izquierdo |
+|chr |Carácter correcto |
+|chrc |Carácter del centro derecho |
+|chc |Carácter central |
+|eff1 |Efecto frontal 1 |
+|eff2 |Efecto frontal 2 |
+|eff3 |Efecto frontal 3 |
+|eff4 |Efecto frontal 4 |
+|chf |Personaje facial |
+|text1 |Capa de texto 1 |
+|text2 |Capa de texto 2 |
+|text3 |Capa de texto 3 |
+|text4 |Capa de texto 4 |
+|text5 |Capa de texto 5 |
+|text6 |Capa de texto 6 |
+|text7 |Capa de texto 7 |
+|text8 |Capa de texto 8 |
 
 ---
 
 ## `returnmacro`
 
-Return from Macro
+Regresar de Macro
 
-The `returnmacro` tag immediately exits the current macro and returns the script execution to the line following the original `[callmacro]` tag.
-It is particularly useful for stopping a macro early based on specific conditions within an `[if]` block.
+La etiqueta `returnmacro` sale inmediatamente de la macro actual y devuelve la ejecución del script a la línea que sigue a la etiqueta `[callmacro]` original.
+Es particularmente útil para detener una macro anticipadamente en función de condiciones específicas dentro de un bloque `[if]`.
 
-### Basic Usage
+### Uso básico
 
 ```
 [defmacro name="check_item"]
@@ -1603,37 +1603,37 @@ It is particularly useful for stopping a macro early based on specific condition
 [endmacro]
 ```
 
-### Arguments
+### Argumentos
 
-This tag does not take any arguments.
+Esta etiqueta no acepta ningún argumento.
 
-| Argument | Omissible | Description | Notes |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |----------|-----------|-------------|-------|
 | -        | -         | -           | -     |
 
-### Tips
+### Consejos
 
-**Early Exit**:
-* Use `[returnmacro]` inside an `[if]` block to skip the rest of a macro's commands if a certain condition is met.
-* This keeps your macros flexible and powerful!
+**Salida anticipada**:
+* Utilice `[returnmacro]` dentro de un bloque `[if]` para omitir el resto de los comandos de una macro si se cumple una determinada condición.
+* ¡Esto mantiene tus macros flexibles y potentes!
 
-**Implicit Return**:
-* You don't actually need to put `[returnmacro]` at the very end of every macro.
-* Once the engine hits the `[endmacro]` tag, it will return to the main script automatically.
+**Retorno implícito**:
+* En realidad, no es necesario poner `[returnmacro]` al final de cada macro.
+* Una vez que el motor llegue a la etiqueta `[endmacro]`, volverá al script principal automáticamente.
 
-**Flow Control**:
-* Remember that this tag only exits the *current* macro. It doesn't stop the whole game or jump to a different label—it just sends you back to where the macro was called from.
+**Control de flujo**:
+* Recuerde que esta etiqueta solo sale de la macro *actual*. No detiene todo el juego ni salta a una etiqueta diferente; simplemente te envía de regreso al lugar desde donde se llamó la macro.
 
 ---
 
 ## `video`
 
-Play Video
+Reproducir vídeo
 
-The `video` tag plays a movie file on the screen.
-It is ideal for opening cinematics, transitional cutscenes, or high-impact visual effects that are best rendered as full-motion video.
+La etiqueta `video` reproduce un archivo de película en la pantalla.
+Es ideal para cinemáticas de apertura, escenas de transición o efectos visuales de alto impacto que se reproducen mejor como vídeo en movimiento completo.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Play an opening movie (cannot be skipped)
@@ -1643,38 +1643,38 @@ It is ideal for opening cinematics, transitional cutscenes, or high-impact visua
 [video file="cutscene01.mp4" skippable="true"]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument    | Omissible     | Description                                           | Notes                                                         |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |-------------|---------------|-------------------------------------------------------|---------------------------------------------------------------|
-| `file`      | No            | The filename of the video to play.                    | The file must be in a supported format (e.g., .mp4).          |
-| `skippable` | Yes (`false`) | Whether the video can be skipped by a player's click. | Set to `false` to force the player to watch the entire video. |
+| `file` | No | El nombre de archivo del vídeo a reproducir.                    | El archivo debe estar en un formato compatible (por ejemplo, .mp4).          |
+| `skippable` | Sí (`false`) | Si el video se puede omitir con el clic de un jugador. | Configúrelo en `false` para obligar al reproductor a ver el video completo. |
 
-### Tips
+### Consejos
 
-**File Support**:
-* Ensure your video file is .mp4 (H.264 + AAC) format.
-* If you want to support 32-bit Windows, prepare .wmv file alongside .mp4 file, then remove extension e.g., `[video file="opening"]`.
+**Soporte de archivos**:
+* Asegúrese de que su archivo de video tenga el formato .mp4 (H.264 + AAC).
+* Si desea admitir Windows de 32 bits, prepare el archivo .wmv junto con el archivo .mp4 y luego elimine la extensión, por ejemplo, `[video file="opening"]`.
 
-**Transitioning**:
-* Once the video finishes playing (or is skipped), the engine automatically proceeds to the next command in your script.
-* It's often a good idea to follow a `[video]` tag with a `[bg]` tag to ensure the screen looks exactly how you want it after the movie ends.
+**Transición**:
+* Una vez que el video termina de reproducirse (o se omite), el motor pasa automáticamente al siguiente comando en su secuencia de comandos.
+* A menudo es una buena idea seguir una etiqueta `[video]` con una etiqueta `[bg]` para garantizar que la pantalla se vea exactamente como desea después de que termine la película.
 
-**Audio in Video**:
-* Most video files include their own audio track.
-* Keep in mind that this audio will play alongside any `[bgm]` you have running.
-* You might want to stop the music with `[bgm file="none"]` before starting a video with sound!
+**Audio en vídeo**:
+* La mayoría de los archivos de vídeo incluyen su propia pista de audio.
+* Tenga en cuenta que este audio se reproducirá junto con cualquier `[bgm]` que esté ejecutando.
+* ¡Quizás quieras detener la música con `[bgm file="none"]` antes de comenzar un video con sonido!
 
 ---
 
 ## `wait`
 
-Wait for Time
+Espera el tiempo
 
-The `wait` tag pauses the NovelML execution for a specified duration.
-It is essential for controlling the pacing of visual transitions, creating dramatic pauses, or timing effects without requiring player input.
+La etiqueta `wait` pausa la ejecución de NovelML durante un período específico.
+Es esencial para controlar el ritmo de las transiciones visuales, crear pausas dramáticas o efectos de sincronización sin requerir la intervención del jugador.
 
-### Basic Usage
+### Uso básico
 
 ```
 # Pause for 1.5 seconds before the next command
@@ -1686,24 +1686,24 @@ It is essential for controlling the pacing of visual transitions, creating drama
 [text text="She couldn't believe her eyes."]
 ```
 
-### Arguments
+### Argumentos
 
-| Argument      | Omissible     | Description                    | Notes                                  |
+| Argumento | Omisible | Descripciﾃｳn | Notas |
 |---------------|---------------|--------------------------------|----------------------------------------|
-| `time`        | No            | The number of seconds to wait. | Supports decimal values (e.g., `0.5`). |
-| `hidemsgbox`  | Yes (`false`) | Force hide the message box.    |                                        |
-| `hidenamebox` | Yes (`false`) | Force hide the name box.       |                                        |
+| `time` | No | El número de segundos a esperar. | Admite valores decimales (por ejemplo, `0.5`). |
+| `hidemsgbox` | Sí (`false`) | Forzar ocultar el cuadro de mensaje.    |                                        |
+| `hidenamebox` | Sí (`false`) | Forzar ocultar el cuadro de nombre.       |                                        |
 
-### Tips
+### Consejos
 
-**Non-interactive Pause**:
-* Unlike `[click]`, which waits for the player to act, `[wait]` continues automatically once the time is up. 
-* This is perfect for "auto-playing" segments or timed visual sequences.
+**Pausa no interactiva**:
+* A diferencia de `[click]`, que espera a que el jugador actúe, `[wait]` continúa automáticamente una vez que se acaba el tiempo. 
+* Esto es perfecto para segmentos de "reproducción automática" o secuencias visuales cronometradas.
 
-**Combining with Animations**:
-* If you use a `[ch]` or `[bg]` tag with a `time` argument, the engine moves to the next command immediately while the animation plays. 
-* Use `[wait]` after an animation if you want the script to stop until the animation is finished (or even longer for dramatic effect).
+**Combinando con animaciones**:
+* Si usa una etiqueta `[ch]` o `[bg]` con un argumento `time`, el motor pasa al siguiente comando inmediatamente mientras se reproduce la animación. 
+* Utilice `[wait]` después de una animación si desea que el guión se detenga hasta que finalice la animación (o incluso más para lograr un efecto dramático).
 
-**User Experience**:
-* Be careful not to make `[wait]` times too long (like more than 3 seconds) without a visual reason, or the player might think the game has frozen!
+**Experiencia de usuario**:
+* ¡Ten cuidado de no hacer `[wait]` veces demasiado largas (como más de 3 segundos) sin una razón visual, o el jugador podría pensar que el juego se ha congelado!
 

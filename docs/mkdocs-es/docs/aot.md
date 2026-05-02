@@ -1,76 +1,76 @@
-How to Use AOT
+Cómo utilizar AOT
 ==============
 
-Suika3 supports **Ahead-of-Time (AOT) compilation** of scripts.
-That is, an app may run completely native code instead of as a bytecode interpreter.
+Suika3 admite la **compilación anticipada (AOT)** de scripts.
+Es decir, una aplicación puede ejecutar código completamente nativo en lugar de hacerlo como un intérprete de código de bytes.
 
-The `suika3-aotcomp` command converts `.ray` scripts into **ANSI C source code**.
-The generated `library.c` file will be compiled with the entire engine.
+El comando `suika3-aotcomp` convierte los scripts `.ray` en **código fuente ANSI C**.
+El archivo `library.c` generado se compilará con todo el motor.
 
 ---
 
-## 1. Modify `main.ray`
+## 1. Modificar `main.ray`
 
-Because the scripts will be compiled into native code,
-loading the runtime library is no longer needed.
+Debido a que los scripts se compilarán en código nativo,
+Ya no es necesario cargar la biblioteca en tiempo de ejecución.
 
-Open `main.ray` and comment out the loadLibrary() calls.
+Abra `main.ray` y comente las llamadas loadLibrary().
 
-Example:
+Ejemplo:
 ```
 // Suika.loadPlugin("system")
 ```
 
-Please note that you should not call `Suika.loadPlugin()` outside the
-`main.ray` file.
+Tenga en cuenta que no debe llamar a `Suika.loadPlugin()` fuera del
+Archivo `main.ray`.
 
 ---
 
-## 2. Generate C Source
+## 2. Generar fuente C
 
-To compile scripts into C source code, run:
+Para compilar scripts en código fuente C, ejecute:
 
 ```sh
 suika3-aotcomp main.ray script1.ray script2.ray ...
 ```
 
-This command generates the following file:
+Este comando genera el siguiente archivo:
 ```
 library.c
 ```
 
-The generated file contains the compiled script library.
+El archivo generado contiene la biblioteca de scripts compilados.
 
-> [!TIPS]
-> Specify all script files in the command line, including `main.ray`.
+> [!CONSEJOS]
+> Especifique todos los archivos de script en la línea de comando, incluido `main.ray`.
 
-Example:
+Ejemplo:
 ```
 suika3-aotcomp main.ray system.ray scenario1.ray scenario2.ray
 ```
 
 --
 
-## 3. Replace the Engine Library
+## 3. Reemplace la biblioteca del motor
 
-Copy the generated `library.c` file to the engine source tree:
+Copie el archivo `library.c` generado en el árbol de fuentes del motor:
 ```
 external/PlayfieldEngine/src/library.c
 ```
 
-Overwrite the existing file.
+Sobrescriba el archivo existente.
 
 ---
 
-## 4. Build the Engine
+## 4. Construya el motor
 
-Build the Suika3 project using CMake as usual.
+Construya el proyecto Suika3 usando CMake como de costumbre.
 
-The compiled scripts will now be linked into the engine binary.
+Los scripts compilados ahora estarán vinculados al binario del motor.
 
 ### iOS
 
-To build static binaries, type:
+Para construir binarios estáticos, escriba:
 ```
 cmake --preset ios-device
 cmake --preset ios-simulator
@@ -78,15 +78,15 @@ cmake --build --preset ios-device
 cmake --build --preset ios-simulator
 ```
 
-After that, copy the static libraries to your iOS project:
-* Copy `build-ios-device/libsuika3.a` to `Suika3.xcframework/ios-arm64/libsuika3.a`
-* Copy `build-ios-simulator/libsuika3.a` to `Suika3.xcframework/ios-arm64_x86_64-simulator/libsuika3.a`
+Después de eso, copie las bibliotecas estáticas a su proyecto de iOS:
+* Copiar `build-ios-device/libsuika3.a` a `Suika3.xcframework/ios-arm64/libsuika3.a`
+* Copiar `build-ios-simulator/libsuika3.a` a `Suika3.xcframework/ios-arm64_x86_64-simulator/libsuika3.a`
 
-Overwrite the existing file.
+Sobrescriba el archivo existente.
 
-### Android
+### androide
 
-To build shared binaries, type:
+Para crear archivos binarios compartidos, escriba:
 ```
 cmake --preset android-arm64
 cmake --preset android-arvm7
@@ -98,17 +98,17 @@ cmake --build --preset android-x86
 cmake --build --preset android-x86_64
 ```
 
-After that, copy the shared libraries to your Android project:
-* Copy `build-android-arm64/libsuika3.so` to `app/src/main/jniLibs/arm64-v8a/libplayfield.so`
-* Copy `build-android-armv7/libsuika3.so` to `app/src/main/jniLibs/armeabi-v7a/libplayfield.so`
-* Copy `build-android-x86/libsuika3.so` to `app/src/main/jniLibs/x86/libplayfield.so`
-* Copy `build-android-x86_64/libsuika3.so` to `app/src/main/jniLibs/x86_64/libplayfield.so`
+Después de eso, copie las bibliotecas compartidas a su proyecto de Android:
+* Copiar `build-android-arm64/libsuika3.so` a `app/src/main/jniLibs/arm64-v8a/libplayfield.so`
+* Copiar `build-android-armv7/libsuika3.so` a `app/src/main/jniLibs/armeabi-v7a/libplayfield.so`
+* Copiar `build-android-x86/libsuika3.so` a `app/src/main/jniLibs/x86/libplayfield.so`
+* Copiar `build-android-x86_64/libsuika3.so` a `app/src/main/jniLibs/x86_64/libplayfield.so`
 
-Overwrite the existing file.
+Sobrescriba el archivo existente.
 
-### HarmonyOS NEXT
+### HarmonyOS SIGUIENTE
 
-To build shared binaries, type:
+Para crear archivos binarios compartidos, escriba:
 ```
 cmake --preset openharmony-arm64
 cmake --preset openharmony-x86_64
@@ -116,31 +116,31 @@ cmake --build --preset openharmony-x86
 cmake --build --preset openharmony-x86_64
 ```
 
-After that, copy the shared libraries to your HarmonyOS NEXT project:
-* Copy `build-openharmony-arm64/libsuika3.a` to `entry/libs/arm64-v8a/libsuika3.a`
-* Copy `build-openharmony-x86_64/libsuika3.a` to `entry/libs/x86_64/libsuika3.a`
+Después de eso, copie las bibliotecas compartidas a su proyecto HarmonyOS NEXT:
+* Copiar `build-openharmony-arm64/libsuika3.a` a `entry/libs/arm64-v8a/libsuika3.a`
+* Copiar `build-openharmony-x86_64/libsuika3.a` a `entry/libs/x86_64/libsuika3.a`
 
-Overwrite the existing file.
+Sobrescriba el archivo existente.
 
-### Unity Plugin
+### Complemento de Unity
 
-To build shared binaries, type:
+Para crear archivos binarios compartidos, escriba:
 ```
 cmake --preset unity-win64
 cmake --build --preset unity-win64
 ```
 
-After that, copy the libraries to your Unity project:
-* Copy `build-unity-win64/libsuika3.dll` to `Assets/Plugins/x86_64/libplayfield.dll`
+Después de eso, copie las bibliotecas a su proyecto de Unity:
+* Copiar `build-unity-win64/libsuika3.dll` a `Assets/Plugins/x86_64/libplayfield.dll`
 
-Overwrite the existing file.
+Sobrescriba el archivo existente.
 
 ---
 
-## Results
+## Resultados
 
-Scripts are embedded directly into the executable, providing:
+Los scripts se incrustan directamente en el ejecutable y proporcionan:
 
-* No JIT (for store review)
-* No runtime script loading
-* Faster startup
+* Sin JIT (para revisión de la tienda)
+* No se carga el script en tiempo de ejecución
+* Inicio más rápido

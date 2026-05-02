@@ -1,17 +1,17 @@
-Ray Syntax Reference
-====================
+Справочник по синтаксису Ray
+============================
 
-`Ray` is actually the `Noct` programming language with additional Suika3 APIs.
+`Ray` на самом деле является языком программирования `Noct` с дополнительными API Suika3.
 
-## Assignments
+## Присваивания
 
-Variables in Noct are dynamically typed and don't require explicit
-declaration. The assignment operator (`=`) is used to create and
-assign values to variables.
+Переменные в Noct имеют динамическую типизацию и не требуют явного
+объявления. Оператор присваивания (`=`) используется для создания
+переменных и присваивания им значений.
 
-As shown in the example below, Noct supports various data types
-including integers, floating-point numbers, and strings. Variables can
-be reassigned to different types at any time during execution.
+Как показано в примере ниже, Noct поддерживает различные типы данных,
+включая целые числа, числа с плавающей точкой и строки. Переменным можно
+повторно присваивать значения разных типов в любой момент выполнения.
 
 ```
 func main() {
@@ -26,10 +26,10 @@ func main() {
 }
 ```
 
-## Global Variables
+## Глобальные переменные
 
-Global variables can be defined in functions, and cannot be defined
-outside of functions.
+Глобальные переменные можно определять в функциях, но нельзя определять
+вне функций.
 
 ```
 func main() {
@@ -38,11 +38,10 @@ func main() {
 }
 ```
 
-## Local Variables
+## Локальные переменные
 
-Using the `var` keyword allows you to declare a variable as
-local. Without `var` declaration, assigning to a variable creates a
-global variable.
+Ключевое слово `var` позволяет объявить переменную как локальную. Без
+объявления `var` присваивание переменной создает глобальную переменную.
 
 ```
 func main() {
@@ -51,11 +50,11 @@ func main() {
 }
 ```
 
-## Array
+## Массив
 
-Arrays are ordered collections of values, accessed by index. Arrays
-support iteration through the `for` loop construct, allowing you to
-iterate through each value directly.
+Массивы - это упорядоченные коллекции значений, доступных по индексу.
+Массивы поддерживают итерацию через конструкцию цикла `for`, позволяя
+перебирать каждое значение напрямую.
 
 ```
 func main() {
@@ -66,8 +65,8 @@ func main() {
 }
 ```
 
-Arrays can hold values of different types simultaneously, reflecting
-the dynamic typing system.
+Массивы могут одновременно содержать значения разных типов, что отражает
+динамическую систему типов.
 
 ```
 func main() {
@@ -75,8 +74,8 @@ func main() {
 }
 ```
 
-The language provides a built-in function `push()` to add elements to
-the end of an array.  Also, `pop()` removes the final element.
+Язык предоставляет встроенную функцию `push()` для добавления элементов в
+конец массива. Кроме того, `pop()` удаляет последний элемент.
 
 ```
 func main() {
@@ -87,32 +86,31 @@ func main() {
 
     var last = array->pop();
 
-    print("Length = " + array.length);
+    print("Длина = " + array.length);
 }
 ```
 
-## Dictionary
+## Словарь
 
-Dictionaries store key-value pairs, similar to hash maps or objects in
-other languages. They are defined using curly braces with key-value
-pairs separated by colons. Dictionaries support iteration where both
-the key and value can be accessed simultaneously.
+Словари хранят пары ключ-значение, подобно хеш-таблицам или объектам в
+других языках. Они задаются фигурными скобками с парами ключ-значение,
+разделенными двоеточиями. Словари поддерживают итерацию, при которой
+одновременно доступны и ключ, и значение.
 
 ```
 func main() {
     var dict = {key1: "value1", key2: "value2"};
     for (key, value in dict) {
-        print("key = " + key);
-        print("value = " + value);
+        print("ключ = " + key);
+        print("значение = " + value);
     }
 
-    print("Length = " + dict.length);
+    print("Длина = " + dict.length);
 }
 ```
 
-Dictionaries may be constructed in a single step way. An assignment
-can be an array style which uses `[]`, or an object style which uses
-`.`.
+Словари можно строить пошагово. Присваивание может использовать стиль
+массива с `[]` или объектный стиль с `.`.
 
 ```
 func main() {
@@ -122,8 +120,7 @@ func main() {
 }
 ```
 
-The built-in function `remove()` allows for the deletion of entries by
-key.
+Встроенная функция `remove()` позволяет удалять записи по ключу.
 
 ```
 func main() {
@@ -132,13 +129,14 @@ func main() {
 }
 ```
 
-## For-loop
+## Цикл for
 
-The for-loop construct provides a concise syntax for iterating through
-sequences such as ranges, arrays, and dictionaries.
+Конструкция цикла for предоставляет краткий синтаксис для перебора
+последовательностей, таких как диапазоны, массивы и словари.
 
-The range syntax (using the `..` operator) creates an iterator that
-generates values from the start to one less than the end value.
+Синтаксис диапазона (с оператором `..`) создает итератор, который
+генерирует значения от начального значения до значения на единицу меньше
+конечного.
 
 ```
 func main() {
@@ -148,10 +146,9 @@ func main() {
 }
 ```
 
-For-loops can also iterate directly over arrays and other collection
-types.
+Циклы for также могут напрямую перебирать массивы и другие типы коллекций.
 
-Arrays can be iterated by the for-value syntax.
+Массивы можно перебирать с помощью синтаксиса for-value.
 
 ```
 func main() {
@@ -162,7 +159,7 @@ func main() {
 }
 ```
 
-Dictionaries can be iterated by the for-key-value syntax.
+Словари можно перебирать с помощью синтаксиса for-key-value.
 
 ```
 func main() {
@@ -173,15 +170,14 @@ func main() {
 }
 ```
 
-## While Loops
+## Циклы while
 
-The while-loop provides a traditional iteration mechanism that
-continues execution as long as a specified condition remains
-true. Unlike for-loops which are designed for iterating over
-collections, while-loops are more flexible and can be used for
-implementing various algorithms where the number of iterations isn't
-known in advance. The example shows a basic counter implementation
-incrementing from 0 to 9.
+Цикл while предоставляет традиционный механизм итерации, который
+продолжает выполнение, пока указанное условие остается истинным. В отличие
+от циклов for, предназначенных для перебора коллекций, циклы while более
+гибкие и могут использоваться для реализации различных алгоритмов, где
+число итераций заранее неизвестно. В примере показана базовая реализация
+счетчика, увеличивающегося от 0 до 9.
 
 ```
 func main() {
@@ -193,11 +189,11 @@ func main() {
 }
 ```
 
-## If and Else Blocks
+## Блоки if и else
 
-Control flows allow for conditional executions based on evaluated
-expressions. The if-else construct follows a familiar syntax where
-conditions are evaluated in sequence.
+Потоки управления позволяют выполнять условное выполнение на основе
+вычисленных выражений. Конструкция if-else использует привычный синтаксис,
+в котором условия проверяются последовательно.
 
 ```
 func main() {
@@ -207,16 +203,16 @@ func main() {
     } else if (a == 1) {
         print("1");
     } else {
-        print("other");
+        print("другое");
     }
 }
 ```
 
-## Lambda Functions
+## Лямбда-функции
 
-Functions are first-class objects in the language. Anonymous
-functions, also known as `lambda` expressions, allow you to create
-functions without names.
+Функции являются объектами первого класса в языке. Анонимные функции,
+также известные как выражения `lambda`, позволяют создавать функции без
+имен.
 
 ```
 func main() {
@@ -225,11 +221,11 @@ func main() {
 }
 ```
 
-Lambda functions are simply translated to named functions in the
-compilation process. Therefore, they can't capture variables declared
-in outer functions.
+В процессе компиляции лямбда-функции просто преобразуются в именованные
+функции. Поэтому они не могут захватывать переменные, объявленные во
+внешних функциях.
 
-## Increment/Decrement (+=, -=, ++, --)
+## Инкремент/декремент (+=, -=, ++, --)
 
 ```
 func main() {
@@ -243,50 +239,50 @@ func main() {
 }
 ```
 
-`++` and `--` are supported only as standalone statements (`a++;`, `b--;`).
-Using them inside expressions is disallowed to avoid complex side-effects.
+`++` и `--` поддерживаются только как самостоятельные инструкции (`a++;`, `b--;`).
+Использовать их внутри выражений запрещено, чтобы избежать сложных побочных эффектов.
 
-## OOP in Noct
+## ООП в Noct
 
-The object-oriented model in Noct is a lightweight variation of prototype-based OOP.
+Объектно-ориентированная модель в Noct - это облегченный вариант ООП на основе прототипов.
 
-- Classes are simply dictionary templates
-- Inheritance and instantiation are realized by dictionary merging
-- There is no prototype chain, and modifying a class does not affect existing instances
+- Классы являются просто шаблонами словарей
+- Наследование и создание экземпляров реализуются слиянием словарей
+- Цепочки прототипов нет, и изменение класса не влияет на существующие экземпляры
 
-This design treats dictionaries as first-class objects, and the author refers to it as Dictionary-based OOP (D-OOP).
+Эта модель рассматривает словари как объекты первого класса, а автор называет ее Dictionary-based OOP (D-OOP).
 
 ```
 func main() {
-    // The base class definition. (A class is just a dictionary.)
+    // Определение базового класса. (Класс - это просто словарь.)
     Animal = class {
         name: "Animal",
         cry: (this) => {
         }
     };
 
-    // The subclass definition. (Just a dictionary merging.)
+    // Определение подкласса. (Просто слияние словарей.)
     Cat = extend Animal {
         name: "Cat",
         voice: "meow",
         cry: (this) => {
-            print(this.name + " cries like " + this.voice);
+            print(this.name + " издает звук " + this.voice);
         }
     };
 
-    // Instantiation. (Just a dictionary merging.)
+    // Создание экземпляра. (Просто слияние словарей.)
     var myCat = new Cat {
         voice: "neee"
     };
 
-    // This-call uses -> () syntax. (Equal to myCat.cry(myCat))
+    // Вызов this использует синтаксис -> (). (Эквивалентно myCat.cry(myCat))
     myCat->cry();
 }
 ```
 
 ---
 
-## Intrinsics
+## Встроенные функции
 
 ### int()
 
@@ -348,8 +344,8 @@ for (i in 0 .. s.length) {
 
 ```
 var s1 = "ABCDEFG";
-var s2 = s1.substring(0, 3); // from the char 0, three characters
-var s3 = s1.substring(2, -1); // from the char 1, to the end
+var s2 = s1.substring(0, 3); // от символа 0, три символа
+var s3 = s1.substring(2, -1); // от символа 1 до конца
 }
 ```
 

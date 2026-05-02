@@ -1,113 +1,104 @@
 GUI
 ===
 
-## Introduction
+## Einführung
 
-GUI is Suika3's UI/UX creation feature.
+GUI ist die UI/UX-Erstellungsfunktion von Suika3.
 
-In Suika3, buttons are defined in a dedicated GUI mode and operate in
-a synchronous manner, that is, calling a GUI results in a button click or
-a cancel.
+In Suika3 werden Schaltflächen in einem dedizierten GUI-Modus definiert und funktionieren synchron, d. h. der Aufruf einer GUI führt zu einem Klick auf die Schaltfläche oder zu einem Abbruch.
 
-Asynchronous callbacks such as showing buttons while text tag
-execution are intentionally avoided because they can be difficult for
-beginner programmers to understand and manage.
+Asynchrone Rückrufe wie das Anzeigen von Schaltflächen während der Ausführung von Text-Tags werden absichtlich vermieden, da sie für Programmieranfänger schwer zu verstehen und zu verwalten sein können.
 
-A GUI file contains a list of button definitions. Each button includes
-a behavior type, idle and hover images, and additional
-properties. Buttons are mapped to animation layers, and animation
-files can be triggered when a button's state changes.
+Eine GUI-Datei enthält eine Liste von Schaltflächendefinitionen. Jede Schaltfläche enthält einen Verhaltenstyp, Leerlauf- und Hover-Bilder sowie zusätzliche Eigenschaften. Schaltflächen werden Animationsebenen zugeordnet und Animationsdateien können ausgelöst werden, wenn sich der Status einer Schaltfläche ändert.
 
 ---
 
-## GUI Sample
+## GUI-Beispiel
 
 ```
-# Global settings section.
+# Abschnitt „Globale Einstellungen“.
 global {
     fadein:       0.2;            # Fading-in time in seconds.
     fadeout:      0.2;            # Fading-out time in seconds.
 }
 
-# A block describes a button.
-# The name of a block can be whatever you like and it won't affect anything.
+# Ein Block beschreibt eine Schaltfläche.
+# Der Name eines Blocks kann beliebig sein und hat keinerlei Auswirkungen.
 button1 {
-    # Layer ID (`1`-`32`)
-    # `1` means the top-most and `32` means the bottom-most in the GUI layers, respectively.
+    # Layer-ID (`1`-`32`)
+    # `1` bedeutet jeweils die oberste und `32` die unterste in den GUI-Ebenen.
     id: 1;
  
-    # Behavior Type (`goto` means go to a label when clicked.)
+    # Verhaltenstyp (`goto` bedeutet, dass beim Klicken zu einer Beschriftung gewechselt wird.)
     type: goto;
 
-    # Label to go to.
+    # Etikett zum Aufrufen.
     label: button1_clicked;
 
     # Position
     x: 39;
     y: 99;
 
-    # `width:` and `height:` are omissible as they can be inferred from the image size.
+    # `width:` und `height:` können weggelassen werden, da sie aus der Bildgröße abgeleitet werden können.
 
-    # Images
+    # Bilder
     image-idle:  gui/item-idle.png;    # Shown when the button is not pointed.
     image-hover: gui/item-hover.png;   # Shown when the button is pointed.
     image-press: gui/item-press.png;   # Shown when the button is pressed.
 
-    # Animations
+    # Animationen
     anime-idle:  gui/item-idle.anime;   # Executed when the button state is changed to `idle`.
     anime-hover: gui/item-hover.anime;  # Executed when the button state is changed to `hover`.
     anime-press: gui/item-press.anime;  # Executed when the button is pressed.
 
-    # Note that `press` is not an independent state, it's an additional flag to the state `hover`.
-    # When a `hover` anime runs, `idle` anime will be canceled.
-    # And when `idle` anime runs, `hover` anime will be canceled.
-    # However, `press` anime doesn't cancel anything.
+    # Beachten Sie, dass `press` kein unabhängiger Status ist, sondern ein zusätzliches Flag zum Status `hover`.
+    # Wenn ein `hover`-Anime ausgeführt wird, wird `idle`-Anime abgebrochen.
+    # Und wenn `idle` Anime läuft, wird `hover` Anime abgebrochen.
+    # Allerdings macht `press` Anime nichts rückgängig.
 }
 ```
 
-In the `global` section, you can specify options for the GUI.
+Im Abschnitt `global` können Sie Optionen für die GUI angeben.
 
-Other sections are interpreted as button definitions.
-Here, `button1` makes a button at position `(39, 99)`.
-If the button is clicked, a jump so called `goto` will happen.
+Andere Abschnitte werden als Schaltflächendefinitionen interpretiert. Hier erstellt `button1` eine Schaltfläche an Position `(39, 99)`. Wenn auf die Schaltfläche geklickt wird, erfolgt ein Sprung namens `goto`.
 
 ---
 
-## Button Types
+## Schaltflächentypen
 
-| Description                     | Meaning                                           |
+| Beschreibung | Bedeutung |
 |---------------------------------|---------------------------------------------------|
-| type: noaction;                 | Non-clickable image.                              |
-| type: goto;                     | Jumps to a label when clicked.                    |
-| type: gui;                      | Jumps to a GUI when clicked.                      |
-| type: mastervol;                | Shown as a master volume slider.                  |
-| type: bgmvol;                   | Shown as a BGM volume slider.                     |
-| type: sevol;                    | Shown as an SE volume slider.                     |
-| type: voicevol;                 | Shown as an voice volume slider.                  |
-| type: charactervol;             | Shown as a character volume slider.               |
-| type: textspeed;                | Shown as a text speed slider.                     |
-| type: autospeed;                | Shown as an auto mode speed slider.               |
-| type: preview;                  | Shown as a text preview area.                     |
-| type: fullscreen;               | Shown as a full screen mode button.               |
-| type: window;                   | Shown as s windoe mode button.                    |
-| type: default;                  | Resets settings when pressed.                     |
-| type: savepage;                 | Shown as a save/load page button.                 |
-| type: save;                     | Shown as a save slot.                             |
-| type: load;                     | Shown as a load slot.                             |
-| type: auto;                     | Shown as an auto mode button.                     |
-| type: skip;                     | Shown as a skip mode button.                      |
-| type: title;                    | Shown as a back-to-title button.                  |
-| type: history;                  | Shown as a history button.                        |
-| type: historyscroll;            | Shown as a vertical history scroll slider.        |
-| type: historyscroll-horizontal; | Shown as a horizontal history scroll slider.      |
-| type: cancel;                   | Shown as a cancel button.                         |
-| type: namevar;                  | Shown as a area to preview a name variable value. |
-| type: char;                     | Shown as a button to input a character.           |
-| type: language                  | Change the language when clicked.                 |
+| Typ: noaction; | Nicht anklickbares Bild. |
+| Typ: gehe zu; | Springt beim Klicken zu einer Beschriftung. |
+| Typ: GUI; | Springt beim Klicken zu einer GUI. |
+| Typ: Mastervol; | Wird als Master-Lautstärkeregler angezeigt. |
+| Typ: bgmvol; | Wird als Hintergrundmusik-Lautstärkeregler angezeigt. |
+| Typ: sevol; | Wird als SE-Lautstärkeregler angezeigt. |
+| Typ: Voicevol; | Wird als Schieberegler für die Sprachlautstärke angezeigt. |
+| Typ: Charaktervol; | Wird als Schieberegler für die Zeichenlautstärke angezeigt. |
+| Typ: Textgeschwindigkeit; | Wird als Schieberegler für die Textgeschwindigkeit angezeigt. |
+| Typ: Autospeed; | Wird als Geschwindigkeitsregler für den automatischen Modus angezeigt. |
+| Typ: Vorschau; | Wird als Textvorschaubereich angezeigt. |
+| Typ: Vollbild; | Wird als Schaltfläche für den Vollbildmodus angezeigt. |
+| Typ: Fenster; | Wird als Fenstermodus-Taste angezeigt. |
+| Typ: Standard; | Setzt die Einstellungen zurück, wenn sie gedrückt wird. |
+| Typ: Savepage; | Wird als save/load-Seitenschaltfläche angezeigt. |
+| Typ: Speichern; | Wird als Speicherplatz angezeigt. |
+| Typ: laden; | Wird als Ladeschacht angezeigt. |
+| Typ: Auto; | Wird als Schaltfläche für den automatischen Modus angezeigt. |
+| Typ: überspringen; | Wird als Schaltfläche zum Überspringen des Modus angezeigt. |
+| Typ: Titel; | Wird als Zurück-zum-Titel-Button angezeigt. |
+| Typ: Geschichte; | Wird als Verlaufsschaltfläche angezeigt. |
+| Typ: HistoryScroll; | Wird als vertikaler Verlaufs-Scroll-Schieberegler angezeigt. |
+| Typ: HistoryScroll-Horizontal; | Wird als horizontaler Verlaufs-Scroll-Schieberegler angezeigt. |
+| Typ: Abbrechen; | Wird als Abbrechen-Schaltfläche angezeigt. |
+| Typ: Namevar; | Wird als Bereich zur Vorschau eines Namensvariablenwerts angezeigt. |
+| Typ: char; | Wird als Schaltfläche zur Eingabe eines Zeichens angezeigt. |
+| Typ: Sprache | Ändern Sie die Sprache, wenn Sie darauf klicken. |
 
 ### `noaction`
 
-A non-clickable image.
+Ein nicht anklickbares Bild.
 
 ```
 background {
@@ -120,7 +111,7 @@ background {
 
 ### `goto`
 
-A clickable button. When clicked, tag execution jumps to a label specified by `label:` parameter.
+Eine anklickbare Schaltfläche. Wenn darauf geklickt wird, springt die Tag-Ausführung zu einer durch den Parameter `label:` angegebenen Bezeichnung.
 
 ```
 button1 {
@@ -135,7 +126,7 @@ button1 {
 
 ### `gui`
 
-A clickable button. When clicked, GUI execution is chained to a new GUI specified by `file:` parameter.
+Eine anklickbare Schaltfläche. Wenn Sie darauf klicken, wird die GUI-Ausführung an eine neue GUI verkettet, die durch den Parameter `file:` angegeben wird.
 
 ```
 button1 {
@@ -150,7 +141,7 @@ button1 {
 
 ### `mastervol`
 
-A slider to set the master volume.
+Ein Schieberegler zum Einstellen der Gesamtlautstärke.
 
 ```
 slider1 {
@@ -165,10 +156,9 @@ slider1 {
 
 ### `bgmvol`
 
-A slider to set the BGM volume.
+Ein Schieberegler zum Einstellen der Hintergrundmusiklautstärke.
 
-This slider sets the volume to be stored in the global save data file.
-This is defferent than the volume to be set by the `[volume]` tag and stored in the local save data.
+Dieser Schieberegler legt das Volumen fest, das in der globalen Sicherungsdatendatei gespeichert werden soll. Dies unterscheidet sich von dem Volumen, das durch das Tag `[volume]` festgelegt und in den lokalen Speicherdaten gespeichert wird.
 
 ```
 slider1 {
@@ -183,10 +173,9 @@ slider1 {
 
 ### `sevol`
 
-A slider to set the SE volume.
+Ein Schieberegler zum Einstellen der SE-Lautstärke.
 
-This slider sets the volume to be stored in the global save data file.
-This is defferent than the volume to be set by the `[volume]` tag and stored in the local save data.
+Dieser Schieberegler legt das Volumen fest, das in der globalen Sicherungsdatendatei gespeichert werden soll. Dies unterscheidet sich von dem Volumen, das durch das Tag `[volume]` festgelegt und in den lokalen Speicherdaten gespeichert wird.
 
 ```
 slider1 {
@@ -201,10 +190,9 @@ slider1 {
 
 ### `voicevol`
 
-A slider to set the SE volume.
+Ein Schieberegler zum Einstellen der SE-Lautstärke.
 
-This slider sets the volume to be stored in the global save data file.
-This is defferent than the volume to be set by the `[volume]` tag and stored in the local save data.
+Dieser Schieberegler legt das Volumen fest, das in der globalen Sicherungsdatendatei gespeichert werden soll. Dies unterscheidet sich von dem Volumen, das durch das Tag `[volume]` festgelegt und in den lokalen Speicherdaten gespeichert wird.
 
 ```
 slider1 {
@@ -219,10 +207,9 @@ slider1 {
 
 ### `charactervol`
 
-A slider to set a per-character volume.
+Ein Schieberegler zum Festlegen der Lautstärke pro Zeichen.
 
-Character index is passed by the `index:` parameter.
-index 0 is for non-defined character, and 1-32 for defined characters.
+Der Zeichenindex wird vom Parameter `index:` übergeben. Index 0 steht für nicht definierte Zeichen und 1-32 für definierte Zeichen.
 
 ```
 slider1 {
@@ -238,7 +225,7 @@ slider1 {
 
 ### `textspeed`
 
-A slider to set the text speed.
+Ein Schieberegler zum Einstellen der Textgeschwindigkeit.
 
 ```
 slider1 {
@@ -253,7 +240,7 @@ slider1 {
 
 ### `autospeed`
 
-A slider to set the auto mode speed.
+Ein Schieberegler zum Einstellen der Geschwindigkeit im Automatikmodus.
 
 ```
 slider1 {
@@ -268,7 +255,7 @@ slider1 {
 
 ### `preview`
 
-A text area to preview the font, language, and speed.
+Ein Textbereich zur Vorschau der Schriftart, Sprache und Geschwindigkeit.
 
 ```
 preview1 {
@@ -281,8 +268,7 @@ preview1 {
 
 ### `fullscreen`
 
-A clickable button.
-When clicked, the engine will enter a full screen mode.
+Eine anklickbare Schaltfläche. Wenn Sie darauf klicken, wechselt die Engine in den Vollbildmodus.
 
 ```
 fullscreen1 {
@@ -297,8 +283,7 @@ fullscreen1 {
 
 ### `window`
 
-A clickable button.
-When clicked, the engine will enter a windowed mode.
+Eine anklickbare Schaltfläche. Wenn Sie darauf klicken, wechselt die Engine in den Fenstermodus.
 
 ```
 window1 {
@@ -313,8 +298,7 @@ window1 {
 
 ### `default`
 
-A clickable button.
-When clicked, it resets all settings.
+Eine anklickbare Schaltfläche. Wenn Sie darauf klicken, werden alle Einstellungen zurückgesetzt.
 
 ```
 reset1 {
@@ -328,8 +312,7 @@ reset1 {
 
 ### `savepage`
 
-A clickable button.
-When clicked, it switches the save screen page.
+Eine anklickbare Schaltfläche. Wenn Sie darauf klicken, wird die Speicherbildschirmseite umgeschaltet.
 
 ```
 savepage1 {
@@ -345,8 +328,7 @@ savepage1 {
 
 ### `save`
 
-A clickable button.
-When clicked, it executes a save.
+Eine anklickbare Schaltfläche. Beim Anklicken wird ein Speichervorgang ausgeführt.
 
 ```
 save1 {
@@ -374,8 +356,7 @@ save1 {
 
 ### `load`
 
-A clickable button.
-When clicked, it executes a load.
+Eine anklickbare Schaltfläche. Wenn darauf geklickt wird, wird ein Ladevorgang ausgeführt.
 
 ```
 load1 {
@@ -403,8 +384,7 @@ load1 {
 
 ### `auto`
 
-A clickable button.
-When clicked, it start Auto Mode.
+Eine anklickbare Schaltfläche. Wenn Sie darauf klicken, wird der Auto-Modus gestartet.
 
 ```
 auto1 {
@@ -418,8 +398,7 @@ auto1 {
 
 ### `skip`
 
-A clickable button.
-When clicked, it start Skip Mode.
+Eine anklickbare Schaltfläche. Wenn Sie darauf klicken, wird der Skip-Modus gestartet.
 
 ```
 skip1 {
@@ -433,8 +412,7 @@ skip1 {
 
 ### `title`
 
-A clickable button.
-When clicked, the engine goes back to the specified NovelML file.
+Eine anklickbare Schaltfläche. Wenn Sie darauf klicken, kehrt die Engine zur angegebenen NovelML-Datei zurück.
 
 ```
 title1 {
@@ -449,8 +427,7 @@ title1 {
 
 ### `history`
 
-A clickable button.
-It shows a message history item.
+Eine anklickbare Schaltfläche. Es zeigt ein Nachrichtenverlaufselement.
 
 ```
 history {
@@ -472,7 +449,7 @@ history {
 
 ### `historyscroll`
 
-A vertical scroll bar for history screen.
+Eine vertikale Bildlaufleiste für den Verlaufsbildschirm.
 
 ```
 scroll1 {
@@ -488,7 +465,7 @@ scroll1 {
 
 ### `historyscroll-horizontal`
 
-A horizontal scroll bar for vertical writing history screen.
+Eine horizontale Bildlaufleiste für den vertikalen Schreibverlaufsbildschirm.
 
 ```
 scroll1 {
@@ -504,8 +481,7 @@ scroll1 {
 
 ### `cancel`
 
-A clickable button.
-When clicked, the GUI will be canceled.
+Eine anklickbare Schaltfläche. Wenn Sie darauf klicken, wird die GUI abgebrochen.
 
 ```
 cancel1 {
@@ -519,8 +495,7 @@ cancel1 {
 
 ### `var`
 
-A text area to show a variable value.
-It is used for name editing.
+Ein Textbereich zur Anzeige eines Variablenwerts. Es wird zur Namensbearbeitung verwendet.
 
 ```
 var1 {
@@ -534,8 +509,7 @@ var1 {
 
 ### `char`
 
-A button to append a character to a variable.
-It is used for name editing.
+Eine Schaltfläche zum Anhängen eines Zeichens an eine Variable. Es wird zur Namensbearbeitung verwendet.
 
 ```
 char1 {
@@ -551,7 +525,7 @@ char1 {
 
 ### `language`
 
-A button to switch the language.
+Eine Schaltfläche zum Umschalten der Sprache.
 
 ```
 language_english1 {
@@ -567,24 +541,22 @@ language_english1 {
 
 ---
 
-## Common Button Options
+## Allgemeine Schaltflächenoptionen
 
-| Description           |Meaning                                                      |
+| Beschreibung | Bedeutung |
 |-----------------------|-------------------------------------------------------------|
-| type:                 | Type of the button.                                         |
-| x:                    | X position of the button.                                   |
-| y:                    | Y position of the button.                                   |
-| width:                | Width of the button. (by default, sets to idle image width) |
-| height:               | Height of the button.                                       |
-| pointse:              | Sound effect for when the button is pointed.                |
-| clickse:              | Sound effect for when the button is clicked.                |
+| Typ: | Typ der Schaltfläche. |
+| X: | X-Position der Schaltfläche. |
+| y: | Y-Position der Schaltfläche. |
+| Breite: | Breite der Schaltfläche. (Standardmäßig ist die Bildbreite im Leerlauf eingestellt.) |
+| Höhe: | Höhe der Schaltfläche. |
+| Punkte: | Soundeffekt, wenn auf die Taste gezeigt wird. |
+| klicke: | Soundeffekt, wenn auf die Schaltfläche geklickt wird. |
 
-### pointse:
+### Punkte:
 
-`pointse: btn-change.ogg;` indicates a sound effect file is played
-back when the mouse cursor enters the button.
+`pointse: btn-__TECH0__;` gibt an, dass eine Soundeffektdatei abgespielt wird, wenn der Mauszeiger auf die Schaltfläche eintritt.
 
-### clickse:
+### klicke:
 
-`clickse: click.ogg;` indicates a sound effect file is played back
-when the button is clicked.
+`clickse: __TECH0__;` gibt an, dass eine Soundeffektdatei abgespielt wird, wenn auf die Schaltfläche geklickt wird.

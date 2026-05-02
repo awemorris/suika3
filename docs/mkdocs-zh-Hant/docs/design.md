@@ -1,20 +1,20 @@
-Suika3 Design
+Suika3 設計
 =============
 
-## Layered Component Model
+## 分層元件模型
 
-Suika3 is not a monolithic design, but is separated into small libraries and parts, with an overall hierarchical structure stacked on top of each other.
+Suika3 並不是單體式設計，而是拆分成多個小型函式庫與元件，整體呈現層層堆疊的階層結構。
 
-- Each layer implements only one feature.
-- Each layer provides a public C language API to the layer one level above it.
-- Each layer can only use the public C language API provided by the layer one level below it.
+- 每一層只實作一項功能。
+- 每一層都會向上一層提供公開的 C 語言 API。
+- 每一層只能使用下一層提供的公開 C 語言 API。
 
-This type of structure is called the "Layered Component Model" in Suika3.
+在 Suika3 裡，這種結構稱為「分層元件模型」。
 
-The advantage of this approach is that while classes in object-oriented languages like C++ must consider many-to-many dependency relationships with inherent complexity, the Layered Component Model only needs to consider relationships with the layers one level above and one level below, making design, implementation, modification, and extension simpler.
-A full-stack game engine is complex and large software, but by assembling it through one-to-one relationships of simple components, it becomes easier to build as a whole, resulting in improved portability.
+這種做法的優點是，像 C++ 這類物件導向語言中的類別，往往必須面對多對多的相依關係，內建複雜度很高；而分層元件模型只需要考慮上一層與下一層的關係，因此設計、實作、修改與擴充都更單純。
+完整的遊戲引擎本來就是複雜又龐大的軟體，但如果透過簡單元件的一對一關係來組裝，整體就更容易建構，也能提升可攜性。
 
-The reason for improved portability is that the bottom layer is a "hardware abstraction layer" that absorbs OS differences, and the layers above it can be designed and implemented without any concern for OS differences.
+可攜性提升的原因在於，最底層是吸收作業系統差異的「硬體抽象層」，而其上的各層在設計與實作時就不必再顧慮作業系統差異。
 
 ```
 +-----------------------------------+

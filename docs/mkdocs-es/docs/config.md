@@ -1,72 +1,72 @@
 WIP
 
-## Game Settings
+## Configuración del juego
 
-| Name                       | Type       | Description                                                   |
+| Nombre | Tipo | Descripciﾃｳn |
 |----------------------------|------------|---------------------------------------------------------------|
-| game.title.en              | String     | Game title in English.                                        |
-| game.novel                 | Boolean    | Enable novel mode.                                            |
-| game.locale                | String     | Force the language over the system locale setting.            |
+| game.title.en | String | Título del juego en inglés.                                        |
+| game.novel | Boolean | Habilite el modo novela.                                            |
+| game.locale | String | Fuerce el idioma sobre la configuración regional del sistema.            |
 
 ### game.title.en
 
-### game.novel
+### game.novela
 
-### game.local
+### game.locale
 
-Language setting.
+Configuración de idioma.
 
-- "":   Use the system setting
-- "ja": Fix to Japanese
-- "en": Fix to English
+- ": Utilice la configuración del sistema
+- ja: arreglado en japonés
+- es: arreglar al inglés
 
 --
 
-## Font File Settings
+## Configuración del archivo de fuente
 
-# Font 1
-#  - Default font
-#  - You can choose this font by adding \f{1} to a message
-font.ttf1=system/font/rounded-l-mplus-1c-bold.ttf
+# Fuente 1
+# - Fuente predeterminada
+# - Puedes elegir esta fuente agregando \f{1} a un mensaje
+font.ttf1=system/font/redondeado-l-mplus-1c-bold.ttf
 
-# Font 2
-#  - You can choose this font by adding \f{2} to a message
+# Fuente 2
+# - Puedes elegir esta fuente agregando \f{2} a un mensaje
 #font.ttf2=
 
-# Font 3
-#  - You can choose this font by adding \f{3} to a message
+# Fuente 3
+# - Puedes elegir esta fuente agregando \f{3} a un mensaje
 #font.ttf3=
 
-# Font 4
-#  - You can choose this font by adding \f{4} to a message
+# Fuente 4
+# - Puedes elegir esta fuente agregando \f{4} a un mensaje
 #font.ttf4=
 
 
 ############################################################
-## Message Box Settings
+## Configuración del cuadro de mensajes
 
 #
-# Image of the message box
+# Imagen del cuadro de mensaje
 #
 
-msgbox.image=system/message/msgbox.png
+msgbox.image=sistema/mensaje/msgbox.png
 
 #
-# Animation
+# Animación
 #
 
-msgbox.anime.hide=system/message/msgbox-hide.anime
-msgbox.anime.show=system/message/msgbox-show.anime
+msgbox.anime.hide=sistema/message/msgbox-hide.anime
+msgbox.anime.show=sistema/message/msgbox-show.anime
 
 #
-# Position of the message box
+# Posición del cuadro de mensaje
 #
 
 msgbox.x=0
 msgbox.y=520
 
 #
-# Margins for message box text in pixels
+# Márgenes para el texto del cuadro de mensaje en píxeles
 #
 
 msgbox.margin.left=200
@@ -75,32 +75,32 @@ msgbox.margin.right=200
 msgbox.margin.bottom=30
 
 #
-# Line margin for message box text in pixels
-# (including character height)
+# Margen de línea para el texto del cuadro de mensaje en píxeles
+# (incluida la altura del carácter)
 #
 
 msgbox.margin.line=40
 
 #
-# Character margin for message box text in pixels
+# Margen de caracteres para el texto del cuadro de mensaje en píxeles
 #
 
 msgbox.margin.char=0
 
 #
-# Font selection for the message box text (1,2,3,4)
+# Selección de fuente para el texto del cuadro de mensaje (1,2,3,4)
 #
 
 msgbox.font.select=1
 
 #
-# Font size of the message box text
+# Tamaño de fuente del texto del cuadro de mensaje
 #
 
 msgbox.font.size=36
 
 #
-# Font color of the message box text
+# Color de fuente del texto del cuadro de mensaje
 #
 
 msgbox.font.r=255
@@ -108,7 +108,7 @@ msgbox.font.g=255
 msgbox.font.b=255
 
 #
-# Font outline width and color of the text of the message box
+# Ancho del contorno de fuente y color del texto del cuadro de mensaje
 #
 
 msgbox.font.outline.width=0
@@ -117,34 +117,34 @@ msgbox.font.outline.g=0
 msgbox.font.outline.b=0
 
 #
-# Ruby size of the text of the message box
+# Tamaño Ruby del texto del cuadro de mensaje.
 #
 
 msgbox.font.ruby=10
 
 #
-# Enable vertical writing of the text of the message box
+# Habilitar la escritura vertical del texto del cuadro de mensaje.
 #
 
-msgbox.font.tategaki=false
+msgbox.font.tategaki=falso
 
 #
-# Enable character backgroun fill
+# Habilitar relleno de fondo de caracteres
 #
 
-msgbox.fill.enable=false
+msgbox.fill.enable=falso
 msgbox.fill.r=255
 msgbox.fill.g=255
 msgbox.fill.b=255
 
 #
-# Enable dimming for the previous paragpaphs of the text of the message box
+# Habilitar la atenuación de los párrafos anteriores del texto del cuadro de mensaje
 #
 
-msgbox.dim.enable=false
+msgbox.dim.enable=falso
 
 #
-# Dimming color of the text of the message box
+# Atenuación del color del texto del cuadro de mensaje.
 #
 
 msgbox.dim.r=0
@@ -152,7 +152,7 @@ msgbox.dim.g=0
 msgbox.dim.b=0
 
 #
-# Dimming outline width and color of the text of the message box
+# Atenuar el ancho del contorno y el color del texto del cuadro de mensaje
 #
 msgbox.dim.outline.width=0
 msgbox.dim.outline.r=0
@@ -160,397 +160,397 @@ msgbox.dim.outline.g=0
 msgbox.dim.outline.b=0
 
 #
-# Enable font color change of the seen messages of the message box
+# Habilitar el cambio de color de fuente de los mensajes vistos en el cuadro de mensaje
 #
 
-msgbox.seen.enable=false
+msgbox.seen.enable=falso
 
 #
-# Font color of the seen messages of the message box
+# Color de fuente de los mensajes vistos en el cuadro de mensajes.
 #
 
-msgbox.seen.r=0
-msgbox.seen.g=0
-msgbox.seen.b=0
+msgbox.visto.r=0
+msgbox.visto.g=0
+msgbox.visto.b=0
 
 #
-# Font outline width and color of the seen messages of the message box
+# Ancho del contorno de fuente y color de los mensajes vistos en el cuadro de mensaje
 #
 
 msgbox.seen.outline.width=0
 msgbox.seen.outline.r=0
 msgbox.seen.outline.g=0
-msgbox.seen.outline.b=0
+msgbox.visto.esquema.b=0
 
 #
-# Enable skip for unseen messages
+# Habilitar omitir mensajes no vistos
 #
 
-msgbox.skip_unseen=false
+msgbox.skip_unseen=falso
 
 ############################################################
-## Name Box Settings
+## Configuración del cuadro de nombre
 
 #
-# Enable the name box
-#  - Disable the name box if you need the full screen novel style
+# Habilitar el cuadro de nombre
+# - Desactive el cuadro de nombre si necesita el estilo de novela en pantalla completa
 #
 
-namebox.enable=true
+namebox.enable=verdadero
 
 #
-# Image of the name box
+# Imagen del cuadro de nombre
 #
 
-namebox.image=system/message/namebox.png
+namebox.image=sistema/mensaje/namebox.png
 
 #
-# Animation
+# Animación
 #
 
-namebox.anime.hide=system/message/namebox-hide.anime
-namebox.anime.show=system/message/namebox-show.anime
+namebox.anime.hide=sistema/mensaje/namebox-hide.anime
+namebox.anime.show=sistema/mensaje/namebox-show.anime
 
 #
-# Position of the name box
+# Posición del cuadro de nombre
 #
 
-namebox.x=80
-namebox.y=450
+cuadro de nombres.x=80
+cuadro de nombres.y=450
 
 #
-# Margins of the text of the name box in pixel
+# Márgenes del texto del cuadro de nombre en píxeles
 #
 
-namebox.margin.top=5
-namebox.margin.left=0
+cuadro de nombre.margin.top=5
+cuadro de nombre.margen.izquierda=0
 
 #
-# Enable centering of the text of the name box
+# Habilitar el centrado del texto del cuadro de nombre.
 #
 
-namebox.centering=true
+namebox.centering=verdadero
 
 #
-# Font selection of the text of the name box (1,2,3,4)
+# Selección de fuente del texto del cuadro de nombre (1,2,3,4)
 #
 
-namebox.font.select=1
+cuadro de nombre.font.select=1
 
 #
-# Font size of the text of the name box
+# Tamaño de fuente del texto del cuadro de nombre
 #
 
-namebox.font.size=36
+cuadro de nombre.font.size=36
 
 #
-# Font color of the text of the name box
+# Color de fuente del texto del cuadro de nombre
 #
 
-namebox.font.r=255
-namebox.font.g=255
-namebox.font.b=255
+cuadro de nombre.font.r=255
+cuadro de nombre.font.g=255
+cuadro de nombre.font.b=255
 
 #
-# Font outline width and color of the text of the name box
+# Ancho del contorno de fuente y color del texto del cuadro de nombre
 #
 
-namebox.font.outline.width=0
-namebox.font.outline.r=255
-namebox.font.outline.g=255
-namebox.font.outline.b=255
+cuadro de nombre.font.outline.width=0
+cuadro de nombre.font.outline.r=255
+cuadro de nombre.font.outline.g=255
+cuadro de nombre.font.outline.b=255
 
 #
-# Ruby size of the text of the name box
+# Tamaño Ruby del texto del cuadro de nombre.
 #
 
-namebox.font.ruby=10
+cuadro de nombre.font.ruby=10
 
 #
-# Enable vertical writing of the text of the name box
+# Habilitar la escritura vertical del texto del cuadro de nombre.
 #
 
-namebox.font.tategaki=false
-
-
-############################################################
-## Click Animation Settings
-
-#
-# Position of the click animation
-#
-
-click.x=1060
-click.y=660
-
-#
-# Interval of the click animation
-#
-
-click.interval=1.0
-
-#
-# Images of the click animation
-#
-
-click.image1=system/message/click1.png
-click.image2=system/message/click2.png
-#click.image3=
-#click.image4=
-#click.image5=
-#click.image6=
-#click.image7=
-#click.image8=
-#click.image9=
-#click.image10=
-#click.image11=
-#click.image12=
-#click.image13=
-#click.image14=
-#click.image15=
-#click.image16=
-
-#
-# Enable auto move of the click animation
-#
-
-click.move=false
+cuadro de nombre.font.tategaki=falso
 
 
 ############################################################
-## Choose Box Settings
+## Haga clic en Configuración de animación
 
 #
-# Font selection of the text of the choose boxes
+# Posición de la animación del clic
 #
 
-choose.font.select=1
+clic.x=1060
+clic.y=660
 
 #
-# Font size of the the text of the choose boxes
+# Intervalo de la animación del clic
 #
 
-choose.font.size=36
+clic.intervalo=1.0
 
 #
-# Font color of the text of the non-pointed choose box
+# Imágenes de la animación del clic
 #
 
-choose.font.idle.r=255
-choose.font.idle.g=255
-choose.font.idle.b=255
+click.image1=sistema/mensaje/click1.png
+click.image2=sistema/mensaje/click2.png
+#hacer clic.imagen3=
+#hacer clic.imagen4=
+#hacer clic.imagen5=
+#hacer clic.imagen6=
+#hacer clic.imagen7=
+#hacer clic.imagen8=
+#hacer clic.imagen9=
+#hacer clic.imagen10=
+#hacer clic.imagen11=
+#hacer clic.imagen12=
+#hacer clic.imagen13=
+#hacer clic.imagen14=
+#hacer clic.imagen15=
+#hacer clic.imagen16=
 
 #
-# Font outline width and color of the text of the non-pointed choose box
+# Habilitar el movimiento automático de la animación del clic.
 #
 
-choose.font.idle.outline.width=0
-choose.font.idle.outline.r=255
-choose.font.idle.outline.g=255
-choose.font.idle.outline.b=255
-
-#
-# Font color of the text of the pointed choose box
-#
-
-choose.font.hover.r=255
-choose.font.hover.g=0
-choose.font.hover.b=0
-
-#
-# Font outline width and color of the text of the pointed choose box
-#
-
-choose.font.hover.outline.width=0
-choose.font.hover.outline.r=255
-choose.font.hover.outline.g=255
-choose.font.hover.outline.b=255
-
-#
-# Ruby size of the text of the choose boxes
-#
-
-choose.font.ruby=10
-
-#
-# Enable vertical writing of the text of the choose boxes
-#
-
-choose.font.tategaki=false
-
-#
-# Sound effect for when the pointed choose box is changed
-#
-
-choose.change_se=system/choose/button.ogg
-
-#
-# Sound effect for when a choose box is selected
-#
-
-choose.click_se=system/choose/button.ogg
-
-#
-# Settings for the choose box 1
-#
-
-choose.box1.idle=system/choose/idle.png
-choose.box1.hover=system/choose/hover.png
-choose.box1.x=200
-choose.box1.y=130
-choose.box1.margin.top=15
-choose.box1.idle_anime=system/choose/idle.anime
-choose.box1.hover_anime=system/choose/hover.anime
-
-#
-# Settings for the choose box 2
-#
-
-choose.box2.idle=system/choose/idle.png
-choose.box2.hover=system/choose/hover.png
-choose.box2.x=200
-choose.box2.y=220
-choose.box2.margin.top=15
-choose.box2.idle_anime=system/choose/idle.anime
-choose.box2.hover_anime=system/choose/hover.anime
-
-#
-# Settings for the choose box 3
-#
-
-choose.box3.idle=system/choose/idle.png
-choose.box3.hover=system/choose/hover.png
-choose.box3.x=200
-choose.box3.y=310
-choose.box3.margin.top=15
-choose.box3.idle_anime=system/choose/idle.anime
-choose.box3.hover_anime=system/choose/hover.anime
-
-#
-# Settings for the choose box 4
-#
-
-choose.box4.idle=system/choose/idle.png
-choose.box4.hover=system/choose/hover.png
-choose.box4.x=200
-choose.box4.y=400
-choose.box4.margin.top=15
-choose.box4.idle_anime=system/choose/idle.anime
-choose.box4.hover_anime=system/choose/hover.anime
-
-#
-# Settings for the choose box 5
-#
-
-choose.box5.idle=system/choose/idle.png
-choose.box5.hover=system/choose/hover.png
-choose.box5.x=200
-choose.box5.y=490
-choose.box5.margin.top=15
-choose.box5.idle_anime=system/choose/idle.anime
-choose.box5.hover_anime=system/choose/hover.anime
-
-#
-# Settings for the choose box 6
-#
-
-choose.box6.idle=system/choose/idle.png
-choose.box6.hover=system/choose/hover.png
-choose.box6.x=200
-choose.box6.y=580
-choose.box6.margin.top=15
-choose.box6.idle_anime=system/choose/idle.anime
-choose.box6.hover_anime=system/choose/hover.anime
-
-#
-# Settings for the choose box 7
-#
-
-choose.box7.idle=system/choose/idle.png
-choose.box7.hover=system/choose/hover.png
-choose.box7.x=200
-choose.box7.y=670
-choose.box7.margin.top=15
-choose.box7.idle_anime=system/choose/idle.anime
-choose.box7.hover_anime=system/choose/hover.anime
-
-#
-# Settings for the choose box 8
-#
-
-choose.box8.idle=system/choose/idle.png
-choose.box8.hover=system/choose/hover.png
-choose.box8.x=200
-choose.box8.y=760
-choose.box8.margin.top=15
-choose.box8.idle_anime=system/choose/idle.anime
-choose.box8.hover_anime=system/choose/hover.anime
+hacer clic.move=falso
 
 
 ############################################################
-## Save Data Settings
+## Elija la configuración del cuadro
+
+#
+# Selección de fuente del texto de los cuadros de elección.
+#
+
+elegir.font.select=1
+
+#
+# Tamaño de fuente del texto de los cuadros de elección
+#
+
+elegir.font.size=36
+
+#
+# Color de fuente del texto del cuadro de selección no puntiagudo
+#
+
+elegir.font.idle.r=255
+elegir.font.idle.g=255
+elegir.font.idle.b=255
+
+#
+# Ancho del contorno de fuente y color del texto del cuadro de selección no puntiagudo
+#
+
+elegir.font.idle.outline.width=0
+elegir.font.idle.outline.r=255
+elegir.font.idle.outline.g=255
+elegir.font.idle.outline.b=255
+
+#
+# Color de fuente del texto del cuadro de selección puntiagudo
+#
+
+elegir.font.hover.r=255
+elegir.font.hover.g=0
+elegir.font.hover.b=0
+
+#
+# Ancho del contorno de fuente y color del texto del cuadro de selección puntiagudo
+#
+
+elegir.font.hover.outline.width=0
+elegir.font.hover.outline.r=255
+elegir.font.hover.outline.g=255
+elegir.font.hover.outline.b=255
+
+#
+# Tamaño Ruby del texto de los cuadros de elección.
+#
+
+elegir.font.ruby=10
+
+#
+# Habilitar la escritura vertical del texto de los cuadros de elección.
+#
+
+elegir.font.tategaki=false
+
+#
+# Efecto de sonido para cuando se cambia el cuadro de selección puntiagudo
+#
+
+elegir.change_se=system/choose/button.ogg
+
+#
+# Efecto de sonido para cuando se selecciona un cuadro de elección
+#
+
+elegir.click_se=system/choose/button.ogg
+
+#
+# Configuraciones para el cuadro de elección 1
+#
+
+elegir.box1.idle=sistema/elegir/idle.png
+elegir.box1.hover=sistema/elegir/hover.png
+elegir.box1.x=200
+elegir.box1.y=130
+elegir.box1.margin.top=15
+elegir.box1.idle_anime=system/choose/idle.anime
+elegir.box1.hover_anime=system/choose/hover.anime
+
+#
+# Configuraciones para el cuadro de elección 2
+#
+
+elegir.box2.idle=sistema/elegir/idle.png
+elegir.box2.hover=sistema/elegir/hover.png
+elegir.box2.x=200
+elegir.box2.y=220
+elegir.box2.margin.top=15
+elegir.box2.idle_anime=system/choose/idle.anime
+elegir.box2.hover_anime=system/choose/hover.anime
+
+#
+# Configuraciones para el cuadro de elección 3
+#
+
+elegir.box3.idle=sistema/elegir/idle.png
+elegir.box3.hover=system/choose/hover.png
+elegir.box3.x=200
+elegir.box3.y=310
+elegir.box3.margin.top=15
+elegir.box3.idle_anime=system/choose/idle.anime
+elegir.box3.hover_anime=system/choose/hover.anime
+
+#
+# Configuraciones para el cuadro de elección 4
+#
+
+elegir.box4.idle=sistema/elegir/idle.png
+elegir.box4.hover=system/choose/hover.png
+elegir.box4.x=200
+elegir.box4.y=400
+elegir.box4.margin.top=15
+elegir.box4.idle_anime=system/choose/idle.anime
+elegir.box4.hover_anime=system/choose/hover.anime
+
+#
+# Configuraciones para el cuadro de elección 5
+#
+
+elegir.box5.idle=sistema/elegir/idle.png
+elegir.box5.hover=system/choose/hover.png
+elegir.box5.x=200
+elegir.box5.y=490
+elegir.box5.margin.top=15
+elegir.box5.idle_anime=system/choose/idle.anime
+elegir.box5.hover_anime=system/choose/hover.anime
+
+#
+# Configuraciones para el cuadro de elección 6
+#
+
+elegir.box6.idle=sistema/elegir/idle.png
+elegir.box6.hover=system/choose/hover.png
+elegir.box6.x=200
+elegir.box6.y=580
+elegir.box6.margin.top=15
+elegir.box6.idle_anime=system/choose/idle.anime
+elegir.box6.hover_anime=system/choose/hover.anime
+
+#
+# Configuraciones para el cuadro de elección 7
+#
+
+elegir.box7.idle=sistema/elegir/idle.png
+elegir.box7.hover=system/choose/hover.png
+elegir.box7.x=200
+elegir.box7.y=670
+elegir.box7.margin.top=15
+elegir.box7.idle_anime=system/choose/idle.anime
+elegir.box7.hover_anime=system/choose/hover.anime
+
+#
+# Configuraciones para el cuadro de elección 8
+#
+
+elegir.box8.idle=sistema/elegir/idle.png
+elegir.box8.hover=system/choose/hover.png
+elegir.box8.x=200
+elegir.box8.y=760
+elegir.box8.margin.top=15
+elegir.box8.idle_anime=system/choose/idle.anime
+elegir.box8.hover_anime=system/choose/hover.anime
+
+
+############################################################
+## Guardar configuración de datos
 ############################################################
 
 #
-# Size of the save thumbnail
+# Tamaño de la miniatura guardada
 #
 
-save.thumb.width=213
-save.thumb.height=120
+guardar.thumb.width=213
+guardar.thumb.height=120
 
 #
-# "New" mark image
+# Nueva imagen de marca
 #
 
-#save.new_image=system/save/new.png
+#save.new_image=sistema/save/new.png
 
 
 ############################################################
-## System Button Settings
+## Configuración del botón del sistema
 
 #
-# Enable the system button
+# Habilitar el botón del sistema
 #
 
-sysbtn.enable=true
+sysbtn.enable=verdadero
 
 #
-# Images of the system button
+# Imágenes del botón del sistema
 #
 
-sysbtn.idle=system/sysbtn/sysbtn-idle.png
-sysbtn.hover=system/sysbtn/sysbtn-hover.png
+sysbtn.idle=sistema/sysbtn/sysbtn-idle.png
+sysbtn.hover=sistema/sysbtn/sysbtn-hover.png
 
 #
-# Anime
+# animado
 #
 
-# Hidden.
-sysbtn.anime.out=system/sysbtn/anime-out.anime
+# Oculto.
+sysbtn.anime.out=sistema/sysbtn/anime-out.anime
 
-# Appearing.
+# Apareciendo.
 sysbtn.anime.fadein=system/sysbtn/anime-fadein.anime
 
-# Appeared but not pointed.
+# Apareció pero no puntiagudo.
 sysbtn.anime.appear=system/sysbtn/anime-appear.anime
 
-# Hovered.
+# Flotado.
 sysbtn.anime.hover=system/sysbtn/anime-hover.anime
 
-# Disappearing.
+# Desapareciendo.
 sysbtn.anime.fadeout=system/sysbtn/anime-fadeout.anime
 
 #
-# Position of the system button
+# Posición del botón del sistema
 #
 
 sysbtn.x=1183
 sysbtn.y=48
-sysbtn.width=100
-sysbtn.height=100
+sysbtn.ancho=100
+sysbtn.altura=100
 
 #
-# Sound effects of the system button
+# Efectos de sonido del botón del sistema.
 #
 
 #sysbtn.enter_se=se/click.ogg
@@ -559,82 +559,82 @@ sysbtn.height=100
 
 
 ############################################################
-## Auto Mode Settings
+## Configuración del modo automático
 
 #
-# Image of the auto mode banner
+# Imagen del banner del modo automático
 #
 
-automode.image=system/message/auto.png
+automode.image=sistema/mensaje/auto.png
 
 #
-# Animation
+# Animación
 #
 
-automode.anime.hide=system/message/auto-hide.anime
+automode.anime.hide=sistema/mensaje/auto-hide.anime
 automode.anime.show=system/message/auto-show.anime
 
 #
-# Position of the auto mode banner
+# Posición del banner del modo automático
 #
 
-automode.x=0
-automode.y=126
+modo automático.x=0
+modo automático.y=126
 
 #
-# Sound effect for when entering the auto mode
+# Efecto de sonido al ingresar al modo automático.
 #
 
-#automode.enter_se=
+#modoautomático.enter_se=
 
 #
-# Sound effect for when leaving the auto mode
+# Efecto de sonido al salir del modo automático.
 #
 
-#automode.leave_se=
+#modoautomático.leave_se=
 
 
 ############################################################
-## Skip Mode Settings
+## Configuración del modo de omisión
 
 #
-# Image of the skip mode banner
+# Imagen del banner del modo de omisión
 #
 
 skipmode.image=system/message/skip.png
 
 #
-# Animation
+# Animación
 #
 
 skipmode.anime.hide=system/message/skip-hide.anime
 skipmode.anime.show=system/message/skip-show.anime
 
 #
-# Position of the auto mode banner
+# Posición del banner del modo automático
 #
 
-skipmode.x=0
-skipmode.y=126
+modo de salto.x=0
+modo de salto.y=126
 
 #
-# Sound effect for when entering the skip mode
+# Efecto de sonido para cuando se ingresa al modo de salto
 #
 
 #skipmode.enter_se=
 
 #
-# Sound effect for when leaving the auto mode
+# Efecto de sonido al salir del modo automático.
 #
 
 #skipmode.leave_se=
 
 
 ############################################################
-## GUI Settings
+## Configuración de la interfaz gráfica de usuario
 
 #
-# Font selection for the slot index text of the save/load GUI items
+# Selección de fuente para el texto del índice de ranura de los elementos de la GUI para guardar/cargar
 #
 gui.save.index.font.select=1
 gui.save.index.font.size=30
@@ -650,7 +650,7 @@ gui.save.index.font.tategaki=false
 gui.save.index.margin.char=3
 
 #
-# Font selection for the date text of the save/load GUI items
+# Selección de fuente para el texto de la fecha de los elementos de la GUI para guardar/cargar
 #
 gui.save.date.font.select=1
 gui.save.date.font.size=30
@@ -666,7 +666,7 @@ gui.save.date.font.tategaki=false
 gui.save.date.margin.char=5
 
 #
-# Font selection for the chapter text of the save/load GUI items
+# Selección de fuente para el texto del capítulo de los elementos de la GUI para guardar/cargar
 #
 gui.save.chapter.font.select=1
 gui.save.chapter.font.size=32
@@ -682,7 +682,7 @@ gui.save.chapter.font.tategaki=false
 gui.save.chapter.margin.char=5
 
 #
-# Font selection for the message text of the save/load GUI items
+# Selección de fuente para el texto del mensaje de los elementos de la GUI para guardar/cargar
 #
 gui.save.msg.font.select=1
 gui.save.msg.font.size=22
@@ -697,10 +697,10 @@ gui.save.msg.font.ruby=10
 gui.save.msg.font.tategaki=false
 gui.save.msg.margin.line=30
 gui.save.msg.margin.char=0
-gui.save.msg.multiline=true
+gui.save.msg.multiline=verdadero
 
 #
-# Font selection of the name and the text of the history GUI items
+# Selección de fuente del nombre y el texto de los elementos de la GUI del historial.
 #
 
 gui.history.name.font.select=1
@@ -732,33 +732,33 @@ gui.history.text.margin.line=40
 gui.history.text.margin.char=0
 
 #
-# Line quotation of the text of the history GUI items
+# Cita de línea del texto de los elementos de la GUI del historial
 #
 
 gui.history.quote.name_separator=\n
-gui.history.quote.start="
-gui.history.quote.end="
+gui.historia.quote.start=
+gui.history.quote.end=
 
 #
-# Hide the last history item
+# Ocultar el último elemento del historial
 #
 
 gui.history.hide_last=false
 
 #
-# Font selection of the text of the text preview GUI item (1,2,3,4)
+# Selección de fuente del texto del elemento GUI de vista previa de texto (1,2,3,4)
 #
 
 gui.preview.font.select=1
 
 #
-# Font size of the text of the text preview GUI item
+# Tamaño de fuente del texto del elemento GUI de vista previa de texto
 #
 
 gui.preview.font.size=36
 
 #
-# Font color of the text of the text preview GUI item
+# Color de fuente del texto del elemento GUI de vista previa de texto
 #
 
 gui.preview.font.r=255
@@ -766,7 +766,7 @@ gui.preview.font.g=255
 gui.preview.font.b=255
 
 #
-# Font outline width and color of the text of the text preview GUI item
+# Ancho del contorno de fuente y color del texto del elemento GUI de vista previa de texto
 #
 
 gui.preview.font.outline.width=0
@@ -775,219 +775,219 @@ gui.preview.font.outline.g=255
 gui.preview.font.outline.b=255
 
 #
-# Ruby size of the text of the text preview GUI item
+# Tamaño Ruby del texto del elemento GUI de vista previa de texto
 #
 
 gui.preview.font.ruby=10
 
 #
-# Enable vertical writing of the text of the text preview GUI item
+# Habilitar la escritura vertical del texto del elemento GUI de vista previa de texto
 #
 
-gui.preview.font.tategaki=false
+gui.preview.font.tategaki=falso
 
 
 ############################################################
-## Sound Settings
+## Configuración de sonido
 
 #
-# Initial value of the BGM track volume
+# Valor inicial del volumen de la pista BGM
 #
 
-sound.vol.bgm=1.0
+sonido.vol.bgm=1.0
 
 #
-# Initial value of the voice track volume
+# Valor inicial del volumen de la pista de voz.
 #
 
-sound.vol.voice=1.0
+sonido.vol.voz=1.0
 
 #
-# Initial value of the SE track volume
+# Valor inicial del volumen de la pista SE
 #
 
-sound.vol.se=1.0
+sonido.vol.se=1.0
 
 #
-# Initial value of the per-character volumes
+# Valor inicial de los volúmenes por carácter.
 #
 
-sound.vol.per_character=1.0
+sonido.vol.per_character=1.0
 
 
 ############################################################
-## Character Settings
+## Configuración de caracteres
 
 #
-# Character names
-#  - for name translation, lip sync, auto focus, etc.
+# Nombres de personajes
+# - para traducción de nombres, sincronización de labios, enfoque automático, etc.
 #
 
-character.name1=Midori
-character.name1.en=Midori
-character.name1.zh-cn=美登利
-character.name1.zh-tw=美登利
-character.name1.ja=みどり
+personaje.nombre1=Midori
+personaje.name1.en=Midori
+personaje.nombre1.zh-cn=美登利
+personaje.nombre1.zh-tw=美登利
+personaje.nombre1.ja=みどり
 
-character.name2=Xiaoling
-character.name2.en=Xiaoling
-character.name2.zh-cn=小玲
-character.name2.zh-tw=小玲
-character.name2.ja=シャオリン
+personaje.nombre2=Xiaoling
+personaje.name2.en=Xiaoling
+personaje.nombre2.zh-cn=小玲
+personaje.nombre2.zh-tw=小玲
+personaje.nombre2.ja=シャオリン
 
-#character.name3=
-#character.name4=
-#character.name5=
-#character.name6=
-#character.name7=
-#character.name8=
-#character.name9=
-#character.name10=
-#character.name11=
-#character.name12=
-#character.name13=
-#character.name14=
-#character.name15=
-#character.name16=
-#character.name17=
-#character.name18=
-#character.name19=
-#character.name20=
-#character.name21=
-#character.name22=
-#character.name23=
-#character.name24=
-#character.name25=
-#character.name26=
-#character.name27=
-#character.name28=
-#character.name29=
-#character.name30=
-#character.name31=
-#character.name32=
-
-#
-# Character image sub-folders (for lip sync and automatic focus)
-#
-
-character.folder1=ch/midori/
-character.folder2=ch/xiaoling/
-#character.folder3=
-#character.folder4=
-#character.folder5=
-#character.folder6=
-#character.folder7=
-#character.folder8=
-#character.folder9=
-#character.folder10=
-#character.folder11=
-#character.folder12=
-#character.folder13=
-#character.folder14=
-#character.folder15=
-#character.folder16=
-#character.folder17=
-#character.folder18=
-#character.folder19=
-#character.folder20=
-#character.folder21=
-#character.folder22=
-#character.folder23=
-#character.folder24=
-#character.folder25=
-#character.folder26=
-#character.folder27=
-#character.folder28=
-#character.folder29=
-#character.folder30=
-#character.folder31=
-#character.folder32=
+#personaje.nombre3=
+#personaje.nombre4=
+#personaje.nombre5=
+#personaje.nombre6=
+#personaje.nombre7=
+#personaje.nombre8=
+#personaje.nombre9=
+#personaje.nombre10=
+#personaje.nombre11=
+#personaje.nombre12=
+#personaje.nombre13=
+#personaje.nombre14=
+#personaje.nombre15=
+#personaje.nombre16=
+#personaje.nombre17=
+#personaje.nombre18=
+#personaje.nombre19=
+#personaje.nombre20=
+#personaje.nombre21=
+#personaje.nombre22=
+#personaje.nombre23=
+#personaje.nombre24=
+#personaje.nombre25=
+#personaje.nombre26=
+#personaje.nombre27=
+#personaje.nombre28=
+#personaje.nombre29=
+#personaje.nombre30=
+#personaje.nombre31=
+#personaje.nombre32=
 
 #
-# Eye blinking interval in seconds
+# Subcarpetas de imágenes de personajes (para sincronización de labios y enfoque automático)
 #
 
-character.eyeblink.interval=4.0
+personaje.carpeta1=ch/midori/
+personaje.carpeta2=ch/xiaoling/
+#carácter.carpeta3=
+#carácter.carpeta4=
+#carácter.carpeta5=
+#carácter.carpeta6=
+#carácter.carpeta7=
+#carácter.carpeta8=
+#carácter.carpeta9=
+#carácter.carpeta10=
+#carácter.carpeta11=
+#carácter.carpeta12=
+#carácter.carpeta13=
+#carácter.carpeta14=
+#carácter.carpeta15=
+#carácter.carpeta16=
+#carácter.carpeta17=
+#carácter.carpeta18=
+#carácter.carpeta19=
+#carácter.carpeta20=
+#carácter.carpeta21=
+#carácter.carpeta22=
+#carácter.carpeta23=
+#carácter.carpeta24=
+#carácter.carpeta25=
+#carácter.carpeta26=
+#carácter.carpeta27=
+#carácter.carpeta28=
+#carácter.carpeta29=
+#carácter.carpeta30=
+#carácter.carpeta31=
+#carácter.carpeta32=
 
 #
-# Eye blinking frame length in seconds
+# Intervalo de parpadeo en segundos
 #
 
-character.eyeblink.frame=0.05
+caracter.intervalo.intervalo=4.0
 
 #
-# Lip synchronization frame length in seconds
+# Longitud del cuadro de parpadeo del ojo en segundos
 #
 
-character.lipsync.frame=0.04
+caracter.eyeblink.frame=0.05
 
 #
-# Lip synchronization frame per characters
+# Longitud del cuadro de sincronización de labios en segundos
 #
 
-character.lipsync.chars=14
+personaje.lipsync.frame=0.04
+
+#
+# Cuadro de sincronización de labios por personaje
+#
+
+carácter.lipsync.chars=14
 
 ############################################################
-## Auto focus settings
+## Configuración de enfoque automático
 ##
-## Note: Not working yet on RC1
+## Nota: Aún no funciona en RC1
 
 #
-# Auto focus on speaker / unfocus non-speakers on [text] with name
+# Enfoque automático en el hablante / desenfoque a los que no hablan en [texto] con nombre
 #
-#autofocus.on_text_name=true
+#enfoque automático.on_text_name=true
 
 #
-# Auto unfocus all characters on [text] without name
+# Desenfoque automático de todos los caracteres en [texto] sin nombre
 #
 #autofocus.on_text_no_name=true
 
 #
-# Auto unfocus non-speakers on [ch]
+# Desenfoque automático de personas que no hablan en [ch]
 #
-#autofocus.on_ch=true
+#enfoque automático.on_ch=true
 
 #
-# Auto unfocus all characters on [choose]
+# Desenfoque automático de todos los personajes en [elegir]
 #
-#autofocus.on_choose=true
+#enfoque automático.on_choose=true
 
 
 ############################################################
-## Stage Settings
+## Configuración del escenario
 
 #
-# Character margins in pixels
+# Márgenes de caracteres en píxeles
 #
 
-stage.ch_margin.bottom=0
-stage.ch_margin.left=0
-stage.ch_margin.right=0
+etapa.ch_margin.bottom=0
+etapa.ch_margin.left=0
+etapa.ch_margin.right=0
 
 
 ############################################################
-## Kira Kira Effect Settings
+## Configuración del efecto Kira Kira
 
 #
-# Enable Kira Kira Effect (click effect animation)
+# Habilitar el efecto Kira Kira (animación del efecto de clic)
 #
 
-kirakira.enable=false
+kirakira.enable=falso
 
 #
-# Enable add-blend for Kira Kira Effect
+# Habilitar agregar-mezcla para el efecto Kira Kira
 #
 
 kirakira.add_blend=false
 
 #
-# Frame length for Kira Kira Effect in seconds
+# Longitud del cuadro para el efecto Kira Kira en segundos
 #
 
 kirakira.frame=0.333
 
 #
-# Images for Kira Kira Effect
+# Imágenes para el efecto Kira Kira
 #
 
 #kirakira.image1=kira1.png
@@ -996,47 +996,47 @@ kirakira.frame=0.333
 #kirakira.image4=kira4.png
 #kirakira.image5=
 #kirakira.image6=
-#kirakira.image7=
+#kirakira.imagen7=
 #kirakira.image8=
 #kirakira.image9=
-#kirakira.image10=
-#kirakira.image11=
-#kirakira.image12=
-#kirakira.image13=
-#kirakira.image14=
-#kirakira.image15=
-#kirakira.image16=
+#kirakira.imagen10=
+#kirakira.imagen11=
+#kirakira.imagen12=
+#kirakira.imagen13=
+#kirakira.imagen14=
+#kirakira.imagen15=
+#kirakira.imagen16=
 
 
 ############################################################
-## Emoji
+##Emojis
 
 #
-# Emojis (1 to 32)
+# Emojis (1 a 32)
 #
 
-emoji.name1=heart
-emoji.image1=system/emoji/heart.png
+emoji.nombre1=corazón
+emoji.image1=sistema/emoji/corazón.png
 
-emoji.name2=sweat
-emoji.image2=system/emoji/sweat.png
+emoji.name2=sudor
+emoji.image2=sistema/emoji/sudor.png
 
 
 ############################################################
-## Text-To-Speech
+## Texto a voz
 
 #
-# Enable TTS
+# Habilitar TTS
 #
 
-tts.enable=false
+tts.enable=falso
 
 
 ############################################################
-## Release Mode (Install App Mode)
+## Modo de lanzamiento (modo de instalación de aplicación)
 
 #
-# Enable Release Mode (writes save data to AppData)
+# Habilitar el modo de lanzamiento (escribe los datos guardados en AppData)
 #
 
-release_mode.enable=false
+release_mode.enable=falso

@@ -1,31 +1,31 @@
 Eye Blinking
 ============
 
-An eye blinking image must be stored in the "eye" folder that is
-located in the same folder as the character's image(s).
+Ein Bild für das Augenblinzeln muss im Ordner "eye" gespeichert werden,
+der sich im selben Verzeichnis wie das oder die Charakterbilder befindet.
 
-- happy.png (main character file)
+- happy.png (Hauptdatei der Figur)
 - eye/
-    - happy.png (eye blinking file)
+    - happy.png (Datei für das Augenblinzeln)
 
-An eye blinking image consists of frame(s) of eye blinking difference(s). 
-A frame must be the same size as the character's image is. 
-Frames must be stored horizontally in the left to right order. See the sample game for the actual image.
+Ein Augenblinzelbild besteht aus Rahmen mit Unterschieden für das Augenblinzeln.
+Ein Frame muss die gleiche Größe haben wie das Charakterbild.
+Frames müssen horizontal von links nach rechts gespeichert werden. Das tatsächliche Bild ist im Beispielspiel zu sehen.
 
-Alpha values on borders must be smoothed.
-Please use "Blur Selection" and "Delete Selection" in an image editing software.
+Die Alpha-Werte an den Rändern müssen geglättet werden.
+Bitte verwende in einem Bildbearbeitungsprogramm "Blur Selection" und "Delete Selection".
 
-The eye blinking interval may be specified in the `config.ini` file.
-Intervals are slightly randomized, and sometimes double-blinkings occur.
+Das Augenblinzelintervall kann in der Datei `config.ini` angegeben werden.
+Die Intervalle werden leicht zufällig variiert, und manchmal treten Doppelblinzeln auf.
 
 ```
 #
-# Eye blinking interval (seconds)
+# Augenblinzelintervall (Sekunden)
 #
 character.eyeblink.interval=4.0
 
 #
-# Eye blining frame length (seconds per frame)
+# Länge eines Augenblinzelframes (Sekunden pro Frame)
 #
 character.eyeblink.frame=0.15
 ```

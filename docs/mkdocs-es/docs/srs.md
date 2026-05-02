@@ -1,72 +1,72 @@
-System Requirement Specifications for Suika3
+Especificaciones de requisitos del sistema para Suika3
 ===========================================
 
-## 1. Overview
+## 1. Descripción general
 
-Suika3 is a high-performance scripting runtime optimized for Visual
-Novels (VN) and 2D games. It provides a multi-layered DSL environment
-to balance ease of use with professional-grade extensibility.
+Suika3 es un tiempo de ejecución de secuencias de comandos de alto rendimiento optimizado para Visual
+Novelas (VN) y juegos 2D. Proporciona un entorno DSL de múltiples capas.
+para equilibrar la facilidad de uso con la extensibilidad de nivel profesional.
 
-## 2. Core Components (The DSL Stack)
+## 2. Componentes principales (la pila DSL)
 
-Suika3 empowers creators through four specialized languages:
+Suika3 empodera a los creadores a través de cuatro lenguajes especializados:
 
-- NovelML (Tag-based DSL): A straightforward markup language using
-  `[]` tags for rapid VN scenario development.
+- NovelML (DSL basado en etiquetas): un lenguaje de marcado sencillo que utiliza
+  Etiquetas `[]` para el desarrollo rápido de escenarios VN.
 
-- Anime (Animation DSL): A dedicated system for layer-based raster
-  image animations, controlling affine transform sequences.
+- Anime (Animation DSL): un sistema dedicado para ráster basado en capas
+  animaciones de imágenes, controlando secuencias de transformación afines.
 
-- GUI (UI/UX DSL): A flexible toolset for building interactive screens
-   with buttons optimized for VN requirements.
+- GUI (UI/UX DSL): un conjunto de herramientas flexible para crear pantallas interactivas
+   con botones optimizados para los requisitos de VN.
 
-- Ray (General-purpose Scripting): A powerful scripting
-  language with VN API.
-    - Customization: Define bespoke NovelML tags.
-    - Performance: JIT-compiled on PC for fast iteration; AOT-compiled
-      to native binaries for iOS compliance.
-    - Low-level Access: Direct hooks into the Suika3 Core C APIs.
+- Ray (General-Purpose Scripting): Un potente scripting
+  Idioma con VN API.
+    - Personalización: defina etiquetas NovelML personalizadas.
+    - Rendimiento: compilado JIT en PC para una iteración rápida; compilado por AOT
+      a binarios nativos para el cumplimiento de iOS.
+    - Acceso de bajo nivel: enlaces directos a las API de Suika3 Core C.
 
-## 3. Key Objectives & Design Philosophy
+## 3. Objetivos clave y filosofía de diseño
 
-- Mobile-First Experience: Designed with the belief that smartphones
-  are a primary computing device. It avoids PC-centric UI/UX in
-  favor of a native mobile feel.
+- Experiencia móvil primero: diseñada con la creencia de que los teléfonos inteligentes
+  son un dispositivo informático primario. Evita UI/UX centrada en PC en
+  a favor de una sensación móvil nativa.
 
-- Store Publishing Compatibility: Fully compliant with iOS/Android store
-  policies via AOT compilation and responsive design.
+- Compatibilidad de publicación en tienda: Totalmente compatible con la tienda iOS/Android
+  políticas a través de compilación AOT y diseño responsivo.
 
-- High Portability:
-    - Tier 1: iOS, Android, HarmonyOS NEXT, Windows, macOS, Linux
-    - Tier 2: Gaming Consoles
-    - Tier 3: Chromebook, Wasm (WebAssembly)
+- Alta portabilidad:
+    - Nivel 1: iOS, Android, HarmonyOS NEXT, Windows, macOS, Linux
+    - Nivel 2: Consolas de juegos
+    - Nivel 3: Chromebook, Wasm (WebAssembly)
 
-- Beyond Visual Novels: While VN-centric, the underlying 2D foundation
-  allows for genre-fusing (e.g., VN + RPG or Action).
+- Más allá de las novelas visuales: aunque centradas en VN, la base 2D subyacente
+  permite la fusión de géneros (por ejemplo, VN + RPG o Acción).
 
-## 4. Out of Scope / Constraints
+## 4. Fuera de alcance/restricciones
 
-To maintain portability and performance, Suika3 explicitly excludes:
+Para mantener la portabilidad y el rendimiento, Suika3 excluye explícitamente:
 
-- PC-Exclusive Features: Suika3 is not a replacement for legacy
-  PC-only VN engines.
+- Funciones exclusivas para PC: Suika3 no reemplaza el modelo heredado
+  Motores VN solo para PC.
 
-- Full-scale Web Deployment: The Wasm port is intended for demos, not
-  primary distribution.
+- Implementación web a gran escala: el port Wasm está diseñado para demostraciones, no
+  distribución primaria.
 
-- 3D Graphics: Currently focused on 2D (future 3D support is planned
-  alongside AI-driven asset generation).
+- Gráficos 3D: actualmente enfocados en 2D (se planea soporte futuro para 3D)
+  junto con la generación de activos impulsada por la IA).
 
-- Proprietary Middleware: No support for closed technologies like
-  Live2D to ensure maximum engine portability.
+- Middleware propietario: no hay soporte para tecnologías cerradas como
+  Live2D para garantizar la máxima portabilidad del motor.
 
-## 5. NovelML
+## 5. Novela ML
 
-## 6. Ray
+## 6. Rayo
 
-## 7. Anime
+## 7. Animado
 
 ## 8. GUI
 
-## 9. Config
+## 9. Configuración
 

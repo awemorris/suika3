@@ -1,21 +1,21 @@
-Suika3 Documentation
+Документация Suika3
 ====================
 
-Welcome to the `Suika3` documentation.
+Добро пожаловать в документацию `Suika3`.
 
-- For Basic Usage:
-    - [Getting Started Guide](getting-started.md)
-    - [NovelML Syntax Reference](novelml-syntax.md)
-    - [NovelML Tag Reference](novelml-tags.md)
-    - [Animation](anime.md)
+- Основы использования:
+    - [Руководство по началу работы](getting-started.md)
+    - [Справочник по синтаксису NovelML](novelml-syntax.md)
+    - [Справочник по тегам NovelML](novelml-tags.md)
+    - [Анимация](anime.md)
     - [GUI](gui.md)
-    - [Lip Sync](lip-sync.md)
-    - [Eye Blink](eye-blink.md)
-- For Advanced Usage:
-    - [Ray Syntax Reference](ray-syntax.md)
-    - [Ray Low Level API Reference](ray-2d-api.md)
-    - [Ray High Level API Reference](ray-vn-api.md)
-    - [Ray Plugin Development](plugin.md)
-    - [AOT Deployment Instructions](aot.md)
-- For Community Developers:
-    - [Build Instructions](build.md)
+    - [Синхронизация губ](lip-sync.md)
+    - [Мигание глаз](eye-blink.md)
+- Расширенное использование:
+    - [Справочник по синтаксису Ray](ray-syntax.md)
+    - [Справочник по низкоуровневому API Ray](ray-2d-api.md)
+    - [Справочник по высокоуровневому API Ray](ray-vn-api.md)
+    - [Разработка плагинов Ray](plugin.md)
+    - [Инструкции по развертыванию AOT](aot.md)
+- Для разработчиков сообщества:
+    - [Инструкции по сборке](build.md)

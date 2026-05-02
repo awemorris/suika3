@@ -1,30 +1,30 @@
-Lip Synchronization
+Синхронизация губ
 ===================
 
-An lip synchronization image must be stored in the "lip" folder folder that is
-located in the same folder as the character's image(s).
+Изображение для синхронизации губ должно храниться в папке "lip",
+расположенной в той же папке, что и изображение или изображения персонажа.
 
-* happy.png (main character file)
+* happy.png (основной файл персонажа)
 * lip/
-    * happy.png (lip synchronization file)
+    * happy.png (файл синхронизации губ)
 
-A lip synchronization image consists of frame(s) of lip synchronization difference(s).
-A frame must be the same size as the character's image is.
-Frames must be stored horizontally in the left to right order.
+Изображение для синхронизации губ состоит из одного или нескольких кадров различий синхронизации губ.
+Кадр должен иметь тот же размер, что и изображение персонажа.
+Кадры должны располагаться горизонтально слева направо.
 
-Alpha values on borders must be smoothed.
-Please use "Blur Selection" and "Delete Selection" in an image editing software.
+Значения альфа-канала на границах должны быть сглажены.
+Используйте функции "Blur Selection" и "Delete Selection" в графическом редакторе.
 
-The lip synchronization interval may be specified in the `project.txt` file.
+Интервал синхронизации губ можно задать в файле `project.txt`.
 
 ```
 #
-# Lip synchronization frame length (seconds per frame)
+# Длительность кадра синхронизации губ (секунд на кадр)
 #
 character.lipsync.frame=0.3
 
 #
-# Lip synchronization times per characters
+# Частота синхронизации губ по числу символов
 #
 character.lipsync.chars=3
 ```

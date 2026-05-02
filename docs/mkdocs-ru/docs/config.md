@@ -1,12 +1,12 @@
 WIP
 
-## Game Settings
+## Настройки игры
 
-| Name                       | Type       | Description                                                   |
+| Имя                        | Тип        | Описание                                                      |
 |----------------------------|------------|---------------------------------------------------------------|
-| game.title.en              | String     | Game title in English.                                        |
-| game.novel                 | Boolean    | Enable novel mode.                                            |
-| game.locale                | String     | Force the language over the system locale setting.            |
+| game.title.en              | String     | Название игры на английском языке.                            |
+| game.novel                 | Boolean    | Включить режим новеллы.                                       |
+| game.locale                | String     | Принудительно задать язык вместо системной локали.            |
 
 ### game.title.en
 
@@ -14,59 +14,59 @@ WIP
 
 ### game.local
 
-Language setting.
+Настройка языка.
 
-- "":   Use the system setting
-- "ja": Fix to Japanese
-- "en": Fix to English
+- "":   Использовать системную настройку
+- "ja": Зафиксировать японский язык
+- "en": Зафиксировать английский язык
 
 --
 
-## Font File Settings
+## Настройки файлов шрифтов
 
-# Font 1
-#  - Default font
-#  - You can choose this font by adding \f{1} to a message
+# Шрифт 1
+#  - Шрифт по умолчанию
+#  - Этот шрифт можно выбрать, добавив \f{1} в сообщение
 font.ttf1=system/font/rounded-l-mplus-1c-bold.ttf
 
-# Font 2
-#  - You can choose this font by adding \f{2} to a message
+# Шрифт 2
+#  - Этот шрифт можно выбрать, добавив \f{2} в сообщение
 #font.ttf2=
 
-# Font 3
-#  - You can choose this font by adding \f{3} to a message
+# Шрифт 3
+#  - Этот шрифт можно выбрать, добавив \f{3} в сообщение
 #font.ttf3=
 
-# Font 4
-#  - You can choose this font by adding \f{4} to a message
+# Шрифт 4
+#  - Этот шрифт можно выбрать, добавив \f{4} в сообщение
 #font.ttf4=
 
 
 ############################################################
-## Message Box Settings
+## Настройки окна сообщений
 
 #
-# Image of the message box
+# Изображение окна сообщений
 #
 
 msgbox.image=system/message/msgbox.png
 
 #
-# Animation
+# Анимация
 #
 
 msgbox.anime.hide=system/message/msgbox-hide.anime
 msgbox.anime.show=system/message/msgbox-show.anime
 
 #
-# Position of the message box
+# Позиция окна сообщений
 #
 
 msgbox.x=0
 msgbox.y=520
 
 #
-# Margins for message box text in pixels
+# Отступы текста окна сообщений в пикселях
 #
 
 msgbox.margin.left=200
@@ -75,32 +75,32 @@ msgbox.margin.right=200
 msgbox.margin.bottom=30
 
 #
-# Line margin for message box text in pixels
-# (including character height)
+# Межстрочный интервал текста окна сообщений в пикселях
+# (включая высоту символа)
 #
 
 msgbox.margin.line=40
 
 #
-# Character margin for message box text in pixels
+# Межсимвольный интервал текста окна сообщений в пикселях
 #
 
 msgbox.margin.char=0
 
 #
-# Font selection for the message box text (1,2,3,4)
+# Выбор шрифта для текста окна сообщений (1,2,3,4)
 #
 
 msgbox.font.select=1
 
 #
-# Font size of the message box text
+# Размер шрифта текста окна сообщений
 #
 
 msgbox.font.size=36
 
 #
-# Font color of the message box text
+# Цвет шрифта текста окна сообщений
 #
 
 msgbox.font.r=255
@@ -108,7 +108,7 @@ msgbox.font.g=255
 msgbox.font.b=255
 
 #
-# Font outline width and color of the text of the message box
+# Ширина и цвет обводки шрифта текста окна сообщений
 #
 
 msgbox.font.outline.width=0
@@ -117,19 +117,19 @@ msgbox.font.outline.g=0
 msgbox.font.outline.b=0
 
 #
-# Ruby size of the text of the message box
+# Размер ruby для текста окна сообщений
 #
 
 msgbox.font.ruby=10
 
 #
-# Enable vertical writing of the text of the message box
+# Включить вертикальное письмо для текста окна сообщений
 #
 
 msgbox.font.tategaki=false
 
 #
-# Enable character backgroun fill
+# Включить заливку фона символов
 #
 
 msgbox.fill.enable=false
@@ -138,13 +138,13 @@ msgbox.fill.g=255
 msgbox.fill.b=255
 
 #
-# Enable dimming for the previous paragpaphs of the text of the message box
+# Включить затемнение предыдущих абзацев текста окна сообщений
 #
 
 msgbox.dim.enable=false
 
 #
-# Dimming color of the text of the message box
+# Цвет затемнения текста окна сообщений
 #
 
 msgbox.dim.r=0
@@ -152,7 +152,7 @@ msgbox.dim.g=0
 msgbox.dim.b=0
 
 #
-# Dimming outline width and color of the text of the message box
+# Ширина и цвет обводки затемнения текста окна сообщений
 #
 msgbox.dim.outline.width=0
 msgbox.dim.outline.r=0
@@ -160,13 +160,13 @@ msgbox.dim.outline.g=0
 msgbox.dim.outline.b=0
 
 #
-# Enable font color change of the seen messages of the message box
+# Включить изменение цвета шрифта прочитанных сообщений в окне сообщений
 #
 
 msgbox.seen.enable=false
 
 #
-# Font color of the seen messages of the message box
+# Цвет шрифта прочитанных сообщений в окне сообщений
 #
 
 msgbox.seen.r=0
@@ -174,7 +174,7 @@ msgbox.seen.g=0
 msgbox.seen.b=0
 
 #
-# Font outline width and color of the seen messages of the message box
+# Ширина и цвет обводки шрифта прочитанных сообщений в окне сообщений
 #
 
 msgbox.seen.outline.width=0
@@ -183,68 +183,68 @@ msgbox.seen.outline.g=0
 msgbox.seen.outline.b=0
 
 #
-# Enable skip for unseen messages
+# Включить пропуск непрочитанных сообщений
 #
 
 msgbox.skip_unseen=false
 
 ############################################################
-## Name Box Settings
+## Настройки окна имени
 
 #
-# Enable the name box
-#  - Disable the name box if you need the full screen novel style
+# Включить окно имени
+#  - Отключите окно имени, если нужен полноэкранный стиль новеллы
 #
 
 namebox.enable=true
 
 #
-# Image of the name box
+# Изображение окна имени
 #
 
 namebox.image=system/message/namebox.png
 
 #
-# Animation
+# Анимация
 #
 
 namebox.anime.hide=system/message/namebox-hide.anime
 namebox.anime.show=system/message/namebox-show.anime
 
 #
-# Position of the name box
+# Позиция окна имени
 #
 
 namebox.x=80
 namebox.y=450
 
 #
-# Margins of the text of the name box in pixel
+# Отступы текста окна имени в пикселях
 #
 
 namebox.margin.top=5
 namebox.margin.left=0
 
 #
-# Enable centering of the text of the name box
+# Включить центрирование текста окна имени
 #
 
 namebox.centering=true
 
 #
-# Font selection of the text of the name box (1,2,3,4)
+# Выбор шрифта текста окна имени (1,2,3,4)
 #
 
 namebox.font.select=1
 
 #
-# Font size of the text of the name box
+# Размер шрифта текста окна имени
 #
 
 namebox.font.size=36
 
 #
-# Font color of the text of the name box
+# Цвет шрифта текста окна имени
 #
 
 namebox.font.r=255
@@ -252,7 +252,7 @@ namebox.font.g=255
 namebox.font.b=255
 
 #
-# Font outline width and color of the text of the name box
+# Ширина и цвет обводки шрифта текста окна имени
 #
 
 namebox.font.outline.width=0
@@ -261,36 +261,36 @@ namebox.font.outline.g=255
 namebox.font.outline.b=255
 
 #
-# Ruby size of the text of the name box
+# Размер ruby для текста окна имени
 #
 
 namebox.font.ruby=10
 
 #
-# Enable vertical writing of the text of the name box
+# Включить вертикальное письмо для текста окна имени
 #
 
 namebox.font.tategaki=false
 
 
 ############################################################
-## Click Animation Settings
+## Настройки анимации щелчка
 
 #
-# Position of the click animation
+# Позиция анимации щелчка
 #
 
 click.x=1060
 click.y=660
 
 #
-# Interval of the click animation
+# Интервал анимации щелчка
 #
 
 click.interval=1.0
 
 #
-# Images of the click animation
+# Изображения анимации щелчка
 #
 
 click.image1=system/message/click1.png
@@ -311,29 +311,29 @@ click.image2=system/message/click2.png
 #click.image16=
 
 #
-# Enable auto move of the click animation
+# Включить автоматическое перемещение анимации щелчка
 #
 
 click.move=false
 
 
 ############################################################
-## Choose Box Settings
+## Настройки окна выбора
 
 #
-# Font selection of the text of the choose boxes
+# Выбор шрифта текста окон выбора
 #
 
 choose.font.select=1
 
 #
-# Font size of the the text of the choose boxes
+# Размер шрифта текста окон выбора
 #
 
 choose.font.size=36
 
 #
-# Font color of the text of the non-pointed choose box
+# Цвет шрифта текста окна выбора без наведения
 #
 
 choose.font.idle.r=255
@@ -341,7 +341,7 @@ choose.font.idle.g=255
 choose.font.idle.b=255
 
 #
-# Font outline width and color of the text of the non-pointed choose box
+# Ширина и цвет обводки шрифта текста окна выбора без наведения
 #
 
 choose.font.idle.outline.width=0
@@ -350,7 +350,7 @@ choose.font.idle.outline.g=255
 choose.font.idle.outline.b=255
 
 #
-# Font color of the text of the pointed choose box
+# Цвет шрифта текста окна выбора при наведении
 #
 
 choose.font.hover.r=255
@@ -358,7 +358,7 @@ choose.font.hover.g=0
 choose.font.hover.b=0
 
 #
-# Font outline width and color of the text of the pointed choose box
+# Ширина и цвет обводки шрифта текста окна выбора при наведении
 #
 
 choose.font.hover.outline.width=0
@@ -367,31 +367,31 @@ choose.font.hover.outline.g=255
 choose.font.hover.outline.b=255
 
 #
-# Ruby size of the text of the choose boxes
+# Размер ruby для текста окон выбора
 #
 
 choose.font.ruby=10
 
 #
-# Enable vertical writing of the text of the choose boxes
+# Включить вертикальное письмо для текста окон выбора
 #
 
 choose.font.tategaki=false
 
 #
-# Sound effect for when the pointed choose box is changed
+# Звуковой эффект при смене окна выбора под указателем
 #
 
 choose.change_se=system/choose/button.ogg
 
 #
-# Sound effect for when a choose box is selected
+# Звуковой эффект при выборе окна выбора
 #
 
 choose.click_se=system/choose/button.ogg
 
 #
-# Settings for the choose box 1
+# Настройки окна выбора 1
 #
 
 choose.box1.idle=system/choose/idle.png
@@ -403,7 +403,7 @@ choose.box1.idle_anime=system/choose/idle.anime
 choose.box1.hover_anime=system/choose/hover.anime
 
 #
-# Settings for the choose box 2
+# Настройки окна выбора 2
 #
 
 choose.box2.idle=system/choose/idle.png
@@ -415,7 +415,7 @@ choose.box2.idle_anime=system/choose/idle.anime
 choose.box2.hover_anime=system/choose/hover.anime
 
 #
-# Settings for the choose box 3
+# Настройки окна выбора 3
 #
 
 choose.box3.idle=system/choose/idle.png
@@ -427,7 +427,7 @@ choose.box3.idle_anime=system/choose/idle.anime
 choose.box3.hover_anime=system/choose/hover.anime
 
 #
-# Settings for the choose box 4
+# Настройки окна выбора 4
 #
 
 choose.box4.idle=system/choose/idle.png
@@ -439,7 +439,7 @@ choose.box4.idle_anime=system/choose/idle.anime
 choose.box4.hover_anime=system/choose/hover.anime
 
 #
-# Settings for the choose box 5
+# Настройки окна выбора 5
 #
 
 choose.box5.idle=system/choose/idle.png
@@ -451,7 +451,7 @@ choose.box5.idle_anime=system/choose/idle.anime
 choose.box5.hover_anime=system/choose/hover.anime
 
 #
-# Settings for the choose box 6
+# Настройки окна выбора 6
 #
 
 choose.box6.idle=system/choose/idle.png
@@ -463,7 +463,7 @@ choose.box6.idle_anime=system/choose/idle.anime
 choose.box6.hover_anime=system/choose/hover.anime
 
 #
-# Settings for the choose box 7
+# Настройки окна выбора 7
 #
 
 choose.box7.idle=system/choose/idle.png
@@ -475,7 +475,7 @@ choose.box7.idle_anime=system/choose/idle.anime
 choose.box7.hover_anime=system/choose/hover.anime
 
 #
-# Settings for the choose box 8
+# Настройки окна выбора 8
 #
 
 choose.box8.idle=system/choose/idle.png
@@ -488,60 +488,60 @@ choose.box8.hover_anime=system/choose/hover.anime
 
 
 ############################################################
-## Save Data Settings
+## Настройки данных сохранения
 ############################################################
 
 #
-# Size of the save thumbnail
+# Размер миниатюры сохранения
 #
 
 save.thumb.width=213
 save.thumb.height=120
 
 #
-# "New" mark image
+# Изображение метки "New"
 #
 
 #save.new_image=system/save/new.png
 
 
 ############################################################
-## System Button Settings
+## Настройки системной кнопки
 
 #
-# Enable the system button
+# Включить системную кнопку
 #
 
 sysbtn.enable=true
 
 #
-# Images of the system button
+# Изображения системной кнопки
 #
 
 sysbtn.idle=system/sysbtn/sysbtn-idle.png
 sysbtn.hover=system/sysbtn/sysbtn-hover.png
 
 #
-# Anime
+# Анимация
 #
 
-# Hidden.
+# Скрыта.
 sysbtn.anime.out=system/sysbtn/anime-out.anime
 
-# Appearing.
+# Появляется.
 sysbtn.anime.fadein=system/sysbtn/anime-fadein.anime
 
-# Appeared but not pointed.
+# Появилась, но указатель не наведен.
 sysbtn.anime.appear=system/sysbtn/anime-appear.anime
 
-# Hovered.
+# Указатель наведен.
 sysbtn.anime.hover=system/sysbtn/anime-hover.anime
 
-# Disappearing.
+# Исчезает.
 sysbtn.anime.fadeout=system/sysbtn/anime-fadeout.anime
 
 #
-# Position of the system button
+# Позиция системной кнопки
 #
 
 sysbtn.x=1183
@@ -550,7 +550,7 @@ sysbtn.width=100
 sysbtn.height=100
 
 #
-# Sound effects of the system button
+# Звуковые эффекты системной кнопки
 #
 
 #sysbtn.enter_se=se/click.ogg
@@ -559,82 +559,82 @@ sysbtn.height=100
 
 
 ############################################################
-## Auto Mode Settings
+## Настройки авторежима
 
 #
-# Image of the auto mode banner
+# Изображение баннера авторежима
 #
 
 automode.image=system/message/auto.png
 
 #
-# Animation
+# Анимация
 #
 
 automode.anime.hide=system/message/auto-hide.anime
 automode.anime.show=system/message/auto-show.anime
 
 #
-# Position of the auto mode banner
+# Позиция баннера авторежима
 #
 
 automode.x=0
 automode.y=126
 
 #
-# Sound effect for when entering the auto mode
+# Звуковой эффект при входе в авторежим
 #
 
 #automode.enter_se=
 
 #
-# Sound effect for when leaving the auto mode
+# Звуковой эффект при выходе из авторежима
 #
 
 #automode.leave_se=
 
 
 ############################################################
-## Skip Mode Settings
+## Настройки режима пропуска
 
 #
-# Image of the skip mode banner
+# Изображение баннера режима пропуска
 #
 
 skipmode.image=system/message/skip.png
 
 #
-# Animation
+# Анимация
 #
 
 skipmode.anime.hide=system/message/skip-hide.anime
 skipmode.anime.show=system/message/skip-show.anime
 
 #
-# Position of the auto mode banner
+# Позиция баннера авторежима
 #
 
 skipmode.x=0
 skipmode.y=126
 
 #
-# Sound effect for when entering the skip mode
+# Звуковой эффект при входе в режим пропуска
 #
 
 #skipmode.enter_se=
 
 #
-# Sound effect for when leaving the auto mode
+# Звуковой эффект при выходе из авторежима
 #
 
 #skipmode.leave_se=
 
 
 ############################################################
-## GUI Settings
+## Настройки GUI
 
 #
-# Font selection for the slot index text of the save/load GUI items
+# Выбор шрифта для текста индекса слота в элементах GUI сохранения/загрузки
 #
 gui.save.index.font.select=1
 gui.save.index.font.size=30
@@ -650,7 +650,7 @@ gui.save.index.font.tategaki=false
 gui.save.index.margin.char=3
 
 #
-# Font selection for the date text of the save/load GUI items
+# Выбор шрифта для текста даты в элементах GUI сохранения/загрузки
 #
 gui.save.date.font.select=1
 gui.save.date.font.size=30
@@ -666,7 +666,7 @@ gui.save.date.font.tategaki=false
 gui.save.date.margin.char=5
 
 #
-# Font selection for the chapter text of the save/load GUI items
+# Выбор шрифта для текста главы в элементах GUI сохранения/загрузки
 #
 gui.save.chapter.font.select=1
 gui.save.chapter.font.size=32
@@ -682,7 +682,7 @@ gui.save.chapter.font.tategaki=false
 gui.save.chapter.margin.char=5
 
 #
-# Font selection for the message text of the save/load GUI items
+# Выбор шрифта для текста сообщения в элементах GUI сохранения/загрузки
 #
 gui.save.msg.font.select=1
 gui.save.msg.font.size=22
@@ -700,7 +700,7 @@ gui.save.msg.margin.char=0
 gui.save.msg.multiline=true
 
 #
-# Font selection of the name and the text of the history GUI items
+# Выбор шрифта для имени и текста в элементах GUI истории
 #
 
 gui.history.name.font.select=1
@@ -732,7 +732,7 @@ gui.history.text.margin.line=40
 gui.history.text.margin.char=0
 
 #
-# Line quotation of the text of the history GUI items
+# Кавычки строк текста в элементах GUI истории
 #
 
 gui.history.quote.name_separator=\n
@@ -740,25 +740,25 @@ gui.history.quote.start="
 gui.history.quote.end="
 
 #
-# Hide the last history item
+# Скрыть последний элемент истории
 #
 
 gui.history.hide_last=false
 
 #
-# Font selection of the text of the text preview GUI item (1,2,3,4)
+# Выбор шрифта текста элемента GUI предварительного просмотра текста (1,2,3,4)
 #
 
 gui.preview.font.select=1
 
 #
-# Font size of the text of the text preview GUI item
+# Размер шрифта текста элемента GUI предварительного просмотра текста
 #
 
 gui.preview.font.size=36
 
 #
-# Font color of the text of the text preview GUI item
+# Цвет шрифта текста элемента GUI предварительного просмотра текста
 #
 
 gui.preview.font.r=255
@@ -766,7 +766,7 @@ gui.preview.font.g=255
 gui.preview.font.b=255
 
 #
-# Font outline width and color of the text of the text preview GUI item
+# Ширина и цвет обводки шрифта текста элемента GUI предварительного просмотра текста
 #
 
 gui.preview.font.outline.width=0
@@ -775,52 +775,52 @@ gui.preview.font.outline.g=255
 gui.preview.font.outline.b=255
 
 #
-# Ruby size of the text of the text preview GUI item
+# Размер ruby для текста элемента GUI предварительного просмотра текста
 #
 
 gui.preview.font.ruby=10
 
 #
-# Enable vertical writing of the text of the text preview GUI item
+# Включить вертикальное письмо для текста элемента GUI предварительного просмотра текста
 #
 
 gui.preview.font.tategaki=false
 
 
 ############################################################
-## Sound Settings
+## Настройки звука
 
 #
-# Initial value of the BGM track volume
+# Начальное значение громкости дорожки BGM
 #
 
 sound.vol.bgm=1.0
 
 #
-# Initial value of the voice track volume
+# Начальное значение громкости дорожки голоса
 #
 
 sound.vol.voice=1.0
 
 #
-# Initial value of the SE track volume
+# Начальное значение громкости дорожки SE
 #
 
 sound.vol.se=1.0
 
 #
-# Initial value of the per-character volumes
+# Начальное значение громкости по персонажам
 #
 
 sound.vol.per_character=1.0
 
 
 ############################################################
-## Character Settings
+## Настройки персонажей
 
 #
-# Character names
-#  - for name translation, lip sync, auto focus, etc.
+# Имена персонажей
+#  - для перевода имен, синхронизации губ, автофокуса и т. п.
 #
 
 character.name1=Midori
@@ -867,7 +867,7 @@ character.name2.ja=シャオリン
 #character.name32=
 
 #
-# Character image sub-folders (for lip sync and automatic focus)
+# Подпапки изображений персонажей (для синхронизации губ и автоматического фокуса)
 #
 
 character.folder1=ch/midori/
@@ -904,60 +904,60 @@ character.folder2=ch/xiaoling/
 #character.folder32=
 
 #
-# Eye blinking interval in seconds
+# Интервал моргания в секундах
 #
 
 character.eyeblink.interval=4.0
 
 #
-# Eye blinking frame length in seconds
+# Длительность кадра моргания в секундах
 #
 
 character.eyeblink.frame=0.05
 
 #
-# Lip synchronization frame length in seconds
+# Длительность кадра синхронизации губ в секундах
 #
 
 character.lipsync.frame=0.04
 
 #
-# Lip synchronization frame per characters
+# Кадр синхронизации губ на количество символов
 #
 
 character.lipsync.chars=14
 
 ############################################################
-## Auto focus settings
+## Настройки автофокуса
 ##
-## Note: Not working yet on RC1
+## Примечание: пока не работает в RC1
 
 #
-# Auto focus on speaker / unfocus non-speakers on [text] with name
+# Автофокус на говорящем / снятие фокуса с неговорящих при [text] с именем
 #
 #autofocus.on_text_name=true
 
 #
-# Auto unfocus all characters on [text] without name
+# Автоматически снимать фокус со всех персонажей при [text] без имени
 #
 #autofocus.on_text_no_name=true
 
 #
-# Auto unfocus non-speakers on [ch]
+# Автоматически снимать фокус с неговорящих при [ch]
 #
 #autofocus.on_ch=true
 
 #
-# Auto unfocus all characters on [choose]
+# Автоматически снимать фокус со всех персонажей при [choose]
 #
 #autofocus.on_choose=true
 
 
 ############################################################
-## Stage Settings
+## Настройки сцены
 
 #
-# Character margins in pixels
+# Отступы персонажей в пикселях
 #
 
 stage.ch_margin.bottom=0
@@ -966,28 +966,28 @@ stage.ch_margin.right=0
 
 
 ############################################################
-## Kira Kira Effect Settings
+## Настройки эффекта Kira Kira
 
 #
-# Enable Kira Kira Effect (click effect animation)
+# Включить эффект Kira Kira (анимация эффекта щелчка)
 #
 
 kirakira.enable=false
 
 #
-# Enable add-blend for Kira Kira Effect
+# Включить аддитивное смешивание для эффекта Kira Kira
 #
 
 kirakira.add_blend=false
 
 #
-# Frame length for Kira Kira Effect in seconds
+# Длительность кадра эффекта Kira Kira в секундах
 #
 
 kirakira.frame=0.333
 
 #
-# Images for Kira Kira Effect
+# Изображения для эффекта Kira Kira
 #
 
 #kirakira.image1=kira1.png
@@ -1009,10 +1009,10 @@ kirakira.frame=0.333
 
 
 ############################################################
-## Emoji
+## Эмодзи
 
 #
-# Emojis (1 to 32)
+# Эмодзи (1-32)
 #
 
 emoji.name1=heart
@@ -1023,20 +1023,20 @@ emoji.image2=system/emoji/sweat.png
 
 
 ############################################################
-## Text-To-Speech
+## Преобразование текста в речь
 
 #
-# Enable TTS
+# Включить синтез речи (TTS)
 #
 
 tts.enable=false
 
 
 ############################################################
-## Release Mode (Install App Mode)
+## Режим выпуска (режим установленного приложения)
 
 #
-# Enable Release Mode (writes save data to AppData)
+# Включить режим выпуска (записывает данные сохранения в AppData)
 #
 
 release_mode.enable=false

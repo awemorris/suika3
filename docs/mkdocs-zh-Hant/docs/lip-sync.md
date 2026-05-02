@@ -1,30 +1,29 @@
-Lip Synchronization
+口型同步
 ===================
 
-An lip synchronization image must be stored in the "lip" folder folder that is
-located in the same folder as the character's image(s).
+口型同步圖片必須存放在與角色圖片相同目錄中的 "lip" 資料夾內。
 
-* happy.png (main character file)
+* happy.png（角色主圖檔）
 * lip/
-    * happy.png (lip synchronization file)
+    * happy.png（口型同步檔）
 
-A lip synchronization image consists of frame(s) of lip synchronization difference(s).
-A frame must be the same size as the character's image is.
-Frames must be stored horizontally in the left to right order.
+口型同步圖片由口型同步差分的影格組成。
+每個影格的大小必須與角色圖片相同。
+影格必須水平排列，並按照由左到右的順序存放。
 
-Alpha values on borders must be smoothed.
-Please use "Blur Selection" and "Delete Selection" in an image editing software.
+邊緣的 alpha 值必須做平滑處理。
+請在影像編輯軟體中使用 "Blur Selection" 與 "Delete Selection"。
 
-The lip synchronization interval may be specified in the `project.txt` file.
+口型同步間隔可以在 `project.txt` 檔案中指定。
 
 ```
 #
-# Lip synchronization frame length (seconds per frame)
+# 口型同步影格長度（每影格秒數）
 #
 character.lipsync.frame=0.3
 
 #
-# Lip synchronization times per characters
+# 每個字元的口型同步次數
 #
 character.lipsync.chars=3
 ```

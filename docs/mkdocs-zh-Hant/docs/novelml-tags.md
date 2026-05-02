@@ -1,23 +1,23 @@
-Suika3 Tag Reference
+Suika3 標籤參考
 ====================
 
-## Index
+## 索引
 
 | Tag Name                    | Description                                                        |
 |-----------------------------|--------------------------------------------------------------------|
-| [anime](#anime)             | Loads and runs an animation file.                                  |
-| [bg](#bg)                   | Changes the background image with a fading effect.                 |
-| [bgm](#bgm)                 | Plays a background music file (Ogg Vorbis format).                 |
-| [callmacro](#callmacro)     | Calls a defined macro.                                             |
-| [ch](#ch)                   | Shows or hides characters with detailed layer parameters.          |
-| [chapter](#chapter)         | Sets a chapter name.                                               |
-| [choose](#choose)           | Displays options and stores the selection or jumps to a label.     |
-| [click](#click)             | Waits for a user click.                                            |
-| [config](#config)           | Sets a configuration value for the game system.                    |
-| [defmacro](#defmacro)       | Starts a macro definition.                                         |
-| [else](#else)               | Part of the if/elseif branch for when no conditions are met.       |
-| [elseif](#elseif)           | Specifies an additional condition in a branch.                     |
-| [endif](#endif)             | Ends a conditional branch.                                         |
+| [anime](#anime)             | 載入並執行動畫檔。                                                 |
+| [bg](#bg)                   | 以淡出效果變更背景圖片。                                           |
+| [bgm](#bgm)                 | 播放背景音樂檔（Ogg Vorbis 格式）。                                |
+| [callmacro](#callmacro)     | 呼叫已定義的巨集。                                                 |
+| [ch](#ch)                   | 以詳細圖層引數顯示或隱藏角色。                                     |
+| [chapter](#chapter)         | 設定章節名稱。                                                     |
+| [choose](#choose)           | 顯示選項並儲存選擇，或跳到標籤。                                   |
+| [click](#click)             | 等待使用者點選。                                                   |
+| [config](#config)           | 設定遊戲系統的設定值。                                             |
+| [defmacro](#defmacro)       | 開始定義巨集。                                                     |
+| [else](#else)               | if/elseif 分支中，當沒有條件成立時使用。                           |
+| [elseif](#elseif)           | 在分支中指定額外條件。                                             |
+| [endif](#endif)             | 結束條件分支。                                                     |
 | [endmacro](#endmacro)       | Ends a macro definition.                                           |
 | [goto](#goto)               | Jumps to a specified label tag.                                    |
 | [gui](#gui)                 | Shows a GUI from a specified file.                                 |
@@ -40,21 +40,21 @@ Suika3 Tag Reference
 
 ## `anime`
 
-Run Animation
+執行動畫
 
-The `anime` tag loads and executes an animation definition from a file. 
-It allows for complex visual effects, character movements, or looping environmental animations beyond simple transitions.
+`anime` 標籤會從檔案載入並執行動畫定義。
+它可用來做出複雜的視覺效果、角色移動，或超越簡單轉場的迴圈環境動畫。
 
 ### Basic Usage
 
 ```
-# Run a synchronous animation (waits for completion)
+# 執行同步動畫（等待完成）
 [anime file="opening_effect.txt"]
 
-# Run an asynchronous looping animation
+# 執行非同步迴圈動畫
 [anime file="sparkle.txt" async="true" register="my_loop"]
 
-# Stop a registered asynchronous animation
+# 停止已註冊的非同步動畫
 [anime stop="true" register="my_loop"]
 ```
 
@@ -62,43 +62,43 @@ It allows for complex visual effects, character movements, or looping environmen
 
 | Argument      | Omissible      | Description                                        | Notes                                                             |
 |---------------|----------------|----------------------------------------------------|-------------------------------------------------------------------|
-| `file`        | Yes            | The filename of the animation definition.          | *Required unless `stop="true"` is used.                           |
-| `async`       | Yes (`false`)  | Whether to run the animation asynchronously.       | If `false`, the script waits until the animation finishes.        |
-| `register`    | Yes            | A unique name to identify this animation instance. | Required for controlling or stopping async animations later.      |
-| `stop`        | Yes (`false`)  | Stops a registered animation if set to `true`.     | Requires the `register` argument.                                 |
-| `showsysbtn`  | Yes (`true`)   | Whether to show system buttons during playback.    | Only valid for synchronous animations.                            |
-| `showmsgbox`  | Yes (`true`)   | Whether to show the message box during playback.   | Only valid for synchronous animations.                            |
-| `shownamebox` | Yes (`true`)   | Whether to show the name box during playback.      | Only valid for synchronous animations.                            |
+| `file`        | Yes            | 動畫定義檔的檔名。                                 | 除非使用 `stop="true"`，否則為必填。                              |
+| `async`       | Yes (`false`)  | 是否以非同步方式執行動畫。                         | 若為 `false`，指令碼會等待動畫結束。                                |
+| `register`    | Yes            | 用來識別此動畫例項的唯一名稱。                     | 之後控制或停止非同步動畫時會用到。                                |
+| `stop`        | Yes (`false`)  | 若設為 `true`，則停止已註冊的動畫。                | 需要搭配 `register` 引數。                                        |
+| `showsysbtn`  | Yes (`true`)   | 播放期間是否顯示系統按鈕。                         | 只適用於同步動畫。                                                |
+| `showmsgbox`  | Yes (`true`)   | 播放期間是否顯示訊息框。                           | 只適用於同步動畫。                                                |
+| `shownamebox` | Yes (`true`)   | 播放期間是否顯示名稱框。                           | 只適用於同步動畫。                                                |
 
 ### Tips
 
-**Synchronous vs. Asynchronous**:
-* **Synchronous (`async="false"`)**: Great for cutscenes where you want the player to watch the animation before any text or choices appear.
-* **Asynchronous (`async="true"`)**: Perfect for background effects (like falling snow or a flickering light) that should continue while the story progresses.
+**同步與非同步**：
+* **同步（`async="false"`）**：適合過場動畫，讓玩家先看完動畫，再顯示文字或選項。
+* **非同步（`async="true"`）**：適合背景效果，例如飄雪或閃爍燈光，讓故事繼續時動畫也持續播放。
 
-**Managing Instances**:
-* By using the `register` argument, you can label a specific animation.
-* This is how you tell the engine exactly which animation to stop when you use `stop="true"`.
+**管理例項**：
+* 透過 `register` 引數，你可以替特定動畫加上名稱。
+* 這就是你在使用 `stop="true"` 時，告訴引擎要停止哪個動畫的方法。
 
-**UI Control**:
-* Use `showmsgbox="false"` if your animation is meant to take up the full screen and you want the dialogue window to disappear temporarily for a cleaner look.
+**UI 控制**：
+* 如果動畫要佔滿全螢幕，而你希望對話視窗暫時消失以保持畫面乾淨，可以使用 `showmsgbox="false"`。
 
 ---
 
 ## `bg`
 
-Change Background
+變更背景
 
-The `bg` tag changes the background image with a smooth fading effect.
-It's the primary way to set the scene in your visual novel.
+`bg` 標籤會以平滑淡入淡出效果變更背景圖片。
+這是視覺小說裡設定場景的主要方式。
 
 ### Basic Usage
 
 ```
-# Transition to background.png over 1.0 second
+# 在 1.0 秒內切換到 background.png
 [bg file="background.png" time="1.0"]
 
-# Fade to a black screen (removes the background)
+# 淡出成黑畫面（移除背景）
 [bg file="none" time="1.0"]
 ```
 
@@ -106,45 +106,45 @@ It's the primary way to set the scene in your visual novel.
 
 | Argument   | Omissible      | Description                                   | Notes                                                                        |
 |------------|----------------|-----------------------------------------------|------------------------------------------------------------------------------|
-| `file`     | No             | The filename of the new background image.     | Set to `none` to remove the background.                                      |
-| `time`     | Yes (`0`)      | The duration of the fading effect in seconds. | Default is `0.0` (instant change).                                           |
-| `method`   | Yes (`normal`) | The fading method/style.                      | Choose from `normal`, `rule`, or `melt`.                                     |
-| `rule`     | Yes            | The rule image file for specific transitions. | Required when `method` is set to `rule` or `melt`.                           |
-| `x`        | Yes (`0`)      | The X-axis offset for the background image.   | Supports absolute values (e.g., `100`) or relative values (e.g., `r100`).    |
-| `y`        | Yes (`0`)      | The Y-axis offset for the background image.   | Supports absolute values (e.g., `100`) or relative values (e.g., `r-100`).   |
-| `alpha`    | Yes (`255`)    | The alpha value of the background image.      | `0` to `255`.                                                                |
-| `clear`    | Yes (`false`)  | Whether to vanish the characters or not.      | If `true`, all characters will be vanished.                                  |
+| `file`     | No             | 新背景圖片的檔名。                              | 設為 `none` 可移除背景。                                                     |
+| `time`     | Yes (`0`)      | 淡出效果的持續時間（秒）。                      | 預設為 `0.0`（立即變更）。                                                   |
+| `method`   | Yes (`normal`) | 淡出方法/樣式。                                | 可選 `normal`、`rule` 或 `melt`。                                            |
+| `rule`     | Yes            | 特定轉場所需的規則圖檔。                        | 當 `method` 設為 `rule` 或 `melt` 時必填。                                   |
+| `x`        | Yes (`0`)      | 背景圖片的 X 軸位移。                           | 支援絕對值（例如 `100`）或相對值（例如 `r100`）。                            |
+| `y`        | Yes (`0`)      | 背景圖片的 Y 軸位移。                           | 支援絕對值（例如 `100`）或相對值（例如 `r-100`）。                           |
+| `alpha`    | Yes (`255`)    | 背景圖片的 alpha 值。                           | `0` 到 `255`。                                                               |
+| `clear`    | Yes (`false`)  | 是否讓角色消失。                                | 若為 `true`，所有角色都會消失。                                             |
 
 ### Transition Methods (`method`)
 
-You can create different atmospheres by choosing the right transition style:
+透過選擇適合的轉場樣式，可以營造不同氛圍：
 
 | Type     | Description                                                                                                                          |
 |----------|--------------------------------------------------------------------------------------------------------------------------------------|
-| `normal` | Alpha Blending. The default method. Performs a smooth cross-fade between the old and new images.                                     |
-| `rule`   | 1-bit Universal Transition. Uses a grayscale "rule" image to determine the switching order.                                          |
-| `melt`   | 8-bit Universal Transition. Similar to `rule`, but with soft, blurred edges at the transition boundary, creating a "melting" effect. |
+| `normal` | Alpha 混合。預設方法。會在舊圖片與新圖片之間平滑交叉淡化。                              |
+| `rule`   | 1-bit Universal Transition。使用灰階 `rule` 圖決定切換順序。                           |
+| `melt`   | 8-bit Universal Transition。類似 `rule`，但轉場邊緣帶有柔和模糊，形成「融化」效果。       |
 
-For `rule` and `melt`, the image switches pixel-by-pixel from the darkest to the lightest areas of the rule map.
+在 `rule` 與 `melt` 中，圖片會依照規則圖由最暗區域一路切換到最亮區域。
 
 ### Tips
 
-**Relative Positioning**: 
-* If you want to nudge the background from its current position, use the `r` prefix.
-* For example, `x="r50"` moves the image 50 pixels to the right of its current X coordinate.
+**相對定位**：
+* 如果你想從目前位置微調背景，請使用 `r` 字首。
+* 例如，`x="r50"` 會讓圖片從目前 X 座標往右移 50 畫素。
 
-**What is a Rule Image?**:
-* It's a grayscale image where black areas transition first and white areas transition last.
-* By creating custom rule images, you can achieve effects like horizontal wipes, circular reveals, or even more artistic patterns!
+**什麼是 `rule` 圖？**
+* 這是一張灰階圖片，黑色區域會先轉場，白色區域會最後轉場。
+* 透過自訂 `rule` 圖，你可以做出水平擦除、圓形展開，甚至更有藝術感的圖樣！
 
 ---
 
 ## `bgm`
 
-Play Background Music
+播放背景音樂
 
-The `bgm` tag plays a background music track. 
-Music is an essential tool for setting the mood of your scene, and it will continue to loop automatically until stopped or changed.
+`bgm` 標籤會播放背景音樂曲目。
+音樂是營造場景氛圍的重要工具，並且會自動迴圈播放，直到被停止或更換。
 
 ### Basic Usage
 
@@ -183,18 +183,18 @@ Music is an essential tool for setting the mood of your scene, and it will conti
 
 ## `callmacro`
 
-Call Macro
+呼叫巨集
 
-The `callmacro` tag executes a previously defined macro.
-It allows you to trigger a specific sequence of commands, such as character entrances or UI animations, multiple times throughout your script without rewriting the original code.
+`callmacro` 標籤會執行先前定義好的巨集。
+它可以讓你在腳本中多次觸發特定的一串命令，例如角色登場或 UI 動畫，而不必重寫原始程式碼。
 
 ### Basic Usage
 
 ```
-# Call a macro named "kaito_entrance"
+# 呼叫名為 "kaito_entrance" 的巨集
 [callmacro name="kaito_entrance"]
 
-# Call a macro for a specific scene transition
+# 呼叫用於特定場景轉場的巨集
 [callmacro name="fade_to_white"]
 ```
 
@@ -202,41 +202,41 @@ It allows you to trigger a specific sequence of commands, such as character entr
 
 | Argument | Omissible | Description                               | Notes                                              |
 |----------|-----------|-------------------------------------------|----------------------------------------------------|
-| `name`   | No        | The name of the macro to execute.         | Must match a name defined by a `[defmacro]` tag.   |
-| `file`   | Yes       | The file name where the macro is defined. | Omit this to call a macro inside the current file. |
+| `name`   | No        | 要執行的巨集名稱。                        | 必須與 `[defmacro]` 標籤定義的名稱一致。          |
+| `file`   | Yes       | 巨集所在的檔案名稱。                      | 若要呼叫目前檔案內的巨集，則可省略。              |
 
 ### Tips
 
-**Efficiency**:
-* By using `[callmacro]`, you can keep your main story script focused and readable.
-* Instead of seeing 10 lines of animation code, you'll just see one clear command.
+**效率**：
+* 使用 `[callmacro]` 可以讓主劇情腳本保持專注且易讀。
+* 原本要看十行動畫程式碼，現在只會看到一條清楚的命令。
 
-**Execution Flow**:
-* When the engine hits `[callmacro]`, it immediately jumps to the defined macro, runs all the tags inside it, and then automatically returns to the very next line after the `[callmacro]` tag.
+**執行流程**：
+* 當引擎碰到 `[callmacro]` 時，會立刻跳到已定義的巨集，執行裡面的所有標籤，然後自動回到 `[callmacro]` 標籤後的下一行。
 
-**Modular Design**:
-* Think of macros as "custom tags" for your game.
-* If you decide to change how a character enters a scene, you only need to update the code once in the `[defmacro]` block, and every `[callmacro]` will reflect that change!
+**模組化設計**：
+* 可以把巨集想成你遊戲裡的「自訂標籤」。
+* 如果你想改變角色入場方式，只需要在 `[defmacro]` 區塊更新一次程式碼，每個 `[callmacro]` 都會跟著反映這個變更！
 
 ---
 
 ## `ch`
 
-Character Display
+角色顯示
 
-The `ch` tag shows, hides, or updates character images on various layers.
-It allows for detailed control over positioning, scaling, and rotations for multiple characters and background at once.
+`ch` 標籤可在各個圖層上顯示、隱藏或更新角色圖片。
+它可以同時精細控制多個角色與背景的位置、縮放與旋轉。
 
 ### Basic Usage
 
 ```
-# Show a character at the center
+# 在中央顯示角色
 [ch center="chara001.png" time="1.0"]
 
-# Show multiple characters with specific positions
+# 顯示多個角色並指定位置
 [ch left="chara002.png" right="chara003.png" time="0.5"]
 
-# Hide a specific character
+# 隱藏指定角色
 [ch center="none" time="1.0"]
 ```
 
@@ -244,66 +244,66 @@ It allows for detailed control over positioning, scaling, and rotations for mult
 
 | Argument  | Omissible      | Description                            | Notes                                                 |
 |-----------|----------------|----------------------------------------|-------------------------------------------------------|
-| `time`    | Yes (`0`)      | Duration of the transition in seconds. | Affects all layer changes within this tag.            |
-| `method`  | Yes (`normal`) | The fading method/style.               | `normal`, `rule`, or `melt`.                          |
-| `rule`    | Yes            | The rule image file for transitions.   | Required when `method` is `rule` or `melt`.           |
+| `time`    | Yes (`0`)      | 轉場持續時間（秒）。                   | 會影響這個標籤內所有圖層變更。                        |
+| `method`  | Yes (`normal`) | 淡入淡出的方式/樣式。                  | `normal`、`rule` 或 `melt`。                         |
+| `rule`    | Yes            | 轉場用的規則圖檔。                     | 當 `method` 是 `rule` 或 `melt` 時必填。              |
 
-#### Layer File Arguments
+#### 圖層檔案引數
 
-Specify a filename to load an image onto a layer. Set to `none` to unload (hide) the image.
+指定檔名即可將圖片載入到某個圖層。設為 `none` 則會解除安裝（隱藏）圖片。
 
 | Argument       | Description                               |
 |----------------|-------------------------------------------|
-| `bg`           | Background layer.                         |
-| `back          | Back-Center character.                    |
-| `left`         | Left character.                           |
-| `right`        | Right character.                          |
-| `center`       | Center character.                         |
-| `left-center`  | Left-Center character.                    |
-| `right-center` | Intermediate character.                   |
-| `face`         | Face character.                           |
+| `bg`           | 背景圖層。                                |
+| `back`         | 後中角色。                                |
+| `left`         | 左側角色。                                |
+| `right`        | 右側角色。                                |
+| `center`       | 中央角色。                                |
+| `left-center`  | 左中角色。                                |
+| `right-center` | 右中角色。                                |
+| `face`         | 臉部角色。                                |
 
-#### Layer Parameter Arguments
+#### 圖層引數引數
 
-Each layer above (e.g., `center`) can be customized using the following suffixes (e.g., `center-x`, `center-rotate`).
+上面的每個圖層（例如 `center`）都可以使用下列字尾自訂（例如 `center-x`、`center-rotate`）。
 
 | Suffix      | Omissible     | Description                | Notes                                                         |
 |-------------|---------------|----------------------------|---------------------------------------------------------------|
-| `-x`        | Yes (`0`)     | X position.                | Supports absolute (e.g., `100`) or relative (e.g., `r50`).    |
-| `-y`        | Yes (`0`)     | Y position.                | Supports absolute (e.g., `100`) or relative (e.g., `r-50`).   |
-| `-a`        | Yes (`255`)   | Alpha value. (opacity)     | `0` (transparent) to `255` (opaque).                          |
-| `-scale-x`  | Yes (`1.0`)   | X scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `-scale-y`  | Yes (`1.0`)   | Y scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `-center-x` | Yes (`0`)     | X center for rotation.     | Pivot point for the rotation effect.                          |
-| `-center-y` | Yes (`0`)     | Y center for rotation.     | Pivot point for the rotation effect.                          |
-| `-rotate`   | Yes (`0`)     | Rotation in degrees.       | Positive for clockwise. Supports `r` prefix.                  |
-| `-dim`      | Yes (`false`) | Dimming status.            | If `true`, the layer is rendered 50% darker.                  |
+| `-x`        | Yes (`0`)     | X 座標。                   | 支援絕對值（例如 `100`）或相對值（例如 `r50`）。              |
+| `-y`        | Yes (`0`)     | Y 座標。                   | 支援絕對值（例如 `100`）或相對值（例如 `r-50`）。             |
+| `-a`        | Yes (`255`)   | Alpha 值（不透明度）。     | `0`（透明）到 `255`（不透明）。                               |
+| `-scale-x`  | Yes (`1.0`)   | X 縮放倍率。               | `1.0` 為原始大小。支援 `r` 字首。                             |
+| `-scale-y`  | Yes (`1.0`)   | Y 縮放倍率。               | `1.0` 為原始大小。支援 `r` 字首。                             |
+| `-center-x` | Yes (`0`)     | 旋轉中心 X。               | 旋轉效果的樞軸點。                                            |
+| `-center-y` | Yes (`0`)     | 旋轉中心 Y。               | 旋轉效果的樞軸點。                                            |
+| `-rotate`   | Yes (`0`)     | 旋轉角度（度）。           | 正值為順時針。支援 `r` 字首。                                  |
+| `-dim`      | Yes (`false`) | 暗化狀態。                 | 若為 `true`，圖層會被渲染得暗 50%。                            |
 
 ### Tips
 
-**Batch Updates**:
-* You can update multiple characters and the background simultaneously in a single `[ch]` tag to ensure they animate together perfectly.
+**批次更新**：
+* 你可以在單一 `[ch]` 標籤中同時更新多個角色與背景，讓它們一起完美地進行動畫。
 
-**Relative Transformation**:
-* Like the `bg` tag, all numeric parameters support the `r` prefix.
-* For example, `center-y="r-50"` will hop the center character 50 pixels upward from its current position.
+**相對變換**：
+* 和 `bg` 標籤一樣，所有數值引數都支援 `r` 字首。
+* 例如 `center-y="r-50"` 會讓中央角色從目前位置往上移動 50 畫素。
 
 ---
 
 ## `chapter`
 
-Set Chapter Name
+設定章節名稱
 
-The `chapter` tag sets the name of the current chapter. 
-This name is typically used by the game system to display progress in the save/load menu or on the game screen, helping players keep track of their journey.
+`chapter` 標籤會設定目前章節的名稱。
+這個名稱通常會被遊戲系統用來在存檔/讀檔選單或遊戲畫面上顯示進度，方便玩家追蹤劇情進展。
 
 ### Basic Usage
 
 ```
-# Set the chapter name at the beginning of a story segment
+# 在故事段落開頭設定章節名稱
 [chapter name="Chapter 01: The Beginning"]
 
-# Update the chapter name as the story progresses
+# 隨著故事推進更新章節名稱
 [chapter name="Intermission: A Quiet Night"]
 ```
 
@@ -311,34 +311,34 @@ This name is typically used by the game system to display progress in the save/l
 
 | Argument | Omissible | Description                        | Notes                                                      |
 |----------|-----------|------------------------------------|------------------------------------------------------------|
-| `name`   | No        | The name of the chapter to be set. | This string will be stored in the game's system variables. |
+| `name`   | No        | 要設定的章節名稱。                 | 這個字串會儲存在遊戲的系統變數中。                        |
 
 ### Tips
 
-**Save Data Visibility**:
-* In many Suika3 configurations, the string you set here is what appears on the "Save" and "Load" slots.
-* Choose a name that helps the player remember exactly where they were in the story!
+**存檔顯示**：
+* 在許多 Suika3 設定中，你在這裡設定的字串會顯示在「存檔」與「讀檔」欄位上。
+* 請選一個能讓玩家清楚記得目前進度的名稱！
 
-**Consistency**:
-* It's a good practice to call the `[chapter]` tag immediately after a `[label]` that starts a new major scene or chapter. 
+**一致性**：
+* 在開始新的主要場景或章節的 `[label]` 後立刻呼叫 `[chapter]` 標籤，是個很好的習慣。
 
-**Updating Names**:
-* You can call `[chapter]` as many times as you like.
-* Every time you do, the old chapter name is overwritten by the new one.
+**更新名稱**：
+* 你可以隨時多次呼叫 `[chapter]`。
+* 每次呼叫時，舊的章節名稱都會被新的名稱覆蓋。
 
 ---
 
 ## `choose`
 
-Display Selection Options
+顯示選擇選項
 
-The `choose` tag displays up to 8 interactive buttons for the player. 
-It stores the text of the chosen item in a variable.
+`choose` 標籤會顯示最多 8 個可互動按鈕給玩家。
+它會把所選專案的文字儲存在變數中。
 
 ### Basic Usage
 
 ```
-# Store selection in a variable
+# 將選擇結果儲存在變數中
 [choose
     text1="Red Pill"
     text2="Green Pill"
@@ -354,64 +354,62 @@ It stores the text of the chosen item in a variable.
 
 | Argument         | Omissible | Description                                    | Notes                                              |
 |------------------|-----------|------------------------------------------------|--------------------------------------------------- |
-| `text1`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text2`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text3`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text4`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text5`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text6`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text7`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text8`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text<N>-locale` | Yes       | The text displayed on each button. (localized) | At least one option are typically required.        |
-| `name`           | No        | The variable name to store the result.         | Stores the text of the selected option.            |
-| `value1`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value2`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value3`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value4`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value5`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value6`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value7`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value8`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `time`           | Yes (`0`) | Timer in seconds.                              | If `0`, no timer is enabled.                       |
+| `text1`          | Yes       | 每個按鈕顯示的文字。                           | 通常至少需要一個選項。                             |
+| `text2`          | Yes       | 每個按鈕顯示的文字。                           | 通常至少需要一個選項。                             |
+| `text3`          | Yes       | 每個按鈕顯示的文字。                           | 通常至少需要一個選項。                             |
+| `text4`          | Yes       | 每個按鈕顯示的文字。                           | 通常至少需要一個選項。                             |
+| `text5`          | Yes       | 每個按鈕顯示的文字。                           | 通常至少需要一個選項。                             |
+| `text6`          | Yes       | 每個按鈕顯示的文字。                           | 通常至少需要一個選項。                             |
+| `text7`          | Yes       | 每個按鈕顯示的文字。                           | 通常至少需要一個選項。                             |
+| `text8`          | Yes       | 每個按鈕顯示的文字。                           | 通常至少需要一個選項。                             |
+| `text<N>-locale` | Yes       | 每個按鈕顯示的文字（依語系）。                 | 通常至少需要一個選項。                             |
+| `name`           | No        | 用來儲存結果的變數名稱。                       | 會儲存所選選項的文字。                             |
+| `value1`         | Yes       | 指派給結果變數的值。                           | 通常至少需要一個選項。                             |
+| `value2`         | Yes       | 指派給結果變數的值。                           | 通常至少需要一個選項。                             |
+| `value3`         | Yes       | 指派給結果變數的值。                           | 通常至少需要一個選項。                             |
+| `value4`         | Yes       | 指派給結果變數的值。                           | 通常至少需要一個選項。                             |
+| `value5`         | Yes       | 指派給結果變數的值。                           | 通常至少需要一個選項。                             |
+| `value6`         | Yes       | 指派給結果變數的值。                           | 通常至少需要一個選項。                             |
+| `value7`         | Yes       | 指派給結果變數的值。                           | 通常至少需要一個選項。                             |
+| `value8`         | Yes       | 指派給結果變數的值。                           | 通常至少需要一個選項。                             |
+| `time`           | Yes (`0`) | 計時器（秒）。                                | 若為 `0`，則不啟用計時器。                         |
 
 ### Localization
 
-For example, if the user OS environment is set to Japanese, `text1-ja` is preferred instead of `text1`.
+例如，如果使用者的作業系統語系是日文，系統會優先採用 `text1-ja`，而不是 `text1`。
 
 | Suffix      | Language                                 |
 |-------------|------------------------------------------|
-| -en         | English (Fallback)                       |
-| -en-us      | English (America)                        |
-| -en-gb      | English (British)                        |
-| -en-au      | English (Austraria)                      |
-| -en-nz      | English (New Zealand)                    |
-| -fr         | French (Fallback)                        |
-| -fr-fr      | French (France)                          |
-| -fr-ca      | French (Canada)                          |
-| -es         | Spanish (Spain, Fallback)                |
-| -es-la      | Spanish (Latin America)                  |
-| -de         | German                                   |
-| -it         | Italian                                  |
-| -ru         | Russian                                  |
-| -el         | Greek                                    |
-| -zh         | Chinese (Simplified)                     |
-| -zh-tw      | Chinese (Traditional, Taiwan)            |
-| -ja         | Japanese                                 |
-| (no suffix) | Fallback (developer decides)             |
+| -en         | 英文（預設）                             |
+| -en-us      | 英文（美國）                             |
+| -en-gb      | 英文（英國）                             |
+| -en-au      | 英文（澳洲）                             |
+| -en-nz      | 英文（紐西蘭）                           |
+| -fr         | 法文（預設）                             |
+| -fr-fr      | 法文（法國）                             |
+| -fr-ca      | 法文（加拿大）                           |
+| -es         | 西班牙文（西班牙，預設）                 |
+| -es-la      | 西班牙文（拉丁美洲）                     |
+| -de         | 德文                                     |
+| -it         | 義大利文                                 |
+| -ru         | 俄文                                     |
+| -el         | 希臘文                                   |
+| -zh         | 中文（簡體）                             |
+| -zh-tw      | 中文（繁體，臺灣）                       |
+| -ja         | 日文                                     |
+| （無字尾）  | 預設值（由開發者決定）                    |
 
-For English OS locales including all regions, `-en` is used as the
-default fallback.  If a more specific variant such as `-en-gb` is
-specified in a tag and best matches with the user region, it will be
-preferred. The same mechanism is applied to Spanish and French. Note
-that there is no fallback from Traditional Chinese to Simplified
-Chinese.
+對於所有英文系統語系，`-en` 會作為預裝置援。
+如果標籤中指定了像 `-en-gb` 這樣更精確的變體，而且它與使用者地區最相符，就會優先採用。
+西班牙文與法文也使用相同機制。
+請注意，繁體中文不會回退到簡體中文。
 
-For example, if the user locale is `en-AU`, the following priority is applied:
+例如，如果使用者語系是 `en-AU`，會套用以下優先順序：
 * 1. text1-en-au
 * 2. text1-en
 * 3. text1
 
-The following are currently not supported but planned to be supported.
+以下目前尚未支援，但預計未來會支援。
 
 | Suffix      | Language                                 |
 |-------------|------------------------------------------|
@@ -432,8 +430,8 @@ The following are currently not supported but planned to be supported.
 
 ### Tips
 
-**Branching Logic**:
-* You can use the `[if]` tag to check the stored value and create complex branches.
+**分支邏輯**：
+* 你可以使用 `[if]` 標籤檢查儲存的值，建立複雜分支。
 
 ```
 [choose
@@ -444,38 +442,38 @@ The following are currently not supported but planned to be supported.
   value2="2"]
 
 [if lhs="${var1}" op="=" rhs="1"]
-  # School.
+  # 學校。
 [else]
-  # Hospital.
+  # 醫院。
 [endif]
 ```
 
-**Variable Persistence**:
-* Since everything is a string, remember that even numbers like "100" are stored as text.
-* Suika3's logic tags (like `if`) can handle these strings for comparisons.
+**變數儲存**：
+* 因為所有內容本質上都是字串，請記得像 `"100"` 這樣的數字也會以文字儲存。
+* Suika3 的邏輯標籤（例如 `if`）可以拿這些字串來做比較。
 
 ---
 
 ## `set`
 
-Set Variable
+設定變數
 
-The `set` tag assigns a value to a variable name. 
-In Suika3, **all variables are treated as text strings**, but they can be compared numerically in other tags like `[if]`.
+`set` 標籤會把值指定給某個變數名稱。
+在 Suika3 中，**所有變數都會被視為文字字串**，但在像 `[if]` 這類其他標籤中仍可做數值比較。
 
 ### Basic Usage
 
 ```
-# Assign a simple string to a variable
+# 將單純字串指派給變數
 [set name="player_name" value="Kaito"]
 
-# Set a numeric-like value (stored as a string)
+# 設定類似數字的值（仍會以字串儲存）
 [set name="health" value="100"]
 
-# Clear a variable by setting it to an empty string
+# 透過設定空字串來清除變數
 [set name="flag_event_01" value=""]
 
-# Add 1 to var1.
+# 將 var1 加 1。
 [set name="var1" value1="${var1}" op="+" value2="1"]
 
 ```
@@ -484,49 +482,49 @@ In Suika3, **all variables are treated as text strings**, but they can be compar
 
 | Argument | Omissible     | Description                                 | Notes                                                               |
 |----------|---------------|---------------------------------------------|---------------------------------------------------------------------|
-| `name`   | No            | The unique name of the variable.            | Use alphanumeric characters and underscores for best compatibility. |
-| `value`  | Yes           | The content to store in the variable.       | Remember: everything is stored as a string!                         |
-| `value1` | Yes           | The operand 1 for opcode.                   |                                                                     |
-| `value2` | Yes           | The operand 2 for opcode.                   |                                                                     |
-| `op`     | Yes           | The opcode. (`+`, `-`, `*`, `/`, `//`, `%`) |                                                                     |
-| `global` | Yes (`false`) | Make the flag global.                       | Global variables are for achievement flags e.g., "Saw ED1".         |
+| `name`   | No            | 變數的唯一名稱。                            | 為了最佳相容性，請使用英數字元與底線。                              |
+| `value`  | Yes           | 要儲存在變數中的內容。                      | 請記住：所有內容都會以字串儲存！                                     |
+| `value1` | Yes           | 運算元 1。                                  |                                                                     |
+| `value2` | Yes           | 運算元 2。                                  |                                                                     |
+| `op`     | Yes           | 運運算元。（`+`、`-`、`*`、`/`、`//`、`%`）   |                                                                     |
+| `global` | Yes (`false`) | 是否設為全域旗標。                           | 全域變數可用於成就旗標，例如「看過 ED1」。                           |
 
 ### Tips
 
-**String Handling**:
-* Since Suika3 treats everything as text, `value="100"` and `value="May"` are handled the same way internally.
-* You can reference these variables in other tags (like `text` or `if`) using the `${variable_name}` syntax.
+**字串處理**：
+* 由於 Suika3 會把所有內容都當成文字，`value="100"` 和 `value="May"` 在內部的處理方式是相同的。
+* 你可以在其他標籤（例如 `text` 或 `if`）中使用 `${variable_name}` 語法來引用這些變數。
 
-**Flag Management**:
-* For game flags (like "has met the hero"), it's a common practice to use `"true"` and `"false"` or `"1"` and `"0"`. 
-* Consistency is key! If you start using `"1"`, stick with it so your `[if]` checks don't get confused.
+**旗標管理**：
+* 對於遊戲旗標（例如「是否遇過主角」），常見作法是使用 `"true"` 和 `"false"`，或 `"1"` 和 `"0"`。
+* 一致性很重要！如果你一開始使用 `"1"`，就請一直維持下去，這樣 `[if]` 判斷才不會混淆。
 
-**Variable Naming**:
-* Avoid using spaces or special symbols in your variable names. `my_variable` is much safer than `my variable!`.
+**變數命名**：
+* 請避免在變數名稱中使用空格或特殊符號。`my_variable` 會比 `my variable!` 安全得多。
 
 ---
 
 ## `click`
 
-Wait for Click
+等待點選
 
-The `click` tag pauses the script execution and waits for the player to click the mouse or press a key.
-It is commonly used to create pauses between visual changes or before a major transition.
+`click` 標籤會暫停指令碼執行，等待玩家點選滑鼠或按下按鍵。
+它通常用來在畫面變化之間，或在重大轉場前製造停頓。
 
 ### Basic Usage
 
 ```
-# Change the background, then wait for the player to click
+# 變更背景，然後等待玩家點選
 [bg file="sunset.png" time="1.0"]
 [click]
 
-# After the click, show the character
+# 點選之後顯示角色
 [ch center="chara01.png" time="1.0"]
 ```
 
 ### Arguments
 
-This tag does not take any arguments.
+這個標籤不接受任何引數。
 
 | Argument | Omissible | Description | Notes           |
 |----------|-----------|-------------|-----------------|
@@ -534,34 +532,34 @@ This tag does not take any arguments.
 
 ### Tips
 
-**Timing and Pacing**:
-* Use `[click]` when you want to give the player a moment to look at a new background or a specific character expression before the dialogue continues.
-* Unlike the `[text]` tag, which waits for a click automatically after displaying a message, `[click]` is used for manual flow control during non-dialogue sequences.
+**時機與節奏**：
+* 當你想在對話繼續前，讓玩家先看一下新的背景或特定角色表情時，可以使用 `[click]`。
+* 和 `[text]` 標籤不同，`[text]` 在顯示訊息後會自動等待點選，而 `[click]` 則用於非對話段落中的手動流程控制。
 
-**Visual Feedback**:
-* When the script hits a `[click]` tag, the game will remain still. Ensure that any preceding animations (like `[bg]` or `[ch]`) have a `time` set, or the screen might feel static too abruptly.
+**視覺回饋**：
+* 當指令碼執行到 `[click]` 標籤時，遊戲會停在目前畫面。請確保前面的動畫（例如 `[bg]` 或 `[ch]`）都有設定 `time`，不然畫面可能會顯得太突兀地靜止。
 
-**For timed waits:**
-* Use `[wait]` for timed waits.
+**若要定時等待：**
+* 請使用 `[wait]` 來做定時等待。
 
 ---
 
 ## `goto`
 
-Jump to Label
+跳轉到標籤
 
-The `goto` tag immediately moves the NovelML execution to a specified label. 
-It is useful tool for controlling the flow of your story, allowing you to skip sections or loop back to previous parts.
+`goto` 標籤會立刻把 NovelML 的執行移到指定標籤。
+它是控制故事流程的實用工具，可以讓你跳過某些段落，或迴圈回前面的部分。
 
-Please note that small branches should be realized by `[if]`.
+請注意，小型分支應該用 `[if]` 來實作。
 
 ### Basic Usage
 
 ```
-# Jump to the beginning of the morning scene
+# 跳到早晨場景的開頭
 [goto name="morning_start"]
 
-# ... this part of the script will be skipped ...
+# ... 這段指令碼會被跳過 ...
 
 [label name="morning_start"]
 [text text="The sun rises over the horizon."]
@@ -571,40 +569,40 @@ Please note that small branches should be realized by `[if]`.
 
 | Argument | Omissible | Description                       | Notes                                         |
 |----------|-----------|-----------------------------------|-----------------------------------------------|
-| `name`   | No        | The target label name to jump to. | Must match a name defined by a `[label]` tag. |
+| `name`   | No        | 要跳轉到的目標標籤名稱。          | 必須與 `[label]` 標籤定義的名稱一致。         |
 
 ### Tips
 
-**Unconditional Jump**:
-* Unlike `[if]`, `[goto]` always jumps to the target label as soon as the engine hits the tag.
+**無條件跳轉**：
+* 和 `[if]` 不同，`[goto]` 會在引擎碰到標籤時立刻跳到目標標籤。
 
-**Flow Management**:
-* Use `[goto]` at the end of a branching path to bring the story back to a "common" route. 
-* It's also great for creating loops (like a "Return to Title" sequence) when combined with other logic.
+**流程管理**：
+* 可以在分支路徑的結尾使用 `[goto]`，把故事帶回「共通」路線。
+* 搭配其他邏輯時，它也很適合拿來建立迴圈（例如「返回標題」流程）。
 
-**Across Files?**:
-* Remember that `[goto]` typically works within the current script file.
-* If you want to jump to a different file entirely, you'll want to look at the `[load]` tag!
+**跨檔案？**：
+* 請記得 `[goto]` 通常只會在目前指令碼檔案內運作。
+* 如果你想完全跳到另一個檔案，就要看 `[load]` 標籤了！
 
 ---
 
 ## `defmacro`
 
-Define Macro
+定義巨集
 
-The `defmacro` tag starts the definition of a macro. 
-A macro allows you to group multiple tags and commands into a single named block, which can be reused throughout your script using the `[callmacro]` tag.
+`defmacro` 標籤會開始定義一個巨集。
+巨集可以把多個標籤與命令組成一個有名稱的區塊，並且能在腳本中透過 `[callmacro]` 重複使用。
 
 ### Basic Usage
 
 ```
-# Define a macro for a specific character's entrance
+# 為特定角色登場定義巨集
 [defmacro name="enter_kaito"]
     [ch center="kaito_smile.png" time="0.5"]
     [text name="Kaito" text="Hey! Did I keep you waiting?"]
 [endmacro]
 
-# Later in your script, call it with a single line
+# 之後在腳本中只要一行就能呼叫
 [callmacro name="enter_kaito"]
 ```
 
@@ -612,38 +610,38 @@ A macro allows you to group multiple tags and commands into a single named block
 
 | Argument | Omissible | Description                     | Notes                                             |
 |----------|-----------|---------------------------------|---------------------------------------------------|
-| `name`   | No        | The unique name for this macro. | Used to identify the macro when calling it later. |
+| `name`   | No        | 這個巨集的唯一名稱。            | 用來在之後呼叫時識別這個巨集。                    |
 
 ### Tips
 
-**Closing the Definition**:
-* Every `[defmacro]` must be paired with an `[endmacro]` tag to mark the end of the definition.
+**結束定義**：
+* 每個 `[defmacro]` 都必須搭配 `[endmacro]` 標籤，標示定義結束。
 
-**Code Reusability**:
-* Macros are perfect for repetitive sequences, such as specific UI transitions, character-specific visual setups, or complex sound and visual combinations.
+**程式重用**：
+* 巨集很適合重複出現的序列，例如特定 UI 轉場、角色專屬視覺配置，或複雜的音效與畫面組合。
 
-**Organization**:
-* It is a common practice to define all your macros at the very beginning of your main script file or in a separate file that you load at the start.
+**組織方式**：
+* 常見做法是在主腳本檔的最前面，或在啟動時載入的獨立檔案中，集中定義所有巨集。
 
-**Nesting and Logic**:
-* You can include almost any other tag inside a macro, including `[if]` statements and even `[returnmacro]` to exit the macro early based on certain conditions.
+**巢狀與邏輯**：
+* 你幾乎可以在巨集中放入任何其他標籤，包含 `[if]` 判斷，甚至可以用 `[returnmacro]` 依條件提前離開巨集。
 
 ---
 
 ## `gui`
 
-Show GUI
+顯示 GUI
 
-The `gui` tag loads and displays a Graphical User Interface (GUI) definition from a specified file. 
-It is used to display menus, title screens, or custom interaction panels.
+`gui` 標籤會從指定檔案載入並顯示圖形化使用者介面（GUI）定義。
+它可用來顯示選單、標題畫面或自訂互動面板。
 
 ### Basic Usage
 
 ```
-# Display the main menu GUI
+# 顯示主選單 GUI
 [gui file="main_menu.txt"]
 
-# Show a custom save/load screen
+# 顯示自訂存檔/讀檔畫面
 [gui file="save_screen.txt"]
 ```
 
@@ -651,36 +649,36 @@ It is used to display menus, title screens, or custom interaction panels.
 
 | Argument | Omissible | Description                                 | Notes                                               |
 |----------|-----------|---------------------------------------------|-----------------------------------------------------|
-| `file`   | No        | The filename of the GUI definition to load. | The file must exist in the project's GUI directory. |
+| `file`   | No        | 要載入的 GUI 定義檔案名稱。                 | 檔案必須存在於專案的 GUI 目錄中。                  |
 
 ### Tips
 
-**GUI Definitions**:
-* The `file` argument points to a text file that defines the layout, buttons, and actions of your interface.
-* These files specify where images are placed and what happens (like jumping to a label or quitting) when a user interacts with them.
+**GUI 定義**：
+* `file` 引數指向一個文字檔，這個檔案會定義介面的版面、按鈕與動作。
+* 這些檔案會指定圖片放置的位置，以及使用者互動時會發生什麼事（例如跳到標籤或結束遊戲）。
 
-**Usage in Flow**:
-* Typically, a `[gui]` tag is used for a graphical menu such as title screen.
+**流程中的用途**：
+* 一般來說，`[gui]` 標籤會用在像標題畫面這類圖形化選單。
 
-**Customization**:
-* Since the GUI is defined in an external file, you can create multiple looks for your game and switch between them just by calling different files with this tag.
+**自訂化**：
+* 因為 GUI 是定義在外部檔案中，所以你可以為遊戲做出多種外觀，只要用這個標籤呼叫不同檔案即可切換。
 
 ---
 
 ## `label`
 
-Define Label
+定義標籤
 
-The `label` tag defines a specific point in the script that can be targeted by jump commands like `[goto]` or `[load]`.
-It acts as a bookmark for navigation within your story.
+`label` 標籤會定義腳本中的特定位置，可供 `[goto]` 或 `[load]` 之類的跳轉命令鎖定。
+它就像故事導覽用的書籤。
 
 ### Basic Usage
 
 ```
-# Define a label for the start of a new chapter
+# 為新章節的開頭定義標籤
 [label name="chapter_01_start"]
 
-# Use a jump command to reach this label
+# 使用跳轉命令前往這個標籤
 [goto name="chapter_01_start"]
 ```
 
@@ -688,38 +686,38 @@ It acts as a bookmark for navigation within your story.
 
 | Argument | Omissible | Description                     | Notes                                                  |
 |----------|-----------|---------------------------------|--------------------------------------------------------|
-| `name`   | No        | The unique name for this label. | Case-sensitive. Avoid using spaces or special symbols. |
+| `name`   | No        | 這個標籤的唯一名稱。            | 大小寫有區別。請避免使用空格或特殊符號。              |
 
 ### Tips
 
-**Navigation Control**:
-* Labels are useful for creating branching paths.
-* For example, you can put a `label` at the begining of the section of your story for a long jump.
+**導覽控制**：
+* 標籤很適合用來建立分支路徑。
+* 例如，你可以在故事某個段落的開頭放一個 `label`，方便長距離跳轉。
 
-**Unique Naming**:
-* Every label name within a single script file must be unique.
-* If you have two labels with the same name, the engine might not know where to jump, and that's no fun for anyone!
+**名稱唯一**：
+* 同一個腳本檔內的每個標籤名稱都必須唯一。
+* 如果有兩個同名標籤，引擎可能會不知道該跳去哪裡，這對誰都不方便。
 
-**Organization**:
-* It's a good habit to use descriptive names like `label_evening_park` instead of `label1`.
-* It makes it much easier for you (and me!) to read the script later and understand what's happening.
+**組織方式**：
+* 使用像 `label_evening_park` 這種有描述性的名稱，會比 `label1` 更好。
+* 這會讓你（也讓我！）之後更容易閱讀腳本並理解發生了什麼。
 
 ---
 
 ## `text`
 
-Display Text
+顯示文字
 
-The `text` tag displays a message in the message box. 
-It can show the main dialogue or narration, and optionally display a character's name in the name box.
+`text` 標籤會在訊息框中顯示訊息。
+它可以顯示主要對話或旁白，也可以選擇在名稱框中顯示角色名稱。
 
 ### Basic Usage
 
 ```
-# Narration style (no name displayed)
+# 旁白樣式（不顯示名稱）
 [text text="The wind was howling through the trees."]
 
-# Character dialogue
+# 角色對話
 [text name="Keith" text="I've been waiting for you here in the small room."]
 ```
 
@@ -727,53 +725,51 @@ It can show the main dialogue or narration, and optionally display a character's
 
 | Argument         | Omissible | Description                                      | Notes                                            |
 |------------------|-----------|--------------------------------------------------|--------------------------------------------------|
-| `text`           | No        | The message content to be displayed.             |                                                  |
-| `text-<locale>`  | Yes       | The message content to be displayed. (localized) |                                                  |
-| `voice`          | Yes       | The voice file.                                  |                                                  |
-| `voice-<locale>` | Yes       | The voice file. (localized)                      |                                                  |
-| `name`           | Yes       | The character's name to display in the name box. | If omitted, the name box will usually be hidden. |
-| `action`         | Yes       | For NVL mode and manual show/hide.               |                                                  |
-| `space`          | Yes       | For NVL mode.                                    |                                                  |
+| `text`           | No        | 要顯示的訊息內容。                               |                                                  |
+| `text-<locale>`  | Yes       | 要顯示的訊息內容（依語系）。                    |                                                  |
+| `voice`          | Yes       | 聲音檔案。                                       |                                                  |
+| `voice-<locale>` | Yes       | 聲音檔案（依語系）。                             |                                                  |
+| `name`           | Yes       | 要顯示在名稱框中的角色名稱。                    | 若省略，名稱框通常會隱藏。                       |
+| `action`         | Yes       | 用於 NVL 模式與手動顯示/隱藏。                  |                                                  |
+| `space`          | Yes       | 用於 NVL 模式。                                  |                                                  |
 
 ### Localization
 
-For example, if the user OS environment is set to Japanese, `text-ja` is preferred instead of `text`.
+例如，如果使用者的作業系統語系是日文，系統會優先採用 `text-ja`，而不是 `text`。
 
 | Suffix      | Language                                 |
 |-------------|------------------------------------------|
-| -en         | English (Fallback)                       |
-| -en-us      | English (America)                        |
-| -en-gb      | English (British)                        |
-| -en-au      | English (Austraria)                      |
-| -en-nz      | English (New Zealand)                    |
-| -fr         | French (Fallback)                        |
-| -fr-fr      | French (France)                          |
-| -fr-ca      | French (Canada)                          |
-| -es         | Spanish (Spain, Fallback)                |
-| -es-es      | Spanish (Spain, Fallback)                |
-| -es-la      | Spanish (Latin America)                  |
-| -de         | German                                   |
-| -it         | Italian                                  |
-| -ru         | Russian                                  |
-| -el         | Greek                                    |
-| -zh-cn      | Chinese (Simplified)                     |
-| -zh-tw      | Chinese (Traditional, Taiwan)            |
-| -ja         | Japanese                                 |
-| (no suffix) | Fallback (developer decides)             |
+| -en         | 英文（預設）                             |
+| -en-us      | 英文（美國）                             |
+| -en-gb      | 英文（英國）                             |
+| -en-au      | 英文（澳洲）                             |
+| -en-nz      | 英文（紐西蘭）                           |
+| -fr         | 法文（預設）                             |
+| -fr-fr      | 法文（法國）                             |
+| -fr-ca      | 法文（加拿大）                           |
+| -es         | 西班牙文（西班牙，預設）                 |
+| -es-es      | 西班牙文（西班牙，預設）                 |
+| -es-la      | 西班牙文（拉丁美洲）                     |
+| -de         | 德文                                     |
+| -it         | 義大利文                                 |
+| -ru         | 俄文                                     |
+| -el         | 希臘文                                   |
+| -zh-cn      | 中文（簡體）                             |
+| -zh-tw      | 中文（繁體，台灣）                       |
+| -ja         | 日文                                     |
+| （無字尾）  | 預設值（由開發者決定）                    |
 
-For English OS locales including all regions, `-en` is used as the
-default fallback.  If a more specific variant such as `-en-gb` is
-specified in a tag and best matches with the user region, it will be
-preferred. The same mechanism is applied to Spanish and French. Note
-that there is no fallback from Traditional Chinese to Simplified
-Chinese.
+對於所有英文系統語系，`-en` 會作為預設備援。
+如果標籤中指定了像 `-en-gb` 這樣更精確的變體，而且它與使用者地區最相符，就會優先採用。
+西班牙文與法文也使用相同機制。
+請注意，繁體中文不會回退到簡體中文。
 
-For example, if the user locale is `en-GB`, the following priority is applied:
+例如，如果使用者語系是 `en-GB`，會套用以下優先順序：
 * 1. text-en-gb
 * 2. text-en
 * 3. text
 
-The following are currently not supported but planned to be supported.
+以下目前尚未支援，但預計未來會支援。
 
 | Suffix      | Language                                 |
 |-------------|------------------------------------------|
@@ -792,12 +788,12 @@ The following are currently not supported but planned to be supported.
 | -ar         | Arabic (RTL)                             |
 | -fa         | Persian (RTL)                            |
 
-### Actions
+### 動作
 
-You can use special parameters in the `text` tag.
+你可以在 `text` 標籤中使用特殊參數。
 
 ```
-# Clear the message box.
+# 清除訊息框。
 [text action="clear"]
 
 # Clear the message box and show it.
@@ -915,21 +911,21 @@ If the current language is `ja`, a voice file will resolved in the following ord
 
 ## `if`
 
-Conditional Branching
+條件分支
 
-The `if` tag allows the NovelML to branch based on a specific condition. 
-By comparing variables or values, you can create unique story paths or react to previous player choices.
+`if` 標籤可讓 NovelML 根據特定條件分支。
+透過比較變數或值，你可以建立獨特的故事路徑，或對玩家先前的選擇做出反應。
 
 ### Basic Usage
 
 ```
-# Check if a variable equals a certain value
+# 檢查變數是否等於某個值
 [if lhs="${points}" op="==" rhs="100"]
-    [text text="Perfect score! You're amazing."]
+    [text text="滿分！你太棒了。"]
 [elseif lhs="${points}" op=">=" rhs="80"]
-    [text text="Great job! You passed."]
+    [text text="做得好！你過關了。"]
 [else]
-    [text text="Better luck next time."]
+    [text text="下次再接再厲。"]
 [endif]
 ```
 
@@ -937,88 +933,88 @@ By comparing variables or values, you can create unique story paths or react to 
 
 | Argument | Omissible | Description                            | Notes                                          |
 |----------|-----------|----------------------------------------|------------------------------------------------|
-| `lhs`    | No        | The Left-Hand Side of the condition.   | Usually a variable like `${var_name}`.         |
-| `op`     | No        | The operator used for comparison.      | See the "Operators" table below.               |
-| `rhs`    | No        | The Right-Hand Side of the condition.  | The value or variable to compare against.      |
+| `lhs`    | No        | 條件左側。                             | 通常是像 `${var_name}` 這樣的變數。           |
+| `op`     | No        | 用於比較的運算子。                     | 請參考下方的「運算子」表。                     |
+| `rhs`    | No        | 條件右側。                             | 要拿來比較的值或變數。                         |
 
 ### Comparison Operators (`op`)
 
-You can use these operators to define how the two sides are compared:
+你可以使用這些運算子來定義兩側的比較方式：
 
 | Operator   | Description                |
 |------------|----------------------------|
-| `===`      | Equal (String)             |
-| `==`       | Equal (Numeric)            |
-| `>`        | Greater Than (Numeric)     |
-| `>=`       | Greater Or Equal (Numeric) |
-| `<`        | Less Than (Numeric)        |
-| `<=`       | Less Or Equal (Numeric)    |
+| `===`      | 相等（字串）               |
+| `==`       | 相等（數值）               |
+| `>`        | 大於（數值）               |
+| `>=`       | 大於等於（數值）           |
+| `<`        | 小於（數值）               |
+| `<=`       | 小於等於（數值）           |
 
 ### Tips
 
-**Closing the Block**:
-* Every `[if]` block MUST end with an `[endif]` tag.
-* If you forget it, the engine might get confused about where the condition ends!
+**結束區塊**：
+* 每個 `[if]` 區塊都必須以 `[endif]` 標籤結束。
+* 如果忘了加，引擎可能會搞不清楚條件結束在哪裡！
 
-**Variable Syntax**:
-* When using a variable as the `lhs`, always wrap it in `${}`.
-* For example, use `lhs="${flag_01}"` instead of just `lhs="flag_01"`.
+**變數語法**：
+* 當你把變數用在 `lhs` 時，請一律用 `${}` 包起來。
+* 例如請使用 `lhs="${flag_01}"`，不要只寫 `lhs="flag_01"`。
 
-**Handling Strings vs. Numbers**:
-* Suika3 treats variable values as strings, but these operators allow you to perform numeric-style comparisons.
-* Just be consistent with your values (e.g., using "1" for true and "0" for false).
+**字串與數字處理**：
+* Suika3 會把變數值當成字串，但這些運算子仍可讓你進行類似數值比較。
+* 只要保持值的一致性即可（例如用 `"1"` 表示真、`"0"` 表示假）。
 
-**Multiple Branches**:
-* You can use as many `[elseif]` tags as you need between `[if]` and `[endif]` to check for multiple specific conditions.
+**多重分支**：
+* 你可以在 `[if]` 與 `[endif]` 之間使用任意多個 `[elseif]` 標籤，來檢查多個特定條件。
 
 ---
 
 ## `elseif`
 
-Additional Conditional Branching
+附加條件分支
 
-The `elseif` tag specifies an additional condition within an `[if]` block. 
-It is only evaluated if the preceding `[if]` and any previous `[elseif]` conditions were false.
+`elseif` 標籤會在 `[if]` 區塊中指定額外條件。
+只有在前面的 `[if]` 與任何先前的 `[elseif]` 條件都為假時才會進行評估。
 
 ### Basic Usage
 
 ```
 [if lhs="${rank}" op="==" rhs="A"]
-    [text text="Excellent! You're a pro."]
+    [text text="太棒了！你是高手。"]
 [elseif lhs="${rank}" op="==" rhs="B"]
-    [text text="Good job! Keep it up."]
+    [text text="做得好！繼續加油。"]
 [elseif lhs="${rank}" op="==" rhs="C"]
-    [text text="Not bad, but you can do better."]
+    [text text="不錯，但你還可以更好。"]
 [else]
-    [text text="Don't give up! Try again."]
+    [text text="別放棄！再試一次。"]
 [endif]
 ```
 
 ### Arguments
 
-Same as `[if]`. See also [if](#if).
+與 `[if]` 相同。另請參閱 [if](#if)。
 
 ### Tips
 
-**Sequential Evaluation**:
-* The engine checks conditions from top to bottom.
-* As soon as one `[if]` or `[elseif]` condition is met, its block is executed, and the rest of the branch (including other `[elseif]`s and the `[else]`) is skipped.
+**順序評估**：
+* 引擎會由上到下檢查條件。
+* 只要有一個 `[if]` 或 `[elseif]` 條件成立，就會執行其區塊，並略過其餘分支（包含其他 `[elseif]` 與 `[else]`）。
 
-**Placement**:
-* `[elseif]` must always be placed between an `[if]` tag and an `[else]` or `[endif]` tag.
-* You can use as many `[elseif]` tags as you need to cover all your bases!
+**位置**：
+* `[elseif]` 必須放在 `[if]` 標籤與 `[else]` 或 `[endif]` 標籤之間。
+* 你可以根據需要使用任意多個 `[elseif]` 標籤來涵蓋所有情況！
 
-**Efficiency**:
-* If you have a lot of conditions that check the same variable, using multiple `[elseif]` tags is much cleaner and more efficient than nesting multiple `[if]` blocks inside each other.
+**維護性**：
+* 如果有很多條件都在檢查同一個變數，使用多個 `[elseif]` 標籤會比把多個 `[if]` 區塊互相巢狀更乾淨，也更有效率。
 
 ---
 
 ## `else`
 
-Default Conditional Branch
+預設條件分支
 
-The `else` tag defines a block of code to be executed if none of the preceding `[if]` or `[elseif]` conditions were met. 
-It acts as the "default" path for your branching logic.
+`else` 標籤會定義一個當前面 `[if]` 或 `[elseif]` 條件都不成立時要執行的程式區塊。
+它會成為分支邏輯中的「預設」路徑。
 
 ### Basic Usage
 
@@ -1028,14 +1024,14 @@ It acts as the "default" path for your branching logic.
 [elseif lhs="${weather}" op="==" rhs="rainy"]
     [text text="I should bring an umbrella."]
 [else]
-    # This runs if it's not sunny OR rainy (e.g., cloudy or snowy)
-    [text text="The sky looks interesting today."]
+    # 如果不是晴天也不是雨天就會執行（例如多雲或下雪）
+    [text text="今天的天空看起來很有意思。"]
 [endif]
 ```
 
 ### Arguments
 
-This tag does not take any arguments.
+這個標籤不接受任何引數。
 
 | Argument | Omissible | Description | Notes |
 |----------|-----------|-------------|-------|
@@ -1043,26 +1039,26 @@ This tag does not take any arguments.
 
 ### Tips
 
-**Final Catch-all**:
-* Use `[else]` to handle any scenarios you didn't explicitly cover in your `[if]` or `[elseif]` checks.
-* It ensures the game always has a valid path to follow.
+**最後保底**：
+* 使用 `[else]` 來處理你在 `[if]` 或 `[elseif]` 中沒有明確涵蓋的情況。
+* 這可以確保遊戲永遠有一條可走的有效路徑。
 
-**Placement**:
-* `[else]` must be placed after all `[elseif]` tags (if any) and immediately before the `[endif]` tag.
-* You can only have one `[else]` per `[if]` block.
+**位置**：
+* `[else]` 必須放在所有 `[elseif]` 標籤之後（如果有的話），並且緊接在 `[endif]` 標籤之前。
+* 每個 `[if]` 區塊只能有一個 `[else]`。
 
-**Optional Nature**:
-* You don't *have* to include an `[else]` block.
-* If no conditions are met and there is no `[else]`, the engine will simply skip everything and continue after the `[endif]`.
+**可選性**：
+* 你不一定要包含 `[else]` 區塊。
+* 如果沒有任何條件成立，而且也沒有 `[else]`，引擎就會直接略過全部內容，繼續執行 `[endif]` 之後的部分。
 
 ---
 
 ## `endif`
 
-End Conditional Branch
+結束條件分支
 
-The `endif` tag marks the end of a conditional block started by an `[if]` tag. 
-It tells the engine to resume normal script execution after the branching logic is complete.
+`endif` 標籤會標示由 `[if]` 標籤開始的條件區塊結束。
+它會告訴引擎在分支邏輯完成後，回到正常的腳本執行流程。
 
 ### Basic Usage
 
@@ -1073,47 +1069,47 @@ It tells the engine to resume normal script execution after the branching logic 
     [text text="She greets you politely."]
 [endif]
 
-# Script execution continues here regardless of the outcome above
-[text text="The day continues..."]
+# 不論上面的結果如何，腳本都會繼續執行到這裡
+[text text="這一天仍在繼續..."]
 ```
 
 ### Arguments
 
-This tag does not take any arguments.
+這個標籤不接受任何引數。
 
 | Argument | Omissible | Description | Notes |
 |----------|-----------|-------------|-------|
 | -        | -         | -           | -     |
 
-### Tips
+### 提示
 
-**Mandatory Closing**:
-* Every single `[if]` tag must have a corresponding `[endif]`.
-* Think of them like a pair of brackets that keep your story's logic organized.
+**必要結尾**：
+* 每一個 `[if]` 標籤都必須有對應的 `[endif]`。
+* 可以把它們想成一對括號，用來維持故事邏輯的整齊。
 
-**Placement**:
-* Always place `[endif]` at the very end of your conditional sequence, following any `[elseif]` or `[else]` blocks. 
+**位置**：
+* 請一律把 `[endif]` 放在條件序列的最後，也就是所有 `[elseif]` 或 `[else]` 區塊之後。
 
-**Nesting**:
-* If you put an `[if]` inside another `[if]`, make sure each one has its own `[endif]`.
-* Proper nesting is the secret to complex, bug-free story flags!
+**巢狀**：
+* 如果你把一個 `[if]` 放在另一個 `[if]` 裡面，請確保每一個都有自己的 `[endif]`。
+* 正確的巢狀結構，是讓複雜劇情旗標不出錯的關鍵！
 
 ---
 
 ## `load`
 
-Load Script File
+載入腳本檔案
 
-The `load` tag switches the current script to a different NovelML file.
-It is primarily used to organize large stories into multiple chapters or to transition between different game parts like a title screen and the main story.
+`load` 標籤會把目前腳本切換到另一個 NovelML 檔案。
+它主要用來把大型故事整理成多個章節，或在標題畫面與主劇情等不同遊戲部分之間切換。
 
 ### Basic Usage
 
 ```
-# Load and start from the beginning of scene02.novel
+# 載入並從 scene02.novel 的開頭開始
 [load file="scene02.novel"]
 
-# Load scene02.novel and jump directly to a specific label
+# 載入 scene02.novel，並直接跳到特定標籤
 [load file="scene02.novel" label="chapter2_start"]
 ```
 
@@ -1121,37 +1117,37 @@ It is primarily used to organize large stories into multiple chapters or to tran
 
 | Argument | Omissible | Description                                      | Notes                                                   |
 |----------|-----------|--------------------------------------------------|---------------------------------------------------------|
-| `file`   | No        | The filename of the NovelML script to load.      | Must be a valid file in the project's script directory. |
-| `label`  | Yes       | The target label to jump to within the new file. | If omitted, the script starts from the very first line. |
+| `file`   | No        | 要載入的 NovelML 腳本檔案名稱。                 | 必須是專案腳本目錄中的有效檔案。                        |
+| `label`  | Yes       | 新檔案中要跳轉到的目標標籤。                     | 若省略，腳本會從第一行開始執行。                        |
 
 ### Tips
 
-**Project Organization**:
-* Instead of writing your entire game in one giant file, use `[load]` to break it down into manageable chunks like `chapter1.novel`, `chapter2.novel`, and so on.
+**專案組織**：
+* 不要把整個遊戲都寫在同一個超大檔案裡，請使用 `[load]` 將內容拆成好管理的區塊，例如 `chapter1.novel`、`chapter2.novel` 等。
 
-**Immediate Transition**:
-* When the engine hits a `[load]` tag, it stops executing the current NovelML file immediately and switches to the new one.
-* Any commands placed after `[load]` in the original file will not be executed.
+**立即切換**：
+* 當引擎碰到 `[load]` 標籤時，會立刻停止執行目前的 NovelML 檔案，並切換到新檔案。
+* 原檔案中 `[load]` 之後的任何命令都不會被執行。
 
-**Global Flags**:
-* Don't worry about your variables — any values you've set with the `[set]` tag will persist even after you load a new script file!
+**全域旗標**：
+* 不用擔心你的變數——即使載入新的腳本檔案，先前用 `[set]` 標籤設定的值仍會保留！
 
 ---
 
 ## `se`
 
-Play Sound Effect
+播放音效
 
-The `se` tag plays a sound effect (SE). 
-Sound effects are used for short audio cues like door knocks, footsteps, or UI feedback, adding a layer of immersion and realism to your scenes.
+`se` 標籤會播放音效（SE）。
+音效通常用於敲門、腳步聲或 UI 反饋這類短促聲音，能替場景增加沉浸感與真實感。
 
 ### Basic Usage
 
 ```
-# Play a sound effect once
+# 播放一次音效
 [se file="door_open.ogg"]
 
-# Stop all currently playing sound effects
+# 停止目前所有正在播放的音效
 [se file="none"]
 ```
 
@@ -1159,45 +1155,45 @@ Sound effects are used for short audio cues like door knocks, footsteps, or UI f
 
 | Argument | Omissible     | Description                               | Notes                                        |
 |----------|---------------|-------------------------------------------|----------------------------------------------|
-| `file`   | No            | The filename of the sound effect to play. | Set to `none` to stop sound effect playback. |
-| `loop`   | Yes (`false`) | Whether to loop the sound effect or not.  |                                              |
+| `file`   | No            | 要播放的音效檔案名稱。                    | 設為 `none` 可停止音效播放。                 |
+| `loop`   | Yes (`false`) | 是否循環播放音效。                        |                                              |
 
 ### Tips
 
-**Required Format**:
-* Like BGM, Suika3 requires SE files to be in **Ogg Vorbis** format.
-* The sampling rate MUST be **44,100Hz** to ensure high fidelity and compatibility.
+**必要格式**：
+* 和 BGM 一樣，Suika3 要求 SE 檔案必須是 **Ogg Vorbis** 格式。
+* 取樣率必須是 **44,100Hz**，才能確保高音質與相容性。
 
-**Layering Sounds**:
-* Sound effects can usually be played while BGM is running.
-* They occupy their own audio track so they won't interrupt your music.
+**音效疊加**：
+* 音效通常可以在 BGM 播放時一併播放。
+* 它們會佔用自己的音軌，因此不會中斷音樂。
 
-**Volume Control**:
-* To adjust the loudness of your sound effects without changing the BGM volume, use the `[volume]` tag with `track="se"`.
+**音量控制**：
+* 若要調整音效音量而不影響 BGM，請在 `[volume]` 標籤中使用 `track="se"`。
 
-**Usage for Ambience**:
-* While SE is often used for short sounds, you can also use it for looping ambient sounds (like wind or rain).
-* A looped SE is restored when a save data file is loaded.
+**環境音用途**：
+* 雖然 SE 常用於短音效，但你也可以拿來做循環的環境音（例如風聲或雨聲）。
+* 載入存檔時，循環中的 SE 會被還原。
 
 ---
 
 ## `volume`
 
-Set Audio Volume
+設定音訊音量
 
-The `volume` tag sets the sound volume for a specific audio track. 
-It's perfect for ensuring that your background music doesn't drown out important sound effects or character voices.
+`volume` 標籤會設定特定音軌的音量。
+它很適合用來確保背景音樂不會蓋過重要的音效或角色語音。
 
 ### Basic Usage
 
 ```
-# Set BGM volume to 50%
+# 將 BGM 音量設為 50%
 [volume track="bgm" volume="0.5"]
 
-# Set SE volume to maximum
+# 將 SE 音量設為最大
 [volume track="se" volume="1.0"]
 
-# Mute voices
+# 將語音靜音
 [volume track="voice" volume="0.0"]
 ```
 
@@ -1205,44 +1201,44 @@ It's perfect for ensuring that your background music doesn't drown out important
 
 | Argument | Omissible | Description                           | Notes                                     |
 |----------|-----------|---------------------------------------|-------------------------------------------|
-| `track`  | No        | The audio track to adjust.            | See the "Tracks" table below.             |
-| `volume` | No        | The volume level from `0.0` to `1.0`. | `0.0` is silent, `1.0` is maximum volume. |
-| `time`   | Yes (`0`) | Fading time in seconds.               | `0` means instant change.                 |
+| `track`  | No        | 要調整的音軌。                        | 請參考下方的「音軌」表。                  |
+| `volume` | No        | 音量大小，範圍從 `0.0` 到 `1.0`。     | `0.0` 表示靜音，`1.0` 表示最大音量。      |
+| `time`   | Yes (`0`) | 淡出/淡入時間（秒）。                 | `0` 表示立即變更。                        |
 ### Track Types (`track`)
 
-Suika3 categorizes audio into three main tracks:
+Suika3 將音訊分為三種主要音軌：
 
 | Track Name | Description                      |
 |------------|----------------------------------|
-| `bgm`      | Background Music.                |
-| `se`       | Sound Effects and system sounds. |
-| `voice`    | Character voice files.           |
+| `bgm`      | 背景音樂。                      |
+| `se`       | 音效與系統音效。                |
+| `voice`    | 角色語音檔案。                  |
 
 ### Tips
 
-**Immediate Change**:
-* The volume change happens gradually when `time` is greater than `0`.
-* `time="0"` means an immediate change.
+**立即變更**：
+* 當 `time` 大於 `0` 時，音量變更會逐漸發生。
+* `time="0"` 則表示立即變更。
 
-**Default Levels**:
-* It's a good idea to set your preferred volume levels at the start of your game (e.g., in a `start` label) so the player has a consistent experience from the beginning.
+**預設音量**：
+* 建議在遊戲一開始就設定好你偏好的音量，例如在 `start` 標籤中，讓玩家從頭就有一致的體驗。
 
 ---
 
 ## `skip`
 
-Set Skip Status
+設定快轉狀態
 
-The `skip` tag enables or disables the skipping function within the game. 
-It is useful for preventing players from skipping through important cinematic sequences or ensuring that certain scenes are experienced at the intended pace.
+`skip` 標籤可以啟用或停用遊戲中的快轉功能。
+它很適合用來避免玩家跳過重要的過場，或確保某些場景能以預定節奏體驗。
 
 ### Basic Usage
 
 ```
-# Enable the skip function
+# 啟用快轉功能
 [skip enable="true"]
 
-# Disable the skip function during a critical scene
+# 在關鍵場景中停用快轉功能
 [skip enable="false"]
 ```
 
@@ -1250,38 +1246,38 @@ It is useful for preventing players from skipping through important cinematic se
 
 | Argument | Omissible | Description                                  | Notes                                                 |
 |----------|-----------|----------------------------------------------|-------------------------------------------------------|
-| `enable` | No        | Whether the skip function is enabled or not. | Set to `true` to allow skipping, `false` to block it. |
+| `enable` | No        | 快轉功能是否啟用。                      | 設為 `true` 可允許快轉，`false` 則禁止。 |
 
 ### Tips
 
-**Cinematic Control**:
-* Skip feature is typically disabled before the title logo at startup.
+**過場控制**：
+* 快轉功能通常會在啟動畫面與標誌出現前停用。
 
-**Restoring Settings**:
-* Don't forget to set `[skip enable="true"]` once the critical scene is over.
-* Players usually appreciate having the freedom to skip through text they've already seen.
+**還原設定**：
+* 關鍵場景結束後，別忘了設定 `[skip enable="true"]`。
+* 玩家通常會喜歡能夠跳過已看過文字的自由。
 
-**System Behavior**:
-* This tag controls the overall "Skip" state of the engine.
-* Even if the player presses a skip hotkey, the engine will ignore it if `enable` is set to `false`.
+**系統行為**：
+* 這個標籤會控制引擎整體的「快轉」狀態。
+* 即使玩家按下快轉快捷鍵，只要 `enable` 設為 `false`，引擎也會忽略它。
 
 ---
 
 ## `config`
 
-Set Configuration Value
+設定組態值
 
-The `config` tag allows you to modify the game system's configuration settings directly from the markup. 
-It is essential for dynamically adjusting the game's UI, such as moving the message box or changing system-level parameters on the fly.
+`config` 標籤可以直接在標記中修改遊戲系統的設定。
+它對於動態調整遊戲 UI 非常重要，例如移動訊息框或即時修改系統層級參數。
 
 ### Basic Usage
 
 ```
-# Change the position of the message box
+# 變更訊息框位置
 [config name="msgbox.x" value="100"]
 [config name="msgbox.y" value="200"]
 
-# Update a specific system setting
+# 更新特定系統設定
 [config name="msgbox.font.size" value="24"]
 ```
 
@@ -1289,42 +1285,42 @@ It is essential for dynamically adjusting the game's UI, such as moving the mess
 
 | Argument | Omissible | Description                                        | Notes                                                    |
 |----------|-----------|----------------------------------------------------|----------------------------------------------------------|
-| `name`   | No        | The name of the configuration parameter to change. | Refer to the system's config list for valid names.       |
-| `value`  | No        | The new value to assign to the parameter.          | Values are handled as strings but may represent numbers. |
+| `name`   | No        | 要變更的設定參數名稱。                   | 請參考系統的設定清單以確認合法名稱。       |
+| `value`  | No        | 要指派給參數的新值。                     | 值會以字串處理，但也可能代表數字。         |
 
 ### Tips
 
-**UI Customization**:
-* You can use `[config]` to reposition the message box during specific scenes to create a more cinematic feel.
+**UI 自訂**：
+* 你可以在特定場景中使用 `[config]` 重新定位訊息框，營造更具電影感的效果。
 
-**Dynamic Adjustments**:
-* Since this tag can be called anywhere in your script, you can change the game's "look and feel" as the story progresses.
-* For example, shifting the UI for a "flashback" sequence.
+**動態調整**：
+* 因為這個標籤可以在腳本中的任何地方呼叫，所以你可以隨著故事推進改變遊戲的「外觀與手感」。
+* 例如為「回憶」段落調整 UI。
 
-**Parameter Names**:
-* Be careful with the `name` argument!
-* It must exactly match the internal configuration keys defined in your Suika3 project settings.
-* See also [the complete list of the configurations](config.md)
+**參數名稱**：
+* `name` 引數要特別小心！
+* 它必須與你的 Suika3 專案設定中定義的內部設定鍵完全一致。
+* 另請參閱 [完整設定列表](config.md)
 
 ---
 
 ## `layer`
 
-Direct Layer Manipulation
+直接操作圖層
 
-The `layer` tag allows for direct control over specific image and text layers. 
-While tags like `[bg]` and `[ch]` are easier for standard scenes, `[layer]` gives you the precision to modify any individual layer's position, scale, and rotation independently.
+`layer` 標籤可以直接控制特定的圖片與文字圖層。
+雖然像 `[bg]` 和 `[ch]` 這類標籤更適合一般場景，但 `[layer]` 能讓你精準地獨立修改任一圖層的位置、縮放與旋轉。
 
 ### Basic Usage
 
 ```
-# Load an image directly onto the center character layer (chc)
+# 直接將圖片載入中央角色圖層（chc）
 [layer name="chc" file="heroine_smile.png"]
 
-# Adjust only the position and opacity of the background (bg)
+# 只調整背景（bg）的位置與透明度
 [layer name="bg" x="100" y="100" alpha="128"]
 
-# Rotate the face layer
+# 旋轉臉部圖層
 [layer name="chf" rotate="45.0" center-x="100" center-y="100"]
 ```
 
@@ -1332,166 +1328,166 @@ While tags like `[bg]` and `[ch]` are easier for standard scenes, `[layer]` give
 
 | Argument  | Omissible   | Description                          | Notes                              |
 |-----------|-------------|--------------------------------------|------------------------------------|
-| `name`    | No          | The target layer name.               | See the "Layer Names" table below. |
-| `file`    | Yes         | The filename to load onto the layer. | Use `none` to clear the layer.     |
-| `x`       | Yes (`0`)   | The layer's X position.              |                                    |
-| `y`       | Yes (`0`)   | The layer's Y position.              |                                    |
-| `alpha`   | Yes (`255`) | The layer's opacity level.           | `0` to `255`.                      |
-| `scale-x` | Yes (`1.0`) | X-axis scaling factor.               | `1.0` is original size.            |
-| `scale-y` | Yes (`1.0`) | Y-axis scaling factor.               | `1.0` is original size.            |
-| `center-x`| Yes (`0`)   | Rotation center (X).                 | Pivot point for rotation.          |
-| `center-y`| Yes (`0`)   | Rotation center (Y).                 | Pivot point for rotation.          |
-| `rotate`  | Yes (`0.0`) | Rotation in degrees.                 | Positive for clockwise.            |
+| `name`    | No          | 目標圖層名稱。                       | 另請參閱下方的「圖層名稱」表。     |
+| `file`    | Yes         | 要載入到圖層上的檔案名稱。           | 使用 `none` 可清除圖層。           |
+| `x`       | Yes (`0`)   | 圖層的 X 座標。                      |                                    |
+| `y`       | Yes (`0`)   | 圖層的 Y 座標。                      |                                    |
+| `alpha`   | Yes (`255`) | 圖層的不透明度。                     | `0` 到 `255`。                     |
+| `scale-x` | Yes (`1.0`) | X 軸縮放倍率。                       | `1.0` 為原始大小。                |
+| `scale-y` | Yes (`1.0`) | Y 軸縮放倍率。                       | `1.0` 為原始大小。                |
+| `center-x`| Yes (`0`)   | 旋轉中心（X）。                     | 旋轉的樞軸點。                    |
+| `center-y`| Yes (`0`)   | 旋轉中心（Y）。                     | 旋轉的樞軸點。                    |
+| `rotate`  | Yes (`0.0`) | 旋轉角度（度）。                     | 正值代表順時針。                  |
 
 ### Common Layer Names (`name`)
 
-Suika3 has a rich set of predefined layers.
+Suika3 內建了相當豐富的預定義圖層。
 
-Here are the complete list of the layers:
+以下是完整圖層清單：
 
-|Layer Name       |Description                              |
+|圖層名稱         |說明                                      |
 |-----------------|-----------------------------------------|
-|bg               |Background Image                         |
-|bg2              |Background Image 2                       |
-|efb1             |Back Effect 1                            |
-|efb2             |Back Effect 2                            |
-|efb3             |Back Effect 3                            |
-|efb4             |Back Effect 4                            |
-|chb              |Center-Back Character                    |
-|chb-eye          |Center-Back Character's Eyes             |
-|chb-lip          |Center-Back Character's Lips             |
-|chb-fo           |Fading-Out Center-Back Character         |
-|chl              |Left Character                           |
-|chl-eye          |Left Character's Eyes                    |
-|chl-lip          |Left Character's Lips                    |
-|chl-fo           |Fading-Out Left Character                |
-|chlc             |Left-Center Character                    |
-|chlc-eye         |Left-Center Character's Eyes             |
-|chlc-lip         |Left-Center Character's Lips             |
-|chlc-fo          |Fading-Out Left-Center Character         |
-|chr              |Right Character                          |
-|chr-eye          |Right Character's Eyes                   |
-|chr-lip          |Right Character's Lips                   |
-|chr-fo           |Fading-Out Right Character               |
-|chrc             |Right-Center Character                   |
-|chrc-eye         |Right-Center Character's Eyes            |
-|chrc-lip         |Right-Center Character's Lips            |
-|chrc-fo          |Fading-Out Right-Center Character        |
-|chc              |Center Character                         |
-|chc-eye          |Center Character's Eyes                  |
-|chc-lip          |Center Character's Lips                  |
-|chc-fo           |Fading-Out Center Character              |
-|msgbox           |Message box (Invisible to `[layer]`)     |
-|namebox          |Name box (Invisible to `[layer]`)        |
-|click            |Click animation (Invisible to `[layer]`) |
-|eff1             |Front Effect 1                           |
-|eff2             |Front Effect 2                           |
-|eff3             |Front Effect 3                           |
-|eff4             |Front Effect 4                           |
-|chf              |Face Character                           |
-|chf-eye          |Face Character's Eyes                    |
-|chf-lip          |Face Character's Lips                    |
-|chf-fo           |Fading-Out Face Character                |
-|text1            |Text Layer 1                             |
-|text2            |Text Layer 2                             |
-|text3            |Text Layer 3                             |
-|text4            |Text Layer 4                             |
-|text5            |Text Layer 5                             |
-|text6            |Text Layer 6                             |
-|text7            |Text Layer 7                             |
-|text8            |Text Layer 8                             |
-|gui1             |GUI Button 1 (Invisible to `[layer]`)    |
-|gui2             |GUI Button 2 (Invisible to `[layer]`)    |
-|gui3             |GUI Button 3 (Invisible to `[layer]`)    |
-|gui4             |GUI Button 4 (Invisible to `[layer]`)    |
-|gui5             |GUI Button 5 (Invisible to `[layer]`)    |
-|gui6             |GUI Button 6 (Invisible to `[layer]`)    |
-|gui7             |GUI Button 7 (Invisible to `[layer]`)    |
-|gui8             |GUI Button 8 (Invisible to `[layer]`)    |
-|gui9             |GUI Button 9 (Invisible to `[layer]`)    |
-|gui10            |GUI Button 10 (Invisible to `[layer]`)   |
-|gui11            |GUI Button 11 (Invisible to `[layer]`)   |
-|gui12            |GUI Button 12 (Invisible to `[layer]`)   |
-|gui13            |GUI Button 13 (Invisible to `[layer]`)   |
-|gui14            |GUI Button 14 (Invisible to `[layer]`)   |
-|gui15            |GUI Button 15 (Invisible to `[layer]`)   |
-|gui16            |GUI Button 16 (Invisible to `[layer]`)   |
-|gui17            |GUI Button 17 (Invisible to `[layer]`)   |
-|gui18            |GUI Button 18 (Invisible to `[layer]`)   |
-|gui19            |GUI Button 19 (Invisible to `[layer]`)   |
-|gui20            |GUI Button 20 (Invisible to `[layer]`)   |
-|gui21            |GUI Button 21 (Invisible to `[layer]`)   |
-|gui22            |GUI Button 22 (Invisible to `[layer]`)   |
-|gui23            |GUI Button 23 (Invisible to `[layer]`)   |
-|gui24            |GUI Button 24 (Invisible to `[layer]`)   |
-|gui25            |GUI Button 25 (Invisible to `[layer]`)   |
-|gui26            |GUI Button 26 (Invisible to `[layer]`)   |
-|gui27            |GUI Button 27 (Invisible to `[layer]`)   |
-|gui28            |GUI Button 28 (Invisible to `[layer]`)   |
-|gui29            |GUI Button 29 (Invisible to `[layer]`)   |
-|gui30            |GUI Button 30 (Invisible to `[layer]`)   |
-|gui31            |GUI Button 31 (Invisible to `[layer]`)   |
-|gui32            |GUI Button 32 (Invisible to `[layer]`)   |
+|bg               |背景圖像。                                |
+|bg2              |背景圖像 2。                              |
+|efb1             |後景效果 1。                              |
+|efb2             |後景效果 2。                              |
+|efb3             |後景效果 3。                              |
+|efb4             |後景效果 4。                              |
+|chb              |後中角色。                                |
+|chb-eye          |後中角色眼睛。                            |
+|chb-lip          |後中角色嘴唇。                            |
+|chb-fo           |淡出中的後中角色。                        |
+|chl              |左側角色。                                |
+|chl-eye          |左側角色眼睛。                            |
+|chl-lip          |左側角色嘴唇。                            |
+|chl-fo           |淡出中的左側角色。                        |
+|chlc             |左中角色。                                |
+|chlc-eye         |左中角色眼睛。                            |
+|chlc-lip         |左中角色嘴唇。                            |
+|chlc-fo          |淡出中的左中角色。                        |
+|chr              |右側角色。                                |
+|chr-eye          |右側角色眼睛。                            |
+|chr-lip          |右側角色嘴唇。                            |
+|chr-fo           |淡出中的右側角色。                        |
+|chrc             |右中角色。                                |
+|chrc-eye         |右中角色眼睛。                            |
+|chrc-lip         |右中角色嘴唇。                            |
+|chrc-fo          |淡出中的右中角色。                        |
+|chc              |中央角色。                                |
+|chc-eye          |中央角色眼睛。                            |
+|chc-lip          |中央角色嘴唇。                            |
+|chc-fo           |淡出中的中央角色。                        |
+|msgbox           |訊息框（`[layer]` 無法看見）。            |
+|namebox          |名稱框（`[layer]` 無法看見）。            |
+|click            |點擊動畫（`[layer]` 無法看見）。          |
+|eff1             |前景效果 1。                              |
+|eff2             |前景效果 2。                              |
+|eff3             |前景效果 3。                              |
+|eff4             |前景效果 4。                              |
+|chf              |臉部角色。                                |
+|chf-eye          |臉部角色眼睛。                            |
+|chf-lip          |臉部角色嘴唇。                            |
+|chf-fo           |淡出中的臉部角色。                        |
+|text1            |文字圖層 1。                              |
+|text2            |文字圖層 2。                              |
+|text3            |文字圖層 3。                              |
+|text4            |文字圖層 4。                              |
+|text5            |文字圖層 5。                              |
+|text6            |文字圖層 6。                              |
+|text7            |文字圖層 7。                              |
+|text8            |文字圖層 8。                              |
+|gui1             |GUI 按鈕 1（`[layer]` 無法看見）。        |
+|gui2             |GUI 按鈕 2（`[layer]` 無法看見）。        |
+|gui3             |GUI 按鈕 3（`[layer]` 無法看見）。        |
+|gui4             |GUI 按鈕 4（`[layer]` 無法看見）。        |
+|gui5             |GUI 按鈕 5（`[layer]` 無法看見）。        |
+|gui6             |GUI 按鈕 6（`[layer]` 無法看見）。        |
+|gui7             |GUI 按鈕 7（`[layer]` 無法看見）。        |
+|gui8             |GUI 按鈕 8（`[layer]` 無法看見）。        |
+|gui9             |GUI 按鈕 9（`[layer]` 無法看見）。        |
+|gui10            |GUI 按鈕 10（`[layer]` 無法看見）。       |
+|gui11            |GUI 按鈕 11（`[layer]` 無法看見）。       |
+|gui12            |GUI 按鈕 12（`[layer]` 無法看見）。       |
+|gui13            |GUI 按鈕 13（`[layer]` 無法看見）。       |
+|gui14            |GUI 按鈕 14（`[layer]` 無法看見）。       |
+|gui15            |GUI 按鈕 15（`[layer]` 無法看見）。       |
+|gui16            |GUI 按鈕 16（`[layer]` 無法看見）。       |
+|gui17            |GUI 按鈕 17（`[layer]` 無法看見）。       |
+|gui18            |GUI 按鈕 18（`[layer]` 無法看見）。       |
+|gui19            |GUI 按鈕 19（`[layer]` 無法看見）。       |
+|gui20            |GUI 按鈕 20（`[layer]` 無法看見）。       |
+|gui21            |GUI 按鈕 21（`[layer]` 無法看見）。       |
+|gui22            |GUI 按鈕 22（`[layer]` 無法看見）。       |
+|gui23            |GUI 按鈕 23（`[layer]` 無法看見）。       |
+|gui24            |GUI 按鈕 24（`[layer]` 無法看見）。       |
+|gui25            |GUI 按鈕 25（`[layer]` 無法看見）。       |
+|gui26            |GUI 按鈕 26（`[layer]` 無法看見）。       |
+|gui27            |GUI 按鈕 27（`[layer]` 無法看見）。       |
+|gui28            |GUI 按鈕 28（`[layer]` 無法看見）。       |
+|gui29            |GUI 按鈕 29（`[layer]` 無法看見）。       |
+|gui30            |GUI 按鈕 30（`[layer]` 無法看見）。       |
+|gui31            |GUI 按鈕 31（`[layer]` 無法看見）。       |
+|gui32            |GUI 按鈕 32（`[layer]` 無法看見）。       |
 
 ### Tips
 
-**Precision Control**:
-* Use `[layer]` when you want to load an image to a layer manually when you're working with custom effect layers (`eff1` etc.) that don't have dedicated tags.
+**精準控制**：
+* 當你在處理沒有專用標籤的自訂效果圖層（例如 `eff1` 等）時，可以用 `[layer]` 手動將圖片載入圖層。
 
-**Instant Updates**:
-* Unlike `[ch]` or `[bg]`, the `layer` tag usually updates the screen instantly.
-* If you want to animate these changes over time, you should use the `[move]` tag instead!
+**即時更新**：
+* 和 `[ch]` 或 `[bg]` 不同，`layer` 標籤通常會立即更新畫面。
+* 如果你想讓這些變化隨時間動畫化，應該改用 `[move]` 標籤。
 
-**Layer Hierarchy**:
-* Remember that layers are stacked.
-* For example, `chf` (Face Character) is always rendered in front of `chc` (Center Character).
-* Understanding this "Z-order" is key to complex visual compositions.
+**圖層階層**：
+* 請記住圖層是疊放的。
+* 例如 `chf`（臉部角色）永遠會渲染在 `chc`（中央角色）前方。
+* 理解這個「Z 順序」是建立複雜視覺構圖的關鍵。
 
 ---
 
 ## `move`
 
-Animate Layer
+圖層動畫
 
-The `move` tag animates specific layers over a set duration.
-It is perfect for creating sliding effects, zooming in on characters, or rotating screen elements to add dynamic energy to your scenes.
+`move` 標籤會在指定時間內讓特定圖層產生動畫。
+它很適合做滑動效果、角色拉近，或旋轉螢幕元素，為場景加入動態感。
 
 ### Basic Usage
 
 ```
-# Move the center character to a new position over 2.0 seconds
+# 在 2.0 秒內將中央角色移到新位置
 [move time="2.0" center-x="150" center-y="100"]
 
-# Relative movement: Nudge the background 50px to the right
+# 相對移動：把背景往右推 50 像素
 [move time="1.0" bg-x="r50"]
 
-# Gradually fade out a layer while rotating it
+# 在旋轉圖層的同時逐漸淡出
 [move time="3.0" face-alpha="0" face-rotate="r360"]
 ```
 
 ### Arguments
 
-**Common:**
+**共通：**
 | Argument         | Omissible     | Description                               | Notes                                      |
 |------------------|---------------|-------------------------------------------|--------------------------------------------|
-| `name`           | No            | The target layer to animate.              | See the "Moveable Layers" table below.     |
-| `time`           | No            | The duration of the animation in seconds. | Supports decimal values (e.g., `0.5`).     |
-| `async`          | Yes (`false`) | If `true`, do non-blocking animation.     |                                            |
-| `accel`          | Yes (`normal`)| Acceleration type.                        | One of                                     |
+| `name`           | No            | 要動畫化的目標圖層。                      | 另請參閱下方的「可移動圖層」表。          |
+| `time`           | No            | 動畫持續時間（秒）。                      | 支援小數值（例如 `0.5`）。               |
+| `async`          | Yes (`false`) | 若為 `true`，則非阻塞執行動畫。           |                                            |
+| `accel`          | Yes (`normal`)| 加速度類型。                              | 其一                                       |
 | (layer)-(suffix) | Yes           |                                           |                                            |
 
 **(layer):**
 | Argument       | Description                               |
 |----------------|-------------------------------------------|
-| `bg`           | Background layer.                         |
-| `bg2`          | Background 2.                             |
-| `back          | Back-Center character.                    |
-| `left`         | Left character.                           |
-| `right`        | Right character.                          |
-| `center`       | Center character.                         |
-| `left-center`  | Left-Center character.                    |
-| `right-center` | Intermediate character.                   |
-| `face`         | Face character.                           |
+| `bg`           | 背景圖層。                                |
+| `bg2`          | 背景 2。                                  |
+| `back`         | 後中角色。                                |
+| `left`         | 左側角色。                                |
+| `right`        | 右側角色。                                |
+| `center`       | 中央角色。                                |
+| `left-center`  | 左中角色。                                |
+| `right-center` | 右中角色。                                |
+| `face`         | 臉部角色。                                |
 
 **(suffix):**
 | Suffix      | Omissible     | Description                | Notes                                                         |
@@ -1508,23 +1504,23 @@ It is perfect for creating sliding effects, zooming in on characters, or rotatin
 
 ### Tips
 
-**Non-blocking Animation (`async="true")`**:
-* The script continues to the next command immediately after starting a `[move]`.
-* If you want the script to wait until the animation finishes, follow it with a `[wait]` tag using the same `time` value.
+**非阻塞動畫（`async="true"`）**：
+* 腳本會在開始 `[move]` 後立刻繼續執行下一個命令。
+* 如果你想讓腳本等到動畫結束，可以在後面接一個 `[wait]` 標籤，並使用相同的 `time` 值。
 
-**Relative Transformations**:
-* Using the `r` prefix (e.g., `x="r100"`) is incredibly useful for repetitive motions, like making a character "jump" or "shake" without calculating absolute coordinates.
+**相對變換**：
+* 使用 `r` 前綴（例如 `x="r100"`）對重複動作非常有用，例如讓角色「跳動」或「晃動」，而不必計算絕對座標。
 
-**Visual Polish**:
-* Combine `scale-x` and `scale-y` with `move` to create "zoom-in" effects on a character's face for dramatic close-ups!
+**視覺修飾**：
+* 把 `scale-x` 和 `scale-y` 與 `move` 結合，可以在角色臉部上做出「放大」效果，營造戲劇性的特寫。
 
 ---
 
 ## `pencil`
 
-Pencil
+鉛筆
 
-Draw a text on a layer.
+在圖層上繪製文字。
 
 ### Basic Usage
 
@@ -1536,40 +1532,40 @@ Draw a text on a layer.
 
 | Argument      | Omissible        | Description              |
 |---------------|------------------|--------------------------|
-| text          | No               | Text to draw.            |
-| layer         | Yes (`text1`)    | Layer name.              |
-| font-type     | Yes (`0`)        | Font selection. (0-3)    |
-| font-size     | Yes (`16`)       | Font size.               |
-| color         | Yes (`#000000`)  | Font color.              |
-| outline-width | Yes (`0`)        | Font outline width.      |
-| outline-color | Yes (`#ffffff`)  | Font outline color.      |
-| line-margin   | Yes              | Line margin.             |
-| char-margin   | Yes (`0`)        | Character margin.        |
-| x             | Yes (`0`)        | Drawing area X position. |
-| y             | Yes (`0`)        | Drawing area Y position. |
-| width         | Yes              | Drawing area width.      |
-| height        | Yes              | Drawing area height.     |
+| text          | No               | 要繪製的文字。           |
+| layer         | Yes (`text1`)    | 圖層名稱。               |
+| font-type     | Yes (`0`)        | 字型選擇。（0-3）        |
+| font-size     | Yes (`16`)       | 字型大小。               |
+| color         | Yes (`#000000`)  | 字型顏色。               |
+| outline-width | Yes (`0`)        | 字型外框寬度。           |
+| outline-color | Yes (`#ffffff`)  | 字型外框顏色。           |
+| line-margin   | Yes              | 行距。                   |
+| char-margin   | Yes (`0`)        | 字元間距。               |
+| x             | Yes (`0`)        | 繪製區域 X 座標。        |
+| y             | Yes (`0`)        | 繪製區域 Y 座標。        |
+| width         | Yes              | 繪製區域寬度。           |
+| height        | Yes              | 繪製區域高度。           |
 
 ## Supported Layer Name
 
 |Layer Name       |Description                              |
 |-----------------|-----------------------------------------|
-|bg               |Background Image                         |
-|bg2              |Background Image 2                       |
-|efb1             |Back Effect 1                            |
-|efb2             |Back Effect 2                            |
-|efb3             |Back Effect 3                            |
-|efb4             |Back Effect 4                            |
-|chb              |Center-Back Character                    |
-|chl              |Left Character                           |
-|chlc             |Left-Center Character                    |
-|chr              |Right Character                          |
-|chrc             |Right-Center Character                   |
-|chc              |Center Character                         |
-|eff1             |Front Effect 1                           |
-|eff2             |Front Effect 2                           |
-|eff3             |Front Effect 3                           |
-|eff4             |Front Effect 4                           |
+|bg               |背景圖像。                                |
+|bg2              |背景圖像 2。                              |
+|efb1             |後景效果 1。                              |
+|efb2             |後景效果 2。                              |
+|efb3             |後景效果 3。                              |
+|efb4             |後景效果 4。                              |
+|chb              |後中角色。                                |
+|chl              |左側角色。                                |
+|chlc             |左中角色。                                |
+|chr              |右側角色。                                |
+|chrc             |右中角色。                                |
+|chc              |中央角色。                                |
+|eff1             |前景效果 1。                              |
+|eff2             |前景效果 2。                              |
+|eff3             |前景效果 3。                              |
+|eff4             |前景效果 4。                              |
 |chf              |Face Character                           |
 |text1            |Text Layer 1                             |
 |text2            |Text Layer 2                             |
@@ -1584,10 +1580,10 @@ Draw a text on a layer.
 
 ## `returnmacro`
 
-Return from Macro
+從巨集返回
 
-The `returnmacro` tag immediately exits the current macro and returns the script execution to the line following the original `[callmacro]` tag.
-It is particularly useful for stopping a macro early based on specific conditions within an `[if]` block.
+`returnmacro` 標籤會立刻結束目前的巨集，並將腳本執行返回到原始 `[callmacro]` 標籤後的那一行。
+它特別適合在 `[if]` 區塊中，依特定條件提前停止巨集。
 
 ### Basic Usage
 
@@ -1598,8 +1594,8 @@ It is particularly useful for stopping a macro early based on specific condition
         [returnmacro]
     [endif]
 
-    # This part only runs if has_key is true
-    [text text="You unlocked the door with the key!"]
+    # 只有在 has_key 為真時才會執行這一段
+    [text text="你用鑰匙打開了門！"]
 [endmacro]
 ```
 
@@ -1611,35 +1607,35 @@ This tag does not take any arguments.
 |----------|-----------|-------------|-------|
 | -        | -         | -           | -     |
 
-### Tips
+### 提示
 
-**Early Exit**:
-* Use `[returnmacro]` inside an `[if]` block to skip the rest of a macro's commands if a certain condition is met.
-* This keeps your macros flexible and powerful!
+**提前退出**：
+* 在 `[if]` 區塊中使用 `[returnmacro]`，可在滿足條件時跳過巨集的其餘命令。
+* 這會讓你的巨集更有彈性，也更強大。
 
-**Implicit Return**:
-* You don't actually need to put `[returnmacro]` at the very end of every macro.
-* Once the engine hits the `[endmacro]` tag, it will return to the main script automatically.
+**隱式返回**：
+* 你其實不必在每個巨集的最後都放 `[returnmacro]`。
+* 一旦引擎碰到 `[endmacro]` 標籤，就會自動返回主腳本。
 
-**Flow Control**:
-* Remember that this tag only exits the *current* macro. It doesn't stop the whole game or jump to a different label—it just sends you back to where the macro was called from.
+**流程控制**：
+* 請記得，這個標籤只會結束「目前」的巨集。它不會停止整個遊戲，也不會跳到其他標籤，只會把你送回巨集被呼叫的地方。
 
 ---
 
 ## `video`
 
-Play Video
+播放影片
 
-The `video` tag plays a movie file on the screen.
-It is ideal for opening cinematics, transitional cutscenes, or high-impact visual effects that are best rendered as full-motion video.
+`video` 標籤會在畫面上播放影片檔。
+它非常適合用於開場動畫、轉場過場，或最適合以動態影片呈現的高衝擊視覺效果。
 
 ### Basic Usage
 
 ```
-# Play an opening movie (cannot be skipped)
+# 播放開場影片（不可跳過）
 [video file="opening.mp4"]
 
-# Play a short cutscene that the player can skip with a click.
+# 播放一段可由玩家點擊跳過的短過場。
 [video file="cutscene01.mp4" skippable="true"]
 ```
 
@@ -1647,40 +1643,40 @@ It is ideal for opening cinematics, transitional cutscenes, or high-impact visua
 
 | Argument    | Omissible     | Description                                           | Notes                                                         |
 |-------------|---------------|-------------------------------------------------------|---------------------------------------------------------------|
-| `file`      | No            | The filename of the video to play.                    | The file must be in a supported format (e.g., .mp4).          |
-| `skippable` | Yes (`false`) | Whether the video can be skipped by a player's click. | Set to `false` to force the player to watch the entire video. |
+| `file`      | No            | 要播放的影片檔案名稱。                                | 檔案必須是支援的格式（例如 .mp4）。                        |
+| `skippable` | Yes (`false`) | 影片是否可由玩家點擊跳過。                            | 設為 `false` 可強制玩家看完整段影片。                    |
 
 ### Tips
 
-**File Support**:
-* Ensure your video file is .mp4 (H.264 + AAC) format.
-* If you want to support 32-bit Windows, prepare .wmv file alongside .mp4 file, then remove extension e.g., `[video file="opening"]`.
+**檔案支援**：
+* 請確認你的影片檔是 .mp4（H.264 + AAC）格式。
+* 如果你要支援 32 位元 Windows，請另外準備 .wmv 檔，再與 .mp4 檔一同提供；此時可省略副檔名，例如 `[video file="opening"]`。
 
-**Transitioning**:
-* Once the video finishes playing (or is skipped), the engine automatically proceeds to the next command in your script.
-* It's often a good idea to follow a `[video]` tag with a `[bg]` tag to ensure the screen looks exactly how you want it after the movie ends.
+**轉場**：
+* 影片播放完畢（或被跳過）後，引擎會自動繼續執行腳本中的下一個命令。
+* 通常會建議在 `[video]` 標籤後接一個 `[bg]` 標籤，確保影片結束後畫面正好符合你的預期。
 
-**Audio in Video**:
-* Most video files include their own audio track.
-* Keep in mind that this audio will play alongside any `[bgm]` you have running.
-* You might want to stop the music with `[bgm file="none"]` before starting a video with sound!
+**影片中的音訊**：
+* 大多數影片檔都會包含自己的音軌。
+* 請記得，這個音訊會和正在播放的 `[bgm]` 一起播放。
+* 如果影片本身有聲音，你可能會想在開始播放前先用 `[bgm file="none"]` 停掉音樂。
 
 ---
 
 ## `wait`
 
-Wait for Time
+等待時間
 
-The `wait` tag pauses the NovelML execution for a specified duration.
-It is essential for controlling the pacing of visual transitions, creating dramatic pauses, or timing effects without requiring player input.
+`wait` 標籤會暫停 NovelML 的執行一段指定時間。
+它對於控制視覺轉場節奏、製造戲劇性停頓，或在不需要玩家輸入的情況下精準控制時機都很重要。
 
 ### Basic Usage
 
 ```
-# Pause for 1.5 seconds before the next command
+# 在下一個命令前暫停 1.5 秒
 [wait time="1.5"]
 
-# Create a brief pause between character changes
+# 在角色變更之間製造短暫停頓
 [ch center="chara01_surprised.png" time="0.5"]
 [wait time="1.0"]
 [text text="She couldn't believe her eyes."]
@@ -1690,20 +1686,19 @@ It is essential for controlling the pacing of visual transitions, creating drama
 
 | Argument      | Omissible     | Description                    | Notes                                  |
 |---------------|---------------|--------------------------------|----------------------------------------|
-| `time`        | No            | The number of seconds to wait. | Supports decimal values (e.g., `0.5`). |
-| `hidemsgbox`  | Yes (`false`) | Force hide the message box.    |                                        |
-| `hidenamebox` | Yes (`false`) | Force hide the name box.       |                                        |
+| `time`        | No            | 要等待的秒數。                 | 支援小數值（例如 `0.5`）。             |
+| `hidemsgbox`  | Yes (`false`) | 強制隱藏訊息框。               |                                        |
+| `hidenamebox` | Yes (`false`) | 強制隱藏名稱框。               |                                        |
 
 ### Tips
 
-**Non-interactive Pause**:
-* Unlike `[click]`, which waits for the player to act, `[wait]` continues automatically once the time is up. 
-* This is perfect for "auto-playing" segments or timed visual sequences.
+**非互動停頓**：
+* 和等待玩家操作的 `[click]` 不同，`[wait]` 會在時間到後自動繼續。
+* 這很適合用在「自動播放」段落或有時間限制的視覺序列。
 
-**Combining with Animations**:
-* If you use a `[ch]` or `[bg]` tag with a `time` argument, the engine moves to the next command immediately while the animation plays. 
-* Use `[wait]` after an animation if you want the script to stop until the animation is finished (or even longer for dramatic effect).
+**與動畫搭配**：
+* 如果你在 `[ch]` 或 `[bg]` 標籤中使用 `time` 引數，引擎會在動畫播放時立即前往下一個命令。
+* 若你想讓腳本停在動畫結束前，或停得更久以營造戲劇效果，可以在動畫後加上 `[wait]`。
 
-**User Experience**:
-* Be careful not to make `[wait]` times too long (like more than 3 seconds) without a visual reason, or the player might think the game has frozen!
-
+**使用者體驗**：
+* 請小心不要在沒有視覺理由的情況下，把 `[wait]` 設太久（例如超過 3 秒），不然玩家可能會以為遊戲卡住了！

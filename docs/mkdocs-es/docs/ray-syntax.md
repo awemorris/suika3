@@ -1,17 +1,17 @@
-Ray Syntax Reference
+Referencia de sintaxis de rayos
 ====================
 
-`Ray` is actually the `Noct` programming language with additional Suika3 APIs.
+`Ray` es en realidad el lenguaje de programación `Noct` con API Suika3 adicionales.
 
-## Assignments
+## Asignaciones
 
-Variables in Noct are dynamically typed and don't require explicit
-declaration. The assignment operator (`=`) is used to create and
-assign values to variables.
+Las variables en Noct se escriben dinámicamente y no requieren
+declaración. El operador de asignación (`=`) se utiliza para crear y
+asignar valores a las variables.
 
-As shown in the example below, Noct supports various data types
-including integers, floating-point numbers, and strings. Variables can
-be reassigned to different types at any time during execution.
+Como se muestra en el siguiente ejemplo, Noct admite varios tipos de datos
+incluidos números enteros, números de punto flotante y cadenas. Las variables pueden
+reasignarse a diferentes tipos en cualquier momento durante la ejecución.
 
 ```
 func main() {
@@ -26,10 +26,10 @@ func main() {
 }
 ```
 
-## Global Variables
+## Variables globales
 
-Global variables can be defined in functions, and cannot be defined
-outside of functions.
+Las variables globales se pueden definir en funciones y no se pueden definir
+fuera de funciones.
 
 ```
 func main() {
@@ -38,11 +38,11 @@ func main() {
 }
 ```
 
-## Local Variables
+## Variables locales
 
-Using the `var` keyword allows you to declare a variable as
-local. Without `var` declaration, assigning to a variable may create a
-global variable.
+El uso de la palabra clave `var` le permite declarar una variable como
+locales. Sin la declaración `var`, la asignación a una variable crea una
+variables globales.
 
 ```
 func main() {
@@ -51,11 +51,11 @@ func main() {
 }
 ```
 
-## Array
+## Matriz
 
-Arrays are ordered collections of values, accessed by index. Arrays
-support iteration through the `for` loop construct, allowing you to
-iterate through each value directly.
+Las matrices son colecciones ordenadas de valores, a las que se accede por índice. matrices
+admite la iteración a través de la construcción del bucle `for`, lo que le permite
+iterar a través de cada valor directamente.
 
 ```
 func main() {
@@ -66,8 +66,8 @@ func main() {
 }
 ```
 
-Arrays can hold values of different types simultaneously, reflecting
-the dynamic typing system.
+Las matrices pueden contener valores de diferentes tipos simultáneamente, lo que refleja
+El sistema de escritura dinámica.
 
 ```
 func main() {
@@ -75,8 +75,8 @@ func main() {
 }
 ```
 
-The language provides a built-in function `push()` to add elements to
-the end of an array.  Also, `pop()` removes the final element.
+El lenguaje proporciona una función incorporada `push()` para agregar elementos a
+el final de una matriz.  Además, `pop()` elimina el elemento final.
 
 ```
 func main() {
@@ -91,12 +91,12 @@ func main() {
 }
 ```
 
-## Dictionary
+## Diccionario
 
-Dictionaries store key-value pairs, similar to hash maps or objects in
-other languages. They are defined using curly braces with key-value
-pairs separated by colons. Dictionaries support iteration where both
-the key and value can be accessed simultaneously.
+Los diccionarios almacenan pares clave-valor, similares a mapas hash u objetos en
+otros idiomas. Se definen mediante llaves con clave-valor.
+pares separados por dos puntos. Los diccionarios admiten la iteración donde ambos
+Se puede acceder a la clave y al valor simultáneamente.
 
 ```
 func main() {
@@ -110,8 +110,8 @@ func main() {
 }
 ```
 
-Dictionaries may be constructed in a single step way. An assignment
-can be an array style which uses `[]`, or an object style which uses
+Los diccionarios se pueden construir en un solo paso. una tarea
+puede ser un estilo de matriz que usa `[]`, o un estilo de objeto que usa
 `.`.
 
 ```
@@ -122,8 +122,8 @@ func main() {
 }
 ```
 
-The built-in function `remove()` allows for the deletion of entries by
-key.
+La función incorporada `remove()` permite la eliminación de entradas por
+clave.
 
 ```
 func main() {
@@ -132,13 +132,13 @@ func main() {
 }
 ```
 
-## For-loop
+## Bucle For
 
-The for-loop construct provides a concise syntax for iterating through
-sequences such as ranges, arrays, and dictionaries.
+La construcción de bucle for proporciona una sintaxis concisa para iterar a través de
+secuencias como rangos, matrices y diccionarios.
 
-The range syntax (using the `..` operator) creates an iterator that
-generates values from the start to one less than the end value.
+La sintaxis de rango (usando el operador `..`) crea un iterador que
+genera valores desde el inicio hasta uno menos que el valor final.
 
 ```
 func main() {
@@ -148,10 +148,10 @@ func main() {
 }
 ```
 
-For-loops can also iterate directly over arrays and other collection
-types.
+Los bucles For también pueden iterar directamente sobre matrices y otras colecciones.
+tipos.
 
-Arrays can be iterated by the for-value syntax.
+Las matrices se pueden iterar mediante la sintaxis de valor.
 
 ```
 func main() {
@@ -162,7 +162,7 @@ func main() {
 }
 ```
 
-Dictionaries can be iterated by the for-key-value syntax.
+Los diccionarios se pueden iterar mediante la sintaxis for-key-value.
 
 ```
 func main() {
@@ -173,15 +173,15 @@ func main() {
 }
 ```
 
-## While Loops
+## Mientras bucles
 
-The while-loop provides a traditional iteration mechanism that
-continues execution as long as a specified condition remains
-true. Unlike for-loops which are designed for iterating over
-collections, while-loops are more flexible and can be used for
-implementing various algorithms where the number of iterations isn't
-known in advance. The example shows a basic counter implementation
-incrementing from 0 to 9.
+El bucle while proporciona un mecanismo de iteración tradicional que
+continúa la ejecución mientras permanezca una condición específica
+cierto. A diferencia de los bucles for que están diseñados para iterar sobre
+colecciones, los bucles while son más flexibles y se pueden utilizar para
+implementar varios algoritmos donde el número de iteraciones no es
+conocido de antemano. El ejemplo muestra una implementación de contador básica.
+incrementando de 0 a 9.
 
 ```
 func main() {
@@ -193,11 +193,11 @@ func main() {
 }
 ```
 
-## If and Else Blocks
+## Bloques If y Else
 
-Control flows allow for conditional executions based on evaluated
-expressions. The if-else construct follows a familiar syntax where
-conditions are evaluated in sequence.
+Los flujos de control permiten ejecuciones condicionales basadas en evaluaciones.
+expresiones. La construcción if-else sigue una sintaxis familiar donde
+Las condiciones se evalúan en secuencia.
 
 ```
 func main() {
@@ -212,11 +212,11 @@ func main() {
 }
 ```
 
-## Lambda Functions
+## Funciones Lambda
 
-Functions are first-class objects in the language. Anonymous
-functions, also known as `lambda` expressions, allow you to create
-functions without names.
+Las funciones son objetos de primera clase en el lenguaje. anónimo
+Las funciones, también conocidas como expresiones `lambda`, le permiten crear
+funciones sin nombre.
 
 ```
 func main() {
@@ -225,11 +225,11 @@ func main() {
 }
 ```
 
-Lambda functions are simply translated to named functions in the
-compilation process. Therefore, they can't capture variables declared
-in outer functions.
+Las funciones Lambda simplemente se traducen a funciones con nombre en el
+proceso de compilación. Por lo tanto, no pueden capturar variables declaradas.
+en funciones exteriores.
 
-## Increment/Decrement (+=, -=, ++, --)
+## Incremento/Decremento (+=, -=, ++, --)
 
 ```
 func main() {
@@ -243,18 +243,18 @@ func main() {
 }
 ```
 
-`++` and `--` are supported only as standalone statements (`a++;`, `b--;`).
-Using them inside expressions is disallowed to avoid complex side-effects.
+`++` y `--` solo se admiten como declaraciones independientes (`a++;`, `b--;`).
+No se permite su uso dentro de expresiones para evitar efectos secundarios complejos.
 
-## OOP in Noct
+## POO en noviembre
 
-The object-oriented model in Noct is a lightweight variation of prototype-based OOP.
+El modelo orientado a objetos en Noct es una variación ligera de la programación orientada a objetos basada en prototipos.
 
-- Classes are simply dictionary templates
-- Inheritance and instantiation are realized by dictionary merging
-- There is no prototype chain, and modifying a class does not affect existing instances
+- Las clases son simplemente plantillas de diccionario.
+- La herencia y la creación de instancias se realizan mediante la fusión de diccionarios.
+- No existe una cadena de prototipos y la modificación de una clase no afecta las instancias existentes.
 
-This design treats dictionaries as first-class objects, and the author refers to it as Dictionary-based OOP (D-OOP).
+Este diseño trata los diccionarios como objetos de primera clase y el autor se refiere a ellos como POO basada en diccionarios (D-OOP).
 
 ```
 func main() {
@@ -286,7 +286,7 @@ func main() {
 
 ---
 
-## Intrinsics
+## Intrínsecos
 
 ### int()
 
@@ -362,9 +362,9 @@ dic->unset("key1");
 
 ---
 
-## Math API
+## API de matemáticas
 
-## Math
+## Matemáticas
 
 ### abs()
 

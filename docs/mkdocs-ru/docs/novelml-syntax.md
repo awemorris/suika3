@@ -1,109 +1,109 @@
-NovelML Syntax Reference
-========================
+Справочник по синтаксису NovelML
+================================
 
-This document explains the basic syntax of NovelML and how it runs.
+Этот документ объясняет базовый синтаксис NovelML и то, как он выполняется.
 
-For the detailed explanation of each tag, please see "Suika3 Tag Reference".
-
----
-
-## 1. NovelML is a list of engine commands called “tags”
-
-NovelML is a list of **tags**. A tag is a **command for the engine**.
-
-- Each tag tells the engine to do something
-- Tags run **one by one**, in the order they appear
-- After a tag runs, it is "done" and the "execution position" moves on
-
-If you write the same tag again, it will do the same thing **each time it runs**.
+Подробное описание каждого тега см. в "Suika3 Tag Reference".
 
 ---
 
-## 2. Execution goes from top to bottom
+## 1. NovelML - это список команд движка, называемых тегами
 
-NovelML runs from the top of the file to the bottom, one tag at a time.
+NovelML - это список **тегов**. Тег - это **команда для движка**.
 
-- Execution normally moves forward
-- There is only one current **execution position**
+- Каждый тег говорит движку выполнить какое-либо действие
+- Теги выполняются **один за другим**, в том порядке, в котором они записаны
+- После выполнения тег считается "завершенным", а "позиция выполнения" переходит дальше
+
+Если записать тот же тег снова, он выполнит то же действие **каждый раз при выполнении**.
+
+---
+
+## 2. Выполнение идет сверху вниз
+
+NovelML выполняется от начала файла к концу, по одному тегу за раз.
+
+- Обычно выполнение движется вперед
+- Существует только одна текущая **позиция выполнения**
 
 ```PlainText
-[text text="Hello"]
-[text text="World"]
+[text text="Привет"]
+[text text="Мир"]
 ```
 
-In this case:
+В этом случае:
 
-1. `Hello` is shown
-2. Then `World` is shown
+1. Показывается `Привет`
+2. Затем показывается `Мир`
 
 ---
 
-## 3. Everything must be written as tags
+## 3. Все должно быть записано как теги
 
-In NovelML, **every line must be a tag**.
+В NovelML **каждая строка должна быть тегом**.
 
-- The whole scenario is written using tags
-- Even text must use the `[text]` tag
+- Весь сценарий записывается с помощью тегов
+- Даже текст должен использовать тег `[text]`
 
 ```PlainText
-[text text="It's a beautiful day."]
+[text text="Сегодня прекрасный день."]
 ```
 
 ---
 
-## 4. Tags that wait, and tags that do not wait
+## 4. Теги, которые ждут, и теги, которые не ждут
 
-There are two main kinds of tags:
+Есть два основных вида тегов:
 
-- **Tags that run and immediately move to the next tag**
-- **Tags that wait** for user input or for something to finish
+- **Теги, которые выполняются и сразу переходят к следующему тегу**
+- **Теги, которые ждут** ввода пользователя или завершения какого-либо действия
 
-Common "wait' tags include:
+Распространенные теги "ожидания":
 
-- `text` (waits for a click)
-- `click` (waits for a click)
-- `wait` (waits for a specified time)
-- `video` (waits until playback finishes)
+- `text` (ждет щелчка)
+- `click` (ждет щелчка)
+- `wait` (ждет указанное время)
+- `video` (ждет завершения воспроизведения)
 
-These tags pause execution **without any special syntax**.
+Эти теги приостанавливают выполнение **без какого-либо специального синтаксиса**.
 
-### 4.1 Tags that run in the background (asynchronously)
+### 4.1 Теги, которые выполняются в фоне (асинхронно)
 
-Some tags may **run in the background**  (asynchronously).
+Некоторые теги могут **выполняться в фоне** (асинхронно).
 
-Typical examples:
+Типичные примеры:
 
 - `anime`
 - `move`
 
-These tags:
+Эти теги:
 
-- Create and start an animation or movement
-- If `async="true"` is specified, the engine **does not wait** for it to finish and immediately continue to the next tag
+- Создают и запускают анимацию или движение
+- Если указан `async="true"`, движок **не ждет** завершения и сразу продолжает выполнение следующего тега
 
-Because of this, tags after an `async="true"` tag may run **while the animation is still playing**.
+Из-за этого теги после тега с `async="true"` могут выполняться **пока анимация еще проигрывается**.
 
-This lets you do things like:
+Это позволяет делать, например, следующее:
 
-- Move a background or character
-- While also showing text or running other effects
+- Двигать фон или персонажа
+- Одновременно показывать текст или запускать другие эффекты
 
 ---
 
-## 5. Tags that change the flow of execution
+## 5. Теги, которые изменяют поток выполнения
 
-Normally execution goes from top to bottom, but some tags **change where execution continues**.
+Обычно выполнение идет сверху вниз, но некоторые теги **меняют место, с которого продолжается выполнение**.
 
-### 5.1 Labels
+### 5.1 Метки
 
 ```PlainText
 [label start]
 ```
 
-- A label marks a named position in the scenario
-- Running a label does not do anything by itself
+- Метка отмечает именованную позицию в сценарии
+- Само выполнение метки ничего не делает
 
-### 5.2 Jumps
+### 5.2 Переходы
 
 ```PlainText
 [goto name="start"]
@@ -111,7 +111,7 @@ Normally execution goes from top to bottom, but some tags **change where executi
 
 ---
 
-## 6. Conditional branching (if / elseif / else)
+## 6. Условное ветвление (if / elseif / else)
 
 ```PlainText
 [if ...]
@@ -123,36 +123,36 @@ Normally execution goes from top to bottom, but some tags **change where executi
 [endif]
 ```
 
-- Only the first matching block is executed
-- Blocks that are not chosen are **skipped completely**
-- You can write `elseif` zero or more times
-- `else` is optional
+- Выполняется только первый подходящий блок
+- Блоки, которые не выбраны, **полностью пропускаются**
+- `elseif` можно записывать ноль или более раз
+- `else` необязателен
 
 ---
 
-## 7. Variables and variable expansion
+## 7. Переменные и подстановка переменных
 
-### 7.1 Setting variables
+### 7.1 Установка переменных
 
-Use the `[set]` tag to set a variable.
+Используйте тег `[set]`, чтобы задать переменную.
 
 ```PlainText
 [set name="player_name" value="Alice"]
 ```
 
-- All variables are **strings**
-- Numbers and booleans are also stored as strings
+- Все переменные являются **строками**
+- Числа и булевы значения также хранятся как строки
 
-### 7.2 Variable expansion
+### 7.2 Подстановка переменных
 
-You can use variable expansion inside tag values and text.
+Подстановку переменных можно использовать внутри значений тегов и текста.
 
 ```PlainText
-[text text="${player_name} stands up"]
+[text text="${player_name} встает"]
 ```
 
-- `${...}` is replaced with the variable value at runtime
-- Expansion happens **when the tag is executed**
+- `${...}` заменяется значением переменной во время выполнения
+- Подстановка происходит **при выполнении тега**
 
 ```PlainText
 [set name="x" value="1"]
@@ -161,17 +161,17 @@ You can use variable expansion inside tag values and text.
 [text text="${x}"]
 ```
 
-In this example, the output is `1` and then `2`.
+В этом примере выводом будет `1`, а затем `2`.
 
 ---
 
-## 8. Macros are blocks you can run as a unit
+## 8. Макросы - это блоки, которые можно выполнять как единое целое
 
-Macros let you group several tags and run them together.
+Макросы позволяют сгруппировать несколько тегов и выполнить их вместе.
 
 ```PlainText
 [defmacro name="greet"]
-  [text text="Hello"]
+  [text text="Привет"]
 [endmacro]
 
 [callmacro name="greet"]
@@ -179,41 +179,41 @@ Macros let you group several tags and run them together.
 
 ---
 
-## 9. Switching files (load)
+## 9. Переключение файлов (load)
 
 ```PlainText
 [load file="scene2.txt" label="start"]
 ```
 
-`file=` is mandatory and `label=` is optional.
+`file=` обязателен, а `label=` необязателен.
 
 ---
 
-## 10. What happens at the end of a file
+## 10. Что происходит в конце файла
 
-If executed:
+Если выполнение:
 
-- Reaches the end of the file, and
-- No more `goto` or `load` tags happen
+- Достигает конца файла, и
+- Больше не выполняются теги `goto` или `load`
 
-Then the **scenario execution ends**.
+Тогда **выполнение сценария завершается**.
 
-However, on some platforms (for example iOS or game consoles), the app is not allowed to quit.
+Однако на некоторых платформах (например, iOS или игровых консолях) приложению не разрешено завершаться.
 
-So it is recommended that your scenario **explicitly**:
+Поэтому рекомендуется, чтобы ваш сценарий **явно**:
 
-- Jumps back to the title using `goto`, or
-- Loads a title scene using `load`
+- Возвращался к заголовку с помощью `goto`, или
+- Загружал сцену заголовка с помощью `load`
 
-instead of ending automatically.
+вместо автоматического завершения.
 
 ---
 
-## 11. How this document fits with other docs
+## 11. Как этот документ связан с другой документацией
 
-This document is meant to go with:
+Этот документ предназначен для использования вместе с:
 
-- Tag Reference: explains what each tag does
-- This document: explains how a scenario runs
+- Tag Reference: объясняет, что делает каждый тег
+- Этот документ: объясняет, как выполняется сценарий
 
-For details on individual tags, see the "Tag Reference".
+Подробности по отдельным тегам см. в "Tag Reference".

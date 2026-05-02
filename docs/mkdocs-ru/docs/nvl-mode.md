@@ -1,48 +1,48 @@
-NVL Mode Reference
-==================
+Справочник по режиму NVL
+========================
 
-Suika3 support the full screen novel style, so called NVL mode.
+Suika3 поддерживает полноэкранный стиль новеллы, так называемый режим NVL.
 
-## Overview
+## Обзор
 
 ```
-# New page.
+# Новая страница.
 [text action="clear"]
 
-# Block style 1. (this is not highlighted by the VS Code extension for now)
+# Блочный стиль 1. (пока не подсвечивается расширением VS Code)
 [text text=
   """
-  Hello, this is NVL mode test.
-  NVL mode has a fullscreen-styled message box.
-  By default, each text tag will do a line feed.
+  Привет, это тест режима NVL.
+  В режиме NVL окно сообщений занимает весь экран.
+  По умолчанию каждый тег text добавляет перевод строки.
   """]
 
-# Block style 2. (this is highlighted by the VS Code extension)
+# Блочный стиль 2. (подсвечивается расширением VS Code)
 [text text="""
-  Hello, this is NVL mode test.
-  NVL mode has a fullscreen-styled message box.
-  By default, each text tag will do a line feed.
+  Привет, это тест режима NVL.
+  В режиме NVL окно сообщений занимает весь экран.
+  По умолчанию каждый тег text добавляет перевод строки.
 """]
 
-# Inline paragraph continuation.
-[text action="inline" text=" To continue a paragraph, use the inline action."]
+# Продолжение абзаца в той же строке.
+[text action="inline" text=" Чтобы продолжить абзац, используйте действие inline."]
 
-# New page.
+# Новая страница.
 [text action="clear"]
-[text text="Please clear the message box explicitly."]
-[text text="This is why NVL is called Page Mode in Suika3!"]
+[text text="Явно очищайте окно сообщений."]
+[text text="Именно поэтому NVL в Suika3 называется Page Mode."]
 ```
 
-## Switch
+## Переключение
 
-Add two macros at the end of your `start.novel`:
+Добавьте два макроса в конец вашего `start.novel`:
 ```
 #
-# Macro to start NVL mode.
+# Макрос для запуска режима NVL.
 #
 [defmacro name="nvl-mode"]
    [text action="hide"]
-   [wait time="0.3"] # Wait for the message box to hide.
+   [wait time="0.3"] # Дождаться скрытия окна сообщений.
    [config name="game.novel" value="true"]
    [config name="msgbox.image" value="system/message/msgbox-nvl.png"]
    [config name="msgbox.x" value="0"]
@@ -66,11 +66,11 @@ Add two macros at the end of your `start.novel`:
 [endmacro]
 
 #
-# Macro to go back ADV mode.
+# Макрос для возврата в режим ADV.
 #
 [defmacro name="adv-mode"]
    [text action="hide"]
-   [wait time="0.3"] # Wait for the message box to hide.
+   [wait time="0.3"] # Дождаться скрытия окна сообщений.
    [config name="game.novel" value="false"]
    [config name="msgbox.image" value="system/message/msgbox.png"]
    [config name="msgbox.x" value="0"]
@@ -93,12 +93,12 @@ Add two macros at the end of your `start.novel`:
 [endmacro]
 ```
 
-Then call the `nvl-mode` macro to switch to NVL mode.
+Затем вызовите макрос `nvl-mode`, чтобы переключиться в режим NVL.
 ```
 [callmacro name="nvl-mode"]
 ```
 
-If you want to switch back to ADV mode (normal message mode), call the `adv-mode` macro:
+Если нужно вернуться в режим ADV (обычный режим сообщений), вызовите макрос `adv-mode`:
 ```
 [callmacro name="adv-mode"]
 ```

@@ -1,80 +1,79 @@
-System Menu
+Системное меню
 ===========
 
 ## SysBtn
 
-Suika3 features a hamburger menu button, typically located in the
-top-left corner of the screen. This button is internally referred to
-as the `System Button (SysBtn)`.
+В Suika3 есть кнопка меню-гамбургера, обычно расположенная в
+левом верхнем углу экрана. Внутри движка эта кнопка называется
+`System Button (SysBtn)`.
 
-To ensure compliance with App Store guidelines, Suika3 avoids placing
-small, PC-style buttons around the message window, adopting a
-mobile-first approach instead. The SysBtn consists of two images and
-associated animations. For a seamless user experience, the button is
-responsive: it appears upon mouse movement or touch, and automatically
-hides after a few seconds of inactivity. While this behavior is
-hard-coded for store compliance, the SysBtn can be completely
-disabled—for instance, for demos or Kiosk mode—by setting
-`sysbtn.enable=false` in the config.
+Чтобы соответствовать правилам App Store, Suika3 не размещает
+маленькие кнопки в стиле ПК вокруг окна сообщений и вместо этого использует
+подход mobile-first. SysBtn состоит из двух изображений и
+связанных с ними анимаций. Для плавного пользовательского опыта кнопка
+реагирует на действия пользователя: она появляется при движении мыши или касании и автоматически
+скрывается через несколько секунд бездействия. Хотя это поведение
+жестко задано для соответствия требованиям магазинов, SysBtn можно полностью
+отключить, например для демонстраций или режима киоска, задав
+`sysbtn.enable=false` в конфигурации.
 
-While the absence of buttons around the familiar message window may
-feel unexpected at first, we hope you'll understand that this
-evolution is essential for adapting visual novels to modern mobile
-platforms.
+Хотя отсутствие кнопок вокруг привычного окна сообщений поначалу может
+показаться неожиданным, мы надеемся, что вы поймете: такая
+эволюция необходима для адаптации визуальных новелл к современным мобильным
+платформам.
 
-Please see also:
-- `config.ini` (search for `sysbtn`)
-- `system/sysbtn/` (in the sample game)
+См. также:
+- `config.ini` (поиск по `sysbtn`)
+- `system/sysbtn/` (в демонстрационной игре)
 
 ## SysMenu
 
-Clicking the SysBtn triggers a GUI known as the `System Menu
-(SysMenu)`. The SysMenu is fully customizable and can be configured to
-include essential functions such as Save, Load, Auto Mode, Skip Mode,
-History, and Config.
+Нажатие SysBtn открывает GUI, известный как `System Menu
+(SysMenu)`. SysMenu полностью настраивается, и его можно сконфигурировать так, чтобы
+оно включало основные функции, такие как сохранение, загрузка, автоматический режим, режим пропуска,
+история и настройки.
 
-Please see also:
-- `system/sysmenu/` (in the sample game)
+См. также:
+- `system/sysmenu/` (в демонстрационной игре)
 
-## Save/Load Screens
+## Экраны сохранения и загрузки
 
-Save and load screens are fully customizable via GUI files.
+Экраны сохранения и загрузки полностью настраиваются через GUI-файлы.
 
-Please see also:
-- `system/save/` (in the sample game)
-- `system/load/` (in the sample game)
+См. также:
+- `system/save/` (в демонстрационной игре)
+- `system/load/` (в демонстрационной игре)
 
-## Auto Mode and Skip Mode Buttons
+## Кнопки автоматического режима и режима пропуска
 
-The Auto and Skip buttons use specialized GUI button types. These
-buttons trigger their respective modes—Auto Mode or Skip Mode—when
-clicked.
+Кнопки Auto и Skip используют специализированные типы GUI-кнопок. Эти
+кнопки при нажатии включают соответствующие режимы: Auto Mode или Skip Mode.
 
-Please see also:
-- `system/sysmenu/` (in the sample game)
+См. также:
+- `system/sysmenu/` (в демонстрационной игре)
 
-## History Screen
+## Экран истории
 
-The History screen is fully customizable via a GUI file.
+Экран истории полностью настраивается через GUI-файл.
 
-Please see also:
-- `system/history/` (in the sample game)
+См. также:
+- `system/history/` (в демонстрационной игре)
 
-## Config Screen
+## Экран настроек
 
-The Config screen is fully customizable via a GUI file.
+Экран настроек полностью настраивается через GUI-файл.
 
-The config screen in the sample game includes:
-- BGM, Sound Effect, and Voice Volume Sliders
-- Language Switch (EN/JP)
-- Text and Auto Mode Speed Adjustments
-- Text Speed Preview
+Экран настроек в демонстрационной игре включает:
+- ползунки громкости BGM, Sound Effect и Voice
+- переключатель языка (EN/JP)
+- настройку скорости текста и автоматического режима
+- предварительный просмотр скорости текста
 
-Additionally, you can implement:
-- Master Volume
-- Per-Character Volume
-- Language Switch (for all supported languages)
-- Custom Buttons
+Дополнительно можно реализовать:
+- общую громкость
+- громкость по персонажам
+- переключатель языка (для всех поддерживаемых языков)
+- пользовательские кнопки
 
-Please see also:
-- `system/config/` (in the sample game)
+См. также:
+- `system/config/` (в демонстрационной игре)

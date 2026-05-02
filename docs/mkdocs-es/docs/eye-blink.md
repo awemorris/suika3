@@ -1,22 +1,22 @@
-Eye Blinking
+Ojo parpadeando
 ============
 
-An eye blinking image must be stored in the "eye" folder that is
-located in the same folder as the character's image(s).
+Una imagen de parpadeo debe almacenarse en la carpeta "ojo" que está
+ubicado en la misma carpeta que el image(s) del personaje.
 
-- happy.png (main character file)
-- eye/
-    - happy.png (eye blinking file)
+- happy.png (archivo del personaje principal)
+- ojo/
+    - happy.png (archivo de parpadeo de ojos)
 
-An eye blinking image consists of frame(s) of eye blinking difference(s). 
-A frame must be the same size as the character's image is. 
-Frames must be stored horizontally in the left to right order. See the sample game for the actual image.
+Una imagen de parpadeo consta de frame(s) de parpadeo difference(s). 
+Un marco debe tener el mismo tamaño que la imagen del personaje. 
+Los fotogramas deben almacenarse horizontalmente en orden de izquierda a derecha. Vea el juego de muestra para ver la imagen real.
 
-Alpha values on borders must be smoothed.
-Please use "Blur Selection" and "Delete Selection" in an image editing software.
+Se deben suavizar los valores alfa en los bordes.
+Utilice "Desenfocar selección" y "Eliminar selección" en un software de edición de imágenes.
 
-The eye blinking interval may be specified in the `config.ini` file.
-Intervals are slightly randomized, and sometimes double-blinkings occur.
+El intervalo de parpadeo de los ojos se puede especificar en el archivo `config.ini`.
+Los intervalos son ligeramente aleatorios y, en ocasiones, se producen dobles parpadeos.
 
 ```
 #

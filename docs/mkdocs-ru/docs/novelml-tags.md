@@ -1,348 +1,348 @@
-Suika3 Tag Reference
+Справочник тегов Suika3
 ====================
 
-## Index
+## Содержание
 
-| Tag Name                    | Description                                                        |
+| Имя тега                    | Описание                                                          |
 |-----------------------------|--------------------------------------------------------------------|
-| [anime](#anime)             | Loads and runs an animation file.                                  |
-| [bg](#bg)                   | Changes the background image with a fading effect.                 |
-| [bgm](#bgm)                 | Plays a background music file (Ogg Vorbis format).                 |
-| [callmacro](#callmacro)     | Calls a defined macro.                                             |
-| [ch](#ch)                   | Shows or hides characters with detailed layer parameters.          |
-| [chapter](#chapter)         | Sets a chapter name.                                               |
-| [choose](#choose)           | Displays options and stores the selection or jumps to a label.     |
-| [click](#click)             | Waits for a user click.                                            |
-| [config](#config)           | Sets a configuration value for the game system.                    |
-| [defmacro](#defmacro)       | Starts a macro definition.                                         |
-| [else](#else)               | Part of the if/elseif branch for when no conditions are met.       |
-| [elseif](#elseif)           | Specifies an additional condition in a branch.                     |
-| [endif](#endif)             | Ends a conditional branch.                                         |
-| [endmacro](#endmacro)       | Ends a macro definition.                                           |
-| [goto](#goto)               | Jumps to a specified label tag.                                    |
-| [gui](#gui)                 | Shows a GUI from a specified file.                                 |
-| [if](#if)                   | Branches the process based on a specified condition.               |
-| [label](#label)             | Defines a label for jump targets.                                  |
-| [layer](#layer)             | Loads/unloads images or sets parameters for specific layers.       |
-| [load](#load)               | Loads a NovelML file and can jump to a specific label.             |
-| [move](#move)               | Animates character layers over a specified time.                   |
-| [pencil](#pencil)           | Draw a text on a layer.                                            |
-| [returnmacro](#returnmacro) | Returns from a macro execution.                                    |
-| [se](#se)                   | Plays a sound effect file (Ogg Vorbis format).                     |
-| [set](#set)                 | Sets a variable value (all variables are treated as text).         |
-| [skip](#skip)               | Enables or disables the skip status.                               |
-| [text](#text)               | Displays text in the message box, optionally with a name.          |
-| [video](#video)             | Plays a video file (supports skippable settings).                  |
-| [volume](#volume)           | Sets the sound volume for BGM, SE, or Voice tracks.                |
-| [wait](#wait)               | Waits for a specified number of seconds.                           |
+| [anime](#anime)             | Загружает и запускает файл анимации.                               |
+| [bg](#bg)                   | Меняет фоновое изображение с эффектом плавного затухания.          |
+| [bgm](#bgm)                 | Воспроизводит файл фоновой музыки (формат Ogg Vorbis).             |
+| [callmacro](#callmacro)     | Вызывает определенный макрос.                                      |
+| [ch](#ch)                   | Показывает или скрывает персонажей с детальными параметрами слоев. |
+| [chapter](#chapter)         | Устанавливает имя главы.                                           |
+| [choose](#choose)           | Показывает варианты и сохраняет выбор или переходит к метке.       |
+| [click](#click)             | Ожидает щелчка пользователя.                                       |
+| [config](#config)           | Устанавливает значение конфигурации для игровой системы.           |
+| [defmacro](#defmacro)       | Начинает определение макроса.                                      |
+| [else](#else)               | Часть ветки if/elseif для случая, когда условия не выполнены.      |
+| [elseif](#elseif)           | Указывает дополнительное условие в ветке.                          |
+| [endif](#endif)             | Завершает условную ветку.                                          |
+| [endmacro](#endmacro)       | Завершает определение макроса.                                     |
+| [goto](#goto)               | Переходит к указанному тегу-метке.                                 |
+| [gui](#gui)                 | Показывает GUI из указанного файла.                                |
+| [if](#if)                   | Разветвляет выполнение на основе указанного условия.               |
+| [label](#label)             | Определяет метку для целей перехода.                               |
+| [layer](#layer)             | Загружает/выгружает изображения или задает параметры для слоев.    |
+| [load](#load)               | Загружает файл NovelML и может перейти к указанной метке.          |
+| [move](#move)               | Анимирует слои персонажей в течение указанного времени.            |
+| [pencil](#pencil)           | Рисует текст на слое.                                              |
+| [returnmacro](#returnmacro) | Возвращается из выполнения макроса.                                |
+| [se](#se)                   | Воспроизводит файл звукового эффекта (формат Ogg Vorbis).          |
+| [set](#set)                 | Устанавливает значение переменной (все переменные считаются текстом). |
+| [skip](#skip)               | Включает или отключает состояние пропуска.                         |
+| [text](#text)               | Показывает текст в окне сообщения, при необходимости с именем.     |
+| [video](#video)             | Воспроизводит видеофайл (поддерживаются настраиваемые параметры пропуска). |
+| [volume](#volume)           | Устанавливает громкость звука для дорожек BGM, SE или Voice.       |
+| [wait](#wait)               | Ждет указанное число секунд.                                       |
 
 ---
 
 ## `anime`
 
-Run Animation
+Запуск анимации
 
-The `anime` tag loads and executes an animation definition from a file. 
-It allows for complex visual effects, character movements, or looping environmental animations beyond simple transitions.
+Тег `anime` загружает и выполняет определение анимации из файла.
+Он позволяет создавать сложные визуальные эффекты, движения персонажей или циклические анимации окружения, выходящие за рамки простых переходов.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Run a synchronous animation (waits for completion)
+# Запуск синхронной анимации (ждет завершения)
 [anime file="opening_effect.txt"]
 
-# Run an asynchronous looping animation
+# Запуск асинхронной циклической анимации
 [anime file="sparkle.txt" async="true" register="my_loop"]
 
-# Stop a registered asynchronous animation
+# Остановка зарегистрированной асинхронной анимации
 [anime stop="true" register="my_loop"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument      | Omissible      | Description                                        | Notes                                                             |
-|---------------|----------------|----------------------------------------------------|-------------------------------------------------------------------|
-| `file`        | Yes            | The filename of the animation definition.          | *Required unless `stop="true"` is used.                           |
-| `async`       | Yes (`false`)  | Whether to run the animation asynchronously.       | If `false`, the script waits until the animation finishes.        |
-| `register`    | Yes            | A unique name to identify this animation instance. | Required for controlling or stopping async animations later.      |
-| `stop`        | Yes (`false`)  | Stops a registered animation if set to `true`.     | Requires the `register` argument.                                 |
-| `showsysbtn`  | Yes (`true`)   | Whether to show system buttons during playback.    | Only valid for synchronous animations.                            |
-| `showmsgbox`  | Yes (`true`)   | Whether to show the message box during playback.   | Only valid for synchronous animations.                            |
-| `shownamebox` | Yes (`true`)   | Whether to show the name box during playback.      | Only valid for synchronous animations.                            |
+| Аргумент      | Можно опустить | Описание                                              | Примечания                                                      |
+|---------------|----------------|-------------------------------------------------------|-----------------------------------------------------------------|
+| `file`        | Да             | Имя файла с определением анимации.                    | *Обязательно, если не используется `stop="true"`.              |
+| `async`       | Да (`false`)   | Выполнять ли анимацию асинхронно.                     | Если `false`, сценарий ждет окончания анимации.                |
+| `register`    | Да             | Уникальное имя для идентификации экземпляра анимации. | Требуется для управления или остановки асинхронных анимаций позже. |
+| `stop`        | Да (`false`)   | Останавливает зарегистрированную анимацию, если `true`. | Требует аргумент `register`.                                    |
+| `showsysbtn`  | Да (`true`)    | Показывать ли системные кнопки во время воспроизведения. | Действительно только для синхронных анимаций.                   |
+| `showmsgbox`  | Да (`true`)    | Показывать ли окно сообщения во время воспроизведения.  | Действительно только для синхронных анимаций.                   |
+| `shownamebox` | Да (`true`)    | Показывать ли окно имени во время воспроизведения.     | Действительно только для синхронных анимаций.                   |
 
-### Tips
+### Советы
 
-**Synchronous vs. Asynchronous**:
-* **Synchronous (`async="false"`)**: Great for cutscenes where you want the player to watch the animation before any text or choices appear.
-* **Asynchronous (`async="true"`)**: Perfect for background effects (like falling snow or a flickering light) that should continue while the story progresses.
+**Синхронно или асинхронно**:
+* **Синхронно (`async="false"`)**: отлично подходит для кат-сцен, где вы хотите, чтобы игрок посмотрел анимацию до появления текста или выбора.
+* **Асинхронно (`async="true"`)**: идеально для фоновых эффектов, таких как падающий снег или мерцающий свет, которые должны продолжаться по мере развития сюжета.
 
-**Managing Instances**:
-* By using the `register` argument, you can label a specific animation.
-* This is how you tell the engine exactly which animation to stop when you use `stop="true"`.
+**Управление экземплярами**:
+* Используя аргумент `register`, можно присвоить имя конкретной анимации.
+* Так вы сообщаете движку, какую именно анимацию остановить при использовании `stop="true"`.
 
-**UI Control**:
-* Use `showmsgbox="false"` if your animation is meant to take up the full screen and you want the dialogue window to disappear temporarily for a cleaner look.
+**Управление интерфейсом**:
+* Используйте `showmsgbox="false"`, если анимация должна занимать весь экран, а диалоговое окно нужно временно скрыть для более чистого вида.
 
 ---
 
 ## `bg`
 
-Change Background
+Изменение фона
 
-The `bg` tag changes the background image with a smooth fading effect.
-It's the primary way to set the scene in your visual novel.
+Тег `bg` меняет фоновое изображение с плавным эффектом затухания.
+Это основной способ задавать сцену в вашей визуальной новелле.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Transition to background.png over 1.0 second
+# Переход к background.png за 1.0 секунду
 [bg file="background.png" time="1.0"]
 
-# Fade to a black screen (removes the background)
+# Плавный переход к черному экрану (удаляет фон)
 [bg file="none" time="1.0"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument   | Omissible      | Description                                   | Notes                                                                        |
-|------------|----------------|-----------------------------------------------|------------------------------------------------------------------------------|
-| `file`     | No             | The filename of the new background image.     | Set to `none` to remove the background.                                      |
-| `time`     | Yes (`0`)      | The duration of the fading effect in seconds. | Default is `0.0` (instant change).                                           |
-| `method`   | Yes (`normal`) | The fading method/style.                      | Choose from `normal`, `rule`, or `melt`.                                     |
-| `rule`     | Yes            | The rule image file for specific transitions. | Required when `method` is set to `rule` or `melt`.                           |
-| `x`        | Yes (`0`)      | The X-axis offset for the background image.   | Supports absolute values (e.g., `100`) or relative values (e.g., `r100`).    |
-| `y`        | Yes (`0`)      | The Y-axis offset for the background image.   | Supports absolute values (e.g., `100`) or relative values (e.g., `r-100`).   |
-| `alpha`    | Yes (`255`)    | The alpha value of the background image.      | `0` to `255`.                                                                |
-| `clear`    | Yes (`false`)  | Whether to vanish the characters or not.      | If `true`, all characters will be vanished.                                  |
+| Аргумент   | Можно опустить | Описание                                      | Примечания                                                                 |
+|------------|----------------|-----------------------------------------------|----------------------------------------------------------------------------|
+| `file`     | Нет            | Имя файла нового фонового изображения.        | Установите `none`, чтобы удалить фон.                                      |
+| `time`     | Да (`0`)       | Продолжительность эффекта затухания в секундах. | Значение по умолчанию `0.0` (мгновенное изменение).                        |
+| `method`   | Да (`normal`)  | Метод/стиль затухания.                        | Выберите `normal`, `rule` или `melt`.                                      |
+| `rule`     | Да             | Файл изображения rule для специальных переходов. | Требуется, когда `method` установлен в `rule` или `melt`.                  |
+| `x`        | Да (`0`)       | Смещение изображения фона по оси X.           | Поддерживаются абсолютные значения (например, `100`) и относительные (например, `r100`). |
+| `y`        | Да (`0`)       | Смещение изображения фона по оси Y.           | Поддерживаются абсолютные значения (например, `100`) и относительные (например, `r-100`). |
+| `alpha`    | Да (`255`)     | Альфа-значение фонового изображения.          | `0` до `255`.                                                              |
+| `clear`    | Да (`false`)   | Нужно ли скрывать персонажей.                 | Если `true`, все персонажи будут скрыты.                                   |
 
-### Transition Methods (`method`)
+### Методы перехода (`method`)
 
-You can create different atmospheres by choosing the right transition style:
+Вы можете создавать разную атмосферу, выбирая подходящий стиль перехода:
 
-| Type     | Description                                                                                                                          |
-|----------|--------------------------------------------------------------------------------------------------------------------------------------|
-| `normal` | Alpha Blending. The default method. Performs a smooth cross-fade between the old and new images.                                     |
-| `rule`   | 1-bit Universal Transition. Uses a grayscale "rule" image to determine the switching order.                                          |
-| `melt`   | 8-bit Universal Transition. Similar to `rule`, but with soft, blurred edges at the transition boundary, creating a "melting" effect. |
+| Тип      | Описание                                                                                                                          |
+|----------|-----------------------------------------------------------------------------------------------------------------------------------|
+| `normal` | Альфа-смешивание. Метод по умолчанию. Выполняет плавное перекрестное затухание между старым и новым изображением.                |
+| `rule`   | 1-битный универсальный переход. Использует полутоновое изображение "rule" для определения порядка смены.                         |
+| `melt`   | 8-битный универсальный переход. Похож на `rule`, но с мягкими размытыми краями на границе перехода, создавая эффект "таяния".   |
 
-For `rule` and `melt`, the image switches pixel-by-pixel from the darkest to the lightest areas of the rule map.
+Для `rule` и `melt` изображение переключается пиксель за пикселем от самых темных областей карты rule к самым светлым.
 
-### Tips
+### Советы
 
-**Relative Positioning**: 
-* If you want to nudge the background from its current position, use the `r` prefix.
-* For example, `x="r50"` moves the image 50 pixels to the right of its current X coordinate.
+**Относительное позиционирование**:
+* Если нужно немного сместить фон от текущей позиции, используйте префикс `r`.
+* Например, `x="r50"` сдвигает изображение на 50 пикселей вправо от текущей координаты X.
 
-**What is a Rule Image?**:
-* It's a grayscale image where black areas transition first and white areas transition last.
-* By creating custom rule images, you can achieve effects like horizontal wipes, circular reveals, or even more artistic patterns!
+**Что такое rule-изображение?**:
+* Это полутоновое изображение, где черные области переключаются первыми, а белые - последними.
+* Создавая собственные rule-изображения, можно получать эффекты вроде горизонтальных вытеснений, круговых раскрытий или даже более художественных узоров!
 
 ---
 
 ## `bgm`
 
-Play Background Music
+Воспроизведение фоновой музыки
 
-The `bgm` tag plays a background music track. 
-Music is an essential tool for setting the mood of your scene, and it will continue to loop automatically until stopped or changed.
+Тег `bgm` воспроизводит фоновый музыкальный трек.
+Музыка - важный инструмент для создания настроения сцены, и она будет автоматически зацикливаться, пока не будет остановлена или заменена.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Start playing a BGM track
+# Начать воспроизведение трека BGM
 [bgm file="field_theme.ogg"]
 
-# Stop the current BGM (use "none")
+# Остановить текущую BGM (используйте "none")
 [bgm file="none"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument | Omissible     | Description                        | Notes                                  |
-|----------|---------------|------------------------------------|----------------------------------------|
-| `file`   | No            | The filename of the music to play. | Set to `none` to stop the current BGM. |
-| `once`   | Yes (`false`) | Don't loop.                        |                                        |
+| Аргумент | Можно опустить | Описание                        | Примечания                               |
+|----------|----------------|---------------------------------|------------------------------------------|
+| `file`   | Нет            | Имя файла музыки для воспроизведения. | Установите `none`, чтобы остановить текущую BGM. |
+| `once`   | Да (`false`)   | Не зацикливать.                 |                                          |
 
-### Tips
+### Советы
 
-**Required Format**:
-* For compatibility and performance, Suika3 requires BGM files to be in **Ogg Vorbis** format.
-* The sampling rate MUST be **44,100Hz**.
+**Требуемый формат**:
+* Для совместимости и производительности Suika3 требует, чтобы файлы BGM были в формате **Ogg Vorbis**.
+* Частота дискретизации ДОЛЖНА быть **44 100 Гц**.
 
-**Looping**:
-* Background music is designed to loop by default, so you don't need to worry about the music ending abruptly during a long dialogue scene.
+**Зацикливание**:
+* Фоновая музыка по умолчанию рассчитана на зацикливание, поэтому вам не нужно беспокоиться о том, что музыка резко закончится во время длинной сцены диалога.
 
-**Smooth Transitions**:
-* If you call `[bgm]` while another track is already playing, the engine will typically handle the transition. 
-* To adjust the loudness of the music, you'll want to use the `[volume]` tag.
+**Плавные переходы**:
+* Если вы вызываете `[bgm]`, когда уже играет другой трек, движок обычно обрабатывает переход автоматически.
+* Чтобы регулировать громкость музыки, используйте тег `[volume]`.
 
-**Stopping Music**:
-* When a scene ends or the mood changes to silence, remember to use `[bgm file="none"]` to give the player's ears a rest!
+**Остановка музыки**:
+* Когда сцена заканчивается или настроение меняется на тишину, не забудьте использовать `[bgm file="none"]`, чтобы дать ушам игрока передышку!
 
 ---
 
 ## `callmacro`
 
-Call Macro
+Вызов макроса
 
-The `callmacro` tag executes a previously defined macro.
-It allows you to trigger a specific sequence of commands, such as character entrances or UI animations, multiple times throughout your script without rewriting the original code.
+Тег `callmacro` выполняет ранее определенный макрос.
+Он позволяет запускать определенную последовательность команд, например выходы персонажей или анимации интерфейса, много раз по всему сценарию без повторной записи исходного кода.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Call a macro named "kaito_entrance"
+# Вызов макроса с именем "kaito_entrance"
 [callmacro name="kaito_entrance"]
 
-# Call a macro for a specific scene transition
+# Вызов макроса для конкретного перехода сцены
 [callmacro name="fade_to_white"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument | Omissible | Description                               | Notes                                              |
-|----------|-----------|-------------------------------------------|----------------------------------------------------|
-| `name`   | No        | The name of the macro to execute.         | Must match a name defined by a `[defmacro]` tag.   |
-| `file`   | Yes       | The file name where the macro is defined. | Omit this to call a macro inside the current file. |
+| Аргумент | Можно опустить | Описание                               | Примечания                                              |
+|----------|----------------|----------------------------------------|---------------------------------------------------------|
+| `name`   | Нет            | Имя макроса, который нужно выполнить.  | Должно совпадать с именем, определенным тегом `[defmacro]`. |
+| `file`   | Да             | Имя файла, где определен макрос.       | Опустите это, чтобы вызвать макрос внутри текущего файла. |
 
-### Tips
+### Советы
 
-**Efficiency**:
-* By using `[callmacro]`, you can keep your main story script focused and readable.
-* Instead of seeing 10 lines of animation code, you'll just see one clear command.
+**Эффективность**:
+* Используя `[callmacro]`, можно сделать основной сценарий более сфокусированным и читаемым.
+* Вместо 10 строк кода анимации вы увидите всего одну понятную команду.
 
-**Execution Flow**:
-* When the engine hits `[callmacro]`, it immediately jumps to the defined macro, runs all the tags inside it, and then automatically returns to the very next line after the `[callmacro]` tag.
+**Порядок выполнения**:
+* Когда движок доходит до `[callmacro]`, он немедленно переходит к определенному макросу, выполняет все теги внутри него, а затем автоматически возвращается к следующей строке после тега `[callmacro]`.
 
-**Modular Design**:
-* Think of macros as "custom tags" for your game.
-* If you decide to change how a character enters a scene, you only need to update the code once in the `[defmacro]` block, and every `[callmacro]` will reflect that change!
+**Модульный дизайн**:
+* Думайте о макросах как о "пользовательских тегах" для вашей игры.
+* Если вы решите изменить, как персонаж входит в сцену, вам нужно будет обновить код только один раз в блоке `[defmacro]`, и каждый `[callmacro]` отразит это изменение!
 
 ---
 
 ## `ch`
 
-Character Display
+Отображение персонажей
 
-The `ch` tag shows, hides, or updates character images on various layers.
-It allows for detailed control over positioning, scaling, and rotations for multiple characters and background at once.
+Тег `ch` показывает, скрывает или обновляет изображения персонажей на различных слоях.
+Он позволяет детально управлять позиционированием, масштабированием и вращением нескольких персонажей и фона одновременно.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Show a character at the center
+# Показать персонажа в центре
 [ch center="chara001.png" time="1.0"]
 
-# Show multiple characters with specific positions
+# Показать нескольких персонажей с заданными позициями
 [ch left="chara002.png" right="chara003.png" time="0.5"]
 
-# Hide a specific character
+# Скрыть конкретного персонажа
 [ch center="none" time="1.0"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument  | Omissible      | Description                            | Notes                                                 |
-|-----------|----------------|----------------------------------------|-------------------------------------------------------|
-| `time`    | Yes (`0`)      | Duration of the transition in seconds. | Affects all layer changes within this tag.            |
-| `method`  | Yes (`normal`) | The fading method/style.               | `normal`, `rule`, or `melt`.                          |
-| `rule`    | Yes            | The rule image file for transitions.   | Required when `method` is `rule` or `melt`.           |
+| Аргумент  | Можно опустить | Описание                              | Примечания                                                 |
+|-----------|----------------|---------------------------------------|------------------------------------------------------------|
+| `time`    | Да (`0`)       | Продолжительность перехода в секундах. | Влияет на все изменения слоев внутри этого тега.          |
+| `method`  | Да (`normal`)  | Метод/стиль затухания.                | `normal`, `rule` или `melt`.                              |
+| `rule`    | Да             | Файл изображения rule для переходов.  | Требуется, когда `method` равен `rule` или `melt`.        |
 
-#### Layer File Arguments
+#### Аргументы файлов слоев
 
-Specify a filename to load an image onto a layer. Set to `none` to unload (hide) the image.
+Укажите имя файла, чтобы загрузить изображение в слой. Установите `none`, чтобы выгрузить (скрыть) изображение.
 
-| Argument       | Description                               |
-|----------------|-------------------------------------------|
-| `bg`           | Background layer.                         |
-| `back          | Back-Center character.                    |
-| `left`         | Left character.                           |
-| `right`        | Right character.                          |
-| `center`       | Center character.                         |
-| `left-center`  | Left-Center character.                    |
-| `right-center` | Intermediate character.                   |
-| `face`         | Face character.                           |
+| Аргумент       | Описание                               |
+|----------------|----------------------------------------|
+| `bg`           | Фоновый слой.                           |
+| `back`         | Персонаж заднего центра.               |
+| `left`         | Левый персонаж.                        |
+| `right`        | Правый персонаж.                       |
+| `center`       | Центральный персонаж.                 |
+| `left-center`  | Левый центральный персонаж.           |
+| `right-center` | Промежуточный персонаж.               |
+| `face`         | Лицевой персонаж.                      |
 
-#### Layer Parameter Arguments
+#### Аргументы параметров слоя
 
-Each layer above (e.g., `center`) can be customized using the following suffixes (e.g., `center-x`, `center-rotate`).
+Каждый из слоев выше (например, `center`) можно настраивать с помощью следующих суффиксов (например, `center-x`, `center-rotate`).
 
-| Suffix      | Omissible     | Description                | Notes                                                         |
-|-------------|---------------|----------------------------|---------------------------------------------------------------|
-| `-x`        | Yes (`0`)     | X position.                | Supports absolute (e.g., `100`) or relative (e.g., `r50`).    |
-| `-y`        | Yes (`0`)     | Y position.                | Supports absolute (e.g., `100`) or relative (e.g., `r-50`).   |
-| `-a`        | Yes (`255`)   | Alpha value. (opacity)     | `0` (transparent) to `255` (opaque).                          |
-| `-scale-x`  | Yes (`1.0`)   | X scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `-scale-y`  | Yes (`1.0`)   | Y scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `-center-x` | Yes (`0`)     | X center for rotation.     | Pivot point for the rotation effect.                          |
-| `-center-y` | Yes (`0`)     | Y center for rotation.     | Pivot point for the rotation effect.                          |
-| `-rotate`   | Yes (`0`)     | Rotation in degrees.       | Positive for clockwise. Supports `r` prefix.                  |
-| `-dim`      | Yes (`false`) | Dimming status.            | If `true`, the layer is rendered 50% darker.                  |
+| Суффикс     | Можно опустить | Описание               | Примечания                                                         |
+|-------------|----------------|------------------------|--------------------------------------------------------------------|
+| `-x`        | Да (`0`)       | Позиция по X.          | Поддерживаются абсолютные значения (например, `100`) и относительные (например, `r50`). |
+| `-y`        | Да (`0`)       | Позиция по Y.          | Поддерживаются абсолютные значения (например, `100`) и относительные (например, `r-50`). |
+| `-a`        | Да (`255`)     | Значение alpha (непрозрачность). | `0` (прозрачный) до `255` (непрозрачный).                          |
+| `-scale-x`  | Да (`1.0`)     | Коэффициент масштабирования по X. | `1.0` - исходный размер. Поддерживает префикс `r`.              |
+| `-scale-y`  | Да (`1.0`)     | Коэффициент масштабирования по Y. | `1.0` - исходный размер. Поддерживает префикс `r`.              |
+| `-center-x` | Да (`0`)       | X-центр для вращения.  | Точка опоры для эффекта вращения.                                  |
+| `-center-y` | Да (`0`)       | Y-центр для вращения.  | Точка опоры для эффекта вращения.                                  |
+| `-rotate`   | Да (`0`)       | Вращение в градусах.   | Положительные значения - по часовой стрелке. Поддерживает префикс `r`. |
+| `-dim`      | Да (`false`)   | Состояние затемнения.  | Если `true`, слой отображается на 50% темнее.                       |
 
-### Tips
+### Советы
 
-**Batch Updates**:
-* You can update multiple characters and the background simultaneously in a single `[ch]` tag to ensure they animate together perfectly.
+**Пакетные обновления**:
+* Можно обновлять несколько персонажей и фон одновременно в одном теге `[ch]`, чтобы они анимировались идеально синхронно.
 
-**Relative Transformation**:
-* Like the `bg` tag, all numeric parameters support the `r` prefix.
-* For example, `center-y="r-50"` will hop the center character 50 pixels upward from its current position.
+**Относительные преобразования**:
+* Как и тег `bg`, все числовые параметры поддерживают префикс `r`.
+* Например, `center-y="r-50"` поднимет центрального персонажа на 50 пикселей относительно его текущего положения.
 
 ---
 
 ## `chapter`
 
-Set Chapter Name
+Установка имени главы
 
-The `chapter` tag sets the name of the current chapter. 
-This name is typically used by the game system to display progress in the save/load menu or on the game screen, helping players keep track of their journey.
+Тег `chapter` задает имя текущей главы.
+Обычно это имя используется игровой системой для отображения прогресса в меню сохранения/загрузки или на игровом экране, помогая игрокам отслеживать ход истории.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Set the chapter name at the beginning of a story segment
+# Задать имя главы в начале сюжетного фрагмента
 [chapter name="Chapter 01: The Beginning"]
 
-# Update the chapter name as the story progresses
+# Обновить имя главы по мере развития сюжета
 [chapter name="Intermission: A Quiet Night"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument | Omissible | Description                        | Notes                                                      |
-|----------|-----------|------------------------------------|------------------------------------------------------------|
-| `name`   | No        | The name of the chapter to be set. | This string will be stored in the game's system variables. |
+| Аргумент | Можно опустить | Описание                         | Примечания                                                      |
+|----------|----------------|----------------------------------|-----------------------------------------------------------------|
+| `name`   | Нет            | Имя главы, которое нужно задать. | Эта строка будет сохранена в системных переменных игры.         |
 
-### Tips
+### Советы
 
-**Save Data Visibility**:
-* In many Suika3 configurations, the string you set here is what appears on the "Save" and "Load" slots.
-* Choose a name that helps the player remember exactly where they were in the story!
+**Видимость данных сохранения**:
+* Во многих конфигурациях Suika3 строка, которую вы задаете здесь, - это то, что отображается в слотах "Save" и "Load".
+* Выберите имя, которое поможет игроку точно помнить, где он находится в сюжете!
 
-**Consistency**:
-* It's a good practice to call the `[chapter]` tag immediately after a `[label]` that starts a new major scene or chapter. 
+**Последовательность**:
+* Хорошая практика - вызывать тег `[chapter]` сразу после `[label]`, который начинает новую крупную сцену или главу.
 
-**Updating Names**:
-* You can call `[chapter]` as many times as you like.
-* Every time you do, the old chapter name is overwritten by the new one.
+**Обновление имен**:
+* Вы можете вызывать `[chapter]` столько раз, сколько захотите.
+* Каждый раз старое имя главы перезаписывается новым.
 
 ---
 
 ## `choose`
 
-Display Selection Options
+Показ вариантов выбора
 
-The `choose` tag displays up to 8 interactive buttons for the player. 
-It stores the text of the chosen item in a variable.
+Тег `choose` отображает до 8 интерактивных кнопок для игрока.
+Он сохраняет текст выбранного варианта в переменной.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Store selection in a variable
+# Сохраняем выбор в переменную
 [choose
-    text1="Red Pill"
-    text2="Green Pill"
-    text3="Blue Pill"
+    text1="Красная таблетка"
+    text2="Зеленая таблетка"
+    text3="Синяя таблетка"
     name="user_choice"
     value1="red"
     value2="green"
@@ -350,473 +350,475 @@ It stores the text of the chosen item in a variable.
 ]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument         | Omissible | Description                                    | Notes                                              |
+| ????????         | ????? ???????? | ????????                                    | ??????????                                              |
 |------------------|-----------|------------------------------------------------|--------------------------------------------------- |
-| `text1`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text2`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text3`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text4`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text5`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text6`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text7`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text8`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text<N>-locale` | Yes       | The text displayed on each button. (localized) | At least one option are typically required.        |
-| `name`           | No        | The variable name to store the result.         | Stores the text of the selected option.            |
-| `value1`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value2`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value3`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value4`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value5`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value6`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value7`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value8`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `time`           | Yes (`0`) | Timer in seconds.                              | If `0`, no timer is enabled.                       |
+| `text1`          | Yes       | Текст, отображаемый на каждой кнопке.          | Обычно требуется как минимум один вариант.        |
+| `text2`          | Yes       | Текст, отображаемый на каждой кнопке.          | Обычно требуется как минимум один вариант.        |
+| `text3`          | Yes       | Текст, отображаемый на каждой кнопке.          | Обычно требуется как минимум один вариант.        |
+| `text4`          | Yes       | Текст, отображаемый на каждой кнопке.          | Обычно требуется как минимум один вариант.        |
+| `text5`          | Yes       | Текст, отображаемый на каждой кнопке.          | Обычно требуется как минимум один вариант.        |
+| `text6`          | Yes       | Текст, отображаемый на каждой кнопке.          | Обычно требуется как минимум один вариант.        |
+| `text7`          | Yes       | Текст, отображаемый на каждой кнопке.          | Обычно требуется как минимум один вариант.        |
+| `text8`          | Yes       | Текст, отображаемый на каждой кнопке.          | Обычно требуется как минимум один вариант.        |
+| `text<N>-locale` | Yes       | Текст, отображаемый на каждой кнопке. (localized) | Обычно требуется как минимум один вариант.        |
+| `name`           | No        | Имя переменной, в которую сохраняется результат. | Сохраняет текст выбранного варианта.               |
+| `value1`         | Yes       | Значение, присваиваемое переменной результата.  | Обычно требуется как минимум один вариант.        |
+| `value2`         | Yes       | Значение, присваиваемое переменной результата.  | Обычно требуется как минимум один вариант.        |
+| `value3`         | Yes       | Значение, присваиваемое переменной результата.  | Обычно требуется как минимум один вариант.        |
+| `value4`         | Yes       | Значение, присваиваемое переменной результата.  | Обычно требуется как минимум один вариант.        |
+| `value5`         | Yes       | Значение, присваиваемое переменной результата.  | Обычно требуется как минимум один вариант.        |
+| `value6`         | Yes       | Значение, присваиваемое переменной результата.  | Обычно требуется как минимум один вариант.        |
+| `value7`         | Yes       | Значение, присваиваемое переменной результата.  | Обычно требуется как минимум один вариант.        |
+| `value8`         | Yes       | Значение, присваиваемое переменной результата.  | Обычно требуется как минимум один вариант.        |
+| `time`           | Yes (`0`) | Таймер в секундах.                             | Если `0`, таймер не активируется.                 |
 
-### Localization
+### Локализация
 
-For example, if the user OS environment is set to Japanese, `text1-ja` is preferred instead of `text1`.
+Например, если в ОС пользователя выбран японский язык, предпочтительнее `text1-ja`, а не `text1`.
 
-| Suffix      | Language                                 |
+| ???????      | ????                                 |
 |-------------|------------------------------------------|
-| -en         | English (Fallback)                       |
-| -en-us      | English (America)                        |
-| -en-gb      | English (British)                        |
-| -en-au      | English (Austraria)                      |
-| -en-nz      | English (New Zealand)                    |
-| -fr         | French (Fallback)                        |
-| -fr-fr      | French (France)                          |
-| -fr-ca      | French (Canada)                          |
-| -es         | Spanish (Spain, Fallback)                |
-| -es-la      | Spanish (Latin America)                  |
-| -de         | German                                   |
-| -it         | Italian                                  |
-| -ru         | Russian                                  |
-| -el         | Greek                                    |
-| -zh         | Chinese (Simplified)                     |
-| -zh-tw      | Chinese (Traditional, Taiwan)            |
-| -ja         | Japanese                                 |
-| (no suffix) | Fallback (developer decides)             |
+| -en         | Английский (резервный вариант)           |
+| -en-us      | Английский (США)                          |
+| -en-gb      | Английский (Великобритания)              |
+| -en-au      | Английский (Австралия)                    |
+| -en-nz      | Английский (Новая Зеландия)              |
+| -fr         | Французский (резервный вариант)          |
+| -fr-fr      | Французский (Франция)                    |
+| -fr-ca      | Французский (Канада)                     |
+| -es         | Испанский (Испания, резервный вариант)   |
+| -es-la      | Испанский (Латинская Америка)            |
+| -de         | Немецкий                                  |
+| -it         | Итальянский                               |
+| -ru         | Русский                                   |
+| -el         | Греческий                                 |
+| -zh         | Китайский (упрощенный)                    |
+| -zh-tw      | Китайский (традиционный, Тайвань)        |
+| -ja         | Японский                                  |
+| (no suffix) | Резервный вариант (решение разработчика) |
 
-For English OS locales including all regions, `-en` is used as the
-default fallback.  If a more specific variant such as `-en-gb` is
-specified in a tag and best matches with the user region, it will be
-preferred. The same mechanism is applied to Spanish and French. Note
-that there is no fallback from Traditional Chinese to Simplified
-Chinese.
+Для всех английских локалей ОС, включая все регионы, в качестве
+стандартного резервного варианта используется `-en`. Если в теге
+указан более конкретный вариант, например `-en-gb`, и он лучше всего
+соответствует региону пользователя, будет выбран именно он. То же
+самое правило применяется к испанскому и французскому. Обратите
+внимание, что для традиционного китайского нет резервного перехода к
+упрощенному китайскому.
 
-For example, if the user locale is `en-AU`, the following priority is applied:
+Например, если локаль пользователя `en-AU`, применяется следующий приоритет:
 * 1. text1-en-au
 * 2. text1-en
 * 3. text1
 
-The following are currently not supported but planned to be supported.
+Следующие варианты сейчас не поддерживаются, но планируется их поддержать.
 
-| Suffix      | Language                                 |
+| ???????      | ????                                 |
 |-------------|------------------------------------------|
-| -ko         | Korean                                   |
-| -vi         | Vietnamese                               |
-| -id         | Indonesia                                |
-| -zh-hk      | Traditional Chinese (Hong Kong)          |
-| -pt         | Portuguese (Fallback)                    |
-| -pt-br      | Portuguese (Brazil)                      |
-| -pl         | Polish                                   |
-| -tr         | Turkish                                  |
-| -ta         | Tamil                                    |
-| -te         | Telugu                                   |
-| -kn         | Kannada                                  |
-| -si         | Sinhala                                  |
-| -ar         | Arabic (RTL)                             |
-| -fa         | Persian (RTL)                            |
+| -ko         | Корейский                                |
+| -vi         | Вьетнамский                              |
+| -id         | Индонезийский                            |
+| -zh-hk      | Традиционный китайский (Гонконг)        |
+| -pt         | Португальский (резервный вариант)        |
+| -pt-br      | Португальский (Бразилия)                |
+| -pl         | Польский                                 |
+| -tr         | Турецкий                                 |
+| -ta         | Тамильский                               |
+| -te         | Телугу                                   |
+| -kn         | Каннада                                  |
+| -si         | Сингальский                              |
+| -ar         | Арабский (RTL)                           |
+| -fa         | Персидский (RTL)                         |
 
-### Tips
+### Советы
 
-**Branching Logic**:
-* You can use the `[if]` tag to check the stored value and create complex branches.
+**Логика ветвления**:
+* Вы можете использовать тег `[if]`, чтобы проверять сохраненное значение и создавать сложные ветвления.
 
 ```
 [choose
   name="var1"
-  text1="Go to school"
-  text2="Go to hospital"
+  text1="Пойти в школу"
+  text2="Пойти в больницу"
   value1="1"
   value2="2"]
 
 [if lhs="${var1}" op="=" rhs="1"]
-  # School.
+  # Школа.
 [else]
-  # Hospital.
+  # Больница.
 [endif]
 ```
 
-**Variable Persistence**:
-* Since everything is a string, remember that even numbers like "100" are stored as text.
-* Suika3's logic tags (like `if`) can handle these strings for comparisons.
+**Сохранение переменных**:
+* Поскольку все хранится как строка, помните, что даже числа вроде "100" внутренне сохраняются как текст.
+* Логические теги Suika3, такие как `if`, умеют сравнивать такие строки.
 
 ---
 
 ## `set`
 
-Set Variable
+Установить переменную
 
-The `set` tag assigns a value to a variable name. 
-In Suika3, **all variables are treated as text strings**, but they can be compared numerically in other tags like `[if]`.
+Тег `set` присваивает значение имени переменной.
+В Suika3 **все переменные обрабатываются как текстовые строки**, но их можно сравнивать численно в других тегах, например `[if]`.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Assign a simple string to a variable
+# Присваиваем простой строковый текст переменной
 [set name="player_name" value="Kaito"]
 
-# Set a numeric-like value (stored as a string)
+# Устанавливаем числоподобное значение (сохраняется как строка)
 [set name="health" value="100"]
 
-# Clear a variable by setting it to an empty string
+# Очищаем переменную, присваивая ей пустую строку
 [set name="flag_event_01" value=""]
 
-# Add 1 to var1.
+# Прибавляем 1 к var1.
 [set name="var1" value1="${var1}" op="+" value2="1"]
 
 ```
 
-### Arguments
+### Аргументы
 
-| Argument | Omissible     | Description                                 | Notes                                                               |
+| ???????? | ????? ????????     | ????????                                 | ??????????                                                               |
 |----------|---------------|---------------------------------------------|---------------------------------------------------------------------|
-| `name`   | No            | The unique name of the variable.            | Use alphanumeric characters and underscores for best compatibility. |
-| `value`  | Yes           | The content to store in the variable.       | Remember: everything is stored as a string!                         |
-| `value1` | Yes           | The operand 1 for opcode.                   |                                                                     |
-| `value2` | Yes           | The operand 2 for opcode.                   |                                                                     |
-| `op`     | Yes           | The opcode. (`+`, `-`, `*`, `/`, `//`, `%`) |                                                                     |
-| `global` | Yes (`false`) | Make the flag global.                       | Global variables are for achievement flags e.g., "Saw ED1".         |
+| `name`   | No            | Уникальное имя переменной.                  | Для лучшей совместимости используйте буквы, цифры и символы подчеркивания. |
+| `value`  | Yes           | Содержимое, которое нужно сохранить в переменной. | Помните: все сохраняется как строка!                         |
+| `value1` | Yes           | Первый операнд для кода операции.           |                                                                     |
+| `value2` | Yes           | Второй операнд для кода операции.           |                                                                     |
+| `op`     | Yes           | Код операции. (`+`, `-`, `*`, `/`, `//`, `%`) |                                                                     |
+| `global` | Yes (`false`) | Сделать флаг глобальным.                    | Глобальные переменные используются для флагов достижений, например "Saw ED1".         |
 
-### Tips
+### Советы
 
-**String Handling**:
-* Since Suika3 treats everything as text, `value="100"` and `value="May"` are handled the same way internally.
-* You can reference these variables in other tags (like `text` or `if`) using the `${variable_name}` syntax.
+**Работа со строками**:
+* Поскольку Suika3 считает все текстом, `value="100"` и `value="May"` внутри обрабатываются одинаково.
+* Эти переменные можно использовать в других тегах (например, `text` или `if`) через синтаксис `${variable_name}`.
 
-**Flag Management**:
-* For game flags (like "has met the hero"), it's a common practice to use `"true"` and `"false"` or `"1"` and `"0"`. 
-* Consistency is key! If you start using `"1"`, stick with it so your `[if]` checks don't get confused.
+**Управление флагами**:
+* Для игровых флагов, таких как "встретил героя", обычно используют `"true"` и `"false"` либо `"1"` и `"0"`.
+* Последовательность важна! Если вы начали использовать `"1"`, придерживайтесь этого варианта, чтобы проверки `[if]` не путались.
 
-**Variable Naming**:
-* Avoid using spaces or special symbols in your variable names. `my_variable` is much safer than `my variable!`.
+**Именование переменных**:
+* Избегайте пробелов и специальных символов в именах переменных. `my_variable` гораздо надежнее, чем `my variable!`.
 
 ---
 
 ## `click`
 
-Wait for Click
+Ожидание клика
 
-The `click` tag pauses the script execution and waits for the player to click the mouse or press a key.
-It is commonly used to create pauses between visual changes or before a major transition.
+Тег `click` приостанавливает выполнение сценария и ждет, пока игрок щелкнет мышью или нажмет клавишу.
+Его обычно используют, чтобы создавать паузы между визуальными изменениями или перед крупным переходом.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Change the background, then wait for the player to click
+# Меняем фон, затем ждем клика игрока
 [bg file="sunset.png" time="1.0"]
 [click]
 
-# After the click, show the character
+# После клика показываем персонажа
 [ch center="chara01.png" time="1.0"]
 ```
 
-### Arguments
+### Аргументы
 
-This tag does not take any arguments.
+Этот тег не принимает аргументов.
 
-| Argument | Omissible | Description | Notes           |
+| ???????? | ????? ???????? | ???????? | ??????????           |
 |----------|-----------|-------------|-----------------|
 | -        | -         | -           | -               |
 
-### Tips
+### Советы
 
-**Timing and Pacing**:
-* Use `[click]` when you want to give the player a moment to look at a new background or a specific character expression before the dialogue continues.
-* Unlike the `[text]` tag, which waits for a click automatically after displaying a message, `[click]` is used for manual flow control during non-dialogue sequences.
+**Тайминг и темп**:
+* Используйте `[click]`, когда хотите дать игроку время рассмотреть новый фон или выражение персонажа перед продолжением диалога.
+* В отличие от тега `[text]`, который автоматически ждет клика после показа сообщения, `[click]` применяется для ручного управления потоком во время недиалоговых последовательностей.
 
-**Visual Feedback**:
-* When the script hits a `[click]` tag, the game will remain still. Ensure that any preceding animations (like `[bg]` or `[ch]`) have a `time` set, or the screen might feel static too abruptly.
+**Визуальная обратная связь**:
+* Когда сценарий доходит до тега `[click]`, игра остается неподвижной. Убедитесь, что у всех предыдущих анимаций, таких как `[bg]` или `[ch]`, задан параметр `time`, иначе экран может слишком резко показаться статичным.
 
-**For timed waits:**
-* Use `[wait]` for timed waits.
+**Для ожидания по времени:**
+* Используйте `[wait]` для ожидания по времени.
 
 ---
 
 ## `goto`
 
-Jump to Label
+Переход к метке
 
-The `goto` tag immediately moves the NovelML execution to a specified label. 
-It is useful tool for controlling the flow of your story, allowing you to skip sections or loop back to previous parts.
+Тег `goto` немедленно переносит выполнение NovelML к указанной метке.
+Это полезный инструмент для управления ходом истории, позволяющий пропускать фрагменты или возвращаться к предыдущим частям.
 
-Please note that small branches should be realized by `[if]`.
+Обратите внимание, что небольшие ветвления следует реализовывать через `[if]`.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Jump to the beginning of the morning scene
+# Перейти к началу утренней сцены
 [goto name="morning_start"]
 
-# ... this part of the script will be skipped ...
+# ... этот фрагмент сценария будет пропущен ...
 
 [label name="morning_start"]
-[text text="The sun rises over the horizon."]
+[text text="Солнце встает над горизонтом."]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument | Omissible | Description                       | Notes                                         |
+| ???????? | ????? ???????? | ????????                       | ??????????                                         |
 |----------|-----------|-----------------------------------|-----------------------------------------------|
-| `name`   | No        | The target label name to jump to. | Must match a name defined by a `[label]` tag. |
+| `name`   | No        | Имя целевой метки для перехода.   | Должно совпадать с именем, заданным тегом `[label]`. |
 
-### Tips
+### Советы
 
-**Unconditional Jump**:
-* Unlike `[if]`, `[goto]` always jumps to the target label as soon as the engine hits the tag.
+**Безусловный переход**:
+* В отличие от `[if]`, `[goto]` всегда выполняет переход к целевой метке, как только движок доходит до тега.
 
-**Flow Management**:
-* Use `[goto]` at the end of a branching path to bring the story back to a "common" route. 
-* It's also great for creating loops (like a "Return to Title" sequence) when combined with other logic.
+**Управление потоком**:
+* Используйте `[goto]` в конце ветвящейся дороги, чтобы вернуть историю на "общий" маршрут.
+* Это также отлично подходит для создания циклов, например последовательности "Вернуться к заголовку", если сочетать тег с другой логикой.
 
-**Across Files?**:
-* Remember that `[goto]` typically works within the current script file.
-* If you want to jump to a different file entirely, you'll want to look at the `[load]` tag!
+**Между файлами?**:
+* Помните, что `[goto]` обычно работает внутри текущего файла сценария.
+* Если вам нужно перейти в совершенно другой файл, обратите внимание на тег `[load]`!
 
 ---
 
 ## `defmacro`
 
-Define Macro
+Определить макрос
 
-The `defmacro` tag starts the definition of a macro. 
-A macro allows you to group multiple tags and commands into a single named block, which can be reused throughout your script using the `[callmacro]` tag.
+Тег `defmacro` начинает определение макроса.
+Макрос позволяет объединить несколько тегов и команд в один именованный блок, который можно повторно использовать во всем сценарии через тег `[callmacro]`.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Define a macro for a specific character's entrance
+# Определяем макрос для появления конкретного персонажа
 [defmacro name="enter_kaito"]
     [ch center="kaito_smile.png" time="0.5"]
-    [text name="Kaito" text="Hey! Did I keep you waiting?"]
+    [text name="Kaito" text="Привет! Я не заставил тебя ждать?"]
 [endmacro]
 
-# Later in your script, call it with a single line
+# Позже в сценарии вызываем его одной строкой
 [callmacro name="enter_kaito"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument | Omissible | Description                     | Notes                                             |
+| ???????? | ????? ???????? | ????????                     | ??????????                                             |
 |----------|-----------|---------------------------------|---------------------------------------------------|
-| `name`   | No        | The unique name for this macro. | Used to identify the macro when calling it later. |
+| `name`   | No        | Уникальное имя этого макроса.   | Используется для идентификации макроса при последующем вызове. |
 
-### Tips
+### Советы
 
-**Closing the Definition**:
-* Every `[defmacro]` must be paired with an `[endmacro]` tag to mark the end of the definition.
+**Закрытие определения**:
+* Каждый `[defmacro]` должен сопровождаться тегом `[endmacro]`, который отмечает конец определения.
 
-**Code Reusability**:
-* Macros are perfect for repetitive sequences, such as specific UI transitions, character-specific visual setups, or complex sound and visual combinations.
+**Переиспользование кода**:
+* Макросы отлично подходят для повторяющихся последовательностей, например для особых переходов интерфейса, визуальных настроек персонажей или сложных сочетаний звука и изображения.
 
-**Organization**:
-* It is a common practice to define all your macros at the very beginning of your main script file or in a separate file that you load at the start.
+**Организация**:
+* Обычно все макросы определяют в самом начале основного файла сценария или в отдельном файле, который загружается в начале.
 
-**Nesting and Logic**:
-* You can include almost any other tag inside a macro, including `[if]` statements and even `[returnmacro]` to exit the macro early based on certain conditions.
+**Вложенность и логика**:
+* Внутрь макроса можно поместить почти любой другой тег, включая инструкции `[if]` и даже `[returnmacro]`, чтобы завершить макрос раньше при выполнении определенных условий.
 
 ---
 
 ## `gui`
 
-Show GUI
+Показ GUI
 
-The `gui` tag loads and displays a Graphical User Interface (GUI) definition from a specified file. 
-It is used to display menus, title screens, or custom interaction panels.
+Тег `gui` загружает и отображает определение графического интерфейса пользователя (GUI) из указанного файла.
+Он используется для показа меню, экранов заголовка или пользовательских панелей взаимодействия.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Display the main menu GUI
+# Показать GUI главного меню
 [gui file="main_menu.txt"]
 
-# Show a custom save/load screen
+# Показать пользовательский экран сохранения/загрузки
 [gui file="save_screen.txt"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument | Omissible | Description                                 | Notes                                               |
+| ???????? | ????? ???????? | ????????                                 | ??????????                                               |
 |----------|-----------|---------------------------------------------|-----------------------------------------------------|
-| `file`   | No        | The filename of the GUI definition to load. | The file must exist in the project's GUI directory. |
+| `file`   | No        | Имя файла с определением GUI для загрузки.  | Файл должен существовать в каталоге GUI проекта.    |
 
-### Tips
+### Советы
 
-**GUI Definitions**:
-* The `file` argument points to a text file that defines the layout, buttons, and actions of your interface.
-* These files specify where images are placed and what happens (like jumping to a label or quitting) when a user interacts with them.
+**Определения GUI**:
+* Аргумент `file` указывает на текстовый файл, который определяет расположение элементов, кнопок и действий вашего интерфейса.
+* Эти файлы задают, где размещаются изображения и что происходит при взаимодействии пользователя, например переход к метке или выход из игры.
 
-**Usage in Flow**:
-* Typically, a `[gui]` tag is used for a graphical menu such as title screen.
+**Использование в потоке**:
+* Обычно тег `[gui]` применяется для графического меню, например экрана заголовка.
 
-**Customization**:
-* Since the GUI is defined in an external file, you can create multiple looks for your game and switch between them just by calling different files with this tag.
+**Настройка**:
+* Поскольку GUI определяется во внешнем файле, вы можете создавать несколько вариантов оформления игры и переключаться между ними, просто вызывая разные файлы этим тегом.
 
 ---
 
 ## `label`
 
-Define Label
+Определить метку
 
-The `label` tag defines a specific point in the script that can be targeted by jump commands like `[goto]` or `[load]`.
-It acts as a bookmark for navigation within your story.
+Тег `label` задает определенную точку в сценарии, на которую можно ссылаться командами перехода, такими как `[goto]` или `[load]`.
+Он служит закладкой для навигации внутри вашей истории.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Define a label for the start of a new chapter
+# Определяем метку для начала новой главы
 [label name="chapter_01_start"]
 
-# Use a jump command to reach this label
+# Используем команду перехода, чтобы достичь этой метки
 [goto name="chapter_01_start"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument | Omissible | Description                     | Notes                                                  |
+| ???????? | ????? ???????? | ????????                     | ??????????                                                  |
 |----------|-----------|---------------------------------|--------------------------------------------------------|
-| `name`   | No        | The unique name for this label. | Case-sensitive. Avoid using spaces or special symbols. |
+| `name`   | No        | Уникальное имя этой метки.      | Чувствительно к регистру. Не используйте пробелы или специальные символы. |
 
-### Tips
+### Советы
 
-**Navigation Control**:
-* Labels are useful for creating branching paths.
-* For example, you can put a `label` at the begining of the section of your story for a long jump.
+**Управление навигацией**:
+* Метки полезны для создания разветвленных маршрутов.
+* Например, вы можете поставить `label` в начале раздела истории, чтобы сделать длинный переход.
 
-**Unique Naming**:
-* Every label name within a single script file must be unique.
-* If you have two labels with the same name, the engine might not know where to jump, and that's no fun for anyone!
+**Уникальные имена**:
+* Каждое имя метки внутри одного файла сценария должно быть уникальным.
+* Если у вас есть две метки с одинаковым именем, движок может не понять, куда переходить, а это неудобно для всех!
 
-**Organization**:
-* It's a good habit to use descriptive names like `label_evening_park` instead of `label1`.
-* It makes it much easier for you (and me!) to read the script later and understand what's happening.
+**Организация**:
+* Хорошая привычка - использовать описательные имена вроде `label_evening_park` вместо `label1`.
+* Так вам (и мне!) будет гораздо проще позже читать сценарий и понимать, что происходит.
 
 ---
 
 ## `text`
 
-Display Text
+Показ текста
 
-The `text` tag displays a message in the message box. 
-It can show the main dialogue or narration, and optionally display a character's name in the name box.
+Тег `text` отображает сообщение в окне сообщения.
+Он может показывать основной диалог или повествование, а также при необходимости отображать имя персонажа в поле имени.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Narration style (no name displayed)
-[text text="The wind was howling through the trees."]
+# Повествовательный стиль (имя не отображается)
+[text text="Ветер выл среди деревьев."]
 
-# Character dialogue
-[text name="Keith" text="I've been waiting for you here in the small room."]
+# Реплика персонажа
+[text name="Keith" text="Я ждал тебя здесь, в этой маленькой комнате."]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument         | Omissible | Description                                      | Notes                                            |
+| ????????         | ????? ???????? | ????????                                      | ??????????                                            |
 |------------------|-----------|--------------------------------------------------|--------------------------------------------------|
-| `text`           | No        | The message content to be displayed.             |                                                  |
-| `text-<locale>`  | Yes       | The message content to be displayed. (localized) |                                                  |
-| `voice`          | Yes       | The voice file.                                  |                                                  |
-| `voice-<locale>` | Yes       | The voice file. (localized)                      |                                                  |
-| `name`           | Yes       | The character's name to display in the name box. | If omitted, the name box will usually be hidden. |
-| `action`         | Yes       | For NVL mode and manual show/hide.               |                                                  |
-| `space`          | Yes       | For NVL mode.                                    |                                                  |
+| `text`           | No        | Содержимое сообщения, которое нужно показать.   |                                                  |
+| `text-<locale>`  | Yes       | Содержимое сообщения, которое нужно показать. (localized) |                                                  |
+| `voice`          | Yes       | Файл голоса.                                     |                                                  |
+| `voice-<locale>` | Yes       | Файл голоса. (localized)                         |                                                  |
+| `name`           | Yes       | Имя персонажа, которое отображается в поле имени. | Если опущено, поле имени обычно скрывается.      |
+| `action`         | Yes       | Для режима NVL и ручного показа/скрытия.         |                                                  |
+| `space`          | Yes       | Для режима NVL.                                  |                                                  |
 
-### Localization
+### Локализация
 
-For example, if the user OS environment is set to Japanese, `text-ja` is preferred instead of `text`.
+Например, если в ОС пользователя выбран японский язык, предпочтительнее `text-ja`, а не `text`.
 
-| Suffix      | Language                                 |
+| ???????      | ????                                 |
 |-------------|------------------------------------------|
-| -en         | English (Fallback)                       |
-| -en-us      | English (America)                        |
-| -en-gb      | English (British)                        |
-| -en-au      | English (Austraria)                      |
-| -en-nz      | English (New Zealand)                    |
-| -fr         | French (Fallback)                        |
-| -fr-fr      | French (France)                          |
-| -fr-ca      | French (Canada)                          |
-| -es         | Spanish (Spain, Fallback)                |
-| -es-es      | Spanish (Spain, Fallback)                |
-| -es-la      | Spanish (Latin America)                  |
-| -de         | German                                   |
-| -it         | Italian                                  |
-| -ru         | Russian                                  |
-| -el         | Greek                                    |
-| -zh-cn      | Chinese (Simplified)                     |
-| -zh-tw      | Chinese (Traditional, Taiwan)            |
-| -ja         | Japanese                                 |
-| (no suffix) | Fallback (developer decides)             |
+| -en         | Английский (резервный вариант)           |
+| -en-us      | Английский (США)                          |
+| -en-gb      | Английский (Великобритания)              |
+| -en-au      | Английский (Австралия)                    |
+| -en-nz      | Английский (Новая Зеландия)              |
+| -fr         | Французский (резервный вариант)          |
+| -fr-fr      | Французский (Франция)                    |
+| -fr-ca      | Французский (Канада)                     |
+| -es         | Испанский (Испания, резервный вариант)   |
+| -es-es      | Испанский (Испания, резервный вариант)   |
+| -es-la      | Испанский (Латинская Америка)            |
+| -de         | Немецкий                                  |
+| -it         | Итальянский                               |
+| -ru         | Русский                                   |
+| -el         | Греческий                                 |
+| -zh-cn      | Китайский (упрощенный)                    |
+| -zh-tw      | Китайский (традиционный, Тайвань)        |
+| -ja         | Японский                                  |
+| (no suffix) | Резервный вариант (решение разработчика) |
 
-For English OS locales including all regions, `-en` is used as the
-default fallback.  If a more specific variant such as `-en-gb` is
-specified in a tag and best matches with the user region, it will be
-preferred. The same mechanism is applied to Spanish and French. Note
-that there is no fallback from Traditional Chinese to Simplified
-Chinese.
+Для всех английских локалей ОС, включая все регионы, в качестве
+стандартного резервного варианта используется `-en`. Если в теге
+указан более конкретный вариант, например `-en-gb`, и он лучше всего
+соответствует региону пользователя, будет выбран именно он. То же
+самое правило применяется к испанскому и французскому. Обратите
+внимание, что для традиционного китайского нет резервного перехода к
+упрощенному китайскому.
 
-For example, if the user locale is `en-GB`, the following priority is applied:
+Например, если локаль пользователя `en-GB`, применяется следующий приоритет:
 * 1. text-en-gb
 * 2. text-en
 * 3. text
 
-The following are currently not supported but planned to be supported.
+Следующие варианты сейчас не поддерживаются, но планируется их поддержать.
 
-| Suffix      | Language                                 |
+| ???????      | ????                                 |
 |-------------|------------------------------------------|
-| -ko         | Korean                                   |
-| -vi         | Vietnamese                               |
-| -id         | Indonesia                                |
-| -zh-hk      | Traditional Chinese (Hong Kong)          |
-| -pt         | Portuguese (Fallback)                    |
-| -pt-br      | Portuguese (Brazil)                      |
-| -pl         | Polish                                   |
-| -tr         | Turkish                                  |
-| -ta         | Tamil                                    |
-| -te         | Telugu                                   |
-| -kn         | Kannada                                  |
-| -si         | Sinhala                                  |
-| -ar         | Arabic (RTL)                             |
-| -fa         | Persian (RTL)                            |
+| -ko         | Корейский                                |
+| -vi         | Вьетнамский                              |
+| -id         | Индонезийский                            |
+| -zh-hk      | Традиционный китайский (Гонконг)        |
+| -pt         | Португальский (резервный вариант)        |
+| -pt-br      | Португальский (Бразилия)                |
+| -pl         | Польский                                 |
+| -tr         | Турецкий                                 |
+| -ta         | Тамильский                               |
+| -te         | Телугу                                   |
+| -kn         | Каннада                                  |
+| -si         | Сингальский                              |
+| -ar         | Арабский (RTL)                           |
+| -fa         | Персидский (RTL)                         |
 
-### Actions
+### Действия
 
-You can use special parameters in the `text` tag.
+В теге `text` можно использовать специальные параметры.
 
 ```
-# Clear the message box.
+# Очистить окно сообщения.
 [text action="clear"]
 
-# Clear the message box and show it.
+# Очистить окно сообщения и показать его.
 [text action="new"]
 
-# Show the message box.
+# Показать окно сообщения.
 [text action="show"]
 
-# Hide the message box.
+# Скрыть окно сообщения.
 [text action="hide"]
 ```
 
-### NVL Mode
+### Режим NVL
 
-You can enter the NVL mode by setting some config.
+Перейти в режим NVL можно, задав некоторые параметры конфигурации.
 
 ```
 [text action="hide"]
-[wait time="0.3"] # Wait for the message box to hide.
+[wait time="0.3"] # Ждем, пока окно сообщения скроется.
 [config name="game.novel" value="true"]
 [config name="msgbox.image" value="system/message/msgbox-nvl.png"]
 [config name="msgbox.x" value="0"]
@@ -839,11 +841,11 @@ You can enter the NVL mode by setting some config.
 [text action="clear"]
 ```
 
-You can go back to ADV mode by resetting the config.
+Вернуться в режим ADV можно, сбросив конфигурацию.
 
 ```
 [text action="hide"]
-[wait time="0.3"] # Wait for the message box to hide.
+[wait time="0.3"] # Ждем, пока окно сообщения скроется.
 [config name="game.novel" value="false"]
 [config name="msgbox.image" value="system/message/msgbox.png"]
 [config name="msgbox.x" value="0"]
@@ -865,87 +867,87 @@ You can go back to ADV mode by resetting the config.
 [config name="click.move" value="false"]
 ```
 
-In NVM mode, you can control text messages like this:
+В режиме NVL можно управлять текстовыми сообщениями так:
 
 ```
-# New page.
+# Новая страница.
 [text action="clear"]
-[text text="Hello, this is NVL mode test."]
-[text text="NVL mode has a fullscreen-styled message box."]
-[text text="By default, each text tag will do a line feed."]
-[text text="To continue a paragraph,"]
-[text text="specify the space parameter." space=" "]
+[text text="Привет, это тест режима NVL."]
+[text text="В режиме NVL окно сообщений оформлено как полноэкранное."]
+[text text="По умолчанию каждый тег text делает перевод строки."]
+[text text="Чтобы продолжить абзац,"]
+[text text="укажите параметр space." space=" "]
 
-# New page.
+# Новая страница.
 [text action="clear"]
-[text text="Please clear the message box explicitly."]
+[text text="Пожалуйста, очищайте окно сообщения явно."]
 ```
 
-### Voice
+### Голос
 
-If the current language is `en-us`, a voice file will resolved in the following order:
+Если текущий язык `en-us`, файл голоса будет разрешаться в следующем порядке:
 
-1. `voice-en-us` parameter
-2. `voice/en-us/` + `voice` parameter
-3. `voice-en` parameter
-4. `voice/en/` + `voice` parameter
-5. `voice` parameter
+1. Параметр `voice-en-us`
+2. `voice/en-us/` + параметр `voice`
+3. Параметр `voice-en`
+4. `voice/en/` + параметр `voice`
+5. Параметр `voice`
 
-If the current language is `ja`, a voice file will resolved in the following order:
+Если текущий язык `ja`, файл голоса будет разрешаться в следующем порядке:
 
-1. `voice-ja` parameter
-2. `voice/ja/` + `voice` parameter
-3. `voice` parameter
+1. Параметр `voice-ja`
+2. `voice/ja/` + параметр `voice`
+3. Параметр `voice`
 
-### Tips
+### Советы
 
-**Automatic Waiting**:
-* Unlike other tags, the `text` tag automatically waits for a player's click after the message is fully displayed.
-* You don't need to add a `[click]` tag after every line of dialogue!
+**Автоматическое ожидание**:
+* В отличие от других тегов, тег `text` автоматически ждет клика игрока после того, как сообщение полностью отображено.
+* Не нужно добавлять тег `[click]` после каждой реплики!
 
-**Using Variables**:
-* You can include variables within your text by using the `${variable_name}` syntax. 
-* Example: `[text text="Hello, ${player_name}!"]` will greet the player using whatever name is stored in that variable.
+**Использование переменных**:
+* Вы можете подставлять переменные в текст, используя синтаксис `${variable_name}`.
+* Пример: `[text text="Привет, ${player_name}!"]` поприветствует игрока тем именем, которое хранится в этой переменной.
 
-**Line Breaks**:
-* Check your project's configuration for how long a single line can be.
-* If your text is too long, it might overflow the message box, so keep an eye on the length of your `text` argument!
+**Переносы строк**:
+* Проверьте конфигурацию проекта, чтобы понять, какой длины может быть одна строка.
+* Если текст слишком длинный, он может выйти за пределы окна сообщения, поэтому следите за длиной аргумента `text`!
 
 ---
 
 ## `if`
 
-Conditional Branching
+Условное ветвление
 
-The `if` tag allows the NovelML to branch based on a specific condition. 
-By comparing variables or values, you can create unique story paths or react to previous player choices.
+Тег `if` позволяет NovelML выполнять ветвление на основе заданного условия.
+Сравнивая переменные или значения, вы можете создавать уникальные сюжетные пути или реагировать на предыдущие выборы игрока.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Check if a variable equals a certain value
+# Проверить, равна ли переменная определенному значению
 [if lhs="${points}" op="==" rhs="100"]
-    [text text="Perfect score! You're amazing."]
+    [text text="Идеальный результат! Ты великолепен."]
 [elseif lhs="${points}" op=">=" rhs="80"]
-    [text text="Great job! You passed."]
+    [text text="Отличная работа! Ты справился."]
 [else]
-    [text text="Better luck next time."]
+    [text text="В следующий раз повезет больше."]
 [endif]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument | Omissible | Description                            | Notes                                          |
-|----------|-----------|----------------------------------------|------------------------------------------------|
-| `lhs`    | No        | The Left-Hand Side of the condition.   | Usually a variable like `${var_name}`.         |
-| `op`     | No        | The operator used for comparison.      | See the "Operators" table below.               |
-| `rhs`    | No        | The Right-Hand Side of the condition.  | The value or variable to compare against.      |
+| Аргумент | Можно опустить | Описание                           | Примечания                                     |
+|----------|---------------|-------------------------------------|------------------------------------------------|
+| `lhs`    | Нет           | Левая часть условия.                | Обычно это переменная вроде `${var_name}`.    |
+| `op`     | Нет           | Оператор, используемый для сравнения. | См. таблицу "Операторы" ниже.              |
+| `rhs`    | Нет           | Правая часть условия.               | Значение или переменная для сравнения.        |
 
-### Comparison Operators (`op`)
+### Операторы сравнения (`op`)
 
-You can use these operators to define how the two sides are compared:
+Вы можете использовать эти операторы, чтобы определить, как сравниваются две стороны:
 
-| Operator   | Description                |
+| Оператор   | Описание                   |
 |------------|----------------------------|
 | `===`      | Equal (String)             |
 | `==`       | Equal (Numeric)            |
@@ -954,756 +956,741 @@ You can use these operators to define how the two sides are compared:
 | `<`        | Less Than (Numeric)        |
 | `<=`       | Less Or Equal (Numeric)    |
 
-### Tips
+### Советы
 
-**Closing the Block**:
-* Every `[if]` block MUST end with an `[endif]` tag.
-* If you forget it, the engine might get confused about where the condition ends!
+**Закрытие блока**:
+* Каждый блок `[if]` ОБЯЗАТЕЛЬНО должен заканчиваться тегом `[endif]`.
+* Если вы забудете его, движок может запутаться, где заканчивается условие!
 
-**Variable Syntax**:
-* When using a variable as the `lhs`, always wrap it in `${}`.
-* For example, use `lhs="${flag_01}"` instead of just `lhs="flag_01"`.
+**Синтаксис переменных**:
+* Если используете переменную как `lhs`, всегда заключайте ее в `${}`.
+* Например, используйте `lhs="${flag_01}"`, а не просто `lhs="flag_01"`.
 
-**Handling Strings vs. Numbers**:
-* Suika3 treats variable values as strings, but these operators allow you to perform numeric-style comparisons.
-* Just be consistent with your values (e.g., using "1" for true and "0" for false).
+**Строки и числа**:
+* Suika3 рассматривает значения переменных как строки, но эти операторы позволяют выполнять числовые сравнения.
+* Просто последовательно используйте свои значения (например, "1" для true и "0" для false).
 
-**Multiple Branches**:
-* You can use as many `[elseif]` tags as you need between `[if]` and `[endif]` to check for multiple specific conditions.
+**Несколько ветвей**:
+* Между `[if]` и `[endif]` можно использовать столько тегов `[elseif]`, сколько нужно, чтобы проверить несколько конкретных условий.
 
 ---
-
 ## `elseif`
 
-Additional Conditional Branching
+Дополнительное условное ветвление
 
-The `elseif` tag specifies an additional condition within an `[if]` block. 
-It is only evaluated if the preceding `[if]` and any previous `[elseif]` conditions were false.
+Тег `elseif` задает дополнительное условие внутри блока `[if]`.
+Он вычисляется только в том случае, если предыдущее условие `[if]` и все предыдущие условия `[elseif]` оказались ложными.
 
-### Basic Usage
+### Базовое использование
 
 ```
 [if lhs="${rank}" op="==" rhs="A"]
-    [text text="Excellent! You're a pro."]
+    [text text="Превосходно! Ты профи."]
 [elseif lhs="${rank}" op="==" rhs="B"]
-    [text text="Good job! Keep it up."]
+    [text text="Хорошая работа! Так держать."]
 [elseif lhs="${rank}" op="==" rhs="C"]
-    [text text="Not bad, but you can do better."]
+    [text text="Неплохо, но можно лучше."]
 [else]
-    [text text="Don't give up! Try again."]
+    [text text="Не сдавайся! Попробуй еще раз."]
 [endif]
 ```
 
-### Arguments
+### Аргументы
 
-Same as `[if]`. See also [if](#if).
+То же, что и у `[if]`. См. также [if](#if).
 
-### Tips
+### Советы
 
-**Sequential Evaluation**:
-* The engine checks conditions from top to bottom.
-* As soon as one `[if]` or `[elseif]` condition is met, its block is executed, and the rest of the branch (including other `[elseif]`s and the `[else]`) is skipped.
+**Последовательная проверка**:
+* Движок проверяет условия сверху вниз.
+* Как только одно из условий `[if]` или `[elseif]` выполняется, его блок запускается, а остальная часть ветви, включая другие `[elseif]` и `[else]`, пропускается.
 
-**Placement**:
-* `[elseif]` must always be placed between an `[if]` tag and an `[else]` or `[endif]` tag.
-* You can use as many `[elseif]` tags as you need to cover all your bases!
+**Размещение**:
+* `[elseif]` всегда должен находиться между тегом `[if]` и тегом `[else]` или `[endif]`.
+* Вы можете использовать столько тегов `[elseif]`, сколько нужно, чтобы учесть все варианты!
 
-**Efficiency**:
-* If you have a lot of conditions that check the same variable, using multiple `[elseif]` tags is much cleaner and more efficient than nesting multiple `[if]` blocks inside each other.
+**Эффективность**:
+* Если у вас много условий, проверяющих одну и ту же переменную, несколько тегов `[elseif]` гораздо чище и эффективнее, чем вложенные блоки `[if]` друг в друга.
 
 ---
-
 ## `else`
 
-Default Conditional Branch
+Ветвь по умолчанию
 
-The `else` tag defines a block of code to be executed if none of the preceding `[if]` or `[elseif]` conditions were met. 
-It acts as the "default" path for your branching logic.
+Тег `else` определяет блок кода, который выполняется, если ни одно из предыдущих условий `[if]` или `[elseif]` не было выполнено.
+Он служит "ветвью по умолчанию" в вашей логике ветвления.
 
-### Basic Usage
+### Базовое использование
 
 ```
 [if lhs="${weather}" op="==" rhs="sunny"]
-    [text text="It's a beautiful day!"]
+    [text text="Прекрасный день!"]
 [elseif lhs="${weather}" op="==" rhs="rainy"]
-    [text text="I should bring an umbrella."]
+    [text text="Мне стоит взять зонт."]
 [else]
-    # This runs if it's not sunny OR rainy (e.g., cloudy or snowy)
-    [text text="The sky looks interesting today."]
+    # Этот код выполняется, если не sunny ИЛИ rainy (например, cloudy или snowy)
+    [text text="Сегодня небо выглядит интересно."]
 [endif]
 ```
 
-### Arguments
+### Аргументы
 
-This tag does not take any arguments.
+Этот тег не принимает аргументов.
 
-| Argument | Omissible | Description | Notes |
-|----------|-----------|-------------|-------|
+| Аргумент | Можно опустить | Описание | Примечания |
+|----------|---------------|----------|------------|
 | -        | -         | -           | -     |
 
-### Tips
+### Советы
 
-**Final Catch-all**:
-* Use `[else]` to handle any scenarios you didn't explicitly cover in your `[if]` or `[elseif]` checks.
-* It ensures the game always has a valid path to follow.
+**Финальная ветвь на все случаи**:
+* Используйте `[else]`, чтобы обработать любые сценарии, которые вы явно не покрыли в проверках `[if]` или `[elseif]`.
+* Это гарантирует, что у игры всегда будет допустимый путь продолжения.
 
-**Placement**:
-* `[else]` must be placed after all `[elseif]` tags (if any) and immediately before the `[endif]` tag.
-* You can only have one `[else]` per `[if]` block.
+**Размещение**:
+* `[else]` должен идти после всех тегов `[elseif]` (если они есть) и непосредственно перед тегом `[endif]`.
+* В одном блоке `[if]` может быть только один `[else]`.
 
-**Optional Nature**:
-* You don't *have* to include an `[else]` block.
-* If no conditions are met and there is no `[else]`, the engine will simply skip everything and continue after the `[endif]`.
+**Необязательность**:
+* Вам *не обязательно* включать блок `[else]`.
+* Если условия не выполнены и `[else]` отсутствует, движок просто пропустит все и продолжит выполнение после `[endif]`.
 
 ---
-
 ## `endif`
 
-End Conditional Branch
+Завершение условной ветви
 
-The `endif` tag marks the end of a conditional block started by an `[if]` tag. 
-It tells the engine to resume normal script execution after the branching logic is complete.
+Тег `endif` обозначает конец условного блока, начатого тегом `[if]`.
+Он сообщает движку, что после завершения логики ветвления нужно вернуться к обычному выполнению сценария.
 
-### Basic Usage
+### Базовое использование
 
 ```
 [if lhs="${love_points}" op=">=" rhs="50"]
-    [text text="She gives you a warm smile."]
+    [text text="Она дарит тебе теплую улыбку."]
 [else]
-    [text text="She greets you politely."]
+    [text text="Она вежливо приветствует тебя."]
 [endif]
 
-# Script execution continues here regardless of the outcome above
+# Выполнение сценария продолжается здесь независимо от результата выше
 [text text="The day continues..."]
 ```
 
-### Arguments
+### Аргументы
 
-This tag does not take any arguments.
+Этот тег не принимает аргументов.
 
-| Argument | Omissible | Description | Notes |
-|----------|-----------|-------------|-------|
+| Аргумент | Можно опустить | Описание | Примечания |
+|----------|---------------|----------|------------|
 | -        | -         | -           | -     |
 
-### Tips
+### Советы
 
-**Mandatory Closing**:
-* Every single `[if]` tag must have a corresponding `[endif]`.
-* Think of them like a pair of brackets that keep your story's logic organized.
+**Обязательное закрытие**:
+* Каждый тег `[if]` обязательно должен иметь соответствующий `[endif]`.
+* Думайте о них как о паре скобок, которые помогают упорядочить логику вашей истории.
 
-**Placement**:
-* Always place `[endif]` at the very end of your conditional sequence, following any `[elseif]` or `[else]` blocks. 
+**Размещение**:
+* Всегда размещайте `[endif]` в самом конце последовательности условий, после любых блоков `[elseif]` или `[else]`.
 
-**Nesting**:
-* If you put an `[if]` inside another `[if]`, make sure each one has its own `[endif]`.
-* Proper nesting is the secret to complex, bug-free story flags!
+**Вложенность**:
+* Если вы помещаете один `[if]` внутрь другого `[if]`, убедитесь, что у каждого есть свой собственный `[endif]`.
+* Правильная вложенность - это секрет сложных, безошибочных сюжетных флагов!
 
 ---
-
 ## `load`
 
-Load Script File
+Загрузка файла сценария
 
-The `load` tag switches the current script to a different NovelML file.
-It is primarily used to organize large stories into multiple chapters or to transition between different game parts like a title screen and the main story.
+Тег `load` переключает текущий сценарий на другой файл NovelML.
+Он в первую очередь используется для организации больших историй по нескольким главам или для перехода между разными частями игры, например от экрана заголовка к основному сюжету.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Load and start from the beginning of scene02.novel
+# Загрузить `scene02.novel` и начать с самого начала
 [load file="scene02.novel"]
 
-# Load scene02.novel and jump directly to a specific label
+# Загрузить scene02.novel и перейти сразу к определенной метке
 [load file="scene02.novel" label="chapter2_start"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument | Omissible | Description                                      | Notes                                                   |
-|----------|-----------|--------------------------------------------------|---------------------------------------------------------|
-| `file`   | No        | The filename of the NovelML script to load.      | Must be a valid file in the project's script directory. |
-| `label`  | Yes       | The target label to jump to within the new file. | If omitted, the script starts from the very first line. |
+| Аргумент | Можно опустить | Описание                                     | Примечания                                                |
+|----------|---------------|---------------------------------------------|-----------------------------------------------------------|
+| `file`   | Нет           | Имя файла NovelML-сценария для загрузки.    | Должен быть допустимым файлом в каталоге сценариев проекта. |
+| `label`  | Да            | Целевая метка, к которой нужно перейти в новом файле. | Если не указано, сценарий начинается с самой первой строки. |
 
-### Tips
+### Советы
 
-**Project Organization**:
-* Instead of writing your entire game in one giant file, use `[load]` to break it down into manageable chunks like `chapter1.novel`, `chapter2.novel`, and so on.
+**Организация проекта**:
+* Вместо того чтобы писать всю игру в одном огромном файле, используйте `[load]`, чтобы разбить ее на управляемые части вроде `chapter1.novel`, `chapter2.novel` и так далее.
 
-**Immediate Transition**:
-* When the engine hits a `[load]` tag, it stops executing the current NovelML file immediately and switches to the new one.
-* Any commands placed after `[load]` in the original file will not be executed.
+**Немедленный переход**:
+* Когда движок достигает тега `[load]`, он немедленно прекращает выполнение текущего файла NovelML и переключается на новый.
+* Любые команды, размещенные после `[load]` в исходном файле, выполняться не будут.
 
-**Global Flags**:
-* Don't worry about your variables — any values you've set with the `[set]` tag will persist even after you load a new script file!
+**Глобальные флаги**:
+* Не беспокойтесь о своих переменных: любые значения, заданные тегом `[set]`, сохранятся даже после загрузки нового файла сценария!
 
 ---
-
 ## `se`
 
-Play Sound Effect
+Воспроизведение звукового эффекта
 
-The `se` tag plays a sound effect (SE). 
-Sound effects are used for short audio cues like door knocks, footsteps, or UI feedback, adding a layer of immersion and realism to your scenes.
+Тег `se` проигрывает звуковой эффект (SE).
+Звуковые эффекты используются для коротких аудиосигналов, например стуков в дверь, шагов или откликов интерфейса, добавляя вашим сценам слой погружения и реализма.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Play a sound effect once
+# Один раз проиграть звуковой эффект
 [se file="door_open.ogg"]
 
-# Stop all currently playing sound effects
+# Остановить все звуковые эффекты, которые сейчас воспроизводятся
 [se file="none"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument | Omissible     | Description                               | Notes                                        |
+| Аргумент | Можно опустить | Описание                                  | Примечания                                   |
 |----------|---------------|-------------------------------------------|----------------------------------------------|
-| `file`   | No            | The filename of the sound effect to play. | Set to `none` to stop sound effect playback. |
-| `loop`   | Yes (`false`) | Whether to loop the sound effect or not.  |                                              |
+| `file`   | Нет           | Имя файла звукового эффекта для воспроизведения. | Установите `none`, чтобы остановить воспроизведение звука. |
+| `loop`   | Да (`false`)  | Воспроизводить ли звуковой эффект по кругу. |                                              |
 
-### Tips
+### Советы
 
-**Required Format**:
-* Like BGM, Suika3 requires SE files to be in **Ogg Vorbis** format.
-* The sampling rate MUST be **44,100Hz** to ensure high fidelity and compatibility.
+**Требуемый формат**:
+* Как и BGM, Suika3 требует, чтобы файлы SE были в формате **Ogg Vorbis**.
+* Частота дискретизации ОБЯЗАТЕЛЬНО должна быть **44,100Hz**, чтобы обеспечить высокое качество и совместимость.
 
-**Layering Sounds**:
-* Sound effects can usually be played while BGM is running.
-* They occupy their own audio track so they won't interrupt your music.
+**Наложение звуков**:
+* Звуковые эффекты обычно можно проигрывать, пока воспроизводится BGM.
+* Они используют собственную аудиодорожку, поэтому не прерывают музыку.
 
-**Volume Control**:
-* To adjust the loudness of your sound effects without changing the BGM volume, use the `[volume]` tag with `track="se"`.
+**Управление громкостью**:
+* Чтобы изменить громкость звуковых эффектов, не трогая громкость BGM, используйте тег `[volume]` с `track="se"`.
 
-**Usage for Ambience**:
-* While SE is often used for short sounds, you can also use it for looping ambient sounds (like wind or rain).
-* A looped SE is restored when a save data file is loaded.
+**Использование для фоновых звуков**:
+* Хотя SE часто используется для коротких звуков, его также можно применять для зацикленных фоновых звуков, например ветра или дождя.
+* Зацикленный SE восстанавливается при загрузке файла сохранения.
 
 ---
-
 ## `volume`
 
-Set Audio Volume
+Установка громкости звука
 
-The `volume` tag sets the sound volume for a specific audio track. 
-It's perfect for ensuring that your background music doesn't drown out important sound effects or character voices.
+Тег `volume` задает громкость звука для конкретной аудиодорожки.
+Он идеально подходит для того, чтобы фоновая музыка не заглушала важные звуковые эффекты или реплики персонажей.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Set BGM volume to 50%
+# Установить громкость BGM на 50%
 [volume track="bgm" volume="0.5"]
 
-# Set SE volume to maximum
+# Установить громкость SE на максимум
 [volume track="se" volume="1.0"]
 
-# Mute voices
+# Выключить голоса
 [volume track="voice" volume="0.0"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument | Omissible | Description                           | Notes                                     |
-|----------|-----------|---------------------------------------|-------------------------------------------|
-| `track`  | No        | The audio track to adjust.            | See the "Tracks" table below.             |
-| `volume` | No        | The volume level from `0.0` to `1.0`. | `0.0` is silent, `1.0` is maximum volume. |
-| `time`   | Yes (`0`) | Fading time in seconds.               | `0` means instant change.                 |
-### Track Types (`track`)
+| Аргумент | Можно опустить | Описание                          | Примечания                               |
+|----------|---------------|------------------------------------|------------------------------------------|
+| `track`  | Нет           | Аудиодорожка, которую нужно настроить. | См. таблицу "Дорожки" ниже.           |
+| `volume` | Нет           | Уровень громкости от `0.0` до `1.0`. | `0.0` означает тишину, `1.0` - максимум. |
+| `time`   | Да (`0`)      | Время затухания в секундах.        | `0` означает мгновенное изменение.      |
 
-Suika3 categorizes audio into three main tracks:
+### Типы дорожек (`track`)
 
-| Track Name | Description                      |
-|------------|----------------------------------|
-| `bgm`      | Background Music.                |
-| `se`       | Sound Effects and system sounds. |
-| `voice`    | Character voice files.           |
+Suika3 разделяет аудио на три основные дорожки:
 
-### Tips
+| Название дорожки | Описание                    |
+|------------------|-----------------------------|
+| `bgm`            | Фоновая музыка.             |
+| `se`             | Звуковые эффекты и системные звуки. |
+| `voice`          | Файлы голосов персонажей.   |
 
-**Immediate Change**:
-* The volume change happens gradually when `time` is greater than `0`.
-* `time="0"` means an immediate change.
+### Советы
 
-**Default Levels**:
-* It's a good idea to set your preferred volume levels at the start of your game (e.g., in a `start` label) so the player has a consistent experience from the beginning.
+**Немедленное изменение**:
+* Изменение громкости происходит постепенно, когда `time` больше `0`.
+* `time="0"` означает мгновенное изменение.
+
+**Уровни по умолчанию**:
+* Хорошая идея - задать предпочитаемые уровни громкости в начале игры (например, в метке `start`), чтобы у игрока с самого начала был стабильный опыт.
 
 ---
-
 ## `skip`
 
-Set Skip Status
+Установка состояния пропуска
 
-The `skip` tag enables or disables the skipping function within the game. 
-It is useful for preventing players from skipping through important cinematic sequences or ensuring that certain scenes are experienced at the intended pace.
+Тег `skip` включает или отключает функцию пропуска в игре.
+Он полезен для того, чтобы не позволять игрокам пропускать важные кинематографические сцены или чтобы определенные сцены воспринимались в заданном темпе.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Enable the skip function
+# Включить функцию пропуска
 [skip enable="true"]
 
-# Disable the skip function during a critical scene
+# Отключить функцию пропуска во время критической сцены
 [skip enable="false"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument | Omissible | Description                                  | Notes                                                 |
-|----------|-----------|----------------------------------------------|-------------------------------------------------------|
-| `enable` | No        | Whether the skip function is enabled or not. | Set to `true` to allow skipping, `false` to block it. |
+| Аргумент | Можно опустить | Описание                               | Примечания                                            |
+|----------|---------------|---------------------------------------|-------------------------------------------------------|
+| `enable` | Нет           | Включена функция пропуска или нет.    | Установите `true`, чтобы разрешить пропуск, `false`, чтобы заблокировать его. |
 
-### Tips
+### Советы
 
-**Cinematic Control**:
-* Skip feature is typically disabled before the title logo at startup.
+**Управление кинематографией**:
+* Функция пропуска обычно отключается перед титульным логотипом при запуске.
 
-**Restoring Settings**:
-* Don't forget to set `[skip enable="true"]` once the critical scene is over.
-* Players usually appreciate having the freedom to skip through text they've already seen.
+**Восстановление настроек**:
+* Не забудьте снова установить `[skip enable="true"]`, когда критическая сцена закончится.
+* Игроки обычно ценят возможность пропускать уже прочитанный текст.
 
-**System Behavior**:
-* This tag controls the overall "Skip" state of the engine.
-* Even if the player presses a skip hotkey, the engine will ignore it if `enable` is set to `false`.
+**Поведение системы**:
+* Этот тег управляет общим состоянием "Skip" в движке.
+* Даже если игрок нажмет горячую клавишу пропуска, движок проигнорирует ее, если `enable` имеет значение `false`.
 
 ---
-
 ## `config`
 
-Set Configuration Value
+Задание значения конфигурации
 
-The `config` tag allows you to modify the game system's configuration settings directly from the markup. 
-It is essential for dynamically adjusting the game's UI, such as moving the message box or changing system-level parameters on the fly.
+Тег `config` позволяет напрямую изменять параметры конфигурации игровой системы из разметки.
+Он незаменим для динамической настройки UI, например для перемещения окна сообщения или изменения системных параметров на лету.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Change the position of the message box
+# Изменение позиции окна сообщения
 [config name="msgbox.x" value="100"]
 [config name="msgbox.y" value="200"]
 
-# Update a specific system setting
+# Обновление конкретной системной настройки
 [config name="msgbox.font.size" value="24"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument | Omissible | Description                                        | Notes                                                    |
+| ???????? | ????? ???????? | ????????                                        | ??????????                                                    |
 |----------|-----------|----------------------------------------------------|----------------------------------------------------------|
-| `name`   | No        | The name of the configuration parameter to change. | Refer to the system's config list for valid names.       |
-| `value`  | No        | The new value to assign to the parameter.          | Values are handled as strings but may represent numbers. |
+| `name`   | No        | Имя параметра конфигурации, который нужно изменить.| См. список конфигурации системы для допустимых имен.     |
+| `value`  | No        | Новое значение, которое нужно присвоить параметру. | Значения обрабатываются как строки, но могут быть числами. |
 
-### Tips
+### Советы
 
-**UI Customization**:
-* You can use `[config]` to reposition the message box during specific scenes to create a more cinematic feel.
+**Настройка интерфейса**:
+* Можно использовать `[config]`, чтобы смещать окно сообщения в отдельных сценах и делать их более кинематографичными.
 
-**Dynamic Adjustments**:
-* Since this tag can be called anywhere in your script, you can change the game's "look and feel" as the story progresses.
-* For example, shifting the UI for a "flashback" sequence.
+**Динамическая подстройка**:
+* Поскольку этот тег можно вызывать в любом месте скрипта, вы можете менять "вид и ощущение" игры по мере развития сюжета.
+* Например, сдвигать UI для сцены "flashback".
 
-**Parameter Names**:
-* Be careful with the `name` argument!
-* It must exactly match the internal configuration keys defined in your Suika3 project settings.
-* See also [the complete list of the configurations](config.md)
+**Имена параметров**:
+* Будьте внимательны с аргументом `name`!
+* Он должен в точности совпадать с внутренними ключами конфигурации, определенными в настройках проекта Suika3.
+* См. также [полный список конфигураций](config.md)
 
 ---
-
 ## `layer`
 
-Direct Layer Manipulation
+Прямое управление слоями
 
-The `layer` tag allows for direct control over specific image and text layers. 
-While tags like `[bg]` and `[ch]` are easier for standard scenes, `[layer]` gives you the precision to modify any individual layer's position, scale, and rotation independently.
+Тег `layer` позволяет напрямую управлять отдельными слоями изображений и текста.
+Если для стандартных сцен теги вроде `[bg]` и `[ch]` использовать проще, то `[layer]` дает точность для независимого изменения позиции, масштаба и поворота любого отдельного слоя.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Load an image directly onto the center character layer (chc)
+# Загрузить изображение напрямую на центральный слой персонажа (chc)
 [layer name="chc" file="heroine_smile.png"]
 
-# Adjust only the position and opacity of the background (bg)
+# Изменить только позицию и прозрачность фона (bg)
 [layer name="bg" x="100" y="100" alpha="128"]
 
-# Rotate the face layer
+# Повернуть слой лица
 [layer name="chf" rotate="45.0" center-x="100" center-y="100"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument  | Omissible   | Description                          | Notes                              |
+| ????????  | ????? ????????   | ????????                          | ??????????                              |
 |-----------|-------------|--------------------------------------|------------------------------------|
-| `name`    | No          | The target layer name.               | See the "Layer Names" table below. |
-| `file`    | Yes         | The filename to load onto the layer. | Use `none` to clear the layer.     |
-| `x`       | Yes (`0`)   | The layer's X position.              |                                    |
-| `y`       | Yes (`0`)   | The layer's Y position.              |                                    |
-| `alpha`   | Yes (`255`) | The layer's opacity level.           | `0` to `255`.                      |
-| `scale-x` | Yes (`1.0`) | X-axis scaling factor.               | `1.0` is original size.            |
-| `scale-y` | Yes (`1.0`) | Y-axis scaling factor.               | `1.0` is original size.            |
-| `center-x`| Yes (`0`)   | Rotation center (X).                 | Pivot point for rotation.          |
-| `center-y`| Yes (`0`)   | Rotation center (Y).                 | Pivot point for rotation.          |
-| `rotate`  | Yes (`0.0`) | Rotation in degrees.                 | Positive for clockwise.            |
+| `name`    | No          | Имя целевого слоя.                   | См. таблицу "??? ????s" ниже.    |
+| `file`    | Yes         | Имя файла, который нужно загрузить на слой. | Используйте `none`, чтобы очистить слой. |
+| `x`       | Yes (`0`)   | Позиция слоя по X.                   |                                    |
+| `y`       | Yes (`0`)   | Позиция слоя по Y.                   |                                    |
+| `alpha`   | Yes (`255`) | Уровень непрозрачности слоя.         | `0` до `255`.                      |
+| `scale-x` | Yes (`1.0`) | Коэффициент масштабирования по X.    | `1.0` - исходный размер.           |
+| `scale-y` | Yes (`1.0`) | Коэффициент масштабирования по Y.    | `1.0` - исходный размер.           |
+| `center-x`| Yes (`0`)   | Центр вращения (X).                  | Точка опоры для вращения.          |
+| `center-y`| Yes (`0`)   | Центр вращения (Y).                  | Точка опоры для вращения.          |
+| `rotate`  | Yes (`0.0`) | Вращение в градусах.                 | Положительное значение - по часовой стрелке. |
 
-### Common Layer Names (`name`)
+### Часто используемые имена слоёв (`name`)
 
-Suika3 has a rich set of predefined layers.
+В Suika3 есть богатый набор предопределенных слоев.
 
-Here are the complete list of the layers:
+Ниже приведен полный список слоев:
 
-|Layer Name       |Description                              |
+|??? ????       |????????                              |
 |-----------------|-----------------------------------------|
-|bg               |Background Image                         |
-|bg2              |Background Image 2                       |
-|efb1             |Back Effect 1                            |
-|efb2             |Back Effect 2                            |
-|efb3             |Back Effect 3                            |
-|efb4             |Back Effect 4                            |
-|chb              |Center-Back Character                    |
-|chb-eye          |Center-Back Character's Eyes             |
-|chb-lip          |Center-Back Character's Lips             |
-|chb-fo           |Fading-Out Center-Back Character         |
-|chl              |Left Character                           |
-|chl-eye          |Left Character's Eyes                    |
-|chl-lip          |Left Character's Lips                    |
-|chl-fo           |Fading-Out Left Character                |
-|chlc             |Left-Center Character                    |
-|chlc-eye         |Left-Center Character's Eyes             |
-|chlc-lip         |Left-Center Character's Lips             |
-|chlc-fo          |Fading-Out Left-Center Character         |
-|chr              |Right Character                          |
-|chr-eye          |Right Character's Eyes                   |
-|chr-lip          |Right Character's Lips                   |
-|chr-fo           |Fading-Out Right Character               |
-|chrc             |Right-Center Character                   |
-|chrc-eye         |Right-Center Character's Eyes            |
-|chrc-lip         |Right-Center Character's Lips            |
-|chrc-fo          |Fading-Out Right-Center Character        |
-|chc              |Center Character                         |
-|chc-eye          |Center Character's Eyes                  |
-|chc-lip          |Center Character's Lips                  |
-|chc-fo           |Fading-Out Center Character              |
-|msgbox           |Message box (Invisible to `[layer]`)     |
-|namebox          |Name box (Invisible to `[layer]`)        |
-|click            |Click animation (Invisible to `[layer]`) |
-|eff1             |Front Effect 1                           |
-|eff2             |Front Effect 2                           |
-|eff3             |Front Effect 3                           |
-|eff4             |Front Effect 4                           |
-|chf              |Face Character                           |
-|chf-eye          |Face Character's Eyes                    |
-|chf-lip          |Face Character's Lips                    |
-|chf-fo           |Fading-Out Face Character                |
-|text1            |Text Layer 1                             |
-|text2            |Text Layer 2                             |
-|text3            |Text Layer 3                             |
-|text4            |Text Layer 4                             |
-|text5            |Text Layer 5                             |
-|text6            |Text Layer 6                             |
-|text7            |Text Layer 7                             |
-|text8            |Text Layer 8                             |
-|gui1             |GUI Button 1 (Invisible to `[layer]`)    |
-|gui2             |GUI Button 2 (Invisible to `[layer]`)    |
-|gui3             |GUI Button 3 (Invisible to `[layer]`)    |
-|gui4             |GUI Button 4 (Invisible to `[layer]`)    |
-|gui5             |GUI Button 5 (Invisible to `[layer]`)    |
-|gui6             |GUI Button 6 (Invisible to `[layer]`)    |
-|gui7             |GUI Button 7 (Invisible to `[layer]`)    |
-|gui8             |GUI Button 8 (Invisible to `[layer]`)    |
-|gui9             |GUI Button 9 (Invisible to `[layer]`)    |
-|gui10            |GUI Button 10 (Invisible to `[layer]`)   |
-|gui11            |GUI Button 11 (Invisible to `[layer]`)   |
-|gui12            |GUI Button 12 (Invisible to `[layer]`)   |
-|gui13            |GUI Button 13 (Invisible to `[layer]`)   |
-|gui14            |GUI Button 14 (Invisible to `[layer]`)   |
-|gui15            |GUI Button 15 (Invisible to `[layer]`)   |
-|gui16            |GUI Button 16 (Invisible to `[layer]`)   |
-|gui17            |GUI Button 17 (Invisible to `[layer]`)   |
-|gui18            |GUI Button 18 (Invisible to `[layer]`)   |
-|gui19            |GUI Button 19 (Invisible to `[layer]`)   |
-|gui20            |GUI Button 20 (Invisible to `[layer]`)   |
-|gui21            |GUI Button 21 (Invisible to `[layer]`)   |
-|gui22            |GUI Button 22 (Invisible to `[layer]`)   |
-|gui23            |GUI Button 23 (Invisible to `[layer]`)   |
-|gui24            |GUI Button 24 (Invisible to `[layer]`)   |
-|gui25            |GUI Button 25 (Invisible to `[layer]`)   |
-|gui26            |GUI Button 26 (Invisible to `[layer]`)   |
-|gui27            |GUI Button 27 (Invisible to `[layer]`)   |
-|gui28            |GUI Button 28 (Invisible to `[layer]`)   |
-|gui29            |GUI Button 29 (Invisible to `[layer]`)   |
-|gui30            |GUI Button 30 (Invisible to `[layer]`)   |
-|gui31            |GUI Button 31 (Invisible to `[layer]`)   |
-|gui32            |GUI Button 32 (Invisible to `[layer]`)   |
+|bg               |Фоновое изображение                     |
+|bg2              |Фоновое изображение 2                   |
+|efb1             |Задний эффект 1                         |
+|efb2             |Задний эффект 2                         |
+|efb3             |Задний эффект 3                         |
+|efb4             |Задний эффект 4                         |
+|chb              |Центральный задний персонаж             |
+|chb-eye          |Глаза центрального заднего персонажа    |
+|chb-lip          |Губы центрального заднего персонажа     |
+|chb-fo           |Исчезающий центральный задний персонаж  |
+|chl              |Левый персонаж                          |
+|chl-eye          |Глаза левого персонажа                  |
+|chl-lip          |Губы левого персонажа                   |
+|chl-fo           |Исчезающий левый персонаж               |
+|chlc             |Левый центральный персонаж              |
+|chlc-eye         |Глаза левого центрального персонажа     |
+|chlc-lip         |Губы левого центрального персонажа      |
+|chlc-fo          |Исчезающий левый центральный персонаж    |
+|chr              |Правый персонаж                         |
+|chr-eye          |Глаза правого персонажа                 |
+|chr-lip          |Губы правого персонажа                  |
+|chr-fo           |Исчезающий правый персонаж              |
+|chrc             |Правый центральный персонаж             |
+|chrc-eye         |Глаза правого центрального персонажа    |
+|chrc-lip         |Губы правого центрального персонажа     |
+|chrc-fo          |Исчезающий правый центральный персонаж   |
+|chc              |Центральный персонаж                    |
+|chc-eye          |Глаза центрального персонажа           |
+|chc-lip          |Губы центрального персонажа            |
+|chc-fo           |Исчезающий центральный персонаж         |
+|msgbox           |Окно сообщения (невидимо для `[layer]`) |
+|namebox          |Окно имени (невидимо для `[layer]`)     |
+|click            |Анимация клика (невидимо для `[layer]`) |
+|eff1             |Передний эффект 1                       |
+|eff2             |Передний эффект 2                       |
+|eff3             |Передний эффект 3                       |
+|eff4             |Передний эффект 4                       |
+|chf              |Персонаж лица                           |
+|chf-eye          |Глаза персонажа лица                   |
+|chf-lip          |Губы персонажа лица                    |
+|chf-fo           |Исчезающий персонаж лица                |
+|text1            |Текстовый слой 1                        |
+|text2            |Текстовый слой 2                        |
+|text3            |Текстовый слой 3                        |
+|text4            |Текстовый слой 4                        |
+|text5            |Текстовый слой 5                        |
+|text6            |Текстовый слой 6                        |
+|text7            |Текстовый слой 7                        |
+|text8            |Текстовый слой 8                        |
+|gui1             |Кнопка GUI 1 (невидимо для `[layer]`)   |
+|gui2             |Кнопка GUI 2 (невидимо для `[layer]`)   |
+|gui3             |Кнопка GUI 3 (невидимо для `[layer]`)   |
+|gui4             |Кнопка GUI 4 (невидимо для `[layer]`)   |
+|gui5             |Кнопка GUI 5 (невидимо для `[layer]`)   |
+|gui6             |Кнопка GUI 6 (невидимо для `[layer]`)   |
+|gui7             |Кнопка GUI 7 (невидимо для `[layer]`)   |
+|gui8             |Кнопка GUI 8 (невидимо для `[layer]`)   |
+|gui9             |Кнопка GUI 9 (невидимо для `[layer]`)   |
+|gui10            |Кнопка GUI 10 (невидимо для `[layer]`)  |
+|gui11            |Кнопка GUI 11 (невидимо для `[layer]`)  |
+|gui12            |Кнопка GUI 12 (невидимо для `[layer]`)  |
+|gui13            |Кнопка GUI 13 (невидимо для `[layer]`)  |
+|gui14            |Кнопка GUI 14 (невидимо для `[layer]`)  |
+|gui15            |Кнопка GUI 15 (невидимо для `[layer]`)  |
+|gui16            |Кнопка GUI 16 (невидимо для `[layer]`)  |
+|gui17            |Кнопка GUI 17 (невидимо для `[layer]`)  |
+|gui18            |Кнопка GUI 18 (невидимо для `[layer]`)  |
+|gui19            |Кнопка GUI 19 (невидимо для `[layer]`)  |
+|gui20            |Кнопка GUI 20 (невидимо для `[layer]`)  |
+|gui21            |Кнопка GUI 21 (невидимо для `[layer]`)  |
+|gui22            |Кнопка GUI 22 (невидимо для `[layer]`)  |
+|gui23            |Кнопка GUI 23 (невидимо для `[layer]`)  |
+|gui24            |Кнопка GUI 24 (невидимо для `[layer]`)  |
+|gui25            |Кнопка GUI 25 (невидимо для `[layer]`)  |
+|gui26            |Кнопка GUI 26 (невидимо для `[layer]`)  |
+|gui27            |Кнопка GUI 27 (невидимо для `[layer]`)  |
+|gui28            |Кнопка GUI 28 (невидимо для `[layer]`)  |
+|gui29            |Кнопка GUI 29 (невидимо для `[layer]`)  |
+|gui30            |Кнопка GUI 30 (невидимо для `[layer]`)  |
+|gui31            |Кнопка GUI 31 (невидимо для `[layer]`)  |
+|gui32            |Кнопка GUI 32 (невидимо для `[layer]`)  |
 
-### Tips
+### Советы
 
-**Precision Control**:
-* Use `[layer]` when you want to load an image to a layer manually when you're working with custom effect layers (`eff1` etc.) that don't have dedicated tags.
+**Точное управление**:
+* Используйте `[layer]`, когда хотите вручную загрузить изображение на слой, особенно при работе с пользовательскими слоями эффектов (`eff1` и т. д.), для которых нет отдельных тегов.
 
-**Instant Updates**:
-* Unlike `[ch]` or `[bg]`, the `layer` tag usually updates the screen instantly.
-* If you want to animate these changes over time, you should use the `[move]` tag instead!
+**Мгновенное обновление**:
+* В отличие от `[ch]` или `[bg]`, тег `layer` обычно обновляет экран мгновенно.
+* Если нужно анимировать эти изменения во времени, используйте вместо него тег `[move]`!
 
-**Layer Hierarchy**:
-* Remember that layers are stacked.
-* For example, `chf` (Face Character) is always rendered in front of `chc` (Center Character).
-* Understanding this "Z-order" is key to complex visual compositions.
+**Иерархия слоев**:
+* Помните, что слои накладываются друг на друга.
+* Например, `chf` (Персонаж лица) всегда отображается перед `chc` (Центральный персонаж).
+* Понимание этого "Z-order" - ключ к сложным визуальным композициям.
 
 ---
-
 ## `move`
 
-Animate Layer
+Анимация слоя
 
-The `move` tag animates specific layers over a set duration.
-It is perfect for creating sliding effects, zooming in on characters, or rotating screen elements to add dynamic energy to your scenes.
+Тег `move` анимирует отдельные слои в течение заданной длительности.
+Он идеально подходит для создания эффектов скольжения, увеличения персонажей или вращения элементов экрана, чтобы добавить сценам динамики.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Move the center character to a new position over 2.0 seconds
+# Переместить центрального персонажа в новую позицию за 2.0 секунды
 [move time="2.0" center-x="150" center-y="100"]
 
-# Relative movement: Nudge the background 50px to the right
+# Относительное движение: сдвинуть фон на 50px вправо
 [move time="1.0" bg-x="r50"]
 
-# Gradually fade out a layer while rotating it
+# Постепенно сделать слой прозрачным, одновременно вращая его
 [move time="3.0" face-alpha="0" face-rotate="r360"]
 ```
 
-### Arguments
+### Аргументы
 
-**Common:**
-| Argument         | Omissible     | Description                               | Notes                                      |
+**Общие:**
+| ????????         | ????? ????????     | ????????                               | ??????????                                      |
 |------------------|---------------|-------------------------------------------|--------------------------------------------|
-| `name`           | No            | The target layer to animate.              | See the "Moveable Layers" table below.     |
-| `time`           | No            | The duration of the animation in seconds. | Supports decimal values (e.g., `0.5`).     |
-| `async`          | Yes (`false`) | If `true`, do non-blocking animation.     |                                            |
-| `accel`          | Yes (`normal`)| Acceleration type.                        | One of                                     |
+| `name`           | No            | Целевой слой для анимации.               | См. таблицу "Moveable Layers" ниже.       |
+| `time`           | No            | Длительность анимации в секундах.        | Поддерживает дробные значения (например, `0.5`). |
+| `async`          | Yes (`false`) | Если `true`, выполнять анимацию без блокировки. |                                            |
+| `accel`          | Yes (`normal`)| Тип ускорения.                           | Один из                                     |
 | (layer)-(suffix) | Yes           |                                           |                                            |
 
 **(layer):**
-| Argument       | Description                               |
+| ????????       | ????????                               |
 |----------------|-------------------------------------------|
-| `bg`           | Background layer.                         |
-| `bg2`          | Background 2.                             |
-| `back          | Back-Center character.                    |
-| `left`         | Left character.                           |
-| `right`        | Right character.                          |
-| `center`       | Center character.                         |
-| `left-center`  | Left-Center character.                    |
-| `right-center` | Intermediate character.                   |
-| `face`         | Face character.                           |
+| `bg`           | Фоновый слой.                             |
+| `bg2`          | Второй фон.                               |
+| `back`         | Задний центральный персонаж.              |
+| `left`         | Левый персонаж.                           |
+| `right`        | Правый персонаж.                          |
+| `center`       | Центральный персонаж.                     |
+| `left-center`  | Левый центральный персонаж.               |
+| `right-center` | Промежуточный персонаж.                  |
+| `face`         | Персонаж лица.                            |
 
 **(suffix):**
-| Suffix      | Omissible     | Description                | Notes                                                         |
+| ???????      | ????? ????????     | ????????                | ??????????                                                         |
 |-------------|---------------|----------------------------|---------------------------------------------------------------|
-| `-x`        | Yes (`0`)     | X position.                | Supports absolute (e.g., `100`) or relative (e.g., `r50`).    |
-| `-y`        | Yes (`0`)     | Y position.                | Supports absolute (e.g., `100`) or relative (e.g., `r-50`).   |
-| `-a`        | Yes (`255`)   | Alpha value. (opacity)     | `0` (transparent) to `255` (opaque).                          |
-| `-scale-x`  | Yes (`1.0`)   | X scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `-scale-y`  | Yes (`1.0`)   | Y scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `-center-x` | Yes (`0`)     | X center for rotation.     | Pivot point for the rotation effect.                          |
-| `-center-y` | Yes (`0`)     | Y center for rotation.     | Pivot point for the rotation effect.                          |
-| `-rotate`   | Yes (`0`)     | Rotation in degrees.       | Positive for clockwise. Supports `r` prefix.                  |
-| `-dim`      | Yes (`false`) | Dimming status.            | If `true`, the layer is rendered 50% darker.                  |
+| `-x`        | Yes (`0`)     | Позиция по X.              | Поддерживает абсолютные значения (например, `100`) или относительные (например, `r50`). |
+| `-y`        | Yes (`0`)     | Позиция по Y.              | Поддерживает абсолютные значения (например, `100`) или относительные (например, `r-50`). |
+| `-a`        | Yes (`255`)   | Значение альфы (непрозрачность). | `0` (прозрачно) до `255` (непрозрачно).                 |
+| `-scale-x`  | Yes (`1.0`)   | Коэффициент масштабирования по X. | `1.0` - исходный размер. Поддерживает префикс `r`.      |
+| `-scale-y`  | Yes (`1.0`)   | Коэффициент масштабирования по Y. | `1.0` - исходный размер. Поддерживает префикс `r`.      |
+| `-center-x` | Yes (`0`)     | Центр вращения по X.       | Точка опоры для эффекта вращения.                          |
+| `-center-y` | Yes (`0`)     | Центр вращения по Y.       | Точка опоры для эффекта вращения.                          |
+| `-rotate`   | Yes (`0`)     | Вращение в градусах.       | Положительное значение - по часовой стрелке. Поддерживает префикс `r`. |
+| `-dim`      | Yes (`false`) | Состояние затемнения.      | Если `true`, слой отображается на 50% темнее.             |
 
-### Tips
+### Советы
 
-**Non-blocking Animation (`async="true")`**:
-* The script continues to the next command immediately after starting a `[move]`.
-* If you want the script to wait until the animation finishes, follow it with a `[wait]` tag using the same `time` value.
+**Неблокирующая анимация (`async="true")`**:
+* Скрипт сразу переходит к следующей команде после запуска `[move]`.
+* Если нужно дождаться завершения анимации, следуйте за ним тегом `[wait]` с тем же значением `time`.
 
-**Relative Transformations**:
-* Using the `r` prefix (e.g., `x="r100"`) is incredibly useful for repetitive motions, like making a character "jump" or "shake" without calculating absolute coordinates.
+**Относительные преобразования**:
+* Использование префикса `r` (например, `x="r100"`) очень полезно для повторяющихся движений, например чтобы заставить персонажа "прыгать" или "трястись" без вычисления абсолютных координат.
 
-**Visual Polish**:
-* Combine `scale-x` and `scale-y` with `move` to create "zoom-in" effects on a character's face for dramatic close-ups!
+**Визуальная полировка**:
+* Комбинируйте `scale-x` и `scale-y` с `move`, чтобы создавать эффекты "приближения" к лицу персонажа для драматичных крупных планов!
 
 ---
-
 ## `pencil`
 
-Pencil
+Карандаш
 
-Draw a text on a layer.
+Рисует текст на слое.
 
-### Basic Usage
+### Базовое использование
 
 ```
 [pencil layer="bg" font-size="30" text="Hello, World!"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument      | Omissible        | Description              |
+| ????????      | ????? ????????        | ????????              |
 |---------------|------------------|--------------------------|
-| text          | No               | Text to draw.            |
-| layer         | Yes (`text1`)    | Layer name.              |
-| font-type     | Yes (`0`)        | Font selection. (0-3)    |
-| font-size     | Yes (`16`)       | Font size.               |
-| color         | Yes (`#000000`)  | Font color.              |
-| outline-width | Yes (`0`)        | Font outline width.      |
-| outline-color | Yes (`#ffffff`)  | Font outline color.      |
-| line-margin   | Yes              | Line margin.             |
-| char-margin   | Yes (`0`)        | Character margin.        |
-| x             | Yes (`0`)        | Drawing area X position. |
-| y             | Yes (`0`)        | Drawing area Y position. |
-| width         | Yes              | Drawing area width.      |
-| height        | Yes              | Drawing area height.     |
+| text          | No               | Текст для вывода.        |
+| layer         | Yes (`text1`)    | Имя слоя.                |
+| font-type     | Yes (`0`)        | Выбор шрифта. (0-3)      |
+| font-size     | Yes (`16`)       | Размер шрифта.           |
+| color         | Yes (`#000000`)  | Цвет шрифта.             |
+| outline-width | Yes (`0`)        | Ширина обводки шрифта.   |
+| outline-color | Yes (`#ffffff`)  | Цвет обводки шрифта.     |
+| line-margin   | Yes              | Межстрочный интервал.    |
+| char-margin   | Yes (`0`)        | Межсимвольный интервал.  |
+| x             | Yes (`0`)        | Позиция области вывода по X. |
+| y             | Yes (`0`)        | Позиция области вывода по Y. |
+| width         | Yes              | Ширина области вывода.   |
+| height        | Yes              | Высота области вывода.   |
+## Поддерживаемые имена слоёв
 
-## Supported Layer Name
-
-|Layer Name       |Description                              |
+|??? ????       |????????                              |
 |-----------------|-----------------------------------------|
-|bg               |Background Image                         |
-|bg2              |Background Image 2                       |
-|efb1             |Back Effect 1                            |
-|efb2             |Back Effect 2                            |
-|efb3             |Back Effect 3                            |
-|efb4             |Back Effect 4                            |
-|chb              |Center-Back Character                    |
-|chl              |Left Character                           |
-|chlc             |Left-Center Character                    |
-|chr              |Right Character                          |
-|chrc             |Right-Center Character                   |
-|chc              |Center Character                         |
-|eff1             |Front Effect 1                           |
-|eff2             |Front Effect 2                           |
-|eff3             |Front Effect 3                           |
-|eff4             |Front Effect 4                           |
-|chf              |Face Character                           |
-|text1            |Text Layer 1                             |
-|text2            |Text Layer 2                             |
-|text3            |Text Layer 3                             |
-|text4            |Text Layer 4                             |
-|text5            |Text Layer 5                             |
-|text6            |Text Layer 6                             |
-|text7            |Text Layer 7                             |
-|text8            |Text Layer 8                             |
+|bg               |Фоновое изображение                     |
+|bg2              |Фоновое изображение 2                   |
+|efb1             |Задний эффект 1                         |
+|efb2             |Задний эффект 2                         |
+|efb3             |Задний эффект 3                         |
+|efb4             |Задний эффект 4                         |
+|chb              |Центральный задний персонаж             |
+|chl              |Левый персонаж                           |
+|chlc             |Левый центральный персонаж              |
+|chr              |Правый персонаж                          |
+|chrc             |Правый центральный персонаж             |
+|chc              |Центральный персонаж                    |
+|eff1             |Передний эффект 1                       |
+|eff2             |Передний эффект 2                       |
+|eff3             |Передний эффект 3                       |
+|eff4             |Передний эффект 4                       |
+|chf              |Персонаж лица                           |
+|text1            |Текстовый слой 1                        |
+|text2            |Текстовый слой 2                        |
+|text3            |Текстовый слой 3                        |
+|text4            |Текстовый слой 4                        |
+|text5            |Текстовый слой 5                        |
+|text6            |Текстовый слой 6                        |
+|text7            |Текстовый слой 7                        |
+|text8            |Текстовый слой 8                        |
 
 ---
-
 ## `returnmacro`
 
-Return from Macro
+Возврат из макроса
 
-The `returnmacro` tag immediately exits the current macro and returns the script execution to the line following the original `[callmacro]` tag.
-It is particularly useful for stopping a macro early based on specific conditions within an `[if]` block.
+Тег `returnmacro` немедленно завершает текущий макрос и возвращает выполнение скрипта к строке, следующей за исходным тегом `[callmacro]`.
+Он особенно полезен для досрочного выхода из макроса на основе определенных условий внутри блока `[if]`.
 
-### Basic Usage
+### Базовое использование
 
 ```
 [defmacro name="check_item"]
     [if lhs="${has_key}" op="==" rhs="false"]
-        [text text="The door is locked."]
+        [text text="Дверь заперта."]
         [returnmacro]
     [endif]
 
-    # This part only runs if has_key is true
-    [text text="You unlocked the door with the key!"]
+    # Эта часть выполняется только если has_key равно true
+    [text text="Вы открыли дверь ключом!"]
 [endmacro]
 ```
 
-### Arguments
+### Аргументы
 
-This tag does not take any arguments.
+Этот тег не принимает аргументов.
 
-| Argument | Omissible | Description | Notes |
+| ???????? | ????? ???????? | ???????? | ?????????? |
 |----------|-----------|-------------|-------|
 | -        | -         | -           | -     |
 
-### Tips
+### Советы
 
-**Early Exit**:
-* Use `[returnmacro]` inside an `[if]` block to skip the rest of a macro's commands if a certain condition is met.
-* This keeps your macros flexible and powerful!
+**Досрочный выход**:
+* Используйте `[returnmacro]` внутри блока `[if]`, чтобы пропустить оставшиеся команды макроса при выполнении определенного условия.
+* Это делает ваши макросы гибкими и мощными!
 
-**Implicit Return**:
-* You don't actually need to put `[returnmacro]` at the very end of every macro.
-* Once the engine hits the `[endmacro]` tag, it will return to the main script automatically.
+**Неявный возврат**:
+* На самом деле не нужно ставить `[returnmacro]` в самом конце каждого макроса.
+* Как только движок доходит до тега `[endmacro]`, он автоматически возвращается в основной скрипт.
 
-**Flow Control**:
-* Remember that this tag only exits the *current* macro. It doesn't stop the whole game or jump to a different label—it just sends you back to where the macro was called from.
+**Управление потоком**:
+* Помните, что этот тег завершает только *текущий* макрос. Он не останавливает всю игру и не переходит к другой метке - он просто возвращает вас туда, откуда макрос был вызван.
 
 ---
-
 ## `video`
 
-Play Video
+Воспроизведение видео
 
-The `video` tag plays a movie file on the screen.
-It is ideal for opening cinematics, transitional cutscenes, or high-impact visual effects that are best rendered as full-motion video.
+Тег `video` воспроизводит видеофайл на экране.
+Он идеально подходит для вступительных роликов, переходных сцен или выразительных визуальных эффектов, которые лучше всего выглядят в формате полноэкранного видео.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Play an opening movie (cannot be skipped)
+# Воспроизвести вступительный ролик (его нельзя пропустить)
 [video file="opening.mp4"]
 
-# Play a short cutscene that the player can skip with a click.
+# Воспроизвести короткую сцену, которую игрок может пропустить щелчком.
 [video file="cutscene01.mp4" skippable="true"]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument    | Omissible     | Description                                           | Notes                                                         |
+| ????????    | ????? ????????     | ????????                                           | ??????????                                                         |
 |-------------|---------------|-------------------------------------------------------|---------------------------------------------------------------|
-| `file`      | No            | The filename of the video to play.                    | The file must be in a supported format (e.g., .mp4).          |
-| `skippable` | Yes (`false`) | Whether the video can be skipped by a player's click. | Set to `false` to force the player to watch the entire video. |
+| `file`      | No            | Имя видеофайла, который нужно воспроизвести.         | Файл должен быть в поддерживаемом формате (например, .mp4).   |
+| `skippable` | Yes (`false`) | Можно ли пропустить видео щелчком игрока.            | Установите `false`, чтобы заставить игрока смотреть видео целиком. |
 
-### Tips
+### Советы
 
-**File Support**:
-* Ensure your video file is .mp4 (H.264 + AAC) format.
-* If you want to support 32-bit Windows, prepare .wmv file alongside .mp4 file, then remove extension e.g., `[video file="opening"]`.
+**Поддержка файлов**:
+* Убедитесь, что ваш видеофайл имеет формат .mp4 (H.264 + AAC).
+* Если нужна поддержка 32-битной версии Windows, подготовьте рядом с .mp4 файл .wmv, затем удалите расширение, например `[video file="opening"]`.
 
-**Transitioning**:
-* Once the video finishes playing (or is skipped), the engine automatically proceeds to the next command in your script.
-* It's often a good idea to follow a `[video]` tag with a `[bg]` tag to ensure the screen looks exactly how you want it after the movie ends.
+**Переход**:
+* После завершения воспроизведения видео (или его пропуска) движок автоматически переходит к следующей команде в вашем скрипте.
+* Часто удобно следом за тегом `[video]` использовать тег `[bg]`, чтобы после завершения ролика экран выглядел именно так, как нужно.
 
-**Audio in Video**:
-* Most video files include their own audio track.
-* Keep in mind that this audio will play alongside any `[bgm]` you have running.
-* You might want to stop the music with `[bgm file="none"]` before starting a video with sound!
+**Аудио в видео**:
+* Большинство видеофайлов содержат собственную звуковую дорожку.
+* Учитывайте, что этот звук будет воспроизводиться вместе с любым `[bgm]`, который уже играет.
+* Возможно, стоит остановить музыку с помощью `[bgm file="none"]` перед запуском видео со звуком!
 
 ---
-
 ## `wait`
 
-Wait for Time
+Ожидание времени
 
-The `wait` tag pauses the NovelML execution for a specified duration.
-It is essential for controlling the pacing of visual transitions, creating dramatic pauses, or timing effects without requiring player input.
+Тег `wait` приостанавливает выполнение NovelML на указанную длительность.
+Он необходим для управления темпом визуальных переходов, создания драматических пауз или синхронизации эффектов без участия игрока.
 
-### Basic Usage
+### Базовое использование
 
 ```
-# Pause for 1.5 seconds before the next command
+# Пауза на 1.5 секунды перед следующей командой
 [wait time="1.5"]
 
-# Create a brief pause between character changes
+# Короткая пауза между сменой персонажей
 [ch center="chara01_surprised.png" time="0.5"]
 [wait time="1.0"]
-[text text="She couldn't believe her eyes."]
+[text text="Она не могла поверить своим глазам."]
 ```
 
-### Arguments
+### Аргументы
 
-| Argument      | Omissible     | Description                    | Notes                                  |
+| ????????      | ????? ????????     | ????????                    | ??????????                                  |
 |---------------|---------------|--------------------------------|----------------------------------------|
-| `time`        | No            | The number of seconds to wait. | Supports decimal values (e.g., `0.5`). |
-| `hidemsgbox`  | Yes (`false`) | Force hide the message box.    |                                        |
-| `hidenamebox` | Yes (`false`) | Force hide the name box.       |                                        |
+| `time`        | No            | Количество секунд ожидания.    | Поддерживает дробные значения (например, `0.5`). |
+| `hidemsgbox`  | Yes (`false`) | Принудительно скрыть окно сообщения. |                                        |
+| `hidenamebox` | Yes (`false`) | Принудительно скрыть окно имени.    |                                        |
 
-### Tips
+### Советы
 
-**Non-interactive Pause**:
-* Unlike `[click]`, which waits for the player to act, `[wait]` continues automatically once the time is up. 
-* This is perfect for "auto-playing" segments or timed visual sequences.
+**Пауза без взаимодействия**:
+* В отличие от `[click]`, который ждет действий игрока, `[wait]` продолжается автоматически, когда время истекает.
+* Это идеально подходит для сегментов с "автовоспроизведением" или временных визуальных последовательностей.
 
-**Combining with Animations**:
-* If you use a `[ch]` or `[bg]` tag with a `time` argument, the engine moves to the next command immediately while the animation plays. 
-* Use `[wait]` after an animation if you want the script to stop until the animation is finished (or even longer for dramatic effect).
+**Совмещение с анимациями**:
+* Если использовать тег `[ch]` или `[bg]` с аргументом `time`, движок сразу переходит к следующей команде, пока анимация проигрывается.
+* Используйте `[wait]` после анимации, если хотите, чтобы скрипт не продолжался до ее завершения (или даже дольше ради драматического эффекта).
 
-**User Experience**:
-* Be careful not to make `[wait]` times too long (like more than 3 seconds) without a visual reason, or the player might think the game has frozen!
-
+**Пользовательский опыт**:
+* Следите за тем, чтобы значения `[wait]` не были слишком длинными (например, больше 3 секунд) без визуальной причины, иначе игрок может подумать, что игра зависла!

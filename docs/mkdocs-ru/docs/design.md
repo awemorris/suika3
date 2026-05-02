@@ -1,20 +1,20 @@
-Suika3 Design
+Дизайн Suika3
 =============
 
-## Layered Component Model
+## Модель слоистых компонентов
 
-Suika3 is not a monolithic design, but is separated into small libraries and parts, with an overall hierarchical structure stacked on top of each other.
+Suika3 не является монолитной системой: она разделена на небольшие библиотеки и части, которые образуют общую иерархическую структуру, где слои располагаются друг над другом.
 
-- Each layer implements only one feature.
-- Each layer provides a public C language API to the layer one level above it.
-- Each layer can only use the public C language API provided by the layer one level below it.
+- Каждый слой реализует только одну возможность.
+- Каждый слой предоставляет публичный API языка C слою, расположенному на один уровень выше.
+- Каждый слой может использовать только публичный API языка C, предоставленный слоем на один уровень ниже.
 
-This type of structure is called the "Layered Component Model" in Suika3.
+В Suika3 такая структура называется "Layered Component Model".
 
-The advantage of this approach is that while classes in object-oriented languages like C++ must consider many-to-many dependency relationships with inherent complexity, the Layered Component Model only needs to consider relationships with the layers one level above and one level below, making design, implementation, modification, and extension simpler.
-A full-stack game engine is complex and large software, but by assembling it through one-to-one relationships of simple components, it becomes easier to build as a whole, resulting in improved portability.
+Преимущество такого подхода в том, что классы в объектно-ориентированных языках, таких как C++, должны учитывать сложные зависимости "многие ко многим", тогда как в Layered Component Model нужно рассматривать только связи со слоями на один уровень выше и ниже. Это упрощает проектирование, реализацию, изменение и расширение.
+Полноценный игровой движок представляет собой сложное и большое программное обеспечение, но если собирать его из простых компонентов со связями "один к одному", систему в целом становится проще строить, что повышает переносимость.
 
-The reason for improved portability is that the bottom layer is a "hardware abstraction layer" that absorbs OS differences, and the layers above it can be designed and implemented without any concern for OS differences.
+Переносимость повышается потому, что нижний слой является "hardware abstraction layer", который скрывает различия между ОС, а расположенные выше слои можно проектировать и реализовывать без учета этих различий.
 
 ```
 +-----------------------------------+

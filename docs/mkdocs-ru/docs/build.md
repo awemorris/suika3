@@ -1,36 +1,36 @@
-Suika3 Build Instructions
-========================
+Инструкции по сборке Suika3
+===========================
 
-Suika3 fully utilizes the CMake build system.
+Suika3 полностью использует систему сборки CMake.
 
-Notes:
-* Requires CMake 3.22 or later
-* Linux: GCC 4.4 or later (Clang is also supported)
-* Windows: Visual Studio 2022/2026, or gcc/clang on WSL
-* macOS: Xcode 8.2.1 or later required
+Примечания:
+* Требуется CMake 3.22 или новее
+* Linux: GCC 4.4 или новее (Clang также поддерживается)
+* Windows: Visual Studio 2022/2026 или gcc/clang в WSL
+* macOS: требуется Xcode 8.2.1 или новее
 
 ---
 
 ## Linux (Wayland/X11 Dual)
 
-### Prerequisites
+### Предварительные требования
 
-* A `Linux` machine with any processor
+* Машина с `Linux` на любом процессоре
 
-On Debian, Ubuntu, or Raspberry Pi OS:
+В Debian, Ubuntu или Raspberry Pi OS:
 ```
 sudo apt-get install git cmake ninja-build build-essential libasound2-dev libx11-dev libxpm-dev libwayland-dev wayland-protocols libegl1-mesa-dev libegl-dev libgles-dev libwayland-client0 libwayland-egl1 libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-x libdecor-0-dev
 ```
 
-On RedHat, Rocky Linux, Fedora, etc.:
+В RedHat, Rocky Linux, Fedora и т. п.:
 ```
 sudo dnf groupinstall "Development Tools" "Development Libraries"
 sudo dnf install patch git cmake ninja-build alsa-lib-devel libX11-devel libXpm-devel wayland-devel wayland-protocols-devel mesa-libEGL-devel alsa-lib-devel gstreamer1.0-devel gstreamer1.0-plugins-base-devel libdecor-devel
 ```
 
-### Steps
+### Шаги
 
-Open the terminal and type the following.
+Откройте терминал и введите следующее.
 ```
 git clone https://github.com/suika3-community/suika3.git
 cd suika3
@@ -38,32 +38,32 @@ cmake --preset linux
 cmake --build --preset linux
 ```
 
-The target file `build-linux/suika3` will be created.
+Будет создан целевой файл `build-linux/suika3`.
 
-If you want to debug Suika3 with GDB, you can use the `linux-debug` preset instead of `linux`.
+Если вы хотите отлаживать Suika3 с помощью GDB, можно использовать пресет `linux-debug` вместо `linux`.
 
 ---
 
 ## Linux (X11-Only)
 
-### Prerequisites
+### Предварительные требования
 
-* A `Linux` machine with any processor
+* Машина с `Linux` на любом процессоре
 
-On Debian, Ubuntu, or Raspberry Pi OS:
+В Debian, Ubuntu или Raspberry Pi OS:
 ```
 sudo apt-get install git cmake ninja-build build-essential libasound2-dev libx11-dev libxpm-dev mesa-common-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-x libdecor-0-dev
 ```
 
-On RedHat, Rocky Linux, Fedora, etc.:
+В RedHat, Rocky Linux, Fedora и т. п.:
 ```
 sudo dnf groupinstall "Development Tools" "Development Libraries"
 sudo dnf install patch git cmake ninja-build libX11-devel libXpm-devel alsa-lib-devel mesa-libGL-devel gstreamer1.0-devel gstreamer1.0-plugins-base-devel
 ```
 
-### Steps
+### Шаги
 
-Open the terminal and type the following.
+Откройте терминал и введите следующее.
 ```
 git clone https://github.com/suika3-community/suika3.git
 cd suika3
@@ -71,36 +71,36 @@ cmake --preset linux-x11
 cmake --build --preset linux-x11
 ```
 
-The target file `build-linux-x11/suika3` will be created.
+Будет создан целевой файл `build-linux-x11/suika3`.
 
-If you want to debug Suika3 with GDB, you can use the `linux-x11-debug` preset instead of `linux-x11`.
+Если вы хотите отлаживать Suika3 с помощью GDB, можно использовать пресет `linux-x11-debug` вместо `linux-x11`.
 
 
 ---
 
 ## Linux (Wayland)
 
-Note that Wayland support is still experimental.
-It is compatible with KDE, but has problems with showing windows on GNOME.
+Обратите внимание, что поддержка Wayland все еще экспериментальная.
+Она совместима с KDE, но имеет проблемы с отображением окон в GNOME.
 
-### Prerequisites
+### Предварительные требования
 
-* A `Linux` machine with any processor
+* Машина с `Linux` на любом процессоре
 
-On Debian or Ubuntu:
+В Debian или Ubuntu:
 ```
 sudo apt-get install git cmake ninja-build build-essential libasound2-dev libwayland-dev wayland-protocols libegl1-mesa-dev libegl-dev libgles-dev libwayland-client0 libwayland-egl1 libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-x libdecor-0-dev
 ```
 
-On RedHat, Rocky Linux, Fedora, etc.:
+В RedHat, Rocky Linux, Fedora и т. п.:
 ```
 sudo dnf groupinstall "Development Tools" "Development Libraries"
 sudo dnf install patch git cmake ninja-build wayland-devel wayland-protocols-devel mesa-libEGL-devel alsa-lib-devel gstreamer1.0-devel gstreamer1.0-plugins-base-devel libdecor-devel
 ```
 
-### Steps
+### Шаги
 
-Open the terminal and type the following.
+Откройте терминал и введите следующее.
 ```
 git clone https://github.com/suika3-community/suika3.git
 cd suika3
@@ -108,52 +108,52 @@ cmake --preset linux-wayland
 cmake --build --preset linux-wayland
 ```
 
-The target file `build-linux-wayland/suika3` will be created.
+Будет создан целевой файл `build-linux-wayland/suika3`.
 
-If you want to debug Suika3 with GDB, you can use the `linux-wayland-debug` preset instead of `linux-wayland`.
+Если вы хотите отлаживать Suika3 с помощью GDB, можно использовать пресет `linux-wayland-debug` вместо `linux-wayland`.
 
 ---
 
 ## Windows (Visual Studio 2026)
 
-Visual Studio is the recommended build environment for Windows, and is used for the official binary.
+Visual Studio является рекомендуемой средой сборки для Windows и используется для официального бинарного файла.
 
-### Prerequisites
+### Предварительные требования
 
-* A `Windows 11` PC with an Intel, AMD, or Arm64 processor
-* `Visual Studio 2026` installed with C/C++ and CMake configured
+* ПК с `Windows 11` на процессоре Intel, AMD или Arm64
+* Установленная `Visual Studio 2026` с настроенными C/C++ и CMake
 
-### Steps
+### Шаги
 
-* Clone the repository.
-* Open the root of the source code folder in Visual Studio.
-* Wait for the CMake configuration to complete.
-* Choose the `VS2026 x64 Release` target.
-* Build the project.
+* Клонируйте репозиторий.
+* Откройте корень папки с исходным кодом в Visual Studio.
+* Дождитесь завершения конфигурации CMake.
+* Выберите цель `VS2026 x64 Release`.
+* Соберите проект.
 
-The target file `out/build/windows-vs2026-x64-release/suika3.exe` will be created.
+Будет создан целевой файл `out/build/windows-vs2026-x64-release/suika3.exe`.
 
 ---
 
 ## Windows (WSL2)
 
-This method uses MinGW on WSL2 to create a Windows exe file.
-Note that it is possible to build Suika3 using MinGW,
-but it is not recommended due to false positives in antivirus software.
+Этот способ использует MinGW в WSL2 для создания Windows exe-файла.
+Обратите внимание, что Suika3 можно собрать с помощью MinGW,
+но это не рекомендуется из-за ложных срабатываний антивирусного ПО.
 
-### Prerequisites
+### Предварительные требования
 
-* A `Windows 11` PC with an Intel, AMD, or Arm64 processor
-* The `WSL2` feature installed
-* `Ubuntu` or `Debian` installed on WSL2
+* ПК с `Windows 11` на процессоре Intel, AMD или Arm64
+* Установленная возможность `WSL2`
+* `Ubuntu` или `Debian`, установленная в WSL2
 
 ```
 sudo apt-get install cmake ninja-build mingw-w64
 ```
 
-### Steps
+### Шаги
 
-Open the terminal and type the following.
+Откройте терминал и введите следующее.
 
 ```
 git clone https://github.com/suika3-community/suika3.git
@@ -162,23 +162,23 @@ cmake --preset windows-mingw-x86_64
 cmake --build --preset windows-mingw-x86_64
 ```
 
-The target file `build-mingw-x86_64/suika3.exe` will be created.
+Будет создан целевой файл `build-mingw-x86_64/suika3.exe`.
 
 ---
 
 ## macOS (App Bundle)
 
-This method creates an app bundle for macOS, and is used for the official binary.
+Этот способ создает пакет приложения для macOS и используется для официального бинарного файла.
 
-### Prerequisites
+### Предварительные требования
 
-* A Mac with an Apple Silicon or Intel processor
-* `macOS 11` or later installed
-* `Xcode` installed
+* Mac с процессором Apple Silicon или Intel
+* Установленная `macOS 11` или новее
+* Установленный `Xcode`
 
-### Steps
+### Шаги
 
-Open the terminal and type the following.
+Откройте терминал и введите следующее.
 
 ```
 git clone https://github.com/suika3-community/suika3.git
@@ -187,31 +187,31 @@ cmake --preset macos
 cmake --build --preset macos
 ```
 
-The target `build-macos/Suika3.app` will be created.
+Будет создана цель `build-macos/Suika3.app`.
 
-### DMG Packaging
+### Упаковка DMG
 
-If you want to distribute Suika3 for macOS, you need to create a DMG file with code signing and notirization.
-You need to have a `Developer ID Application` certificate in the keychain and be logged in with an Apple Developer account on Xcode.
-Please note that an app bundle distributed via a zip file cannot access outside of the app bundle, so we use DMG here.
+Если вы хотите распространять Suika3 для macOS, нужно создать DMG-файл с подписыванием кода и нотариальным заверением.
+В связке ключей должен быть сертификат `Developer ID Application`, а в Xcode нужно войти в учетную запись Apple Developer.
+Обратите внимание, что пакет приложения, распространяемый через zip-файл, не может получать доступ за пределы пакета приложения, поэтому здесь используется DMG.
 
 ```
 cd macos
 
-# Sign the app.
+# Подписать приложение.
 codesign --timestamp --options runtime --entitlements ../resources/macos/macos.entitlements --deep --force --sign "Developer ID Application" Suika3.app
 
-# Notarize the app. (takes some time)
+# Нотариально заверить приложение. (занимает некоторое время)
 ditto -c -k --sequesterRsrc --keepParent Suika3.app Suika3.zip
 xcrun notarytool submit Suika3.zip --apple-id "$APPLE_ID" --team-id "$TEAM_ID" --password "$APP_SECRET" --wait
 xcrun stapler staple Suika3.app
 
-# Create a DMG file.
+# Создать DMG-файл.
 mkdir tmp
 cp -Rv Suika3.app tmp/Suika3.app
 hdiutil create -fs HFS+ -format UDBZ -srcfolder tmp -volname Suika3 Suika3.dmg
 
-# Sign the DMG file to allow access to files outside the bundle (avoid Gatekeeper issues).
+# Подписать DMG-файл, чтобы разрешить доступ к файлам вне пакета (и избежать проблем Gatekeeper).
 codesign --sign "Developer ID Application" Suika3.dmg
 ```
 
@@ -219,18 +219,18 @@ codesign --sign "Developer ID Application" Suika3.dmg
 
 ## macOS (CLI)
 
-This method creates a command-line interface (CLI) version of Suika3 for macOS.
-It is useful for debugging and development, but is not recommended for distribution.
+Этот способ создает версию Suika3 для интерфейса командной строки (CLI) на macOS.
+Она полезна для отладки и разработки, но не рекомендуется для распространения.
 
-### Prerequisites
+### Предварительные требования
 
-* A Mac with an Apple Silicon or Intel processor
-* `macOS 11` or later installed
-* `Xcode` installed
+* Mac с процессором Apple Silicon или Intel
+* Установленная `macOS 11` или новее
+* Установленный `Xcode`
 
-### Steps
+### Шаги
 
-Open the terminal and type the following.
+Откройте терминал и введите следующее.
 
 ```
 git clone https://github.com/suika3-community/suika3.git
@@ -239,83 +239,83 @@ cmake --preset macos-cli
 cmake --build --preset macos-cli
 ```
 
-The target `build-macos/Suika3.app` will be created.
+Будет создана цель `build-macos/Suika3.app`.
 
-If you want to debug Suika3 with LLDB, you can use the `macos-cli-debug` preset instead of `macos`.
+Если вы хотите отлаживать Suika3 с помощью LLDB, можно использовать пресет `macos-cli-debug` вместо `macos`.
 
 ---
 
 ## iOS
 
-### Prerequisites
+### Предварительные требования
 
-* A Mac with an Apple Silicon or Intel processor
-* `macOS 11` or later installed
-* `Xcode` installed
+* Mac с процессором Apple Silicon или Intel
+* Установленная `macOS 11` или новее
+* Установленный `Xcode`
 
-### Steps
+### Шаги
 
-* Pack assets into the `assets.arc` file.
-* Download [the official binary](https://github.com/suika3-community/suika/releases) and extract it.
-* Copy your `assets.arc` file into the `SDK/ios/resources` folder.
-* Open the `SDK/ios` folder in Xcode.
-* Build and run.
+* Упакуйте ресурсы в файл `assets.arc`.
+* Скачайте [официальный бинарный файл](https://github.com/suika3-community/suika/releases) и распакуйте его.
+* Скопируйте файл `assets.arc` в папку `SDK/ios/resources`.
+* Откройте папку `SDK/ios` в Xcode.
+* Соберите и запустите.
 
-### Build from Scratch
+### Сборка с нуля
 
-If you want to build from scratch, use `cmake --preset ios-device` or `cmake --preset ios-simulator`,
-then copy the built `libsuika3.a` file into the `SDK/ios/lib` folder, and open the `SDK/ios` folder in Xcode.
+Если вы хотите собрать с нуля, используйте `cmake --preset ios-device` или `cmake --preset ios-simulator`,
+затем скопируйте собранный файл `libsuika3.a` в папку `SDK/ios/lib` и откройте папку `SDK/ios` в Xcode.
 
 ---
 
 ## Android
 
-### Prerequisites
+### Предварительные требования
 
 * `Android Studio`
 
-### Steps
+### Шаги
 
-* Download [the official binary](https://github.com/suika3-community/suika/releases) and extract it.
-* Copy your asset files into the `SDK/android/app/src/main/assets` folder.
-* Open the `SDK/android` folder in Android Studio.
+* Скачайте [официальный бинарный файл](https://github.com/suika3-community/suika/releases) и распакуйте его.
+* Скопируйте файлы ресурсов в папку `SDK/android/app/src/main/assets`.
+* Откройте папку `SDK/android` в Android Studio.
 
-### Build from Scratch
+### Сборка с нуля
 
-If you want to build from scratch, use `cmake --preset android-arm64`, then copy the built `libsuika3.so` file into the `SDK/android/app/src/main/jniLibs/arm64-v8a` folder, and open the `SDK/android` folder in Android Studio.
+Если вы хотите собрать с нуля, используйте `cmake --preset android-arm64`, затем скопируйте собранный файл `libsuika3.so` в папку `SDK/android/app/src/main/jniLibs/arm64-v8a` и откройте папку `SDK/android` в Android Studio.
 
 ---
 
 ## HarmonyOS NEXT / OpenHarmony
 
-### Prerequisites
+### Предварительные требования
 
-* `OpenHarmony SDK` installed
+* Установленный `OpenHarmony SDK`
 
-### Steps
+### Шаги
 
-* Download [the official binary](https://github.com/awemorris/suika/releases) and extract it.
-* Copy your asset files into the `SDK/openharmony/entry/src/main/resources/rawfile` folder.
-* Open the `SDK/openharmony` folder in DevEco.
-* Build and run.
+* Скачайте [официальный бинарный файл](https://github.com/awemorris/suika/releases) и распакуйте его.
+* Скопируйте файлы ресурсов в папку `SDK/openharmony/entry/src/main/resources/rawfile`.
+* Откройте папку `SDK/openharmony` в DevEco.
+* Соберите и запустите.
 
-### Build from Scratch
+### Сборка с нуля
 
-If you want to build from scratch, use `cmake --preset openharmony-arm64`,
-then copy the built `libsuika3.a` file into the `SDK/openharmony/entry/libs/arm64-v8a` folder,
-and open the `SDK/openharmony` folder in DevEco.
+Если вы хотите собрать с нуля, используйте `cmake --preset openharmony-arm64`,
+затем скопируйте собранный файл `libsuika3.a` в папку `SDK/openharmony/entry/libs/arm64-v8a`,
+и откройте папку `SDK/openharmony` в DevEco.
 
 ---
 
 ## WebAssembly
 
-### Prerequisites
+### Предварительные требования
 
-* `emsdk` installed. (Any OS will do.)
+* Установленный `emsdk`. (Подойдет любая ОС.)
 
-### Steps
+### Шаги
 
-Open the terminal and type the following.
+Откройте терминал и введите следующее.
 
 ```
 git clone https://github.com/suika3-community/suika3.git
@@ -324,28 +324,28 @@ cmake --preset wasm
 cmake --build --preset wasm
 ```
 
-The target file `wasm/index.html` will be created.
+Будет создан целевой файл `wasm/index.html`.
 
-### Testing
+### Тестирование
 
-To run the app, place your `assets.arc` file in the `wasm` folder.
+Чтобы запустить приложение, поместите файл `assets.arc` в папку `wasm`.
 
-After that, type `python -m http.server` and open `http://localhost:8000` in a browser window.
+После этого введите `python -m http.server` и откройте `http://localhost:8000` в окне браузера.
 
-On Windows, you can use `suika3-web.exe` instead of `python`. It runs a small web server and opens the browser automatically.
+В Windows можно использовать `suika3-web.exe` вместо `python`. Он запускает небольшой веб-сервер и автоматически открывает браузер.
 
 ---
 
 ## FreeBSD
 
-### Prerequisites
+### Предварительные требования
 
-* A `FreeBSD` machine
-* `cmake` and `ninja` installed.
+* Машина с `FreeBSD`
+* Установленные `cmake` и `ninja`.
 
-### Steps
+### Шаги
 
-Open the terminal and type the following.
+Откройте терминал и введите следующее.
 
 ```
 git clone https://github.com/suika3-community/suika3.git
@@ -354,20 +354,20 @@ cmake --preset freebsd
 cmake --build --preset freebsd
 ```
 
-The target file `build-freebsd/suika3` will be created.
+Будет создан целевой файл `build-freebsd/suika3`.
 
 ---
 
 ## NetBSD
 
-### Prerequisites
+### Предварительные требования
 
-* A `NetBSD` machine
-* `cmake` and `ninja` installed.
+* Машина с `NetBSD`
+* Установленные `cmake` и `ninja`.
 
-### Steps
+### Шаги
 
-Open the terminal and type the following.
+Откройте терминал и введите следующее.
 
 ```
 git clone https://github.com/suika3-community/suika3.git
@@ -376,20 +376,20 @@ cmake --preset netbsd
 cmake --build --preset netbsd
 ```
 
-The target file `build-netbsd/suika3` will be created.
+Будет создан целевой файл `build-netbsd/suika3`.
 
 ---
 
 ## OpenBSD
 
-### Prerequisites
+### Предварительные требования
 
-* A `OpenBSD` machine
-* `cmake` and `ninja` installed.
+* Машина с `OpenBSD`
+* Установленные `cmake` и `ninja`.
 
-### Steps
+### Шаги
 
-Open the terminal and type the following.
+Откройте терминал и введите следующее.
 
 ```
 git clone https://github.com/suika3-community/suika3.git
@@ -398,21 +398,21 @@ cmake --preset openbsd
 cmake --build --preset openbsd
 ```
 
-The target file `build-openbsd/suika3` will be created.
+Будет создан целевой файл `build-openbsd/suika3`.
 
 ---
 
 ## Solaris 11
 
-### Prerequisites
+### Предварительные требования
 
-* A `Solaris 11` machine
-* `SunCC`, `cmake`, and `gmake` installed.
-* `cmake` must be compiled by source code.
+* Машина с `Solaris 11`
+* Установленные `SunCC`, `cmake` и `gmake`.
+* `cmake` должен быть собран из исходного кода.
 
-### Steps
+### Шаги
 
-Open the terminal and type the following.
+Откройте терминал и введите следующее.
 
 ```
 git clone https://github.com/suika3-community/suika3.git
@@ -421,21 +421,21 @@ cmake --preset solaris11
 cmake --build --preset solaris11
 ```
 
-The target file `build-solaris11/suika3` will be created.
+Будет создан целевой файл `build-solaris11/suika3`.
 
 ---
 
 ## Solaris 10
 
-### Prerequisites
+### Предварительные требования
 
-* A `Solaris 10` machine
-* `SunCC`, `cmake`, and `gmake` installed.
-* `cmake` must be compiled by source code.
+* Машина с `Solaris 10`
+* Установленные `SunCC`, `cmake` и `gmake`.
+* `cmake` должен быть собран из исходного кода.
 
-### Steps
+### Шаги
 
-Open the terminal and type the following.
+Откройте терминал и введите следующее.
 
 ```
 git clone https://github.com/suika3-community/suika3.git
@@ -444,20 +444,20 @@ cmake --preset solaris10
 cmake --build --preset solaris10
 ```
 
-The target file `build-solaris10/suika3` will be created.
+Будет создан целевой файл `build-solaris10/suika3`.
 
 ---
 
 ## Haiku
 
-### Prerequisites
+### Предварительные требования
 
-* A `Haiku` machine
-* `gcc`, `cmake`, and `ninja` installed.
+* Машина с `Haiku`
+* Установленные `gcc`, `cmake` и `ninja`.
 
-### Steps
+### Шаги
 
-Open the terminal and type the following.
+Откройте терминал и введите следующее.
 
 ```
 git clone https://github.com/suika3-community/suika3.git
@@ -466,19 +466,19 @@ cmake --preset haiku
 cmake --build --preset haiku
 ```
 
-The target file `build-solaris10/suika3` will be created.
+Будет создан целевой файл `build-solaris10/suika3`.
 
 ---
 
 ## Unity Plugin
 
-### Prerequisites
+### Предварительные требования
 
-* Full build of `LLVM-22` installed.
+* Установленная полная сборка `LLVM-22`.
 
-### Steps
+### Шаги
 
-Open the terminal and type the following.
+Откройте терминал и введите следующее.
 
 ```
 git clone https://github.com/suika3-community/suika3.git
@@ -487,8 +487,8 @@ cmake --preset unity-win64
 cmake --build --preset unity-win64
 ```
 
-The target file `build-unity-win64/libsuika3.dll` will be created.
+Будет создан целевой файл `build-unity-win64/libsuika3.dll`.
 
-Note: Replace `win64` to one of `switch`, `ps5`, and `xbox`.
+Примечание: замените `win64` на одно из значений `switch`, `ps5` или `xbox`.
 
-To use a vendor official SDK, open `cmake/toolchains/unity-*.cmake` and replace `CMAKE_C_COMPILER`, `CMAKE_CXX_COMPILER` and `CMAKE_AR`.
+Чтобы использовать официальный SDK поставщика, откройте `cmake/toolchains/unity-*.cmake` и замените `CMAKE_C_COMPILER`, `CMAKE_CXX_COMPILER` и `CMAKE_AR`.

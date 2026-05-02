@@ -1,113 +1,112 @@
 GUI
 ===
 
-## Introduction
+## Введение
 
-GUI is Suika3's UI/UX creation feature.
+GUI — это возможность Suika3 для создания UI/UX.
 
-In Suika3, buttons are defined in a dedicated GUI mode and operate in
-a synchronous manner, that is, calling a GUI results in a button click or
-a cancel.
+В Suika3 кнопки определяются в специальном режиме GUI и работают
+синхронно: вызов GUI завершается щелчком по кнопке или отменой.
 
-Asynchronous callbacks such as showing buttons while text tag
-execution are intentionally avoided because they can be difficult for
-beginner programmers to understand and manage.
+Асинхронные обратные вызовы, например показ кнопок во время
+выполнения текстовых тегов, намеренно не используются, потому что
+начинающим программистам может быть трудно понимать их и управлять ими.
 
-A GUI file contains a list of button definitions. Each button includes
-a behavior type, idle and hover images, and additional
-properties. Buttons are mapped to animation layers, and animation
-files can be triggered when a button's state changes.
+Файл GUI содержит список определений кнопок. Каждая кнопка включает
+тип поведения, изображения idle и hover, а также дополнительные
+свойства. Кнопки сопоставляются со слоями анимации, а файлы анимации
+могут запускаться при изменении состояния кнопки.
 
 ---
 
-## GUI Sample
+## Пример GUI
 
 ```
-# Global settings section.
+# Раздел глобальных настроек.
 global {
-    fadein:       0.2;            # Fading-in time in seconds.
-    fadeout:      0.2;            # Fading-out time in seconds.
+    fadein:       0.2;            # Время появления в секундах.
+    fadeout:      0.2;            # Время исчезновения в секундах.
 }
 
-# A block describes a button.
-# The name of a block can be whatever you like and it won't affect anything.
+# Блок описывает кнопку.
+# Имя блока может быть любым и ни на что не влияет.
 button1 {
-    # Layer ID (`1`-`32`)
-    # `1` means the top-most and `32` means the bottom-most in the GUI layers, respectively.
+    # ID слоя (`1`-`32`)
+    # `1` означает самый верхний слой, а `32` — самый нижний слой среди слоев GUI.
     id: 1;
  
-    # Behavior Type (`goto` means go to a label when clicked.)
+    # Тип поведения (`goto` означает переход к метке при щелчке.)
     type: goto;
 
-    # Label to go to.
+    # Метка, к которой нужно перейти.
     label: button1_clicked;
 
-    # Position
+    # Позиция
     x: 39;
     y: 99;
 
-    # `width:` and `height:` are omissible as they can be inferred from the image size.
+    # `width:` и `height:` можно опустить, так как они выводятся из размера изображения.
 
-    # Images
-    image-idle:  gui/item-idle.png;    # Shown when the button is not pointed.
-    image-hover: gui/item-hover.png;   # Shown when the button is pointed.
-    image-press: gui/item-press.png;   # Shown when the button is pressed.
+    # Изображения
+    image-idle:  gui/item-idle.png;    # Показывается, когда указатель не наведен на кнопку.
+    image-hover: gui/item-hover.png;   # Показывается, когда указатель наведен на кнопку.
+    image-press: gui/item-press.png;   # Показывается при нажатии кнопки.
 
-    # Animations
-    anime-idle:  gui/item-idle.anime;   # Executed when the button state is changed to `idle`.
-    anime-hover: gui/item-hover.anime;  # Executed when the button state is changed to `hover`.
-    anime-press: gui/item-press.anime;  # Executed when the button is pressed.
+    # Анимации
+    anime-idle:  gui/item-idle.anime;   # Выполняется, когда состояние кнопки меняется на `idle`.
+    anime-hover: gui/item-hover.anime;  # Выполняется, когда состояние кнопки меняется на `hover`.
+    anime-press: gui/item-press.anime;  # Выполняется при нажатии кнопки.
 
-    # Note that `press` is not an independent state, it's an additional flag to the state `hover`.
-    # When a `hover` anime runs, `idle` anime will be canceled.
-    # And when `idle` anime runs, `hover` anime will be canceled.
-    # However, `press` anime doesn't cancel anything.
+    # Обратите внимание, что `press` не является самостоятельным состоянием, это дополнительный флаг к состоянию `hover`.
+    # При запуске анимации `hover` анимация `idle` будет отменена.
+    # А при запуске анимации `idle` анимация `hover` будет отменена.
+    # Однако анимация `press` ничего не отменяет.
 }
 ```
 
-In the `global` section, you can specify options for the GUI.
+В разделе `global` можно указать параметры GUI.
 
-Other sections are interpreted as button definitions.
-Here, `button1` makes a button at position `(39, 99)`.
-If the button is clicked, a jump so called `goto` will happen.
+Остальные разделы интерпретируются как определения кнопок.
+Здесь `button1` создает кнопку в позиции `(39, 99)`.
+Если по кнопке щелкнуть, произойдет переход типа `goto`.
 
 ---
 
-## Button Types
+## Типы кнопок
 
-| Description                     | Meaning                                           |
-|---------------------------------|---------------------------------------------------|
-| type: noaction;                 | Non-clickable image.                              |
-| type: goto;                     | Jumps to a label when clicked.                    |
-| type: gui;                      | Jumps to a GUI when clicked.                      |
-| type: mastervol;                | Shown as a master volume slider.                  |
-| type: bgmvol;                   | Shown as a BGM volume slider.                     |
-| type: sevol;                    | Shown as an SE volume slider.                     |
-| type: voicevol;                 | Shown as an voice volume slider.                  |
-| type: charactervol;             | Shown as a character volume slider.               |
-| type: textspeed;                | Shown as a text speed slider.                     |
-| type: autospeed;                | Shown as an auto mode speed slider.               |
-| type: preview;                  | Shown as a text preview area.                     |
-| type: fullscreen;               | Shown as a full screen mode button.               |
-| type: window;                   | Shown as s windoe mode button.                    |
-| type: default;                  | Resets settings when pressed.                     |
-| type: savepage;                 | Shown as a save/load page button.                 |
-| type: save;                     | Shown as a save slot.                             |
-| type: load;                     | Shown as a load slot.                             |
-| type: auto;                     | Shown as an auto mode button.                     |
-| type: skip;                     | Shown as a skip mode button.                      |
-| type: title;                    | Shown as a back-to-title button.                  |
-| type: history;                  | Shown as a history button.                        |
-| type: historyscroll;            | Shown as a vertical history scroll slider.        |
-| type: historyscroll-horizontal; | Shown as a horizontal history scroll slider.      |
-| type: cancel;                   | Shown as a cancel button.                         |
-| type: namevar;                  | Shown as a area to preview a name variable value. |
-| type: char;                     | Shown as a button to input a character.           |
-| type: language                  | Change the language when clicked.                 |
+| Описание                        | Значение                                                   |
+|---------------------------------|------------------------------------------------------------|
+| type: noaction;                 | Некликабельное изображение.                                |
+| type: goto;                     | Переход к метке при щелчке.                                |
+| type: gui;                      | Переход к GUI при щелчке.                                  |
+| type: mastervol;                | Отображается как ползунок общей громкости.                 |
+| type: bgmvol;                   | Отображается как ползунок громкости BGM.                   |
+| type: sevol;                    | Отображается как ползунок громкости SE.                    |
+| type: voicevol;                 | Отображается как ползунок громкости голоса.                |
+| type: charactervol;             | Отображается как ползунок громкости персонажа.             |
+| type: textspeed;                | Отображается как ползунок скорости текста.                 |
+| type: autospeed;                | Отображается как ползунок скорости авторежима.             |
+| type: preview;                  | Отображается как область предварительного просмотра текста. |
+| type: fullscreen;               | Отображается как кнопка полноэкранного режима.             |
+| type: window;                   | Отображается как кнопка оконного режима.                   |
+| type: default;                  | Сбрасывает настройки при нажатии.                          |
+| type: savepage;                 | Отображается как кнопка страницы сохранения/загрузки.      |
+| type: save;                     | Отображается как слот сохранения.                          |
+| type: load;                     | Отображается как слот загрузки.                            |
+| type: auto;                     | Отображается как кнопка авторежима.                        |
+| type: skip;                     | Отображается как кнопка режима пропуска.                   |
+| type: title;                    | Отображается как кнопка возврата к титульному экрану.      |
+| type: history;                  | Отображается как кнопка истории.                           |
+| type: historyscroll;            | Отображается как вертикальный ползунок прокрутки истории.  |
+| type: historyscroll-horizontal; | Отображается как горизонтальный ползунок прокрутки истории.|
+| type: cancel;                   | Отображается как кнопка отмены.                            |
+| type: namevar;                  | Отображается как область просмотра значения переменной имени. |
+| type: char;                     | Отображается как кнопка для ввода символа.                 |
+| type: language                  | Меняет язык при щелчке.                                    |
 
 ### `noaction`
 
-A non-clickable image.
+Некликабельное изображение.
 
 ```
 background {
@@ -120,7 +119,7 @@ background {
 
 ### `goto`
 
-A clickable button. When clicked, tag execution jumps to a label specified by `label:` parameter.
+Кликабельная кнопка. При щелчке выполнение тегов переходит к метке, указанной параметром `label:`.
 
 ```
 button1 {
@@ -135,7 +134,7 @@ button1 {
 
 ### `gui`
 
-A clickable button. When clicked, GUI execution is chained to a new GUI specified by `file:` parameter.
+Кликабельная кнопка. При щелчке выполнение GUI цепочкой переходит к новому GUI, указанному параметром `file:`.
 
 ```
 button1 {
@@ -150,125 +149,125 @@ button1 {
 
 ### `mastervol`
 
-A slider to set the master volume.
+Ползунок для установки общей громкости.
 
 ```
 slider1 {
     type: mastervol;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # Базовая полоса ползунка
+    image-hover: hover.png;  # Базовая полоса ползунка (яркая)
+    image-knob:  knob.png;   # Ручка ползунка
 }
 ```
 
 ### `bgmvol`
 
-A slider to set the BGM volume.
+Ползунок для установки громкости BGM.
 
-This slider sets the volume to be stored in the global save data file.
-This is defferent than the volume to be set by the `[volume]` tag and stored in the local save data.
+Этот ползунок задает громкость, которая сохраняется в глобальном файле данных сохранения.
+Это отличается от громкости, задаваемой тегом `[volume]` и сохраняемой в локальных данных сохранения.
 
 ```
 slider1 {
     type: bgmvol;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # Базовая полоса ползунка
+    image-hover: hover.png;  # Базовая полоса ползунка (яркая)
+    image-knob:  knob.png;   # Ручка ползунка
 }
 ```
 
 ### `sevol`
 
-A slider to set the SE volume.
+Ползунок для установки громкости SE.
 
-This slider sets the volume to be stored in the global save data file.
-This is defferent than the volume to be set by the `[volume]` tag and stored in the local save data.
+Этот ползунок задает громкость, которая сохраняется в глобальном файле данных сохранения.
+Это отличается от громкости, задаваемой тегом `[volume]` и сохраняемой в локальных данных сохранения.
 
 ```
 slider1 {
     type: bgmvol;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # Базовая полоса ползунка
+    image-hover: hover.png;  # Базовая полоса ползунка (яркая)
+    image-knob:  knob.png;   # Ручка ползунка
 }
 ```
 
 ### `voicevol`
 
-A slider to set the SE volume.
+Ползунок для установки громкости SE.
 
-This slider sets the volume to be stored in the global save data file.
-This is defferent than the volume to be set by the `[volume]` tag and stored in the local save data.
+Этот ползунок задает громкость, которая сохраняется в глобальном файле данных сохранения.
+Это отличается от громкости, задаваемой тегом `[volume]` и сохраняемой в локальных данных сохранения.
 
 ```
 slider1 {
     type: bgmvol;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # Базовая полоса ползунка
+    image-hover: hover.png;  # Базовая полоса ползунка (яркая)
+    image-knob:  knob.png;   # Ручка ползунка
 }
 ```
 
 ### `charactervol`
 
-A slider to set a per-character volume.
+Ползунок для установки громкости отдельного персонажа.
 
-Character index is passed by the `index:` parameter.
-index 0 is for non-defined character, and 1-32 for defined characters.
+Индекс персонажа передается параметром `index:`.
+Индекс 0 используется для неопределенного персонажа, а 1-32 — для определенных персонажей.
 
 ```
 slider1 {
     type: charactervol;
-    index: 1;  # Character Index
+    index: 1;  # Индекс персонажа
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # Базовая полоса ползунка
+    image-hover: hover.png;  # Базовая полоса ползунка (яркая)
+    image-knob:  knob.png;   # Ручка ползунка
 }
 ```
 
 ### `textspeed`
 
-A slider to set the text speed.
+Ползунок для установки скорости текста.
 
 ```
 slider1 {
     type: textspeed;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # Базовая полоса ползунка
+    image-hover: hover.png;  # Базовая полоса ползунка (яркая)
+    image-knob:  knob.png;   # Ручка ползунка
 }
 ```
 
 ### `autospeed`
 
-A slider to set the auto mode speed.
+Ползунок для установки скорости авторежима.
 
 ```
 slider1 {
     type: textspeed;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # Базовая полоса ползунка
+    image-hover: hover.png;  # Базовая полоса ползунка (яркая)
+    image-knob:  knob.png;   # Ручка ползунка
 }
 ```
 
 ### `preview`
 
-A text area to preview the font, language, and speed.
+Текстовая область для предварительного просмотра шрифта, языка и скорости.
 
 ```
 preview1 {
@@ -281,8 +280,8 @@ preview1 {
 
 ### `fullscreen`
 
-A clickable button.
-When clicked, the engine will enter a full screen mode.
+Кликабельная кнопка.
+При щелчке движок перейдет в полноэкранный режим.
 
 ```
 fullscreen1 {
@@ -291,14 +290,14 @@ fullscreen1 {
     y: 0;
     image-idle:    idle.png;
     image-hover:   hover.png;
-    image-disable: disable.png;  # For when in the full screen mode.
+    image-disable: disable.png;  # Для случая, когда активен полноэкранный режим.
 }
 ```
 
 ### `window`
 
-A clickable button.
-When clicked, the engine will enter a windowed mode.
+Кликабельная кнопка.
+При щелчке движок перейдет в оконный режим.
 
 ```
 window1 {
@@ -307,14 +306,14 @@ window1 {
     y: 0;
     image-idle:    idle.png;
     image-hover:   hover.png;
-    image-disable: disable.png;  # For when in the windowed mode.
+    image-disable: disable.png;  # Для случая, когда активен оконный режим.
 }
 ```
 
 ### `default`
 
-A clickable button.
-When clicked, it resets all settings.
+Кликабельная кнопка.
+При щелчке она сбрасывает все настройки.
 
 ```
 reset1 {
@@ -328,30 +327,30 @@ reset1 {
 
 ### `savepage`
 
-A clickable button.
-When clicked, it switches the save screen page.
+Кликабельная кнопка.
+При щелчке она переключает страницу экрана сохранения.
 
 ```
 savepage1 {
     type: savepage;
-    index: 0; # Page index (0-)
+    index: 0; # Индекс страницы (0-)
     x: 0;
     y: 0;
     image-idle:    idle.png;
     image-hover:   hover.png;
-    image-active:  active.png;  # For when the page is active.
+    image-active:  active.png;  # Для случая, когда страница активна.
 }
 ```
 
 ### `save`
 
-A clickable button.
-When clicked, it executes a save.
+Кликабельная кнопка.
+При щелчке она выполняет сохранение.
 
 ```
 save1 {
     type: save;
-    index: 0; # Index in apage. actual save slot = page * saveslots + index
+    index: 0; # Индекс на странице. фактический слот сохранения = page * saveslots + index
 
     x: 0;
     y: 0;
@@ -359,28 +358,28 @@ save1 {
     image-idle: system/save/save-item-idle.png;
     image-hover: system/save/save-item-hover.png;
 
-    index-x:   10;   # Number
+    index-x:   10;   # Номер
     index-y:   0;
-    date-x:    60;   # Date
+    date-x:    60;   # Дата
     date-y:    0;
-    thumb-x:   27;   # Thumbnail
+    thumb-x:   27;   # Миниатюра
     thumb-y:   77;
-    chapter-x: 260;  # Chapter title
+    chapter-x: 260;  # Заголовок главы
     chapter-y: 48;
-    msg-x:     260;  # Last message
+    msg-x:     260;  # Последнее сообщение
     msg-y:     96;
 }
 ```
 
 ### `load`
 
-A clickable button.
-When clicked, it executes a load.
+Кликабельная кнопка.
+При щелчке она выполняет загрузку.
 
 ```
 load1 {
     type: load;
-    index: 0; # Index in apage. actual save slot = page * saveslots + index
+    index: 0; # Индекс на странице. фактический слот сохранения = page * saveslots + index
 
     x: 0;
     y: 0;
@@ -388,23 +387,23 @@ load1 {
     image-idle: system/load/load-item-idle.png;
     image-hover: system/load/load-item-hover.png;
 
-    index-x:   10;   # Number
+    index-x:   10;   # Номер
     index-y:   0;
-    date-x:    60;   # Date
+    date-x:    60;   # Дата
     date-y:    0;
-    thumb-x:   27;   # Thumbnail
+    thumb-x:   27;   # Миниатюра
     thumb-y:   77;
-    chapter-x: 260;  # Chapter title
+    chapter-x: 260;  # Заголовок главы
     chapter-y: 48;
-    msg-x:     260;  # Last message
+    msg-x:     260;  # Последнее сообщение
     msg-y:     96;
 }
 ```
 
 ### `auto`
 
-A clickable button.
-When clicked, it start Auto Mode.
+Кликабельная кнопка.
+При щелчке она запускает Auto Mode.
 
 ```
 auto1 {
@@ -418,8 +417,8 @@ auto1 {
 
 ### `skip`
 
-A clickable button.
-When clicked, it start Skip Mode.
+Кликабельная кнопка.
+При щелчке она запускает Skip Mode.
 
 ```
 skip1 {
@@ -433,8 +432,8 @@ skip1 {
 
 ### `title`
 
-A clickable button.
-When clicked, the engine goes back to the specified NovelML file.
+Кликабельная кнопка.
+При щелчке движок возвращается к указанному файлу NovelML.
 
 ```
 title1 {
@@ -449,30 +448,30 @@ title1 {
 
 ### `history`
 
-A clickable button.
-It shows a message history item.
+Кликабельная кнопка.
+Она показывает элемент истории сообщений.
 
 ```
 history {
     type: history;
-    index: 0; # Index in a page
+    index: 0; # Индекс на странице
     x: 0;
     y: 0;
     image-idle:    idle.png;
     image-hover:   hover.png;
 
-    name-x: 20;   # Name
+    name-x: 20;   # Имя
     name-y: 10;
-    text-x:  20;  # Text (for when there is a name)
+    text-x:  20;  # Текст (когда есть имя)
     text-y:  50;
-    msg-x:  20;   # Message (for when no name)
+    msg-x:  20;   # Сообщение (когда имени нет)
     msg-y:  10;
 }
 ```
 
 ### `historyscroll`
 
-A vertical scroll bar for history screen.
+Вертикальная полоса прокрутки для экрана истории.
 
 ```
 scroll1 {
@@ -488,7 +487,7 @@ scroll1 {
 
 ### `historyscroll-horizontal`
 
-A horizontal scroll bar for vertical writing history screen.
+Горизонтальная полоса прокрутки для экрана истории с вертикальным письмом.
 
 ```
 scroll1 {
@@ -504,8 +503,8 @@ scroll1 {
 
 ### `cancel`
 
-A clickable button.
-When clicked, the GUI will be canceled.
+Кликабельная кнопка.
+При щелчке GUI будет отменен.
 
 ```
 cancel1 {
@@ -519,8 +518,8 @@ cancel1 {
 
 ### `var`
 
-A text area to show a variable value.
-It is used for name editing.
+Текстовая область для отображения значения переменной.
+Она используется для редактирования имени.
 
 ```
 var1 {
@@ -534,14 +533,14 @@ var1 {
 
 ### `char`
 
-A button to append a character to a variable.
-It is used for name editing.
+Кнопка для добавления символа к переменной.
+Она используется для редактирования имени.
 
 ```
 char1 {
     type: char;
-    variable: variable_name; # Variable name.
-    msg: A;                  # Text to append.
+    variable: variable_name; # Имя переменной.
+    msg: A;                  # Добавляемый текст.
     x: 0;
     y: 0;
     image-idle:    idle.png;
@@ -551,7 +550,7 @@ char1 {
 
 ### `language`
 
-A button to switch the language.
+Кнопка для переключения языка.
 
 ```
 language_english1 {
@@ -561,30 +560,30 @@ language_english1 {
     y: 0;
     image-idle:    idle.png;
     image-hover:   hover.png;
-    image-disable: disable.png; # For when English is active.
+    image-disable: disable.png; # Для случая, когда активен английский язык.
 }
 ```
 
 ---
 
-## Common Button Options
+## Общие параметры кнопок
 
-| Description           |Meaning                                                      |
-|-----------------------|-------------------------------------------------------------|
-| type:                 | Type of the button.                                         |
-| x:                    | X position of the button.                                   |
-| y:                    | Y position of the button.                                   |
-| width:                | Width of the button. (by default, sets to idle image width) |
-| height:               | Height of the button.                                       |
-| pointse:              | Sound effect for when the button is pointed.                |
-| clickse:              | Sound effect for when the button is clicked.                |
+| Описание              | Значение                                                   |
+|-----------------------|------------------------------------------------------------|
+| type:                 | Тип кнопки.                                                |
+| x:                    | Позиция кнопки по X.                                       |
+| y:                    | Позиция кнопки по Y.                                       |
+| width:                | Ширина кнопки. (по умолчанию задается шириной idle-изображения) |
+| height:               | Высота кнопки.                                             |
+| pointse:              | Звуковой эффект при наведении указателя на кнопку.         |
+| clickse:              | Звуковой эффект при щелчке по кнопке.                      |
 
 ### pointse:
 
-`pointse: btn-change.ogg;` indicates a sound effect file is played
-back when the mouse cursor enters the button.
+`pointse: btn-change.ogg;` указывает, что файл звукового эффекта
+воспроизводится, когда курсор мыши входит в область кнопки.
 
 ### clickse:
 
-`clickse: click.ogg;` indicates a sound effect file is played back
-when the button is clicked.
+`clickse: click.ogg;` указывает, что файл звукового эффекта воспроизводится
+при щелчке по кнопке.

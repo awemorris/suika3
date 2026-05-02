@@ -1,26 +1,26 @@
-Ray Plugin Development Reference
+Referencia de desarrollo de complementos de Ray
 ================================
 
-## Folder
+## Carpeta
 
-Plugins must be stored in the `system/plugin/<PLUGIN-NAME>/` directory.
+Los complementos deben almacenarse en el directorio `system/plugin/<PLUGIN-NAME>/`.
 
-## File
+## Archivo
 
-A plugin file must be stored to the `system/plugin/<PLUGIN-NAME>/<PLUGIN-NAME>.ray` file.
+Se debe almacenar un archivo de complemento en el archivo `system/plugin/<PLUGIN-NAME>/<PLUGIN-NAME>.ray`.
 
-## Function
+## Función
 
-The plugin must define the `plugin_init_<PLUGIN-NAME>()` function.
+El complemento debe definir la función `plugin_init_<PLUGIN-NAME>()`.
 
-## Defining a New Tag
+## Definiendo una nueva etiqueta
 
-Define a function named `Tag_mytag()` in the `system/plugin/<PLUGIN-NAME>/<PLUGIN-NAME>.ray` file to create a new tag named `mytag`.
-After loading the plugin via `Suika.loadPlugin()`, you can use `mytag` in NovelML.
+Defina una función denominada `Tag_mytag()` en el archivo `system/plugin/<PLUGIN-NAME>/<PLUGIN-NAME>.ray` para crear una nueva etiqueta denominada `mytag`.
+Después de cargar el complemento a través de `Suika.loadPlugin()`, puede usar `mytag` en NovelML.
 
-## Sample
+## Muestra
 
-In `system/plugin/testplugin/testplugin.ray`:
+En `system/plugin/testplugin/testplugin.ray`:
 ```
 func plugin_init_testplugin() {
     // Called when loaded.
@@ -36,7 +36,7 @@ func Tag_testplugintag(params) {
 }
 ```
 
-In `main.ray`:
+En `main.ray`:
 ```
 // Called before the game starts.
 func start() {
@@ -47,7 +47,7 @@ func start() {
 }
 ```
 
-In `start.novel`:
+En `start.novel`:
 ```
 [testplugintag text="hello"]
 ```

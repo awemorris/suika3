@@ -1,143 +1,143 @@
 Anime
 =====
 
-Anime is a feature to play layer-based animations via the anime tag.
+Anime - это возможность воспроизводить послойные анимации через тег anime.
 
-## Anime File
+## Файл anime
 
-An anime file is a text file which describes sequences of layer transforms.
+Файл anime - это текстовый файл, который описывает последовательности преобразований слоев.
 
-## Sequence
+## Последовательность
 
-To move the message box 100px right in a second, write the following sequence in an anime file.
+Чтобы за одну секунду сдвинуть окно сообщений на 100 пикселей вправо, запишите в файле anime следующую последовательность.
 
 ```
-# A block describes a sequence for animation.
-# The name of a block can be whatever you like and it won't affect anything.
+# Блок описывает последовательность для анимации.
+# Имя блока может быть любым и ни на что не влияет.
 move {
-    # This is a layer specifier.
+    # Это указатель слоя.
     layer: msg;
 
-    # These are time specifiers. (in second)
+    # Это указатели времени. (в секундах)
     start: 0.0;
     end: 1.0;
 
-    # These are origin position specifiers. 'r0' means relative '0'.
+    # Это указатели исходной позиции. 'r0' означает относительное значение '0'.
     from-x: r0;
     from-y: r0;
 
-    # This is an origin alpha specifier.
+    # Это указатель исходной прозрачности.
     from-a: 255;
 
-    # These are final position specifiers. 'r100' means relative '100'.
+    # Это указатели конечной позиции. 'r100' означает относительное значение '100'.
     to-x: r100;
     to-y: r0;
 
-    # This is a final alpha specifier.
+    # Это указатель конечной прозрачности.
     to-a: 255;
 }
 ```
 
-## Layer Structure
+## Структура слоев
 
-The following is our layer structure in the bottom-to-top order.
+Ниже приведена структура слоев в порядке снизу вверх.
 
-| Layer Name       | Description                                |
+| Имя слоя         | Описание                                   |
 |------------------|--------------------------------------------|
-| bg               | background                                 |
-| bg2              | second background (for seemless scrolling) |
-| efb1             | effect on back 1                           |
-| efb2             | effect on back 2                           |
-| efb3             | effect on back 3                           |
-| efb4             | effect on back 4                           |
-| chb              | character at back center                   |
-| chb-eye          | character at back center                   |
-| chb-lip          | character at back center                   |
-| chl              | character at left                          |
-| chl-eye          | character at left                          |
-| chl-lip          | character at left                          |
-| chlc             | character at left center                   |
-| chlc-eye         | character at left center                   |
-| chlc-lip         | character at left center                   |
-| chr              | character at right                         |
-| chr-eye          | character at right                         |
-| chr-lip          | character at right                         |
-| chrc             | character at right center                  |
-| chrc-eye         | character at right center                  |
-| chrc-lip         | character at right center                  |
-| eff1             | effect on front 1                          |
-| eff2             | effect on front 2                          |
-| eff3             | effect on front 3                          |
-| eff4             | effect on front 4                          |
-| msgbox           | message box                                |
-| namebox          | name box                                   |
-| choose1-idle     | choose box 1 (idle)                        |
-| choose1-hover    | choose box 1 (hover)                       |
-| choose2-idle     | choose box 2 (idle)                        |
-| choose2-hover    | choose box 2 (hover)                       |
-| choose3-idle     | choose box 3 (idle)                        |
-| choose3-hover    | choose box 3 (hover)                       |
-| choose4-idle     | choose box 4 (idle)                        |
-| choose4-hover    | choose box 4 (hover)                       |
-| choose5-idle     | choose box 5 (idle)                        |
-| choose5-hover    | choose box 5 (hover)                       |
-| choose6-idle     | choose box 6 (idle)                        |
-| choose6-hover    | choose box 6 (hover)                       |
-| choose7-idle     | choose box 7 (idle)                        |
-| choose7-hover    | choose box 7 (hover)                       |
-| choose8-idle     | choose box 8 (idle)                        |
-| choose8-hover    | choose box 8 (hover)                       |
-| chf              | character face                             |
-| chf-eye          | character face                             |
-| chf-lip          | character face                             |
-| click            | click animation                            |
-| auto             | auto mode banner                           |
-| skip             | skip mode banner                           |
-| text1            | text layer 1                               |
-| text2            | text layer 2                               |
-| text3            | text layer 3                               |
-| text4            | text layer 4                               |
-| text5            | text layer 5                               |
-| text6            | text layer 6                               |
-| text7            | text layer 7                               |
-| text8            | text layer 8                               |
-| gui-button-1     | GUI button ID 1                            |
-| gui-button-2     | GUI button ID 2                            |
-| gui-button-3     | GUI button ID 3                            |
-| gui-button-4     | GUI button ID 4                            |
-| gui-button-5     | GUI button ID 5                            |
-| gui-button-6     | GUI button ID 6                            |
-| gui-button-7     | GUI button ID 7                            |
-| gui-button-8     | GUI button ID 8                            |
-| gui-button-9     | GUI button ID 9                            |
-| gui-button-10    | GUI button ID 10                           |
-| gui-button-11    | GUI button ID 11                           |
-| gui-button-12    | GUI button ID 12                           |
-| gui-button-13    | GUI button ID 13                           |
-| gui-button-14    | GUI button ID 14                           |
-| gui-button-15    | GUI button ID 15                           |
-| gui-button-16    | GUI button ID 16                           |
-| gui-button-17    | GUI button ID 17                           |
-| gui-button-18    | GUI button ID 18                           |
-| gui-button-19    | GUI button ID 19                           |
-| gui-button-20    | GUI button ID 20                           |
-| gui-button-21    | GUI button ID 21                           |
-| gui-button-22    | GUI button ID 22                           |
-| gui-button-23    | GUI button ID 23                           |
-| gui-button-24    | GUI button ID 24                           |
-| gui-button-25    | GUI button ID 25                           |
-| gui-button-26    | GUI button ID 26                           |
-| gui-button-27    | GUI button ID 27                           |
-| gui-button-28    | GUI button ID 28                           |
-| gui-button-29    | GUI button ID 29                           |
-| gui-button-30    | GUI button ID 30                           |
-| gui-button-31    | GUI button ID 31                           |
-| gui-button-32    | GUI button ID 32                           |
+| bg               | фон                                        |
+| bg2              | второй фон (для бесшовной прокрутки)       |
+| efb1             | эффект на заднем плане 1                   |
+| efb2             | эффект на заднем плане 2                   |
+| efb3             | эффект на заднем плане 3                   |
+| efb4             | эффект на заднем плане 4                   |
+| chb              | персонаж сзади по центру                   |
+| chb-eye          | персонаж сзади по центру                   |
+| chb-lip          | персонаж сзади по центру                   |
+| chl              | персонаж слева                             |
+| chl-eye          | персонаж слева                             |
+| chl-lip          | персонаж слева                             |
+| chlc             | персонаж слева по центру                   |
+| chlc-eye         | персонаж слева по центру                   |
+| chlc-lip         | персонаж слева по центру                   |
+| chr              | персонаж справа                            |
+| chr-eye          | персонаж справа                            |
+| chr-lip          | персонаж справа                            |
+| chrc             | персонаж справа по центру                  |
+| chrc-eye         | персонаж справа по центру                  |
+| chrc-lip         | персонаж справа по центру                  |
+| eff1             | эффект на переднем плане 1                 |
+| eff2             | эффект на переднем плане 2                 |
+| eff3             | эффект на переднем плане 3                 |
+| eff4             | эффект на переднем плане 4                 |
+| msgbox           | окно сообщений                             |
+| namebox          | окно имени                                 |
+| choose1-idle     | окно выбора 1 (ожидание)                   |
+| choose1-hover    | окно выбора 1 (наведение)                  |
+| choose2-idle     | окно выбора 2 (ожидание)                   |
+| choose2-hover    | окно выбора 2 (наведение)                  |
+| choose3-idle     | окно выбора 3 (ожидание)                   |
+| choose3-hover    | окно выбора 3 (наведение)                  |
+| choose4-idle     | окно выбора 4 (ожидание)                   |
+| choose4-hover    | окно выбора 4 (наведение)                  |
+| choose5-idle     | окно выбора 5 (ожидание)                   |
+| choose5-hover    | окно выбора 5 (наведение)                  |
+| choose6-idle     | окно выбора 6 (ожидание)                   |
+| choose6-hover    | окно выбора 6 (наведение)                  |
+| choose7-idle     | окно выбора 7 (ожидание)                   |
+| choose7-hover    | окно выбора 7 (наведение)                  |
+| choose8-idle     | окно выбора 8 (ожидание)                   |
+| choose8-hover    | окно выбора 8 (наведение)                  |
+| chf              | лицо персонажа                             |
+| chf-eye          | лицо персонажа                             |
+| chf-lip          | лицо персонажа                             |
+| click            | анимация щелчка                            |
+| auto             | баннер авторежима                          |
+| skip             | баннер режима пропуска                     |
+| text1            | текстовый слой 1                           |
+| text2            | текстовый слой 2                           |
+| text3            | текстовый слой 3                           |
+| text4            | текстовый слой 4                           |
+| text5            | текстовый слой 5                           |
+| text6            | текстовый слой 6                           |
+| text7            | текстовый слой 7                           |
+| text8            | текстовый слой 8                           |
+| gui-button-1     | кнопка GUI с ID 1                          |
+| gui-button-2     | кнопка GUI с ID 2                          |
+| gui-button-3     | кнопка GUI с ID 3                          |
+| gui-button-4     | кнопка GUI с ID 4                          |
+| gui-button-5     | кнопка GUI с ID 5                          |
+| gui-button-6     | кнопка GUI с ID 6                          |
+| gui-button-7     | кнопка GUI с ID 7                          |
+| gui-button-8     | кнопка GUI с ID 8                          |
+| gui-button-9     | кнопка GUI с ID 9                          |
+| gui-button-10    | кнопка GUI с ID 10                         |
+| gui-button-11    | кнопка GUI с ID 11                         |
+| gui-button-12    | кнопка GUI с ID 12                         |
+| gui-button-13    | кнопка GUI с ID 13                         |
+| gui-button-14    | кнопка GUI с ID 14                         |
+| gui-button-15    | кнопка GUI с ID 15                         |
+| gui-button-16    | кнопка GUI с ID 16                         |
+| gui-button-17    | кнопка GUI с ID 17                         |
+| gui-button-18    | кнопка GUI с ID 18                         |
+| gui-button-19    | кнопка GUI с ID 19                         |
+| gui-button-20    | кнопка GUI с ID 20                         |
+| gui-button-21    | кнопка GUI с ID 21                         |
+| gui-button-22    | кнопка GUI с ID 22                         |
+| gui-button-23    | кнопка GUI с ID 23                         |
+| gui-button-24    | кнопка GUI с ID 24                         |
+| gui-button-25    | кнопка GUI с ID 25                         |
+| gui-button-26    | кнопка GUI с ID 26                         |
+| gui-button-27    | кнопка GUI с ID 27                         |
+| gui-button-28    | кнопка GUI с ID 28                         |
+| gui-button-29    | кнопка GUI с ID 29                         |
+| gui-button-30    | кнопка GUI с ID 30                         |
+| gui-button-31    | кнопка GUI с ID 31                         |
+| gui-button-32    | кнопка GUI с ID 32                         |
 
-## Scaling and Rotation
+## Масштабирование и поворот
 
 ```
-# Scale-up and rotate the `effect1` layer to 2.0x and 360 deg in 3 seconds.
+# Увеличить масштаб слоя `effect1` до 2.0x и повернуть на 360 градусов за 3 секунды.
 test1 {
     layer: effect1;
  
@@ -152,22 +152,22 @@ test1 {
     to-y: 400;
     to-a: 255;
 
-    # Scaling and rotation origin
+    # Центр масштабирования и поворота
     center-x: 600;
     center-y: 100;
 
-    # Scaling factors
+    # Коэффициенты масштабирования
     from-scale-x: 1.0;
     from-scale-y: 1.0;
     to-scale-x: 2.0;
     to-scale-y: 2.0;
  
-    # Rotation (+ for right, - for left)
+    # Поворот (+ вправо, - влево)
     from-rotate: 0.0;
     to-rotate: -360;
 }
 
-# Reverse.
+# Обратное действие.
 test2 {
     layer: effect1;
 

@@ -1,143 +1,143 @@
 Anime
 =====
 
-Anime is a feature to play layer-based animations via the anime tag.
+Anime ist eine Funktion zum Abspielen ebenenbasierter Animationen über das Anime-Tag.
 
-## Anime File
+## Anime-Datei
 
-An anime file is a text file which describes sequences of layer transforms.
+Eine Anime-Datei ist eine Textdatei, die Sequenzen von Ebenentransformationen beschreibt.
 
-## Sequence
+## Sequenz
 
-To move the message box 100px right in a second, write the following sequence in an anime file.
+Um das Meldungsfeld in einer Sekunde um 100 Pixel nach rechts zu verschieben, schreiben Sie die folgende Sequenz in eine Anime-Datei.
 
 ```
-# A block describes a sequence for animation.
-# The name of a block can be whatever you like and it won't affect anything.
+# Ein Block beschreibt eine Sequenz zur Animation.
+# Der Name eines Blocks kann beliebig sein und hat keinerlei Auswirkungen.
 move {
-    # This is a layer specifier.
+    # Dies ist ein Ebenenspezifizierer.
     layer: msg;
 
-    # These are time specifiers. (in second)
+    # Dies sind Zeitspezifizierer. (in Sekunden)
     start: 0.0;
     end: 1.0;
 
-    # These are origin position specifiers. 'r0' means relative '0'.
+    # Dies sind Ursprungspositionsspezifizierer. „r0“ bedeutet relative „0“.
     from-x: r0;
     from-y: r0;
 
-    # This is an origin alpha specifier.
+    # Dies ist ein Ursprungs-Alpha-Spezifizierer.
     from-a: 255;
 
-    # These are final position specifiers. 'r100' means relative '100'.
+    # Dies sind Endpositionsspezifizierer. „r100“ bedeutet relativ „100“.
     to-x: r100;
     to-y: r0;
 
-    # This is a final alpha specifier.
+    # Dies ist ein endgültiger Alpha-Spezifizierer.
     to-a: 255;
 }
 ```
 
-## Layer Structure
+## Schichtstruktur
 
-The following is our layer structure in the bottom-to-top order.
+Das Folgende ist unsere Schichtenstruktur in der Reihenfolge von unten nach oben.
 
-| Layer Name       | Description                                |
+| Layername | Beschreibung |
 |------------------|--------------------------------------------|
-| bg               | background                                 |
-| bg2              | second background (for seemless scrolling) |
-| efb1             | effect on back 1                           |
-| efb2             | effect on back 2                           |
-| efb3             | effect on back 3                           |
-| efb4             | effect on back 4                           |
-| chb              | character at back center                   |
-| chb-eye          | character at back center                   |
-| chb-lip          | character at back center                   |
-| chl              | character at left                          |
-| chl-eye          | character at left                          |
-| chl-lip          | character at left                          |
-| chlc             | character at left center                   |
-| chlc-eye         | character at left center                   |
-| chlc-lip         | character at left center                   |
-| chr              | character at right                         |
-| chr-eye          | character at right                         |
-| chr-lip          | character at right                         |
-| chrc             | character at right center                  |
-| chrc-eye         | character at right center                  |
-| chrc-lip         | character at right center                  |
-| eff1             | effect on front 1                          |
-| eff2             | effect on front 2                          |
-| eff3             | effect on front 3                          |
-| eff4             | effect on front 4                          |
-| msgbox           | message box                                |
-| namebox          | name box                                   |
-| choose1-idle     | choose box 1 (idle)                        |
-| choose1-hover    | choose box 1 (hover)                       |
-| choose2-idle     | choose box 2 (idle)                        |
-| choose2-hover    | choose box 2 (hover)                       |
-| choose3-idle     | choose box 3 (idle)                        |
-| choose3-hover    | choose box 3 (hover)                       |
-| choose4-idle     | choose box 4 (idle)                        |
-| choose4-hover    | choose box 4 (hover)                       |
-| choose5-idle     | choose box 5 (idle)                        |
-| choose5-hover    | choose box 5 (hover)                       |
-| choose6-idle     | choose box 6 (idle)                        |
-| choose6-hover    | choose box 6 (hover)                       |
-| choose7-idle     | choose box 7 (idle)                        |
-| choose7-hover    | choose box 7 (hover)                       |
-| choose8-idle     | choose box 8 (idle)                        |
-| choose8-hover    | choose box 8 (hover)                       |
-| chf              | character face                             |
-| chf-eye          | character face                             |
-| chf-lip          | character face                             |
-| click            | click animation                            |
-| auto             | auto mode banner                           |
-| skip             | skip mode banner                           |
-| text1            | text layer 1                               |
-| text2            | text layer 2                               |
-| text3            | text layer 3                               |
-| text4            | text layer 4                               |
-| text5            | text layer 5                               |
-| text6            | text layer 6                               |
-| text7            | text layer 7                               |
-| text8            | text layer 8                               |
-| gui-button-1     | GUI button ID 1                            |
-| gui-button-2     | GUI button ID 2                            |
-| gui-button-3     | GUI button ID 3                            |
-| gui-button-4     | GUI button ID 4                            |
-| gui-button-5     | GUI button ID 5                            |
-| gui-button-6     | GUI button ID 6                            |
-| gui-button-7     | GUI button ID 7                            |
-| gui-button-8     | GUI button ID 8                            |
-| gui-button-9     | GUI button ID 9                            |
-| gui-button-10    | GUI button ID 10                           |
-| gui-button-11    | GUI button ID 11                           |
-| gui-button-12    | GUI button ID 12                           |
-| gui-button-13    | GUI button ID 13                           |
-| gui-button-14    | GUI button ID 14                           |
-| gui-button-15    | GUI button ID 15                           |
-| gui-button-16    | GUI button ID 16                           |
-| gui-button-17    | GUI button ID 17                           |
-| gui-button-18    | GUI button ID 18                           |
-| gui-button-19    | GUI button ID 19                           |
-| gui-button-20    | GUI button ID 20                           |
-| gui-button-21    | GUI button ID 21                           |
-| gui-button-22    | GUI button ID 22                           |
-| gui-button-23    | GUI button ID 23                           |
-| gui-button-24    | GUI button ID 24                           |
-| gui-button-25    | GUI button ID 25                           |
-| gui-button-26    | GUI button ID 26                           |
-| gui-button-27    | GUI button ID 27                           |
-| gui-button-28    | GUI button ID 28                           |
-| gui-button-29    | GUI button ID 29                           |
-| gui-button-30    | GUI button ID 30                           |
-| gui-button-31    | GUI button ID 31                           |
-| gui-button-32    | GUI button ID 32                           |
+| bg | Hintergrund |
+| bg2 | zweiter Hintergrund (für nahtloses Scrollen) |
+| efb1 | Wirkung auf Rücken 1 |
+| efb2 | Wirkung auf Rücken 2 |
+| efb3 | Wirkung auf den Rücken 3 |
+| efb4 | Wirkung auf Rücken 4 |
+| chb | Charakter hinten in der Mitte |
+| Chb-Auge | Charakter hinten in der Mitte |
+| Chb-Lippe | Charakter hinten in der Mitte |
+| chl | Zeichen links |
+| chl-auge | Zeichen links |
+| chl-Lippe | Zeichen links |
+| chlc | Zeichen in der linken Mitte |
+| chlc-Auge | Zeichen in der linken Mitte |
+| chlc-Lippe | Zeichen in der linken Mitte |
+| chr | Charakter rechts |
+| Chr-Auge | Charakter rechts |
+| Chr-Lippe | Charakter rechts |
+| Chr | Zeichen in der rechten Mitte |
+| Chrc-Auge | Zeichen in der rechten Mitte |
+| Chrc-Lippe | Zeichen in der rechten Mitte |
+| eff1 | Wirkung auf Vorderseite 1 |
+| eff2 | Wirkung auf Vorderseite 2 |
+| eff3 | Wirkung auf Vorderseite 3 |
+| eff4 | Wirkung auf Vorderseite 4 |
+| msgbox | Meldungsfeld |
+| Namensfeld | Namensfeld |
+| wähle1-idle | Wählen Sie Feld 1 (inaktiv) |
+| Choose1-hover | Wählen Sie Feld 1 (bewegen Sie den Mauszeiger) |
+| wähle2-idle | Wählen Sie Feld 2 (inaktiv) |
+| Choose2-Hover | Wählen Sie Feld 2 (bewegen Sie den Mauszeiger) |
+| wähle3-idle | Wählen Sie Feld 3 (inaktiv) |
+| Choose3-hover | Wählen Sie Feld 3 (bewegen Sie den Mauszeiger) |
+| wähle4-idle | Wählen Sie Feld 4 (inaktiv) |
+| Choose4-hover | Wählen Sie Feld 4 (bewegen Sie den Mauszeiger) |
+| wähle5-idle | Wählen Sie Feld 5 (inaktiv) |
+| Choose5-hover | Wählen Sie Feld 5 (bewegen Sie den Mauszeiger) |
+| wähle6-idle | Wählen Sie Feld 6 (inaktiv) |
+| Choose6-hover | Wählen Sie Feld 6 (bewegen Sie den Mauszeiger) |
+| wähle7-idle | Wählen Sie Feld 7 (inaktiv) |
+| Choose7-hover | Wählen Sie Feld 7 (bewegen Sie den Mauszeiger) |
+| wähle8-idle | Wählen Sie Feld 8 (inaktiv) |
+| Choose8-Hover | Wählen Sie Feld 8 (bewegen Sie den Mauszeiger) |
+| CHF | Charaktergesicht |
+| CHF-Auge | Charaktergesicht |
+| CHF-Lippe | Charaktergesicht |
+| klicken | Klick-Animation |
+| Auto | Banner für den automatischen Modus |
+| überspringen | Banner für den Überspringmodus |
+| Text 1 | Textebene 1 |
+| Text2 | Textebene 2 |
+| text3 | Textebene 3 |
+| Text4 | Textebene 4 |
+| Text5 | Textebene 5 |
+| Text6 | Textebene 6 |
+| Text7 | Textebene 7 |
+| Text8 | Textebene 8 |
+| GUI-Button-1 | GUI-Schaltflächen-ID 1 |
+| GUI-Button-2 | GUI-Schaltflächen-ID 2 |
+| GUI-Button-3 | GUI-Schaltflächen-ID 3 |
+| GUI-Button-4 | GUI-Tasten-ID 4 |
+| GUI-Button-5 | GUI-Schaltflächen-ID 5 |
+| GUI-Button-6 | GUI-Schaltflächen-ID 6 |
+| GUI-Button-7 | GUI-Schaltflächen-ID 7 |
+| GUI-Button-8 | GUI-Schaltflächen-ID 8 |
+| GUI-Button-9 | GUI-Schaltflächen-ID 9 |
+| GUI-Button-10 | GUI-Schaltflächen-ID 10 |
+| GUI-Button-11 | GUI-Schaltflächen-ID 11 |
+| GUI-Button-12 | GUI-Schaltflächen-ID 12 |
+| GUI-Button-13 | GUI-Schaltflächen-ID 13 |
+| GUI-Button-14 | GUI-Schaltflächen-ID 14 |
+| GUI-Button-15 | GUI-Schaltflächen-ID 15 |
+| GUI-Button-16 | GUI-Schaltflächen-ID 16 |
+| GUI-Button-17 | GUI-Schaltflächen-ID 17 |
+| GUI-Button-18 | GUI-Schaltflächen-ID 18 |
+| GUI-Button-19 | GUI-Schaltflächen-ID 19 |
+| GUI-Button-20 | GUI-Schaltflächen-ID 20 |
+| GUI-Button-21 | GUI-Schaltflächen-ID 21 |
+| GUI-Button-22 | GUI-Schaltflächen-ID 22 |
+| GUI-Button-23 | GUI-Schaltflächen-ID 23 |
+| GUI-Button-24 | GUI-Schaltflächen-ID 24 |
+| GUI-Button-25 | GUI-Schaltflächen-ID 25 |
+| GUI-Button-26 | GUI-Schaltflächen-ID 26 |
+| GUI-Button-27 | GUI-Schaltflächen-ID 27 |
+| GUI-Button-28 | GUI-Schaltflächen-ID 28 |
+| GUI-Button-29 | GUI-Schaltflächen-ID 29 |
+| GUI-Button-30 | GUI-Schaltflächen-ID 30 |
+| GUI-Button-31 | GUI-Schaltflächen-ID 31 |
+| GUI-Button-32 | GUI-Schaltflächen-ID 32 |
 
-## Scaling and Rotation
+## Skalierung und Rotation
 
 ```
-# Scale-up and rotate the `effect1` layer to 2.0x and 360 deg in 3 seconds.
+# Vergrößern und drehen Sie die Ebene `effect1` in 3 Sekunden auf 2.0x und 360 Grad.
 test1 {
     layer: effect1;
  
@@ -152,22 +152,22 @@ test1 {
     to-y: 400;
     to-a: 255;
 
-    # Scaling and rotation origin
+    # Skalierungs- und Rotationsursprung
     center-x: 600;
     center-y: 100;
 
-    # Scaling factors
+    # Skalierungsfaktoren
     from-scale-x: 1.0;
     from-scale-y: 1.0;
     to-scale-x: 2.0;
     to-scale-y: 2.0;
  
-    # Rotation (+ for right, - for left)
+    # Drehung (+ für rechts, - für links)
     from-rotate: 0.0;
     to-rotate: -360;
 }
 
-# Reverse.
+# Umkehren.
 test2 {
     layer: effect1;
 

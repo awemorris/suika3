@@ -1,64 +1,64 @@
-System Requirement Specifications for Suika3
+Спецификация системных требований для Suika3
 ===========================================
 
-## 1. Overview
+## 1. Обзор
 
-Suika3 is a high-performance scripting runtime optimized for Visual
-Novels (VN) and 2D games. It provides a multi-layered DSL environment
-to balance ease of use with professional-grade extensibility.
+Suika3 — это высокопроизводительная среда выполнения скриптов, оптимизированная для Visual
+Novels (VN) и 2D-игр. Она предоставляет многослойную DSL-среду,
+сочетающую простоту использования с расширяемостью профессионального уровня.
 
-## 2. Core Components (The DSL Stack)
+## 2. Основные компоненты (стек DSL)
 
-Suika3 empowers creators through four specialized languages:
+Suika3 предоставляет авторам четыре специализированных языка:
 
-- NovelML (Tag-based DSL): A straightforward markup language using
-  `[]` tags for rapid VN scenario development.
+- NovelML (DSL на основе тегов): простой язык разметки, использующий
+  теги `[]` для быстрой разработки сценариев VN.
 
-- Anime (Animation DSL): A dedicated system for layer-based raster
-  image animations, controlling affine transform sequences.
+- Anime (DSL для анимации): специализированная система для послойной анимации растровых
+  изображений с управлением последовательностями аффинных преобразований.
 
-- GUI (UI/UX DSL): A flexible toolset for building interactive screens
-   with buttons optimized for VN requirements.
+- GUI (UI/UX DSL): гибкий набор инструментов для создания интерактивных экранов
+   с кнопками, оптимизированными под требования VN.
 
-- Ray (General-purpose Scripting): A powerful scripting
-  language with VN API.
-    - Customization: Define bespoke NovelML tags.
-    - Performance: JIT-compiled on PC for fast iteration; AOT-compiled
-      to native binaries for iOS compliance.
-    - Low-level Access: Direct hooks into the Suika3 Core C APIs.
+- Ray (скриптовый язык общего назначения): мощный скриптовый
+  язык с VN API.
+    - Настройка: определение собственных тегов NovelML.
+    - Производительность: JIT-компиляция на ПК для быстрых итераций; AOT-компиляция
+      в нативные бинарные файлы для соответствия требованиям iOS.
+    - Низкоуровневый доступ: прямые точки подключения к C API ядра Suika3.
 
-## 3. Key Objectives & Design Philosophy
+## 3. Ключевые цели и философия дизайна
 
-- Mobile-First Experience: Designed with the belief that smartphones
-  are a primary computing device. It avoids PC-centric UI/UX in
-  favor of a native mobile feel.
+- Подход mobile-first: спроектировано исходя из идеи, что смартфоны
+  являются основным вычислительным устройством. Suika3 избегает UI/UX, ориентированного на ПК,
+  в пользу нативного мобильного ощущения.
 
-- Store Publishing Compatibility: Fully compliant with iOS/Android store
-  policies via AOT compilation and responsive design.
+- Совместимость с публикацией в магазинах: полное соответствие политикам магазинов iOS/Android
+  за счет AOT-компиляции и адаптивного дизайна.
 
-- High Portability:
-    - Tier 1: iOS, Android, HarmonyOS NEXT, Windows, macOS, Linux
-    - Tier 2: Gaming Consoles
-    - Tier 3: Chromebook, Wasm (WebAssembly)
+- Высокая переносимость:
+    - Уровень 1: iOS, Android, HarmonyOS NEXT, Windows, macOS, Linux
+    - Уровень 2: игровые консоли
+    - Уровень 3: Chromebook, Wasm (WebAssembly)
 
-- Beyond Visual Novels: While VN-centric, the underlying 2D foundation
-  allows for genre-fusing (e.g., VN + RPG or Action).
+- За пределами визуальных новелл: хотя движок ориентирован на VN, базовая 2D-основа
+  позволяет смешивать жанры (например, VN + RPG или Action).
 
-## 4. Out of Scope / Constraints
+## 4. Вне области применения / ограничения
 
-To maintain portability and performance, Suika3 explicitly excludes:
+Для сохранения переносимости и производительности Suika3 явно исключает:
 
-- PC-Exclusive Features: Suika3 is not a replacement for legacy
-  PC-only VN engines.
+- Возможности только для ПК: Suika3 не является заменой устаревшим
+  VN-движкам, предназначенным только для ПК.
 
-- Full-scale Web Deployment: The Wasm port is intended for demos, not
-  primary distribution.
+- Полноценное веб-развертывание: порт Wasm предназначен для демонстраций, а не
+  для основного распространения.
 
-- 3D Graphics: Currently focused on 2D (future 3D support is planned
-  alongside AI-driven asset generation).
+- 3D-графика: в настоящее время фокус сделан на 2D (поддержка 3D в будущем планируется
+  вместе с генерацией ассетов на основе ИИ).
 
-- Proprietary Middleware: No support for closed technologies like
-  Live2D to ensure maximum engine portability.
+- Проприетарное middleware: закрытые технологии вроде
+  Live2D не поддерживаются, чтобы обеспечить максимальную переносимость движка.
 
 ## 5. NovelML
 
@@ -69,4 +69,3 @@ To maintain portability and performance, Suika3 explicitly excludes:
 ## 8. GUI
 
 ## 9. Config
-

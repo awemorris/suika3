@@ -1,17 +1,13 @@
-Ray Syntax Reference
+Referenz zur Ray-Syntax
 ====================
 
-`Ray` is actually the `Noct` programming language with additional Suika3 APIs.
+`Ray` ist eigentlich die Programmiersprache `Noct` mit zusätzlichen Suika3-APIs.
 
-## Assignments
+## Aufgaben
 
-Variables in Noct are dynamically typed and don't require explicit
-declaration. The assignment operator (`=`) is used to create and
-assign values to variables.
+Variablen in Noct werden dynamisch typisiert und erfordern keine explizite Deklaration. Der Zuweisungsoperator (`=`) wird zum Erstellen und Zuweisen von Werten zu Variablen verwendet.
 
-As shown in the example below, Noct supports various data types
-including integers, floating-point numbers, and strings. Variables can
-be reassigned to different types at any time during execution.
+Wie im folgenden Beispiel gezeigt, unterstützt Noct verschiedene Datentypen, darunter Ganzzahlen, Gleitkommazahlen und Zeichenfolgen. Variablen können während der Ausführung jederzeit anderen Typen zugewiesen werden.
 
 ```
 func main() {
@@ -26,10 +22,9 @@ func main() {
 }
 ```
 
-## Global Variables
+## Globale Variablen
 
-Global variables can be defined in functions, and cannot be defined
-outside of functions.
+Globale Variablen können in Funktionen definiert werden und können nicht außerhalb von Funktionen definiert werden.
 
 ```
 func main() {
@@ -38,11 +33,9 @@ func main() {
 }
 ```
 
-## Local Variables
+## Lokale Variablen
 
-Using the `var` keyword allows you to declare a variable as
-local. Without `var` declaration, assigning to a variable creates a
-global variable.
+Mit dem Schlüsselwort `var` können Sie eine Variable als lokal deklarieren. Ohne `var`-Deklaration wird durch die Zuweisung zu einer Variablen eine globale Variable erstellt.
 
 ```
 func main() {
@@ -53,9 +46,7 @@ func main() {
 
 ## Array
 
-Arrays are ordered collections of values, accessed by index. Arrays
-support iteration through the `for` loop construct, allowing you to
-iterate through each value directly.
+Arrays sind geordnete Sammlungen von Werten, auf die über einen Index zugegriffen wird. Arrays unterstützen die Iteration durch das `for`-Schleifenkonstrukt, sodass Sie jeden Wert direkt durchlaufen können.
 
 ```
 func main() {
@@ -66,8 +57,7 @@ func main() {
 }
 ```
 
-Arrays can hold values of different types simultaneously, reflecting
-the dynamic typing system.
+Arrays können gleichzeitig Werte verschiedener Typen enthalten und spiegeln das dynamische Typisierungssystem wider.
 
 ```
 func main() {
@@ -75,8 +65,7 @@ func main() {
 }
 ```
 
-The language provides a built-in function `push()` to add elements to
-the end of an array.  Also, `pop()` removes the final element.
+Die Sprache bietet eine integrierte Funktion `push()` zum Hinzufügen von Elementen am Ende eines Arrays. Außerdem entfernt `pop()` das letzte Element.
 
 ```
 func main() {
@@ -91,12 +80,9 @@ func main() {
 }
 ```
 
-## Dictionary
+## Wörterbuch
 
-Dictionaries store key-value pairs, similar to hash maps or objects in
-other languages. They are defined using curly braces with key-value
-pairs separated by colons. Dictionaries support iteration where both
-the key and value can be accessed simultaneously.
+Wörterbücher speichern Schlüssel-Wert-Paare, ähnlich wie Hash-Maps oder Objekte in anderen Sprachen. Sie werden durch geschweifte Klammern mit durch Doppelpunkte getrennten Schlüssel-Wert-Paaren definiert. Wörterbücher unterstützen die Iteration, bei der gleichzeitig auf den Schlüssel und den Wert zugegriffen werden kann.
 
 ```
 func main() {
@@ -110,9 +96,7 @@ func main() {
 }
 ```
 
-Dictionaries may be constructed in a single step way. An assignment
-can be an array style which uses `[]`, or an object style which uses
-`.`.
+Wörterbücher können in einem einzigen Schritt erstellt werden. Eine Zuweisung kann ein Array-Stil sein, der `[]` verwendet, oder ein Objektstil, der `.` verwendet.
 
 ```
 func main() {
@@ -122,8 +106,7 @@ func main() {
 }
 ```
 
-The built-in function `remove()` allows for the deletion of entries by
-key.
+Die eingebaute Funktion `remove()` ermöglicht das Löschen von Einträgen per Schlüssel.
 
 ```
 func main() {
@@ -132,13 +115,11 @@ func main() {
 }
 ```
 
-## For-loop
+## For-Schleife
 
-The for-loop construct provides a concise syntax for iterating through
-sequences such as ranges, arrays, and dictionaries.
+Das for-Loop-Konstrukt bietet eine prägnante Syntax zum Durchlaufen von Sequenzen wie Bereichen, Arrays und Wörterbüchern.
 
-The range syntax (using the `..` operator) creates an iterator that
-generates values from the start to one less than the end value.
+Die Bereichssyntax (unter Verwendung des `..`-Operators) erstellt einen Iterator, der Werte vom Anfang bis zu einem Wert generiert, der um eins kleiner als der Endwert ist.
 
 ```
 func main() {
@@ -148,10 +129,9 @@ func main() {
 }
 ```
 
-For-loops can also iterate directly over arrays and other collection
-types.
+For-Schleifen können auch direkt über Arrays und andere Sammlungstypen iterieren.
 
-Arrays can be iterated by the for-value syntax.
+Arrays können mit der For-Value-Syntax iteriert werden.
 
 ```
 func main() {
@@ -162,7 +142,7 @@ func main() {
 }
 ```
 
-Dictionaries can be iterated by the for-key-value syntax.
+Wörterbücher können mit der For-Key-Value-Syntax iteriert werden.
 
 ```
 func main() {
@@ -173,15 +153,9 @@ func main() {
 }
 ```
 
-## While Loops
+## While-Schleifen
 
-The while-loop provides a traditional iteration mechanism that
-continues execution as long as a specified condition remains
-true. Unlike for-loops which are designed for iterating over
-collections, while-loops are more flexible and can be used for
-implementing various algorithms where the number of iterations isn't
-known in advance. The example shows a basic counter implementation
-incrementing from 0 to 9.
+Die While-Schleife stellt einen traditionellen Iterationsmechanismus dar, der die Ausführung so lange fortsetzt, wie eine angegebene Bedingung wahr bleibt. Im Gegensatz zu for-Schleifen, die für die Iteration über Sammlungen konzipiert sind, sind while-Schleifen flexibler und können zur Implementierung verschiedener Algorithmen verwendet werden, bei denen die Anzahl der Iterationen nicht im Voraus bekannt ist. Das Beispiel zeigt eine einfache Zählerimplementierung, die von 0 auf 9 erhöht wird.
 
 ```
 func main() {
@@ -193,11 +167,9 @@ func main() {
 }
 ```
 
-## If and Else Blocks
+## If- und Else-Blöcke
 
-Control flows allow for conditional executions based on evaluated
-expressions. The if-else construct follows a familiar syntax where
-conditions are evaluated in sequence.
+Kontrollflüsse ermöglichen bedingte Ausführungen basierend auf ausgewerteten Ausdrücken. Das if-else-Konstrukt folgt einer bekannten Syntax, bei der Bedingungen nacheinander ausgewertet werden.
 
 ```
 func main() {
@@ -212,11 +184,9 @@ func main() {
 }
 ```
 
-## Lambda Functions
+## Lambda-Funktionen
 
-Functions are first-class objects in the language. Anonymous
-functions, also known as `lambda` expressions, allow you to create
-functions without names.
+Funktionen sind erstklassige Objekte in der Sprache. Mit anonymen Funktionen, auch `lambda`-Ausdrücke genannt, können Sie Funktionen ohne Namen erstellen.
 
 ```
 func main() {
@@ -225,9 +195,7 @@ func main() {
 }
 ```
 
-Lambda functions are simply translated to named functions in the
-compilation process. Therefore, they can't capture variables declared
-in outer functions.
+Lambda-Funktionen werden im Kompilierungsprozess einfach in benannte Funktionen übersetzt. Daher können sie keine in äußeren Funktionen deklarierten Variablen erfassen.
 
 ## Increment/Decrement (+=, -=, ++, --)
 
@@ -243,29 +211,28 @@ func main() {
 }
 ```
 
-`++` and `--` are supported only as standalone statements (`a++;`, `b--;`).
-Using them inside expressions is disallowed to avoid complex side-effects.
+`++` und `--` werden nur als eigenständige Anweisungen (`a++;`, `b--;`) unterstützt. Die Verwendung innerhalb von Ausdrücken ist nicht zulässig, um komplexe Nebenwirkungen zu vermeiden.
 
-## OOP in Noct
+## OOP im Noct
 
-The object-oriented model in Noct is a lightweight variation of prototype-based OOP.
+Das objektorientierte Modell in Noct ist eine leichtgewichtige Variante des prototypbasierten OOP.
 
-- Classes are simply dictionary templates
-- Inheritance and instantiation are realized by dictionary merging
-- There is no prototype chain, and modifying a class does not affect existing instances
+- Klassen sind einfach Wörterbuchvorlagen
+- Vererbung und Instanziierung werden durch Wörterbuchzusammenführung realisiert
+- Es gibt keine Prototypenkette und das Ändern einer Klasse hat keine Auswirkungen auf vorhandene Instanzen
 
-This design treats dictionaries as first-class objects, and the author refers to it as Dictionary-based OOP (D-OOP).
+Dieses Design behandelt Wörterbücher als erstklassige Objekte und der Autor bezeichnet es als Dictionary-based OOP (D-OOP).
 
 ```
 func main() {
-    // The base class definition. (A class is just a dictionary.)
+    // Die Basisklassendefinition. (Eine Klasse ist nur ein Wörterbuch.)
     Animal = class {
         name: "Animal",
         cry: (this) => {
         }
     };
 
-    // The subclass definition. (Just a dictionary merging.)
+    // Die Unterklassendefinition. (Nur eine Wörterbuchzusammenführung.)
     Cat = extend Animal {
         name: "Cat",
         voice: "meow",
@@ -274,19 +241,19 @@ func main() {
         }
     };
 
-    // Instantiation. (Just a dictionary merging.)
+    // Instanziierung. (Nur eine Wörterbuchzusammenführung.)
     var myCat = new Cat {
         voice: "neee"
     };
 
-    // This-call uses -> () syntax. (Equal to myCat.cry(myCat))
+    // Dieser Aufruf verwendet die ->()-Syntax. (Gleich myCat.cry(myCat))
     myCat->cry();
 }
 ```
 
 ---
 
-## Intrinsics
+## Eigenheiten
 
 ### int()
 
@@ -294,7 +261,7 @@ func main() {
 var i = int(1.23);
 ```
 
-### float()
+### schweben()
 
 ```
 var f = float(123);
@@ -306,21 +273,21 @@ var f = float(123);
 var array = newArray(10);
 ```
 
-### push()
+### drücken()
 
 ```
 var array = [1, 2, 3];
 array->push(4);
 ```
 
-### pop()
+### Pop()
 
 ```
 var array = [1, 2, 3];
 var last = array->pop();
 ```
 
-### resize()
+### Größe ändern()
 
 ```
 var array = [1, 2, 3];
@@ -344,7 +311,7 @@ for (i in 0 .. s.length) {
 }
 ```
 
-### substring()
+### Teilzeichenfolge()
 
 ```
 var s1 = "ABCDEFG";
@@ -362,9 +329,9 @@ dic->unset("key1");
 
 ---
 
-## Math API
+## Mathe-API
 
-## Math
+## Mathe
 
 ### abs()
 
@@ -372,7 +339,7 @@ dic->unset("key1");
 var a = abs(x);
 ```
 
-### random()
+### zufällig()
 
 ```
 var r = random(); // 0 .. 1.0

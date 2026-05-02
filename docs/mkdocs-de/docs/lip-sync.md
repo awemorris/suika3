@@ -1,30 +1,30 @@
 Lip Synchronization
 ===================
 
-An lip synchronization image must be stored in the "lip" folder folder that is
-located in the same folder as the character's image(s).
+Ein Bild für die Lippensynchronisation muss im Ordner "lip" gespeichert werden,
+der sich im selben Verzeichnis wie das oder die Charakterbilder befindet.
 
-* happy.png (main character file)
+* happy.png (Hauptdatei der Figur)
 * lip/
-    * happy.png (lip synchronization file)
+    * happy.png (Datei für die Lippensynchronisation)
 
-A lip synchronization image consists of frame(s) of lip synchronization difference(s).
-A frame must be the same size as the character's image is.
-Frames must be stored horizontally in the left to right order.
+Ein Lippensynchronisationsbild besteht aus Rahmen mit Unterschieden für die Lippensynchronisation.
+Ein Frame muss die gleiche Größe haben wie das Charakterbild.
+Frames müssen horizontal von links nach rechts gespeichert werden.
 
-Alpha values on borders must be smoothed.
-Please use "Blur Selection" and "Delete Selection" in an image editing software.
+Die Alpha-Werte an den Rändern müssen geglättet werden.
+Bitte verwende in einem Bildbearbeitungsprogramm "Blur Selection" und "Delete Selection".
 
-The lip synchronization interval may be specified in the `project.txt` file.
+Das Lippensynchronisationsintervall kann in der Datei `project.txt` angegeben werden.
 
 ```
 #
-# Lip synchronization frame length (seconds per frame)
+# Länge eines Lippensynchronisationsframes (Sekunden pro Frame)
 #
 character.lipsync.frame=0.3
 
 #
-# Lip synchronization times per characters
+# Lippensynchronisationshäufigkeit pro Zeichen
 #
 character.lipsync.chars=3
 ```

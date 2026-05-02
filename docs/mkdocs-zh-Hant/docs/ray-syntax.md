@@ -1,17 +1,13 @@
-Ray Syntax Reference
+Ray 語法參考
 ====================
 
-`Ray` is actually the `Noct` programming language with additional Suika3 APIs.
+`Ray` 其實就是加上 Suika3 API 的 `Noct` 程式語言。
 
-## Assignments
+## 指派
 
-Variables in Noct are dynamically typed and don't require explicit
-declaration. The assignment operator (`=`) is used to create and
-assign values to variables.
+Noct 的變數是動態型別，不需要明確宣告。指派運運算元（`=`）用來建立並設定變數值。
 
-As shown in the example below, Noct supports various data types
-including integers, floating-point numbers, and strings. Variables can
-be reassigned to different types at any time during execution.
+如下例所示，Noct 支援多種資料型別，包括整數、浮點數與字串。變數在執行過程中可以隨時重新指派成不同型別。
 
 ```
 func main() {
@@ -26,10 +22,9 @@ func main() {
 }
 ```
 
-## Global Variables
+## 全域變數
 
-Global variables can be defined in functions, and cannot be defined
-outside of functions.
+全域變數可以在函式中定義，不能在函式外定義。
 
 ```
 func main() {
@@ -38,11 +33,10 @@ func main() {
 }
 ```
 
-## Local Variables
+## 區域變數
 
-Using the `var` keyword allows you to declare a variable as
-local. Without `var` declaration, assigning to a variable creates a
-global variable.
+使用 `var` 關鍵字可以把變數宣告為區域變數。
+如果不使用 `var` 宣告，直接對變數賦值就會建立全域變數。
 
 ```
 func main() {
@@ -51,11 +45,9 @@ func main() {
 }
 ```
 
-## Array
+## 陣列
 
-Arrays are ordered collections of values, accessed by index. Arrays
-support iteration through the `for` loop construct, allowing you to
-iterate through each value directly.
+陣列是按索引存取的有序值集合。陣列支援 `for` 迴圈迭代，因此可以直接逐一走訪每個值。
 
 ```
 func main() {
@@ -66,8 +58,7 @@ func main() {
 }
 ```
 
-Arrays can hold values of different types simultaneously, reflecting
-the dynamic typing system.
+陣列可以同時容納不同型別的值，反映其動態型別系統。
 
 ```
 func main() {
@@ -75,8 +66,7 @@ func main() {
 }
 ```
 
-The language provides a built-in function `push()` to add elements to
-the end of an array.  Also, `pop()` removes the final element.
+語言提供內建函式 `push()`，可以把元素加到陣列尾端。另外，`pop()` 會移除最後一個元素。
 
 ```
 func main() {
@@ -91,12 +81,9 @@ func main() {
 }
 ```
 
-## Dictionary
+## 字典
 
-Dictionaries store key-value pairs, similar to hash maps or objects in
-other languages. They are defined using curly braces with key-value
-pairs separated by colons. Dictionaries support iteration where both
-the key and value can be accessed simultaneously.
+字典會儲存鍵值對，類似其他語言中的雜湊表或物件。它使用大括號定義，鍵值對以冒號分隔。字典支援迭代，且可以同時取得鍵與值。
 
 ```
 func main() {
@@ -110,9 +97,7 @@ func main() {
 }
 ```
 
-Dictionaries may be constructed in a single step way. An assignment
-can be an array style which uses `[]`, or an object style which uses
-`.`.
+字典也可以用一步完成的方式建立。賦值可以是使用 `[]` 的陣列式寫法，或使用 `.` 的物件式寫法。
 
 ```
 func main() {
@@ -122,8 +107,7 @@ func main() {
 }
 ```
 
-The built-in function `remove()` allows for the deletion of entries by
-key.
+內建函式 `remove()` 可以根據鍵刪除專案。
 
 ```
 func main() {
@@ -132,13 +116,11 @@ func main() {
 }
 ```
 
-## For-loop
+## for 迴圈
 
-The for-loop construct provides a concise syntax for iterating through
-sequences such as ranges, arrays, and dictionaries.
+for 迴圈提供簡潔語法，可用來走訪範圍、陣列與字典等序列。
 
-The range syntax (using the `..` operator) creates an iterator that
-generates values from the start to one less than the end value.
+範圍語法（使用 `..` 運運算元）會建立一個迭代器，產生從起始值到結束值前一個數字的值。
 
 ```
 func main() {
@@ -148,10 +130,9 @@ func main() {
 }
 ```
 
-For-loops can also iterate directly over arrays and other collection
-types.
+for 迴圈也可以直接迭代陣列與其他集合型別。
 
-Arrays can be iterated by the for-value syntax.
+陣列可以使用 for-value 語法迭代。
 
 ```
 func main() {
@@ -162,7 +143,7 @@ func main() {
 }
 ```
 
-Dictionaries can be iterated by the for-key-value syntax.
+字典可以使用 for-key-value 語法迭代。
 
 ```
 func main() {
@@ -173,15 +154,9 @@ func main() {
 }
 ```
 
-## While Loops
+## while 迴圈
 
-The while-loop provides a traditional iteration mechanism that
-continues execution as long as a specified condition remains
-true. Unlike for-loops which are designed for iterating over
-collections, while-loops are more flexible and can be used for
-implementing various algorithms where the number of iterations isn't
-known in advance. The example shows a basic counter implementation
-incrementing from 0 to 9.
+while 迴圈提供傳統的迭代機制，只要指定條件維持為真就會持續執行。與專為集合迭代設計的 for 迴圈不同，while 迴圈更有彈性，可用於實作各種無法事先知道迭代次數的演演算法。以下範例示範一個基本計數器，從 0 遞增到 9。
 
 ```
 func main() {
@@ -193,11 +168,9 @@ func main() {
 }
 ```
 
-## If and Else Blocks
+## if 與 else 區塊
 
-Control flows allow for conditional executions based on evaluated
-expressions. The if-else construct follows a familiar syntax where
-conditions are evaluated in sequence.
+控制流程可根據運算後的表示式進行條件式執行。if-else 結構使用熟悉的語法，條件會依序進行判斷。
 
 ```
 func main() {
@@ -212,11 +185,9 @@ func main() {
 }
 ```
 
-## Lambda Functions
+## Lambda 函式
 
-Functions are first-class objects in the language. Anonymous
-functions, also known as `lambda` expressions, allow you to create
-functions without names.
+函式在這個語言中是第一級物件。匿名函式，也就是 `lambda` 表示式，可以讓你在沒有名稱的情況下建立函式。
 
 ```
 func main() {
@@ -225,11 +196,9 @@ func main() {
 }
 ```
 
-Lambda functions are simply translated to named functions in the
-compilation process. Therefore, they can't capture variables declared
-in outer functions.
+Lambda 函式在編譯過程中只會被轉成具名函式。因此，它們無法捕捉外層函式中宣告的變數。
 
-## Increment/Decrement (+=, -=, ++, --)
+## 遞增/遞減（+=, -=, ++, --）
 
 ```
 func main() {
@@ -243,29 +212,29 @@ func main() {
 }
 ```
 
-`++` and `--` are supported only as standalone statements (`a++;`, `b--;`).
-Using them inside expressions is disallowed to avoid complex side-effects.
+`++` 與 `--` 只支援作為獨立敘述（`a++;`、`b--;`）。
+為了避免複雜的副作用，不允許把它們放在表示式內使用。
 
-## OOP in Noct
+## Noct 的 OOP
 
-The object-oriented model in Noct is a lightweight variation of prototype-based OOP.
+Noct 的物件導向模型是一種輕量級、基於原型的 OOP 變體。
 
-- Classes are simply dictionary templates
-- Inheritance and instantiation are realized by dictionary merging
-- There is no prototype chain, and modifying a class does not affect existing instances
+- 類別本質上就是字典樣板
+- 繼承與實體化是透過字典合併實現
+- 沒有原型鏈，而且修改類別不會影響既有例項
 
-This design treats dictionaries as first-class objects, and the author refers to it as Dictionary-based OOP (D-OOP).
+這種設計把字典視為第一級物件，作者稱之為基於字典的 OOP（D-OOP）。
 
 ```
 func main() {
-    // The base class definition. (A class is just a dictionary.)
+    // 基底類別定義。（類別其實就是字典。）
     Animal = class {
         name: "Animal",
         cry: (this) => {
         }
     };
 
-    // The subclass definition. (Just a dictionary merging.)
+    // 子類別定義。（其實只是字典合併。）
     Cat = extend Animal {
         name: "Cat",
         voice: "meow",
@@ -274,19 +243,19 @@ func main() {
         }
     };
 
-    // Instantiation. (Just a dictionary merging.)
+    // 實體化。（其實只是字典合併。）
     var myCat = new Cat {
         voice: "neee"
     };
 
-    // This-call uses -> () syntax. (Equal to myCat.cry(myCat))
+    // this-call 使用 -> () 語法。（等同於 myCat.cry(myCat)）
     myCat->cry();
 }
 ```
 
 ---
 
-## Intrinsics
+## 內建函式
 
 ### int()
 
@@ -330,14 +299,14 @@ array->resize(2);
 ### charCount()
 
 ```
-var s = "ABC文あいう";
+var s = "ABC漢語";
 var l = s->charCount();
 ```
 
 ### charAt()
 
 ```
-var s = "ABC文あいう";
+var s = "ABC漢語";
 for (i in 0 .. s.length) {
    var c = s->charAt(i);
    print(c);
@@ -348,8 +317,8 @@ for (i in 0 .. s.length) {
 
 ```
 var s1 = "ABCDEFG";
-var s2 = s1.substring(0, 3); // from the char 0, three characters
-var s3 = s1.substring(2, -1); // from the char 1, to the end
+var s2 = s1.substring(0, 3); // 從字元 0 起算，共三個字元
+var s3 = s1.substring(2, -1); // 從字元 1 起，直到結尾
 }
 ```
 
@@ -362,7 +331,7 @@ dic->unset("key1");
 
 ---
 
-## Math API
+## 數學 API
 
 ## Math
 

@@ -1,80 +1,79 @@
-System Menu
+Systemmenü
 ===========
 
 ## SysBtn
 
-Suika3 features a hamburger menu button, typically located in the
-top-left corner of the screen. This button is internally referred to
-as the `System Button (SysBtn)`.
+Suika3 verfügt über eine Hamburger-Menüschaltfläche, die sich typischerweise in der linken oberen Ecke des Bildschirms befindet.
+Intern wird diese Schaltfläche als `System Button (SysBtn)` bezeichnet.
 
-To ensure compliance with App Store guidelines, Suika3 avoids placing
-small, PC-style buttons around the message window, adopting a
-mobile-first approach instead. The SysBtn consists of two images and
-associated animations. For a seamless user experience, the button is
-responsive: it appears upon mouse movement or touch, and automatically
-hides after a few seconds of inactivity. While this behavior is
-hard-coded for store compliance, the SysBtn can be completely
-disabled—for instance, for demos or Kiosk mode—by setting
-`sysbtn.enable=false` in the config.
+Um die Richtlinien des App Stores einzuhalten, vermeidet Suika3 kleine
+PC-artige Schaltflächen rund um das Textfenster und verfolgt stattdessen
+einen Mobile-First-Ansatz. Der SysBtn besteht aus zwei Bildern und den
+dazugehörigen Animationen. Für ein nahtloses Nutzungserlebnis ist die
+Schaltfläche reaktiv: Sie erscheint bei Mausbewegung oder Berührung und
+verschwindet nach einigen Sekunden Inaktivität automatisch wieder.
+Während dieses Verhalten fest für die Store-Konformität eingebaut ist,
+kann der SysBtn vollständig deaktiviert werden, etwa für Demos oder den
+Kiosk-Modus, indem `sysbtn.enable=false` in der Konfiguration gesetzt wird.
 
-While the absence of buttons around the familiar message window may
-feel unexpected at first, we hope you'll understand that this
-evolution is essential for adapting visual novels to modern mobile
-platforms.
+Auch wenn das Fehlen von Schaltflächen rund um das vertraute Textfenster
+anfangs ungewohnt wirken mag, hoffen wir, dass nachvollziehbar ist, dass
+diese Entwicklung für die Anpassung von Visual Novels an moderne
+Mobilplattformen notwendig ist.
 
-Please see also:
-- `config.ini` (search for `sysbtn`)
-- `system/sysbtn/` (in the sample game)
+Siehe auch:
+- `config.ini` (Suche nach `sysbtn`)
+- `system/sysbtn/` (im Beispielspiel)
 
 ## SysMenu
 
-Clicking the SysBtn triggers a GUI known as the `System Menu
-(SysMenu)`. The SysMenu is fully customizable and can be configured to
-include essential functions such as Save, Load, Auto Mode, Skip Mode,
-History, and Config.
+Ein Klick auf den SysBtn öffnet eine GUI mit dem Namen `System Menu
+(SysMenu)`. Das SysMenu ist vollständig anpassbar und kann so konfiguriert
+werden, dass es wesentliche Funktionen wie Speichern, Laden, Auto-Modus,
+Skip-Modus, Verlauf und Konfiguration enthält.
 
-Please see also:
-- `system/sysmenu/` (in the sample game)
+Siehe auch:
+- `system/sysmenu/` (im Beispielspiel)
 
-## Save/Load Screens
+## Speicher-/Ladebildschirme
 
-Save and load screens are fully customizable via GUI files.
+Speicher- und Ladebildschirme sind über GUI-Dateien vollständig anpassbar.
 
-Please see also:
-- `system/save/` (in the sample game)
-- `system/load/` (in the sample game)
+Siehe auch:
+- `system/save/` (im Beispielspiel)
+- `system/load/` (im Beispielspiel)
 
-## Auto Mode and Skip Mode Buttons
+## Schaltflächen für Auto- und Skip-Modus
 
-The Auto and Skip buttons use specialized GUI button types. These
-buttons trigger their respective modes—Auto Mode or Skip Mode—when
-clicked.
+Die Auto- und Skip-Schaltflächen verwenden spezialisierte GUI-Schaltflächentypen.
+Diese Schaltflächen aktivieren beim Anklicken ihre jeweiligen Modi,
+also Auto-Modus oder Skip-Modus.
 
-Please see also:
-- `system/sysmenu/` (in the sample game)
+Siehe auch:
+- `system/sysmenu/` (im Beispielspiel)
 
-## History Screen
+## Verlauf-Bildschirm
 
-The History screen is fully customizable via a GUI file.
+Der Verlaufsbildschirm ist über eine GUI-Datei vollständig anpassbar.
 
-Please see also:
-- `system/history/` (in the sample game)
+Siehe auch:
+- `system/history/` (im Beispielspiel)
 
-## Config Screen
+## Konfigurationsbildschirm
 
-The Config screen is fully customizable via a GUI file.
+Der Konfigurationsbildschirm ist über eine GUI-Datei vollständig anpassbar.
 
-The config screen in the sample game includes:
-- BGM, Sound Effect, and Voice Volume Sliders
-- Language Switch (EN/JP)
-- Text and Auto Mode Speed Adjustments
-- Text Speed Preview
+Der Konfigurationsbildschirm im Beispielspiel enthält:
+- Regler für BGM-, Soundeffekt- und Sprachlautstärke
+- Sprachumschaltung (EN/JP)
+- Anpassung von Text- und Auto-Modus-Geschwindigkeit
+- Vorschau der Textgeschwindigkeit
 
-Additionally, you can implement:
-- Master Volume
-- Per-Character Volume
-- Language Switch (for all supported languages)
-- Custom Buttons
+Außerdem kannst du implementieren:
+- Master-Lautstärke
+- Lautstärke pro Figur
+- Sprachumschaltung (für alle unterstützten Sprachen)
+- Eigene Schaltflächen
 
-Please see also:
-- `system/config/` (in the sample game)
+Siehe auch:
+- `system/config/` (im Beispielspiel)

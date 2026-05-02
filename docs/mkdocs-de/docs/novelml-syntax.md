@@ -1,49 +1,49 @@
-NovelML Syntax Reference
+NovelML-Syntaxreferenz
 ========================
 
-This document explains the basic syntax of NovelML and how it runs.
+In diesem Dokument werden die grundlegende Syntax von NovelML und seine Ausführung erläutert.
 
-For the detailed explanation of each tag, please see "Suika3 Tag Reference".
-
----
-
-## 1. NovelML is a list of engine commands called “tags”
-
-NovelML is a list of **tags**. A tag is a **command for the engine**.
-
-- Each tag tells the engine to do something
-- Tags run **one by one**, in the order they appear
-- After a tag runs, it is "done" and the "execution position" moves on
-
-If you write the same tag again, it will do the same thing **each time it runs**.
+Eine ausführliche Erläuterung der einzelnen Tags finden Sie in der „Suika3-Tag-Referenz“.
 
 ---
 
-## 2. Execution goes from top to bottom
+## 1. NovelML ist eine Liste von Engine-Befehlen, die „Tags“ genannt werden.
 
-NovelML runs from the top of the file to the bottom, one tag at a time.
+NovelML ist eine Liste von **Tags**. Ein Tag ist ein **Befehl für die Engine**.
 
-- Execution normally moves forward
-- There is only one current **execution position**
+- Jedes Tag weist die Engine an, etwas zu tun
+- Tags werden **einzeln** in der Reihenfolge ausgeführt, in der sie erscheinen
+- Nachdem ein Tag ausgeführt wurde, ist es „fertig“ und die „Ausführungsposition“ wird fortgesetzt
+
+Wenn Sie dasselbe Tag erneut schreiben, wird es **bei jeder Ausführung** dasselbe tun.
+
+---
+
+## 2. Die Ausführung erfolgt von oben nach unten
+
+NovelML wird Tag für Tag vom Anfang der Datei bis zum Ende ausgeführt.
+
+- Die Ausführung erfolgt normalerweise vorwärts
+- Es gibt nur eine aktuelle **Ausführungsposition**
 
 ```PlainText
 [text text="Hello"]
 [text text="World"]
 ```
 
-In this case:
+In diesem Fall:
 
-1. `Hello` is shown
-2. Then `World` is shown
+1. `Hello` wird angezeigt
+2. Dann wird `World` angezeigt
 
 ---
 
-## 3. Everything must be written as tags
+## 3. Alles muss als Tags geschrieben werden
 
-In NovelML, **every line must be a tag**.
+In NovelML muss **jede Zeile ein Tag sein**.
 
-- The whole scenario is written using tags
-- Even text must use the `[text]` tag
+- Das gesamte Szenario wird mithilfe von Tags geschrieben
+- Auch Text muss das Tag `[text]` verwenden
 
 ```PlainText
 [text text="It's a beautiful day."]
@@ -51,59 +51,59 @@ In NovelML, **every line must be a tag**.
 
 ---
 
-## 4. Tags that wait, and tags that do not wait
+## 4. Tags, die warten, und Tags, die nicht warten
 
-There are two main kinds of tags:
+Es gibt zwei Hauptarten von Tags:
 
-- **Tags that run and immediately move to the next tag**
-- **Tags that wait** for user input or for something to finish
+- **Tags, die ausgeführt werden und sofort zum nächsten Tag wechseln**
+- **Tags, die auf Benutzereingaben oder den Abschluss eines Vorgangs warten**
 
-Common "wait' tags include:
+Zu den gängigen „Warten“-Tags gehören:
 
-- `text` (waits for a click)
-- `click` (waits for a click)
-- `wait` (waits for a specified time)
-- `video` (waits until playback finishes)
+- `text` (wartet auf einen Klick)
+- `click` (wartet auf einen Klick)
+- `wait` (wartet eine angegebene Zeit)
+- `video` (wartet, bis die Wiedergabe beendet ist)
 
-These tags pause execution **without any special syntax**.
+Diese Tags unterbrechen die Ausführung **ohne besondere Syntax**.
 
-### 4.1 Tags that run in the background (asynchronously)
+### 4.1 Tags, die im Hintergrund (asynchron) ausgeführt werden
 
-Some tags may **run in the background**  (asynchronously).
+Einige Tags werden möglicherweise **im Hintergrund ausgeführt** (asynchron).
 
-Typical examples:
+Typische Beispiele:
 
 - `anime`
 - `move`
 
-These tags:
+Diese Tags:
 
-- Create and start an animation or movement
-- If `async="true"` is specified, the engine **does not wait** for it to finish and immediately continue to the next tag
+- Erstellen und starten Sie eine Animation oder Bewegung
+- Wenn `async="true"` angegeben ist, wartet die Engine nicht, bis der Vorgang abgeschlossen ist, und fährt sofort mit dem nächsten Tag fort
 
-Because of this, tags after an `async="true"` tag may run **while the animation is still playing**.
+Aus diesem Grund werden möglicherweise Tags nach einem `async="true"`-Tag ausgeführt, **während die Animation noch abgespielt wird**.
 
-This lets you do things like:
+Damit können Sie Dinge tun wie:
 
-- Move a background or character
-- While also showing text or running other effects
+- Verschieben Sie einen Hintergrund oder ein Zeichen
+- Während gleichzeitig Text angezeigt oder andere Effekte ausgeführt werden
 
 ---
 
-## 5. Tags that change the flow of execution
+## 5. Tags, die den Ausführungsfluss ändern
 
-Normally execution goes from top to bottom, but some tags **change where execution continues**.
+Normalerweise erfolgt die Ausführung von oben nach unten, aber einige Tags **ändern sich, wo die Ausführung fortgesetzt wird**.
 
-### 5.1 Labels
+### 5.1 Etiketten
 
 ```PlainText
 [label start]
 ```
 
-- A label marks a named position in the scenario
-- Running a label does not do anything by itself
+- Eine Beschriftung markiert eine benannte Position im Szenario
+- Das Ausführen eines Labels allein bewirkt nichts
 
-### 5.2 Jumps
+### 5.2 Sprünge
 
 ```PlainText
 [goto name="start"]
@@ -111,7 +111,7 @@ Normally execution goes from top to bottom, but some tags **change where executi
 
 ---
 
-## 6. Conditional branching (if / elseif / else)
+## 6. Bedingte Verzweigung (if / elseif / else)
 
 ```PlainText
 [if ...]
@@ -123,36 +123,36 @@ Normally execution goes from top to bottom, but some tags **change where executi
 [endif]
 ```
 
-- Only the first matching block is executed
-- Blocks that are not chosen are **skipped completely**
-- You can write `elseif` zero or more times
-- `else` is optional
+- Nur der erste passende Block wird ausgeführt
+- Nicht ausgewählte Blöcke werden **komplett übersprungen**
+- Sie können `elseif` null oder mehrmals schreiben
+- `else` ist optional
 
 ---
 
-## 7. Variables and variable expansion
+## 7. Variablen und Variablenerweiterung
 
-### 7.1 Setting variables
+### 7.1 Variablen festlegen
 
-Use the `[set]` tag to set a variable.
+Verwenden Sie das Tag `[set]`, um eine Variable festzulegen.
 
 ```PlainText
 [set name="player_name" value="Alice"]
 ```
 
-- All variables are **strings**
-- Numbers and booleans are also stored as strings
+- Alle Variablen sind **Strings**
+- Zahlen und boolesche Werte werden ebenfalls als Zeichenfolgen gespeichert
 
-### 7.2 Variable expansion
+### 7.2 Variable Erweiterung
 
-You can use variable expansion inside tag values and text.
+Sie können die Variablenerweiterung innerhalb von Tag-Werten und Text verwenden.
 
 ```PlainText
 [text text="${player_name} stands up"]
 ```
 
-- `${...}` is replaced with the variable value at runtime
-- Expansion happens **when the tag is executed**
+- `${...}` wird zur Laufzeit durch den Variablenwert ersetzt
+- Die Erweiterung erfolgt **wenn das Tag ausgeführt wird**
 
 ```PlainText
 [set name="x" value="1"]
@@ -161,13 +161,13 @@ You can use variable expansion inside tag values and text.
 [text text="${x}"]
 ```
 
-In this example, the output is `1` and then `2`.
+In diesem Beispiel ist die Ausgabe `1` und dann `2`.
 
 ---
 
-## 8. Macros are blocks you can run as a unit
+## 8. Makros sind Blöcke, die Sie als Einheit ausführen können
 
-Macros let you group several tags and run them together.
+Mit Makros können Sie mehrere Tags gruppieren und gemeinsam ausführen.
 
 ```PlainText
 [defmacro name="greet"]
@@ -179,41 +179,41 @@ Macros let you group several tags and run them together.
 
 ---
 
-## 9. Switching files (load)
+## 9. Dateien wechseln (laden)
 
 ```PlainText
 [load file="scene2.txt" label="start"]
 ```
 
-`file=` is mandatory and `label=` is optional.
+`file=` ist obligatorisch und `label=` ist optional.
 
 ---
 
-## 10. What happens at the end of a file
+## 10. Was passiert am Ende einer Datei?
 
-If executed:
+Bei Ausführung:
 
-- Reaches the end of the file, and
-- No more `goto` or `load` tags happen
+- Erreicht das Ende der Datei und
+- Es passieren keine weiteren `goto`- oder `load`-Tags
 
-Then the **scenario execution ends**.
+Dann endet die **Szenarioausführung**.
 
-However, on some platforms (for example iOS or game consoles), the app is not allowed to quit.
+Auf einigen Plattformen (zum Beispiel iOS oder Spielekonsolen) darf die App jedoch nicht beendet werden.
 
-So it is recommended that your scenario **explicitly**:
+Daher wird empfohlen, dass Ihr Szenario **ausdrücklich**:
 
-- Jumps back to the title using `goto`, or
-- Loads a title scene using `load`
+- Springt zurück zum Titel mit `goto`, oder
+- Lädt eine Titelszene mit `load`
 
-instead of ending automatically.
+anstatt automatisch zu enden.
 
 ---
 
-## 11. How this document fits with other docs
+## 11. Wie dieses Dokument mit anderen Dokumenten zusammenpasst
 
-This document is meant to go with:
+Dieses Dokument soll begleiten:
 
-- Tag Reference: explains what each tag does
-- This document: explains how a scenario runs
+- Tag-Referenz: erklärt, was jedes Tag bewirkt
+- Dieses Dokument: erklärt, wie ein Szenario abläuft
 
-For details on individual tags, see the "Tag Reference".
+Einzelheiten zu einzelnen Tags finden Sie in der „Tag-Referenz“.

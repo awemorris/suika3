@@ -1,80 +1,62 @@
-System Menu
+系統選單
 ===========
 
 ## SysBtn
 
-Suika3 features a hamburger menu button, typically located in the
-top-left corner of the screen. This button is internally referred to
-as the `System Button (SysBtn)`.
+Suika3 提供一個漢堡選單按鈕，通常位於畫面左上角。這個按鈕在內部稱為 `System Button (SysBtn)`。
 
-To ensure compliance with App Store guidelines, Suika3 avoids placing
-small, PC-style buttons around the message window, adopting a
-mobile-first approach instead. The SysBtn consists of two images and
-associated animations. For a seamless user experience, the button is
-responsive: it appears upon mouse movement or touch, and automatically
-hides after a few seconds of inactivity. While this behavior is
-hard-coded for store compliance, the SysBtn can be completely
-disabled—for instance, for demos or Kiosk mode—by setting
-`sysbtn.enable=false` in the config.
+為了符合 App Store 規範，Suika3 不會在訊息視窗周圍放置一排小型、偏 PC 風格的按鈕，而是採用以行動裝置為優先的設計。SysBtn 由兩張圖片與相關動畫組成。為了讓使用體驗更順暢，這個按鈕具有反應式行為：滑鼠移動或觸控時會出現，閒置幾秒後會自動隱藏。雖然這個行為是為了商店規範而寫死的，但 SysBtn 仍然可以完全停用，例如在展示版或 Kiosk 模式下，只要在設定檔中設為 `sysbtn.enable=false` 即可。
 
-While the absence of buttons around the familiar message window may
-feel unexpected at first, we hope you'll understand that this
-evolution is essential for adapting visual novels to modern mobile
-platforms.
+乍看之下，訊息視窗周圍少了那些熟悉的按鈕，可能會讓人覺得有點意外；但我們希望你能理解，這樣的演進對於把視覺小說帶到現代行動平臺是必要的。
 
-Please see also:
-- `config.ini` (search for `sysbtn`)
-- `system/sysbtn/` (in the sample game)
+另請參閱：
+- `config.ini`（搜尋 `sysbtn`）
+- `system/sysbtn/`（範例遊戲中）
 
 ## SysMenu
 
-Clicking the SysBtn triggers a GUI known as the `System Menu
-(SysMenu)`. The SysMenu is fully customizable and can be configured to
-include essential functions such as Save, Load, Auto Mode, Skip Mode,
-History, and Config.
+點選 SysBtn 會開啟一個名為 `System Menu (SysMenu)` 的 GUI。SysMenu 完全可自訂，可配置成包含儲存、讀取、自動模式、跳過模式、歷史紀錄與設定等必要功能。
 
-Please see also:
-- `system/sysmenu/` (in the sample game)
+另請參閱：
+- `system/sysmenu/`（範例遊戲中）
 
-## Save/Load Screens
+## 儲存/讀取畫面
 
-Save and load screens are fully customizable via GUI files.
+儲存與讀取畫面都可以透過 GUI 檔案完整自訂。
 
-Please see also:
-- `system/save/` (in the sample game)
-- `system/load/` (in the sample game)
+另請參閱：
+- `system/save/`（範例遊戲中）
+- `system/load/`（範例遊戲中）
 
-## Auto Mode and Skip Mode Buttons
+## 自動模式與跳過模式按鈕
 
-The Auto and Skip buttons use specialized GUI button types. These
-buttons trigger their respective modes—Auto Mode or Skip Mode—when
-clicked.
+自動與跳過按鈕使用專用的 GUI 按鈕型別。這些按鈕在被點選時，會啟動各自對應的模式，也就是自動模式或跳過模式。
 
-Please see also:
-- `system/sysmenu/` (in the sample game)
+另請參閱：
+- `system/sysmenu/`（範例遊戲中）
 
-## History Screen
+## 歷史紀錄畫面
 
-The History screen is fully customizable via a GUI file.
+歷史紀錄畫面可以透過 GUI 檔案完整自訂。
 
-Please see also:
-- `system/history/` (in the sample game)
+另請參閱：
+- `system/history/`（範例遊戲中）
 
-## Config Screen
+## 設定畫面
 
-The Config screen is fully customizable via a GUI file.
+設定畫面可以透過 GUI 檔案完整自訂。
 
-The config screen in the sample game includes:
-- BGM, Sound Effect, and Voice Volume Sliders
-- Language Switch (EN/JP)
-- Text and Auto Mode Speed Adjustments
-- Text Speed Preview
+範例遊戲中的設定畫面包含：
+- BGM、音效與語音音量滑桿
+- 語言切換（EN/JP）
+- 文字與自動模式速度調整
+- 文字速度預覽
 
-Additionally, you can implement:
-- Master Volume
-- Per-Character Volume
-- Language Switch (for all supported languages)
-- Custom Buttons
+另外，你也可以實作：
+- 主音量
+- 角色個別音量
+- 語言切換（適用所有支援語言）
+- 自訂按鈕
 
-Please see also:
-- `system/config/` (in the sample game)
+另請參閱：
+- `system/config/`（範例遊戲中）

@@ -1,17 +1,17 @@
-Ray VN API Reference
-====================
+﻿Справочник по Ray VN API
+=========================
 
-The `VN API (Suika.*)` is designed for Visual Novel creation.
+`VN API (Suika.*)` предназначен для создания визуальных новелл.
 
-Every `Suika.*` API function takes only one argument.
-The argument must be a dictionary, and options to a function must be stored as key-and-value pairs in the dictionary.
-In this document, "parameter" means a key-value-pair in that dictionary.
+Каждая функция API `Suika.*` принимает только один аргумент.
+Аргумент должен быть словарём, а параметры функции должны храниться в словаре как пары ключ-значение.
+В этом документе под словом "параметр" понимается пара ключ-значение в этом словаре.
 
-## Index
+## Содержание
 
-* Fundamental
+* Базовые
     * [Suika.loadPlugin()](#suikaloadplugin)
-* Config
+* Конфигурация
     * [Suika.setConfig()](#suikasetconfig)
     * [Suika.getConfigCount()](#suikagetconfigcount)
     * [Suika.getConfigKey()](#suikagetconfigkey)
@@ -24,7 +24,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.getFloatConfig()](#suikagetfloatconfig)
     * [Suika.getConfigAsString()](#suikagetconfigasstring)
     * [Suika.compareLocale()](#suikacomparelocale)
-* Input
+* Ввод
     * [Suika.getMousePosX()](#suikagetmouseposx)
     * [Suika.getMousePosY()](#suikagetmouseposy)
     * [Suika.isMouseLeftPressed()](#suikaismouseleftpressed)
@@ -48,7 +48,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.isTouchCanceled()](#suikaistouchcanceled)
     * [Suika.isSwiped()](#suikaisswiped)
     * [Suika.clearInputState()](#suikaclearinputstate)
-* Game
+* Игра
     * [Suika.startCommandRepetition()](#suikastartcommandrepetition)
     * [Suika.stopCommandRepetition()](#suikastopcommandrepetition)
     * [Suika.isInCommandRepetition()](#suikaisincommandrepetition)
@@ -97,7 +97,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.getLastEnglishTagIndex()](#suikagetlastenglishtagindex)
     * [Suika.clearLastEnglishTagIndex()](#suikaclearlastenglishtagindex)
     * [Suika.getLastTagName()](#suikagetlasttagname)
-* Image
+* Изображение
     * [Suika.createImageFromFile()](#suikacreateimagefromfile)
     * [Suika.createImage()](#suikacreateimage)
     * [Suika.getImageWidth()](#suikagetimagewidth)
@@ -107,7 +107,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.drawImage3D()](#suikadrawimage3d)
     * [Suika.makeColor()](#suikamakecolor)
     * [Suika.fillImageRect()](#suikafillimagerect)
-* Stage
+* Сцена
     * [Suika.reloadStageImages()](#suikareloadstageimages)
     * [Suika.reloadStagePositions()](#suikareloadstagepositions)
     * [Suika.getLayerX()](#suikagetlayerx)
@@ -173,7 +173,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.getChooseBoxRect()](#suikagetchooseboxrect)
     * [Suika.startKirakira()](#suikastartkirakira)
     * [Suika.renderKirakira()](#suikarenderkirakira)
-* Mixer
+* Микшер
     * [Suika.setMixerInputFile()](#suikasetmixerinputfile)
     * [Suika.setMixerVolume()](#suikasetmixervolume)
     * [Suika.getMixerVolume()](#suikagetmixervolume)
@@ -192,7 +192,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.updateSysBtnState()](#suikaupdatesysbtnstate)
     * [Suika.isSysBtnPointed()](#suikaisysbtnpointed)
     * [Suika.isSysBtnClicked()](#suikaisysbtnclicked)
-* Text
+* Текст
     * [Suika.drawTextOnLayer()](#suikadrawtextonlayer)
     * [Suika.getStringWidth()](#suikagetstringwidth)
     * [Suika.getStringHeight()](#suikagetstringheight)
@@ -203,7 +203,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.drawMessage()](#suikadrawmsgcommon)
     * [Suika.getDrawMsgPenPosition()](#suikagetpenpositioncommon)
     * [Suika.isEscapeSequenceChar()](#suikaisescapesequencechar)
-* Tag
+* Тег
     * [Suika.getTagCount()](#suikagettagcount)
     * [Suika.moveToTagFile()](#suikamovetotagfile)
     * [Suika.moveToTagIndex()](#suikamovetotagindex)
@@ -227,7 +227,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.popTagStackIf()](#suikapoptagstackif)
     * [Suika.pushTagStackWhile()](#suikapushtagstackwhile)
     * [Suika.pushTagStackFor()](#suikapushtagstackfor)
-* Anime
+* Анимация
     * [Suika.loadAnimeFromFile()](#suikaloadanimefromfile)
     * [Suika.newAnimeSequence()](#suikanewanimesequence)
     * [Suika.addAnimeSequencePropertyF()](#suikaaddanimesequencepropertyf)
@@ -242,7 +242,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.stopLipAnime()](#suikastoplipanime)
     * [Suika.clearLayerAnimeSequence()](#suikaclearlayeranimesequence)
     * [Suika.clearAllAnimeSequence()](#suikaclearallanimesequnce)
-* Variable
+* Переменные
     * [Suika.setVariableInt()](#suikasetvariableint)
     * [Suika.setVariableFloat()](#suikasetvariablefloat)
     * [Suika.setVariableString()](#suikasetvariablestring)
@@ -257,7 +257,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.getVariableName()](#suikagetvariablename)
     * [Suika.checkVariableExists()](#suikacheckvariableexists)
     * [Suika.expandStringWithVariable()](#suikaexpandstringwithvariable)
-* Save
+* Сохранение
     * [Suika.executeSaveGlobal()](#suikaexecutesaveglobal)
     * [Suika.executeLoadGlobal()](#suikaexecuteloadglobal)
     * [Suika.executeSaveLocal()](#suikaexecutesavelocal)
@@ -271,14 +271,14 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.getSaveChapterName()](#suikagetsavechaptername)
     * [Suika.getSaveLastMessage()](#suikagetsavelastmessage)
     * [Suika.getSaveThumbnail()](#suikagetsavethumbnail)
-* History
+* История
     * [Suika.clearHistory()](#suikaclearhistory)
     * [Suika.addHistory()](#suikaaddhistory)
     * [Suika.getHistoryCount()](#suikagethistorycount)
     * [Suika.getHistoryName()](#suikagethistoryname)
     * [Suika.getHistoryMessage()](#suikagethistorymessage)
     * [Suika.getHistoryVoice()](#suikagethistoryvoice)
-* Seen
+* Просмотрено
     * [Suika.loadSeen()](#suikaloadseen)
     * [Suika.saveSeen()](#suikasaveseen)
     * [Suika.getSeenFlags()](#suikagetseenflags)
@@ -319,2003 +319,2002 @@ In this document, "parameter" means a key-value-pair in that dictionary.
 
 ## Suika.loadPlugin()
 
-Loads a plugin.
+Загружает плагин.
 
-Only this API takes a non-dictionary argument.
+Только этот API принимает аргумент не в виде словаря.
 
-### Parameters (Direct)
+### Параметры (прямые)
 
-| Parameter | Type   | Description     |
-|-----------|--------|-----------------|
-| name      | String | Plugin name.    |
+| Параметр | Тип    | Описание        |
+|----------|--------|-----------------|
+| name     | String | Имя плагина.    |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.setConfig()
 
-Set a config.
+Устанавливает конфигурацию.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| key       | String | Key of the config.                         |
-| value     | String | Value of the config.                       |
+| Параметр | Тип    | Описание                                   |
+|----------|--------|--------------------------------------------|
+| key      | String | Ключ конфигурации.                         |
+| value    | String | Значение конфигурации.                     |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getConfigCount()
 
-Get the number of the config keys.
+Возвращает количество ключей конфигурации.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Integer that represents a number of config keys.
+Целое число, показывающее количество ключей конфигурации.
 
 ---
 
 ## Suika.getConfigKey()
 
-Get a config key's index.
+Возвращает ключ конфигурации по индексу.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| index     | Integer | Index of a config.                         |
+| Параметр | Тип     | Описание                                   |
+|----------|---------|--------------------------------------------|
+| index    | Integer | Индекс конфигурации.                       |
 
-### Return
+### Возврат
 
-String that represents a key of the config at the specified index.
+Строка, представляющая ключ конфигурации по указанному индексу.
 
 ---
 
 ## Suika.isGlobalSaveConfig()
 
-Check if a config key is stored to global save data.
+Проверяет, хранится ли ключ конфигурации в глобальных данных сохранения.
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| Параметр | Тип    | Описание                                   |
+|----------|--------|--------------------------------------------|
+| key      | String | Имя ключа.                                 |
 
-### Return
+### Возврат
 
-Boolean that represents whether the config is global-saved or not.
+Булево значение, показывающее, сохранена ли конфигурация глобально.
 
 ---
 
 ## Suika.isLocalSaveConfig()
 
-Check if a config key is stored to local save data.
+Проверяет, хранится ли ключ конфигурации в локальных данных сохранения.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| Параметр | Тип    | Описание                                   |
+|----------|--------|--------------------------------------------|
+| key      | String | Имя ключа.                                 |
 
-### Return
+### Возврат
 
-Boolean that represents whether the config is local-saved or not.
+Булево значение, показывающее, сохранена ли конфигурация локально.
 
 ---
 
 ## Suika.getConfigType()
 
-Get a config value type. ("s", "b", "i", "f")
+Возвращает тип значения конфигурации. ("s", "b", "i", "f")
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| Параметр | Тип    | Описание                                   |
+|----------|--------|--------------------------------------------|
+| key      | String | Имя ключа.                                 |
 
-### Return
+### Возврат
 
-One of the following strings.
+Одна из следующих строк.
 
-| Value      | Meaning                  |
-|------------|--------------------------|
-| "s"        | Config is string.        |
-| "b"        | Config is boolean.       |
-| "i"        | Config is integer.       |
-| "f"        | Config is float.         |
+| Значение | Значение                  |
+|----------|--------------------------|
+| "s"      | Конфигурация - строка.    |
+| "b"      | Конфигурация - логическое значение. |
+| "i"      | Конфигурация - целое число. |
+| "f"      | Конфигурация - число с плавающей точкой. |
 
 ---
 
 ## Suika.getStringConfig()
 
-Get a string config value.
+Возвращает строковое значение конфигурации.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| Параметр | Тип    | Описание                                   |
+|----------|--------|--------------------------------------------|
+| key      | String | Имя ключа.                                 |
 
-### Return
+### Возврат
 
-String value of the config.
+Строковое значение конфигурации.
 
 ---
 
 ## Suika.getBoolConfig()
 
-Get a boolean config value.
+Возвращает логическое значение конфигурации.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| Параметр | Тип    | Описание                                   |
+|----------|--------|--------------------------------------------|
+| key      | String | Имя ключа.                                 |
 
-### Return
+### Возврат
 
-Boolean value of the config.
+Логическое значение конфигурации.
 
 ---
 
 ## Suika.getIntConfig()
 
-Get an integer config value.
+Возвращает целочисленное значение конфигурации.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| Параметр | Тип    | Описание                                   |
+|----------|--------|--------------------------------------------|
+| key      | String | Имя ключа.                                 |
 
-### Return
+### Возврат
 
-Integer value of the config.
+Целочисленное значение конфигурации.
 
 ---
 
 ## Suika.getFloatConfig()
 
-Get a float config value.
+Возвращает значение конфигурации с плавающей точкой.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| Параметр | Тип    | Описание                                   |
+|----------|--------|--------------------------------------------|
+| key      | String | Имя ключа.                                 |
 
-### Return
+### Возврат
 
-Float value of the config.
+Значение конфигурации с плавающей точкой.
 
 ---
 
 ## Suika.getConfigAsString()
 
-Get a config value as a string.
+Возвращает значение конфигурации в виде строки.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| Параметр | Тип    | Описание                                   |
+|----------|--------|--------------------------------------------|
+| key      | String | Имя ключа.                                 |
 
-### Return
+### Возврат
 
-Stringified value of the config.
+Строковое представление значения конфигурации.
 
 ---
 
 ## Suika.compareLocale()
 
-Check if the specified locale is same as the current locale.
+Проверяет, совпадает ли указанная локаль с текущей.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| locale    | String | Locale name.                               |
+| Параметр | Тип    | Описание                                   |
+|----------|--------|--------------------------------------------|
+| locale   | String | Имя локали.                                |
 
 
-### Return
+### Возврат
 
-Bolean that represents whether the specified locale is matched to the
-current one.
+Булево значение, показывающее, совпадает ли указанная локаль с текущей.
 
 ---
 
 ## Suika.getMousePosX()
 
-Get the mouse X position.
+Возвращает X-координату мыши.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Integer that represents the current mouse X coordinate.
+Целое число, представляющее текущую X-координату мыши.
 
 ---
 
 ## Suika.getMousePosY()
 
-Get the mouse Y position.
+Возвращает Y-координату мыши.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Integer that represents the current mouse Y coordinate.
+Целое число, представляющее текущую Y-координату мыши.
 
 ---
 
 ## Suika.isMouseLeftPressed()
 
-Check if mouse left button is pressed.
+Проверяет, нажата ли левая кнопка мыши.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean that represents whether the left button is currently held down.
+Булево значение, показывающее, удерживается ли левая кнопка.
 
 ---
 
 ## Suika.isMouseRightPressed()
 
-Check if mouse right button is pressed.
+Проверяет, нажата ли правая кнопка мыши.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean that represents whether the right button is currently held down.
+Булево значение, показывающее, удерживается ли правая кнопка.
 
 ---
 
 ## Suika.isMouseLeftClicked()
 
-Check if mouse left button is pressed then released.
+Проверяет, была ли левая кнопка мыши нажата и отпущена.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean that represents whether a left-click occurred in the current frame.
+Булево значение, показывающее, произошло ли левое нажатие в текущем кадре.
 
 ---
 
 ## Suika.isMouseRightClicked()
 
-Check if mouse right button is pressed then released.
+Проверяет, была ли правая кнопка мыши нажата и отпущена.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean that represents whether a right-click occurred in the current frame.
+Булево значение, показывающее, произошло ли правое нажатие в текущем кадре.
 
 ---
 
 ## Suika.isMouseDragging()
 
-Check if mouse is dragging.
+Проверяет, выполняется ли перетаскивание мышью.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean that represents whether the mouse is being moved while a button is pressed.
+Булево значение, показывающее, перемещается ли мышь при нажатой кнопке.
 
 ---
 
 ## Suika.isReturnKeyPressed()
 
-Check if return key is pressed.
+Проверяет, нажата ли клавиша Enter.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isSpaceKeyPressed()
 
-Check if space key is pressed.
+Проверяет, нажата ли клавиша пробела.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isEscapeKeyPressed()
 
-Check if escape key is pressed.
+Проверяет, нажата ли клавиша Escape.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isUpKeyPressed()
 
-Check if up key is pressed.
+Проверяет, нажата ли клавиша вверх.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isDownKeyPressed()
 
-Check if down key is pressed.
+Проверяет, нажата ли клавиша вниз.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isLeftKeyPressed()
 
-Check if left key is pressed.
+Проверяет, нажата ли клавиша влево.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isRightKeyPressed()
 
-Check if right key is pressed.
+Проверяет, нажата ли клавиша вправо.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isPageUpKeyPressed()
 
-Check if pageup key is pressed.
+Проверяет, нажата ли клавиша Page Up.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isPageDownKeyPressed()
 
-Check if pagedown key is pressed.
+Проверяет, нажата ли клавиша Page Down.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isControlKeyPressed()
 
-Check if control key is pressed.
+Проверяет, нажата ли клавиша Control.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isSKeyPressed()
 
-Check if S key is pressed.
+Проверяет, нажата ли клавиша S.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isLKeyPressed()
 
-Check if L key is pressed.
+Проверяет, нажата ли клавиша L.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isHKeyPressed()
 
-Check if H key is pressed.
+Проверяет, нажата ли клавиша H.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isTouchCanceled()
 
-Check if touch is canceled.
+Проверяет, отменён ли сенсорный ввод.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isSwiped()
 
-Check if swiped.
+Проверяет, был ли выполнен свайп.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.clearInputState()
 
-Clear input states to avoid further input processing in the current frame.
+Сбрасывает состояние ввода, чтобы предотвратить дальнейшую обработку ввода в текущем кадре.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 
 ---
 
 ## Suika.startCommandRepetition()
 
-Start a multiple-frame command execution.
+Запускает выполнение команды на несколько кадров.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.stopCommandRepetition()
 
-Stop a multiple-frame command execution.
+Останавливает выполнение команды на несколько кадров.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.isInCommandRepetition()
 
-Check whether we are in a multiple-frame command execution or not.
+Проверяет, выполняется ли команда на несколько кадров.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.setMessageActive()
 
-Set the message showing state to active.
+Активирует состояние отображения сообщения.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.clearMessageActive()
 
-Reset the message showing state.
+Сбрасывает состояние отображения сообщения.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.isMessageActive()
 
-Check whether the message showing state is set or not.
+Проверяет, включено ли состояние отображения сообщения.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.startAutoMode()
 
-Start the auto-mode.
+Запускает авто-режим.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.stopAutoMode()
 
-Stop the auto-mode.
+Останавливает авто-режим.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.isAutoMode()
 
-Check whether we are in the auto-mode or not.
+Проверяет, включён ли авто-режим.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.startSkipMode()
 
-Start the skip-mode.
+Запускает режим пропуска.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.stopSkipMode()
 
-Stop the skip-mode.
+Останавливает режим пропуска.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.isSkipMode()
 
-Check whether we are in the skip-mode or not.
+Проверяет, включён ли режим пропуска.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.setSaveLoad()
 
-Set the save/load enable setting.
+Устанавливает разрешение на сохранение и загрузку.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                       |
-|-----------|---------|-----------------------------------|
-| enable    | Boolean | Whether to enable save and load.  |
+| Параметр | Тип     | Описание                          |
+|----------|---------|-----------------------------------|
+| enable   | Boolean | Включить сохранение и загрузку.   |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.isSaveLoadEnabled()
 
-Get the save/load enable setting.
+Возвращает настройку разрешения сохранения и загрузки.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.setNonInterruptible()
 
-Set the non-interruptible mode setting.
+Устанавливает режим без прерывания.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| enable    | Boolean | Non-interruptible mode.    |
+| Параметр | Тип     | Описание                   |
+|----------|---------|----------------------------|
+| enable   | Boolean | Режим без прерывания.      |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.isNonInterruptible()
 
-Get the non-interruptible mode setting.
+Возвращает настройку режима без прерывания.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.setPenPosition()
 
-Set the pen position for text drawing.
+Устанавливает позицию пера для рисования текста.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| x         | Integer | X coordinate.         |
-| y         | Integer | Y coordinate.         |
+| Параметр | Тип     | Описание       |
+|----------|---------|----------------|
+| x        | Integer | X-координата.  |
+| y        | Integer | Y-координата.  |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getPenPositionX()
 
-Get the pen X position.
+Возвращает X-позицию пера.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Integer value.
+Целое число.
 
 ---
 
 ## Suika.getPenPositionY()
 
-Get the pen Y position.
+Возвращает Y-позицию пера.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Integer value.
+Целое число.
 
 ---
 
 ## Suika.pushForCall()
 
-Push the return point to the call stack.
+Помещает точку возврата в стек вызовов.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| file      | String  | Script file name.     |
-| index     | Integer | Command index.        |
+| Параметр | Тип     | Описание            |
+|----------|---------|---------------------|
+| file     | String  | Имя файла сценария. |
+| index    | Integer | Индекс команды.     |
 
-### Return
+### Возврат
 
-Boolean that represents success or failure.
+Булево значение, показывающее успех или неудачу.
 
 ---
 
 ## Suika.popForReturn()
 
-Pop the return point from the call stack.
+Извлекает точку возврата из стека вызовов.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns a dictionary that contains:
+Возвращает словарь, содержащий:
 
-* obj.file: File name
-* obj.index: Tag index
+* obj.file: имя файла
+* obj.index: индекс тега
 
 ---
 
 ## Suika.readCallStack()
 
-Read the call stack element at the specified index.
+Читает элемент стека вызовов по указанному индексу.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| sp        | Integer | Stack element index.  |
+| Параметр | Тип     | Описание              |
+|----------|---------|----------------------|
+| sp       | Integer | Индекс элемента стека. |
 
-### Return
+### Возврат
 
-Returns a dictionary that contains:
+Возвращает словарь, содержащий:
 
-* obj.file: File name
-* obj.index: Tag index
+* obj.file: имя файла
+* obj.index: индекс тега
 
 ---
 
 ## Suika.writeCallStack()
 
-Write the call stack element at the specified index.
+Записывает элемент стека вызовов по указанному индексу.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| sp        | Integer | Stack element index.  |
-| file      | String  | Script file name.     |
-| index     | Integer | Tag index.            |
+| Параметр | Тип     | Описание            |
+|----------|---------|---------------------|
+| sp       | Integer | Индекс элемента стека. |
+| file     | String  | Имя файла сценария. |
+| index    | Integer | Индекс тега.        |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.setCallArgument()
 
-Set a calling argument for GUI or anime.
+Устанавливает аргумент вызова для GUI или анимации.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| index     | Integer | Argument index.       |
-| value     | String  | Argument value.       |
+| Параметр | Тип     | Описание           |
+|----------|---------|---------------------|
+| index    | Integer | Индекс аргумента.   |
+| value    | String  | Значение аргумента. |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.getCallArgument()
 
-Get a calling argument.
+Возвращает аргумент вызова.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| index     | Integer | Argument index.       |
+| Параметр | Тип     | Описание           |
+|----------|---------|---------------------|
+| index    | Integer | Индекс аргумента.   |
 
-### Return
+### Возврат
 
-String value.
+Строковое значение.
 
 ---
 
 ## Suika.isPageMode()
 
-Check if the script page mode is enabled.
+Проверяет, включён ли режим страниц сценария.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns boolean.
+Возвращает булево значение.
 
 ---
 
 ## Suika.appendBufferedMessage()
 
-Append a string to the page mode buffer string.
+Добавляет строку в буфер режима страниц.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| message   | String  | Message.              |
+| Параметр | Тип    | Описание    |
+|----------|---------|------------|
+| message  | String | Сообщение. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getBufferedMessage()
 
-Get the page mode buffer string.
+Возвращает строку буфера режима страниц.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns a string.
+Возвращает строку.
 
 ---
 
 ## Suika.clearBufferedMessage()
 
-Clear the page mode buffer string.
+Очищает строку буфера режима страниц.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.resetPageLine()
 
-Reset the message line count in a page.
+Сбрасывает счётчик строк сообщения на странице.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.incPageLine()
 
-Increment the line count in a page.
+Увеличивает счётчик строк на странице.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.isPageTop()
 
-Check if we are at the first line in a page.
+Проверяет, находимся ли мы на первой строке страницы.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.registerBGVoice()
 
-Register a BGVoice.
+Регистрирует BGVoice.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| file      | String  | BGVoice file.         |
+| Параметр | Тип    | Описание       |
+|----------|--------|----------------|
+| file     | String | Файл BGVoice.  |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getBVoice()
 
-Get the BGVoice.
+Возвращает BGVoice.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns a file name string.
+Возвращает строку с именем файла.
 
 ---
 
 ## Suika.setBGVoicePlaying()
 
-Set the BGVoice state playing.
+Устанавливает состояние воспроизведения BGVoice.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| isPlaying | Boolean | State.                |
+| Параметр  | Тип     | Описание |
+|-----------|---------|----------|
+| isPlaying | Boolean | Состояние. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.isBGVoicePlaying()
 
-Check if the BGVoice is playing.
+Проверяет, воспроизводится ли BGVoice.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns boolean.
+Возвращает булево значение.
 
 ---
 
 ## Suika.setChapterName()
 
-Set the chapter name.
+Устанавливает имя главы.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| name      | String  | Chapter name.         |
+| Параметр | Тип    | Описание        |
+|----------|--------|-----------------|
+| name     | String | Имя главы.      |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getChapterName()
 
-Get the chapter name.
+Возвращает имя главы.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns a string.
+Возвращает строку.
 
 ---
 
 ## Suika.setLastMessage()
 
-Set the last message.
+Устанавливает последнее сообщение.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| message   | String  | Message.              |
-| isAppend  | Boolean | Append or replace.    |
+| Параметр | Тип     | Описание            |
+|----------|---------|---------------------|
+| message  | String  | Сообщение.          |
+| isAppend | Boolean | Добавить или заменить. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getLastMessage()
 
-Get the last message.
+Возвращает последнее сообщение.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns a string.
+Возвращает строку.
 
 ---
 
 ## Suika.setTextSpeed()
 
-Set the text speed.
+Устанавливает скорость текста.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| speed     | Float   | Text speed.           |
+| Параметр | Тип   | Описание        |
+|----------|-------|-----------------|
+| speed    | Float | Скорость текста. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getTextSpeed()
 
-Get the text speed.
+Возвращает скорость текста.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns a float.
+Возвращает число с плавающей точкой.
 
 ---
 
 ## Suika.setAutoSpeed()
 
-Set the auto mode speed.
+Устанавливает скорость авто-режима.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| speed     | Float   | Auto speed.           |
+| Параметр | Тип   | Описание          |
+|----------|-------|-------------------|
+| speed    | Float | Скорость авто-режима. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getAutoSpeed()
 
-Get the auto speed.
+Возвращает скорость авто-режима.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns a float.
+Возвращает число с плавающей точкой.
 
 ---
 
 ## Suika.markLastEnglishTagIndex()
 
-Mark the last English index.
+Помечает последний английский индекс.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getLastEnglishTagIndex()
 
-Get the last English index.
+Возвращает последний английский индекс.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns an integer.
+Возвращает целое число.
 
 ---
 
 ## Suika.clearLastEnglishTagIndex()
 
-Clear the last English index.
+Очищает последний английский индекс.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getLastTagName()
 
-Get the last tag name.
+Возвращает имя последнего тега.
 
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns a string.
+Возвращает строку.
 
 ---
 
 ## Suika.createImageFromFile()
 
-Load an image from a file.
+Загружает изображение из файла.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                   |
-|-----------|--------|-------------------------------|
-| file      | String | Path to the image file.       |
+| Параметр | Тип    | Описание                  |
+|----------|--------|---------------------------|
+| file     | String | Путь к файлу изображения. |
 
-### Return
+### Возврат
 
-An image object, or null on failure.
+Объект изображения или `null` при неудаче.
 
 ---
 
 ## Suika.createImage()
 
-Create a new blank image.
+Создаёт новое пустое изображение.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                   |
-|-----------|---------|-------------------------------|
-| width     | Integer | Width of the image.           |
-| height    | Integer | Height of the image.          |
+| Параметр | Тип     | Описание              |
+|----------|---------|----------------------|
+| width    | Integer | Ширина изображения.  |
+| height   | Integer | Высота изображения.  |
 
-### Return
+### Возврат
 
-An image object.
+Объект изображения.
 
 ---
 
 ## Suika.getImageWidth()
 
-Get the width of an image.
+Возвращает ширину изображения.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                   |
-|-----------|--------|-------------------------------|
-| img       | Object | Image object.                 |
+| Параметр | Тип    | Описание          |
+|----------|--------|-------------------|
+| img      | Object | Объект изображения. |
 
-### Return
+### Возврат
 
-Integer that represents the width.
+Целое число, представляющее ширину.
 
 ---
 
 ## Suika.getImageHeight()
 
-Get the height of an image.
+Возвращает высоту изображения.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                   |
-|-----------|--------|-------------------------------|
-| image     | Object | Image object.                 |
+| Параметр | Тип    | Описание          |
+|----------|--------|-------------------|
+| image    | Object | Объект изображения. |
 
-### Return
+### Возврат
 
-Integer that represents the height.
+Целое число, представляющее высоту.
 
 ---
 
 ## Suika.destroyImage()
 
-Destroy an image and free its memory.
+Уничтожает изображение и освобождает память.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                   |
-|-----------|--------|-------------------------------|
-| image     | Object | Image object to destroy.      |
+| Параметр | Тип    | Описание                |
+|----------|--------|-------------------------|
+| image    | Object | Объект изображения для уничтожения. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.drawImage()
 
-Copy an image to another image (no blending).
+Копирует изображение в другое изображение без смешивания.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter  | Type    | Description                      |
-|------------|---------|----------------------------------|
-| dstImage   | Object  | Destination image.               |
-| dstLeft    | Integer | X coordinate in destination.     |
-| dstTop     | Integer | Y coordinate in destination.     |
-| srcImage   | Object  | Source image.                    |
-| dstWidth   | Integer | Width to draw.                   |
-| dstHeight  | Integer | Height to draw.                  |
-| srcLeft    | Integer | X coordinate in source.          |
-| srcTop     | Integer | Y coordinate in source.          |
-| alpha      | Integer | 0-255                            |
-| blend      | Integer | Blending type.                   |
+| Параметр | Тип     | Описание                  |
+|----------|---------|---------------------------|
+| dstImage | Object  | Целевое изображение.      |
+| dstLeft  | Integer | X-координата в цели.      |
+| dstTop   | Integer | Y-координата в цели.      |
+| srcImage | Object  | Исходное изображение.     |
+| dstWidth | Integer | Ширина отрисовки.         |
+| dstHeight| Integer | Высота отрисовки.         |
+| srcLeft  | Integer | X-координата в источнике. |
+| srcTop   | Integer | Y-координата в источнике. |
+| alpha    | Integer | 0-255                     |
+| blend    | Integer | Тип смешивания.           |
 
-### Blending Types
+### Типы смешивания
 
-| Type                | Description                        |
-|---------------------|------------------------------------|
-| Suika.BLEND_COPY    | Copy.                              |
-| Suika.BLEND_ALPHA   | Alpha blending.                    |
-| Suika.BLEND_ADD     | Add blending.                      |
-| Suika.BLEND_SUB     | Sub blending.                      |
-| Suika.BLEND_DIM     | RGB 50% alpha blending.            |
-| Suika.BLEND_GLYPH   | Alpha blending for normal glyphs.  |
-| Suika.BLEND_EMOJI   | Alpha blending for emoji glyphs.   |
+| Тип                | Описание                           |
+|--------------------|------------------------------------|
+| Suika.BLEND_COPY   | Копирование.                       |
+| Suika.BLEND_ALPHA  | Альфа-смешивание.                  |
+| Suika.BLEND_ADD    | Аддитивное смешивание.             |
+| Suika.BLEND_SUB    | Субтрактивное смешивание.          |
+| Suika.BLEND_DIM    | Альфа-смешивание RGB 50%.          |
+| Suika.BLEND_GLYPH  | Альфа-смешивание для обычных глифов. |
+| Suika.BLEND_EMOJI  | Альфа-смешивание для глифов-эмодзи. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.drawImage3D()
 
-Copy an image to another image (no blending).
+Копирует изображение в другое изображение без смешивания.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter  | Type    | Description                      |
-|------------|---------|----------------------------------|
-| dstImage   | Object  | Destination image.               |
-| x1         | Integer | x1 coordinate in destination.    |
-| y1         | Integer | y1 coordinate in destination.    |
-| x2         | Integer | x2 coordinate in destination.    |
-| y2         | Integer | y2 coordinate in destination.    |
-| x3         | Integer | x3 coordinate in destination.    |
-| y3         | Integer | y3 coordinate in destination.    |
-| x4         | Integer | x4 coordinate in destination.    |
-| y5         | Integer | y4 coordinate in destination.    |
-| srcImage   | Object  | Source image.                    |
-| srcLeft    | Integer | X coordinate in source.          |
-| srcTop     | Integer | Y coordinate in source.          |
-| srcWidth   | Integer | Width in source.                 |
-| srcHeight  | Integer | Height in source.                |
-| alpha      | Integer | 0-255                            |
-| blend      | Integer | Blending type.                   |
+| Параметр | Тип     | Описание                  |
+|----------|---------|---------------------------|
+| dstImage | Object  | Целевое изображение.      |
+| x1       | Integer | Координата x1 в цели.     |
+| y1       | Integer | Координата y1 в цели.     |
+| x2       | Integer | Координата x2 в цели.     |
+| y2       | Integer | Координата y2 в цели.     |
+| x3       | Integer | Координата x3 в цели.     |
+| y3       | Integer | Координата y3 в цели.     |
+| x4       | Integer | Координата x4 в цели.     |
+| y5       | Integer | Координата y4 в цели.     |
+| srcImage | Object  | Исходное изображение.     |
+| srcLeft  | Integer | X-координата в источнике. |
+| srcTop   | Integer | Y-координата в источнике. |
+| srcWidth | Integer | Ширина в источнике.       |
+| srcHeight| Integer | Высота в источнике.       |
+| alpha    | Integer | 0-255                     |
+| blend    | Integer | Тип смешивания.           |
 
-### Blending Types
+### Типы смешивания
 
-| Type                | Description                        |
-|---------------------|------------------------------------|
-| Suika.BLEND_ALPHA   | Alpha blending.                    |
-| Suika.BLEND_ADD     | Add blending.                      |
-| Suika.BLEND_SUB     | Sub blending.                      |
-| Suika.BLEND_DIM     | RGB 50% alpha blending.            |
+| Тип                | Описание                 |
+|--------------------|--------------------------|
+| Suika.BLEND_ALPHA  | Альфа-смешивание.        |
+| Suika.BLEND_ADD    | Аддитивное смешивание.   |
+| Suika.BLEND_SUB    | Субтрактивное смешивание.|
+| Suika.BLEND_DIM    | Альфа-смешивание RGB 50%.|
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.drawImageAlpha()
 
-Draw an image with alpha blending.
+Рисует изображение с альфа-смешиванием.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                      |
-|-----------|---------|----------------------------------|
-| dstImage  | Object  | Destination image.               |
-| dstLeft   | Integer | X coordinate in destination.     |
-| dstTop    | Integer | Y coordinate in destination.     |
-| dstWidth  | Integer | Width to draw.                   |
-| dstHeight | Integer | Height to draw.                  |
-| srcImage  | Object  | Source image.                    |
-| srcLeft   | Integer | X coordinate in source.          |
-| srcTop    | Integer | Y coordinate in source.          |
-| alpha     | Integer | Alpha value (`0`-`255`).         |
+| Параметр | Тип     | Описание                  |
+|----------|---------|---------------------------|
+| dstImage | Object  | Целевое изображение.      |
+| dstLeft  | Integer | X-координата в цели.      |
+| dstTop   | Integer | Y-координата в цели.      |
+| dstWidth | Integer | Ширина отрисовки.         |
+| dstHeight| Integer | Высота отрисовки.         |
+| srcImage | Object  | Исходное изображение.     |
+| srcLeft  | Integer | X-координата в источнике. |
+| srcTop   | Integer | Y-координата в источнике. |
+| alpha    | Integer | Значение альфы (`0`-`255`). |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.drawImageAdd()
 
-Draw an image with additive blending.
+Рисует изображение с аддитивным смешиванием.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                      |
-|-----------|---------|----------------------------------|
-| dstImage  | Object  | Destination image.               |
-| dstLeft   | Integer | X coordinate in destination.     |
-| dstTop    | Integer | Y coordinate in destination.     |
-| dstWidth  | Integer | Width to draw.                   |
-| dstHeight | Integer | Height to draw.                  |
-| srcImage  | Object  | Source image.                    |
-| srcLeft   | Integer | X coordinate in source.          |
-| srcTop    | Integer | Y coordinate in source.          |
-| alpha     | Integer | Alpha value (`0`-`255`).         |
+| Параметр | Тип     | Описание                  |
+|----------|---------|---------------------------|
+| dstImage | Object  | Целевое изображение.      |
+| dstLeft  | Integer | X-координата в цели.      |
+| dstTop   | Integer | Y-координата в цели.      |
+| dstWidth | Integer | Ширина отрисовки.         |
+| dstHeight| Integer | Высота отрисовки.         |
+| srcImage | Object  | Исходное изображение.     |
+| srcLeft  | Integer | X-координата в источнике. |
+| srcTop   | Integer | Y-координата в источнике. |
+| alpha    | Integer | Значение альфы (`0`-`255`). |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.drawImageSub()
 
-Draw an image with subtractive blending.
+Рисует изображение с субтрактивным смешиванием.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                      |
-|-----------|---------|----------------------------------|
-| dstImage  | Object  | Destination image.               |
-| dstLeft   | Integer | X coordinate in destination.     |
-| dstTop    | Integer | Y coordinate in destination.     |
-| dstWidth  | Integer | Width to draw.                   |
-| dstHeight | Integer | Height to draw.                  |
-| srcImage  | Object  | Source image.                    |
-| srcLeft   | Integer | X coordinate in source.          |
-| srcTop    | Integer | Y coordinate in source.          |
-| alpha     | Integer | Alpha value (`0`-`255`).         |
+| Параметр | Тип     | Описание                  |
+|----------|---------|---------------------------|
+| dstImage | Object  | Целевое изображение.      |
+| dstLeft  | Integer | X-координата в цели.      |
+| dstTop   | Integer | Y-координата в цели.      |
+| dstWidth | Integer | Ширина отрисовки.         |
+| dstHeight| Integer | Высота отрисовки.         |
+| srcImage | Object  | Исходное изображение.     |
+| srcLeft  | Integer | X-координата в источнике. |
+| srcTop   | Integer | Y-координата в источнике. |
+| alpha    | Integer | Значение альфы (`0`-`255`). |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.makeColor()
 
-Create a pixel value from RGBA components.
+Создаёт значение пикселя из компонентов RGBA.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description      |
-|-----------|---------|------------------|
-| r         | Integer | Red (0-255).     |
-| g         | Integer | Green (0-255).   |
-| b         | Integer | Blue (0-255).    |
-| a         | Integer | Alpha (0-255).   |
+| Параметр | Тип     | Описание        |
+|----------|---------|-----------------|
+| r        | Integer | Красный (0-255). |
+| g        | Integer | Зелёный (0-255). |
+| b        | Integer | Синий (0-255).   |
+| a        | Integer | Альфа (0-255).   |
 
-### Return
+### Возврат
 
-A pixel value.
+Значение пикселя.
 
 ---
 
 ## Suika.fillImageRect()
 
-Fill a rectangular area on an image with a color.
+Заполняет прямоугольную область изображения цветом.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                         |
-|-----------|---------|-------------------------------------|
-| image     | Object  | Target image.                       |
-| left      | Integer | X coordinate.                       |
-| top       | Integer | Y coordinate.                       |
-| width     | Integer | Width.                              |
-| height    | Integer | Height.                             |
-| color     | Integer | Color created by Suika.makeColor(). |
+| Параметр | Тип    | Описание                                |
+|----------|--------|-----------------------------------------|
+| image    | Object | Целевое изображение.                    |
+| left     | Integer | X-координата.                           |
+| top      | Integer | Y-координата.                           |
+| width    | Integer | Ширина.                                 |
+| height   | Integer | Высота.                                 |
+| color    | Integer | Цвет, созданный `Suika.makeColor()`.    |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.reloadStageImages()
 
-Reload the stage images by the config.
+Перезагружает изображения сцены по конфигурации.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean that represents success or failure.
+Булево значение, показывающее успех или неудачу.
 
 ---
 
 ## Suika.reloadStagePositions()
 
-Reload the stage positions by the config.
+Перезагружает позиции сцены по конфигурации.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getLayerX()
 
-Get the current position of a specific layer.
+Возвращает текущую позицию указанного слоя.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| layer    | Integer | Индекс слоя сцены.     |
 
-### Return
+### Возврат
 
-Integer value of the coordinate.
+Целочисленное значение координаты.
 
 ---
 
 ## Suika.getLayerY()
 
-Get the current position of a specific layer.
+Возвращает текущую позицию указанного слоя.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| layer    | Integer | Индекс слоя сцены.     |
 
-### Return
+### Возврат
 
-Integer value of the coordinate.
+Целочисленное значение координаты.
 
 ---
 
 ## Suika.setLayerPosition()
 
-Set the position of a specific layer.
+Устанавливает позицию указанного слоя.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| x         | Integer | X coordinate.              |
-| y         | Integer | Y coordinate.              |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| layer    | Integer | Индекс слоя сцены.     |
+| x        | Integer | X-координата.          |
+| y        | Integer | Y-координата.          |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getLayerScaleX()
 
-Get the X scaling factor of a specific layer.
+Возвращает коэффициент масштабирования по X для указанного слоя.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| layer    | Integer | Индекс слоя сцены.     |
 
-### Return
+### Возврат
 
-Float value of the scale.
+Число с плавающей точкой, представляющее масштаб.
 
 ---
 
 ## Suika.getLayerScaleY()
 
-Get the Y scaling factor of a specific layer.
+Возвращает коэффициент масштабирования по Y для указанного слоя.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| layer    | Integer | Индекс слоя сцены.     |
 
-### Return
+### Возврат
 
-Float value of the scale.
+Число с плавающей точкой, представляющее масштаб.
 
 ---
 
 ## Suika.setLayerScale()
 
-Set the scaling factor of a specific layer.
+Устанавливает коэффициент масштабирования указанного слоя.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| scale_x   | Float   | Horizontal scale.          |
-| scale_y   | Float   | Vertical scale.            |
+| Параметр | Тип   | Описание            |
+|----------|-------|---------------------|
+| layer    | Integer | Индекс слоя сцены. |
+| scale_x  | Float | Горизонтальный масштаб. |
+| scale_y  | Float | Вертикальный масштаб.   |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getLayerRotate()
 
-Get the rotation angle of a specific layer.
+Возвращает угол поворота указанного слоя.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| layer    | Integer | Индекс слоя сцены.     |
 
-### Return
+### Возврат
 
-Returns float.
+Возвращает число с плавающей точкой.
 
 ---
 
 ## Suika.setLayerRotate()
 
-Set the rotation angle of a specific layer.
+Устанавливает угол поворота указанного слоя.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| rot       | Float   | Rotation angle in radians. |
+| Параметр | Тип   | Описание                    |
+|----------|-------|-----------------------------|
+| layer    | Integer | Индекс слоя сцены.        |
+| rot      | Float | Угол поворота в радианах.   |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getLayerDim()
 
-Get the dimming state of a specific layer.
+Возвращает состояние затемнения указанного слоя.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| layer    | Integer | Индекс слоя сцены.     |
 
-### Return
+### Возврат
 
-Returns boolean.
+Возвращает булево значение.
 
 ---
 
 ## Suika.setLayerDim()
 
-Set the dimming state of a specific layer.
+Устанавливает состояние затемнения указанного слоя.
 
-### Parameters (Dictionary) (Set)
+### Параметры (словарь) (Set)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| dim       | Boolean | Whether to dim the layer.  |
+| Параметр | Тип     | Описание                    |
+|----------|---------|-----------------------------|
+| layer    | Integer | Индекс слоя сцены.          |
+| dim      | Boolean | Затемнять ли слой.          |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getLayerAlpha()
 
-Get the transparency of a specific layer.
+Возвращает прозрачность указанного слоя.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| layer    | Integer | Индекс слоя сцены.     |
 
-### Return
+### Возврат
 
-Returns integer.
+Возвращает целое число.
 
 ---
 
 ## Suika.setLayerAlpha()
 
-Set the transparency of a specific layer.
+Устанавливает прозрачность указанного слоя.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| alpha     | Integer | Alpha value (0-255).       |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| layer    | Integer | Индекс слоя сцены.     |
+| alpha    | Integer | Значение альфы (0-255). |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.setLayerBlend()
 
-Set the blending mode for a layer.
+Устанавливает режим смешивания для слоя.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| blend     | Integer | Blend mode (Alpha, Add, Sub). |
+| Параметр | Тип     | Описание                        |
+|----------|---------|---------------------------------|
+| layer    | Integer | Индекс слоя сцены.              |
+| blend    | Integer | Режим смешивания (Alpha, Add, Sub). |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.setLayerFile()
 
-Set a file to be displayed on a layer.
+Устанавливает файл, отображаемый на слое.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| file_name | String  | Path to the image file.    |
+| Параметр  | Тип    | Описание                  |
+|-----------|--------|---------------------------|
+| layer     | Integer | Индекс слоя сцены.        |
+| file_name | String  | Путь к файлу изображения. |
 
-### Return
+### Возврат
 
-Boolean that represents success or failure.
+Булево значение, показывающее успех или неудачу.
 
 ---
 
 ## Suika.setLayerFrame()
 
-Set the frame index for eye blinking and lip synchronization.
+Устанавливает индекс кадра для моргания глаз и синхронизации губ.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| frame     | Integer | Frame index.               |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| layer    | Integer | Индекс слоя сцены.     |
+| frame    | Integer | Индекс кадра.          |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getLayerText()
 
-Get the string displayed on a text layer.
+Возвращает строку, отображаемую на текстовом слое.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Index of the text layer.   |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| index    | Integer | Индекс текстового слоя. |
 
-### Return
+### Возврат
 
-Returns string.
+Возвращает строку.
 
 ---
 
 ## Suika.setLayerText()
 
-Set the string displayed on a text layer.
+Устанавливает строку, отображаемую на текстовом слое.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Index of the text layer.   |
-| text      | String  | Text message to set.       |
+| Параметр | Тип    | Описание                |
+|----------|--------|-------------------------|
+| index    | Integer | Индекс текстового слоя. |
+| text     | String  | Устанавливаемый текст.  |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getSysBtnIdleImage()
 
-Get the sysbtn idle image.
+Возвращает изображение состояния ожидания системной кнопки.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns an image object.
+Возвращает объект изображения.
 
 ---
 
 ## Suika.getSysBtnHoverImage()
 
-Get the sysbtn hover image.
+Возвращает изображение состояния наведения системной кнопки.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns an image object.
+Возвращает объект изображения.
 
 ---
 
 ## Suika.clearStageBasic()
 
-Clear the basic layers.
+Очищает базовые слои.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns an image object.
+Возвращает объект изображения.
 
 ---
 
 ## Suika.clearStage()
 
-Clear the stage and make it initial state.
+Очищает сцену и возвращает её в начальное состояние.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns an image object.
+Возвращает объект изображения.
 
 ---
 
 ## Suika.chposToLayer()
 
-Convert a character position to a stage layer index.
+Преобразует позицию персонажа в индекс слоя сцены.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| chpos     | Integer | Character position.   |
+| Параметр | Тип     | Описание              |
+|----------|---------|-----------------------|
+| chpos    | Integer | Позиция персонажа.    |
 
-### Return
+### Возврат
 
-Returns an integer.
+Возвращает целое число.
 
 ---
 
 ## Suika.chposToEyeLayer()
 
-Convert a character position to a stage layer index (character eye).
+Преобразует позицию персонажа в индекс слоя сцены для глаз персонажа.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| chpos     | Integer | Character position.   |
+| Параметр | Тип     | Описание              |
+|----------|---------|-----------------------|
+| chpos    | Integer | Позиция персонажа.    |
 
-### Return
+### Возврат
 
-Returns an integer.
+Возвращает целое число.
 
 ---
 
 ## Suika.chposToLipLayer()
 
-Convert a character position to a stage layer index (character lip).
+Преобразует позицию персонажа в индекс слоя сцены для губ персонажа.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| chpos     | Integer | Character position.   |
+| Параметр | Тип     | Описание              |
+|----------|---------|-----------------------|
+| chpos    | Integer | Позиция персонажа.    |
 
-### Return
+### Возврат
 
-Returns an integer.
+Возвращает целое число.
 
 ---
 
 ## Suika.layerToChpos()
 
-Convert a stage layer index to a character position.
+Преобразует индекс слоя сцены в позицию персонажа.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description           |
-|-----------|---------|-----------------------|
-| layer     | Integer | Layer index.          |
+| Параметр | Тип     | Описание         |
+|----------|---------|------------------|
+| layer    | Integer | Индекс слоя.     |
 
-### Return
+### Возврат
 
-Returns an integer.
+Возвращает целое число.
 
 ---
 
 ## Suika.renderStage()
 
-Render the stage with all stage layers.
+Отрисовывает сцену со всеми слоями.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.startFade()
 
-Start a transition effect.
+Запускает эффект перехода.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                  |
-|-----------|---------|----------------------------------------------|
-| desc      | Array   | Fade descriptor.                             |
-| method    | String  | Fading method.                               |
-| time      | Float   | Duration in seconds.                         |
-| ruleImage | Object  | Rule image object (optional).                |
+| Параметр  | Тип    | Описание                               |
+|-----------|--------|----------------------------------------|
+| desc      | Array  | Описание перехода.                     |
+| method    | String | Метод перехода.                        |
+| time      | Float  | Длительность в секундах.               |
+| ruleImage | Object | Объект rule image (необязательно).     |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.getShakeOffset()
 
-Get the offset for the shake command.
+Возвращает смещение для команды shake.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-An object that contains:
+Объект, содержащий:
 * x
 * y
 
@@ -2323,182 +2322,182 @@ An object that contains:
 
 ## Suika.setShakeOffset()
 
-Set the offset for the shake command.
+Устанавливает смещение для команды shake.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description    |
-|-----------|---------|----------------|
-| x         | Integer | X offset.      |
-| y         | Integer | Y offset.      |
+| Параметр | Тип     | Описание    |
+|----------|---------|------------|
+| x        | Integer | Смещение по X. |
+| y        | Integer | Смещение по Y. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.isFadeRunning()
 
-Check if the fading is running.
+Проверяет, выполняется ли переход.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.finishFade()
 
-Immediately end the fading effect.
+Немедленно завершает эффект перехода.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.setChNameMapping()
 
-Specify a character name index for a character position.
+Задаёт индекс имени персонажа для позиции персонажа.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter   | Type    | Description                |
-|-------------|---------|----------------------------|
-| chpos       | Integer | Character position.        |
-| chNameIndex | Integer | Character name index.      |
+| Параметр    | Тип     | Описание               |
+|-------------|---------|------------------------|
+| chpos       | Integer | Позиция персонажа.     |
+| chNameIndex | Integer | Индекс имени персонажа. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getTalkingChpos()
 
-Get the position of the character currently speaking.
+Возвращает позицию персонажа, который сейчас говорит.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns an integer.
+Возвращает целое число.
 
 ---
 
 ## Suika.setChTalking()
 
-Set the talking character.
+Устанавливает говорящего персонажа.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| chpos     | Integer | Character position.        |
+| Параметр | Тип     | Описание              |
+|----------|---------|-----------------------|
+| chpos    | Integer | Позиция персонажа.    |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getTalkingChpos()
 
-Get the talker character position.
+Возвращает позицию говорящего персонажа.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns an integer.
+Возвращает целое число.
 
 ---
 
 ## Suika.updateChDimByTalkingCh()
 
-Automatically update character dimming based on who is speaking.
+Автоматически обновляет затемнение персонажей в зависимости от того, кто говорит.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.forceChDim()
 
-Update the character dimming manually.
+Обновляет затемнение персонажей вручную.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| chpos     | Integer | Character position.        |
-| dim       | Boolean | Dim or not.                |
+| Параметр | Тип     | Описание              |
+|----------|---------|-----------------------|
+| chpos    | Integer | Позиция персонажа.    |
+| dim      | Boolean | Затемнять или нет.    |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getChDim()
 
-Get the dimming state.
+Возвращает состояние затемнения.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| chpos     | Integer | Character position.        |
+| Параметр | Тип     | Описание              |
+|----------|---------|-----------------------|
+| chpos    | Integer | Позиция персонажа.    |
 
-### Return
+### Возврат
 
-Returns a boolean.
+Возвращает булево значение.
 
 ---
 
 ## Suika.fillNameBox()
 
-Fill the name box by the name box image.
+Заполняет имябокс изображением имени.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getNameBoxRect()
 
-Get the name box position and size.
+Возвращает позицию и размер name box.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Object.
+Объект.
 
 * x
 * y
@@ -2509,61 +2508,61 @@ Object.
 
 ## Suika.showNameBox()
 
-Show or hides the name box.
+Показывает или скрывает name box.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| show      | Boolean | Show or hide.              |
+| Параметр | Тип     | Описание         |
+|----------|---------|------------------|
+| show     | Boolean | Показать или скрыть. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.fillMessageBox()
 
-Fill the message box by the message box image.
+Заполняет message box изображением message box.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.showMessageBox()
 
-Show or hide the message box.
+Показывает или скрывает message box.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| show      | Boolean | Whether to show the box.   |
+| Параметр | Тип     | Описание            |
+|----------|---------|---------------------|
+| show     | Boolean | Показывать ли окно. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getMessageBoxRect()
 
-Get the message box rect.
+Возвращает прямоугольник message box.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-An object that contains:
+Объект, содержащий:
 * `x`
 * `y`
 * `w`
@@ -2573,64 +2572,64 @@ An object that contains:
 
 ## Suika.setClickPosition()
 
-Set the click animation position.
+Устанавливает позицию анимации клика.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| x         | Integer | X position.                |
-| y         | Integer | Y position.                |
+| Параметр | Тип     | Описание       |
+|----------|---------|----------------|
+| x        | Integer | Позиция по X.  |
+| y        | Integer | Позиция по Y.  |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.showClick()
 
-Show or hide the click animation.
+Показывает или скрывает анимацию клика.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| show      | Boolean | Show or hide.              |
+| Параметр | Тип     | Описание         |
+|----------|---------|------------------|
+| show     | Boolean | Показать или скрыть. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.setClickIndex()
 
-Set the index of the click animation frame.
+Устанавливает индекс кадра анимации клика.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Frame index.               |
+| Параметр | Тип     | Описание       |
+|----------|---------|----------------|
+| index    | Integer | Индекс кадра.  |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getClickRect()
 
-Get the click animation rect.
+Возвращает прямоугольник анимации клика.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-An object that contains:
+Объект, содержащий:
 * `x`
 * `y`
 * `w`
@@ -2640,65 +2639,65 @@ An object that contains:
 
 ## Suika.fillChooseBoxIdleImage()
 
-Fill a choose box idle layer by the choose box idle image.
+Заполняет idle-слой choice box изображением состояния idle.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Choose box index.          |
+| Параметр | Тип     | Описание              |
+|----------|---------|-----------------------|
+| index    | Integer | Индекс choice box.    |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.fillChooseBoxHoverImage()
 
-Fill a choose box hover layer by the choose box hover image.
+Заполняет hover-слой choice box изображением состояния hover.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Choose box index.          |
+| Параметр | Тип     | Описание              |
+|----------|---------|-----------------------|
+| index    | Integer | Индекс choice box.    |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.showChoosebox()
 
-Show or hide a choice box.
+Показывает или скрывает choice box.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter  | Type    | Description                 |
-|------------|---------|-----------------------------|
-| index      | Integer | Choice box index. (`0`-`7`) |
-| showIdle   | Boolean | Show idle state.            |
-| showHover  | Boolean | Show hover state.           |
+| Параметр | Тип     | Описание                  |
+|----------|---------|---------------------------|
+| index    | Integer | Индекс choice box. (`0`-`7`) |
+| showIdle | Boolean | Показывать состояние idle. |
+| showHover| Boolean | Показывать состояние hover. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getChooseBoxRect()
 
-Get the choose box rect.
+Возвращает прямоугольник choice box.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-An object that contains:
+Объект, содержащий:
 * `x`
 * `y`
 * `w`
@@ -2708,2167 +2707,2161 @@ An object that contains:
 
 ## Suika.showAutoModeBanner()
 
-Show or hide the auto mode banner.
+Показывает или скрывает баннер авто-режима.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter  | Type    | Description                 |
-|------------|---------|-----------------------------|
-| show       | Boolean | Show or hide.               |
+| Параметр | Тип     | Описание         |
+|----------|---------|------------------|
+| show     | Boolean | Показать или скрыть. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.showSkipModeBanner()
 
-Show or hide the skip mode banner.
+Показывает или скрывает баннер режима пропуска.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter  | Type    | Description                 |
-|------------|---------|-----------------------------|
-| show       | Boolean | Show or hide.               |
+| Параметр | Тип     | Описание         |
+|----------|---------|------------------|
+| show     | Boolean | Показать или скрыть. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.renderImage()
 
-Perform direct rendering of an image to the screen.
+Выполняет прямую отрисовку изображения на экран.
 
-Note that you should consider using the stage layers for normal rendering.
-This API is useful for effects.
+Учтите, что для обычной отрисовки лучше использовать слои сцены.
+Этот API полезен для эффектов.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Omissible    | Type    | Description                                |
-|-----------|--------------|---------|--------------------------------------------|
-| dstLeft   | No           | Integer | Destination top-left X position.           |
-| dstTop    | No           | Integer | Destination top-left Y position.           |
-| image     | No           | Object  | Image.                                     |
-| srcLeft   | No           | Integer | Source top-left X position.                |
-| srcTop    | No           | Integer | Source top-left Y position.                |
-| srcWidth  | No           | Integer | Source width.                              |
-| srcHeight | No           | Integer | Source height.                             |
-| alpha     | No           | Integer | Alpha value. (`0`-`255`)                   |
-| blend     | No           | Integer | Blend type.                                |
+| Параметр | Omissible | Тип     | Описание                           |
+|----------|-----------|---------|------------------------------------|
+| dstLeft  | No        | Integer | X-координата левого верхнего угла назначения. |
+| dstTop   | No        | Integer | Y-координата левого верхнего угла назначения. |
+| image    | No        | Object  | Изображение.                       |
+| srcLeft  | No        | Integer | X-координата левого верхнего угла источника. |
+| srcTop   | No        | Integer | Y-координата левого верхнего угла источника. |
+| srcWidth | No        | Integer | Ширина источника.                  |
+| srcHeight| No        | Integer | Высота источника.                  |
+| alpha    | No        | Integer | Значение альфы (`0`-`255`).       |
+| blend    | No        | Integer | Тип смешивания.                   |
 
-### Blend Types
+### Типы смешивания
 
-| Name                 | Description       |
-|----------------------|-------------------|
-| Suika.BLEND_ALPHA    | Alpha blending.   |
-| Suika.BLEND_ADD      | Add blending.     |
-| Suika.BLEND_SUB      | Sub blending.     |
+| Name              | Description         |
+|-------------------|---------------------|
+| Suika.BLEND_ALPHA | Альфа-смешивание.   |
+| Suika.BLEND_ADD   | Аддитивное смешивание. |
+| Suika.BLEND_SUB   | Субтрактивное смешивание. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.renderImage3d()
 
-Perform direct rendering of an image to the screen with 3D transformation.
+Выполняет прямую отрисовку изображения на экран с 3D-преобразованием.
 
-Note that you should consider using the stage layers for normal rendering.
-This API is useful for effects.
+Учтите, что для обычной отрисовки лучше использовать слои сцены.
+Этот API полезен для эффектов.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Omissible    | Type    | Description                                |
-|-----------|--------------|---------|--------------------------------------------|
-| x1        | No           | Integer | Destination vertex 1 X position.           |
-| y1        | No           | Integer | Destination vertex 1 Y position.           |
-| x2        | No           | Integer | Destination vertex 2 X position.           |
-| y2        | No           | Integer | Destination vertex 2 Y position.           |
-| x3        | No           | Integer | Destination vertex 3 X position.           |
-| y3        | No           | Integer | Destination vertex 3 Y position.           |
-| x4        | No           | Integer | Destination vertex 4 X position.           |
-| y4        | No           | Integer | Destination vertex 4 Y position.           |
-| tex       | No           | Object  | Image.                                     |
-| srcLeft   | No           | Integer | Source top-left X position.                |
-| srcTop    | No           | Integer | Source top-left Y position.                |
-| srcWidth  | No           | Integer | Source width.                              |
-| srcHeight | No           | Integer | Source height.                             |
-| alpha     | No           | Integer | Alpha value. (`0`-`255`)                   |
+| Параметр | Omissible | Тип     | Описание                           |
+|----------|-----------|---------|------------------------------------|
+| x1       | No        | Integer | Позиция X вершины назначения 1.    |
+| y1       | No        | Integer | Позиция Y вершины назначения 1.    |
+| x2       | No        | Integer | Позиция X вершины назначения 2.    |
+| y2       | No        | Integer | Позиция Y вершины назначения 2.    |
+| x3       | No        | Integer | Позиция X вершины назначения 3.    |
+| y3       | No        | Integer | Позиция Y вершины назначения 3.    |
+| x4       | No        | Integer | Позиция X вершины назначения 4.    |
+| y4       | No        | Integer | Позиция Y вершины назначения 4.    |
+| tex      | No        | Object  | Изображение.                       |
+| srcLeft  | No        | Integer | X-координата левого верхнего угла источника. |
+| srcTop   | No        | Integer | Y-координата левого верхнего угла источника. |
+| srcWidth | No        | Integer | Ширина источника.                  |
+| srcHeight| No        | Integer | Высота источника.                  |
+| alpha    | No        | Integer | Значение альфы (`0`-`255`).       |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.startKirakira()
 
-Start Kirakira effect.
+Запускает эффект Kirakira.
 
-Kirakira effect is an animation that is shown at the screen position where the mouse cursor is clicked.
+Эффект Kirakira - это анимация, которая показывается в той точке экрана, где был щёлкнут курсор мыши.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.renderKirakira()
 
-Render Kirakira effect.
+Отрисовывает эффект Kirakira.
 
 ---
 
 ## Suika.setMixerInputFile()
 
-Play a sound file on a specific mixer track.
+Воспроизводит звуковой файл на указанной дорожке микшера.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Omissible    | Type    | Description                                |
-|-----------|--------------|---------|--------------------------------------------|
-| track     | No           | String  | Mixer track name.                          |
-| file      | No           | String  | Path to the sound file.                    |
-| isLooped  | Yes(`false`) | Boolean | Whether to loop the playback.              |
+| Параметр | Omissible   | Тип     | Описание                         |
+|----------|-------------|---------|----------------------------------|
+| track    | No          | String  | Имя дорожки микшера.             |
+| file     | No          | String  | Путь к звуковому файлу.          |
+| isLooped | Yes(`false`)| Boolean | Зацикливать ли воспроизведение.  |
 
-### Track Names
+### Имена дорожек
 
-| Name   | Description              |
-|--------|--------------------------|
-| bgm    | Background music track.  |
-| se     | Sound effect track.      |
-| voice  | Character voice track.   |
-| sys    | System sound track.      |
+| Name   | Description                  |
+|--------|------------------------------|
+| bgm    | Дорожка фоновой музыки.      |
+| se     | Дорожка звуковых эффектов.   |
+| voice  | Дорожка голоса персонажа.    |
+| sys    | Дорожка системных звуков.    |
 
-### Return
+### Возврат
 
-Boolean that represents whether the file was opened successfully.
+Булево значение, показывающее, удалось ли открыть файл.
 
 ---
 
 ## Suika.setMixerVolume()
 
-Set the volume for a specific mixer track.
+Устанавливает громкость указанной дорожки микшера.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| track     | String  | Mixer track name.                          |
-| vol       | Float   | Volume level (0.0 to 1.0).                 |
-| span      | Float   | Fade duration in seconds.                  |
+| Параметр | Тип    | Описание                              |
+|----------|--------|---------------------------------------|
+| track    | String | Имя дорожки микшера.                  |
+| vol      | Float  | Уровень громкости (0.0 to 1.0).       |
+| span     | Float  | Длительность плавного изменения в секундах. |
 
-### Track Names
+### Имена дорожек
 
-| Name   | Description              |
-|--------|--------------------------|
-| bgm    | Background music track.  |
-| se     | Sound effect track.      |
-| voice  | Character voice track.   |
-| sys    | System sound track.      |
+| Name   | Description                  |
+|--------|------------------------------|
+| bgm    | Дорожка фоновой музыки.      |
+| se     | Дорожка звуковых эффектов.   |
+| voice  | Дорожка голоса персонажа.    |
+| sys    | Дорожка системных звуков.    |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getMixerVolume()
 
-Get the volume for a specific mixer track.
+Возвращает громкость указанной дорожки микшера.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| track     | String  | Mixer track name.                          |
-| volume    | Float   | Volume level (0.0 to 1.0).                 |
-| span      | Float   | Fade duration in seconds.                  |
+| Параметр | Тип    | Описание                              |
+|----------|--------|---------------------------------------|
+| track    | String | Имя дорожки микшера.                  |
+| volume   | Float  | Уровень громкости (0.0 to 1.0).       |
+| span     | Float  | Длительность плавного изменения в секундах. |
 
-### Track Names
+### Имена дорожек
 
-| Name   | Description              |
-|--------|--------------------------|
-| bgm    | Background music track.  |
-| se     | Sound effect track.      |
-| voice  | Character voice track.   |
-| sys    | System sound track.      |
+| Name   | Description                  |
+|--------|------------------------------|
+| bgm    | Дорожка фоновой музыки.      |
+| se     | Дорожка звуковых эффектов.   |
+| voice  | Дорожка голоса персонажа.    |
+| sys    | Дорожка системных звуков.    |
 
-### Return
+### Возврат
 
-Returns float.
+Возвращает число с плавающей точкой.
 
 ---
 
 ## Suika.setMasterVolume()
 
-Set the master volume affecting all tracks.
+Устанавливает общую громкость для всех дорожек.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| volume    | Float   | Master volume level (0.0 to 1.0).          |
+| Параметр | Тип   | Описание                          |
+|----------|-------|-----------------------------------|
+| volume   | Float | Общая громкость (0.0 to 1.0).     |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getMasterVolume()
 
-Get the master volume affecting all tracks.
+Возвращает общую громкость, влияющую на все дорожки.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns float.
+Возвращает число с плавающей точкой.
 
 ---
 
 ## Suika.setMixerGlobalVolume()
 
-Set the global volume for a track (often used for config settings).
+Устанавливает глобальную громкость для дорожки, часто используется для настроек конфигурации.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| track     | String  | Mixer track name.                          |
-| vol       | Float   | Global volume level.                       |
+| Параметр | Тип    | Описание                   |
+|----------|--------|----------------------------|
+| track    | String | Имя дорожки микшера.       |
+| vol      | Float  | Уровень глобальной громкости. |
 
-### Track Names
+### Имена дорожек
 
-| Name   | Description              |
-|--------|--------------------------|
-| bgm    | Background music track.  |
-| se     | Sound effect track.      |
-| voice  | Character voice track.   |
-| sys    | System sound track.      |
+| Name   | Description                  |
+|--------|------------------------------|
+| bgm    | Дорожка фоновой музыки.      |
+| se     | Дорожка звуковых эффектов.   |
+| voice  | Дорожка голоса персонажа.    |
+| sys    | Дорожка системных звуков.    |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getMixerGlobalVolume()
 
-Get the global volume for a track (often used for config settings).
+Возвращает глобальную громкость для дорожки, часто используемую в настройках конфигурации.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| track     | String  | Mixer track name.                          |
+| Параметр | Тип    | Описание                   |
+|----------|--------|----------------------------|
+| track    | String | Имя дорожки микшера.       |
 
-### Track Names
+### Имена дорожек
 
-| Name   | Description              |
-|--------|--------------------------|
-| bgm    | Background music track.  |
-| se     | Sound effect track.      |
-| voice  | Character voice track.   |
-| sys    | System sound track.      |
+| Name   | Description                  |
+|--------|------------------------------|
+| bgm    | Дорожка фоновой музыки.      |
+| se     | Дорожка звуковых эффектов.   |
+| voice  | Дорожка голоса персонажа.    |
+| sys    | Дорожка системных звуков.    |
 
-### Return
+### Возврат
 
-Returns float.
+Возвращает число с плавающей точкой.
 
 ---
 
 ## Suika.setCharacterVolume()
 
-Set the volume for a specific character's voice.
+Устанавливает громкость голоса конкретного персонажа.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| index     | Integer | Character name index.                      |
-| vol       | Float   | Volume level.                              |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| index    | Integer | Индекс имени персонажа. |
+| vol      | Float   | Уровень громкости.     |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getCharacterVolume()
 
-Get the volume for a specific character's voice.
+Возвращает громкость голоса конкретного персонажа.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| ch_index  | Integer | Character name index.                      |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| ch_index | Integer | Индекс имени персонажа. |
 
-### Return
+### Возврат
 
-Get returns float.
+Возвращает число с плавающей точкой.
 
 ---
 
 ## Suika.isMixerSoundFinished()
 
-Check if the playback on a specific track is finished.
+Проверяет, завершилось ли воспроизведение на указанной дорожке.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| track     | Integer | Mixer track index.                         |
+| Параметр | Тип     | Описание                |
+|----------|---------|-------------------------|
+| track    | Integer | Индекс дорожки микшера. |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.getTrackFileName()
 
-Get the file name of the sound currently loaded in a track.
+Возвращает имя файла звука, который сейчас загружен на дорожку.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| track     | Integer | Mixer track index.                         |
+| Параметр | Тип     | Описание                |
+|----------|---------|-------------------------|
+| track    | Integer | Индекс дорожки микшера. |
 
-### Return
+### Возврат
 
-String representing the file path.
+Строка, представляющая путь к файлу.
 
 ---
 
 ## Suika.applyCharacterVolume()
 
-Apply a character's specific volume setting to the VOICE track.
+Применяет индивидуальную громкость персонажа к дорожке VOICE.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| ch        | Integer | Character name index.                      |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| ch       | Integer | Индекс имени персонажа. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.enableSysBtn()
 
-Control the system button.
+Управляет системной кнопкой.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| isEnabled | Boolean | Enable the system button or not.           |
+| Параметр  | Тип     | Описание                     |
+|-----------|---------|------------------------------|
+| isEnabled | Boolean | Включать ли системную кнопку. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.isSysBtnEnabled()
 
-Check if the system button is enabled.
+Проверяет, включена ли системная кнопка.
 
-### Parameters
+### Параметры
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns a boolean value. 
+Возвращает булево значение.
 
 ---
 
 ## Suika.updateSysBtnState()
 
-Update the mouse tracking for the system button.
+Обновляет отслеживание мыши для системной кнопки.
 
-### Parameters
+### Параметры
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.isSysBtnPointed()
 
-Check if the system button is pointed.
+Проверяет, наведён ли курсор на системную кнопку.
 
-### Parameters
+### Параметры
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns a boolean value.
+Возвращает булево значение.
 
 ---
 
 ## Suika.isSysBtnClicked()
 
-Check if the system button is clicked.
+Проверяет, нажата ли системная кнопка.
 
-### Parameters
+### Параметры
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns a boolean value.
+Возвращает булево значение.
 
 ---
 
 ## Suika.drawTextOnLayer()
 
-Draw a text on a specified layer.
+Рисует текст на указанном слое.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter    | Type    | Description               |
-|--------------|---------|---------------------------|
-| layer        | Integer | Target stage layer index. |
-| fontType     | Integer | Font selection index.     |
-| fontSize     | Integer | Size of the font.         |
-| color        | Integer | Color.                    |
-| outlineWidth | Integer | Outline width.            |
-| outlineColor | Integer | Outline color.            |
-| lineMargin   | Integer | Line margin.              |
-| charMargin   | Integer | Character margin.         |
-| x            | Integer | Bounding box X position.  |
-| y            | Integer | Bounding box Y position.  |
-| width        | Integer | Bounding box width.       |
-| height       | Integer | Bounding box height.      |
-| text         | String  | Text.                     |
+| Параметр    | Тип     | Описание                     |
+|-------------|---------|------------------------------|
+| layer       | Integer | Индекс целевого слоя сцены.  |
+| fontType    | Integer | Индекс выбора шрифта.        |
+| fontSize    | Integer | Размер шрифта.               |
+| color       | Integer | Цвет.                        |
+| outlineWidth| Integer | Толщина контура.             |
+| outlineColor| Integer | Цвет контура.                |
+| lineMargin  | Integer | Отступ между строками.       |
+| charMargin  | Integer | Отступ между символами.      |
+| x           | Integer | Позиция X рамки.             |
+| y           | Integer | Позиция Y рамки.             |
+| width       | Integer | Ширина рамки.                |
+| height      | Integer | Высота рамки.                |
+| text        | String  | Текст.                       |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.getStringWidth()
 
-Get the total width of a UTF-8 string.
+Возвращает общую ширину UTF-8 строки.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description            |
-|-----------|---------|------------------------|
-| fontType  | Integer | Font selection index.  |
-| fontSize  | Integer | Size of the font.      |
-| text      | String  | Text.                  |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| fontType | Integer | Индекс выбора шрифта.  |
+| fontSize | Integer | Размер шрифта.         |
+| text     | String  | Текст.                 |
 
-### Return
+### Возврат
 
-Integer value of the width in pixels.
+Целочисленная ширина в пикселях.
 
 ---
 
 ## Suika.getStringHeight()
 
-Get the total height of a UTF-8 string.
+Возвращает общую высоту UTF-8 строки.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description            |
-|-----------|---------|------------------------|
-| fontType  | Integer | Font selection index.  |
-| fontSize  | Integer | Size of the font.      |
-| text      | String  | Text.                  |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| fontType | Integer | Индекс выбора шрифта.  |
+| fontSize | Integer | Размер шрифта.         |
+| text     | String  | Текст.                 |
 
-### Return
+### Возврат
 
-Integer value of the height in pixels.
+Целочисленная высота в пикселях.
 
 ---
 
 ## Suika.drawGlyph()
 
-Draw a single glyph onto an image.
+Рисует один глиф на изображении.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter     | Type    | Description                                |
-|---------------|---------|--------------------------------------------|
-| img           | Object  | Target image.                              |
-| font_type     | Integer | Font selection index.                      |
-| font_size     | Integer | Rendering font size.                       |
-| base_font_size| Integer | Base font size for metrics.                |
-| outline_size  | Integer | Width of the outline.                      |
-| x             | Integer | X coordinate.                              |
-| y             | Integer | Y coordinate.                              |
-| color         | Pixel   | Main text color.                           |
-| outline_color | Pixel   | Outline color.                             |
-| codepoint     | Integer | UTF-32 code point.                         |
-| is_dim        | Boolean | Whether to apply dimming.                  |
+| Параметр      | Тип     | Описание                           |
+|---------------|---------|------------------------------------|
+| img           | Object  | Целевое изображение.               |
+| font_type     | Integer | Индекс выбора шрифта.              |
+| font_size     | Integer | Размер шрифта при отрисовке.       |
+| base_font_size| Integer | Базовый размер шрифта для метрик.  |
+| outline_size  | Integer | Толщина контура.                   |
+| x             | Integer | X-координата.                      |
+| y             | Integer | Y-координата.                      |
+| color         | Pixel   | Основной цвет текста.              |
+| outline_color | Pixel   | Цвет контура.                      |
+| codepoint     | Integer | Кодовая точка UTF-32.              |
+| is_dim        | Boolean | Применять ли затемнение.           |
 
-### Return
+### Возврат
 
-Boolean that represents success.
+Булево значение, показывающее успех.
 
 ---
 
 ## Suika.createDrawMsg()
 
-Create a complex message drawing context for high-level text rendering.
+Создаёт контекст сложной отрисовки сообщения для высокоуровневого текстового рендеринга.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter      | Type     | Description            |
-|----------------|----------|------------------------|
-| image          | Integer  | Destination image.     |
-| text           | String   | Message to draw.       |
-| fontType       | Integer  | Font selection.        |
-| fontSize       | Integer  | Font size.             |
-| baseFontSize   | Integer  | Base font size.        |
-| rubySize       | Integer  | Ruby size.             |
-| outlineSize    | Integer  | Outline width.         |
-| penX           | Integer  | Pen X position.        |
-| penY           | Integer  | Pen Y position.        |
-| areaWidth      | Integer  | Draw area width.       |
-| areaHeight     | Integer  | Draw area height.      |
-| leftMargin     | Integer  | Left margin.           |
-| rightMargin    | Integer  | Right margin.          |
-| topMargin      | Integer  | Top margin.            |
-| bottomMargin   | Integer  | Bottom margin.         |
-| lineMargin     | Integer  | Line margin.           |
-| charMargin     | Integer  | Character margin.      |
-| color          | Integer  | Color.                 |
-| outlineColor   | Integer  | Outline color.         |
-| bgColor        | Integer  | Background color.      |
-| fillBg         | Boolean  | Fill background?       |
-| dim            | Boolean  | Dim?                   |
-| ignoreLF       | Boolean  | Ignore LF?             |
-| ignoreFont     | Boolean  | Ignore font change?    |
-| ignoreOutline  | Boolean  | Ignore outline change? |
-| ignoreColor    | Boolean  | Ignore color change?   |
-| ignoreSize     | Boolean  | Ignore size change?    |
-| ignorePosition | Boolean  | Ignore cursor change?  |
-| ignoreRuby     | Boolean  | Ignore ruby?           |
-| ignoreWait     | Boolean  | Ignore inline wait?    |
-| inlineWaitHook | Function | Inline wait hook.      |
-| tategaki       | Boolean  | Use tategaki?          |
+| Параметр      | Тип     | Описание                    |
+|---------------|---------|-----------------------------|
+| image         | Integer | Целевое изображение.        |
+| text          | String  | Сообщение для отрисовки.    |
+| fontType      | Integer | Выбор шрифта.               |
+| fontSize      | Integer | Размер шрифта.              |
+| baseFontSize  | Integer | Базовый размер шрифта.      |
+| rubySize      | Integer | Размер ruby.                |
+| outlineSize   | Integer | Толщина контура.            |
+| penX          | Integer | Позиция пера по X.          |
+| penY          | Integer | Позиция пера по Y.          |
+| areaWidth     | Integer | Ширина области отрисовки.   |
+| areaHeight    | Integer | Высота области отрисовки.   |
+| leftMargin    | Integer | Левый отступ.               |
+| rightMargin   | Integer | Правый отступ.              |
+| topMargin     | Integer | Верхний отступ.             |
+| bottomMargin  | Integer | Нижний отступ.              |
+| lineMargin    | Integer | Отступ между строками.      |
+| charMargin    | Integer | Отступ между символами.     |
+| color         | Integer | Цвет.                       |
+| outlineColor  | Integer | Цвет контура.               |
+| bgColor       | Integer | Цвет фона.                  |
+| fillBg        | Boolean | Заполнять фон?              |
+| dim           | Boolean | Затемнять?                  |
+| ignoreLF      | Boolean | Игнорировать LF?            |
+| ignoreFont    | Boolean | Игнорировать смену шрифта?  |
+| ignoreOutline | Boolean | Игнорировать контур?        |
+| ignoreColor   | Boolean | Игнорировать цвет?          |
+| ignoreSize    | Boolean | Игнорировать размер?        |
+| ignorePosition| Boolean | Игнорировать позицию курсора? |
+| ignoreRuby    | Boolean | Игнорировать ruby?          |
+| ignoreWait    | Boolean | Игнорировать встроенную паузу? |
+| inlineWaitHook| Function | Хук встроенной паузы.       |
+| tategaki      | Boolean | Использовать tategaki?      |
 
-### Return
+### Возврат
 
-A message drawing context object.
+Объект контекста отрисовки сообщения.
 
 ---
 
 ## Suika.destroyDrawMsg()
 
-Destroy a message drawing context.
+Уничтожает контекст отрисовки сообщения.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter      | Type     | Description            |
-|----------------|----------|------------------------|
-| context        | Object   | Draw message context.  |
+| Параметр | Тип    | Описание                 |
+|----------|--------|--------------------------|
+| context  | Object | Контекст отрисовки сообщения. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.countDrawMsgChars()
 
-Count the remaining characters excluding escape sequences.
+Считает оставшиеся символы без учёта escape-последовательностей.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter      | Type     | Description            |
-|----------------|----------|------------------------|
-| context        | Object   | Draw message context.  |
+| Параметр | Тип    | Описание                 |
+|----------|--------|--------------------------|
+| context  | Object | Контекст отрисовки сообщения. |
 
-### Return
+### Возврат
 
-Returns an integer.
+Возвращает целое число.
 
 ---
 
 ## Suika.drawMessage()
 
-Draw characters in a message up to (maxChars) characters.
+Рисует символы сообщения до значения `maxChars`.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter      | Type     | Description            |
-|----------------|----------|------------------------|
-| context        | Object   | Draw message context.  |
-| maxChars       | Integer  | Max chars.             |
+| Параметр | Тип     | Описание                 |
+|----------|---------|--------------------------|
+| context  | Object  | Контекст отрисовки сообщения. |
+| maxChars | Integer | Максимальное число символов. |
 
-### Return
+### Возврат
 
-Returns an integer that indicates the count of characters drawn in the call.
+Возвращает целое число, показывающее количество символов, отрисованных за вызов.
 
 ---
 
 ## Suika.getDrawMsgPenPosition()
 
-Get the current pen position from a drawing context.
+Возвращает текущую позицию пера из контекста отрисовки.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| context   | Object  | Drawing context.                           |
+| Параметр | Тип    | Описание            |
+|----------|--------|---------------------|
+| context  | Object | Контекст отрисовки. |
 
-### Return
+### Возврат
 
-An object containing `x` and `y`.
+Объект, содержащий `x` и `y`.
 
 ---
 
 ## Suika.isEscapeSequenceChar()
 
-Check if a character is part of an escape sequence.
+Проверяет, является ли символ частью escape-последовательности.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| c         | String | Character to check.                        |
+| Параметр | Type   | Description                                |
+|----------|--------|--------------------------------------------|
+| c        | String | Символ для проверки.                       |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.moveToTagFile()
 
-Load a new tag file and move the execution point to its beginning.
+Загружает новый файл тегов и переводит точку выполнения в его начало.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| file      | String | Path to the .novel or script file. |
+| Параметр | Тип    | Описание                          |
+|----------|--------|-----------------------------------|
+| file     | String | Путь к файлу `.novel` или файлу сценария. |
 
-### Return
+### Возврат
 
-Boolean that represents success or failure.
+Булево значение, показывающее успех или неудачу.
 
 ---
 
 ## Suika.getTagCount()
 
-Get the total number of tags in the current script file.
+Возвращает общее количество тегов в текущем файле сценария.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Integer representing the tag count.
+Целое число, представляющее количество тегов.
 
 ---
 
 ## Suika.moveToTagIndex()
 
-Move the execution pointer to a specific tag index.
+Перемещает указатель выполнения к указанному индексу тега.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Target tag index. |
+| Параметр | Тип     | Описание            |
+|----------|---------|---------------------|
+| index    | Integer | Целевой индекс тега. |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.moveToNextTag()
 
-Move the execution pointer to the very next tag.
+Перемещает указатель выполнения к следующему тегу.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.moveToLabelTag()
 
-Jump to a specific label.
+Переходит к указанной метке.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description             |
-|-----------|--------|-------------------------|
-| name      | String | Target label name.      |
+| Параметр | Тип    | Описание           |
+|----------|--------|--------------------|
+| name     | String | Имя целевой метки. |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.moveToMacroTag()
 
-Jump to a specific macro by name.
+Переходит к указанному макросу по имени.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description             |
-|-----------|--------|-------------------------|
-| name      | String | Target macro name.      |
+| Параметр | Тип    | Описание            |
+|----------|--------|---------------------|
+| name     | String | Имя целевого макроса. |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.moveToElseTag()
 
-Jump to a correspoinding else/elseif/endif tag.
+Переходит к соответствующему тегу `else`/`elseif`/`endif`.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description             |
-|-----------|--------|-------------------------|
-| name      | String | Target macro name.      |
+| Параметр | Тип    | Описание            |
+|----------|--------|---------------------|
+| name     | String | Имя целевого макроса. |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.moveToEndIfTag()
 
-Jump to a correspoinding endif tag.
+Переходит к соответствующему тегу `endif`.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description             |
-|-----------|--------|-------------------------|
-| name      | String | Target macro name.      |
+| Параметр | Тип    | Описание             |
+|----------|--------|----------------------|
+| name     | String | Имя целевого макротега. |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.moveToEndMacroTag()
 
-Jump to a correspoinding endmacro tag.
+Переходит к соответствующему тегу `endmacro`.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description             |
-|-----------|--------|-------------------------|
-| name      | String | Target macro name.      |
+| Параметр | Тип    | Описание             |
+|----------|--------|----------------------|
+| name     | String | Имя целевого макротега. |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.getTagFileName()
 
-Get the current script file name current tag.
+Возвращает имя файла сценария для текущего тега.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-String representing the file name.
+Строка, представляющая имя файла.
 
 ---
 
 ## Suika.getTagName()
 
-Get the name of the current tag.
+Возвращает имя текущего тега.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-String representing the tag name.
+Строка, представляющая имя тега.
 
 ---
 
 ## Suika.getTagPropertyCount()
 
-Get the number of the properties of the current tag.
+Возвращает количество свойств текущего тега.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-String representing the name or value.
+Строка, представляющая имя или значение.
 
 ---
 
 ## Suika.getTagPropertyName()
 
-Iterate through and retrieve the properties (arguments) of the current
-tag.
+Перебирает и возвращает свойства (аргументы) текущего тега.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description       |
-|-----------|---------|-------------------|
-| index     | Integer | Property index.   |
+| Параметр | Тип     | Описание         |
+|----------|---------|------------------|
+| index    | Integer | Индекс свойства. |
 
-### Return
+### Возврат
 
-String representing the name.
+Строка, представляющая имя.
 
 ---
 
 ## Suika.getTagPropertyValue()
 
-Iterate through and retrieve the properties (arguments) of the current
-tag.
+Перебирает и возвращает свойства (аргументы) текущего тега.
 
-### Parameters (Dictionary) (for PropertyName/Value)
+### Параметры (словарь) (для PropertyName/Value)
 
-| Parameter | Type    | Description       |
-|-----------|---------|-------------------|
-| index     | Integer | Property index.   |
+| Параметр | Тип     | Описание         |
+|----------|---------|------------------|
+| index    | Integer | Индекс свойства. |
 
-### Return
+### Возврат
 
-String representing the value.
+Строка, представляющая значение.
 
 ---
 
 ## Suika.getTagArgBool()
 
-Get a specific argument of the current tag, with support for default
-values and optionality.
+Возвращает конкретный аргумент текущего тега с поддержкой значений по умолчанию и необязательности.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                       |
+| Параметр  | Тип     | Описание                          |
 |-----------|---------|-----------------------------------|
-| name      | String  | Name of the argument.             |
-| omissible | Boolean | Whether the argument is optional. |
-| defVal    | Boolean | Default value if missing.         |
+| name      | String  | Имя аргумента.                    |
+| omissible | Boolean | Является ли аргумент необязательным. |
+| defVal    | Boolean | Значение по умолчанию, если отсутствует. |
 
-### Return
+### Возврат
 
-The value of the argument in the requested type.
+Значение аргумента в запрошенном типе.
 
 ---
 
 ## Suika.getTagArgInt()
 
-Get a specific argument of the current tag, with support for default
-values and optionality.
+Возвращает конкретный аргумент текущего тега с поддержкой значений по умолчанию и необязательности.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                       |
+| Параметр  | Тип     | Описание                          |
 |-----------|---------|-----------------------------------|
-| name      | String  | Name of the argument.             |
-| omissible | Boolean | Whether the argument is optional. |
-| defVal    | Integer | Default value if missing.         |
+| name      | String  | Имя аргумента.                    |
+| omissible | Boolean | Является ли аргумент необязательным. |
+| defVal    | Integer | Значение по умолчанию, если отсутствует. |
 
-### Return
+### Возврат
 
-The value of the argument in the requested type.
+Значение аргумента в запрошенном типе.
 
 ---
 
 ## Suika.getTagArgFloat()
 
-Get a specific argument of the current tag, with support for default
-values and optionality.
+Возвращает конкретный аргумент текущего тега с поддержкой значений по умолчанию и необязательности.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                       |
-|-----------|---------|-----------------------------------|
-| name      | String  | Name of the argument.             |
-| omissible | Boolean | Whether the argument is optional. |
-| defVal    | Float   | Default value if missing.         |
+| Параметр  | Тип   | Описание                          |
+|-----------|-------|-----------------------------------|
+| name      | String | Имя аргумента.                    |
+| omissible | Boolean | Является ли аргумент необязательным. |
+| defVal    | Float | Значение по умолчанию, если отсутствует. |
 
-### Return
+### Возврат
 
-The value of the argument in the requested type.
+Значение аргумента в запрошенном типе.
 
 ---
 
 ## Suika.getTagArgString()
 
-Get a specific argument of the current tag, with support for default
-values and optionality.
+Возвращает конкретный аргумент текущего тега с поддержкой значений по умолчанию и необязательности.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                       |
-|-----------|---------|-----------------------------------|
-| name      | String  | Name of the argument.             |
-| omissible | Boolean | Whether the argument is optional. |
-| defVal    | String  | Default value if missing.         |
+| Параметр  | Тип    | Описание                          |
+|-----------|--------|-----------------------------------|
+| name      | String | Имя аргумента.                    |
+| omissible | Boolean | Является ли аргумент необязательным. |
+| defVal    | String | Значение по умолчанию, если отсутствует. |
 
-### Return
+### Возврат
 
-The value of the argument in the requested type.
+Значение аргумента в запрошенном типе.
 
 ---
 
 ## Suika.evaluateTag()
 
-Evaluate the property values of the current tag to expand inline
-variables. (`${varname}` form)
+Вычисляет значения свойств текущего тега, чтобы раскрыть встроенные переменные. (`${varname}` form)
 
-Calling this API updates the cache for the property values.
+Вызов этого API обновляет кэш значений свойств.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.pushTagStackIf()
 
-Manage the internal stack for `[if]` conditional blocks.
+Управляет внутренним стеком для условных блоков `[if]`.
 
-This API marks the `if` block position for nested block processing.
+Этот API помечает позицию блока `if` для обработки вложенных блоков.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.popTagStackIf()
 
-Manage the internal stack for `if` conditional blocks.
+Управляет внутренним стеком для условных блоков `if`.
 
-This API marks the end of `if` block for nested block processing.
+Этот API помечает конец блока `if` для обработки вложенных блоков.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.pushTagStackWhile()
 
-Manage the internal stack for loops (`while`).
+Управляет внутренним стеком для циклов (`while`).
 
-This API marks the `while` block for nested block processing.
+Этот API помечает блок `while` для обработки вложенных блоков.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.popTagStackWhile()
 
-Manage the internal stack for loops (`while`).
+Управляет внутренним стеком для циклов (`while`).
 
-This API marks the end of `while` block for nested block processing.
+Этот API помечает конец блока `while` для обработки вложенных блоков.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.pushTagStackFor()
 
-Manage the internal stack for loops (`for`).
+Управляет внутренним стеком для циклов (`for`).
 
-This API marks the `for` block for nested block processing.
+Этот API помечает блок `for` для обработки вложенных блоков.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.popTagStackFor()
 
-Manage the internal stack for loops (`for`).
+Управляет внутренним стеком для циклов (`for`).
 
-This API marks the end of `for` block for nested block processing.
+Этот API помечает конец блока `for` для обработки вложенных блоков.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.loadAnimeFromFile()
 
-Load an animation definition from a file and register it.
+Загружает определение анимации из файла и регистрирует его.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| file      | String  | Path to the anime file.                    |
-| reg_name  | String  | Registration name for the anime.           |
+| Параметр | Тип    | Описание                       |
+|----------|--------|--------------------------------|
+| file     | String | Путь к файлу анимации.         |
+| reg_name | String | Имя регистрации анимации.      |
 
-### Return
+### Возврат
 
-An array of boolean that indicate each layer is loaded or not.
+Массив булевых значений, показывающий, загружен ли каждый слой.
 
 ---
 
 ## Suika.newAnimeSequence()
 
-Begin describing a new animation sequence for a specific layer.
-This API is used for manually generated animations.
+Начинает описание новой последовательности анимации для указанного слоя.
+Этот API используется для анимаций, созданных вручную.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| layer     | Integer | Target stage layer index.                  |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| layer    | Integer | Индекс целевого слоя сцены. |
 
-### Return
+### Возврат
 
-Boolean that represents success.
+Булево значение, показывающее успех.
 
 ---
 
 ## Suika.addAnimeSequencePropertyF()
 
-Add a float property (e.g., position, alpha) to the current anime sequence.
-This API is used for manually generated animations.
+Добавляет свойство с плавающей точкой, например позицию или alpha, в текущую последовательность анимации.
+Этот API используется для анимаций, созданных вручную.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| key       | String  | Property key (e.g., "x", "y", "a").        |
-| val       | Float   | Target value.                              |
+| Параметр | Тип   | Описание                         |
+|----------|-------|----------------------------------|
+| key      | String | Ключ свойства (например, "x", "y", "a"). |
+| val      | Float | Целевое значение.                |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.addAnimeSequencePropertyI()
 
-Add an integer property (e.g., position, alpha) to the current anime sequence.
-This API is used for manually generated animations.
+Добавляет целочисленное свойство, например позицию или alpha, в текущую последовательность анимации.
+Этот API используется для анимаций, созданных вручную.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| key       | String  | Property key (e.g., "x", "y", "a").        |
-| val       | Integer | Target value.                              |
+| Параметр | Тип     | Описание                         |
+|----------|---------|----------------------------------|
+| key      | String  | Ключ свойства (например, "x", "y", "a"). |
+| val      | Integer | Целевое значение.                |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.startLayerAnime()
 
-Start the registered animation sequence for a specific layer.
+Запускает зарегистрированную последовательность анимации для указанного слоя.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| layer     | Integer | Target stage layer index.                  |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| layer    | Integer | Индекс целевого слоя сцены. |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isAnimeRunning()
 
-Check the overall animation status.
+Проверяет общее состояние анимации.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isAnimeFinishedForLayer()
 
-Check if a specific layer's animation has ended.
+Проверяет, закончилась ли анимация указанного слоя.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Target stage layer index.  |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| layer    | Integer | Индекс целевого слоя сцены. |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.updateAnimeFrame()
 
-Update the animation frame state. Usually called once per frame.
+Обновляет состояние кадра анимации. Обычно вызывается один раз за кадр.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.loadEyeImageIfExists()
 
-Manage eye-blinking (eye-patch) image and animation for a character position.
+Управляет изображением и анимацией моргания глаз для позиции персонажа.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| chpos     | Integer | Character position (Left, Center, etc.).   |
-| file      | String  | Path to the eye image file.                |
+| Параметр | Тип    | Описание                           |
+|----------|--------|------------------------------------|
+| chpos    | Integer | Позиция персонажа (Left, Center и т.д.). |
+| file     | String | Путь к файлу изображения глаз.     |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.reloadEyeAnime()
 
-Restart the eye-blinking (eye-patch) animation for a character position.
+Перезапускает анимацию моргания глаз для позиции персонажа.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| chpos     | Integer | Character position (Left, Center, etc.).   |
+| Параметр | Тип     | Описание                           |
+|----------|---------|------------------------------------|
+| chpos    | Integer | Позиция персонажа (Left, Center и т.д.). |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.runLipAnime()
 
-Start lip-sync animation based on the message content for a character.
+Запускает анимацию синхронизации губ по содержимому сообщения для персонажа.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| chpos     | Integer | Character position.                        |
-| text      | String  | The message text to sync with.             |
+| Параметр | Тип    | Описание                     |
+|----------|--------|------------------------------|
+| chpos    | Integer | Позиция персонажа.           |
+| text     | String | Текст сообщения для синхронизации. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.stopLipAnime()
 
-Stop lip-sync animation.
+Останавливает анимацию синхронизации губ.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| chpos     | Integer | Character position.                        |
+| Параметр | Тип     | Описание              |
+|----------|---------|-----------------------|
+| chpos    | Integer | Позиция персонажа.    |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.clearLayerAnimeSequence()
 
-Clear animation sequences for a specific layer.
+Очищает последовательности анимации для указанного слоя.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| layer     | Integer | Target stage layer index.  |
+| Параметр | Тип     | Описание               |
+|----------|---------|------------------------|
+| layer    | Integer | Индекс целевого слоя сцены. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.clearAllAnimeSequence()
 
-Clear animation sequences for all layers.
+Очищает последовательности анимации для всех слоёв.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.setVariableInt()
 
-Set a value to a local or global variable.
+Устанавливает значение локальной или глобальной переменной.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description            |
-|-----------|---------|------------------------|
-| name      | String  | Name of the variable.  |
-| value     | Integer | Value to set           |
+| Параметр | Тип     | Описание              |
+|----------|---------|-----------------------|
+| name     | String  | Имя переменной.       |
+| value    | Integer | Устанавливаемое значение. |
 
-### Return
+### Возврат
 
-Boolean that represents success or failure.
+Булево значение, показывающее успех или неудачу.
 
 ---
 
 ## Suika.setVariableFloat()
 
-Set a value to a local or global variable.
+Устанавливает значение локальной или глобальной переменной.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description             |
-|-----------|---------|-------------------------|
-| name      | String  | Name of the variable.   |
-| value     | Float   | Value to set            |
+| Параметр | Тип   | Описание              |
+|----------|-------|-----------------------|
+| name     | String | Имя переменной.       |
+| value    | Float  | Устанавливаемое значение. |
 
-### Return
+### Возврат
 
-Boolean that represents success or failure.
+Булево значение, показывающее успех или неудачу.
 
 ---
 
 ## Suika.setVariableString()
 
-Set a value to a local or global variable.
+Устанавливает значение локальной или глобальной переменной.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description             |
-|-----------|---------|-------------------------|
-| name      | String  | Name of the variable.   |
-| value     | String  | Value to set            |
+| Параметр | Тип    | Описание              |
+|----------|--------|-----------------------|
+| name     | String | Имя переменной.       |
+| value    | String | Устанавливаемое значение. |
 
-### Return
+### Возврат
 
-Boolean that represents success or failure.
+Булево значение, показывающее успех или неудачу.
 
 ---
 
 ## Suika.getVariableInt()
 
-Get the current value of a variable.
+Возвращает текущее значение переменной.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| name      | String | Name of the variable.                      |
+| Параметр | Тип    | Описание                |
+|----------|--------|-------------------------|
+| name     | String | Имя переменной.         |
 
-### Return
+### Возврат
 
-The value of the variable in integer.
+Значение переменной в виде целого числа.
 
 ---
 
 ## Suika.getVariableFloat()
 
-Get the current value of a variable.
+Возвращает текущее значение переменной.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| name      | String | Name of the variable.                      |
+| Параметр | Тип    | Описание                |
+|----------|--------|-------------------------|
+| name     | String | Имя переменной.         |
 
-### Return
+### Возврат
 
-The value of the variable in float.
+Значение переменной в виде числа с плавающей точкой.
 
 ---
 
 ## Suika.getVariableString()
 
-Get the current value of a variable.
+Возвращает текущее значение переменной.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| name      | String | Name of the variable.                      |
+| Параметр | Тип    | Описание                |
+|----------|--------|-------------------------|
+| name     | String | Имя переменной.         |
 
-### Return
+### Возврат
 
-The value of the variable in string
+Значение переменной в виде строки.
 
 ---
 
 ## Suika.unsetVariable()
 
-Unset (delete) a specific variable.
+Удаляет указанную переменную.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| name      | String | Name of the variable to unset.             |
+| Параметр | Тип    | Описание                     |
+|----------|--------|------------------------------|
+| name     | String | Имя переменной для удаления. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.unsetLocalVariables()
 
-Unset (delete) all local variables.
+Удаляет все локальные переменные.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.makeVariableGlobal()
 
-Set a variable to be global (persistent across saves).
+Делает переменную глобальной, то есть сохраняемой между сохранениями.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| name      | String  | Name of the variable.                      |
-| is_global | Boolean | Whether to make it global.                 |
+| Параметр  | Тип     | Описание                 |
+|-----------|---------|--------------------------|
+| name      | String  | Имя переменной.          |
+| is_global | Boolean | Делать ли её глобальной. |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isGlobalVariable()
 
-Check the variable's global status.
+Проверяет глобальный статус переменной.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| name      | String  | Name of the variable.                      |
+| Параметр | Тип    | Описание                |
+|----------|--------|-------------------------|
+| name     | String | Имя переменной.         |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.getVariableCount()
 
-Get the number of variables.
+Возвращает количество переменных.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Integer for count.
+Целое число, представляющее количество.
 
 ---
 
 ## Suika.getVariableName()
 
-Iterate through the registered variables.
+Перебирает зарегистрированные переменные.
 
-### Parameters (Dictionary) (for getVariableName)
+### Параметры (словарь) (для getVariableName)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Index of the variable.     |
+| Параметр | Тип     | Описание              |
+|----------|---------|-----------------------|
+| index    | Integer | Индекс переменной.    |
 
-### Return
+### Возврат
 
-String for name.
+Строка с именем.
 
 ---
 
 ## Suika.checkVariableExists()
 
-Check if a variable with the specified name exists.
+Проверяет, существует ли переменная с указанным именем.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| name      | String | Name to check.                             |
+| Параметр | Тип    | Описание         |
+|----------|--------|------------------|
+| name     | String | Имя для проверки. |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.executeSaveGlobal()
 
-Execute a global save.
-Global data typically includes persistent settings.
+Выполняет глобальное сохранение.
+Глобальные данные обычно включают постоянные настройки.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean that represents success or failure.
+Булево значение, показывающее успех или неудачу.
 
 ---
 
 ## Suika.executeLoadGlobal()
 
-Execute a global load.
-Global data typically includes persistent settings.
+Выполняет глобальную загрузку.
+Глобальные данные обычно включают постоянные настройки.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean that represents success or failure.
+Булево значение, показывающее успех или неудачу.
 
 ---
 
 ## Suika.executeSaveLocal()
 
-Save the game progress to a specific slot.
+Сохраняет прогресс игры в указанный слот.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| Параметр | Тип     | Описание             |
+|----------|---------|----------------------|
+| index    | Integer | Индекс слота сохранения. |
 
-### Return
+### Возврат
 
-Boolean that represents success or failure.
+Булево значение, показывающее успех или неудачу.
 
 ---
 
 ## Suika.executeLoadLocal()
 
-Load game progress from a specific slot.
+Загружает прогресс игры из указанного слота.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| Параметр | Тип     | Описание             |
+|----------|---------|----------------------|
+| index    | Integer | Индекс слота сохранения. |
 
-### Return
+### Возврат
 
-Boolean that represents success or failure.
+Булево значение, показывающее успех или неудачу.
 
 ---
 
 ## Suika.checkSaveExists()
 
-Check if the save data exists for the specified slot index.
+Проверяет, существуют ли данные сохранения для указанного индекса слота.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| Параметр | Тип     | Описание             |
+|----------|---------|----------------------|
+| index    | Integer | Индекс слота сохранения. |
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.deleteLocalSave()
 
-Delete a local save slot.
+Удаляет локальный слот сохранения.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| Параметр | Тип     | Описание             |
+|----------|---------|----------------------|
+| index    | Integer | Индекс слота сохранения. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.deleteGlobalSave()
 
-Delete the entire global save data.
+Удаляет все глобальные данные сохранения.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.checkRightAfterLoad()
 
-Check if the current frame is immediately following a successful load operation.
+Проверяет, следует ли текущий кадр сразу после успешной операции загрузки.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.getSaveTimestamp()
 
-Get the timestamp (Unix time) when the save data was created.
+Возвращает временную метку Unix, когда были созданы данные сохранения.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| Параметр | Тип     | Описание             |
+|----------|---------|----------------------|
+| index    | Integer | Индекс слота сохранения. |
 
-### Return
+### Возврат
 
-Integer (timestamp).
+Целое число (временная метка).
 
 ---
 
 ## Suika.getLatestSaveIndex()
 
-Get the index of the most recently updated save slot.
+Возвращает индекс наиболее недавно обновлённого слота сохранения.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Integer representing the slot index.
+Целое число, представляющее индекс слота.
 
 ---
 
 ## Suika.getSaveChapterName()
 
-Retrieve the chapter title stored in a save slot.
+Возвращает название главы, сохранённое в слоте сохранения.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| Параметр | Тип     | Описание             |
+|----------|---------|----------------------|
+| index    | Integer | Индекс слота сохранения. |
 
-### Return
+### Возврат
 
-String representing the chapter name.
+Строка, представляющая название главы.
 
 ---
 
 ## Suika.getSaveLastMessage()
 
-Retrieve the last displayed message stored in a save slot.
+Возвращает последнее отображённое сообщение, сохранённое в слоте.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| Параметр | Тип     | Описание             |
+|----------|---------|----------------------|
+| index    | Integer | Индекс слота сохранения. |
 
-### Return
+### Возврат
 
-String representing the message.
+Строка, представляющая сообщение.
 
 ---
 
 ## Suika.getSaveThumbnail()
 
-Get the thumbnail image associated with a save slot.
+Возвращает миниатюру, связанную со слотом сохранения.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| Параметр | Тип     | Описание             |
+|----------|---------|----------------------|
+| index    | Integer | Индекс слота сохранения. |
 
-### Return
+### Возврат
 
-An image object.
+Объект изображения.
 
 ---
 
 ## Suika.clearHistory()
 
-Clear all messages from the history (backlog).
+Очищает все сообщения из истории (backlog).
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.addHistory()
 
-Add a new entry to the history.
+Добавляет новую запись в историю.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter        | Type    | Description                                |
-|------------------|---------|--------------------------------------------|
-| name             | String  | Character name.                            |
-| msg              | String  | Message text.                              |
-| voice            | String  | Path to the voice file.                    |
-| bodyColor        | Integer | Body color.                                |
-| bodyOutlineColor | Integer | Body outline color.                        |
-| nameColor        | Integer | Name color.                                |
-| nameOutlineColor | Integer | Name outline color.                        |
+| Параметр         | Тип     | Описание                   |
+|------------------|---------|----------------------------|
+| name             | String  | Имя персонажа.             |
+| msg              | String  | Текст сообщения.           |
+| voice            | String  | Путь к файлу голоса.       |
+| bodyColor        | Integer | Цвет тела.                 |
+| bodyOutlineColor | Integer | Цвет контура тела.         |
+| nameColor        | Integer | Цвет имени.                |
+| nameOutlineColor | Integer | Цвет контура имени.        |
 
-### Return
+### Возврат
 
-Boolean that represents success.
+Булево значение, показывающее успех.
 
 ---
 
 ## Suika.getHistoryCount()
 
-Get the total number of entries currently in the history.
+Возвращает общее количество записей в истории.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Integer representing the history count.
+Целое число, представляющее количество записей в истории.
 
 ---
 
 ## Suika.getHistoryName()
 
-Retrieve the name at a specific history index.
+Возвращает имя по указанному индексу истории.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Index in the history.      |
+| Параметр | Тип     | Описание            |
+|----------|---------|---------------------|
+| index    | Integer | Индекс в истории.   |
 
-### Return
+### Возврат
 
-String value.
+Строковое значение.
 
 ---
 
 ## Suika.getHistoryMessage()
 
-Retrieve the message at a specific history index.
+Возвращает сообщение по указанному индексу истории.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Index in the history.      |
+| Параметр | Тип     | Описание            |
+|----------|---------|---------------------|
+| index    | Integer | Индекс в истории.   |
 
-### Return
+### Возврат
 
-String value.
+Строковое значение.
 
 ---
 
 ## Suika.getHistoryVoice()
 
-Retrieve the voice path at a specific history index.
+Возвращает путь к голосу по указанному индексу истории.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| index     | Integer | Index in the history.      |
+| Параметр | Тип     | Описание            |
+|----------|---------|---------------------|
+| index    | Integer | Индекс в истории.   |
 
-### Return
+### Возврат
 
-String value.
+Строковое значение.
 
 ---
 
 ## Suika.loadSeen()
 
-Load the seen (read) flags for the current script file.
+Загружает флаги просмотренного (прочитанного) для текущего файла сценария.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean that represents success.
+Булево значение, показывающее успех.
 
 ---
 
 ## Suika.saveSeen()
 
-Save the seen (read) flags for the current script file.
+Сохраняет флаги просмотренного (прочитанного) для текущего файла сценария.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean that represents success.
+Булево значение, показывающее успех.
 
 ---
 
 ## Suika.getSeenFlags()
 
-Get the seen status for the current tag.
+Возвращает статус просмотра для текущего тега.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Get returns Integer.
+Возвращает целое число.
 
-For a `[text]` tag, `0` means unread and `1` means read.
+Для тега `[text]` `0` означает непрочитано, а `1` означает прочитано.
 
-For a `[choose]` tag, each bit indicates the option is selected before.
+Для тега `[choose]` каждый бит показывает, был ли вариант выбран ранее.
 
 ---
 
 ## Suika.setSeenFlags()
 
-Set the seen status for the current tag.
+Устанавливает статус просмотра для текущего тега.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                |
-|-----------|---------|----------------------------|
-| flag      | Integer | Seen status flag.          |
+| Параметр | Тип     | Описание             |
+|----------|---------|----------------------|
+| flag     | Integer | Флаг статуса просмотра. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.loadGUIFile()
 
-Load a GUI definition file and prepare it for execution.
+Загружает файл описания GUI и подготавливает его к выполнению.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type    | Description                                |
-|-----------|---------|--------------------------------------------|
-| file      | String  | Path to the .gui file.                     |
-| sys       | Boolean | Whether it's a system GUI (Save/Load/etc). |
+| Параметр | Тип     | Описание                              |
+|----------|---------|---------------------------------------|
+| file     | String  | Путь к файлу `.gui`.                  |
+| sys      | Boolean | Является ли это системным GUI (Save/Load и т.д.). |
 
-### What is System GUI
+### Что такое System GUI
 
-System GUI is typically called when `[text]` or `[choose]` is running,
-and the control will return to the interrupted tag.
+System GUI обычно вызывается, когда выполняется `[text]` или `[choose]`,
+и управление возвращается к прерванному тегу.
 
-### Return
+### Возврат
 
-Boolean that represents success or failure.
+Булево значение, показывающее успех или неудачу.
 
 ---
 
 ## Suika.startGUI()
 
-Start the loaded GUI.
+Запускает загруженный GUI.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.stopGUI()
 
-Stop the currently running GUI.
+Останавливает текущий работающий GUI.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.isGUIRunning()
 
-Check if a GUI is currently active.
+Проверяет, активен ли GUI в данный момент.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.isGUIFinished()
 
-Check if a GUI has completed its operation.
+Проверяет, завершил ли GUI свою работу.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.getGUIResultLabel()
 
-Get the label of the button that was selected to finish the GUI.
+Возвращает метку кнопки, выбранной для завершения GUI.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-String representing the result label.
+Строка, представляющая метку результата.
 
 ---
 
 ## Suika.isGUIResultTitle()
 
-Check if the GUI was closed with a "back to title" action.
+Проверяет, был ли GUI закрыт действием "back to title".
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.checkIfSavedInGUI()
 
-Check if a save operation was performed while the GUI was active.
+Проверяет, была ли выполнена операция сохранения, пока GUI был активен.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.checkIfLoadedInGUI()
 
-Check if a load operation was performed while the GUI was active.
+Проверяет, была ли выполнена операция загрузки, пока GUI был активен.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.checkRightAfterSysGUI()
 
-Check if the current frame is immediately following a return from a system GUI.
+Проверяет, следует ли текущий кадр сразу после возврата из системного GUI.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean value.
+Булево значение.
 
 ---
 
 ## Suika.getMillisec()
 
-Get a lap time since the time origin in milliseconds.
+Возвращает прошедшее время с момента отсчёта в миллисекундах.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Integer in milliseconds.
+Целое число в миллисекундах.
 
 ---
 
 ## Suika.checkFileExists()
 
-Check if a file exists.
+Проверяет, существует ли файл.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| file      | String | Path to the file.                          |
+| Параметр | Тип    | Описание             |
+|----------|--------|----------------------|
+| file     | String | Путь к файлу.        |
 
-### Return
+### Возврат
 
-Returns boolean.
+Возвращает булево значение.
 
 ---
 
 ## Suika.readFileContent()
 
-Read an entire file content.
+Читает содержимое файла целиком.
 
-### Parameters (Dictionary) (for readFileContent)
+### Параметры (словарь) (для readFileContent)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| file      | String | Path to the file.                          |
+| Параметр | Тип    | Описание             |
+|----------|--------|----------------------|
+| file     | String | Путь к файлу.        |
 
-### Return
+### Возврат
 
-Returns a string.
+Возвращает строку.
 
 ---
 
 ## Suika.writeSaveData()
 
-Directly write raw save data associated with a key.
+Непосредственно записывает сырые данные сохранения, связанные с ключом.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| key       | String | Unique key for the data.                   |
-| data      | String | Data to write/read.                        |
+| Параметр | Тип    | Описание               |
+|----------|--------|------------------------|
+| key      | String | Уникальный ключ данных. |
+| data     | String | Данные для записи/чтения. |
 
-### Return
+### Возврат
 
-Boolean that represents success or failure.
+Булево значение, показывающее успех или неудачу.
 
 ---
 
 ## Suika.readSaveData()
 
-Directly read raw save data associated with a key.
+Непосредственно читает сырые данные сохранения, связанные с ключом.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| key       | String | Unique key for the data.                   |
+| Параметр | Тип    | Описание               |
+|----------|--------|------------------------|
+| key      | String | Уникальный ключ данных. |
 
-### Return
+### Возврат
 
-Boolean that represents success or failure.
+Булево значение, показывающее успех или неудачу.
 
 ---
 
 ## Suika.playVideo()
 
-Control video playback.
+Управляет воспроизведением видео.
 
-### Parameters (Dictionary) (for playVideo)
+### Параметры (словарь) (для playVideo)
 
-| Parameter    | Type    | Description                          |
-|--------------|---------|--------------------------------------|
-| file         | String  | Path to the video file.              |
-| is_skippable | Boolean | Whether the user can skip the video. |
+| Параметр     | Тип     | Описание                         |
+|--------------|---------|----------------------------------|
+| file         | String  | Путь к видеофайлу.               |
+| is_skippable | Boolean | Можно ли пропустить видео.       |
 
-### Return
+### Возврат
 
-Play returns Boolean; IsPlaying returns Boolean.
+`Play` возвращает Boolean; `IsPlaying` возвращает Boolean.
 
 ---
 
 ## Suika.stopVideo()
 
-Stop the video playback.
+Останавливает воспроизведение видео.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.isVideoPlaying()
 
-Check if a video is playing back.
+Проверяет, воспроизводится ли видео.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Returns boolean.
+Возвращает булево значение.
 
 ---
 
 ## Suika.isFullScreenSupported()
 
-Check for full-screen mode ability.
+Проверяет поддержку полноэкранного режима.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-Boolean.
+Булево значение.
 
 ---
 
 ## Suika.enterFullScreenMode()
 
-Enter the full-screen mode.
+Переходит в полноэкранный режим.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-No parameters.
+Параметры отсутствуют.
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
 
 ---
 
 ## Suika.speakText()
 
-Execute Text-to-Speech (TTS) for the given message.
+Выполняет синтез речи (TTS) для указанного сообщения.
 
-### Parameters (Dictionary)
+### Параметры (словарь)
 
-| Parameter | Type   | Description                                |
-|-----------|--------|--------------------------------------------|
-| msg       | String | Text to be spoken.                         |
+| Параметр | Тип    | Описание            |
+|----------|--------|---------------------|
+| msg      | String | Текст для озвучивания. |
 
-### Return
+### Возврат
 
-No return.
+Возврат отсутствует.
+

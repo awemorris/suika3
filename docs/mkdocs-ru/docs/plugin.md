@@ -1,33 +1,33 @@
-Ray Plugin Development Reference
+Справочник по разработке плагинов Ray
 ================================
 
-## Folder
+## Папка
 
-Plugins must be stored in the `system/plugin/<PLUGIN-NAME>/` directory.
+Плагины должны храниться в каталоге `system/plugin/<PLUGIN-NAME>/`.
 
-## File
+## Файл
 
-A plugin file must be stored to the `system/plugin/<PLUGIN-NAME>/<PLUGIN-NAME>.ray` file.
+Файл плагина должен храниться как `system/plugin/<PLUGIN-NAME>/<PLUGIN-NAME>.ray`.
 
-## Function
+## Функция
 
-The plugin must define the `plugin_init_<PLUGIN-NAME>()` function.
+Плагин должен определять функцию `plugin_init_<PLUGIN-NAME>()`.
 
-## Defining a New Tag
+## Определение нового тега
 
-Define a function named `Tag_mytag()` in the `system/plugin/<PLUGIN-NAME>/<PLUGIN-NAME>.ray` file to create a new tag named `mytag`.
-After loading the plugin via `Suika.loadPlugin()`, you can use `mytag` in NovelML.
+Определите функцию с именем `Tag_mytag()` в файле `system/plugin/<PLUGIN-NAME>/<PLUGIN-NAME>.ray`, чтобы создать новый тег с именем `mytag`.
+После загрузки плагина через `Suika.loadPlugin()` можно использовать `mytag` в NovelML.
 
-## Sample
+## Пример
 
-In `system/plugin/testplugin/testplugin.ray`:
+В `system/plugin/testplugin/testplugin.ray`:
 ```
 func plugin_init_testplugin() {
-    // Called when loaded.
+    // Вызывается при загрузке.
     print("Plugin is loaded.");
 }
 
-// New tag.
+// Новый тег.
 func Tag_testplugintag(params) {
     print("Plugin tag is called.");
     print("parameter: " + params.text);
@@ -36,18 +36,18 @@ func Tag_testplugintag(params) {
 }
 ```
 
-In `main.ray`:
+В `main.ray`:
 ```
-// Called before the game starts.
+// Вызывается перед запуском игры.
 func start() {
-    // Do not delete the following line.
+    // Не удаляйте следующую строку.
     Suika.start();
 
     Suika.loadPluin("testplugin");
 }
 ```
 
-In `start.novel`:
+В `start.novel`:
 ```
 [testplugintag text="hello"]
 ```
