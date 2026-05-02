@@ -1,30 +1,30 @@
-Lip Synchronization
-===================
+リップシンク
+============
 
-An lip synchronization image must be stored in the "lip" folder folder that is
-located in the same folder as the character's image(s).
+リップシンク画像は、キャラクター画像と同じフォルダーにある
+「lip」フォルダーに保存する必要があります。
 
-* happy.png (main character file)
+* happy.png (メインのキャラクターファイル)
 * lip/
-    * happy.png (lip synchronization file)
+    * happy.png (リップシンクファイル)
 
-A lip synchronization image consists of frame(s) of lip synchronization difference(s).
-A frame must be the same size as the character's image is.
-Frames must be stored horizontally in the left to right order.
+リップシンク画像は、リップシンクの差分フレームで構成されます。
+各フレームはキャラクター画像と同じサイズでなければなりません。
+フレームは、左から右の順に横方向へ並べて保存してください。
 
-Alpha values on borders must be smoothed.
-Please use "Blur Selection" and "Delete Selection" in an image editing software.
+境界部分のアルファ値は滑らかにしてください。
+画像編集ソフトウェアの「選択範囲をぼかす」と「選択範囲を削除」を使用してください。
 
-The lip synchronization interval may be specified in the `project.txt` file.
+リップシンクの間隔は、`project.txt` ファイルで指定できます。
 
 ```
 #
-# Lip synchronization frame length (seconds per frame)
+# リップシンクのフレーム長 (1フレームあたりの秒数)
 #
 character.lipsync.frame=0.3
 
 #
-# Lip synchronization times per characters
+# 文字ごとのリップシンク回数
 #
 character.lipsync.chars=3
 ```

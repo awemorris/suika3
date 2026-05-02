@@ -23,36 +23,53 @@ files can be triggered when a button's state changes.
 ## GUI Sample
 
 ```
+# Global settings section.
 global {
     fadein:       0.2;            # Fading-in time in seconds.
     fadeout:      0.2;            # Fading-out time in seconds.
 }
 
+# A block describes a button.
+# The name of a block can be whatever you like and it won't affect anything.
 button1 {
-    # Layer ID (1-32)
+    # Layer ID (`1`-`32`)
+    # `1` means the top-most and `32` means the bottom-most in the GUI layers, respectively.
     id: 1;
-
-    # Behavior Type (Go to a label)
+ 
+    # Behavior Type (`goto` means go to a label when clicked.)
     type: goto;
 
     # Label to go to.
-    label: button1_clicked;   
+    label: button1_clicked;
 
     # Position
     x: 39;
     y: 99;
 
+    # `width:` and `height:` are omissible as they can be inferred from the image size.
+
     # Images
-    image-idle:  gui/item-idle.png;
-    image-hover: gui/item-hover.png;
+    image-idle:  gui/item-idle.png;    # Shown when the button is not pointed.
+    image-hover: gui/item-hover.png;   # Shown when the button is pointed.
+    image-press: gui/item-press.png;   # Shown when the button is pressed.
+
+    # Animations
+    anime-idle:  gui/item-idle.anime;   # Executed when the button state is changed to `idle`.
+    anime-hover: gui/item-hover.anime;  # Executed when the button state is changed to `hover`.
+    anime-press: gui/item-press.anime;  # Executed when the button is pressed.
+
+    # Note that `press` is not an independent state, it's an additional flag to the state `hover`.
+    # When a `hover` anime runs, `idle` anime will be canceled.
+    # And when `idle` anime runs, `hover` anime will be canceled.
+    # However, `press` anime doesn't cancel anything.
 }
 ```
 
 In the `global` section, you can specify options for the GUI.
 
 Other sections are interpreted as button definitions.
-Here, `button1` makes a button at position (39, 99).
-If the button is clicked, a `go to` jump will happen.
+Here, `button1` makes a button at position `(39, 99)`.
+If the button is clicked, a jump so called `goto` will happen.
 
 ---
 

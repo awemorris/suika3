@@ -41,7 +41,7 @@ func main() {
 ## Local Variables
 
 Using the `var` keyword allows you to declare a variable as
-local. Without `var` declaration, assigning to a variable may create a
+local. Without `var` declaration, assigning to a variable creates a
 global variable.
 
 ```

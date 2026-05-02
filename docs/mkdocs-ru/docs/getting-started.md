@@ -11,7 +11,7 @@ Let's get the engine running so you can see the magic happen!
 ### Windows
 
 - **Download & Extract**
-    - Download [Suika3-full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-full.zip) and extract it to your preferred folder.
+    - Download [Suika3-SDK-Full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-SDK-Full.zip) and extract it to your preferred folder.
 - **Launch**
     - Open the folder and run `suika3.exe` to start to the sample game!
 

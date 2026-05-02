@@ -1,131 +1,129 @@
-Suika3: Getting Started Guide
-=============================
+Suika3: はじめに
+=================
 
-Welcome to Suika3! This guide will help you jump-start your very first
-visual novel project in just a few easy steps.
+Suika3 へようこそ！このガイドでは簡単な手順で初めてのビジュアルノベル制作をすぐに始められるようにします。
 
-## 1. Installation
+## 1. インストール
 
-Let's get the engine running so you can see the magic happen!
+まずはエンジンを起動して、実際に動くところを見てみましょう！
 
 ### Windows
 
-- **Download & Extract**
-    - Download [Suika3-full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-full.zip) and extract it to your preferred folder.
-- **Launch**
-    - Open the folder and run `suika3.exe` to start to the sample game!
+- **ダウンロードと展開**
+    - [Suika3-SDK-Full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-SDK-Full.zip) をダウンロードし、任意のフォルダーに展開します。
+- **起動**
+    - フォルダーを開き、`suika3.exe` を実行してサンプルゲームを起動します。
 
 ### macOS
 
-- **Download & Extract**
-    - Download Suika3-full.zip and extract it to your preferred folder.
-- **Mount the Disk Image**
-    - Navigate to `SDK/macos/` and open `Suika3.dmg`.
-- **Setup the App Bundle**
-    - Copy the `Suika3` app from the DMG into the same folder where `suika3.exe` (and the data folder) is located.
-    - Note: The app bundle must reside alongside your game data to function correctly.
-- **Launch**
-    - Double-click the `Suika3` app to start the sample game!
+- **ダウンロードと展開**
+    - Suika3-SDK-Full.zip をダウンロードし、任意のフォルダーに展開します。
+- **ディスクイメージをマウント**
+    - `SDK/macos/` に移動し、`Suika3.dmg` を開きます。
+- **アプリバンドルの設定**
+    - DMG 内の `Suika3` アプリを、`suika3.exe`（および data フォルダー）があるフォルダーと同じ場所にコピーします。
+    - 注意: 正しく動作させるには、アプリバンドルをゲームデータと同じ場所に置く必要があります。
+- **起動**
+    - `Suika3` アプリをダブルクリックしてサンプルゲームを起動します。
 
 ### Linux
 
-- **Download & Extract**
-    - Download Suika3-full.zip and extract it to your preferred directory.
-- **Install the Flatpak Package**
-    - Navigate to `SDK/linux/` and open `Suika3.flatpak` (or run `flatpak install --user Suika3.flatpak`).
-    - This associates `.novel` and `.ray` files with the Suika3 engine.
-- **Launch**
-    - Open the extracted folder, then double-click `start.novel` to launch the sample game!
+- **ダウンロードと展開**
+    - Suika3-SDK-Full.zip をダウンロードし、任意のディレクトリに展開します。
+- **Flatpak パッケージのインストール**
+    - `SDK/linux/` に移動して `Suika3.flatpak` を開きます。（または `flatpak install --user Suika3.flatpak` を実行します。）
+    - これにより、`.novel` ファイルと `.ray` ファイルが Suika3 エンジンに関連付けられます。
+- **起動**
+    - 展開したフォルダーを開き、`start.novel` をダブルクリックしてサンプルゲームを起動します。
 
-## 2. Visual Studio Code Integration
+## 2. Visual Studio Code 連携
 
-VSCode Integration is available on Windows, macOS, and Linux!
+VSCode 連携は Windows、macOS、Linux で利用できます。
 
-Also, [NovelML-Helper](https://github.com/lalalll-lalalll/NovelML-Helper) is available for syntax highlighting.
+また、構文ハイライトには [NovelML-Helper](https://github.com/lalalll-lalalll/NovelML-Helper) を利用できます。
 
-- Open the extracted folder by `Visual Studio Code`.
-- Click the command palette.
-- Click `Run Task`.
-- Choose from:
-    - `Suika3: Run` (or `Ctrl+Shift+B`)
+- 展開したフォルダーを `Visual Studio Code` で開きます。
+- コマンドパレットをクリックします。
+- `Run Task` をクリックします。
+- 次の中から選択します。
+    - `Suika3: Run`（または `Ctrl+Shift+B`）
     - `Suika3: Create a package`
     - `Suika3: Build Android APK`
     - `Suika3: Build iOS IPA`
-- Click `PROBLEMS` if an error occurred.
+- エラーが発生した場合は `PROBLEMS` をクリックします。
 
-## 3. Personalize Your Story (`start.novel`)
+## 3. ストーリーを自分好みにする（`start.novel`）
 
-Now, let's make the game say exactly what you want.
+次に、ゲームに表示したいメッセージを設定してみましょう。
 
-- **Open:**
-    - Find the `start.novel` file in your project folder and open it with your favorite text editor.
-- **Edit:**
-    - Add the following tag at the beginning of the file:
+- **開く:**
+    - プロジェクトフォルダー内の `start.novel` ファイルを見つけ、お好みのテキストエディターで開きます。
+- **編集:**
+    - ファイルの先頭に次のタグを追加します。
     ```
-    [text text="Hello, world! This is my first game."]
+    [text text="こんにちは、世界！これは私の最初のゲームです。"]
     ```
-- **Test:**
-    - Save the file and run Suika3 again.
-    - You should see your new message on the screen!
+- **テスト:**
+    - ファイルを保存し、Suika3 をもう一度実行します。
+    - 画面に新しいメッセージが表示されるはずです。
 
-## 4. Customize the Screen (main.ray)
+## 4. 画面をカスタマイズする（main.ray）
 
-You can easily change the look and feel of your game window.
+ゲームウィンドウの見た目や動作は簡単に変更できます。
 
-- **Locate:**
-    - Open the `main.ray` file in your editor.
-- **Modify:**
-    - Look for the `func setup()` section.
-    - You can change the resolution and the title of your window here:
+- **場所を確認:**
+    - エディターで `main.ray` ファイルを開きます。
+- **変更:**
+    - `func setup()` セクションを探します。
+    - ここでウィンドウの解像度やタイトルを変更できます。
     ```
-    // Called when the window is opened.
+    // ウィンドウが開かれたときに呼び出されます。
     func setup() {
         return {
-            width:      1280,            // The width of your game
-            height:     720,             // The height of your game
-            title:      "My First Game", // Your game's title
-            fullscreen: false            // Set to true for full-screen mode
+            width:      1280,            // ゲームの幅
+            height:     720,             // ゲームの高さ
+            title:      "私の最初のゲーム", // ゲームのタイトル
+            fullscreen: false            // フルスクリーンモードにする場合は true
         };
     }
     ```
 
-## 5. Under the Hood (Advanced Tips)
+## 5. 内部の仕組み（上級者向けのヒント）
 
-The bottom part of your `main.ray` file contains the core engine
-logic. It's best to leave these functions as they are unless you are
-doing advanced customization:
+`main.ray` ファイルの下部には、エンジンの中核となるロジックが含まれています。
+高度なカスタマイズを行う場合を除き、これらの関数はそのままにしておくことをおすすめします。
 
 - `func start()`:
-    - This is called once when your game launches.
+    - ゲームの起動時に一度だけ呼び出されます。
 - `func update()`:
-    - This runs every single frame to handle game logic.
+    - ゲームロジックを処理するために、毎フレーム実行されます。
 - `func render()`:
-    - This draws everything on the screen after the update is done.
+    - 更新処理が終わったあと、画面上のすべてを描画します。
 
 ```
-// Called before the game starts.
+// ゲームが開始される前に呼び出されます。
 func start() {
-    // Load plugins here.
+    // ここでプラグインを読み込みます。
     // Suika.loadPlugin("testplugin");
 
-    // Do not delete the following line.
+    // 次の行は削除しないでください。
     Suika.start();
 }
 
-// Called before a frame rendering.
+// フレーム描画の前に呼び出されます。
 func update() {
-    // Do not delete the following line.
+    // 次の行は削除しないでください。
     Suika.update();
 }
 
-// Called every frame rendering.
+// 毎フレームの描画時に呼び出されます。
 func render() {
-    // Do not delete the following line.
+    // 次の行は削除しないでください。
     Suika.render();
 }
 ```
 
 > [!TIPS]
-> These functions are the core mechanism of the `Playfield Engine` that
-> powers Suika3. Suika.start(), Suika.update(), and Suika.render() must
-> remain in place for the game to function properly.
+> これらの関数は、Suika3 を動かしている `Playfield Engine` の中核となる仕組みです。
+> ゲームを正しく動作させるには、Suika.start()、Suika.update()、Suika.render() を
+> そのまま残しておく必要があります。

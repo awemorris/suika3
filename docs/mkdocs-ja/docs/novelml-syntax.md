@@ -1,49 +1,49 @@
-NovelML Syntax Reference
-========================
+NovelML 構文リファレンス
+=====================
 
-This document explains the basic syntax of NovelML and how it runs.
+このドキュメントでは、NovelML の「基本的な構文」と「実行の仕組み」を説明します。
 
-For the detailed explanation of each tag, please see "Suika3 Tag Reference".
-
----
-
-## 1. NovelML is a list of engine commands called “tags”
-
-NovelML is a list of **tags**. A tag is a **command for the engine**.
-
-- Each tag tells the engine to do something
-- Tags run **one by one**, in the order they appear
-- After a tag runs, it is "done" and the "execution position" moves on
-
-If you write the same tag again, it will do the same thing **each time it runs**.
+各タグの詳しい説明については [NovelML タグリファレンス](novelml-tags.md) を参照してください。
 
 ---
 
-## 2. Execution goes from top to bottom
+## 1. NovelML は「タグ」と呼ばれるエンジン命令のリストです
 
-NovelML runs from the top of the file to the bottom, one tag at a time.
+NovelML は **タグ** のリストです。タグは **エンジンに対するコマンド** です。
 
-- Execution normally moves forward
-- There is only one current **execution position**
+- 各タグは、エンジンに何をするかを指示します
+- タグは、書かれている順番に **1つずつ** 実行されます
+- タグが実行されると、そのタグは「完了」し、「実行位置」が次へ進みます
+
+同じタグをもう一度書いた場合、そのタグは **実行されるたびに** 同じ処理を行います。
+
+---
+
+## 2. 実行は上から下へ進みます
+
+NovelML は、ファイルの先頭から末尾へ向かって、タグを1つずつ実行します。
+
+- 通常、実行は前方へ進みます
+- 現在の **実行位置** は1つだけです
 
 ```PlainText
 [text text="Hello"]
 [text text="World"]
 ```
 
-In this case:
+この場合:
 
-1. `Hello` is shown
-2. Then `World` is shown
+1. `Hello` が表示されます
+2. そのあと `World` が表示されます
 
 ---
 
-## 3. Everything must be written as tags
+## 3. すべてをタグとして書く必要があります
 
-In NovelML, **every line must be a tag**.
+NovelML では、**すべての行をタグとして書く必要があります**。
 
-- The whole scenario is written using tags
-- Even text must use the `[text]` tag
+- シナリオ全体はタグを使って記述します
+- テキストであっても `[text]` タグを使う必要があります
 
 ```PlainText
 [text text="It's a beautiful day."]
@@ -51,59 +51,59 @@ In NovelML, **every line must be a tag**.
 
 ---
 
-## 4. Tags that wait, and tags that do not wait
+## 4. 待機するタグと、待機しないタグ
 
-There are two main kinds of tags:
+タグには大きく分けて、次の2種類があります。
 
-- **Tags that run and immediately move to the next tag**
-- **Tags that wait** for user input or for something to finish
+- **実行後、すぐに次のタグへ進むタグ**
+- ユーザー入力や何かの完了を **待機するタグ**
 
-Common "wait' tags include:
+一般的な「待機する」タグには、次のようなものがあります。
 
-- `text` (waits for a click)
-- `click` (waits for a click)
-- `wait` (waits for a specified time)
-- `video` (waits until playback finishes)
+- `text` (クリックを待ちます)
+- `click` (クリックを待ちます)
+- `wait` (指定された時間だけ待ちます)
+- `video` (再生が終わるまで待ちます)
 
-These tags pause execution **without any special syntax**.
+これらのタグは、**特別な構文なしで** 実行を一時停止します。
 
-### 4.1 Tags that run in the background (asynchronously)
+### 4.1 バックグラウンドで実行されるタグ (非同期)
 
-Some tags may **run in the background**  (asynchronously).
+一部のタグは **バックグラウンドで実行** されることがあります (非同期実行)。
 
-Typical examples:
+代表的な例:
 
 - `anime`
 - `move`
 
-These tags:
+これらのタグは次のように動作します。
 
-- Create and start an animation or movement
-- If `async="true"` is specified, the engine **does not wait** for it to finish and immediately continue to the next tag
+- アニメーションや移動を作成して開始します
+- `async="true"` が指定されている場合、エンジンは完了を **待たずに** すぐ次のタグへ進みます
 
-Because of this, tags after an `async="true"` tag may run **while the animation is still playing**.
+そのため、`async="true"` が指定されたタグの後ろにあるタグは、**アニメーションの再生中に** 実行されることがあります。
 
-This lets you do things like:
+これにより、次のようなことができます。
 
-- Move a background or character
-- While also showing text or running other effects
+- 背景やキャラクターを移動する
+- 同時にテキストを表示したり、ほかのエフェクトを実行したりする
 
 ---
 
-## 5. Tags that change the flow of execution
+## 5. 実行の流れを変更するタグ
 
-Normally execution goes from top to bottom, but some tags **change where execution continues**.
+通常、実行は上から下へ進みますが、一部のタグは **実行を続ける場所を変更** します。
 
-### 5.1 Labels
+### 5.1 ラベル
 
 ```PlainText
 [label start]
 ```
 
-- A label marks a named position in the scenario
-- Running a label does not do anything by itself
+- ラベルは、シナリオ内の名前付き位置を示します
+- ラベルを実行しても、それ自体では何も起こりません
 
-### 5.2 Jumps
+### 5.2 ジャンプ
 
 ```PlainText
 [goto name="start"]
@@ -111,7 +111,7 @@ Normally execution goes from top to bottom, but some tags **change where executi
 
 ---
 
-## 6. Conditional branching (if / elseif / else)
+## 6. 条件分岐 (if / elseif / else)
 
 ```PlainText
 [if ...]
@@ -123,36 +123,36 @@ Normally execution goes from top to bottom, but some tags **change where executi
 [endif]
 ```
 
-- Only the first matching block is executed
-- Blocks that are not chosen are **skipped completely**
-- You can write `elseif` zero or more times
-- `else` is optional
+- 最初に条件が一致したブロックだけが実行されます
+- 選ばれなかったブロックは **完全にスキップ** されます
+- `elseif` は0回以上書くことができます
+- `else` は省略できます
 
 ---
 
-## 7. Variables and variable expansion
+## 7. 変数と変数展開
 
-### 7.1 Setting variables
+### 7.1 変数の設定
 
-Use the `[set]` tag to set a variable.
+変数を設定するには `[set]` タグを使います。
 
 ```PlainText
 [set name="player_name" value="Alice"]
 ```
 
-- All variables are **strings**
-- Numbers and booleans are also stored as strings
+- すべての変数は **文字列** です
+- 数値や真偽値も文字列として保存されます
 
-### 7.2 Variable expansion
+### 7.2 変数展開
 
-You can use variable expansion inside tag values and text.
+タグの値やテキストの中で、変数展開を使うことができます。
 
 ```PlainText
 [text text="${player_name} stands up"]
 ```
 
-- `${...}` is replaced with the variable value at runtime
-- Expansion happens **when the tag is executed**
+- `${...}` は実行時に変数の値へ置き換えられます
+- 展開は **タグが実行されるとき** に行われます
 
 ```PlainText
 [set name="x" value="1"]
@@ -161,13 +161,13 @@ You can use variable expansion inside tag values and text.
 [text text="${x}"]
 ```
 
-In this example, the output is `1` and then `2`.
+この例では、出力は `1`、その次に `2` になります。
 
 ---
 
-## 8. Macros are blocks you can run as a unit
+## 8. マクロはまとめて実行できるブロックです
 
-Macros let you group several tags and run them together.
+マクロを使うと、複数のタグをまとめてグループ化し、一緒に実行できます。
 
 ```PlainText
 [defmacro name="greet"]
@@ -179,41 +179,39 @@ Macros let you group several tags and run them together.
 
 ---
 
-## 9. Switching files (load)
+## 9. ファイルの切り替え (load)
 
 ```PlainText
 [load file="scene2.txt" label="start"]
 ```
 
-`file=` is mandatory and `label=` is optional.
+`file=` は必須で、`label=` は省略できます。
 
 ---
 
-## 10. What happens at the end of a file
+## 10. ファイルの末尾で起こること
 
-If executed:
+実行が次の状態になった場合:
 
-- Reaches the end of the file, and
-- No more `goto` or `load` tags happen
+- ファイルの末尾に到達し、
+- それ以上 `goto` または `load` タグが実行されない
 
-Then the **scenario execution ends**.
+そのとき、**シナリオの実行は終了** します。
 
-However, on some platforms (for example iOS or game consoles), the app is not allowed to quit.
+ただし、一部のプラットフォーム (たとえば iOS やゲーム機) では、アプリの終了が許可されていません。
 
-So it is recommended that your scenario **explicitly**:
+そのため、シナリオを自動終了させるのではなく、**明示的に** 次のどちらかを行うことを推奨します。
 
-- Jumps back to the title using `goto`, or
-- Loads a title scene using `load`
-
-instead of ending automatically.
+- `goto` を使ってタイトルへ戻る
+- `load` を使ってタイトルシーンを読み込む
 
 ---
 
-## 11. How this document fits with other docs
+## 11. このドキュメントとほかのドキュメントの関係
 
-This document is meant to go with:
+このドキュメントは、次のドキュメントと合わせて使うことを想定しています。
 
-- Tag Reference: explains what each tag does
-- This document: explains how a scenario runs
+- タグリファレンス: 各タグが何をするかを説明します
+- このドキュメント: シナリオがどのように実行されるかを説明します
 
-For details on individual tags, see the "Tag Reference".
+個別のタグの詳細については、「タグリファレンス」を参照してください。

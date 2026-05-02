@@ -1,7 +1,7 @@
-SuikaScript 構文リファレンス
-============================
+Ray 構文リファレンス
+=================
 
-`SuikaScript 3.0` は、実質的に Suika3 API を備えた `Noct` プログラミング言語です。
+`Ray` は `Noct` プログラミング言語に Suika3 API を追加したものです。
 
 ## 代入 (Assignments)
 

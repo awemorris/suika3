@@ -1,31 +1,37 @@
-Eye Blinking
-============
+瞬きアニメーション
+================
 
-An eye blinking image must be stored in the "eye" folder that is
-located in the same folder as the character's image(s).
+瞬きアニメーションとは、適度な間隔で「目をつぶった瞬間の絵」をキャラの立ち絵に重ねて表示することで、瞬きを表現する機能です。
 
-- happy.png (main character file)
+画像は、キャラクター画像と同じフォルダ内に
+配置された "eye" フォルダに保存する必要があります。
+
+- happy.png (メインキャラクターファイル)
 - eye/
-    - happy.png (eye blinking file)
+    - happy.png (瞬きアニメーションファイル)
 
-An eye blinking image consists of frame(s) of eye blinking difference(s). 
-A frame must be the same size as the character's image is. 
-Frames must be stored horizontally in the left to right order. See the sample game for the actual image.
+瞬き画像は、キャラの上に重ねて表示するコマの画像です。
+通常はキャラと同じサイズの画像で、１コマのみの表現です。
 
-Alpha values on borders must be smoothed.
-Please use "Blur Selection" and "Delete Selection" in an image editing software.
+複数コマの表現にするには、水平方向にコマを連結して、１枚の画像にしてください。
+ただし、画面サイズを超えるような画像は、GPUのテクスチャにできない環境がありますので、画面サイズ以内の利用としてください。
 
-The eye blinking interval may be specified in the `config.ini` file.
-Intervals are slightly randomized, and sometimes double-blinkings occur.
+実際の画像については、サンプルゲームを参照してください。
+
+境界線のアルファ値は滑らかにする必要があります。
+画像編集ソフトで「選択範囲をぼかす」と「選択範囲を削除」を使用してください。
+
+瞬きアニメーション間隔は `config.ini` ファイルで指定できます。
+間隔はランダムに変化し、二重瞬きが起こることもあります。
 
 ```
 #
-# Eye blinking interval (seconds)
+# 瞬きアニメーション間隔（秒）
 #
 character.eyeblink.interval=4.0
 
 #
-# Eye blining frame length (seconds per frame)
+# 瞬きアニメーションフレーム長（フレームごとの秒数）
 #
 character.eyeblink.frame=0.15
 ```

@@ -1,10 +1,11 @@
-Ray High Level API Reference
-============================
+Ray VN API Reference
+====================
 
-The `High Level API (Engine.*)` is designed for Visual Novel creation.
+The `VN API (Suika.*)` is designed for Visual Novel creation.
 
-Every API function takes one parameter.
-The parameter must be a dictionary and arguments must be stored as key-and-value pairs.
+Every `Suika.*` API function takes only one argument.
+The argument must be a dictionary, and options to a function must be stored as key-and-value pairs in the dictionary.
+In this document, "parameter" means a key-value-pair in that dictionary.
 
 ## Index
 

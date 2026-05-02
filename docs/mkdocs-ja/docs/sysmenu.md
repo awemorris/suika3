@@ -1,80 +1,70 @@
-System Menu
-===========
+システムメニュー
+==============
 
 ## SysBtn
 
-Suika3 features a hamburger menu button, typically located in the
-top-left corner of the screen. This button is internally referred to
-as the `System Button (SysBtn)`.
+Suika3 には、通常、画面の左上隅に配置されるハンバーガーメニューボタンがあります。
+このボタンは内部的に「システムボタン (SysBtn)」と呼ばれています。
 
-To ensure compliance with App Store guidelines, Suika3 avoids placing
-small, PC-style buttons around the message window, adopting a
-mobile-first approach instead. The SysBtn consists of two images and
-associated animations. For a seamless user experience, the button is
-responsive: it appears upon mouse movement or touch, and automatically
-hides after a few seconds of inactivity. While this behavior is
-hard-coded for store compliance, the SysBtn can be completely
-disabled—for instance, for demos or Kiosk mode—by setting
-`sysbtn.enable=false` in the config.
+App Store ガイドラインへの準拠を確保するため、Suika3 はメッセージウィンドウの周辺に小さな PC スタイルのボタンを配置することを避け、モバイルファーストなアプローチを採用しています。
+SysBtn は 2 つの画像と関連するアニメーションで構成されています。
+シームレスなユーザー体験のため、ボタンはレスポンシブです。
+マウスの動きやタッチで表示され、一定時間の非操作後には自動的に非表示になります。
+このはすべての挙動はストア準拠のためにハードコードされていますが、SysBtn は完全に無効にすることができます（例えば、デモやキオスクモード用に）。
+設定で `sysbtn.enable=false` を設定することで実現できます。
 
-While the absence of buttons around the familiar message window may
-feel unexpected at first, we hope you'll understand that this
-evolution is essential for adapting visual novels to modern mobile
-platforms.
+なじみのあるメッセージウィンドウの周辺にボタンが見当たらないことは、最初はなれないかもしれませんが、この進化がビジュアルノベルを現代的なモバイルプラットフォームに適応させるのに不可欠であることをご理解いただければ幸いです。
 
-Please see also:
-- `config.ini` (search for `sysbtn`)
-- `system/sysbtn/` (in the sample game)
+関連項目:
+- `config.ini` (`sysbtn` を検索)
+- `system/sysbtn/` (サンプルゲーム内)
 
 ## SysMenu
 
-Clicking the SysBtn triggers a GUI known as the `System Menu
-(SysMenu)`. The SysMenu is fully customizable and can be configured to
-include essential functions such as Save, Load, Auto Mode, Skip Mode,
-History, and Config.
+SysBtn をクリックすると、「システムメニュー (SysMenu)」として知られる GUI がトリガーされます。
+SysMenu は完全にカスタマイズ可能で、Save、Load、Auto Mode、Skip Mode、History、Config などの重要な機能を含めるように設定できます。
 
-Please see also:
-- `system/sysmenu/` (in the sample game)
+関連項目:
+- `system/sysmenu/` (サンプルゲーム内)
 
-## Save/Load Screens
+## セーブ/ロード画面
 
-Save and load screens are fully customizable via GUI files.
+セーブ画面とロード画面は GUI ファイルを介して完全にカスタマイズ可能です。
 
-Please see also:
-- `system/save/` (in the sample game)
-- `system/load/` (in the sample game)
+関連項目:
+- `system/save/` (サンプルゲーム内)
+- `system/load/` (サンプルゲーム内)
 
-## Auto Mode and Skip Mode Buttons
+## Auto Mode と Skip Mode のボタン
 
-The Auto and Skip buttons use specialized GUI button types. These
-buttons trigger their respective modes—Auto Mode or Skip Mode—when
-clicked.
+Auto ボタンと Skip ボタンは特殊な GUI ボタンタイプを使用します。
+これらのボタンをクリックすると、それぞれ Auto Mode または Skip Mode がトリガーされます。
 
-Please see also:
-- `system/sysmenu/` (in the sample game)
+関連項目:
+- `system/sysmenu/` (サンプルゲーム内)
 
-## History Screen
+## ヒストリー画面
 
-The History screen is fully customizable via a GUI file.
+ヒストリー画面は GUI ファイルを介して完全にカスタマイズ可能です。
 
-Please see also:
-- `system/history/` (in the sample game)
+関連項目:
+- `system/history/` (サンプルゲーム内)
 
-## Config Screen
+## Config 画面
 
-The Config screen is fully customizable via a GUI file.
+Config 画面は GUI ファイルを介して完全にカスタマイズ可能です。
 
-The config screen in the sample game includes:
-- BGM, Sound Effect, and Voice Volume Sliders
-- Language Switch (EN/JP)
-- Text and Auto Mode Speed Adjustments
-- Text Speed Preview
+サンプルゲームの Config 画面に含まれるもの:
+- BGM、効果音、ボイスボリュームスライダー
+- 言語切り替え (EN/JP)
+- テキストと Auto Mode 速度調整
+- テキスト速度プレビュー
 
-Additionally, you can implement:
-- Master Volume
-- Per-Character Volume
-- Language Switch (for all supported languages)
-- Custom Buttons
+さらに実装できるもの:
+- マスターボリューム
+- キャラクター別ボリューム
+- 言語切り替え (サポートされているすべての言語)
+- カスタムボタン
 
-Please see also:
-- `system/config/` (in the sample game)
+関連項目:
+- `system/config/` (サンプルゲーム内)

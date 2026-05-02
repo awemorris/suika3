@@ -1,48 +1,49 @@
-NVL Mode Reference
-==================
+NVLモード リファレンス
+====================
 
-Suika3 support the full screen novel style, so called NVL mode.
+Suika3は全画面小説スタイル（NVLモード）に対応しています。
 
-## Overview
+## 概要
 
 ```
-# New page.
+# 新しいページ
 [text action="clear"]
 
-# Block style 1. (this is not highlighted by the VS Code extension for now)
+# ブロック形式1 (現在のところ VS Code 拡張機能ではハイライトされません)
 [text text=
   """
-  Hello, this is NVL mode test.
-  NVL mode has a fullscreen-styled message box.
-  By default, each text tag will do a line feed.
+  これはNVLモードのテストです。
+  NVLモードはフルスクリーンのメッセージボックスを持ちます。
+  デフォルトでは、各テキストタグは改行を行います。
   """]
 
-# Block style 2. (this is highlighted by the VS Code extension)
+# ブロック形式2 (VS Code 拡張機能でハイライトされます)
 [text text="""
-  Hello, this is NVL mode test.
-  NVL mode has a fullscreen-styled message box.
-  By default, each text tag will do a line feed.
+  これはNVLモードのテストです。
+  NVLモードはフルスクリーンのメッセージボックスを持ちます。
+  デフォルトでは、各テキストタグは改行を行います。
 """]
 
-# Inline paragraph continuation.
-[text action="inline" text=" To continue a paragraph, use the inline action."]
+# インラインの段落継続
+[text action="inline" text=" 段落を続行するには、inline アクションを使用してください。"]
 
-# New page.
+# 新しいページ
 [text action="clear"]
-[text text="Please clear the message box explicitly."]
-[text text="This is why NVL is called Page Mode in Suika3!"]
+[text text="メッセージボックスを明示的にクリアしてください。"]
+[text text="これが Suika3 でNVLがページモードと呼ばれる理由です！"]
 ```
 
-## Switch
+## ADV/NVL切り替え
 
-Add two macros at the end of your `start.novel`:
+`start.novel` の末尾に2つのマクロを追加してください：
+
 ```
 #
-# Macro to start NVL mode.
+# NVLモードを開始するマクロ
 #
 [defmacro name="nvl-mode"]
    [text action="hide"]
-   [wait time="0.3"] # Wait for the message box to hide.
+   [wait time="0.3"] # メッセージボックスが非表示になるのを待ちます
    [config name="game.novel" value="true"]
    [config name="msgbox.image" value="system/message/msgbox-nvl.png"]
    [config name="msgbox.x" value="0"]
@@ -66,11 +67,11 @@ Add two macros at the end of your `start.novel`:
 [endmacro]
 
 #
-# Macro to go back ADV mode.
+# ADVモードに戻すマクロ
 #
 [defmacro name="adv-mode"]
    [text action="hide"]
-   [wait time="0.3"] # Wait for the message box to hide.
+   [wait time="0.3"] # メッセージボックスが非表示になるのを待ちます
    [config name="game.novel" value="false"]
    [config name="msgbox.image" value="system/message/msgbox.png"]
    [config name="msgbox.x" value="0"]
@@ -93,12 +94,14 @@ Add two macros at the end of your `start.novel`:
 [endmacro]
 ```
 
-Then call the `nvl-mode` macro to switch to NVL mode.
+次に `nvl-mode` マクロを呼び出して、NVLモードに切り替えます。
+
 ```
 [callmacro name="nvl-mode"]
 ```
 
-If you want to switch back to ADV mode (normal message mode), call the `adv-mode` macro:
+ADVモード（通常のメッセージモード）に戻したい場合は、`adv-mode` マクロを呼び出してください：
+
 ```
 [callmacro name="adv-mode"]
 ```
