@@ -1,16 +1,16 @@
-Ray High Level API Reference
+Ray 高レベル API リファレンス
 ============================
 
-The `High Level API (Engine.*)` is designed for Visual Novel creation.
+`High Level API (Engine.*)` はビジュアルノベル制作向けに設計されています。
 
-Every API function takes one parameter.
-The parameter must be a dictionary and arguments must be stored as key-and-value pairs.
+すべての API 関数は 1 つのパラメータを受け取ります。
+パラメータは辞書でなければならず、引数はキーと値のペアとして格納する必要があります。
 
-## Index
+## 目次
 
-* Fundamental
+* 基本
     * [Suika.loadPlugin()](#suikaloadplugin)
-* Config
+* 設定
     * [Suika.setConfig()](#suikasetconfig)
     * [Suika.getConfigCount()](#suikagetconfigcount)
     * [Suika.getConfigKey()](#suikagetconfigkey)
@@ -23,7 +23,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.getFloatConfig()](#suikagetfloatconfig)
     * [Suika.getConfigAsString()](#suikagetconfigasstring)
     * [Suika.compareLocale()](#suikacomparelocale)
-* Input
+* 入力
     * [Suika.getMousePosX()](#suikagetmouseposx)
     * [Suika.getMousePosY()](#suikagetmouseposy)
     * [Suika.isMouseLeftPressed()](#suikaismouseleftpressed)
@@ -47,7 +47,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.isTouchCanceled()](#suikaistouchcanceled)
     * [Suika.isSwiped()](#suikaisswiped)
     * [Suika.clearInputState()](#suikaclearinputstate)
-* Game
+* ゲーム
     * [Suika.startCommandRepetition()](#suikastartcommandrepetition)
     * [Suika.stopCommandRepetition()](#suikastopcommandrepetition)
     * [Suika.isInCommandRepetition()](#suikaisincommandrepetition)
@@ -96,7 +96,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.getLastEnglishTagIndex()](#suikagetlastenglishtagindex)
     * [Suika.clearLastEnglishTagIndex()](#suikaclearlastenglishtagindex)
     * [Suika.getLastTagName()](#suikagetlasttagname)
-* Image
+* 画像
     * [Suika.createImageFromFile()](#suikacreateimagefromfile)
     * [Suika.createImage()](#suikacreateimage)
     * [Suika.getImageWidth()](#suikagetimagewidth)
@@ -106,7 +106,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.drawImage3D()](#suikadrawimage3d)
     * [Suika.makeColor()](#suikamakecolor)
     * [Suika.fillImageRect()](#suikafillimagerect)
-* Stage
+* ステージ
     * [Suika.reloadStageImages()](#suikareloadstageimages)
     * [Suika.reloadStagePositions()](#suikareloadstagepositions)
     * [Suika.getLayerX()](#suikagetlayerx)
@@ -172,7 +172,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.getChooseBoxRect()](#suikagetchooseboxrect)
     * [Suika.startKirakira()](#suikastartkirakira)
     * [Suika.renderKirakira()](#suikarenderkirakira)
-* Mixer
+* ミキサー
     * [Suika.setMixerInputFile()](#suikasetmixerinputfile)
     * [Suika.setMixerVolume()](#suikasetmixervolume)
     * [Suika.getMixerVolume()](#suikagetmixervolume)
@@ -185,13 +185,13 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.isMixerSoundFinished()](#suikaismixersoundfinished)
     * [Suika.getTrackFileName()](#suikagettrackfilename)
     * [Suika.applyCharacterVolume()](#suikaapplycharactervolume)
-* SysBtn
+* システムボタン
     * [Suika.enableSysBtn()](#suikaenablesysbtn)
     * [Suika.isSysBtnVisible()](#suikaisysbtnvisible)
     * [Suika.updateSysBtnState()](#suikaupdatesysbtnstate)
     * [Suika.isSysBtnPointed()](#suikaisysbtnpointed)
     * [Suika.isSysBtnClicked()](#suikaisysbtnclicked)
-* Text
+* テキスト
     * [Suika.drawTextOnLayer()](#suikadrawtextonlayer)
     * [Suika.getStringWidth()](#suikagetstringwidth)
     * [Suika.getStringHeight()](#suikagetstringheight)
@@ -202,7 +202,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.drawMessage()](#suikadrawmsgcommon)
     * [Suika.getDrawMsgPenPosition()](#suikagetpenpositioncommon)
     * [Suika.isEscapeSequenceChar()](#suikaisescapesequencechar)
-* Tag
+* タグ
     * [Suika.getTagCount()](#suikagettagcount)
     * [Suika.moveToTagFile()](#suikamovetotagfile)
     * [Suika.moveToTagIndex()](#suikamovetotagindex)
@@ -226,7 +226,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.popTagStackIf()](#suikapoptagstackif)
     * [Suika.pushTagStackWhile()](#suikapushtagstackwhile)
     * [Suika.pushTagStackFor()](#suikapushtagstackfor)
-* Anime
+* アニメーション
     * [Suika.loadAnimeFromFile()](#suikaloadanimefromfile)
     * [Suika.newAnimeSequence()](#suikanewanimesequence)
     * [Suika.addAnimeSequencePropertyF()](#suikaaddanimesequencepropertyf)
@@ -241,7 +241,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.stopLipAnime()](#suikastoplipanime)
     * [Suika.clearLayerAnimeSequence()](#suikaclearlayeranimesequence)
     * [Suika.clearAllAnimeSequence()](#suikaclearallanimesequnce)
-* Variable
+* 変数
     * [Suika.setVariableInt()](#suikasetvariableint)
     * [Suika.setVariableFloat()](#suikasetvariablefloat)
     * [Suika.setVariableString()](#suikasetvariablestring)
@@ -256,7 +256,7 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.getVariableName()](#suikagetvariablename)
     * [Suika.checkVariableExists()](#suikacheckvariableexists)
     * [Suika.expandStringWithVariable()](#suikaexpandstringwithvariable)
-* Save
+* セーブ
     * [Suika.executeSaveGlobal()](#suikaexecutesaveglobal)
     * [Suika.executeLoadGlobal()](#suikaexecuteloadglobal)
     * [Suika.executeSaveLocal()](#suikaexecutesavelocal)
@@ -270,14 +270,14 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
     * [Suika.getSaveChapterName()](#suikagetsavechaptername)
     * [Suika.getSaveLastMessage()](#suikagetsavelastmessage)
     * [Suika.getSaveThumbnail()](#suikagetsavethumbnail)
-* History
+* 履歴
     * [Suika.clearHistory()](#suikaclearhistory)
     * [Suika.addHistory()](#suikaaddhistory)
     * [Suika.getHistoryCount()](#suikagethistorycount)
     * [Suika.getHistoryName()](#suikagethistoryname)
     * [Suika.getHistoryMessage()](#suikagethistorymessage)
     * [Suika.getHistoryVoice()](#suikagethistoryvoice)
-* Seen
+* 既読
     * [Suika.loadSeen()](#suikaloadseen)
     * [Suika.saveSeen()](#suikasaveseen)
     * [Suika.getSeenFlags()](#suikagetseenflags)
@@ -318,2003 +318,2002 @@ The parameter must be a dictionary and arguments must be stored as key-and-value
 
 ## Suika.loadPlugin()
 
-Loads a plugin.
+プラグインを読み込みます。
 
-Only this API takes a non-dictionary argument.
+この API だけは辞書ではない引数を受け取ります。
 
-### Parameters (Direct)
+### パラメータ (直接)
 
-| Parameter | Type   | Description     |
+| パラメータ | 型   | 説明     |
 |-----------|--------|-----------------|
-| name      | String | Plugin name.    |
+| name      | String | プラグイン名。    |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.setConfig()
 
-Set a config.
+設定をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key of the config.                         |
-| value     | String | Value of the config.                       |
+| key       | String | 設定のキー。                         |
+| value     | String | 設定の値。                       |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getConfigCount()
 
-Get the number of the config keys.
+設定キーの数を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Integer that represents a number of config keys.
+設定キーの数を表す整数。
 
 ---
 
 ## Suika.getConfigKey()
 
-Get a config key's index.
+設定キーのインデックスを取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| index     | Integer | Index of a config.                         |
+| index     | Integer | 設定のインデックス。                         |
 
-### Return
+### 戻り値
 
-String that represents a key of the config at the specified index.
+指定したインデックスにある設定キーを表す文字列。
 
 ---
 
 ## Suika.isGlobalSaveConfig()
 
-Check if a config key is stored to global save data.
+設定キーがグローバルセーブデータに保存されるかどうかを確認します。
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| key       | String | キー名。                                  |
 
-### Return
+### 戻り値
 
-Boolean that represents whether the config is global-saved or not.
+設定がグローバルセーブされるかどうかを表す真偽値。
 
 ---
 
 ## Suika.isLocalSaveConfig()
 
-Check if a config key is stored to local save data.
+設定キーがローカルセーブデータに保存されるかどうかを確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| key       | String | キー名。                                  |
 
-### Return
+### 戻り値
 
-Boolean that represents whether the config is local-saved or not.
+設定がローカルセーブされるかどうかを表す真偽値。
 
 ---
 
 ## Suika.getConfigType()
 
-Get a config value type. ("s", "b", "i", "f")
+設定値の型を取得します。("s", "b", "i", "f")
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| key       | String | キー名。                                  |
 
-### Return
+### 戻り値
 
-One of the following strings.
+次のいずれかの文字列。
 
-| Value      | Meaning                  |
+| 値      | 意味                  |
 |------------|--------------------------|
-| "s"        | Config is string.        |
-| "b"        | Config is boolean.       |
-| "i"        | Config is integer.       |
-| "f"        | Config is float.         |
+| "s"        | 設定は文字列です。        |
+| "b"        | 設定は真偽値です。       |
+| "i"        | 設定は整数です。       |
+| "f"        | 設定は浮動小数点数です。         |
 
 ---
 
 ## Suika.getStringConfig()
 
-Get a string config value.
+文字列の設定値を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| key       | String | キー名。                                  |
 
-### Return
+### 戻り値
 
-String value of the config.
+設定の文字列値。
 
 ---
 
 ## Suika.getBoolConfig()
 
-Get a boolean config value.
+真偽値の設定値を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| key       | String | キー名。                                  |
 
-### Return
+### 戻り値
 
-Boolean value of the config.
+設定の真偽値。
 
 ---
 
 ## Suika.getIntConfig()
 
-Get an integer config value.
+整数の設定値を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| key       | String | キー名。                                  |
 
-### Return
+### 戻り値
 
-Integer value of the config.
+設定の整数値。
 
 ---
 
 ## Suika.getFloatConfig()
 
-Get a float config value.
+浮動小数点数の設定値を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| key       | String | キー名。                                  |
 
-### Return
+### 戻り値
 
-Float value of the config.
+設定の浮動小数点値。
 
 ---
 
 ## Suika.getConfigAsString()
 
-Get a config value as a string.
+設定値を文字列として取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| key       | String | キー名。                                  |
 
-### Return
+### 戻り値
 
-Stringified value of the config.
+文字列化された設定値。
 
 ---
 
 ## Suika.compareLocale()
 
-Check if the specified locale is same as the current locale.
+指定したロケールが現在のロケールと同じか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| locale    | String | Locale name.                               |
+| locale    | String | ロケール名。                               |
 
 
-### Return
+### 戻り値
 
-Bolean that represents whether the specified locale is matched to the
-current one.
+指定したロケールが現在のロケールと一致するかどうかを表す真偽値。
 
 ---
 
 ## Suika.getMousePosX()
 
-Get the mouse X position.
+マウスの X 位置を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Integer that represents the current mouse X coordinate.
+現在のマウス X 座標を表す整数。
 
 ---
 
 ## Suika.getMousePosY()
 
-Get the mouse Y position.
+マウスの Y 位置を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Integer that represents the current mouse Y coordinate.
+現在のマウス Y 座標を表す整数。
 
 ---
 
 ## Suika.isMouseLeftPressed()
 
-Check if mouse left button is pressed.
+マウスの左ボタンが押されているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean that represents whether the left button is currently held down.
+左ボタンが現在押し下げられているかどうかを表す真偽値。
 
 ---
 
 ## Suika.isMouseRightPressed()
 
-Check if mouse right button is pressed.
+マウスの右ボタンが押されているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean that represents whether the right button is currently held down.
+右ボタンが現在押し下げられているかどうかを表す真偽値。
 
 ---
 
 ## Suika.isMouseLeftClicked()
 
-Check if mouse left button is pressed then released.
+マウスの左ボタンが押されてから離されたか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean that represents whether a left-click occurred in the current frame.
+現在のフレームで左クリックが発生したかどうかを表す真偽値。
 
 ---
 
 ## Suika.isMouseRightClicked()
 
-Check if mouse right button is pressed then released.
+マウスの右ボタンが押されてから離されたか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean that represents whether a right-click occurred in the current frame.
+現在のフレームで右クリックが発生したかどうかを表す真偽値。
 
 ---
 
 ## Suika.isMouseDragging()
 
-Check if mouse is dragging.
+マウスがドラッグ中か確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean that represents whether the mouse is being moved while a button is pressed.
+ボタンが押されている間にマウスが移動しているかどうかを表す真偽値。
 
 ---
 
 ## Suika.isReturnKeyPressed()
 
-Check if return key is pressed.
+Return キーが押されているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isSpaceKeyPressed()
 
-Check if space key is pressed.
+Space キーが押されているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isEscapeKeyPressed()
 
-Check if escape key is pressed.
+Escape キーが押されているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isUpKeyPressed()
 
-Check if up key is pressed.
+上キーが押されているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isDownKeyPressed()
 
-Check if down key is pressed.
+下キーが押されているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isLeftKeyPressed()
 
-Check if left key is pressed.
+左キーが押されているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isRightKeyPressed()
 
-Check if right key is pressed.
+右キーが押されているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isPageUpKeyPressed()
 
-Check if pageup key is pressed.
+PageUp キーが押されているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isPageDownKeyPressed()
 
-Check if pagedown key is pressed.
+PageDown キーが押されているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isControlKeyPressed()
 
-Check if control key is pressed.
+Control キーが押されているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isSKeyPressed()
 
-Check if S key is pressed.
+S キーが押されているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isLKeyPressed()
 
-Check if L key is pressed.
+L キーが押されているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isHKeyPressed()
 
-Check if H key is pressed.
+H キーが押されているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isTouchCanceled()
 
-Check if touch is canceled.
+タッチがキャンセルされたか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isSwiped()
 
-Check if swiped.
+スワイプされたか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.clearInputState()
 
-Clear input states to avoid further input processing in the current frame.
+現在のフレームで以降の入力処理を避けるため、入力状態をクリアします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 
 ---
 
 ## Suika.startCommandRepetition()
 
-Start a multiple-frame command execution.
+複数フレームにまたがるコマンド実行を開始します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.stopCommandRepetition()
 
-Stop a multiple-frame command execution.
+複数フレームにまたがるコマンド実行を停止します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.isInCommandRepetition()
 
-Check whether we are in a multiple-frame command execution or not.
+複数フレームにまたがるコマンド実行中かどうかを確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.setMessageActive()
 
-Set the message showing state to active.
+メッセージ表示状態をアクティブにします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.clearMessageActive()
 
-Reset the message showing state.
+メッセージ表示状態をリセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.isMessageActive()
 
-Check whether the message showing state is set or not.
+メッセージ表示状態がセットされているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.startAutoMode()
 
-Start the auto-mode.
+オートモードを開始します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.stopAutoMode()
 
-Stop the auto-mode.
+オートモードを停止します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.isAutoMode()
 
-Check whether we are in the auto-mode or not.
+オートモード中かどうかを確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.startSkipMode()
 
-Start the skip-mode.
+スキップモードを開始します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.stopSkipMode()
 
-Stop the skip-mode.
+スキップモードを停止します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.isSkipMode()
 
-Check whether we are in the skip-mode or not.
+スキップモード中かどうかを確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.setSaveLoad()
 
-Set the save/load enable setting.
+セーブ/ロードの有効設定をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                       |
+| パラメータ | 型    | 説明                       |
 |-----------|---------|-----------------------------------|
-| enable    | Boolean | Whether to enable save and load.  |
+| enable    | Boolean | セーブとロードを有効にするかどうか。  |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.isSaveLoadEnabled()
 
-Get the save/load enable setting.
+セーブ/ロードの有効設定を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.setNonInterruptible()
 
-Set the non-interruptible mode setting.
+割り込み不可モード設定をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| enable    | Boolean | Non-interruptible mode.    |
+| enable    | Boolean | 割り込み不可モード。    |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.isNonInterruptible()
 
-Get the non-interruptible mode setting.
+割り込み不可モード設定を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.setPenPosition()
 
-Set the pen position for text drawing.
+テキスト描画用のペン位置をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| x         | Integer | X coordinate.         |
-| y         | Integer | Y coordinate.         |
+| x         | Integer | X 座標。         |
+| y         | Integer | Y 座標。         |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getPenPositionX()
 
-Get the pen X position.
+ペンの X 位置を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Integer value.
+整数値。
 
 ---
 
 ## Suika.getPenPositionY()
 
-Get the pen Y position.
+ペンの Y 位置を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Integer value.
+整数値。
 
 ---
 
 ## Suika.pushForCall()
 
-Push the return point to the call stack.
+戻り先をコールスタックにプッシュします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| file      | String  | Script file name.     |
-| index     | Integer | Command index.        |
+| file      | String  | スクリプトファイル名。     |
+| index     | Integer | コマンドインデックス。        |
 
-### Return
+### 戻り値
 
-Boolean that represents success or failure.
+成功または失敗を表す真偽値。
 
 ---
 
 ## Suika.popForReturn()
 
-Pop the return point from the call stack.
+戻り先をコールスタックからポップします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns a dictionary that contains:
+次の要素を含む辞書を返します:
 
-* obj.file: File name
-* obj.index: Tag index
+* obj.file: ファイル名
+* obj.index: タグインデックス
 
 ---
 
 ## Suika.readCallStack()
 
-Read the call stack element at the specified index.
+指定したインデックスのコールスタック要素を読み取ります。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| sp        | Integer | Stack element index.  |
+| sp        | Integer | スタック要素インデックス。  |
 
-### Return
+### 戻り値
 
-Returns a dictionary that contains:
+次の要素を含む辞書を返します:
 
-* obj.file: File name
-* obj.index: Tag index
+* obj.file: ファイル名
+* obj.index: タグインデックス
 
 ---
 
 ## Suika.writeCallStack()
 
-Write the call stack element at the specified index.
+指定したインデックスのコールスタック要素を書き込みます。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| sp        | Integer | Stack element index.  |
-| file      | String  | Script file name.     |
-| index     | Integer | Tag index.            |
+| sp        | Integer | スタック要素インデックス。  |
+| file      | String  | スクリプトファイル名。     |
+| index     | Integer | タグインデックス。            |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.setCallArgument()
 
-Set a calling argument for GUI or anime.
+GUI またはアニメーション用の呼び出し引数をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| index     | Integer | Argument index.       |
-| value     | String  | Argument value.       |
+| index     | Integer | 引数インデックス。       |
+| value     | String  | 引数の値。       |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.getCallArgument()
 
-Get a calling argument.
+呼び出し引数を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| index     | Integer | Argument index.       |
+| index     | Integer | 引数インデックス。       |
 
-### Return
+### 戻り値
 
-String value.
+文字列値。
 
 ---
 
 ## Suika.isPageMode()
 
-Check if the script page mode is enabled.
+スクリプトのページモードが有効か確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns boolean.
+真偽値を返します。
 
 ---
 
 ## Suika.appendBufferedMessage()
 
-Append a string to the page mode buffer string.
+ページモードのバッファ文字列に文字列を追加します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| message   | String  | Message.              |
+| message   | String  | メッセージ。              |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getBufferedMessage()
 
-Get the page mode buffer string.
+ページモードのバッファ文字列を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns a string.
+文字列を返します。
 
 ---
 
 ## Suika.clearBufferedMessage()
 
-Clear the page mode buffer string.
+ページモードのバッファ文字列をクリアします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.resetPageLine()
 
-Reset the message line count in a page.
+ページ内のメッセージ行数をリセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.incPageLine()
 
-Increment the line count in a page.
+ページ内の行数を増やします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.isPageTop()
 
-Check if we are at the first line in a page.
+ページの先頭行にいるか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.registerBGVoice()
 
-Register a BGVoice.
+BGVoice を登録します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| file      | String  | BGVoice file.         |
+| file      | String  | BGVoice ファイル。         |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getBVoice()
 
-Get the BGVoice.
+BGVoice を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns a file name string.
+ファイル名文字列を返します。
 
 ---
 
 ## Suika.setBGVoicePlaying()
 
-Set the BGVoice state playing.
+BGVoice の再生状態をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| isPlaying | Boolean | State.                |
+| isPlaying | Boolean | 状態。                |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.isBGVoicePlaying()
 
-Check if the BGVoice is playing.
+BGVoice が再生中か確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns boolean.
+真偽値を返します。
 
 ---
 
 ## Suika.setChapterName()
 
-Set the chapter name.
+チャプター名をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| name      | String  | Chapter name.         |
+| name      | String  | チャプター名。         |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getChapterName()
 
-Get the chapter name.
+チャプター名を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns a string.
+文字列を返します。
 
 ---
 
 ## Suika.setLastMessage()
 
-Set the last message.
+最後のメッセージをセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| message   | String  | Message.              |
-| isAppend  | Boolean | Append or replace.    |
+| message   | String  | メッセージ。              |
+| isAppend  | Boolean | 追加または置換。    |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getLastMessage()
 
-Get the last message.
+最後のメッセージを取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns a string.
+文字列を返します。
 
 ---
 
 ## Suika.setTextSpeed()
 
-Set the text speed.
+テキスト速度をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| speed     | Float   | Text speed.           |
+| speed     | Float   | テキスト速度。           |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getTextSpeed()
 
-Get the text speed.
+テキスト速度を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns a float.
+浮動小数点数を返します。
 
 ---
 
 ## Suika.setAutoSpeed()
 
-Set the auto mode speed.
+オートモード速度をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| speed     | Float   | Auto speed.           |
+| speed     | Float   | オート速度。           |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getAutoSpeed()
 
-Get the auto speed.
+オート速度を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns a float.
+浮動小数点数を返します。
 
 ---
 
 ## Suika.markLastEnglishTagIndex()
 
-Mark the last English index.
+最後の English インデックスを記録します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getLastEnglishTagIndex()
 
-Get the last English index.
+最後の English インデックスを取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns an integer.
+整数を返します。
 
 ---
 
 ## Suika.clearLastEnglishTagIndex()
 
-Clear the last English index.
+最後の English インデックスをクリアします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getLastTagName()
 
-Get the last tag name.
+最後のタグ名を取得します。
 
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns a string.
+文字列を返します。
 
 ---
 
 ## Suika.createImageFromFile()
 
-Load an image from a file.
+ファイルから画像を読み込みます。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                   |
+| パラメータ | 型   | 説明                   |
 |-----------|--------|-------------------------------|
-| file      | String | Path to the image file.       |
+| file      | String | 画像ファイルへのパス。       |
 
-### Return
+### 戻り値
 
-An image object, or null on failure.
+画像オブジェクト。失敗時は null。
 
 ---
 
 ## Suika.createImage()
 
-Create a new blank image.
+新しい空の画像を作成します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                   |
+| パラメータ | 型    | 説明                   |
 |-----------|---------|-------------------------------|
-| width     | Integer | Width of the image.           |
-| height    | Integer | Height of the image.          |
+| width     | Integer | 画像の幅。           |
+| height    | Integer | 画像の高さ。          |
 
-### Return
+### 戻り値
 
-An image object.
+画像オブジェクト。
 
 ---
 
 ## Suika.getImageWidth()
 
-Get the width of an image.
+画像の幅を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                   |
+| パラメータ | 型   | 説明                   |
 |-----------|--------|-------------------------------|
-| img       | Object | Image object.                 |
+| img       | Object | 画像オブジェクト。                 |
 
-### Return
+### 戻り値
 
-Integer that represents the width.
+幅を表す整数。
 
 ---
 
 ## Suika.getImageHeight()
 
-Get the height of an image.
+画像の高さを取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                   |
+| パラメータ | 型   | 説明                   |
 |-----------|--------|-------------------------------|
-| image     | Object | Image object.                 |
+| image     | Object | 画像オブジェクト。                 |
 
-### Return
+### 戻り値
 
-Integer that represents the height.
+高さを表す整数。
 
 ---
 
 ## Suika.destroyImage()
 
-Destroy an image and free its memory.
+画像を破棄し、そのメモリを解放します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                   |
+| パラメータ | 型   | 説明                   |
 |-----------|--------|-------------------------------|
-| image     | Object | Image object to destroy.      |
+| image     | Object | 破棄する画像オブジェクト。      |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.drawImage()
 
-Copy an image to another image (no blending).
+画像を別の画像へコピーします (ブレンドなし)。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter  | Type    | Description                      |
+| パラメータ  | 型    | 説明                      |
 |------------|---------|----------------------------------|
-| dstImage   | Object  | Destination image.               |
-| dstLeft    | Integer | X coordinate in destination.     |
-| dstTop     | Integer | Y coordinate in destination.     |
-| srcImage   | Object  | Source image.                    |
-| dstWidth   | Integer | Width to draw.                   |
-| dstHeight  | Integer | Height to draw.                  |
-| srcLeft    | Integer | X coordinate in source.          |
-| srcTop     | Integer | Y coordinate in source.          |
+| dstImage   | Object  | 描画先画像。               |
+| dstLeft    | Integer | 描画先の X 座標。     |
+| dstTop     | Integer | 描画先の Y 座標。     |
+| srcImage   | Object  | 描画元画像。                    |
+| dstWidth   | Integer | 描画する幅。                   |
+| dstHeight  | Integer | 描画する高さ。                  |
+| srcLeft    | Integer | 描画元の X 座標。          |
+| srcTop     | Integer | 描画元の Y 座標。          |
 | alpha      | Integer | 0-255                            |
-| blend      | Integer | Blending type.                   |
+| blend      | Integer | ブレンド種別。                   |
 
-### Blending Types
+### ブレンド種別
 
-| Type                | Description                        |
+| 型                | 説明                        |
 |---------------------|------------------------------------|
-| Suika.BLEND_COPY    | Copy.                              |
-| Suika.BLEND_ALPHA   | Alpha blending.                    |
-| Suika.BLEND_ADD     | Add blending.                      |
-| Suika.BLEND_SUB     | Sub blending.                      |
-| Suika.BLEND_DIM     | RGB 50% alpha blending.            |
-| Suika.BLEND_GLYPH   | Alpha blending for normal glyphs.  |
-| Suika.BLEND_EMOJI   | Alpha blending for emoji glyphs.   |
+| Suika.BLEND_COPY    | コピー。                              |
+| Suika.BLEND_ALPHA   | アルファブレンド。                    |
+| Suika.BLEND_ADD     | 加算ブレンド。                      |
+| Suika.BLEND_SUB     | 減算ブレンド。                      |
+| Suika.BLEND_DIM     | RGB 50% アルファブレンド。            |
+| Suika.BLEND_GLYPH   | 通常グリフ用のアルファブレンド。  |
+| Suika.BLEND_EMOJI   | 絵文字グリフ用のアルファブレンド。   |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.drawImage3D()
 
-Copy an image to another image (no blending).
+画像を別の画像へコピーします (ブレンドなし)。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter  | Type    | Description                      |
+| パラメータ  | 型    | 説明                      |
 |------------|---------|----------------------------------|
-| dstImage   | Object  | Destination image.               |
-| x1         | Integer | x1 coordinate in destination.    |
-| y1         | Integer | y1 coordinate in destination.    |
-| x2         | Integer | x2 coordinate in destination.    |
-| y2         | Integer | y2 coordinate in destination.    |
-| x3         | Integer | x3 coordinate in destination.    |
-| y3         | Integer | y3 coordinate in destination.    |
-| x4         | Integer | x4 coordinate in destination.    |
-| y5         | Integer | y4 coordinate in destination.    |
-| srcImage   | Object  | Source image.                    |
-| srcLeft    | Integer | X coordinate in source.          |
-| srcTop     | Integer | Y coordinate in source.          |
-| srcWidth   | Integer | Width in source.                 |
-| srcHeight  | Integer | Height in source.                |
+| dstImage   | Object  | 描画先画像。               |
+| x1         | Integer | 描画先の x1 座標。    |
+| y1         | Integer | 描画先の y1 座標。    |
+| x2         | Integer | 描画先の x2 座標。    |
+| y2         | Integer | 描画先の y2 座標。    |
+| x3         | Integer | 描画先の x3 座標。    |
+| y3         | Integer | 描画先の y3 座標。    |
+| x4         | Integer | 描画先の x4 座標。    |
+| y5         | Integer | 描画先の y4 座標。    |
+| srcImage   | Object  | 描画元画像。                    |
+| srcLeft    | Integer | 描画元の X 座標。          |
+| srcTop     | Integer | 描画元の Y 座標。          |
+| srcWidth   | Integer | 描画元の幅。                 |
+| srcHeight  | Integer | 描画元の高さ。                |
 | alpha      | Integer | 0-255                            |
-| blend      | Integer | Blending type.                   |
+| blend      | Integer | ブレンド種別。                   |
 
-### Blending Types
+### ブレンド種別
 
-| Type                | Description                        |
+| 型                | 説明                        |
 |---------------------|------------------------------------|
-| Suika.BLEND_ALPHA   | Alpha blending.                    |
-| Suika.BLEND_ADD     | Add blending.                      |
-| Suika.BLEND_SUB     | Sub blending.                      |
-| Suika.BLEND_DIM     | RGB 50% alpha blending.            |
+| Suika.BLEND_ALPHA   | アルファブレンド。                    |
+| Suika.BLEND_ADD     | 加算ブレンド。                      |
+| Suika.BLEND_SUB     | 減算ブレンド。                      |
+| Suika.BLEND_DIM     | RGB 50% アルファブレンド。            |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.drawImageAlpha()
 
-Draw an image with alpha blending.
+アルファブレンドで画像を描画します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                      |
+| パラメータ | 型    | 説明                      |
 |-----------|---------|----------------------------------|
-| dstImage  | Object  | Destination image.               |
-| dstLeft   | Integer | X coordinate in destination.     |
-| dstTop    | Integer | Y coordinate in destination.     |
-| dstWidth  | Integer | Width to draw.                   |
-| dstHeight | Integer | Height to draw.                  |
-| srcImage  | Object  | Source image.                    |
-| srcLeft   | Integer | X coordinate in source.          |
-| srcTop    | Integer | Y coordinate in source.          |
-| alpha     | Integer | Alpha value (`0`-`255`).         |
+| dstImage  | Object  | 描画先画像。               |
+| dstLeft   | Integer | 描画先の X 座標。     |
+| dstTop    | Integer | 描画先の Y 座標。     |
+| dstWidth  | Integer | 描画する幅。                   |
+| dstHeight | Integer | 描画する高さ。                  |
+| srcImage  | Object  | 描画元画像。                    |
+| srcLeft   | Integer | 描画元の X 座標。          |
+| srcTop    | Integer | 描画元の Y 座標。          |
+| alpha     | Integer | アルファ値 (`0`-`255`)。         |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.drawImageAdd()
 
-Draw an image with additive blending.
+加算ブレンドで画像を描画します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                      |
+| パラメータ | 型    | 説明                      |
 |-----------|---------|----------------------------------|
-| dstImage  | Object  | Destination image.               |
-| dstLeft   | Integer | X coordinate in destination.     |
-| dstTop    | Integer | Y coordinate in destination.     |
-| dstWidth  | Integer | Width to draw.                   |
-| dstHeight | Integer | Height to draw.                  |
-| srcImage  | Object  | Source image.                    |
-| srcLeft   | Integer | X coordinate in source.          |
-| srcTop    | Integer | Y coordinate in source.          |
-| alpha     | Integer | Alpha value (`0`-`255`).         |
+| dstImage  | Object  | 描画先画像。               |
+| dstLeft   | Integer | 描画先の X 座標。     |
+| dstTop    | Integer | 描画先の Y 座標。     |
+| dstWidth  | Integer | 描画する幅。                   |
+| dstHeight | Integer | 描画する高さ。                  |
+| srcImage  | Object  | 描画元画像。                    |
+| srcLeft   | Integer | 描画元の X 座標。          |
+| srcTop    | Integer | 描画元の Y 座標。          |
+| alpha     | Integer | アルファ値 (`0`-`255`)。         |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.drawImageSub()
 
-Draw an image with subtractive blending.
+減算ブレンドで画像を描画します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                      |
+| パラメータ | 型    | 説明                      |
 |-----------|---------|----------------------------------|
-| dstImage  | Object  | Destination image.               |
-| dstLeft   | Integer | X coordinate in destination.     |
-| dstTop    | Integer | Y coordinate in destination.     |
-| dstWidth  | Integer | Width to draw.                   |
-| dstHeight | Integer | Height to draw.                  |
-| srcImage  | Object  | Source image.                    |
-| srcLeft   | Integer | X coordinate in source.          |
-| srcTop    | Integer | Y coordinate in source.          |
-| alpha     | Integer | Alpha value (`0`-`255`).         |
+| dstImage  | Object  | 描画先画像。               |
+| dstLeft   | Integer | 描画先の X 座標。     |
+| dstTop    | Integer | 描画先の Y 座標。     |
+| dstWidth  | Integer | 描画する幅。                   |
+| dstHeight | Integer | 描画する高さ。                  |
+| srcImage  | Object  | 描画元画像。                    |
+| srcLeft   | Integer | 描画元の X 座標。          |
+| srcTop    | Integer | 描画元の Y 座標。          |
+| alpha     | Integer | アルファ値 (`0`-`255`)。         |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.makeColor()
 
-Create a pixel value from RGBA components.
+RGBA 成分からピクセル値を作成します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description      |
+| パラメータ | 型    | 説明      |
 |-----------|---------|------------------|
-| r         | Integer | Red (0-255).     |
-| g         | Integer | Green (0-255).   |
-| b         | Integer | Blue (0-255).    |
-| a         | Integer | Alpha (0-255).   |
+| r         | Integer | 赤 (0-255)。     |
+| g         | Integer | 緑 (0-255)。   |
+| b         | Integer | 青 (0-255)。    |
+| a         | Integer | アルファ (0-255)。   |
 
-### Return
+### 戻り値
 
-A pixel value.
+ピクセル値。
 
 ---
 
 ## Suika.fillImageRect()
 
-Fill a rectangular area on an image with a color.
+画像上の矩形領域を色で塗りつぶします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                         |
+| パラメータ | 型    | 説明                         |
 |-----------|---------|-------------------------------------|
-| image     | Object  | Target image.                       |
-| left      | Integer | X coordinate.                       |
-| top       | Integer | Y coordinate.                       |
-| width     | Integer | Width.                              |
-| height    | Integer | Height.                             |
-| color     | Integer | Color created by Suika.makeColor(). |
+| image     | Object  | 対象画像。                       |
+| left      | Integer | X 座標。                       |
+| top       | Integer | Y 座標。                       |
+| width     | Integer | 幅。                              |
+| height    | Integer | 高さ。                             |
+| color     | Integer | Suika.makeColor() で作成した色。 |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.reloadStageImages()
 
-Reload the stage images by the config.
+設定に基づいてステージ画像を再読み込みします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean that represents success or failure.
+成功または失敗を表す真偽値。
 
 ---
 
 ## Suika.reloadStagePositions()
 
-Reload the stage positions by the config.
+設定に基づいてステージ位置を再読み込みします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getLayerX()
 
-Get the current position of a specific layer.
+指定したレイヤーの現在位置を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | ステージレイヤーのインデックス。  |
 
-### Return
+### 戻り値
 
-Integer value of the coordinate.
+座標の整数値。
 
 ---
 
 ## Suika.getLayerY()
 
-Get the current position of a specific layer.
+指定したレイヤーの現在位置を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | ステージレイヤーのインデックス。  |
 
-### Return
+### 戻り値
 
-Integer value of the coordinate.
+座標の整数値。
 
 ---
 
 ## Suika.setLayerPosition()
 
-Set the position of a specific layer.
+指定したレイヤーの位置をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| x         | Integer | X coordinate.              |
-| y         | Integer | Y coordinate.              |
+| layer     | Integer | ステージレイヤーのインデックス。  |
+| x         | Integer | X 座標。              |
+| y         | Integer | Y 座標。              |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getLayerScaleX()
 
-Get the X scaling factor of a specific layer.
+指定したレイヤーの X スケール係数を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | ステージレイヤーのインデックス。  |
 
-### Return
+### 戻り値
 
-Float value of the scale.
+スケールの浮動小数点値。
 
 ---
 
 ## Suika.getLayerScaleY()
 
-Get the Y scaling factor of a specific layer.
+指定したレイヤーの Y スケール係数を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | ステージレイヤーのインデックス。  |
 
-### Return
+### 戻り値
 
-Float value of the scale.
+スケールの浮動小数点値。
 
 ---
 
 ## Suika.setLayerScale()
 
-Set the scaling factor of a specific layer.
+指定したレイヤーのスケール係数をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| scale_x   | Float   | Horizontal scale.          |
-| scale_y   | Float   | Vertical scale.            |
+| layer     | Integer | ステージレイヤーのインデックス。  |
+| scale_x   | Float   | 水平スケール。          |
+| scale_y   | Float   | 垂直スケール。            |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getLayerRotate()
 
-Get the rotation angle of a specific layer.
+指定したレイヤーの回転角を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | ステージレイヤーのインデックス。  |
 
-### Return
+### 戻り値
 
-Returns float.
+浮動小数点数を返します。
 
 ---
 
 ## Suika.setLayerRotate()
 
-Set the rotation angle of a specific layer.
+指定したレイヤーの回転角をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| rot       | Float   | Rotation angle in radians. |
+| layer     | Integer | ステージレイヤーのインデックス。  |
+| rot       | Float   | ラジアン単位の回転角。 |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getLayerDim()
 
-Get the dimming state of a specific layer.
+指定したレイヤーの暗転状態を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | ステージレイヤーのインデックス。  |
 
-### Return
+### 戻り値
 
-Returns boolean.
+真偽値を返します。
 
 ---
 
 ## Suika.setLayerDim()
 
-Set the dimming state of a specific layer.
+指定したレイヤーの暗転状態をセットします。
 
-### Parameters (Dictionary) (Set)
+### パラメータ (辞書) (設定)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| dim       | Boolean | Whether to dim the layer.  |
+| layer     | Integer | ステージレイヤーのインデックス。  |
+| dim       | Boolean | レイヤーを暗くするかどうか。  |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getLayerAlpha()
 
-Get the transparency of a specific layer.
+指定したレイヤーの透明度を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | ステージレイヤーのインデックス。  |
 
-### Return
+### 戻り値
 
-Returns integer.
+整数を返します。
 
 ---
 
 ## Suika.setLayerAlpha()
 
-Set the transparency of a specific layer.
+指定したレイヤーの透明度をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| alpha     | Integer | Alpha value (0-255).       |
+| layer     | Integer | ステージレイヤーのインデックス。  |
+| alpha     | Integer | アルファ値 (0-255)。       |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.setLayerBlend()
 
-Set the blending mode for a layer.
+レイヤーのブレンドモードをセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| blend     | Integer | Blend mode (Alpha, Add, Sub). |
+| layer     | Integer | ステージレイヤーのインデックス。  |
+| blend     | Integer | ブレンドモード (Alpha、Add、Sub)。 |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.setLayerFile()
 
-Set a file to be displayed on a layer.
+レイヤーに表示するファイルをセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| file_name | String  | Path to the image file.    |
+| layer     | Integer | ステージレイヤーのインデックス。  |
+| file_name | String  | 画像ファイルへのパス。    |
 
-### Return
+### 戻り値
 
-Boolean that represents success or failure.
+成功または失敗を表す真偽値。
 
 ---
 
 ## Suika.setLayerFrame()
 
-Set the frame index for eye blinking and lip synchronization.
+目パチとリップシンク用のフレームインデックスをセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| frame     | Integer | Frame index.               |
+| layer     | Integer | ステージレイヤーのインデックス。  |
+| frame     | Integer | フレームインデックス。               |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getLayerText()
 
-Get the string displayed on a text layer.
+テキストレイヤーに表示されている文字列を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the text layer.   |
+| index     | Integer | テキストレイヤーのインデックス。   |
 
-### Return
+### 戻り値
 
-Returns string.
+文字列を返します。
 
 ---
 
 ## Suika.setLayerText()
 
-Set the string displayed on a text layer.
+テキストレイヤーに表示する文字列をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the text layer.   |
-| text      | String  | Text message to set.       |
+| index     | Integer | テキストレイヤーのインデックス。   |
+| text      | String  | 設定するテキストメッセージ。       |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getSysBtnIdleImage()
 
-Get the sysbtn idle image.
+システムボタンの通常時画像を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns an image object.
+画像オブジェクトを返します。
 
 ---
 
 ## Suika.getSysBtnHoverImage()
 
-Get the sysbtn hover image.
+システムボタンのホバー時画像を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns an image object.
+画像オブジェクトを返します。
 
 ---
 
 ## Suika.clearStageBasic()
 
-Clear the basic layers.
+基本レイヤーをクリアします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns an image object.
+画像オブジェクトを返します。
 
 ---
 
 ## Suika.clearStage()
 
-Clear the stage and make it initial state.
+ステージをクリアして初期状態にします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns an image object.
+画像オブジェクトを返します。
 
 ---
 
 ## Suika.chposToLayer()
 
-Convert a character position to a stage layer index.
+キャラクター位置をステージレイヤーインデックスに変換します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| chpos     | Integer | Character position.   |
+| chpos     | Integer | キャラクター位置。   |
 
-### Return
+### 戻り値
 
-Returns an integer.
+整数を返します。
 
 ---
 
 ## Suika.chposToEyeLayer()
 
-Convert a character position to a stage layer index (character eye).
+キャラクター位置をステージレイヤーインデックスに変換します (キャラクターの目)。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| chpos     | Integer | Character position.   |
+| chpos     | Integer | キャラクター位置。   |
 
-### Return
+### 戻り値
 
-Returns an integer.
+整数を返します。
 
 ---
 
 ## Suika.chposToLipLayer()
 
-Convert a character position to a stage layer index (character lip).
+キャラクター位置をステージレイヤーインデックスに変換します (キャラクターの口)。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| chpos     | Integer | Character position.   |
+| chpos     | Integer | キャラクター位置。   |
 
-### Return
+### 戻り値
 
-Returns an integer.
+整数を返します。
 
 ---
 
 ## Suika.layerToChpos()
 
-Convert a stage layer index to a character position.
+ステージレイヤーインデックスをキャラクター位置に変換します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description           |
+| パラメータ | 型    | 説明           |
 |-----------|---------|-----------------------|
-| layer     | Integer | Layer index.          |
+| layer     | Integer | レイヤーインデックス。          |
 
-### Return
+### 戻り値
 
-Returns an integer.
+整数を返します。
 
 ---
 
 ## Suika.renderStage()
 
-Render the stage with all stage layers.
+すべてのステージレイヤーでステージを描画します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.startFade()
 
-Start a transition effect.
+トランジション効果を開始します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                  |
+| パラメータ | 型    | 説明                                  |
 |-----------|---------|----------------------------------------------|
-| desc      | Array   | Fade descriptor.                             |
-| method    | String  | Fading method.                               |
-| time      | Float   | Duration in seconds.                         |
-| ruleImage | Object  | Rule image object (optional).                |
+| desc      | Array   | フェード記述子。                             |
+| method    | String  | フェード方式。                               |
+| time      | Float   | 秒単位の時間。                         |
+| ruleImage | Object  | ルール画像オブジェクト (任意)。                |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.getShakeOffset()
 
-Get the offset for the shake command.
+shake コマンド用のオフセットを取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-An object that contains:
+次の要素を含むオブジェクト:
 * x
 * y
 
@@ -2322,182 +2321,182 @@ An object that contains:
 
 ## Suika.setShakeOffset()
 
-Set the offset for the shake command.
+shake コマンド用のオフセットをセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description    |
+| パラメータ | 型    | 説明    |
 |-----------|---------|----------------|
-| x         | Integer | X offset.      |
-| y         | Integer | Y offset.      |
+| x         | Integer | X オフセット。      |
+| y         | Integer | Y オフセット。      |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.isFadeRunning()
 
-Check if the fading is running.
+フェードが実行中か確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.finishFade()
 
-Immediately end the fading effect.
+フェード効果を即座に終了します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.setChNameMapping()
 
-Specify a character name index for a character position.
+キャラクター位置に対するキャラクター名インデックスを指定します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter   | Type    | Description                |
+| パラメータ   | 型    | 説明                |
 |-------------|---------|----------------------------|
-| chpos       | Integer | Character position.        |
-| chNameIndex | Integer | Character name index.      |
+| chpos       | Integer | キャラクター位置。        |
+| chNameIndex | Integer | キャラクター名インデックス。      |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getTalkingChpos()
 
-Get the position of the character currently speaking.
+現在話しているキャラクターの位置を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns an integer.
+整数を返します。
 
 ---
 
 ## Suika.setChTalking()
 
-Set the talking character.
+話者キャラクターをセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| chpos     | Integer | Character position.        |
+| chpos     | Integer | キャラクター位置。        |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getTalkingChpos()
 
-Get the talker character position.
+話者キャラクター位置を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns an integer.
+整数を返します。
 
 ---
 
 ## Suika.updateChDimByTalkingCh()
 
-Automatically update character dimming based on who is speaking.
+話者に基づいてキャラクターの暗転を自動更新します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.forceChDim()
 
-Update the character dimming manually.
+キャラクターの暗転を手動で更新します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| chpos     | Integer | Character position.        |
-| dim       | Boolean | Dim or not.                |
+| chpos     | Integer | キャラクター位置。        |
+| dim       | Boolean | 暗くするかどうか。                |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getChDim()
 
-Get the dimming state.
+暗転状態を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| chpos     | Integer | Character position.        |
+| chpos     | Integer | キャラクター位置。        |
 
-### Return
+### 戻り値
 
-Returns a boolean.
+真偽値を返します。
 
 ---
 
 ## Suika.fillNameBox()
 
-Fill the name box by the name box image.
+名前ボックス画像で名前ボックスを塗りつぶします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getNameBoxRect()
 
-Get the name box position and size.
+名前ボックスの位置とサイズを取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Object.
+オブジェクト。
 
 * x
 * y
@@ -2508,61 +2507,61 @@ Object.
 
 ## Suika.showNameBox()
 
-Show or hides the name box.
+名前ボックスを表示または非表示にします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| show      | Boolean | Show or hide.              |
+| show      | Boolean | 表示または非表示。              |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.fillMessageBox()
 
-Fill the message box by the message box image.
+メッセージボックス画像でメッセージボックスを塗りつぶします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.showMessageBox()
 
-Show or hide the message box.
+メッセージボックスを表示または非表示にします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| show      | Boolean | Whether to show the box.   |
+| show      | Boolean | ボックスを表示するかどうか。   |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getMessageBoxRect()
 
-Get the message box rect.
+メッセージボックスの矩形を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-An object that contains:
+次の要素を含むオブジェクト:
 * `x`
 * `y`
 * `w`
@@ -2572,64 +2571,64 @@ An object that contains:
 
 ## Suika.setClickPosition()
 
-Set the click animation position.
+クリックアニメーションの位置をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| x         | Integer | X position.                |
-| y         | Integer | Y position.                |
+| x         | Integer | X 位置。                |
+| y         | Integer | Y 位置。                |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.showClick()
 
-Show or hide the click animation.
+クリックアニメーションを表示または非表示にします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| show      | Boolean | Show or hide.              |
+| show      | Boolean | 表示または非表示。              |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.setClickIndex()
 
-Set the index of the click animation frame.
+クリックアニメーションフレームのインデックスをセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Frame index.               |
+| index     | Integer | フレームインデックス。               |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getClickRect()
 
-Get the click animation rect.
+クリックアニメーションの矩形を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-An object that contains:
+次の要素を含むオブジェクト:
 * `x`
 * `y`
 * `w`
@@ -2639,65 +2638,65 @@ An object that contains:
 
 ## Suika.fillChooseBoxIdleImage()
 
-Fill a choose box idle layer by the choose box idle image.
+選択肢ボックスの通常時画像で通常時レイヤーを塗りつぶします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Choose box index.          |
+| index     | Integer | 選択肢ボックスのインデックス。          |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.fillChooseBoxHoverImage()
 
-Fill a choose box hover layer by the choose box hover image.
+選択肢ボックスのホバー時画像でホバー時レイヤーを塗りつぶします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Choose box index.          |
+| index     | Integer | 選択肢ボックスのインデックス。          |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.showChoosebox()
 
-Show or hide a choice box.
+選択肢ボックスを表示または非表示にします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter  | Type    | Description                 |
+| パラメータ  | 型    | 説明                 |
 |------------|---------|-----------------------------|
-| index      | Integer | Choice box index. (`0`-`7`) |
-| showIdle   | Boolean | Show idle state.            |
-| showHover  | Boolean | Show hover state.           |
+| index      | Integer | 選択肢ボックスのインデックス (`0`-`7`)。 |
+| showIdle   | Boolean | 通常状態を表示します。            |
+| showHover  | Boolean | ホバー状態を表示します。           |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getChooseBoxRect()
 
-Get the choose box rect.
+選択肢ボックスの矩形を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-An object that contains:
+次の要素を含むオブジェクト:
 * `x`
 * `y`
 * `w`
@@ -2707,2167 +2706,2159 @@ An object that contains:
 
 ## Suika.showAutoModeBanner()
 
-Show or hide the auto mode banner.
+オートモードバナーを表示または非表示にします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter  | Type    | Description                 |
+| パラメータ  | 型    | 説明                 |
 |------------|---------|-----------------------------|
-| show       | Boolean | Show or hide.               |
+| show       | Boolean | 表示または非表示。               |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.showSkipModeBanner()
 
-Show or hide the skip mode banner.
+スキップモードバナーを表示または非表示にします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter  | Type    | Description                 |
+| パラメータ  | 型    | 説明                 |
 |------------|---------|-----------------------------|
-| show       | Boolean | Show or hide.               |
+| show       | Boolean | 表示または非表示。               |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.renderImage()
 
-Perform direct rendering of an image to the screen.
+画像を画面へ直接描画します。
 
-Note that you should consider using the stage layers for normal rendering.
-This API is useful for effects.
+通常の描画ではステージレイヤーの使用を検討してください。
+この API はエフェクトに便利です。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Omissible    | Type    | Description                                |
+| パラメータ | 省略可    | 型    | 説明                                |
 |-----------|--------------|---------|--------------------------------------------|
-| dstLeft   | No           | Integer | Destination top-left X position.           |
-| dstTop    | No           | Integer | Destination top-left Y position.           |
-| image     | No           | Object  | Image.                                     |
-| srcLeft   | No           | Integer | Source top-left X position.                |
-| srcTop    | No           | Integer | Source top-left Y position.                |
-| srcWidth  | No           | Integer | Source width.                              |
-| srcHeight | No           | Integer | Source height.                             |
-| alpha     | No           | Integer | Alpha value. (`0`-`255`)                   |
-| blend     | No           | Integer | Blend type.                                |
+| dstLeft   | いいえ           | Integer | 描画先左上の X 位置。           |
+| dstTop    | いいえ           | Integer | 描画先左上の Y 位置。           |
+| image     | いいえ           | Object  | 画像。                                     |
+| srcLeft   | いいえ           | Integer | 描画元左上の X 位置。                |
+| srcTop    | いいえ           | Integer | 描画元左上の Y 位置。                |
+| srcWidth  | いいえ           | Integer | 描画元の幅。                              |
+| srcHeight | いいえ           | Integer | 描画元の高さ。                             |
+| alpha     | いいえ           | Integer | アルファ値 (`0`-`255`)。                   |
+| blend     | いいえ           | Integer | ブレンド種別。                                |
 
-### Blend Types
+### ブレンド種別
 
-| Name                 | Description       |
+| 名前                 | 説明       |
 |----------------------|-------------------|
-| Suika.BLEND_ALPHA    | Alpha blending.   |
-| Suika.BLEND_ADD      | Add blending.     |
-| Suika.BLEND_SUB      | Sub blending.     |
+| Suika.BLEND_ALPHA    | アルファブレンド。   |
+| Suika.BLEND_ADD      | 加算ブレンド。     |
+| Suika.BLEND_SUB      | 減算ブレンド。     |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.renderImage3d()
 
-Perform direct rendering of an image to the screen with 3D transformation.
+3D 変換を使って画像を画面へ直接描画します。
 
-Note that you should consider using the stage layers for normal rendering.
-This API is useful for effects.
+通常の描画ではステージレイヤーの使用を検討してください。
+この API はエフェクトに便利です。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Omissible    | Type    | Description                                |
+| パラメータ | 省略可    | 型    | 説明                                |
 |-----------|--------------|---------|--------------------------------------------|
-| x1        | No           | Integer | Destination vertex 1 X position.           |
-| y1        | No           | Integer | Destination vertex 1 Y position.           |
-| x2        | No           | Integer | Destination vertex 2 X position.           |
-| y2        | No           | Integer | Destination vertex 2 Y position.           |
-| x3        | No           | Integer | Destination vertex 3 X position.           |
-| y3        | No           | Integer | Destination vertex 3 Y position.           |
-| x4        | No           | Integer | Destination vertex 4 X position.           |
-| y4        | No           | Integer | Destination vertex 4 Y position.           |
-| tex       | No           | Object  | Image.                                     |
-| srcLeft   | No           | Integer | Source top-left X position.                |
-| srcTop    | No           | Integer | Source top-left Y position.                |
-| srcWidth  | No           | Integer | Source width.                              |
-| srcHeight | No           | Integer | Source height.                             |
-| alpha     | No           | Integer | Alpha value. (`0`-`255`)                   |
+| x1        | いいえ           | Integer | 描画先頂点 1 の X 位置。           |
+| y1        | いいえ           | Integer | 描画先頂点 1 の Y 位置。           |
+| x2        | いいえ           | Integer | 描画先頂点 2 の X 位置。           |
+| y2        | いいえ           | Integer | 描画先頂点 2 の Y 位置。           |
+| x3        | いいえ           | Integer | 描画先頂点 3 の X 位置。           |
+| y3        | いいえ           | Integer | 描画先頂点 3 の Y 位置。           |
+| x4        | いいえ           | Integer | 描画先頂点 4 の X 位置。           |
+| y4        | いいえ           | Integer | 描画先頂点 4 の Y 位置。           |
+| tex       | いいえ           | Object  | 画像。                                     |
+| srcLeft   | いいえ           | Integer | 描画元左上の X 位置。                |
+| srcTop    | いいえ           | Integer | 描画元左上の Y 位置。                |
+| srcWidth  | いいえ           | Integer | 描画元の幅。                              |
+| srcHeight | いいえ           | Integer | 描画元の高さ。                             |
+| alpha     | いいえ           | Integer | アルファ値 (`0`-`255`)。                   |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.startKirakira()
 
-Start Kirakira effect.
+キラキラ効果を開始します。
 
-Kirakira effect is an animation that is shown at the screen position where the mouse cursor is clicked.
+キラキラ効果は、マウスカーソルがクリックされた画面位置に表示されるアニメーションです。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.renderKirakira()
 
-Render Kirakira effect.
+キラキラ効果を描画します。
 
 ---
 
 ## Suika.setMixerInputFile()
 
-Play a sound file on a specific mixer track.
+指定したミキサートラックで音声ファイルを再生します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Omissible    | Type    | Description                                |
+| パラメータ | 省略可    | 型    | 説明                                |
 |-----------|--------------|---------|--------------------------------------------|
-| track     | No           | String  | Mixer track name.                          |
-| file      | No           | String  | Path to the sound file.                    |
-| isLooped  | Yes(`false`) | Boolean | Whether to loop the playback.              |
+| track     | いいえ           | String  | ミキサートラック名。                          |
+| file      | いいえ           | String  | 音声ファイルへのパス。                    |
+| isLooped  | はい (`false`) | Boolean | 再生をループするかどうか。              |
 
-### Track Names
+### トラック名
 
-| Name   | Description              |
+| 名前   | 説明              |
 |--------|--------------------------|
-| bgm    | Background music track.  |
-| se     | Sound effect track.      |
-| voice  | Character voice track.   |
-| sys    | System sound track.      |
+| bgm    | BGM トラック。  |
+| se     | 効果音トラック。      |
+| voice  | キャラクターボイストラック。   |
+| sys    | システム音トラック。      |
 
-### Return
+### 戻り値
 
-Boolean that represents whether the file was opened successfully.
+ファイルを正常に開けたかどうかを表す真偽値。
 
 ---
 
 ## Suika.setMixerVolume()
 
-Set the volume for a specific mixer track.
+指定したミキサートラックの音量をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| track     | String  | Mixer track name.                          |
-| vol       | Float   | Volume level (0.0 to 1.0).                 |
-| span      | Float   | Fade duration in seconds.                  |
+| track     | String  | ミキサートラック名。                          |
+| vol       | Float   | 音量レベル (0.0 から 1.0)。                 |
+| span      | Float   | 秒単位のフェード時間。                  |
 
-### Track Names
+### トラック名
 
-| Name   | Description              |
+| 名前   | 説明              |
 |--------|--------------------------|
-| bgm    | Background music track.  |
-| se     | Sound effect track.      |
-| voice  | Character voice track.   |
-| sys    | System sound track.      |
+| bgm    | BGM トラック。  |
+| se     | 効果音トラック。      |
+| voice  | キャラクターボイストラック。   |
+| sys    | システム音トラック。      |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getMixerVolume()
 
-Get the volume for a specific mixer track.
+指定したミキサートラックの音量を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| track     | String  | Mixer track name.                          |
-| volume    | Float   | Volume level (0.0 to 1.0).                 |
-| span      | Float   | Fade duration in seconds.                  |
+| track     | String  | ミキサートラック名。                          |
+| volume    | Float   | 音量レベル (0.0 から 1.0)。                 |
+| span      | Float   | 秒単位のフェード時間。                  |
 
-### Track Names
+### トラック名
 
-| Name   | Description              |
+| 名前   | 説明              |
 |--------|--------------------------|
-| bgm    | Background music track.  |
-| se     | Sound effect track.      |
-| voice  | Character voice track.   |
-| sys    | System sound track.      |
+| bgm    | BGM トラック。  |
+| se     | 効果音トラック。      |
+| voice  | キャラクターボイストラック。   |
+| sys    | システム音トラック。      |
 
-### Return
+### 戻り値
 
-Returns float.
+浮動小数点数を返します。
 
 ---
 
 ## Suika.setMasterVolume()
 
-Set the master volume affecting all tracks.
+全トラックに影響するマスター音量をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| volume    | Float   | Master volume level (0.0 to 1.0).          |
+| volume    | Float   | マスター音量レベル (0.0 から 1.0)。          |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getMasterVolume()
 
-Get the master volume affecting all tracks.
+全トラックに影響するマスター音量を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns float.
+浮動小数点数を返します。
 
 ---
 
 ## Suika.setMixerGlobalVolume()
 
-Set the global volume for a track (often used for config settings).
+トラックのグローバル音量をセットします (設定でよく使用されます)。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| track     | String  | Mixer track name.                          |
-| vol       | Float   | Global volume level.                       |
+| track     | String  | ミキサートラック名。                          |
+| vol       | Float   | グローバル音量レベル。                       |
 
-### Track Names
+### トラック名
 
-| Name   | Description              |
+| 名前   | 説明              |
 |--------|--------------------------|
-| bgm    | Background music track.  |
-| se     | Sound effect track.      |
-| voice  | Character voice track.   |
-| sys    | System sound track.      |
+| bgm    | BGM トラック。  |
+| se     | 効果音トラック。      |
+| voice  | キャラクターボイストラック。   |
+| sys    | システム音トラック。      |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getMixerGlobalVolume()
 
-Get the global volume for a track (often used for config settings).
+トラックのグローバル音量を取得します (設定でよく使用されます)。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| track     | String  | Mixer track name.                          |
+| track     | String  | ミキサートラック名。                          |
 
-### Track Names
+### トラック名
 
-| Name   | Description              |
+| 名前   | 説明              |
 |--------|--------------------------|
-| bgm    | Background music track.  |
-| se     | Sound effect track.      |
-| voice  | Character voice track.   |
-| sys    | System sound track.      |
+| bgm    | BGM トラック。  |
+| se     | 効果音トラック。      |
+| voice  | キャラクターボイストラック。   |
+| sys    | システム音トラック。      |
 
-### Return
+### 戻り値
 
-Returns float.
+浮動小数点数を返します。
 
 ---
 
 ## Suika.setCharacterVolume()
 
-Set the volume for a specific character's voice.
+指定したキャラクターボイスの音量をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| index     | Integer | Character name index.                      |
-| vol       | Float   | Volume level.                              |
+| index     | Integer | キャラクター名インデックス。                      |
+| vol       | Float   | 音量レベル。                              |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getCharacterVolume()
 
-Get the volume for a specific character's voice.
+指定したキャラクターボイスの音量を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| ch_index  | Integer | Character name index.                      |
+| ch_index  | Integer | キャラクター名インデックス。                      |
 
-### Return
+### 戻り値
 
-Get returns float.
+浮動小数点数を返します。
 
 ---
 
 ## Suika.isMixerSoundFinished()
 
-Check if the playback on a specific track is finished.
+指定したトラックの再生が終了したか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| track     | Integer | Mixer track index.                         |
+| track     | Integer | ミキサートラックインデックス。                         |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.getTrackFileName()
 
-Get the file name of the sound currently loaded in a track.
+トラックに現在読み込まれている音声のファイル名を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| track     | Integer | Mixer track index.                         |
+| track     | Integer | ミキサートラックインデックス。                         |
 
-### Return
+### 戻り値
 
-String representing the file path.
+ファイルパスを表す文字列。
 
 ---
 
 ## Suika.applyCharacterVolume()
 
-Apply a character's specific volume setting to the VOICE track.
+キャラクター固有の音量設定を VOICE トラックに適用します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| ch        | Integer | Character name index.                      |
+| ch        | Integer | キャラクター名インデックス。                      |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.enableSysBtn()
 
-Control the system button.
+システムボタンを制御します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| isEnabled | Boolean | Enable the system button or not.           |
+| isEnabled | Boolean | システムボタンを有効にするかどうか。           |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.isSysBtnEnabled()
 
-Check if the system button is enabled.
+システムボタンが有効か確認します。
 
-### Parameters
+### パラメータ
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns a boolean value. 
+真偽値を返します。 
 
 ---
 
 ## Suika.updateSysBtnState()
 
-Update the mouse tracking for the system button.
+システムボタンのマウストラッキングを更新します。
 
-### Parameters
+### パラメータ
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.isSysBtnPointed()
 
-Check if the system button is pointed.
+システムボタンがポイントされているか確認します。
 
-### Parameters
+### パラメータ
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns a boolean value.
+真偽値を返します。
 
 ---
 
 ## Suika.isSysBtnClicked()
 
-Check if the system button is clicked.
+システムボタンがクリックされたか確認します。
 
-### Parameters
+### パラメータ
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns a boolean value.
+真偽値を返します。
 
 ---
 
 ## Suika.drawTextOnLayer()
 
-Draw a text on a specified layer.
+指定したレイヤーにテキストを描画します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter    | Type    | Description               |
+| パラメータ    | 型    | 説明               |
 |--------------|---------|---------------------------|
-| layer        | Integer | Target stage layer index. |
-| fontType     | Integer | Font selection index.     |
-| fontSize     | Integer | Size of the font.         |
-| color        | Integer | Color.                    |
-| outlineWidth | Integer | Outline width.            |
-| outlineColor | Integer | Outline color.            |
-| lineMargin   | Integer | Line margin.              |
-| charMargin   | Integer | Character margin.         |
-| x            | Integer | Bounding box X position.  |
-| y            | Integer | Bounding box Y position.  |
-| width        | Integer | Bounding box width.       |
-| height       | Integer | Bounding box height.      |
-| text         | String  | Text.                     |
+| layer        | Integer | 対象ステージレイヤーのインデックス。 |
+| fontType     | Integer | フォント選択インデックス。     |
+| fontSize     | Integer | フォントサイズ。         |
+| color        | Integer | 色。                    |
+| outlineWidth | Integer | アウトライン幅。            |
+| outlineColor | Integer | アウトライン色。            |
+| lineMargin   | Integer | 行間。              |
+| charMargin   | Integer | 文字間。         |
+| x            | Integer | 境界ボックスの X 位置。  |
+| y            | Integer | 境界ボックスの Y 位置。  |
+| width        | Integer | 境界ボックスの幅。       |
+| height       | Integer | 境界ボックスの高さ。      |
+| text         | String  | テキスト。                     |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.getStringWidth()
 
-Get the total width of a UTF-8 string.
+UTF-8 文字列の合計幅を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description            |
+| パラメータ | 型    | 説明            |
 |-----------|---------|------------------------|
-| fontType  | Integer | Font selection index.  |
-| fontSize  | Integer | Size of the font.      |
-| text      | String  | Text.                  |
+| fontType  | Integer | フォント選択インデックス。  |
+| fontSize  | Integer | フォントサイズ。      |
+| text      | String  | テキスト。                  |
 
-### Return
+### 戻り値
 
-Integer value of the width in pixels.
+ピクセル単位の幅の整数値。
 
 ---
 
 ## Suika.getStringHeight()
 
-Get the total height of a UTF-8 string.
+UTF-8 文字列の合計高さを取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description            |
+| パラメータ | 型    | 説明            |
 |-----------|---------|------------------------|
-| fontType  | Integer | Font selection index.  |
-| fontSize  | Integer | Size of the font.      |
-| text      | String  | Text.                  |
+| fontType  | Integer | フォント選択インデックス。  |
+| fontSize  | Integer | フォントサイズ。      |
+| text      | String  | テキスト。                  |
 
-### Return
+### 戻り値
 
-Integer value of the height in pixels.
+ピクセル単位の高さの整数値。
 
 ---
 
 ## Suika.drawGlyph()
 
-Draw a single glyph onto an image.
+画像に単一グリフを描画します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter     | Type    | Description                                |
+| パラメータ     | 型    | 説明                                |
 |---------------|---------|--------------------------------------------|
-| img           | Object  | Target image.                              |
-| font_type     | Integer | Font selection index.                      |
-| font_size     | Integer | Rendering font size.                       |
-| base_font_size| Integer | Base font size for metrics.                |
-| outline_size  | Integer | Width of the outline.                      |
-| x             | Integer | X coordinate.                              |
-| y             | Integer | Y coordinate.                              |
-| color         | Pixel   | Main text color.                           |
-| outline_color | Pixel   | Outline color.                             |
-| codepoint     | Integer | UTF-32 code point.                         |
-| is_dim        | Boolean | Whether to apply dimming.                  |
+| img           | Object  | 対象画像。                              |
+| font_type     | Integer | フォント選択インデックス。                      |
+| font_size     | Integer | 描画フォントサイズ。                       |
+| base_font_size| Integer | メトリクス用の基準フォントサイズ。                |
+| outline_size  | Integer | アウトラインの幅。                      |
+| x             | Integer | X 座標。                              |
+| y             | Integer | Y 座標。                              |
+| color         | Pixel   | 本文の色。                           |
+| outline_color | Pixel   | アウトライン色。                             |
+| codepoint     | Integer | UTF-32 コードポイント。                         |
+| is_dim        | Boolean | 暗転を適用するかどうか。                  |
 
-### Return
+### 戻り値
 
-Boolean that represents success.
+成功を表す真偽値。
 
 ---
 
 ## Suika.createDrawMsg()
 
-Create a complex message drawing context for high-level text rendering.
+高レベルのテキスト描画用に複合メッセージ描画コンテキストを作成します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter      | Type     | Description            |
+| パラメータ      | 型     | 説明            |
 |----------------|----------|------------------------|
-| image          | Integer  | Destination image.     |
-| text           | String   | Message to draw.       |
-| fontType       | Integer  | Font selection.        |
-| fontSize       | Integer  | Font size.             |
-| baseFontSize   | Integer  | Base font size.        |
-| rubySize       | Integer  | Ruby size.             |
-| outlineSize    | Integer  | Outline width.         |
-| penX           | Integer  | Pen X position.        |
-| penY           | Integer  | Pen Y position.        |
-| areaWidth      | Integer  | Draw area width.       |
-| areaHeight     | Integer  | Draw area height.      |
-| leftMargin     | Integer  | Left margin.           |
-| rightMargin    | Integer  | Right margin.          |
-| topMargin      | Integer  | Top margin.            |
-| bottomMargin   | Integer  | Bottom margin.         |
-| lineMargin     | Integer  | Line margin.           |
-| charMargin     | Integer  | Character margin.      |
-| color          | Integer  | Color.                 |
-| outlineColor   | Integer  | Outline color.         |
-| bgColor        | Integer  | Background color.      |
-| fillBg         | Boolean  | Fill background?       |
-| dim            | Boolean  | Dim?                   |
-| ignoreLF       | Boolean  | Ignore LF?             |
-| ignoreFont     | Boolean  | Ignore font change?    |
-| ignoreOutline  | Boolean  | Ignore outline change? |
-| ignoreColor    | Boolean  | Ignore color change?   |
-| ignoreSize     | Boolean  | Ignore size change?    |
-| ignorePosition | Boolean  | Ignore cursor change?  |
-| ignoreRuby     | Boolean  | Ignore ruby?           |
-| ignoreWait     | Boolean  | Ignore inline wait?    |
-| inlineWaitHook | Function | Inline wait hook.      |
-| tategaki       | Boolean  | Use tategaki?          |
+| image          | Integer  | 描画先画像。     |
+| text           | String   | 描画するメッセージ。       |
+| fontType       | Integer  | フォント選択。        |
+| fontSize       | Integer  | フォントサイズ。             |
+| baseFontSize   | Integer  | 基準フォントサイズ。        |
+| rubySize       | Integer  | ルビサイズ。             |
+| outlineSize    | Integer  | アウトライン幅。         |
+| penX           | Integer  | ペンの X 位置。        |
+| penY           | Integer  | ペンの Y 位置。        |
+| areaWidth      | Integer  | 描画領域の幅。       |
+| areaHeight     | Integer  | 描画領域の高さ。      |
+| leftMargin     | Integer  | 左余白。           |
+| rightMargin    | Integer  | 右余白。          |
+| topMargin      | Integer  | 上余白。            |
+| bottomMargin   | Integer  | 下余白。         |
+| lineMargin     | Integer  | 行間。           |
+| charMargin     | Integer  | 文字間。      |
+| color          | Integer  | 色。                 |
+| outlineColor   | Integer  | アウトライン色。         |
+| bgColor        | Integer  | 背景色。      |
+| fillBg         | Boolean  | 背景を塗りつぶすか。       |
+| dim            | Boolean  | 暗くするか。                   |
+| ignoreLF       | Boolean  | 改行を無視するか。             |
+| ignoreFont     | Boolean  | フォント変更を無視するか。    |
+| ignoreOutline  | Boolean  | アウトライン変更を無視するか。 |
+| ignoreColor    | Boolean  | 色変更を無視するか。   |
+| ignoreSize     | Boolean  | サイズ変更を無視するか。    |
+| ignorePosition | Boolean  | カーソル変更を無視するか。  |
+| ignoreRuby     | Boolean  | ルビを無視するか。           |
+| ignoreWait     | Boolean  | インライン待機を無視するか。    |
+| inlineWaitHook | Function | インライン待機フック。      |
+| tategaki       | Boolean  | 縦書きを使用するか。          |
 
-### Return
+### 戻り値
 
-A message drawing context object.
+メッセージ描画コンテキストオブジェクト。
 
 ---
 
 ## Suika.destroyDrawMsg()
 
-Destroy a message drawing context.
+メッセージ描画コンテキストを破棄します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter      | Type     | Description            |
+| パラメータ      | 型     | 説明            |
 |----------------|----------|------------------------|
-| context        | Object   | Draw message context.  |
+| context        | Object   | メッセージ描画コンテキスト。  |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.countDrawMsgChars()
 
-Count the remaining characters excluding escape sequences.
+エスケープシーケンスを除いた残り文字数を数えます。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter      | Type     | Description            |
+| パラメータ      | 型     | 説明            |
 |----------------|----------|------------------------|
-| context        | Object   | Draw message context.  |
+| context        | Object   | メッセージ描画コンテキスト。  |
 
-### Return
+### 戻り値
 
-Returns an integer.
+整数を返します。
 
 ---
 
 ## Suika.drawMessage()
 
-Draw characters in a message up to (maxChars) characters.
+メッセージ内の文字を最大 (maxChars) 文字まで描画します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter      | Type     | Description            |
+| パラメータ      | 型     | 説明            |
 |----------------|----------|------------------------|
-| context        | Object   | Draw message context.  |
-| maxChars       | Integer  | Max chars.             |
+| context        | Object   | メッセージ描画コンテキスト。  |
+| maxChars       | Integer  | 最大文字数。             |
 
-### Return
+### 戻り値
 
-Returns an integer that indicates the count of characters drawn in the call.
+この呼び出しで描画した文字数を示す整数を返します。
 
 ---
 
 ## Suika.getDrawMsgPenPosition()
 
-Get the current pen position from a drawing context.
+描画コンテキストから現在のペン位置を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| context   | Object  | Drawing context.                           |
+| context   | Object  | 描画コンテキスト。                           |
 
-### Return
+### 戻り値
 
-An object containing `x` and `y`.
+`x` と `y` を含むオブジェクト。
 
 ---
 
 ## Suika.isEscapeSequenceChar()
 
-Check if a character is part of an escape sequence.
+文字がエスケープシーケンスの一部か確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| c         | String | Character to check.                        |
+| c         | String | 確認する文字。                        |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.moveToTagFile()
 
-Load a new tag file and move the execution point to its beginning.
+新しいタグファイルを読み込み、実行位置を先頭へ移動します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| file      | String | Path to the .novel or script file. |
+| file      | String | .novel またはスクリプトファイルへのパス。 |
 
-### Return
+### 戻り値
 
-Boolean that represents success or failure.
+成功または失敗を表す真偽値。
 
 ---
 
 ## Suika.getTagCount()
 
-Get the total number of tags in the current script file.
+現在のスクリプトファイル内のタグ総数を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Integer representing the tag count.
+タグ数を表す整数。
 
 ---
 
 ## Suika.moveToTagIndex()
 
-Move the execution pointer to a specific tag index.
+実行ポインタを指定したタグインデックスへ移動します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Target tag index. |
+| index     | Integer | 対象タグインデックス。 |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.moveToNextTag()
 
-Move the execution pointer to the very next tag.
+実行ポインタを次のタグへ移動します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.moveToLabelTag()
 
-Jump to a specific label.
+指定したラベルへジャンプします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description             |
+| パラメータ | 型   | 説明             |
 |-----------|--------|-------------------------|
-| name      | String | Target label name.      |
+| name      | String | 対象ラベル名。      |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.moveToMacroTag()
 
-Jump to a specific macro by name.
+名前で指定したマクロへジャンプします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description             |
+| パラメータ | 型   | 説明             |
 |-----------|--------|-------------------------|
-| name      | String | Target macro name.      |
+| name      | String | 対象マクロ名。      |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.moveToElseTag()
 
-Jump to a correspoinding else/elseif/endif tag.
+対応する else/elseif/endif タグへジャンプします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description             |
+| パラメータ | 型   | 説明             |
 |-----------|--------|-------------------------|
-| name      | String | Target macro name.      |
+| name      | String | 対象マクロ名。      |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.moveToEndIfTag()
 
-Jump to a correspoinding endif tag.
+対応する endif タグへジャンプします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description             |
+| パラメータ | 型   | 説明             |
 |-----------|--------|-------------------------|
-| name      | String | Target macro name.      |
+| name      | String | 対象マクロ名。      |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.moveToEndMacroTag()
 
-Jump to a correspoinding endmacro tag.
+対応する endmacro タグへジャンプします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description             |
+| パラメータ | 型   | 説明             |
 |-----------|--------|-------------------------|
-| name      | String | Target macro name.      |
+| name      | String | 対象マクロ名。      |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.getTagFileName()
 
-Get the current script file name current tag.
+現在タグのスクリプトファイル名を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-String representing the file name.
+ファイル名を表す文字列。
 
 ---
 
 ## Suika.getTagName()
 
-Get the name of the current tag.
+現在のタグ名を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-String representing the tag name.
+タグ名を表す文字列。
 
 ---
 
 ## Suika.getTagPropertyCount()
 
-Get the number of the properties of the current tag.
+現在のタグのプロパティ数を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-String representing the name or value.
+名前または値を表す文字列。
 
 ---
 
 ## Suika.getTagPropertyName()
 
-Iterate through and retrieve the properties (arguments) of the current
-tag.
+現在のタグのプロパティ (引数) を反復して取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description       |
+| パラメータ | 型    | 説明       |
 |-----------|---------|-------------------|
-| index     | Integer | Property index.   |
+| index     | Integer | プロパティインデックス。   |
 
-### Return
+### 戻り値
 
-String representing the name.
+名前を表す文字列。
 
 ---
 
 ## Suika.getTagPropertyValue()
 
-Iterate through and retrieve the properties (arguments) of the current
-tag.
+現在のタグのプロパティ (引数) を反復して取得します。
 
-### Parameters (Dictionary) (for PropertyName/Value)
+### パラメータ (辞書) (PropertyName/Value 用)
 
-| Parameter | Type    | Description       |
+| パラメータ | 型    | 説明       |
 |-----------|---------|-------------------|
-| index     | Integer | Property index.   |
+| index     | Integer | プロパティインデックス。   |
 
-### Return
+### 戻り値
 
-String representing the value.
+値を表す文字列。
 
 ---
 
 ## Suika.getTagArgBool()
 
-Get a specific argument of the current tag, with support for default
-values and optionality.
+現在のタグの指定した引数を取得します。デフォルト値と省略可能性に対応します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                       |
+| パラメータ | 型    | 説明                       |
 |-----------|---------|-----------------------------------|
-| name      | String  | Name of the argument.             |
-| omissible | Boolean | Whether the argument is optional. |
-| defVal    | Boolean | Default value if missing.         |
+| name      | String  | 引数名。             |
+| omissible | Boolean | 引数を省略可能にするかどうか。 |
+| defVal    | Boolean | 未指定時のデフォルト値。         |
 
-### Return
+### 戻り値
 
-The value of the argument in the requested type.
+要求した型での引数値。
 
 ---
 
 ## Suika.getTagArgInt()
 
-Get a specific argument of the current tag, with support for default
-values and optionality.
+現在のタグの指定した引数を取得します。デフォルト値と省略可能性に対応します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                       |
+| パラメータ | 型    | 説明                       |
 |-----------|---------|-----------------------------------|
-| name      | String  | Name of the argument.             |
-| omissible | Boolean | Whether the argument is optional. |
-| defVal    | Integer | Default value if missing.         |
+| name      | String  | 引数名。             |
+| omissible | Boolean | 引数を省略可能にするかどうか。 |
+| defVal    | Integer | 未指定時のデフォルト値。         |
 
-### Return
+### 戻り値
 
-The value of the argument in the requested type.
+要求した型での引数値。
 
 ---
 
 ## Suika.getTagArgFloat()
 
-Get a specific argument of the current tag, with support for default
-values and optionality.
+現在のタグの指定した引数を取得します。デフォルト値と省略可能性に対応します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                       |
+| パラメータ | 型    | 説明                       |
 |-----------|---------|-----------------------------------|
-| name      | String  | Name of the argument.             |
-| omissible | Boolean | Whether the argument is optional. |
-| defVal    | Float   | Default value if missing.         |
+| name      | String  | 引数名。             |
+| omissible | Boolean | 引数を省略可能にするかどうか。 |
+| defVal    | Float   | 未指定時のデフォルト値。         |
 
-### Return
+### 戻り値
 
-The value of the argument in the requested type.
+要求した型での引数値。
 
 ---
 
 ## Suika.getTagArgString()
 
-Get a specific argument of the current tag, with support for default
-values and optionality.
+現在のタグの指定した引数を取得します。デフォルト値と省略可能性に対応します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                       |
+| パラメータ | 型    | 説明                       |
 |-----------|---------|-----------------------------------|
-| name      | String  | Name of the argument.             |
-| omissible | Boolean | Whether the argument is optional. |
-| defVal    | String  | Default value if missing.         |
+| name      | String  | 引数名。             |
+| omissible | Boolean | 引数を省略可能にするかどうか。 |
+| defVal    | String  | 未指定時のデフォルト値。         |
 
-### Return
+### 戻り値
 
-The value of the argument in the requested type.
+要求した型での引数値。
 
 ---
 
 ## Suika.evaluateTag()
 
-Evaluate the property values of the current tag to expand inline
-variables. (`${varname}` form)
+現在のタグのプロパティ値を評価し、インライン変数 (`${varname}` 形式) を展開します。
 
-Calling this API updates the cache for the property values.
+この API を呼び出すと、プロパティ値のキャッシュが更新されます。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.pushTagStackIf()
 
-Manage the internal stack for `[if]` conditional blocks.
+`[if]` 条件ブロック用の内部スタックを管理します。
 
-This API marks the `if` block position for nested block processing.
+この API はネストしたブロック処理のために `if` ブロック位置を記録します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.popTagStackIf()
 
-Manage the internal stack for `if` conditional blocks.
+`if` 条件ブロック用の内部スタックを管理します。
 
-This API marks the end of `if` block for nested block processing.
+この API はネストしたブロック処理のために `if` ブロックの終端を記録します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.pushTagStackWhile()
 
-Manage the internal stack for loops (`while`).
+ループ (`while`) 用の内部スタックを管理します。
 
-This API marks the `while` block for nested block processing.
+この API はネストしたブロック処理のために `while` ブロックを記録します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.popTagStackWhile()
 
-Manage the internal stack for loops (`while`).
+ループ (`while`) 用の内部スタックを管理します。
 
-This API marks the end of `while` block for nested block processing.
+この API はネストしたブロック処理のために `while` ブロックの終端を記録します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.pushTagStackFor()
 
-Manage the internal stack for loops (`for`).
+ループ (`for`) 用の内部スタックを管理します。
 
-This API marks the `for` block for nested block processing.
+この API はネストしたブロック処理のために `for` ブロックを記録します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.popTagStackFor()
 
-Manage the internal stack for loops (`for`).
+ループ (`for`) 用の内部スタックを管理します。
 
-This API marks the end of `for` block for nested block processing.
+この API はネストしたブロック処理のために `for` ブロックの終端を記録します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.loadAnimeFromFile()
 
-Load an animation definition from a file and register it.
+ファイルからアニメーション定義を読み込み、登録します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| file      | String  | Path to the anime file.                    |
-| reg_name  | String  | Registration name for the anime.           |
+| file      | String  | アニメーションファイルへのパス。                    |
+| reg_name  | String  | アニメーションの登録名。           |
 
-### Return
+### 戻り値
 
-An array of boolean that indicate each layer is loaded or not.
+各レイヤーが読み込まれたかどうかを示す真偽値の配列。
 
 ---
 
 ## Suika.newAnimeSequence()
 
-Begin describing a new animation sequence for a specific layer.
-This API is used for manually generated animations.
+指定したレイヤー用の新しいアニメーションシーケンスの記述を開始します。
+この API は手動生成アニメーションに使用します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| layer     | Integer | Target stage layer index.                  |
+| layer     | Integer | 対象ステージレイヤーのインデックス。                  |
 
-### Return
+### 戻り値
 
-Boolean that represents success.
+成功を表す真偽値。
 
 ---
 
 ## Suika.addAnimeSequencePropertyF()
 
-Add a float property (e.g., position, alpha) to the current anime sequence.
-This API is used for manually generated animations.
+現在のアニメーションシーケンスに浮動小数点プロパティ (位置、アルファなど) を追加します。
+この API は手動生成アニメーションに使用します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| key       | String  | Property key (e.g., "x", "y", "a").        |
-| val       | Float   | Target value.                              |
+| key       | String  | プロパティキー (例: "x", "y", "a")。        |
+| val       | Float   | 対象値。                              |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.addAnimeSequencePropertyI()
 
-Add an integer property (e.g., position, alpha) to the current anime sequence.
-This API is used for manually generated animations.
+現在のアニメーションシーケンスに整数プロパティ (位置、アルファなど) を追加します。
+この API は手動生成アニメーションに使用します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| key       | String  | Property key (e.g., "x", "y", "a").        |
-| val       | Integer | Target value.                              |
+| key       | String  | プロパティキー (例: "x", "y", "a")。        |
+| val       | Integer | 対象値。                              |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.startLayerAnime()
 
-Start the registered animation sequence for a specific layer.
+指定したレイヤーで登録済みアニメーションシーケンスを開始します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| layer     | Integer | Target stage layer index.                  |
+| layer     | Integer | 対象ステージレイヤーのインデックス。                  |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isAnimeRunning()
 
-Check the overall animation status.
+全体のアニメーション状態を確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isAnimeFinishedForLayer()
 
-Check if a specific layer's animation has ended.
+指定したレイヤーのアニメーションが終了したか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Target stage layer index.  |
+| layer     | Integer | 対象ステージレイヤーのインデックス。  |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.updateAnimeFrame()
 
-Update the animation frame state. Usually called once per frame.
+アニメーションフレーム状態を更新します。通常はフレームごとに 1 回呼び出します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.loadEyeImageIfExists()
 
-Manage eye-blinking (eye-patch) image and animation for a character position.
+キャラクター位置の目パチ (eye-patch) 画像とアニメーションを管理します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| chpos     | Integer | Character position (Left, Center, etc.).   |
-| file      | String  | Path to the eye image file.                |
+| chpos     | Integer | キャラクター位置 (Left、Center など)。   |
+| file      | String  | 目パチ画像ファイルへのパス。                |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.reloadEyeAnime()
 
-Restart the eye-blinking (eye-patch) animation for a character position.
+キャラクター位置の目パチ (eye-patch) アニメーションを再開します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| chpos     | Integer | Character position (Left, Center, etc.).   |
+| chpos     | Integer | キャラクター位置 (Left、Center など)。   |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.runLipAnime()
 
-Start lip-sync animation based on the message content for a character.
+キャラクターに対して、メッセージ内容に基づくリップシンクアニメーションを開始します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| chpos     | Integer | Character position.                        |
-| text      | String  | The message text to sync with.             |
+| chpos     | Integer | キャラクター位置。                        |
+| text      | String  | 同期するメッセージテキスト。             |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.stopLipAnime()
 
-Stop lip-sync animation.
+リップシンクアニメーションを停止します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| chpos     | Integer | Character position.                        |
+| chpos     | Integer | キャラクター位置。                        |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.clearLayerAnimeSequence()
 
-Clear animation sequences for a specific layer.
+指定したレイヤーのアニメーションシーケンスをクリアします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| layer     | Integer | Target stage layer index.  |
+| layer     | Integer | 対象ステージレイヤーのインデックス。  |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.clearAllAnimeSequence()
 
-Clear animation sequences for all layers.
+すべてのレイヤーのアニメーションシーケンスをクリアします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.setVariableInt()
 
-Set a value to a local or global variable.
+ローカルまたはグローバル変数に値をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description            |
+| パラメータ | 型    | 説明            |
 |-----------|---------|------------------------|
-| name      | String  | Name of the variable.  |
-| value     | Integer | Value to set           |
+| name      | String  | 変数名。  |
+| value     | Integer | セットする値           |
 
-### Return
+### 戻り値
 
-Boolean that represents success or failure.
+成功または失敗を表す真偽値。
 
 ---
 
 ## Suika.setVariableFloat()
 
-Set a value to a local or global variable.
+ローカルまたはグローバル変数に値をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description             |
+| パラメータ | 型    | 説明             |
 |-----------|---------|-------------------------|
-| name      | String  | Name of the variable.   |
-| value     | Float   | Value to set            |
+| name      | String  | 変数名。   |
+| value     | Float   | セットする値            |
 
-### Return
+### 戻り値
 
-Boolean that represents success or failure.
+成功または失敗を表す真偽値。
 
 ---
 
 ## Suika.setVariableString()
 
-Set a value to a local or global variable.
+ローカルまたはグローバル変数に値をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description             |
+| パラメータ | 型    | 説明             |
 |-----------|---------|-------------------------|
-| name      | String  | Name of the variable.   |
-| value     | String  | Value to set            |
+| name      | String  | 変数名。   |
+| value     | String  | セットする値            |
 
-### Return
+### 戻り値
 
-Boolean that represents success or failure.
+成功または失敗を表す真偽値。
 
 ---
 
 ## Suika.getVariableInt()
 
-Get the current value of a variable.
+変数の現在値を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| name      | String | Name of the variable.                      |
+| name      | String | 変数名。                      |
 
-### Return
+### 戻り値
 
-The value of the variable in integer.
+整数としての変数値。
 
 ---
 
 ## Suika.getVariableFloat()
 
-Get the current value of a variable.
+変数の現在値を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| name      | String | Name of the variable.                      |
+| name      | String | 変数名。                      |
 
-### Return
+### 戻り値
 
-The value of the variable in float.
+浮動小数点数としての変数値。
 
 ---
 
 ## Suika.getVariableString()
 
-Get the current value of a variable.
+変数の現在値を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| name      | String | Name of the variable.                      |
+| name      | String | 変数名。                      |
 
-### Return
+### 戻り値
 
-The value of the variable in string
+文字列としての変数値。
 
 ---
 
 ## Suika.unsetVariable()
 
-Unset (delete) a specific variable.
+指定した変数を解除 (削除) します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| name      | String | Name of the variable to unset.             |
+| name      | String | 解除する変数名。             |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.unsetLocalVariables()
 
-Unset (delete) all local variables.
+すべてのローカル変数を解除 (削除) します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.makeVariableGlobal()
 
-Set a variable to be global (persistent across saves).
+変数をグローバルにします (セーブをまたいで永続化)。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| name      | String  | Name of the variable.                      |
-| is_global | Boolean | Whether to make it global.                 |
+| name      | String  | 変数名。                      |
+| is_global | Boolean | グローバルにするかどうか。                 |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isGlobalVariable()
 
-Check the variable's global status.
+変数のグローバル状態を確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| name      | String  | Name of the variable.                      |
+| name      | String  | 変数名。                      |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.getVariableCount()
 
-Get the number of variables.
+変数の数を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Integer for count.
+個数を表す整数。
 
 ---
 
 ## Suika.getVariableName()
 
-Iterate through the registered variables.
+登録済み変数を反復処理します。
 
-### Parameters (Dictionary) (for getVariableName)
+### パラメータ (辞書) (getVariableName 用)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the variable.     |
+| index     | Integer | 変数のインデックス。     |
 
-### Return
+### 戻り値
 
-String for name.
+名前を表す文字列。
 
 ---
 
 ## Suika.checkVariableExists()
 
-Check if a variable with the specified name exists.
+指定した名前の変数が存在するか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| name      | String | Name to check.                             |
+| name      | String | 確認する名前。                             |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.executeSaveGlobal()
 
-Execute a global save.
-Global data typically includes persistent settings.
+グローバルセーブを実行します。
+グローバルデータには通常、永続設定が含まれます。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean that represents success or failure.
+成功または失敗を表す真偽値。
 
 ---
 
 ## Suika.executeLoadGlobal()
 
-Execute a global load.
-Global data typically includes persistent settings.
+グローバルロードを実行します。
+グローバルデータには通常、永続設定が含まれます。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean that represents success or failure.
+成功または失敗を表す真偽値。
 
 ---
 
 ## Suika.executeSaveLocal()
 
-Save the game progress to a specific slot.
+ゲーム進行状況を指定したスロットに保存します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| index     | Integer | セーブスロットのインデックス。    |
 
-### Return
+### 戻り値
 
-Boolean that represents success or failure.
+成功または失敗を表す真偽値。
 
 ---
 
 ## Suika.executeLoadLocal()
 
-Load game progress from a specific slot.
+指定したスロットからゲーム進行状況を読み込みます。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| index     | Integer | セーブスロットのインデックス。    |
 
-### Return
+### 戻り値
 
-Boolean that represents success or failure.
+成功または失敗を表す真偽値。
 
 ---
 
 ## Suika.checkSaveExists()
 
-Check if the save data exists for the specified slot index.
+指定したスロットインデックスのセーブデータが存在するか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| index     | Integer | セーブスロットのインデックス。    |
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.deleteLocalSave()
 
-Delete a local save slot.
+ローカルセーブスロットを削除します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| index     | Integer | セーブスロットのインデックス。    |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.deleteGlobalSave()
 
-Delete the entire global save data.
+グローバルセーブデータ全体を削除します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.checkRightAfterLoad()
 
-Check if the current frame is immediately following a successful load operation.
+現在のフレームが、ロード成功直後か確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.getSaveTimestamp()
 
-Get the timestamp (Unix time) when the save data was created.
+セーブデータが作成された日時 (Unix 時刻) を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| index     | Integer | セーブスロットのインデックス。    |
 
-### Return
+### 戻り値
 
-Integer (timestamp).
+整数 (タイムスタンプ)。
 
 ---
 
 ## Suika.getLatestSaveIndex()
 
-Get the index of the most recently updated save slot.
+直近に更新されたセーブスロットのインデックスを取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Integer representing the slot index.
+スロットインデックスを表す整数。
 
 ---
 
 ## Suika.getSaveChapterName()
 
-Retrieve the chapter title stored in a save slot.
+セーブスロットに保存されたチャプタータイトルを取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| index     | Integer | セーブスロットのインデックス。    |
 
-### Return
+### 戻り値
 
-String representing the chapter name.
+チャプター名を表す文字列。
 
 ---
 
 ## Suika.getSaveLastMessage()
 
-Retrieve the last displayed message stored in a save slot.
+セーブスロットに保存された最後の表示メッセージを取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| index     | Integer | セーブスロットのインデックス。    |
 
-### Return
+### 戻り値
 
-String representing the message.
+メッセージを表す文字列。
 
 ---
 
 ## Suika.getSaveThumbnail()
 
-Get the thumbnail image associated with a save slot.
+セーブスロットに関連付けられたサムネイル画像を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| index     | Integer | セーブスロットのインデックス。    |
 
-### Return
+### 戻り値
 
-An image object.
+画像オブジェクト。
 
 ---
 
 ## Suika.clearHistory()
 
-Clear all messages from the history (backlog).
+履歴 (バックログ) からすべてのメッセージをクリアします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.addHistory()
 
-Add a new entry to the history.
+履歴に新しいエントリを追加します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter        | Type    | Description                                |
+| パラメータ        | 型    | 説明                                |
 |------------------|---------|--------------------------------------------|
-| name             | String  | Character name.                            |
-| msg              | String  | Message text.                              |
-| voice            | String  | Path to the voice file.                    |
-| bodyColor        | Integer | Body color.                                |
-| bodyOutlineColor | Integer | Body outline color.                        |
-| nameColor        | Integer | Name color.                                |
-| nameOutlineColor | Integer | Name outline color.                        |
+| name             | String  | キャラクター名。                            |
+| msg              | String  | メッセージテキスト。                              |
+| voice            | String  | ボイスファイルへのパス。                    |
+| bodyColor        | Integer | 本文色。                                |
+| bodyOutlineColor | Integer | 本文アウトライン色。                        |
+| nameColor        | Integer | 名前色。                                |
+| nameOutlineColor | Integer | 名前アウトライン色。                        |
 
-### Return
+### 戻り値
 
-Boolean that represents success.
+成功を表す真偽値。
 
 ---
 
 ## Suika.getHistoryCount()
 
-Get the total number of entries currently in the history.
+現在の履歴内のエントリ総数を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Integer representing the history count.
+履歴数を表す整数。
 
 ---
 
 ## Suika.getHistoryName()
 
-Retrieve the name at a specific history index.
+指定した履歴インデックスの名前を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Index in the history.      |
+| index     | Integer | 履歴内のインデックス。      |
 
-### Return
+### 戻り値
 
-String value.
+文字列値。
 
 ---
 
 ## Suika.getHistoryMessage()
 
-Retrieve the message at a specific history index.
+指定した履歴インデックスのメッセージを取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Index in the history.      |
+| index     | Integer | 履歴内のインデックス。      |
 
-### Return
+### 戻り値
 
-String value.
+文字列値。
 
 ---
 
 ## Suika.getHistoryVoice()
 
-Retrieve the voice path at a specific history index.
+指定した履歴インデックスのボイスパスを取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| index     | Integer | Index in the history.      |
+| index     | Integer | 履歴内のインデックス。      |
 
-### Return
+### 戻り値
 
-String value.
+文字列値。
 
 ---
 
 ## Suika.loadSeen()
 
-Load the seen (read) flags for the current script file.
+現在のスクリプトファイルの既読フラグを読み込みます。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean that represents success.
+成功を表す真偽値。
 
 ---
 
 ## Suika.saveSeen()
 
-Save the seen (read) flags for the current script file.
+現在のスクリプトファイルの既読フラグを保存します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean that represents success.
+成功を表す真偽値。
 
 ---
 
 ## Suika.getSeenFlags()
 
-Get the seen status for the current tag.
+現在のタグの既読状態を取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Get returns Integer.
+整数を返します。
 
-For a `[text]` tag, `0` means unread and `1` means read.
+`[text]` タグでは、`0` は未読、`1` は既読を意味します。
 
-For a `[choose]` tag, each bit indicates the option is selected before.
+`[choose]` タグでは、各ビットがその選択肢が以前に選ばれたことを示します。
 
 ---
 
 ## Suika.setSeenFlags()
 
-Set the seen status for the current tag.
+現在のタグの既読状態をセットします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                |
+| パラメータ | 型    | 説明                |
 |-----------|---------|----------------------------|
-| flag      | Integer | Seen status flag.          |
+| flag      | Integer | 既読状態フラグ。          |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.loadGUIFile()
 
-Load a GUI definition file and prepare it for execution.
+GUI 定義ファイルを読み込み、実行準備をします。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type    | Description                                |
+| パラメータ | 型    | 説明                                |
 |-----------|---------|--------------------------------------------|
-| file      | String  | Path to the .gui file.                     |
-| sys       | Boolean | Whether it's a system GUI (Save/Load/etc). |
+| file      | String  | .gui ファイルへのパス。                     |
+| sys       | Boolean | システム GUI (セーブ/ロードなど) かどうか。 |
 
-### What is System GUI
+### システム GUI とは
 
-System GUI is typically called when `[text]` or `[choose]` is running,
-and the control will return to the interrupted tag.
+システム GUI は通常、`[text]` または `[choose]` の実行中に呼び出され、制御は中断されたタグへ戻ります。
 
-### Return
+### 戻り値
 
-Boolean that represents success or failure.
+成功または失敗を表す真偽値。
 
 ---
 
 ## Suika.startGUI()
 
-Start the loaded GUI.
+読み込んだ GUI を開始します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.stopGUI()
 
-Stop the currently running GUI.
+現在実行中の GUI を停止します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.isGUIRunning()
 
-Check if a GUI is currently active.
+GUI が現在アクティブか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.isGUIFinished()
 
-Check if a GUI has completed its operation.
+GUI の処理が完了したか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.getGUIResultLabel()
 
-Get the label of the button that was selected to finish the GUI.
+GUI 終了時に選択されたボタンのラベルを取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-String representing the result label.
+結果ラベルを表す文字列。
 
 ---
 
 ## Suika.isGUIResultTitle()
 
-Check if the GUI was closed with a "back to title" action.
+GUI が「タイトルへ戻る」操作で閉じられたか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.checkIfSavedInGUI()
 
-Check if a save operation was performed while the GUI was active.
+GUI がアクティブな間にセーブ操作が実行されたか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.checkIfLoadedInGUI()
 
-Check if a load operation was performed while the GUI was active.
+GUI がアクティブな間にロード操作が実行されたか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.checkRightAfterSysGUI()
 
-Check if the current frame is immediately following a return from a system GUI.
+現在のフレームがシステム GUI から戻った直後か確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean value.
+真偽値。
 
 ---
 
 ## Suika.getMillisec()
 
-Get a lap time since the time origin in milliseconds.
+時間原点からの経過時間をミリ秒で取得します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Integer in milliseconds.
+ミリ秒単位の整数。
 
 ---
 
 ## Suika.checkFileExists()
 
-Check if a file exists.
+ファイルが存在するか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| file      | String | Path to the file.                          |
+| file      | String | ファイルへのパス。                          |
 
-### Return
+### 戻り値
 
-Returns boolean.
+真偽値を返します。
 
 ---
 
 ## Suika.readFileContent()
 
-Read an entire file content.
+ファイル内容全体を読み込みます。
 
-### Parameters (Dictionary) (for readFileContent)
+### パラメータ (辞書) (readFileContent 用)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| file      | String | Path to the file.                          |
+| file      | String | ファイルへのパス。                          |
 
-### Return
+### 戻り値
 
-Returns a string.
+文字列を返します。
 
 ---
 
 ## Suika.writeSaveData()
 
-Directly write raw save data associated with a key.
+キーに関連付けられた生のセーブデータを直接書き込みます。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| key       | String | Unique key for the data.                   |
-| data      | String | Data to write/read.                        |
+| key       | String | データの一意なキー。                   |
+| data      | String | 書き込み/読み込みするデータ。                        |
 
-### Return
+### 戻り値
 
-Boolean that represents success or failure.
+成功または失敗を表す真偽値。
 
 ---
 
 ## Suika.readSaveData()
 
-Directly read raw save data associated with a key.
+キーに関連付けられた生のセーブデータを直接読み込みます。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| key       | String | Unique key for the data.                   |
+| key       | String | データの一意なキー。                   |
 
-### Return
+### 戻り値
 
-Boolean that represents success or failure.
+成功または失敗を表す真偽値。
 
 ---
 
 ## Suika.playVideo()
 
-Control video playback.
+動画再生を制御します。
 
-### Parameters (Dictionary) (for playVideo)
+### パラメータ (辞書) (playVideo 用)
 
-| Parameter    | Type    | Description                          |
+| パラメータ    | 型    | 説明                          |
 |--------------|---------|--------------------------------------|
-| file         | String  | Path to the video file.              |
-| is_skippable | Boolean | Whether the user can skip the video. |
+| file         | String  | 動画ファイルへのパス。              |
+| is_skippable | Boolean | ユーザーが動画をスキップできるかどうか。 |
 
-### Return
+### 戻り値
 
-Play returns Boolean; IsPlaying returns Boolean.
+Play は真偽値を返し、IsPlaying も真偽値を返します。
 
 ---
 
 ## Suika.stopVideo()
 
-Stop the video playback.
+動画再生を停止します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.isVideoPlaying()
 
-Check if a video is playing back.
+動画が再生中か確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Returns boolean.
+真偽値を返します。
 
 ---
 
 ## Suika.isFullScreenSupported()
 
-Check for full-screen mode ability.
+フルスクリーンモードに対応しているか確認します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-Boolean.
+真偽値。
 
 ---
 
 ## Suika.enterFullScreenMode()
 
-Enter the full-screen mode.
+フルスクリーンモードに入ります。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-No parameters.
+パラメータなし。
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。
 
 ---
 
 ## Suika.speakText()
 
-Execute Text-to-Speech (TTS) for the given message.
+指定したメッセージに対して Text-to-Speech (TTS) を実行します。
 
-### Parameters (Dictionary)
+### パラメータ (辞書)
 
-| Parameter | Type   | Description                                |
+| パラメータ | 型   | 説明                                |
 |-----------|--------|--------------------------------------------|
-| msg       | String | Text to be spoken.                         |
+| msg       | String | 読み上げるテキスト。                         |
 
-### Return
+### 戻り値
 
-No return.
+戻り値なし。

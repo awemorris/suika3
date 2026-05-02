@@ -1,330 +1,330 @@
-Suika3 Tag Reference
+Suika3 タグリファレンス
 ====================
 
-## Index
+## 目次
 
-| Tag Name                    | Description                                                        |
+| タグ名                       | 説明                                                                   |
 |-----------------------------|--------------------------------------------------------------------|
-| [anime](#anime)             | Loads and runs an animation file.                                  |
-| [bg](#bg)                   | Changes the background image with a fading effect.                 |
-| [bgm](#bgm)                 | Plays a background music file (Ogg Vorbis format).                 |
-| [callmacro](#callmacro)     | Calls a defined macro.                                             |
-| [ch](#ch)                   | Shows or hides characters with detailed layer parameters.          |
-| [chapter](#chapter)         | Sets a chapter name.                                               |
-| [choose](#choose)           | Displays options and stores the selection or jumps to a label.     |
-| [click](#click)             | Waits for a user click.                                            |
-| [config](#config)           | Sets a configuration value for the game system.                    |
-| [defmacro](#defmacro)       | Starts a macro definition.                                         |
-| [else](#else)               | Part of the if/elseif branch for when no conditions are met.       |
-| [elseif](#elseif)           | Specifies an additional condition in a branch.                     |
-| [endif](#endif)             | Ends a conditional branch.                                         |
-| [endmacro](#endmacro)       | Ends a macro definition.                                           |
-| [goto](#goto)               | Jumps to a specified label tag.                                    |
-| [gui](#gui)                 | Shows a GUI from a specified file.                                 |
-| [if](#if)                   | Branches the process based on a specified condition.               |
-| [label](#label)             | Defines a label for jump targets.                                  |
-| [layer](#layer)             | Loads/unloads images or sets parameters for specific layers.       |
-| [load](#load)               | Loads a NovelML file and can jump to a specific label.             |
-| [move](#move)               | Animates character layers over a specified time.                   |
-| [pencil](#pencil)           | Draw a text on a layer.                                            |
-| [returnmacro](#returnmacro) | Returns from a macro execution.                                    |
-| [se](#se)                   | Plays a sound effect file (Ogg Vorbis format).                     |
-| [set](#set)                 | Sets a variable value (all variables are treated as text).         |
-| [skip](#skip)               | Enables or disables the skip status.                               |
-| [text](#text)               | Displays text in the message box, optionally with a name.          |
-| [video](#video)             | Plays a video file (supports skippable settings).                  |
-| [volume](#volume)           | Sets the sound volume for BGM, SE, or Voice tracks.                |
-| [wait](#wait)               | Waits for a specified number of seconds.                           |
+| [anime](#anime)             | アニメーションファイルを読み込んで実行します。                         |
+| [bg](#bg)                   | フェード効果付きで背景画像を変更します。                               |
+| [bgm](#bgm)                 | BGMファイルを再生します（Ogg Vorbis形式）。                            |
+| [callmacro](#callmacro)     | 定義済みのマクロを呼び出します。                                       |
+| [ch](#ch)                   | 詳細なレイヤーパラメーターでキャラクターを表示・非表示にします。       |
+| [chapter](#chapter)         | チャプター名を設定します。                                             |
+| [choose](#choose)           | 選択肢を表示し、選択結果を変数に保存するかラベルにジャンプします。     |
+| [click](#click)             | ユーザーのクリックを待ちます。                                         |
+| [config](#config)           | ゲームシステムの設定値を変更します。                                   |
+| [defmacro](#defmacro)       | マクロ定義を開始します。                                               |
+| [else](#else)               | 条件が一致しない場合のif/elseifブランチの一部です。                    |
+| [elseif](#elseif)           | ブランチに追加の条件を指定します。                                     |
+| [endif](#endif)             | 条件分岐を終了します。                                                 |
+| [endmacro](#endmacro)       | マクロ定義を終了します。                                               |
+| [goto](#goto)               | 指定したラベルタグにジャンプします。                                   |
+| [gui](#gui)                 | 指定したファイルのGUIを表示します。                                    |
+| [if](#if)                   | 指定した条件に基づいて処理を分岐します。                               |
+| [label](#label)             | ジャンプ先のラベルを定義します。                                       |
+| [layer](#layer)             | 特定のレイヤーに画像を読み込んだり、パラメーターを設定します。         |
+| [load](#load)               | NovelMLファイルを読み込み、特定のラベルにジャンプできます。            |
+| [move](#move)               | キャラクターレイヤーを指定時間かけてアニメーションさせます。           |
+| [pencil](#pencil)           | レイヤーにテキストを描画します。                                       |
+| [returnmacro](#returnmacro) | マクロの実行から戻ります。                                             |
+| [se](#se)                   | 効果音ファイルを再生します（Ogg Vorbis形式）。                         |
+| [set](#set)                 | 変数の値を設定します（すべての変数はテキストとして扱われます）。       |
+| [skip](#skip)               | スキップ機能の有効・無効を切り替えます。                               |
+| [text](#text)               | メッセージボックスにテキストを表示します。オプションで名前も表示できます。 |
+| [video](#video)             | 動画ファイルを再生します（スキップ設定に対応）。                       |
+| [volume](#volume)           | BGM・SE・ボイストラックの音量を設定します。                            |
+| [wait](#wait)               | 指定した秒数待機します。                                               |
 
 ---
 
 ## `anime`
 
-Run Animation
+アニメーションの実行
 
-The `anime` tag loads and executes an animation definition from a file. 
-It allows for complex visual effects, character movements, or looping environmental animations beyond simple transitions.
+`anime` タグはファイルからアニメーション定義を読み込んで実行します。
+単純なトランジションにとどまらず、複雑な視覚エフェクト・キャラクターの動き・ループするシーンアニメーションなどを実現します。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Run a synchronous animation (waits for completion)
+# 同期アニメーションを実行する（完了まで待機）
 [anime file="opening_effect.txt"]
 
-# Run an asynchronous looping animation
+# 非同期ループアニメーションを実行する
 [anime file="sparkle.txt" async="true" register="my_loop"]
 
-# Stop a registered asynchronous animation
+# 登録済みの非同期アニメーションを停止する
 [anime stop="true" register="my_loop"]
 ```
 
-### Arguments
+### 引数
 
-| Argument      | Omissible      | Description                                        | Notes                                                             |
+| 引数           | 省略可否        | 説明                                               | 備考                                                              |
 |---------------|----------------|----------------------------------------------------|-------------------------------------------------------------------|
-| `file`        | Yes            | The filename of the animation definition.          | *Required unless `stop="true"` is used.                           |
-| `async`       | Yes (`false`)  | Whether to run the animation asynchronously.       | If `false`, the script waits until the animation finishes.        |
-| `register`    | Yes            | A unique name to identify this animation instance. | Required for controlling or stopping async animations later.      |
-| `stop`        | Yes (`false`)  | Stops a registered animation if set to `true`.     | Requires the `register` argument.                                 |
-| `showsysbtn`  | Yes (`true`)   | Whether to show system buttons during playback.    | Only valid for synchronous animations.                            |
-| `showmsgbox`  | Yes (`true`)   | Whether to show the message box during playback.   | Only valid for synchronous animations.                            |
-| `shownamebox` | Yes (`true`)   | Whether to show the name box during playback.      | Only valid for synchronous animations.                            |
+| `file`        | 可             | アニメーション定義のファイル名。                     | `stop="true"` を使う場合を除き必須です。                            |
+| `async`       | 可 (`false`)   | アニメーションを非同期で実行するかどうか。           | `false` の場合、アニメーション完了までスクリプトが待機します。      |
+| `register`    | 可             | このアニメーションインスタンスを識別する一意の名前。 | 非同期アニメーションを後から制御・停止するために必要です。          |
+| `stop`        | 可 (`false`)   | `true` にすると登録済みアニメーションを停止します。 | `register` 引数が必要です。                                        |
+| `showsysbtn`  | 可 (`true`)    | 再生中にシステムボタンを表示するかどうか。           | 同期アニメーションのみ有効です。                                    |
+| `showmsgbox`  | 可 (`true`)    | 再生中にメッセージボックスを表示するかどうか。       | 同期アニメーションのみ有効です。                                    |
+| `shownamebox` | 可 (`true`)    | 再生中に名前ボックスを表示するかどうか。             | 同期アニメーションのみ有効です。                                    |
 
-### Tips
+### ヒント
 
-**Synchronous vs. Asynchronous**:
-* **Synchronous (`async="false"`)**: Great for cutscenes where you want the player to watch the animation before any text or choices appear.
-* **Asynchronous (`async="true"`)**: Perfect for background effects (like falling snow or a flickering light) that should continue while the story progresses.
+**同期 vs. 非同期**:
+* **同期（`async="false"`）**: テキストや選択肢が表示される前にアニメーションを見せたいカットシーンに最適です。
+* **非同期（`async="true"`）**: 物語が進む間も継続して流れる背景エフェクト（雪や炎のちらつきなど）に最適です。
 
-**Managing Instances**:
-* By using the `register` argument, you can label a specific animation.
-* This is how you tell the engine exactly which animation to stop when you use `stop="true"`.
+**インスタンスの管理**:
+* `register` 引数を使うと、特定のアニメーションにラベルを付けられます。
+* `stop="true"` を使うとき、エンジンはこのラベルで停止するアニメーションを特定します。
 
-**UI Control**:
-* Use `showmsgbox="false"` if your animation is meant to take up the full screen and you want the dialogue window to disappear temporarily for a cleaner look.
+**UI 制御**:
+* アニメーションがフルスクリーン表示を意図している場合、`showmsgbox="false"` を使うことでダイアログウィンドウを一時的に非表示にし、すっきりした見た目にできます。
 
 ---
 
 ## `bg`
 
-Change Background
+背景の変更
 
-The `bg` tag changes the background image with a smooth fading effect.
-It's the primary way to set the scene in your visual novel.
+`bg` タグはなめらかなフェード効果付きで背景画像を変更します。
+ビジュアルノベルでシーンを設定するための主要な方法です。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Transition to background.png over 1.0 second
+# 1.0秒かけて background.png にトランジション
 [bg file="background.png" time="1.0"]
 
-# Fade to a black screen (removes the background)
+# 黒い画面にフェード（背景を削除）
 [bg file="none" time="1.0"]
 ```
 
-### Arguments
+### 引数
 
-| Argument   | Omissible      | Description                                   | Notes                                                                        |
-|------------|----------------|-----------------------------------------------|------------------------------------------------------------------------------|
-| `file`     | No             | The filename of the new background image.     | Set to `none` to remove the background.                                      |
-| `time`     | Yes (`0`)      | The duration of the fading effect in seconds. | Default is `0.0` (instant change).                                           |
-| `method`   | Yes (`normal`) | The fading method/style.                      | Choose from `normal`, `rule`, or `melt`.                                     |
-| `rule`     | Yes            | The rule image file for specific transitions. | Required when `method` is set to `rule` or `melt`.                           |
-| `x`        | Yes (`0`)      | The X-axis offset for the background image.   | Supports absolute values (e.g., `100`) or relative values (e.g., `r100`).    |
-| `y`        | Yes (`0`)      | The Y-axis offset for the background image.   | Supports absolute values (e.g., `100`) or relative values (e.g., `r-100`).   |
-| `alpha`    | Yes (`255`)    | The alpha value of the background image.      | `0` to `255`.                                                                |
-| `clear`    | Yes (`false`)  | Whether to vanish the characters or not.      | If `true`, all characters will be vanished.                                  |
+| 引数       | 省略可否        | 説明                                      | 備考                                                                          |
+|------------|----------------|-------------------------------------------|------------------------------------------------------------------------------|
+| `file`     | 不可           | 新しい背景画像のファイル名。               | 背景を削除するには `none` を指定します。                                      |
+| `time`     | 可 (`0`)       | フェード効果の時間（秒）。                 | デフォルトは `0.0`（即時変更）。                                              |
+| `method`   | 可 (`normal`)  | フェードの方式・スタイル。                 | `normal`、`rule`、`melt` から選択します。                                     |
+| `rule`     | 可             | 特定のトランジション用のルール画像ファイル。 | `method` が `rule` または `melt` のときに必要です。                           |
+| `x`        | 可 (`0`)       | 背景画像のX軸オフセット。                  | 絶対値（例: `100`）または相対値（例: `r100`）をサポートします。               |
+| `y`        | 可 (`0`)       | 背景画像のY軸オフセット。                  | 絶対値（例: `100`）または相対値（例: `r-100`）をサポートします。              |
+| `alpha`    | 可 (`255`)     | 背景画像のアルファ値。                     | `0` ～ `255`。                                                                |
+| `clear`    | 可 (`false`)   | キャラクターを消去するかどうか。           | `true` にすると全キャラクターが非表示になります。                             |
 
-### Transition Methods (`method`)
+### トランジション方式（`method`）
 
-You can create different atmospheres by choosing the right transition style:
+適切なトランジションスタイルを選ぶことで、さまざまな雰囲気を演出できます。
 
-| Type     | Description                                                                                                                          |
+| 種類     | 説明                                                                                                                                  |
 |----------|--------------------------------------------------------------------------------------------------------------------------------------|
-| `normal` | Alpha Blending. The default method. Performs a smooth cross-fade between the old and new images.                                     |
-| `rule`   | 1-bit Universal Transition. Uses a grayscale "rule" image to determine the switching order.                                          |
-| `melt`   | 8-bit Universal Transition. Similar to `rule`, but with soft, blurred edges at the transition boundary, creating a "melting" effect. |
+| `normal` | アルファブレンド。デフォルトの方式。旧画像と新画像の間でなめらかなクロスフェードを行います。                                          |
+| `rule`   | 1ビット汎用トランジション。グレースケールの「ルール」画像を使って切り替え順序を決定します。                                            |
+| `melt`   | 8ビット汎用トランジション。`rule` と同様ですが、トランジション境界にぼかしが入り「溶ける」ような効果が生まれます。                     |
 
-For `rule` and `melt`, the image switches pixel-by-pixel from the darkest to the lightest areas of the rule map.
+`rule` と `melt` では、ルールマップの暗い部分から明るい部分の順にピクセル単位で切り替わります。
 
-### Tips
+### ヒント
 
-**Relative Positioning**: 
-* If you want to nudge the background from its current position, use the `r` prefix.
-* For example, `x="r50"` moves the image 50 pixels to the right of its current X coordinate.
+**相対位置指定**:
+* 背景を現在の位置から少しずらしたい場合は、`r` プレフィックスを使います。
+* 例えば `x="r50"` は、現在のX座標から右に50ピクセル移動します。
 
-**What is a Rule Image?**:
-* It's a grayscale image where black areas transition first and white areas transition last.
-* By creating custom rule images, you can achieve effects like horizontal wipes, circular reveals, or even more artistic patterns!
+**ルール画像とは？**:
+* 黒いエリアが最初に、白いエリアが最後にトランジションするグレースケール画像です。
+* カスタムのルール画像を作成することで、横方向のワイプ・円形のリビール・より芸術的なパターンなど多彩なエフェクトが実現できます！
 
 ---
 
 ## `bgm`
 
-Play Background Music
+BGMの再生
 
-The `bgm` tag plays a background music track. 
-Music is an essential tool for setting the mood of your scene, and it will continue to loop automatically until stopped or changed.
+`bgm` タグはBGMトラックを再生します。
+音楽はシーンの雰囲気を設定するための重要な手段であり、停止または変更されるまで自動的にループします。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Start playing a BGM track
+# BGMトラックの再生を開始
 [bgm file="field_theme.ogg"]
 
-# Stop the current BGM (use "none")
+# 現在のBGMを停止（"none" を使用）
 [bgm file="none"]
 ```
 
-### Arguments
+### 引数
 
-| Argument | Omissible     | Description                        | Notes                                  |
-|----------|---------------|------------------------------------|----------------------------------------|
-| `file`   | No            | The filename of the music to play. | Set to `none` to stop the current BGM. |
-| `once`   | Yes (`false`) | Don't loop.                        |                                        |
+| 引数     | 省略可否       | 説明                           | 備考                                        |
+|----------|---------------|---------------------------------|---------------------------------------------|
+| `file`   | 不可          | 再生する音楽ファイルのファイル名。 | BGMを停止するには `none` を指定します。       |
+| `once`   | 可 (`false`)  | ループしない。                  |                                             |
 
-### Tips
+### ヒント
 
-**Required Format**:
-* For compatibility and performance, Suika3 requires BGM files to be in **Ogg Vorbis** format.
-* The sampling rate MUST be **44,100Hz**.
+**必須フォーマット**:
+* 互換性とパフォーマンスのため、Suika3 の BGM ファイルは **Ogg Vorbis** 形式である必要があります。
+* サンプリングレートは **44,100Hz** でなければなりません。
 
-**Looping**:
-* Background music is designed to loop by default, so you don't need to worry about the music ending abruptly during a long dialogue scene.
+**ループ**:
+* BGM はデフォルトでループ再生されるため、長い会話シーンで音楽が突然終わる心配は不要です。
 
-**Smooth Transitions**:
-* If you call `[bgm]` while another track is already playing, the engine will typically handle the transition. 
-* To adjust the loudness of the music, you'll want to use the `[volume]` tag.
+**スムーズなトランジション**:
+* 別のトラックが再生中に `[bgm]` を呼び出すと、エンジンが自動的にトランジションを処理します。
+* 音楽の音量を調整するには `[volume]` タグを使用します。
 
-**Stopping Music**:
-* When a scene ends or the mood changes to silence, remember to use `[bgm file="none"]` to give the player's ears a rest!
+**音楽の停止**:
+* シーンが終わったり、無音に変わる場合は、`[bgm file="none"]` を使ってプレイヤーの耳を休ませましょう！
 
 ---
 
 ## `callmacro`
 
-Call Macro
+マクロの呼び出し
 
-The `callmacro` tag executes a previously defined macro.
-It allows you to trigger a specific sequence of commands, such as character entrances or UI animations, multiple times throughout your script without rewriting the original code.
+`callmacro` タグは事前に定義されたマクロを実行します。
+キャラクターの登場シーンやUIアニメーションなど、特定のコマンド列をスクリプト全体で何度でも、元のコードを書き直すことなく呼び出せます。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Call a macro named "kaito_entrance"
+# "kaito_entrance" という名前のマクロを呼び出す
 [callmacro name="kaito_entrance"]
 
-# Call a macro for a specific scene transition
+# 特定のシーントランジション用マクロを呼び出す
 [callmacro name="fade_to_white"]
 ```
 
-### Arguments
+### 引数
 
-| Argument | Omissible | Description                               | Notes                                              |
-|----------|-----------|-------------------------------------------|----------------------------------------------------|
-| `name`   | No        | The name of the macro to execute.         | Must match a name defined by a `[defmacro]` tag.   |
-| `file`   | Yes       | The file name where the macro is defined. | Omit this to call a macro inside the current file. |
+| 引数     | 省略可否  | 説明                                 | 備考                                               |
+|----------|-----------|--------------------------------------|----------------------------------------------------|
+| `name`   | 不可      | 実行するマクロの名前。               | `[defmacro]` タグで定義した名前と一致する必要があります。 |
+| `file`   | 可        | マクロが定義されているファイル名。   | 省略すると現在のファイル内のマクロを呼び出します。  |
 
-### Tips
+### ヒント
 
-**Efficiency**:
-* By using `[callmacro]`, you can keep your main story script focused and readable.
-* Instead of seeing 10 lines of animation code, you'll just see one clear command.
+**効率化**:
+* `[callmacro]` を使うことで、メインのストーリースクリプトをシンプルで読みやすく保てます。
+* 10行のアニメーションコードの代わりに、1つの明確なコマンドだけが見えるようになります。
 
-**Execution Flow**:
-* When the engine hits `[callmacro]`, it immediately jumps to the defined macro, runs all the tags inside it, and then automatically returns to the very next line after the `[callmacro]` tag.
+**実行フロー**:
+* エンジンが `[callmacro]` に到達すると、即座に定義されたマクロにジャンプし、その中のすべてのタグを実行してから、`[callmacro]` タグの次の行に自動的に戻ります。
 
-**Modular Design**:
-* Think of macros as "custom tags" for your game.
-* If you decide to change how a character enters a scene, you only need to update the code once in the `[defmacro]` block, and every `[callmacro]` will reflect that change!
+**モジュラー設計**:
+* マクロはゲームの「カスタムタグ」と考えてください。
+* キャラクターの登場方法を変更したい場合、`[defmacro]` ブロックを1箇所修正するだけで、すべての `[callmacro]` に反映されます！
 
 ---
 
 ## `ch`
 
-Character Display
+キャラクターの表示
 
-The `ch` tag shows, hides, or updates character images on various layers.
-It allows for detailed control over positioning, scaling, and rotations for multiple characters and background at once.
+`ch` タグは各種レイヤーのキャラクター画像を表示・非表示・更新します。
+複数のキャラクターと背景の位置・スケール・回転を同時に詳細に制御できます。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Show a character at the center
+# キャラクターを中央に表示
 [ch center="chara001.png" time="1.0"]
 
-# Show multiple characters with specific positions
+# 複数のキャラクターを指定位置に表示
 [ch left="chara002.png" right="chara003.png" time="0.5"]
 
-# Hide a specific character
+# 特定のキャラクターを非表示
 [ch center="none" time="1.0"]
 ```
 
-### Arguments
+### 引数
 
-| Argument  | Omissible      | Description                            | Notes                                                 |
-|-----------|----------------|----------------------------------------|-------------------------------------------------------|
-| `time`    | Yes (`0`)      | Duration of the transition in seconds. | Affects all layer changes within this tag.            |
-| `method`  | Yes (`normal`) | The fading method/style.               | `normal`, `rule`, or `melt`.                          |
-| `rule`    | Yes            | The rule image file for transitions.   | Required when `method` is `rule` or `melt`.           |
+| 引数      | 省略可否        | 説明                                     | 備考                                                  |
+|-----------|----------------|------------------------------------------|---------------------------------------------------------|
+| `time`    | 可 (`0`)       | トランジションの時間（秒）。              | このタグ内のすべてのレイヤー変更に適用されます。        |
+| `method`  | 可 (`normal`)  | フェードの方式・スタイル。                | `normal`、`rule`、`melt`。                              |
+| `rule`    | 可             | トランジション用のルール画像ファイル。    | `method` が `rule` または `melt` のときに必要です。     |
 
-#### Layer File Arguments
+#### レイヤーファイル引数
 
-Specify a filename to load an image onto a layer. Set to `none` to unload (hide) the image.
+ファイル名を指定してレイヤーに画像を読み込みます。`none` を指定するとレイヤーをアンロード（非表示）します。
 
-| Argument       | Description                               |
-|----------------|-------------------------------------------|
-| `bg`           | Background layer.                         |
-| `back          | Back-Center character.                    |
-| `left`         | Left character.                           |
-| `right`        | Right character.                          |
-| `center`       | Center character.                         |
-| `left-center`  | Left-Center character.                    |
-| `right-center` | Intermediate character.                   |
-| `face`         | Face character.                           |
+| 引数           | 説明                          |
+|----------------|-------------------------------|
+| `bg`           | 背景レイヤー。                |
+| `back`         | 背面中央キャラクター。        |
+| `left`         | 左キャラクター。              |
+| `right`        | 右キャラクター。              |
+| `center`       | 中央キャラクター。            |
+| `left-center`  | 左中央キャラクター。          |
+| `right-center` | 右中央キャラクター。          |
+| `face`         | フェイスキャラクター。        |
 
-#### Layer Parameter Arguments
+#### レイヤーパラメーター引数
 
-Each layer above (e.g., `center`) can be customized using the following suffixes (e.g., `center-x`, `center-rotate`).
+上記の各レイヤー（例: `center`）は以下のサフィックスでカスタマイズできます（例: `center-x`、`center-rotate`）。
 
-| Suffix      | Omissible     | Description                | Notes                                                         |
+| サフィックス  | 省略可否      | 説明                       | 備考                                                          |
 |-------------|---------------|----------------------------|---------------------------------------------------------------|
-| `-x`        | Yes (`0`)     | X position.                | Supports absolute (e.g., `100`) or relative (e.g., `r50`).    |
-| `-y`        | Yes (`0`)     | Y position.                | Supports absolute (e.g., `100`) or relative (e.g., `r-50`).   |
-| `-a`        | Yes (`255`)   | Alpha value. (opacity)     | `0` (transparent) to `255` (opaque).                          |
-| `-scale-x`  | Yes (`1.0`)   | X scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `-scale-y`  | Yes (`1.0`)   | Y scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `-center-x` | Yes (`0`)     | X center for rotation.     | Pivot point for the rotation effect.                          |
-| `-center-y` | Yes (`0`)     | Y center for rotation.     | Pivot point for the rotation effect.                          |
-| `-rotate`   | Yes (`0`)     | Rotation in degrees.       | Positive for clockwise. Supports `r` prefix.                  |
-| `-dim`      | Yes (`false`) | Dimming status.            | If `true`, the layer is rendered 50% darker.                  |
+| `-x`        | 可 (`0`)      | X位置。                    | 絶対値（例: `100`）または相対値（例: `r50`）をサポート。       |
+| `-y`        | 可 (`0`)      | Y位置。                    | 絶対値（例: `100`）または相対値（例: `r-50`）をサポート。      |
+| `-a`        | 可 (`255`)    | アルファ値（不透明度）。    | `0`（透明）〜 `255`（不透明）。                               |
+| `-scale-x`  | 可 (`1.0`)    | X方向のスケール係数。       | `1.0` が元のサイズ。`r` プレフィックスをサポート。             |
+| `-scale-y`  | 可 (`1.0`)    | Y方向のスケール係数。       | `1.0` が元のサイズ。`r` プレフィックスをサポート。             |
+| `-center-x` | 可 (`0`)      | 回転の中心（X）。           | 回転エフェクトのピボットポイント。                             |
+| `-center-y` | 可 (`0`)      | 回転の中心（Y）。           | 回転エフェクトのピボットポイント。                             |
+| `-rotate`   | 可 (`0`)      | 回転角度（度）。            | 正の値は時計回り。`r` プレフィックスをサポート。               |
+| `-dim`      | 可 (`false`)  | ディム状態。                | `true` にするとレイヤーが50%暗くなります。                    |
 
-### Tips
+### ヒント
 
-**Batch Updates**:
-* You can update multiple characters and the background simultaneously in a single `[ch]` tag to ensure they animate together perfectly.
+**一括更新**:
+* 1つの `[ch]` タグで複数のキャラクターと背景を同時に更新でき、アニメーションを完璧に同期できます。
 
-**Relative Transformation**:
-* Like the `bg` tag, all numeric parameters support the `r` prefix.
-* For example, `center-y="r-50"` will hop the center character 50 pixels upward from its current position.
+**相対変形**:
+* `bg` タグと同様、すべての数値パラメーターは `r` プレフィックスをサポートします。
+* 例えば `center-y="r-50"` とすると、中央キャラクターが現在位置から上に50ピクセル移動します。
 
 ---
 
 ## `chapter`
 
-Set Chapter Name
+チャプター名の設定
 
-The `chapter` tag sets the name of the current chapter. 
-This name is typically used by the game system to display progress in the save/load menu or on the game screen, helping players keep track of their journey.
+`chapter` タグは現在のチャプター名を設定します。
+この名前は主にセーブ・ロードメニューやゲーム画面で進捗を表示するために使用され、プレイヤーが物語の進行状況を把握するのに役立ちます。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Set the chapter name at the beginning of a story segment
-[chapter name="Chapter 01: The Beginning"]
+# ストーリーセグメントの冒頭でチャプター名を設定
+[chapter name="第1章: はじまり"]
 
-# Update the chapter name as the story progresses
-[chapter name="Intermission: A Quiet Night"]
+# 物語の進行に合わせてチャプター名を更新
+[chapter name="幕間: 静かな夜"]
 ```
 
-### Arguments
+### 引数
 
-| Argument | Omissible | Description                        | Notes                                                      |
-|----------|-----------|------------------------------------|------------------------------------------------------------|
-| `name`   | No        | The name of the chapter to be set. | This string will be stored in the game's system variables. |
+| 引数     | 省略可否  | 説明                               | 備考                                                    |
+|----------|-----------|------------------------------------|---------------------------------------------------------|
+| `name`   | 不可      | 設定するチャプターの名前。         | この文字列はゲームのシステム変数に保存されます。         |
 
-### Tips
+### ヒント
 
-**Save Data Visibility**:
-* In many Suika3 configurations, the string you set here is what appears on the "Save" and "Load" slots.
-* Choose a name that helps the player remember exactly where they were in the story!
+**セーブデータへの反映**:
+* 多くの Suika3 の設定では、ここで設定した文字列が「セーブ」「ロード」スロットに表示されます。
+* プレイヤーが物語のどこにいたかを思い出せるような名前を選びましょう！
 
-**Consistency**:
-* It's a good practice to call the `[chapter]` tag immediately after a `[label]` that starts a new major scene or chapter. 
+**一貫性**:
+* 新しいシーンやチャプターを開始する `[label]` の直後に `[chapter]` タグを呼び出すのが良い慣習です。
 
-**Updating Names**:
-* You can call `[chapter]` as many times as you like.
-* Every time you do, the old chapter name is overwritten by the new one.
+**名前の更新**:
+* `[chapter]` は何度でも呼び出せます。
+* 呼び出すたびに古いチャプター名が新しいものに上書きされます。
 
 ---
 
@@ -332,17 +332,19 @@ This name is typically used by the game system to display progress in the save/l
 
 Display Selection Options
 
-The `choose` tag displays up to 8 interactive buttons for the player. 
-It stores the text of the chosen item in a variable.
+選択肢の表示
 
-### Basic Usage
+`choose` タグはプレイヤーに最大8つのインタラクティブなボタンを表示します。
+選択した項目のテキストを変数に保存します。
+
+### 基本的な使い方
 
 ```
-# Store selection in a variable
+# 選択結果を変数に保存
 [choose
-    text1="Red Pill"
-    text2="Green Pill"
-    text3="Blue Pill"
+    text1="赤い薬"
+    text2="緑の薬"
+    text3="青い薬"
     name="user_choice"
     value1="red"
     value2="green"
@@ -350,473 +352,463 @@ It stores the text of the chosen item in a variable.
 ]
 ```
 
-### Arguments
+### 引数
 
-| Argument         | Omissible | Description                                    | Notes                                              |
-|------------------|-----------|------------------------------------------------|--------------------------------------------------- |
-| `text1`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text2`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text3`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text4`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text5`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text6`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text7`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text8`          | Yes       | The text displayed on each button.             | At least one option are typically required.        |
-| `text<N>-locale` | Yes       | The text displayed on each button. (localized) | At least one option are typically required.        |
-| `name`           | No        | The variable name to store the result.         | Stores the text of the selected option.            |
-| `value1`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value2`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value3`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value4`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value5`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value6`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value7`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `value8`         | Yes       | The value assigned to the result variable.     | At least one option are typically required.        |
-| `time`           | Yes (`0`) | Timer in seconds.                              | If `0`, no timer is enabled.                       |
+| 引数              | 省略可否   | 説明                                       | 備考                                               |
+|------------------|-----------|--------------------------------------------|----------------------------------------------------|
+| `text1`          | 可        | 各ボタンに表示するテキスト。               | 通常、少なくとも1つのオプションが必要です。        |
+| `text2`          | 可        | 各ボタンに表示するテキスト。               | 通常、少なくとも1つのオプションが必要です。        |
+| `text3`          | 可        | 各ボタンに表示するテキスト。               | 通常、少なくとも1つのオプションが必要です。        |
+| `text4`          | 可        | 各ボタンに表示するテキスト。               | 通常、少なくとも1つのオプションが必要です。        |
+| `text5`          | 可        | 各ボタンに表示するテキスト。               | 通常、少なくとも1つのオプションが必要です。        |
+| `text6`          | 可        | 各ボタンに表示するテキスト。               | 通常、少なくとも1つのオプションが必要です。        |
+| `text7`          | 可        | 各ボタンに表示するテキスト。               | 通常、少なくとも1つのオプションが必要です。        |
+| `text8`          | 可        | 各ボタンに表示するテキスト。               | 通常、少なくとも1つのオプションが必要です。        |
+| `text<N>-locale` | 可        | 各ボタンに表示するテキスト（ローカライズ）。 | 通常、少なくとも1つのオプションが必要です。       |
+| `name`           | 不可      | 結果を保存する変数名。                     | 選択されたオプションのテキストが保存されます。      |
+| `value1`         | 可        | 結果変数に割り当てる値。                   | 通常、少なくとも1つのオプションが必要です。        |
+| `value2`         | 可        | 結果変数に割り当てる値。                   | 通常、少なくとも1つのオプションが必要です。        |
+| `value3`         | 可        | 結果変数に割り当てる値。                   | 通常、少なくとも1つのオプションが必要です。        |
+| `value4`         | 可        | 結果変数に割り当てる値。                   | 通常、少なくとも1つのオプションが必要です。        |
+| `value5`         | 可        | 結果変数に割り当てる値。                   | 通常、少なくとも1つのオプションが必要です。        |
+| `value6`         | 可        | 結果変数に割り当てる値。                   | 通常、少なくとも1つのオプションが必要です。        |
+| `value7`         | 可        | 結果変数に割り当てる値。                   | 通常、少なくとも1つのオプションが必要です。        |
+| `value8`         | 可        | 結果変数に割り当てる値。                   | 通常、少なくとも1つのオプションが必要です。        |
+| `time`           | 可 (`0`)  | タイマー（秒）。                           | `0` の場合はタイマーなし。                         |
 
-### Localization
+### ローカライゼーション
 
-For example, if the user OS environment is set to Japanese, `text1-ja` is preferred instead of `text1`.
+例えば、ユーザーのOS環境が日本語に設定されている場合、`text1` の代わりに `text1-ja` が優先されます。
 
-| Suffix      | Language                                 |
+| サフィックス  | 言語                                     |
 |-------------|------------------------------------------|
-| -en         | English (Fallback)                       |
-| -en-us      | English (America)                        |
-| -en-gb      | English (British)                        |
-| -en-au      | English (Austraria)                      |
-| -en-nz      | English (New Zealand)                    |
-| -fr         | French (Fallback)                        |
-| -fr-fr      | French (France)                          |
-| -fr-ca      | French (Canada)                          |
-| -es         | Spanish (Spain, Fallback)                |
-| -es-la      | Spanish (Latin America)                  |
-| -de         | German                                   |
-| -it         | Italian                                  |
-| -ru         | Russian                                  |
-| -el         | Greek                                    |
-| -zh         | Chinese (Simplified)                     |
-| -zh-tw      | Chinese (Traditional, Taiwan)            |
-| -ja         | Japanese                                 |
-| (no suffix) | Fallback (developer decides)             |
+| -en         | 英語（フォールバック）                   |
+| -en-us      | 英語（アメリカ）                         |
+| -en-gb      | 英語（イギリス）                         |
+| -en-au      | 英語（オーストラリア）                   |
+| -en-nz      | 英語（ニュージーランド）                 |
+| -fr         | フランス語（フォールバック）             |
+| -fr-fr      | フランス語（フランス）                   |
+| -fr-ca      | フランス語（カナダ）                     |
+| -es         | スペイン語（スペイン、フォールバック）   |
+| -es-la      | スペイン語（ラテンアメリカ）             |
+| -de         | ドイツ語                                 |
+| -it         | イタリア語                               |
+| -ru         | ロシア語                                 |
+| -el         | ギリシャ語                               |
+| -zh         | 中国語（簡体字）                         |
+| -zh-tw      | 中国語（繁体字、台湾）                   |
+| -ja         | 日本語                                   |
+| (サフィックスなし) | フォールバック（開発者が決定）      |
 
-For English OS locales including all regions, `-en` is used as the
-default fallback.  If a more specific variant such as `-en-gb` is
-specified in a tag and best matches with the user region, it will be
-preferred. The same mechanism is applied to Spanish and French. Note
-that there is no fallback from Traditional Chinese to Simplified
-Chinese.
+英語のすべての地域ロケールでは、`-en` がデフォルトのフォールバックとして使用されます。`-en-gb` のようにより具体的なバリアントがタグで指定され、ユーザーの地域に最もマッチする場合はそちらが優先されます。同じ仕組みがスペイン語とフランス語にも適用されます。繁体字中国語から簡体字中国語へのフォールバックはありません。
 
-For example, if the user locale is `en-AU`, the following priority is applied:
+例えば、ユーザーのロケールが `en-AU` の場合、以下の優先順位が適用されます：
 * 1. text1-en-au
 * 2. text1-en
 * 3. text1
 
-The following are currently not supported but planned to be supported.
+以下は現在未対応ですが、対応予定です。
 
-| Suffix      | Language                                 |
+| サフィックス  | 言語                                     |
 |-------------|------------------------------------------|
-| -ko         | Korean                                   |
-| -vi         | Vietnamese                               |
-| -id         | Indonesia                                |
-| -zh-hk      | Traditional Chinese (Hong Kong)          |
-| -pt         | Portuguese (Fallback)                    |
-| -pt-br      | Portuguese (Brazil)                      |
-| -pl         | Polish                                   |
-| -tr         | Turkish                                  |
-| -ta         | Tamil                                    |
-| -te         | Telugu                                   |
-| -kn         | Kannada                                  |
-| -si         | Sinhala                                  |
-| -ar         | Arabic (RTL)                             |
-| -fa         | Persian (RTL)                            |
+| -ko         | 韓国語                                   |
+| -vi         | ベトナム語                               |
+| -id         | インドネシア語                           |
+| -zh-hk      | 繁体字中国語（香港）                     |
+| -pt         | ポルトガル語（フォールバック）           |
+| -pt-br      | ポルトガル語（ブラジル）                 |
+| -pl         | ポーランド語                             |
+| -tr         | トルコ語                                 |
+| -ta         | タミル語                                 |
+| -te         | テルグ語                                 |
+| -kn         | カンナダ語                               |
+| -si         | シンハラ語                               |
+| -ar         | アラビア語（RTL）                        |
+| -fa         | ペルシャ語（RTL）                        |
 
-### Tips
+### ヒント
 
-**Branching Logic**:
-* You can use the `[if]` tag to check the stored value and create complex branches.
+**分岐ロジック**:
+* `[if]` タグを使って保存された値を確認し、複雑な分岐を作成できます。
 
 ```
 [choose
   name="var1"
-  text1="Go to school"
-  text2="Go to hospital"
+  text1="学校へ行く"
+  text2="病院へ行く"
   value1="1"
   value2="2"]
 
 [if lhs="${var1}" op="=" rhs="1"]
-  # School.
+  # 学校。
 [else]
-  # Hospital.
+  # 病院。
 [endif]
 ```
 
-**Variable Persistence**:
-* Since everything is a string, remember that even numbers like "100" are stored as text.
-* Suika3's logic tags (like `if`) can handle these strings for comparisons.
+**変数の永続性**:
+* すべてが文字列として扱われるため、"100" のような数字もテキストとして保存されることを覚えておきましょう。
+* Suika3 のロジックタグ（`if` など）はこれらの文字列を比較に利用できます。
 
 ---
 
 ## `set`
 
-Set Variable
+変数の設定
 
-The `set` tag assigns a value to a variable name. 
-In Suika3, **all variables are treated as text strings**, but they can be compared numerically in other tags like `[if]`.
+`set` タグは変数名に値を割り当てます。
+Suika3 では**すべての変数はテキスト文字列として扱われます**が、`[if]` などの他のタグで数値として比較することも可能です。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Assign a simple string to a variable
+# シンプルな文字列を変数に割り当て
 [set name="player_name" value="Kaito"]
 
-# Set a numeric-like value (stored as a string)
+# 数値ライクな値を設定（文字列として保存される）
 [set name="health" value="100"]
 
-# Clear a variable by setting it to an empty string
+# 空文字列を設定して変数をクリア
 [set name="flag_event_01" value=""]
 
-# Add 1 to var1.
+# var1 に 1 を加算する
 [set name="var1" value1="${var1}" op="+" value2="1"]
 
 ```
 
-### Arguments
+### 引数
 
-| Argument | Omissible     | Description                                 | Notes                                                               |
-|----------|---------------|---------------------------------------------|---------------------------------------------------------------------|
-| `name`   | No            | The unique name of the variable.            | Use alphanumeric characters and underscores for best compatibility. |
-| `value`  | Yes           | The content to store in the variable.       | Remember: everything is stored as a string!                         |
-| `value1` | Yes           | The operand 1 for opcode.                   |                                                                     |
-| `value2` | Yes           | The operand 2 for opcode.                   |                                                                     |
-| `op`     | Yes           | The opcode. (`+`, `-`, `*`, `/`, `//`, `%`) |                                                                     |
-| `global` | Yes (`false`) | Make the flag global.                       | Global variables are for achievement flags e.g., "Saw ED1".         |
+| 引数     | 省略可否       | 説明                                          | 備考                                                               |
+|----------|---------------|-----------------------------------------------|---------------------------------------------------------------------|
+| `name`   | 不可          | 変数の一意の名前。                            | 互換性のため英数字とアンダースコアを使用してください。               |
+| `value`  | 可            | 変数に保存する内容。                          | すべてが文字列として保存されます！                                   |
+| `value1` | 可            | 演算のオペランド1。                           |                                                                     |
+| `value2` | 可            | 演算のオペランド2。                           |                                                                     |
+| `op`     | 可            | 演算コード。（`+`, `-`, `*`, `/`, `//`, `%`） |                                                                     |
+| `global` | 可 (`false`)  | フラグをグローバルにする。                    | グローバル変数は「ED1を見た」などのアチーブメントフラグ用です。       |
 
-### Tips
+### ヒント
 
-**String Handling**:
-* Since Suika3 treats everything as text, `value="100"` and `value="May"` are handled the same way internally.
-* You can reference these variables in other tags (like `text` or `if`) using the `${variable_name}` syntax.
+**文字列の扱い**:
+* Suika3 はすべてをテキストとして扱うため、`value="100"` も `value="May"` も内部的には同じように扱われます。
+* これらの変数は `${variable_name}` 構文を使って他のタグ（`text` や `if` など）で参照できます。
 
-**Flag Management**:
-* For game flags (like "has met the hero"), it's a common practice to use `"true"` and `"false"` or `"1"` and `"0"`. 
-* Consistency is key! If you start using `"1"`, stick with it so your `[if]` checks don't get confused.
+**フラグ管理**:
+* ゲームフラグ（「主人公に会った」など）には `"true"` と `"false"` や `"1"` と `"0"` を使うのが一般的です。
+* 一貫性が重要です！`"1"` を使い始めたら、`[if]` チェックで混乱しないよう統一してください。
 
-**Variable Naming**:
-* Avoid using spaces or special symbols in your variable names. `my_variable` is much safer than `my variable!`.
+**変数の命名**:
+* 変数名にスペースや特殊記号は避けましょう。`my_variable` は `my variable!` よりずっと安全です。
 
 ---
 
 ## `click`
 
-Wait for Click
+クリック待ち
 
-The `click` tag pauses the script execution and waits for the player to click the mouse or press a key.
-It is commonly used to create pauses between visual changes or before a major transition.
+`click` タグはスクリプトの実行を一時停止し、プレイヤーがマウスをクリックするかキーを押すまで待機します。
+視覚的な変化の間や大きなトランジションの前にポーズを作るためによく使用されます。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Change the background, then wait for the player to click
+# 背景を変更し、プレイヤーのクリックを待つ
 [bg file="sunset.png" time="1.0"]
 [click]
 
-# After the click, show the character
+# クリック後にキャラクターを表示
 [ch center="chara01.png" time="1.0"]
 ```
 
-### Arguments
+### 引数
 
-This tag does not take any arguments.
+このタグは引数を取りません。
 
-| Argument | Omissible | Description | Notes           |
-|----------|-----------|-------------|-----------------|
-| -        | -         | -           | -               |
+| 引数 | 省略可否 | 説明 | 備考           |
+|------|---------|------|----------------|
+| -    | -       | -    | -              |
 
-### Tips
+### ヒント
 
-**Timing and Pacing**:
-* Use `[click]` when you want to give the player a moment to look at a new background or a specific character expression before the dialogue continues.
-* Unlike the `[text]` tag, which waits for a click automatically after displaying a message, `[click]` is used for manual flow control during non-dialogue sequences.
+**タイミングとペース**:
+* `[click]` は、会話が続く前に新しい背景や特定のキャラクター表情をプレイヤーに見せたいときに使います。
+* メッセージを表示した後に自動的にクリックを待機する `[text]` タグとは異なり、`[click]` は会話以外のシーケンスでの手動フロー制御に使います。
 
-**Visual Feedback**:
-* When the script hits a `[click]` tag, the game will remain still. Ensure that any preceding animations (like `[bg]` or `[ch]`) have a `time` set, or the screen might feel static too abruptly.
+**視覚的なフィードバック**:
+* スクリプトが `[click]` タグに達すると、ゲームは静止します。直前のアニメーション（`[bg]` や `[ch]` など）に `time` が設定されていない場合、画面が唐突に止まって見えることがあります。
 
-**For timed waits:**
-* Use `[wait]` for timed waits.
+**時間指定の待機の場合**:
+* 時間指定の待機には `[wait]` を使用してください。
 
 ---
 
 ## `goto`
 
-Jump to Label
+ラベルへのジャンプ
 
-The `goto` tag immediately moves the NovelML execution to a specified label. 
-It is useful tool for controlling the flow of your story, allowing you to skip sections or loop back to previous parts.
+`goto` タグは NovelML の実行を指定したラベルに即座に移動させます。
+ストーリーのフローを制御するための便利なツールで、セクションをスキップしたり前の部分に戻ったりできます。
 
-Please note that small branches should be realized by `[if]`.
+小さな分岐は `[if]` で実現するようにしてください。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Jump to the beginning of the morning scene
+# 朝のシーンの冒頭にジャンプ
 [goto name="morning_start"]
 
-# ... this part of the script will be skipped ...
+# ... スクリプトのこの部分はスキップされます ...
 
 [label name="morning_start"]
-[text text="The sun rises over the horizon."]
+[text text="地平線から太陽が昇る。"]
 ```
 
-### Arguments
+### 引数
 
-| Argument | Omissible | Description                       | Notes                                         |
-|----------|-----------|-----------------------------------|-----------------------------------------------|
-| `name`   | No        | The target label name to jump to. | Must match a name defined by a `[label]` tag. |
+| 引数     | 省略可否  | 説明                         | 備考                                           |
+|----------|-----------|------------------------------|-------------------------------------------------|
+| `name`   | 不可      | ジャンプ先のラベル名。       | `[label]` タグで定義した名前と一致する必要があります。 |
 
-### Tips
+### ヒント
 
-**Unconditional Jump**:
-* Unlike `[if]`, `[goto]` always jumps to the target label as soon as the engine hits the tag.
+**無条件ジャンプ**:
+* `[if]` とは異なり、`[goto]` はエンジンがタグに到達した瞬間に必ずターゲットラベルにジャンプします。
 
-**Flow Management**:
-* Use `[goto]` at the end of a branching path to bring the story back to a "common" route. 
-* It's also great for creating loops (like a "Return to Title" sequence) when combined with other logic.
+**フロー管理**:
+* 分岐パスの末尾に `[goto]` を使って、ストーリーを「共通ルート」に戻すことができます。
+* 他のロジックと組み合わせてループ（「タイトルに戻る」シーケンスなど）を作成するのにも最適です。
 
-**Across Files?**:
-* Remember that `[goto]` typically works within the current script file.
-* If you want to jump to a different file entirely, you'll want to look at the `[load]` tag!
+**ファイルを跨いだジャンプ**:
+* `[goto]` は通常、現在のスクリプトファイル内でのみ動作します。
+* 別のファイルにジャンプしたい場合は `[load]` タグを使用してください！
 
 ---
 
 ## `defmacro`
 
-Define Macro
+マクロの定義
 
-The `defmacro` tag starts the definition of a macro. 
-A macro allows you to group multiple tags and commands into a single named block, which can be reused throughout your script using the `[callmacro]` tag.
+`defmacro` タグはマクロの定義を開始します。
+マクロは複数のタグとコマンドを1つの名前付きブロックにまとめ、`[callmacro]` タグを使ってスクリプト全体で再利用できます。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Define a macro for a specific character's entrance
+# 特定のキャラクターの登場シーン用マクロを定義
 [defmacro name="enter_kaito"]
     [ch center="kaito_smile.png" time="0.5"]
-    [text name="Kaito" text="Hey! Did I keep you waiting?"]
+    [text name="Kaito" text="やあ！待たせた？"]
 [endmacro]
 
-# Later in your script, call it with a single line
+# スクリプト内で1行で呼び出す
 [callmacro name="enter_kaito"]
 ```
 
-### Arguments
+### 引数
 
-| Argument | Omissible | Description                     | Notes                                             |
-|----------|-----------|---------------------------------|---------------------------------------------------|
-| `name`   | No        | The unique name for this macro. | Used to identify the macro when calling it later. |
+| 引数     | 省略可否  | 説明                           | 備考                                              |
+|----------|-----------|--------------------------------|---------------------------------------------------|
+| `name`   | 不可      | このマクロの一意の名前。       | 後で呼び出すときにマクロを識別するために使います。 |
 
-### Tips
+### ヒント
 
-**Closing the Definition**:
-* Every `[defmacro]` must be paired with an `[endmacro]` tag to mark the end of the definition.
+**定義の終了**:
+* すべての `[defmacro]` は対応する `[endmacro]` タグで定義の終わりを示す必要があります。
 
-**Code Reusability**:
-* Macros are perfect for repetitive sequences, such as specific UI transitions, character-specific visual setups, or complex sound and visual combinations.
+**コードの再利用**:
+* マクロは、特定のUIトランジション、キャラクター固有のビジュアル設定、複雑な音声と映像の組み合わせなど、繰り返しのシーケンスに最適です。
 
-**Organization**:
-* It is a common practice to define all your macros at the very beginning of your main script file or in a separate file that you load at the start.
+**整理**:
+* すべてのマクロをメインスクリプトファイルの冒頭か、スタート時に読み込む別ファイルに定義するのが一般的な慣習です。
 
-**Nesting and Logic**:
-* You can include almost any other tag inside a macro, including `[if]` statements and even `[returnmacro]` to exit the macro early based on certain conditions.
+**ネストとロジック**:
+* マクロ内には `[if]` 文や `[returnmacro]`（条件に基づいてマクロを早期終了するため）を含む、ほぼすべてのタグを組み込めます。
 
 ---
 
 ## `gui`
 
-Show GUI
+GUIの表示
 
-The `gui` tag loads and displays a Graphical User Interface (GUI) definition from a specified file. 
-It is used to display menus, title screens, or custom interaction panels.
+`gui` タグは指定したファイルからGUI（グラフィカルユーザーインターフェース）定義を読み込んで表示します。
+メニュー・タイトル画面・カスタムインタラクションパネルの表示に使用されます。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Display the main menu GUI
+# メインメニューGUIを表示
 [gui file="main_menu.txt"]
 
-# Show a custom save/load screen
+# カスタムのセーブ・ロード画面を表示
 [gui file="save_screen.txt"]
 ```
 
-### Arguments
+### 引数
 
-| Argument | Omissible | Description                                 | Notes                                               |
-|----------|-----------|---------------------------------------------|-----------------------------------------------------|
-| `file`   | No        | The filename of the GUI definition to load. | The file must exist in the project's GUI directory. |
+| 引数     | 省略可否  | 説明                                    | 備考                                                |
+|----------|-----------|------------------------------------------|----------------------------------------------------|
+| `file`   | 不可      | 読み込むGUI定義のファイル名。            | ファイルはプロジェクトのGUIディレクトリに存在する必要があります。 |
 
-### Tips
+### ヒント
 
-**GUI Definitions**:
-* The `file` argument points to a text file that defines the layout, buttons, and actions of your interface.
-* These files specify where images are placed and what happens (like jumping to a label or quitting) when a user interacts with them.
+**GUI定義ファイル**:
+* `file` 引数は、インターフェースのレイアウト・ボタン・アクションを定義するテキストファイルを指します。
+* これらのファイルは、画像の配置とユーザーが操作したときの動作（ラベルへのジャンプや終了など）を指定します。
 
-**Usage in Flow**:
-* Typically, a `[gui]` tag is used for a graphical menu such as title screen.
+**フローにおける使い方**:
+* `[gui]` タグは通常、タイトル画面などのグラフィカルメニューに使用されます。
 
-**Customization**:
-* Since the GUI is defined in an external file, you can create multiple looks for your game and switch between them just by calling different files with this tag.
+**カスタマイズ**:
+* GUIは外部ファイルで定義されているため、ゲームの複数のデザインを作成し、このタグで異なるファイルを呼び出すだけで切り替えられます。
 
 ---
 
 ## `label`
 
-Define Label
+ラベルの定義
 
-The `label` tag defines a specific point in the script that can be targeted by jump commands like `[goto]` or `[load]`.
-It acts as a bookmark for navigation within your story.
+`label` タグは `[goto]` や `[load]` などのジャンプコマンドがターゲットにできる特定のスクリプト上の位置を定義します。
+物語内のナビゲーションのためのブックマークとして機能します。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Define a label for the start of a new chapter
+# 新しいチャプター開始のラベルを定義
 [label name="chapter_01_start"]
 
-# Use a jump command to reach this label
+# ジャンプコマンドでこのラベルに到達する
 [goto name="chapter_01_start"]
 ```
 
-### Arguments
+### 引数
 
-| Argument | Omissible | Description                     | Notes                                                  |
-|----------|-----------|---------------------------------|--------------------------------------------------------|
-| `name`   | No        | The unique name for this label. | Case-sensitive. Avoid using spaces or special symbols. |
+| 引数     | 省略可否  | 説明                           | 備考                                                   |
+|----------|-----------|--------------------------------|---------------------------------------------------------|
+| `name`   | 不可      | このラベルの一意の名前。       | 大文字・小文字を区別します。スペースや特殊記号は避けてください。 |
 
-### Tips
+### ヒント
 
-**Navigation Control**:
-* Labels are useful for creating branching paths.
-* For example, you can put a `label` at the begining of the section of your story for a long jump.
+**ナビゲーション制御**:
+* ラベルは分岐パスを作成するのに役立ちます。
+* 例えば、長いジャンプのためにストーリーのセクション冒頭に `label` を配置できます。
 
-**Unique Naming**:
-* Every label name within a single script file must be unique.
-* If you have two labels with the same name, the engine might not know where to jump, and that's no fun for anyone!
+**一意の命名**:
+* 1つのスクリプトファイル内のすべてのラベル名は一意である必要があります。
+* 同じ名前のラベルが2つあると、エンジンがどこにジャンプすべきか判断できなくなります！
 
-**Organization**:
-* It's a good habit to use descriptive names like `label_evening_park` instead of `label1`.
-* It makes it much easier for you (and me!) to read the script later and understand what's happening.
+**整理**:
+* `label1` の代わりに `label_evening_park` のような説明的な名前を使う習慣をつけましょう。
+* スクリプトを後で読み返すときに、何が起きているか格段にわかりやすくなります。
 
 ---
 
 ## `text`
 
-Display Text
+テキストの表示
 
-The `text` tag displays a message in the message box. 
-It can show the main dialogue or narration, and optionally display a character's name in the name box.
+`text` タグはメッセージボックスにメッセージを表示します。
+メインの会話やナレーションを表示し、オプションで名前ボックスにキャラクター名を表示することもできます。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Narration style (no name displayed)
-[text text="The wind was howling through the trees."]
+# ナレーションスタイル（名前なし）
+[text text="風が木々の間を唸りながら吹き抜けた。"]
 
-# Character dialogue
-[text name="Keith" text="I've been waiting for you here in the small room."]
+# キャラクター会話
+[text name="Keith" text="この小さな部屋でずっと待っていたよ。"]
 ```
 
-### Arguments
+### 引数
 
-| Argument         | Omissible | Description                                      | Notes                                            |
-|------------------|-----------|--------------------------------------------------|--------------------------------------------------|
-| `text`           | No        | The message content to be displayed.             |                                                  |
-| `text-<locale>`  | Yes       | The message content to be displayed. (localized) |                                                  |
-| `voice`          | Yes       | The voice file.                                  |                                                  |
-| `voice-<locale>` | Yes       | The voice file. (localized)                      |                                                  |
-| `name`           | Yes       | The character's name to display in the name box. | If omitted, the name box will usually be hidden. |
-| `action`         | Yes       | For NVL mode and manual show/hide.               |                                                  |
-| `space`          | Yes       | For NVL mode.                                    |                                                  |
+| 引数              | 省略可否  | 説明                                           | 備考                                              |
+|------------------|-----------|------------------------------------------------|---------------------------------------------------|
+| `text`           | 不可      | 表示するメッセージ内容。                       |                                                   |
+| `text-<locale>`  | 可        | 表示するメッセージ内容（ローカライズ）。        |                                                   |
+| `voice`          | 可        | ボイスファイル。                               |                                                   |
+| `voice-<locale>` | 可        | ボイスファイル（ローカライズ）。               |                                                   |
+| `name`           | 可        | 名前ボックスに表示するキャラクター名。         | 省略すると名前ボックスは通常非表示になります。      |
+| `action`         | 可        | NVLモードおよび手動の表示・非表示制御用。      |                                                   |
+| `space`          | 可        | NVLモード用。                                  |                                                   |
 
-### Localization
+### ローカライゼーション
 
-For example, if the user OS environment is set to Japanese, `text-ja` is preferred instead of `text`.
+例えば、ユーザーのOS環境が日本語に設定されている場合、`text` の代わりに `text-ja` が優先されます。
 
-| Suffix      | Language                                 |
+| サフィックス  | 言語                                     |
 |-------------|------------------------------------------|
-| -en         | English (Fallback)                       |
-| -en-us      | English (America)                        |
-| -en-gb      | English (British)                        |
-| -en-au      | English (Austraria)                      |
-| -en-nz      | English (New Zealand)                    |
-| -fr         | French (Fallback)                        |
-| -fr-fr      | French (France)                          |
-| -fr-ca      | French (Canada)                          |
-| -es         | Spanish (Spain, Fallback)                |
-| -es-es      | Spanish (Spain, Fallback)                |
-| -es-la      | Spanish (Latin America)                  |
-| -de         | German                                   |
-| -it         | Italian                                  |
-| -ru         | Russian                                  |
-| -el         | Greek                                    |
-| -zh-cn      | Chinese (Simplified)                     |
-| -zh-tw      | Chinese (Traditional, Taiwan)            |
-| -ja         | Japanese                                 |
-| (no suffix) | Fallback (developer decides)             |
+| -en         | 英語（フォールバック）                   |
+| -en-us      | 英語（アメリカ）                         |
+| -en-gb      | 英語（イギリス）                         |
+| -en-au      | 英語（オーストラリア）                   |
+| -en-nz      | 英語（ニュージーランド）                 |
+| -fr         | フランス語（フォールバック）             |
+| -fr-fr      | フランス語（フランス）                   |
+| -fr-ca      | フランス語（カナダ）                     |
+| -es         | スペイン語（スペイン、フォールバック）   |
+| -es-es      | スペイン語（スペイン、フォールバック）   |
+| -es-la      | スペイン語（ラテンアメリカ）             |
+| -de         | ドイツ語                                 |
+| -it         | イタリア語                               |
+| -ru         | ロシア語                                 |
+| -el         | ギリシャ語                               |
+| -zh-cn      | 中国語（簡体字）                         |
+| -zh-tw      | 中国語（繁体字、台湾）                   |
+| -ja         | 日本語                                   |
+| (サフィックスなし) | フォールバック（開発者が決定）      |
 
-For English OS locales including all regions, `-en` is used as the
-default fallback.  If a more specific variant such as `-en-gb` is
-specified in a tag and best matches with the user region, it will be
-preferred. The same mechanism is applied to Spanish and French. Note
-that there is no fallback from Traditional Chinese to Simplified
-Chinese.
+英語のすべての地域ロケールでは、`-en` がデフォルトのフォールバックとして使用されます。`-en-gb` のようにより具体的なバリアントがタグで指定され、ユーザーの地域に最もマッチする場合はそちらが優先されます。同じ仕組みがスペイン語とフランス語にも適用されます。繁体字中国語から簡体字中国語へのフォールバックはありません。
 
-For example, if the user locale is `en-GB`, the following priority is applied:
+例えば、ユーザーのロケールが `en-GB` の場合、以下の優先順位が適用されます：
 * 1. text-en-gb
 * 2. text-en
 * 3. text
 
-The following are currently not supported but planned to be supported.
+以下は現在未対応ですが、対応予定です。
 
-| Suffix      | Language                                 |
+| サフィックス  | 言語                                     |
 |-------------|------------------------------------------|
-| -ko         | Korean                                   |
-| -vi         | Vietnamese                               |
-| -id         | Indonesia                                |
-| -zh-hk      | Traditional Chinese (Hong Kong)          |
-| -pt         | Portuguese (Fallback)                    |
-| -pt-br      | Portuguese (Brazil)                      |
-| -pl         | Polish                                   |
-| -tr         | Turkish                                  |
-| -ta         | Tamil                                    |
-| -te         | Telugu                                   |
-| -kn         | Kannada                                  |
-| -si         | Sinhala                                  |
-| -ar         | Arabic (RTL)                             |
-| -fa         | Persian (RTL)                            |
+| -ko         | 韓国語                                   |
+| -vi         | ベトナム語                               |
+| -id         | インドネシア語                           |
+| -zh-hk      | 繁体字中国語（香港）                     |
+| -pt         | ポルトガル語（フォールバック）           |
+| -pt-br      | ポルトガル語（ブラジル）                 |
+| -pl         | ポーランド語                             |
+| -tr         | トルコ語                                 |
+| -ta         | タミル語                                 |
+| -te         | テルグ語                                 |
+| -kn         | カンナダ語                               |
+| -si         | シンハラ語                               |
+| -ar         | アラビア語（RTL）                        |
+| -fa         | ペルシャ語（RTL）                        |
 
-### Actions
+### アクション
 
-You can use special parameters in the `text` tag.
+`text` タグで特殊なパラメーターを使用できます。
 
 ```
-# Clear the message box.
+# メッセージボックスをクリアする。
 [text action="clear"]
 
-# Clear the message box and show it.
+# メッセージボックスをクリアして表示する。
 [text action="new"]
 
-# Show the message box.
+# メッセージボックスを表示する。
 [text action="show"]
 
-# Hide the message box.
+# メッセージボックスを非表示にする。
 [text action="hide"]
 ```
 
-### NVL Mode
+### NVLモード
 
-You can enter the NVL mode by setting some config.
+configを設定することでNVLモードに入ることができます。
 
 ```
 [text action="hide"]
-[wait time="0.3"] # Wait for the message box to hide.
+[wait time="0.3"] # メッセージボックスが非表示になるまで待機。
 [config name="game.novel" value="true"]
 [config name="msgbox.image" value="system/message/msgbox-nvl.png"]
 [config name="msgbox.x" value="0"]
@@ -839,11 +831,11 @@ You can enter the NVL mode by setting some config.
 [text action="clear"]
 ```
 
-You can go back to ADV mode by resetting the config.
+configをリセットすることでADVモードに戻ることができます。
 
 ```
 [text action="hide"]
-[wait time="0.3"] # Wait for the message box to hide.
+[wait time="0.3"] # メッセージボックスが非表示になるまで待機。
 [config name="game.novel" value="false"]
 [config name="msgbox.image" value="system/message/msgbox.png"]
 [config name="msgbox.x" value="0"]
@@ -865,845 +857,846 @@ You can go back to ADV mode by resetting the config.
 [config name="click.move" value="false"]
 ```
 
-In NVM mode, you can control text messages like this:
+NVLモードでは、テキストメッセージを以下のように制御できます：
 
 ```
-# New page.
+# 新しいページ。
 [text action="clear"]
-[text text="Hello, this is NVL mode test."]
-[text text="NVL mode has a fullscreen-styled message box."]
-[text text="By default, each text tag will do a line feed."]
-[text text="To continue a paragraph,"]
-[text text="specify the space parameter." space=" "]
+[text text="こんにちは、これはNVLモードのテストです。"]
+[text text="NVLモードはフルスクリーンスタイルのメッセージボックスを持ちます。"]
+[text text="デフォルトでは各textタグが改行を行います。"]
+[text text="段落を継続するには、"]
+[text text="spaceパラメーターを指定してください。" space=" "]
 
-# New page.
+# 新しいページ。
 [text action="clear"]
-[text text="Please clear the message box explicitly."]
+[text text="メッセージボックスを明示的にクリアしてください。"]
 ```
 
-### Voice
+### ボイス
 
-If the current language is `en-us`, a voice file will resolved in the following order:
+現在の言語が `en-us` の場合、ボイスファイルは以下の順序で解決されます：
 
-1. `voice-en-us` parameter
-2. `voice/en-us/` + `voice` parameter
-3. `voice-en` parameter
-4. `voice/en/` + `voice` parameter
-5. `voice` parameter
+1. `voice-en-us` パラメーター
+2. `voice/en-us/` + `voice` パラメーター
+3. `voice-en` パラメーター
+4. `voice/en/` + `voice` パラメーター
+5. `voice` パラメーター
 
-If the current language is `ja`, a voice file will resolved in the following order:
+現在の言語が `ja` の場合、ボイスファイルは以下の順序で解決されます：
 
-1. `voice-ja` parameter
-2. `voice/ja/` + `voice` parameter
-3. `voice` parameter
+1. `voice-ja` パラメーター
+2. `voice/ja/` + `voice` パラメーター
+3. `voice` パラメーター
 
-### Tips
+### ヒント
 
-**Automatic Waiting**:
-* Unlike other tags, the `text` tag automatically waits for a player's click after the message is fully displayed.
-* You don't need to add a `[click]` tag after every line of dialogue!
+**自動待機**:
+* 他のタグとは異なり、`text` タグはメッセージが完全に表示された後、プレイヤーのクリックを自動的に待機します。
+* 会話の各行の後に `[click]` タグを追加する必要はありません！
 
-**Using Variables**:
-* You can include variables within your text by using the `${variable_name}` syntax. 
-* Example: `[text text="Hello, ${player_name}!"]` will greet the player using whatever name is stored in that variable.
+**変数の使用**:
+* `${variable_name}` 構文を使ってテキスト内に変数を埋め込めます。
+* 例：`[text text="こんにちは、${player_name}さん！"]` は変数に保存された名前でプレイヤーに挨拶します。
 
-**Line Breaks**:
-* Check your project's configuration for how long a single line can be.
-* If your text is too long, it might overflow the message box, so keep an eye on the length of your `text` argument!
+**行の長さ**:
+* 1行の最大文字数はプロジェクトの設定を確認してください。
+* テキストが長すぎるとメッセージボックスからあふれる可能性があるため、`text` 引数の長さに注意してください！
 
 ---
 
 ## `if`
 
-Conditional Branching
+条件分岐
 
-The `if` tag allows the NovelML to branch based on a specific condition. 
-By comparing variables or values, you can create unique story paths or react to previous player choices.
+`if` タグは特定の条件に基づいて NovelML を分岐させます。
+変数や値を比較することで、独自のストーリーパスを作ったり、プレイヤーの過去の選択に反応したりできます。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Check if a variable equals a certain value
+# 変数が特定の値と等しいか確認
 [if lhs="${points}" op="==" rhs="100"]
-    [text text="Perfect score! You're amazing."]
+    [text text="満点！素晴らしい。"]
 [elseif lhs="${points}" op=">=" rhs="80"]
-    [text text="Great job! You passed."]
+    [text text="よくできました！合格です。"]
 [else]
-    [text text="Better luck next time."]
+    [text text="次は頑張りましょう。"]
 [endif]
 ```
 
-### Arguments
+### 引数
 
-| Argument | Omissible | Description                            | Notes                                          |
-|----------|-----------|----------------------------------------|------------------------------------------------|
-| `lhs`    | No        | The Left-Hand Side of the condition.   | Usually a variable like `${var_name}`.         |
-| `op`     | No        | The operator used for comparison.      | See the "Operators" table below.               |
-| `rhs`    | No        | The Right-Hand Side of the condition.  | The value or variable to compare against.      |
+| 引数     | 省略可否  | 説明                             | 備考                                           |
+|----------|-----------|----------------------------------|------------------------------------------------|
+| `lhs`    | 不可      | 条件の左辺。                     | 通常 `${var_name}` のような変数を使います。    |
+| `op`     | 不可      | 比較に使う演算子。               | 下記「演算子」テーブルを参照してください。      |
+| `rhs`    | 不可      | 条件の右辺。                     | 比較する値や変数。                             |
 
-### Comparison Operators (`op`)
+### 比較演算子（`op`）
 
-You can use these operators to define how the two sides are compared:
+2つの値の比較方法を定義するために以下の演算子を使用できます：
 
-| Operator   | Description                |
-|------------|----------------------------|
-| `===`      | Equal (String)             |
-| `==`       | Equal (Numeric)            |
-| `>`        | Greater Than (Numeric)     |
-| `>=`       | Greater Or Equal (Numeric) |
-| `<`        | Less Than (Numeric)        |
-| `<=`       | Less Or Equal (Numeric)    |
+| 演算子   | 説明                      |
+|----------|---------------------------|
+| `===`    | 等しい（文字列）          |
+| `==`     | 等しい（数値）            |
+| `>`      | より大きい（数値）        |
+| `>=`     | 以上（数値）              |
+| `<`      | より小さい（数値）        |
+| `<=`     | 以下（数値）              |
 
-### Tips
+### ヒント
 
-**Closing the Block**:
-* Every `[if]` block MUST end with an `[endif]` tag.
-* If you forget it, the engine might get confused about where the condition ends!
+**ブロックの終了**:
+* すべての `[if]` ブロックは必ず `[endif]` タグで終了する必要があります。
+* 忘れると、エンジンが条件の終わりを認識できなくなります！
 
-**Variable Syntax**:
-* When using a variable as the `lhs`, always wrap it in `${}`.
-* For example, use `lhs="${flag_01}"` instead of just `lhs="flag_01"`.
+**変数の構文**:
+* `lhs` として変数を使う場合は必ず `${}` で囲んでください。
+* 例えば `lhs="flag_01"` ではなく `lhs="${flag_01}"` のように記述します。
 
-**Handling Strings vs. Numbers**:
-* Suika3 treats variable values as strings, but these operators allow you to perform numeric-style comparisons.
-* Just be consistent with your values (e.g., using "1" for true and "0" for false).
+**文字列と数値の扱い**:
+* Suika3 は変数の値を文字列として扱いますが、これらの演算子を使って数値スタイルの比較ができます。
+* 値に一貫性を持たせましょう（例：trueに "1"、falseに "0" を使う）。
 
-**Multiple Branches**:
-* You can use as many `[elseif]` tags as you need between `[if]` and `[endif]` to check for multiple specific conditions.
+**複数の分岐**:
+* `[if]` と `[endif]` の間に必要なだけ `[elseif]` タグを使って複数の特定条件を確認できます。
 
 ---
 
 ## `elseif`
 
-Additional Conditional Branching
+追加の条件分岐
 
-The `elseif` tag specifies an additional condition within an `[if]` block. 
-It is only evaluated if the preceding `[if]` and any previous `[elseif]` conditions were false.
+`elseif` タグは `[if]` ブロック内に追加の条件を指定します。
+直前の `[if]` および前の `[elseif]` の条件がすべて false の場合にのみ評価されます。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
 [if lhs="${rank}" op="==" rhs="A"]
-    [text text="Excellent! You're a pro."]
+    [text text="素晴らしい！プロですね。"]
 [elseif lhs="${rank}" op="==" rhs="B"]
-    [text text="Good job! Keep it up."]
+    [text text="よくできました！続けてください。"]
 [elseif lhs="${rank}" op="==" rhs="C"]
-    [text text="Not bad, but you can do better."]
+    [text text="悪くありませんが、もっとできるはずです。"]
 [else]
-    [text text="Don't give up! Try again."]
+    [text text="諦めないで！もう一度挑戦しましょう。"]
 [endif]
 ```
 
-### Arguments
+### 引数
 
-Same as `[if]`. See also [if](#if).
+`[if]` と同じです。[if](#if) も参照してください。
 
-### Tips
+### ヒント
 
-**Sequential Evaluation**:
-* The engine checks conditions from top to bottom.
-* As soon as one `[if]` or `[elseif]` condition is met, its block is executed, and the rest of the branch (including other `[elseif]`s and the `[else]`) is skipped.
+**順次評価**:
+* エンジンは条件を上から下の順に確認します。
+* `[if]` または `[elseif]` のいずれかの条件が満たされると、そのブロックが実行され、残りのブランチ（他の `[elseif]` や `[else]`）はスキップされます。
 
-**Placement**:
-* `[elseif]` must always be placed between an `[if]` tag and an `[else]` or `[endif]` tag.
-* You can use as many `[elseif]` tags as you need to cover all your bases!
+**配置**:
+* `[elseif]` は必ず `[if]` タグと `[else]` または `[endif]` タグの間に配置する必要があります。
+* すべての条件をカバーするために必要なだけ `[elseif]` タグを使用できます！
 
-**Efficiency**:
-* If you have a lot of conditions that check the same variable, using multiple `[elseif]` tags is much cleaner and more efficient than nesting multiple `[if]` blocks inside each other.
+**効率性**:
+* 同じ変数を確認する条件が多い場合、複数の `[if]` ブロックをネストするよりも複数の `[elseif]` タグを使う方がはるかにすっきりして効率的です。
 
 ---
 
 ## `else`
 
-Default Conditional Branch
+デフォルトの条件分岐
 
-The `else` tag defines a block of code to be executed if none of the preceding `[if]` or `[elseif]` conditions were met. 
-It acts as the "default" path for your branching logic.
+`else` タグは、直前の `[if]` または `[elseif]` の条件がいずれも満たされなかった場合に実行されるコードブロックを定義します。
+分岐ロジックの「デフォルト」パスとして機能します。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
 [if lhs="${weather}" op="==" rhs="sunny"]
-    [text text="It's a beautiful day!"]
+    [text text="素晴らしい天気！"]
 [elseif lhs="${weather}" op="==" rhs="rainy"]
-    [text text="I should bring an umbrella."]
+    [text text="傘を持っていくべきだ。"]
 [else]
-    # This runs if it's not sunny OR rainy (e.g., cloudy or snowy)
-    [text text="The sky looks interesting today."]
+    # sunny でも rainy でもない場合（曇りや雪など）に実行される
+    [text text="今日は面白い空模様だ。"]
 [endif]
 ```
 
-### Arguments
+### 引数
 
-This tag does not take any arguments.
+このタグは引数を取りません。
 
-| Argument | Omissible | Description | Notes |
-|----------|-----------|-------------|-------|
-| -        | -         | -           | -     |
+| 引数 | 省略可否 | 説明 | 備考 |
+|------|---------|------|------|
+| -    | -       | -    | -    |
 
-### Tips
+### ヒント
 
-**Final Catch-all**:
-* Use `[else]` to handle any scenarios you didn't explicitly cover in your `[if]` or `[elseif]` checks.
-* It ensures the game always has a valid path to follow.
+**最終のキャッチオール**:
+* `[if]` や `[elseif]` で明示的にカバーしていないシナリオを `[else]` で処理しましょう。
+* ゲームが常に有効なパスを持つことを保証します。
 
-**Placement**:
-* `[else]` must be placed after all `[elseif]` tags (if any) and immediately before the `[endif]` tag.
-* You can only have one `[else]` per `[if]` block.
+**配置**:
+* `[else]` はすべての `[elseif]` タグ（ある場合）の後、`[endif]` タグの直前に配置する必要があります。
+* 1つの `[if]` ブロックに `[else]` は1つだけです。
 
-**Optional Nature**:
-* You don't *have* to include an `[else]` block.
-* If no conditions are met and there is no `[else]`, the engine will simply skip everything and continue after the `[endif]`.
+**省略可能**:
+* `[else]` ブロックは必須ではありません。
+* 条件が満たされず `[else]` もない場合、エンジンはすべてをスキップして `[endif]` の後から処理を続けます。
 
 ---
 
 ## `endif`
 
-End Conditional Branch
+条件分岐の終了
 
-The `endif` tag marks the end of a conditional block started by an `[if]` tag. 
-It tells the engine to resume normal script execution after the branching logic is complete.
+`endif` タグは `[if]` タグで開始された条件ブロックの終わりを示します。
+分岐ロジックが完了した後、エンジンに通常のスクリプト実行を再開するよう伝えます。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
 [if lhs="${love_points}" op=">=" rhs="50"]
-    [text text="She gives you a warm smile."]
+    [text text="彼女は温かい笑顔を向けてくれた。"]
 [else]
-    [text text="She greets you politely."]
+    [text text="彼女は礼儀正しく挨拶した。"]
 [endif]
 
-# Script execution continues here regardless of the outcome above
-[text text="The day continues..."]
+# 上記の結果に関わらず、スクリプトの実行はここから続く
+[text text="その日は続いていった..."]
 ```
 
-### Arguments
+### 引数
 
-This tag does not take any arguments.
+このタグは引数を取りません。
 
-| Argument | Omissible | Description | Notes |
-|----------|-----------|-------------|-------|
-| -        | -         | -           | -     |
+| 引数 | 省略可否 | 説明 | 備考 |
+|------|---------|------|------|
+| -    | -       | -    | -    |
 
-### Tips
+### ヒント
 
-**Mandatory Closing**:
-* Every single `[if]` tag must have a corresponding `[endif]`.
-* Think of them like a pair of brackets that keep your story's logic organized.
+**必須の終了タグ**:
+* すべての `[if]` タグには対応する `[endif]` が必要です。
+* ストーリーのロジックを整理するために対になっています。
 
-**Placement**:
-* Always place `[endif]` at the very end of your conditional sequence, following any `[elseif]` or `[else]` blocks. 
+**配置**:
+* `[endif]` は必ず条件シーケンスの最後、つまり `[elseif]` や `[else]` ブロックの後に配置してください。
 
-**Nesting**:
-* If you put an `[if]` inside another `[if]`, make sure each one has its own `[endif]`.
-* Proper nesting is the secret to complex, bug-free story flags!
+**ネスト**:
+* `[if]` の中に別の `[if]` を入れる場合、それぞれに独自の `[endif]` が必要です。
+* 適切なネストが複雑でバグのないストーリーフラグの秘訣です！
 
 ---
 
 ## `load`
 
-Load Script File
+スクリプトファイルの読み込み
 
-The `load` tag switches the current script to a different NovelML file.
-It is primarily used to organize large stories into multiple chapters or to transition between different game parts like a title screen and the main story.
+`load` タグは現在のスクリプトを別の NovelML ファイルに切り替えます。
+大きなストーリーを複数のチャプターに分割したり、タイトル画面とメインストーリーのような異なるゲームパート間のトランジションに主に使用されます。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Load and start from the beginning of scene02.novel
+# scene02.novel の先頭から読み込んで開始
 [load file="scene02.novel"]
 
-# Load scene02.novel and jump directly to a specific label
+# scene02.novel を読み込み、特定のラベルに直接ジャンプ
 [load file="scene02.novel" label="chapter2_start"]
 ```
 
-### Arguments
+### 引数
 
-| Argument | Omissible | Description                                      | Notes                                                   |
-|----------|-----------|--------------------------------------------------|---------------------------------------------------------|
-| `file`   | No        | The filename of the NovelML script to load.      | Must be a valid file in the project's script directory. |
-| `label`  | Yes       | The target label to jump to within the new file. | If omitted, the script starts from the very first line. |
+| 引数     | 省略可否  | 説明                                          | 備考                                                   |
+|----------|-----------|-----------------------------------------------|--------------------------------------------------------|
+| `file`   | 不可      | 読み込む NovelML スクリプトのファイル名。     | プロジェクトのスクリプトディレクトリに有効なファイルである必要があります。 |
+| `label`  | 可        | 新しいファイル内でジャンプするターゲットラベル。 | 省略すると最初の行からスクリプトが開始されます。        |
 
-### Tips
+### ヒント
 
-**Project Organization**:
-* Instead of writing your entire game in one giant file, use `[load]` to break it down into manageable chunks like `chapter1.novel`, `chapter2.novel`, and so on.
+**プロジェクトの整理**:
+* ゲーム全体を1つの巨大なファイルに書く代わりに、`[load]` を使って `chapter1.novel`・`chapter2.novel` のような管理しやすいチャンクに分割しましょう。
 
-**Immediate Transition**:
-* When the engine hits a `[load]` tag, it stops executing the current NovelML file immediately and switches to the new one.
-* Any commands placed after `[load]` in the original file will not be executed.
+**即時トランジション**:
+* エンジンが `[load]` タグに達すると、現在の NovelML ファイルの実行を即座に停止し、新しいファイルに切り替えます。
+* 元のファイルの `[load]` の後に続くコマンドは実行されません。
 
-**Global Flags**:
-* Don't worry about your variables — any values you've set with the `[set]` tag will persist even after you load a new script file!
+**グローバルフラグ**:
+* 変数の心配は不要です。`[set]` タグで設定した値は新しいスクリプトファイルを読み込んだ後も保持されます！
 
 ---
 
 ## `se`
 
-Play Sound Effect
+効果音の再生
 
-The `se` tag plays a sound effect (SE). 
-Sound effects are used for short audio cues like door knocks, footsteps, or UI feedback, adding a layer of immersion and realism to your scenes.
+`se` タグは効果音（SE）を再生します。
+ドアのノック・足音・UIフィードバックなどの短い音声キューに使用され、シーンに没入感とリアリティを加えます。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Play a sound effect once
+# 効果音を一度再生
 [se file="door_open.ogg"]
 
-# Stop all currently playing sound effects
+# 現在再生中のすべての効果音を停止
 [se file="none"]
 ```
 
-### Arguments
+### 引数
 
-| Argument | Omissible     | Description                               | Notes                                        |
-|----------|---------------|-------------------------------------------|----------------------------------------------|
-| `file`   | No            | The filename of the sound effect to play. | Set to `none` to stop sound effect playback. |
-| `loop`   | Yes (`false`) | Whether to loop the sound effect or not.  |                                              |
+| 引数     | 省略可否       | 説明                               | 備考                                         |
+|----------|---------------|------------------------------------|----------------------------------------------|
+| `file`   | 不可          | 再生する効果音のファイル名。        | SEの再生を停止するには `none` を指定します。   |
+| `loop`   | 可 (`false`)  | 効果音をループするかどうか。        |                                              |
 
-### Tips
+### ヒント
 
-**Required Format**:
-* Like BGM, Suika3 requires SE files to be in **Ogg Vorbis** format.
-* The sampling rate MUST be **44,100Hz** to ensure high fidelity and compatibility.
+**必須フォーマット**:
+* BGMと同様、Suika3 の SE ファイルは **Ogg Vorbis** 形式である必要があります。
+* サンプリングレートは高品質と互換性を確保するために **44,100Hz** でなければなりません。
 
-**Layering Sounds**:
-* Sound effects can usually be played while BGM is running.
-* They occupy their own audio track so they won't interrupt your music.
+**サウンドのレイヤリング**:
+* 効果音は通常 BGM の再生中にも再生できます。
+* 独自のオーディオトラックを持つため、音楽を中断しません。
 
-**Volume Control**:
-* To adjust the loudness of your sound effects without changing the BGM volume, use the `[volume]` tag with `track="se"`.
+**音量制御**:
+* BGM 音量を変えずに効果音の音量だけを調整するには、`track="se"` を指定した `[volume]` タグを使います。
 
-**Usage for Ambience**:
-* While SE is often used for short sounds, you can also use it for looping ambient sounds (like wind or rain).
-* A looped SE is restored when a save data file is loaded.
+**アンビエンスへの活用**:
+* SE は短い音だけでなく、ループするアンビエントサウンド（風や雨など）にも使用できます。
+* ループする SE はセーブデータが読み込まれたときに復元されます。
 
 ---
 
 ## `volume`
 
-Set Audio Volume
+音量の設定
 
-The `volume` tag sets the sound volume for a specific audio track. 
-It's perfect for ensuring that your background music doesn't drown out important sound effects or character voices.
+`volume` タグは特定のオーディオトラックのサウンド音量を設定します。
+BGMが重要な効果音やキャラクターのボイスをかき消さないよう調整するのに最適です。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Set BGM volume to 50%
+# BGM音量を50%に設定
 [volume track="bgm" volume="0.5"]
 
-# Set SE volume to maximum
+# SE音量を最大に設定
 [volume track="se" volume="1.0"]
 
-# Mute voices
+# ボイスをミュート
 [volume track="voice" volume="0.0"]
 ```
 
-### Arguments
+### 引数
 
-| Argument | Omissible | Description                           | Notes                                     |
-|----------|-----------|---------------------------------------|-------------------------------------------|
-| `track`  | No        | The audio track to adjust.            | See the "Tracks" table below.             |
-| `volume` | No        | The volume level from `0.0` to `1.0`. | `0.0` is silent, `1.0` is maximum volume. |
-| `time`   | Yes (`0`) | Fading time in seconds.               | `0` means instant change.                 |
-### Track Types (`track`)
+| 引数     | 省略可否  | 説明                                 | 備考                                      |
+|----------|-----------|--------------------------------------|-------------------------------------------|
+| `track`  | 不可      | 調整するオーディオトラック。          | 下記「トラック」テーブルを参照してください。 |
+| `volume` | 不可      | `0.0` から `1.0` までの音量レベル。   | `0.0` は無音、`1.0` は最大音量。           |
+| `time`   | 可 (`0`)  | フェード時間（秒）。                  | `0` は即時変更。                           |
 
-Suika3 categorizes audio into three main tracks:
+### トラック種別（`track`）
 
-| Track Name | Description                      |
-|------------|----------------------------------|
-| `bgm`      | Background Music.                |
-| `se`       | Sound Effects and system sounds. |
-| `voice`    | Character voice files.           |
+Suika3 はオーディオを3つのメイントラックに分類します：
 
-### Tips
+| トラック名 | 説明                         |
+|------------|------------------------------|
+| `bgm`      | バックグラウンドミュージック。 |
+| `se`       | 効果音およびシステムサウンド。 |
+| `voice`    | キャラクターのボイスファイル。 |
 
-**Immediate Change**:
-* The volume change happens gradually when `time` is greater than `0`.
-* `time="0"` means an immediate change.
+### ヒント
 
-**Default Levels**:
-* It's a good idea to set your preferred volume levels at the start of your game (e.g., in a `start` label) so the player has a consistent experience from the beginning.
+**即時変更**:
+* `time` が `0` より大きい場合、音量変化は徐々に行われます。
+* `time="0"` は即時変更を意味します。
+
+**デフォルトレベル**:
+* ゲームの開始時（例えば `start` ラベル内）に希望の音量レベルを設定しておくと、プレイヤーに一貫した体験を提供できます。
 
 ---
 
 ## `skip`
 
-Set Skip Status
+スキップ状態の設定
 
-The `skip` tag enables or disables the skipping function within the game. 
-It is useful for preventing players from skipping through important cinematic sequences or ensuring that certain scenes are experienced at the intended pace.
+`skip` タグはゲーム内のスキップ機能を有効または無効にします。
+重要なシネマティックシーケンスをスキップされないようにしたり、特定のシーンを意図したペースで体験させるのに役立ちます。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Enable the skip function
+# スキップ機能を有効にする
 [skip enable="true"]
 
-# Disable the skip function during a critical scene
+# 重要なシーン中はスキップ機能を無効にする
 [skip enable="false"]
 ```
 
-### Arguments
+### 引数
 
-| Argument | Omissible | Description                                  | Notes                                                 |
-|----------|-----------|----------------------------------------------|-------------------------------------------------------|
-| `enable` | No        | Whether the skip function is enabled or not. | Set to `true` to allow skipping, `false` to block it. |
+| 引数     | 省略可否  | 説明                                     | 備考                                                   |
+|----------|-----------|------------------------------------------|-------------------------------------------------------|
+| `enable` | 不可      | スキップ機能を有効にするかどうか。        | `true` でスキップを許可、`false` でブロックします。    |
 
-### Tips
+### ヒント
 
-**Cinematic Control**:
-* Skip feature is typically disabled before the title logo at startup.
+**シネマティック制御**:
+* スキップ機能は通常、起動時のタイトルロゴの前には無効にされます。
 
-**Restoring Settings**:
-* Don't forget to set `[skip enable="true"]` once the critical scene is over.
-* Players usually appreciate having the freedom to skip through text they've already seen.
+**設定の復元**:
+* 重要なシーンが終わったら `[skip enable="true"]` を設定することを忘れずに。
+* プレイヤーはすでに見たテキストをスキップできる自由を通常は感謝します。
 
-**System Behavior**:
-* This tag controls the overall "Skip" state of the engine.
-* Even if the player presses a skip hotkey, the engine will ignore it if `enable` is set to `false`.
+**システムの動作**:
+* このタグはエンジンの全体的な「スキップ」状態を制御します。
+* プレイヤーがスキップのホットキーを押しても、`enable` が `false` の場合はエンジンが無視します。
 
 ---
 
 ## `config`
 
-Set Configuration Value
+設定値の変更
 
-The `config` tag allows you to modify the game system's configuration settings directly from the markup. 
-It is essential for dynamically adjusting the game's UI, such as moving the message box or changing system-level parameters on the fly.
+`config` タグはマークアップから直接ゲームシステムの設定を変更できます。
+メッセージボックスの移動やシステムレベルのパラメーターをその場で調整するなど、ゲームのUIを動的に変更するために不可欠です。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Change the position of the message box
+# メッセージボックスの位置を変更
 [config name="msgbox.x" value="100"]
 [config name="msgbox.y" value="200"]
 
-# Update a specific system setting
+# 特定のシステム設定を更新
 [config name="msgbox.font.size" value="24"]
 ```
 
-### Arguments
+### 引数
 
-| Argument | Omissible | Description                                        | Notes                                                    |
-|----------|-----------|----------------------------------------------------|----------------------------------------------------------|
-| `name`   | No        | The name of the configuration parameter to change. | Refer to the system's config list for valid names.       |
-| `value`  | No        | The new value to assign to the parameter.          | Values are handled as strings but may represent numbers. |
+| 引数     | 省略可否  | 説明                                         | 備考                                                     |
+|----------|-----------|----------------------------------------------|----------------------------------------------------------|
+| `name`   | 不可      | 変更する設定パラメーターの名前。             | 有効な名前はシステムの設定リストを参照してください。      |
+| `value`  | 不可      | パラメーターに割り当てる新しい値。           | 値は文字列として扱われますが、数値を表す場合もあります。   |
 
-### Tips
+### ヒント
 
-**UI Customization**:
-* You can use `[config]` to reposition the message box during specific scenes to create a more cinematic feel.
+**UIのカスタマイズ**:
+* `[config]` を使って特定のシーンでメッセージボックスを移動させ、よりシネマティックな雰囲気を演出できます。
 
-**Dynamic Adjustments**:
-* Since this tag can be called anywhere in your script, you can change the game's "look and feel" as the story progresses.
-* For example, shifting the UI for a "flashback" sequence.
+**動的な調整**:
+* このタグはスクリプトのどこでも呼び出せるため、物語が進むにつれてゲームの「見た目と感触」を変えられます。
+* 例えば「フラッシュバック」シーケンス用にUIをシフトするなど。
 
-**Parameter Names**:
-* Be careful with the `name` argument!
-* It must exactly match the internal configuration keys defined in your Suika3 project settings.
-* See also [the complete list of the configurations](config.md)
+**パラメーター名**:
+* `name` 引数には注意が必要です！
+* Suika3 プロジェクト設定で定義された内部設定キーと完全に一致する必要があります。
+* [設定の完全なリスト](config.md)も参照してください。
 
 ---
 
 ## `layer`
 
-Direct Layer Manipulation
+レイヤーの直接操作
 
-The `layer` tag allows for direct control over specific image and text layers. 
-While tags like `[bg]` and `[ch]` are easier for standard scenes, `[layer]` gives you the precision to modify any individual layer's position, scale, and rotation independently.
+`layer` タグは特定の画像・テキストレイヤーを直接制御できます。
+`[bg]` や `[ch]` などのタグが通常シーンでは使いやすいですが、`[layer]` は任意の個別レイヤーの位置・スケール・回転を独立して精密に変更できます。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Load an image directly onto the center character layer (chc)
+# 中央キャラクターレイヤー (chc) に直接画像を読み込む
 [layer name="chc" file="heroine_smile.png"]
 
-# Adjust only the position and opacity of the background (bg)
+# 背景 (bg) の位置と不透明度のみを調整する
 [layer name="bg" x="100" y="100" alpha="128"]
 
-# Rotate the face layer
+# フェイスレイヤーを回転させる
 [layer name="chf" rotate="45.0" center-x="100" center-y="100"]
 ```
 
-### Arguments
+### 引数
 
-| Argument  | Omissible   | Description                          | Notes                              |
-|-----------|-------------|--------------------------------------|------------------------------------|
-| `name`    | No          | The target layer name.               | See the "Layer Names" table below. |
-| `file`    | Yes         | The filename to load onto the layer. | Use `none` to clear the layer.     |
-| `x`       | Yes (`0`)   | The layer's X position.              |                                    |
-| `y`       | Yes (`0`)   | The layer's Y position.              |                                    |
-| `alpha`   | Yes (`255`) | The layer's opacity level.           | `0` to `255`.                      |
-| `scale-x` | Yes (`1.0`) | X-axis scaling factor.               | `1.0` is original size.            |
-| `scale-y` | Yes (`1.0`) | Y-axis scaling factor.               | `1.0` is original size.            |
-| `center-x`| Yes (`0`)   | Rotation center (X).                 | Pivot point for rotation.          |
-| `center-y`| Yes (`0`)   | Rotation center (Y).                 | Pivot point for rotation.          |
-| `rotate`  | Yes (`0.0`) | Rotation in degrees.                 | Positive for clockwise.            |
+| 引数       | 省略可否     | 説明                                | 備考                                       |
+|------------|-------------|-------------------------------------|--------------------------------------------|
+| `name`     | 不可        | 対象のレイヤー名。                   | 下記「レイヤー名」テーブルを参照してください。 |
+| `file`     | 可          | レイヤーに読み込むファイル名。        | `none` でレイヤーをクリアします。            |
+| `x`        | 可 (`0`)    | レイヤーのX座標。                    |                                            |
+| `y`        | 可 (`0`)    | レイヤーのY座標。                    |                                            |
+| `alpha`    | 可 (`255`)  | レイヤーの不透明度。                 | `0` ～ `255`。                             |
+| `scale-x`  | 可 (`1.0`)  | X軸のスケール係数。                  | `1.0` が元のサイズ。                       |
+| `scale-y`  | 可 (`1.0`)  | Y軸のスケール係数。                  | `1.0` が元のサイズ。                       |
+| `center-x` | 可 (`0`)    | 回転の中心（X）。                    | 回転のピボットポイント。                    |
+| `center-y` | 可 (`0`)    | 回転の中心（Y）。                    | 回転のピボットポイント。                    |
+| `rotate`   | 可 (`0.0`)  | 回転角度（度数）。                   | 正の値で時計回り。                          |
 
-### Common Layer Names (`name`)
+### レイヤー名一覧（`name`）
 
-Suika3 has a rich set of predefined layers.
+Suika3 には豊富なプリセットレイヤーがあります。
 
-Here are the complete list of the layers:
+以下にすべてのレイヤーの一覧を示します：
 
-|Layer Name       |Description                              |
-|-----------------|-----------------------------------------|
-|bg               |Background Image                         |
-|bg2              |Background Image 2                       |
-|efb1             |Back Effect 1                            |
-|efb2             |Back Effect 2                            |
-|efb3             |Back Effect 3                            |
-|efb4             |Back Effect 4                            |
-|chb              |Center-Back Character                    |
-|chb-eye          |Center-Back Character's Eyes             |
-|chb-lip          |Center-Back Character's Lips             |
-|chb-fo           |Fading-Out Center-Back Character         |
-|chl              |Left Character                           |
-|chl-eye          |Left Character's Eyes                    |
-|chl-lip          |Left Character's Lips                    |
-|chl-fo           |Fading-Out Left Character                |
-|chlc             |Left-Center Character                    |
-|chlc-eye         |Left-Center Character's Eyes             |
-|chlc-lip         |Left-Center Character's Lips             |
-|chlc-fo          |Fading-Out Left-Center Character         |
-|chr              |Right Character                          |
-|chr-eye          |Right Character's Eyes                   |
-|chr-lip          |Right Character's Lips                   |
-|chr-fo           |Fading-Out Right Character               |
-|chrc             |Right-Center Character                   |
-|chrc-eye         |Right-Center Character's Eyes            |
-|chrc-lip         |Right-Center Character's Lips            |
-|chrc-fo          |Fading-Out Right-Center Character        |
-|chc              |Center Character                         |
-|chc-eye          |Center Character's Eyes                  |
-|chc-lip          |Center Character's Lips                  |
-|chc-fo           |Fading-Out Center Character              |
-|msgbox           |Message box (Invisible to `[layer]`)     |
-|namebox          |Name box (Invisible to `[layer]`)        |
-|click            |Click animation (Invisible to `[layer]`) |
-|eff1             |Front Effect 1                           |
-|eff2             |Front Effect 2                           |
-|eff3             |Front Effect 3                           |
-|eff4             |Front Effect 4                           |
-|chf              |Face Character                           |
-|chf-eye          |Face Character's Eyes                    |
-|chf-lip          |Face Character's Lips                    |
-|chf-fo           |Fading-Out Face Character                |
-|text1            |Text Layer 1                             |
-|text2            |Text Layer 2                             |
-|text3            |Text Layer 3                             |
-|text4            |Text Layer 4                             |
-|text5            |Text Layer 5                             |
-|text6            |Text Layer 6                             |
-|text7            |Text Layer 7                             |
-|text8            |Text Layer 8                             |
-|gui1             |GUI Button 1 (Invisible to `[layer]`)    |
-|gui2             |GUI Button 2 (Invisible to `[layer]`)    |
-|gui3             |GUI Button 3 (Invisible to `[layer]`)    |
-|gui4             |GUI Button 4 (Invisible to `[layer]`)    |
-|gui5             |GUI Button 5 (Invisible to `[layer]`)    |
-|gui6             |GUI Button 6 (Invisible to `[layer]`)    |
-|gui7             |GUI Button 7 (Invisible to `[layer]`)    |
-|gui8             |GUI Button 8 (Invisible to `[layer]`)    |
-|gui9             |GUI Button 9 (Invisible to `[layer]`)    |
-|gui10            |GUI Button 10 (Invisible to `[layer]`)   |
-|gui11            |GUI Button 11 (Invisible to `[layer]`)   |
-|gui12            |GUI Button 12 (Invisible to `[layer]`)   |
-|gui13            |GUI Button 13 (Invisible to `[layer]`)   |
-|gui14            |GUI Button 14 (Invisible to `[layer]`)   |
-|gui15            |GUI Button 15 (Invisible to `[layer]`)   |
-|gui16            |GUI Button 16 (Invisible to `[layer]`)   |
-|gui17            |GUI Button 17 (Invisible to `[layer]`)   |
-|gui18            |GUI Button 18 (Invisible to `[layer]`)   |
-|gui19            |GUI Button 19 (Invisible to `[layer]`)   |
-|gui20            |GUI Button 20 (Invisible to `[layer]`)   |
-|gui21            |GUI Button 21 (Invisible to `[layer]`)   |
-|gui22            |GUI Button 22 (Invisible to `[layer]`)   |
-|gui23            |GUI Button 23 (Invisible to `[layer]`)   |
-|gui24            |GUI Button 24 (Invisible to `[layer]`)   |
-|gui25            |GUI Button 25 (Invisible to `[layer]`)   |
-|gui26            |GUI Button 26 (Invisible to `[layer]`)   |
-|gui27            |GUI Button 27 (Invisible to `[layer]`)   |
-|gui28            |GUI Button 28 (Invisible to `[layer]`)   |
-|gui29            |GUI Button 29 (Invisible to `[layer]`)   |
-|gui30            |GUI Button 30 (Invisible to `[layer]`)   |
-|gui31            |GUI Button 31 (Invisible to `[layer]`)   |
-|gui32            |GUI Button 32 (Invisible to `[layer]`)   |
+|レイヤー名       |説明                                          |
+|----------------|----------------------------------------------|
+|bg               |背景画像                                      |
+|bg2              |背景画像2                                     |
+|efb1             |後方エフェクト1                               |
+|efb2             |後方エフェクト2                               |
+|efb3             |後方エフェクト3                               |
+|efb4             |後方エフェクト4                               |
+|chb              |中央後方キャラクター                           |
+|chb-eye          |中央後方キャラクターの目                      |
+|chb-lip          |中央後方キャラクターの口                      |
+|chb-fo           |フェードアウト中の中央後方キャラクター         |
+|chl              |左キャラクター                                |
+|chl-eye          |左キャラクターの目                            |
+|chl-lip          |左キャラクターの口                            |
+|chl-fo           |フェードアウト中の左キャラクター              |
+|chlc             |左中央キャラクター                            |
+|chlc-eye         |左中央キャラクターの目                        |
+|chlc-lip         |左中央キャラクターの口                        |
+|chlc-fo          |フェードアウト中の左中央キャラクター          |
+|chr              |右キャラクター                                |
+|chr-eye          |右キャラクターの目                            |
+|chr-lip          |右キャラクターの口                            |
+|chr-fo           |フェードアウト中の右キャラクター              |
+|chrc             |右中央キャラクター                            |
+|chrc-eye         |右中央キャラクターの目                        |
+|chrc-lip         |右中央キャラクターの口                        |
+|chrc-fo          |フェードアウト中の右中央キャラクター          |
+|chc              |中央キャラクター                              |
+|chc-eye          |中央キャラクターの目                          |
+|chc-lip          |中央キャラクターの口                          |
+|chc-fo           |フェードアウト中の中央キャラクター            |
+|msgbox           |メッセージボックス（`[layer]` からは操作不可） |
+|namebox          |名前ボックス（`[layer]` からは操作不可）      |
+|click            |クリックアニメーション（`[layer]` からは操作不可）|
+|eff1             |前方エフェクト1                               |
+|eff2             |前方エフェクト2                               |
+|eff3             |前方エフェクト3                               |
+|eff4             |前方エフェクト4                               |
+|chf              |フェイスキャラクター                          |
+|chf-eye          |フェイスキャラクターの目                      |
+|chf-lip          |フェイスキャラクターの口                      |
+|chf-fo           |フェードアウト中のフェイスキャラクター        |
+|text1            |テキストレイヤー1                             |
+|text2            |テキストレイヤー2                             |
+|text3            |テキストレイヤー3                             |
+|text4            |テキストレイヤー4                             |
+|text5            |テキストレイヤー5                             |
+|text6            |テキストレイヤー6                             |
+|text7            |テキストレイヤー7                             |
+|text8            |テキストレイヤー8                             |
+|gui1             |GUIボタン1（`[layer]` からは操作不可）        |
+|gui2             |GUIボタン2（`[layer]` からは操作不可）        |
+|gui3             |GUIボタン3（`[layer]` からは操作不可）        |
+|gui4             |GUIボタン4（`[layer]` からは操作不可）        |
+|gui5             |GUIボタン5（`[layer]` からは操作不可）        |
+|gui6             |GUIボタン6（`[layer]` からは操作不可）        |
+|gui7             |GUIボタン7（`[layer]` からは操作不可）        |
+|gui8             |GUIボタン8（`[layer]` からは操作不可）        |
+|gui9             |GUIボタン9（`[layer]` からは操作不可）        |
+|gui10            |GUIボタン10（`[layer]` からは操作不可）       |
+|gui11            |GUIボタン11（`[layer]` からは操作不可）       |
+|gui12            |GUIボタン12（`[layer]` からは操作不可）       |
+|gui13            |GUIボタン13（`[layer]` からは操作不可）       |
+|gui14            |GUIボタン14（`[layer]` からは操作不可）       |
+|gui15            |GUIボタン15（`[layer]` からは操作不可）       |
+|gui16            |GUIボタン16（`[layer]` からは操作不可）       |
+|gui17            |GUIボタン17（`[layer]` からは操作不可）       |
+|gui18            |GUIボタン18（`[layer]` からは操作不可）       |
+|gui19            |GUIボタン19（`[layer]` からは操作不可）       |
+|gui20            |GUIボタン20（`[layer]` からは操作不可）       |
+|gui21            |GUIボタン21（`[layer]` からは操作不可）       |
+|gui22            |GUIボタン22（`[layer]` からは操作不可）       |
+|gui23            |GUIボタン23（`[layer]` からは操作不可）       |
+|gui24            |GUIボタン24（`[layer]` からは操作不可）       |
+|gui25            |GUIボタン25（`[layer]` からは操作不可）       |
+|gui26            |GUIボタン26（`[layer]` からは操作不可）       |
+|gui27            |GUIボタン27（`[layer]` からは操作不可）       |
+|gui28            |GUIボタン28（`[layer]` からは操作不可）       |
+|gui29            |GUIボタン29（`[layer]` からは操作不可）       |
+|gui30            |GUIボタン30（`[layer]` からは操作不可）       |
+|gui31            |GUIボタン31（`[layer]` からは操作不可）       |
+|gui32            |GUIボタン32（`[layer]` からは操作不可）       |
 
-### Tips
+### ヒント
 
-**Precision Control**:
-* Use `[layer]` when you want to load an image to a layer manually when you're working with custom effect layers (`eff1` etc.) that don't have dedicated tags.
+**精密な制御**:
+* 専用タグを持たないカスタムエフェクトレイヤー（`eff1` など）に手動で画像を読み込みたい場合に `[layer]` を使います。
 
-**Instant Updates**:
-* Unlike `[ch]` or `[bg]`, the `layer` tag usually updates the screen instantly.
-* If you want to animate these changes over time, you should use the `[move]` tag instead!
+**即時更新**:
+* `[ch]` や `[bg]` と異なり、`layer` タグは通常即座に画面を更新します。
+* これらの変更を時間をかけてアニメーションしたい場合は、`[move]` タグを使ってください！
 
-**Layer Hierarchy**:
-* Remember that layers are stacked.
-* For example, `chf` (Face Character) is always rendered in front of `chc` (Center Character).
-* Understanding this "Z-order" is key to complex visual compositions.
+**レイヤーの重なり順**:
+* レイヤーは積み重なっていることを覚えておいてください。
+* 例えば `chf`（フェイスキャラクター）は常に `chc`（中央キャラクター）の前面に描画されます。
+* この「Zオーダー」を理解することが複雑なビジュアル構成の鍵です。
 
 ---
 
 ## `move`
 
-Animate Layer
+レイヤーのアニメーション
 
-The `move` tag animates specific layers over a set duration.
-It is perfect for creating sliding effects, zooming in on characters, or rotating screen elements to add dynamic energy to your scenes.
+`move` タグは特定のレイヤーを指定した時間をかけてアニメーションします。
+スライドエフェクトの作成、キャラクターへのズームイン、画面要素の回転など、シーンに躍動感を加えるのに最適です。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Move the center character to a new position over 2.0 seconds
+# 中央キャラクターを2.0秒かけて新しい位置に移動させる
 [move time="2.0" center-x="150" center-y="100"]
 
-# Relative movement: Nudge the background 50px to the right
+# 相対移動: 背景を右に50pxずらす
 [move time="1.0" bg-x="r50"]
 
-# Gradually fade out a layer while rotating it
+# レイヤーを回転させながら徐々にフェードアウトさせる
 [move time="3.0" face-alpha="0" face-rotate="r360"]
 ```
 
-### Arguments
+### 引数
 
-**Common:**
-| Argument         | Omissible     | Description                               | Notes                                      |
-|------------------|---------------|-------------------------------------------|--------------------------------------------|
-| `name`           | No            | The target layer to animate.              | See the "Moveable Layers" table below.     |
-| `time`           | No            | The duration of the animation in seconds. | Supports decimal values (e.g., `0.5`).     |
-| `async`          | Yes (`false`) | If `true`, do non-blocking animation.     |                                            |
-| `accel`          | Yes (`normal`)| Acceleration type.                        | One of                                     |
-| (layer)-(suffix) | Yes           |                                           |                                            |
+**共通：**
+| 引数               | 省略可否       | 説明                                | 備考                                      |
+|--------------------|---------------|-------------------------------------|-------------------------------------------|
+| `name`             | 不可          | アニメーションする対象レイヤー。     | 下記「移動可能レイヤー」テーブルを参照。   |
+| `time`             | 不可          | アニメーションの継続時間（秒）。     | 小数値に対応（例：`0.5`）。               |
+| `async`            | 可 (`false`)  | `true` の場合、非ブロッキングアニメーション。 |                                    |
+| `accel`            | 可 (`normal`) | 加速タイプ。                         | いずれか一つ                              |
+| (レイヤー)-(サフィックス) | 可       |                                     |                                           |
 
-**(layer):**
-| Argument       | Description                               |
-|----------------|-------------------------------------------|
-| `bg`           | Background layer.                         |
-| `bg2`          | Background 2.                             |
-| `back          | Back-Center character.                    |
-| `left`         | Left character.                           |
-| `right`        | Right character.                          |
-| `center`       | Center character.                         |
-| `left-center`  | Left-Center character.                    |
-| `right-center` | Intermediate character.                   |
-| `face`         | Face character.                           |
+**(レイヤー)：**
+| 引数           | 説明                          |
+|----------------|-------------------------------|
+| `bg`           | 背景レイヤー。                 |
+| `bg2`          | 背景2。                        |
+| `back`         | 中央後方キャラクター。         |
+| `left`         | 左キャラクター。               |
+| `right`        | 右キャラクター。               |
+| `center`       | 中央キャラクター。             |
+| `left-center`  | 左中央キャラクター。           |
+| `right-center` | 右中央キャラクター。           |
+| `face`         | フェイスキャラクター。         |
 
-**(suffix):**
-| Suffix      | Omissible     | Description                | Notes                                                         |
-|-------------|---------------|----------------------------|---------------------------------------------------------------|
-| `-x`        | Yes (`0`)     | X position.                | Supports absolute (e.g., `100`) or relative (e.g., `r50`).    |
-| `-y`        | Yes (`0`)     | Y position.                | Supports absolute (e.g., `100`) or relative (e.g., `r-50`).   |
-| `-a`        | Yes (`255`)   | Alpha value. (opacity)     | `0` (transparent) to `255` (opaque).                          |
-| `-scale-x`  | Yes (`1.0`)   | X scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `-scale-y`  | Yes (`1.0`)   | Y scaling factor.          | `1.0` is original size. Supports `r` prefix.                  |
-| `-center-x` | Yes (`0`)     | X center for rotation.     | Pivot point for the rotation effect.                          |
-| `-center-y` | Yes (`0`)     | Y center for rotation.     | Pivot point for the rotation effect.                          |
-| `-rotate`   | Yes (`0`)     | Rotation in degrees.       | Positive for clockwise. Supports `r` prefix.                  |
-| `-dim`      | Yes (`false`) | Dimming status.            | If `true`, the layer is rendered 50% darker.                  |
+**(サフィックス)：**
+| サフィックス  | 省略可否     | 説明                     | 備考                                                          |
+|---------------|-------------|--------------------------|---------------------------------------------------------------|
+| `-x`          | 可 (`0`)    | X座標。                  | 絶対値（例：`100`）または相対値（例：`r50`）に対応。         |
+| `-y`          | 可 (`0`)    | Y座標。                  | 絶対値（例：`100`）または相対値（例：`r-50`）に対応。        |
+| `-a`          | 可 (`255`)  | アルファ値（不透明度）。  | `0`（透明）から `255`（不透明）。                            |
+| `-scale-x`    | 可 (`1.0`)  | Xスケール係数。           | `1.0` が元のサイズ。`r` プレフィックスに対応。               |
+| `-scale-y`    | 可 (`1.0`)  | Yスケール係数。           | `1.0` が元のサイズ。`r` プレフィックスに対応。               |
+| `-center-x`   | 可 (`0`)    | 回転の中心（X）。         | 回転エフェクトのピボットポイント。                           |
+| `-center-y`   | 可 (`0`)    | 回転の中心（Y）。         | 回転エフェクトのピボットポイント。                           |
+| `-rotate`     | 可 (`0`)    | 回転角度（度数）。        | 正の値で時計回り。`r` プレフィックスに対応。                 |
+| `-dim`        | 可 (`false`)| ディム状態。              | `true` の場合、レイヤーが50%暗く描画されます。               |
 
-### Tips
+### ヒント
 
-**Non-blocking Animation (`async="true")`**:
-* The script continues to the next command immediately after starting a `[move]`.
-* If you want the script to wait until the animation finishes, follow it with a `[wait]` tag using the same `time` value.
+**非ブロッキングアニメーション（`async="true"`）**:
+* `[move]` 開始直後にスクリプトが次のコマンドへ進みます。
+* アニメーション終了まで待機させたい場合は、同じ `time` 値の `[wait]` タグを続けてください。
 
-**Relative Transformations**:
-* Using the `r` prefix (e.g., `x="r100"`) is incredibly useful for repetitive motions, like making a character "jump" or "shake" without calculating absolute coordinates.
+**相対変換**:
+* `r` プレフィックス（例：`x="r100"`）は、絶対座標を計算せずにキャラクターを「ジャンプ」させたり「揺らす」など繰り返しの動作に非常に便利です。
 
-**Visual Polish**:
-* Combine `scale-x` and `scale-y` with `move` to create "zoom-in" effects on a character's face for dramatic close-ups!
+**視覚的な仕上げ**:
+* `scale-x` と `scale-y` を `move` と組み合わせると、ドラマチックなクローズアップのためにキャラクターの顔を「ズームイン」するエフェクトが作れます！
 
 ---
 
 ## `pencil`
 
-Pencil
+ペンシル
 
-Draw a text on a layer.
+レイヤーにテキストを描画します。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
 [pencil layer="bg" font-size="30" text="Hello, World!"]
 ```
 
-### Arguments
+### 引数
 
-| Argument      | Omissible        | Description              |
-|---------------|------------------|--------------------------|
-| text          | No               | Text to draw.            |
-| layer         | Yes (`text1`)    | Layer name.              |
-| font-type     | Yes (`0`)        | Font selection. (0-3)    |
-| font-size     | Yes (`16`)       | Font size.               |
-| color         | Yes (`#000000`)  | Font color.              |
-| outline-width | Yes (`0`)        | Font outline width.      |
-| outline-color | Yes (`#ffffff`)  | Font outline color.      |
-| line-margin   | Yes              | Line margin.             |
-| char-margin   | Yes (`0`)        | Character margin.        |
-| x             | Yes (`0`)        | Drawing area X position. |
-| y             | Yes (`0`)        | Drawing area Y position. |
-| width         | Yes              | Drawing area width.      |
-| height        | Yes              | Drawing area height.     |
+| 引数            | 省略可否          | 説明                        |
+|----------------|------------------|-----------------------------|
+| text           | 不可              | 描画するテキスト。           |
+| layer          | 可 (`text1`)      | レイヤー名。                 |
+| font-type      | 可 (`0`)          | フォント選択。（0〜3）       |
+| font-size      | 可 (`16`)         | フォントサイズ。             |
+| color          | 可 (`#000000`)    | フォントカラー。             |
+| outline-width  | 可 (`0`)          | フォントのアウトライン幅。   |
+| outline-color  | 可 (`#ffffff`)    | フォントのアウトラインカラー。|
+| line-margin    | 可                | 行マージン。                 |
+| char-margin    | 可 (`0`)          | 文字マージン。               |
+| x              | 可 (`0`)          | 描画エリアのX座標。          |
+| y              | 可 (`0`)          | 描画エリアのY座標。          |
+| width          | 可                | 描画エリアの幅。             |
+| height         | 可                | 描画エリアの高さ。           |
 
-## Supported Layer Name
+## 対応レイヤー名
 
-|Layer Name       |Description                              |
-|-----------------|-----------------------------------------|
-|bg               |Background Image                         |
-|bg2              |Background Image 2                       |
-|efb1             |Back Effect 1                            |
-|efb2             |Back Effect 2                            |
-|efb3             |Back Effect 3                            |
-|efb4             |Back Effect 4                            |
-|chb              |Center-Back Character                    |
-|chl              |Left Character                           |
-|chlc             |Left-Center Character                    |
-|chr              |Right Character                          |
-|chrc             |Right-Center Character                   |
-|chc              |Center Character                         |
-|eff1             |Front Effect 1                           |
-|eff2             |Front Effect 2                           |
-|eff3             |Front Effect 3                           |
-|eff4             |Front Effect 4                           |
-|chf              |Face Character                           |
-|text1            |Text Layer 1                             |
-|text2            |Text Layer 2                             |
-|text3            |Text Layer 3                             |
-|text4            |Text Layer 4                             |
-|text5            |Text Layer 5                             |
-|text6            |Text Layer 6                             |
-|text7            |Text Layer 7                             |
-|text8            |Text Layer 8                             |
+|レイヤー名       |説明                      |
+|----------------|--------------------------|
+|bg               |背景画像                  |
+|bg2              |背景画像2                 |
+|efb1             |後方エフェクト1           |
+|efb2             |後方エフェクト2           |
+|efb3             |後方エフェクト3           |
+|efb4             |後方エフェクト4           |
+|chb              |中央後方キャラクター      |
+|chl              |左キャラクター            |
+|chlc             |左中央キャラクター        |
+|chr              |右キャラクター            |
+|chrc             |右中央キャラクター        |
+|chc              |中央キャラクター          |
+|eff1             |前方エフェクト1           |
+|eff2             |前方エフェクト2           |
+|eff3             |前方エフェクト3           |
+|eff4             |前方エフェクト4           |
+|chf              |フェイスキャラクター      |
+|text1            |テキストレイヤー1         |
+|text2            |テキストレイヤー2         |
+|text3            |テキストレイヤー3         |
+|text4            |テキストレイヤー4         |
+|text5            |テキストレイヤー5         |
+|text6            |テキストレイヤー6         |
+|text7            |テキストレイヤー7         |
+|text8            |テキストレイヤー8         |
 
 ---
 
 ## `returnmacro`
 
-Return from Macro
+マクロからの復帰
 
-The `returnmacro` tag immediately exits the current macro and returns the script execution to the line following the original `[callmacro]` tag.
-It is particularly useful for stopping a macro early based on specific conditions within an `[if]` block.
+`returnmacro` タグは現在のマクロを即座に終了し、元の `[callmacro]` タグの次の行にスクリプト実行を返します。
+`[if]` ブロック内の特定の条件に基づいてマクロを早期終了するのに特に便利です。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
 [defmacro name="check_item"]
     [if lhs="${has_key}" op="==" rhs="false"]
-        [text text="The door is locked."]
+        [text text="ドアに鍵がかかっています。"]
         [returnmacro]
     [endif]
 
-    # This part only runs if has_key is true
-    [text text="You unlocked the door with the key!"]
+    # has_key が true の場合のみここが実行される
+    [text text="鍵でドアを開けました！"]
 [endmacro]
 ```
 
-### Arguments
+### 引数
 
-This tag does not take any arguments.
+このタグには引数がありません。
 
-| Argument | Omissible | Description | Notes |
-|----------|-----------|-------------|-------|
-| -        | -         | -           | -     |
+| 引数 | 省略可否 | 説明 | 備考 |
+|------|---------|------|------|
+| -    | -       | -    | -    |
 
-### Tips
+### ヒント
 
-**Early Exit**:
-* Use `[returnmacro]` inside an `[if]` block to skip the rest of a macro's commands if a certain condition is met.
-* This keeps your macros flexible and powerful!
+**早期終了**:
+* 特定の条件が満たされた場合にマクロの残りのコマンドをスキップするために、`[if]` ブロック内で `[returnmacro]` を使います。
+* これによりマクロを柔軟かつ強力にできます！
 
-**Implicit Return**:
-* You don't actually need to put `[returnmacro]` at the very end of every macro.
-* Once the engine hits the `[endmacro]` tag, it will return to the main script automatically.
+**暗黙のリターン**:
+* 実際にはすべてのマクロの末尾に `[returnmacro]` を置く必要はありません。
+* エンジンが `[endmacro]` タグに到達すると、自動的にメインスクリプトに戻ります。
 
-**Flow Control**:
-* Remember that this tag only exits the *current* macro. It doesn't stop the whole game or jump to a different label—it just sends you back to where the macro was called from.
+**フロー制御**:
+* このタグは*現在の*マクロのみを終了することを覚えておいてください。ゲーム全体を停止したり別のラベルにジャンプしたりするわけではなく、マクロが呼び出された箇所に戻るだけです。
 
 ---
 
 ## `video`
 
-Play Video
+動画の再生
 
-The `video` tag plays a movie file on the screen.
-It is ideal for opening cinematics, transitional cutscenes, or high-impact visual effects that are best rendered as full-motion video.
+`video` タグは画面で動画ファイルを再生します。
+オープニングシネマティクス、トランジションカットシーン、フルモーションビデオとして表現するのが最適な高インパクトなビジュアルエフェクトに最適です。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Play an opening movie (cannot be skipped)
+# オープニング動画を再生する（スキップ不可）
 [video file="opening.mp4"]
 
-# Play a short cutscene that the player can skip with a click.
+# プレイヤーがクリックでスキップできる短いカットシーンを再生する
 [video file="cutscene01.mp4" skippable="true"]
 ```
 
-### Arguments
+### 引数
 
-| Argument    | Omissible     | Description                                           | Notes                                                         |
-|-------------|---------------|-------------------------------------------------------|---------------------------------------------------------------|
-| `file`      | No            | The filename of the video to play.                    | The file must be in a supported format (e.g., .mp4).          |
-| `skippable` | Yes (`false`) | Whether the video can be skipped by a player's click. | Set to `false` to force the player to watch the entire video. |
+| 引数         | 省略可否      | 説明                                         | 備考                                                             |
+|-------------|--------------|----------------------------------------------|------------------------------------------------------------------|
+| `file`      | 不可          | 再生する動画のファイル名。                    | サポートされているフォーマット（例：.mp4）である必要があります。  |
+| `skippable` | 可 (`false`) | プレイヤーのクリックで動画をスキップできるか。 | `false` でプレイヤーに動画全体を視聴させます。                   |
 
-### Tips
+### ヒント
 
-**File Support**:
-* Ensure your video file is .mp4 (H.264 + AAC) format.
-* If you want to support 32-bit Windows, prepare .wmv file alongside .mp4 file, then remove extension e.g., `[video file="opening"]`.
+**ファイルサポート**:
+* 動画ファイルは .mp4（H.264 + AAC）フォーマットを使用してください。
+* 32ビットWindowsをサポートしたい場合は、.mp4と並べて .wmv ファイルを用意し、拡張子を省略してください（例：`[video file="opening"]`）。
 
-**Transitioning**:
-* Once the video finishes playing (or is skipped), the engine automatically proceeds to the next command in your script.
-* It's often a good idea to follow a `[video]` tag with a `[bg]` tag to ensure the screen looks exactly how you want it after the movie ends.
+**トランジション**:
+* 動画が再生終了（またはスキップ）されると、エンジンは自動的にスクリプトの次のコマンドへ進みます。
+* `[video]` タグの後に `[bg]` タグを続けると、動画終了後に画面が意図した状態になります。
 
-**Audio in Video**:
-* Most video files include their own audio track.
-* Keep in mind that this audio will play alongside any `[bgm]` you have running.
-* You might want to stop the music with `[bgm file="none"]` before starting a video with sound!
+**動画内のオーディオ**:
+* ほとんどの動画ファイルには独自のオーディオトラックが含まれています。
+* このオーディオは再生中の `[bgm]` と同時に流れます。
+* 音声付き動画を開始する前に `[bgm file="none"]` でBGMを停止することを検討してください！
 
 ---
 
 ## `wait`
 
-Wait for Time
+時間待機
 
-The `wait` tag pauses the NovelML execution for a specified duration.
-It is essential for controlling the pacing of visual transitions, creating dramatic pauses, or timing effects without requiring player input.
+`wait` タグは指定した時間だけ NovelML の実行を一時停止します。
+ビジュアルトランジションのペース制御、ドラマチックな間の演出、プレイヤー入力なしでエフェクトのタイミングを合わせるのに不可欠です。
 
-### Basic Usage
+### 基本的な使い方
 
 ```
-# Pause for 1.5 seconds before the next command
+# 次のコマンドの前に1.5秒間一時停止する
 [wait time="1.5"]
 
-# Create a brief pause between character changes
+# キャラクター切り替えの間に短い間を作る
 [ch center="chara01_surprised.png" time="0.5"]
 [wait time="1.0"]
-[text text="She couldn't believe her eyes."]
+[text text="彼女は自分の目が信じられなかった。"]
 ```
 
-### Arguments
+### 引数
 
-| Argument      | Omissible     | Description                    | Notes                                  |
-|---------------|---------------|--------------------------------|----------------------------------------|
-| `time`        | No            | The number of seconds to wait. | Supports decimal values (e.g., `0.5`). |
-| `hidemsgbox`  | Yes (`false`) | Force hide the message box.    |                                        |
-| `hidenamebox` | Yes (`false`) | Force hide the name box.       |                                        |
+| 引数           | 省略可否      | 説明                         | 備考                               |
+|---------------|--------------|------------------------------|-------------------------------------|
+| `time`        | 不可          | 待機する秒数。               | 小数値に対応（例：`0.5`）。         |
+| `hidemsgbox`  | 可 (`false`) | メッセージボックスを強制非表示にする。 |                                |
+| `hidenamebox` | 可 (`false`) | 名前ボックスを強制非表示にする。       |                                |
 
-### Tips
+### ヒント
 
-**Non-interactive Pause**:
-* Unlike `[click]`, which waits for the player to act, `[wait]` continues automatically once the time is up. 
-* This is perfect for "auto-playing" segments or timed visual sequences.
+**非インタラクティブな一時停止**:
+* プレイヤーの操作を待つ `[click]` と異なり、`[wait]` は時間が経過すると自動的に進みます。
+* これは「自動再生」セグメントやタイミングが重要なビジュアルシーケンスに最適です。
 
-**Combining with Animations**:
-* If you use a `[ch]` or `[bg]` tag with a `time` argument, the engine moves to the next command immediately while the animation plays. 
-* Use `[wait]` after an animation if you want the script to stop until the animation is finished (or even longer for dramatic effect).
+**アニメーションとの組み合わせ**:
+* `[ch]` や `[bg]` タグに `time` 引数を指定した場合、アニメーション再生中にエンジンは即座に次のコマンドへ進みます。
+* アニメーション終了まで（またはドラマチックな効果のためにさらに）スクリプトを停止させたい場合は、アニメーションの後に `[wait]` を使います。
 
-**User Experience**:
-* Be careful not to make `[wait]` times too long (like more than 3 seconds) without a visual reason, or the player might think the game has frozen!
+**ユーザー体験**:
+* 視覚的な理由なしに `[wait]` の時間を長くしすぎないよう注意してください（3秒以上など）。プレイヤーがゲームがフリーズしたと思う可能性があります！
 

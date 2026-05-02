@@ -1,0 +1,31 @@
+site_name: Suika3 Docs
+repo_url: https://github.com/awemorris/suika3
+use_directory_urls: false
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - NovelML Syntax: novelml-syntax.md
+  - NovelML Tags: novelml-tags.md
+  - Ray Syntax: ray-syntax.md
+  - Ray Low-Level 2D API: ray-2d-api.md
+  - Ray High-Level VN API: ray-vn-api.md
+  - Animation: anime.md
+  - GUI: gui.md
+  - System Menu: sysmenu.md
+  - Lip Sync: lip-sync.md
+  - Eye Blink: eye-blink.md
+  - Config: config.md
+  - Page Mode (NVL): nvl-mode.md
+  - Plugin: plugin.md
+  - AOT: aot.md
+  - Build: build.md
+  - Software Requirement Specification: srs.md
+
+theme:
+  name: material
+  features:
+    - navigation.expand
+    - navigation.tabs
+    - search.suggest
+    - content.code.annotate
