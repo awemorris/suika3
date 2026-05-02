@@ -75,8 +75,8 @@ func Tag_getSampleDir(params) {
     // Here is the candidates of the sample directory.
     var list = [
         "/app/share/suika3/game",                   // Flatpak
-        "/usr/share/doc/suika3/examples/game",      // Debian
-        "/usr/local/share/examples/suika3/game",    // FreeBSD
+        "/usr/share/doc/suika3/examples",           // Debian
+        "/usr/local/share/examples/suika3",         // FreeBSD
         "/usr/share/suika3/game",                   // prefix="/usr"
         "/usr/local/share/suika3/game",             // prefix="/usr/local"
         "/opt/share/suika3/game"                    // prefix="/opt"
