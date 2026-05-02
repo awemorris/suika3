@@ -1,76 +1,77 @@
-How to Use AOT
-==============
+AOT の使い方
+============
 
-Suika3 supports **Ahead-of-Time (AOT) compilation** of scripts.
-That is, an app may run completely native code instead of as a bytecode interpreter.
+Suika3 の Ray 言語処理系は、スクリプトの **事前 (Ahead-of-Time: AOT) コンパイル** に対応しています。
+つまり、Ray で書かれたプログラムは、バイトコードインタプリタを介してではなく、完全にネイティブコードに変換してから実行できます。
 
-The `suika3-aotcomp` command converts `.ray` scripts into **ANSI C source code**.
-The generated `library.c` file will be compiled with the entire engine.
+`suika3-aotcomp` コマンドは、`.ray` スクリプトを **ANSI C ソースコード**に変換します。
+生成された `library.c` ファイルは、エンジン全体と一緒にコンパイルされます。
+
+バイナリに直接変換せずに C 言語を経由する理由は、未知の CPU アーキテクチャに対応することと、コンソールにおいてベンダのコンパイラが生成したコード以外が許可されないケースがあるからです。
 
 ---
 
-## 1. Modify `main.ray`
+## 1. `main.ray` を変更する
 
-Because the scripts will be compiled into native code,
-loading the runtime library is no longer needed.
+スクリプトはネイティブコードにコンパイルされるため、
+実行時ライブラリを読み込む必要はなくなります。
 
-Open `main.ray` and comment out the loadLibrary() calls.
+`main.ray` を開き、loadLibrary() の呼び出しをコメントアウトしてください。
 
-Example:
+例:
 ```
 // Suika.loadPlugin("system")
 ```
 
-Please note that you should not call `Suika.loadPlugin()` outside the
-`main.ray` file.
+`Suika.loadPlugin()` は `main.ray` ファイル以外から呼び出さないでください。
 
 ---
 
-## 2. Generate C Source
+## 2. C ソースを生成する
 
-To compile scripts into C source code, run:
+スクリプトを C ソースコードにコンパイルするには、次を実行します。
 
 ```sh
 suika3-aotcomp main.ray script1.ray script2.ray ...
 ```
 
-This command generates the following file:
+このコマンドは、次のファイルを生成します。
 ```
 library.c
 ```
 
-The generated file contains the compiled script library.
+生成されたファイルには、コンパイル済みのスクリプトライブラリが含まれます。
 
 > [!TIPS]
-> Specify all script files in the command line, including `main.ray`.
+> `main.ray` を含むすべてのスクリプトファイルをコマンドラインで指定してください。
 
-Example:
+例:
 ```
 suika3-aotcomp main.ray system.ray scenario1.ray scenario2.ray
 ```
 
 --
 
-## 3. Replace the Engine Library
+## 3. エンジンライブラリを置き換える
 
-Copy the generated `library.c` file to the engine source tree:
+生成された `library.c` ファイルをエンジンのソースツリーにコピーします。
 ```
 external/PlayfieldEngine/src/library.c
 ```
 
-Overwrite the existing file.
+既存のファイルを上書きしてください。
 
 ---
 
-## 4. Build the Engine
+## 4. エンジンをビルドする
 
-Build the Suika3 project using CMake as usual.
+通常どおり CMake を使って Suika3 プロジェクトをビルドします。
 
-The compiled scripts will now be linked into the engine binary.
+コンパイル済みスクリプトが、エンジンバイナリにリンクされるようになります。
 
 ### iOS
 
-To build static binaries, type:
+静的バイナリをビルドするには、次を入力します。
 ```
 cmake --preset ios-device
 cmake --preset ios-simulator
@@ -78,15 +79,15 @@ cmake --build --preset ios-device
 cmake --build --preset ios-simulator
 ```
 
-After that, copy the static libraries to your iOS project:
-* Copy `build-ios-device/libsuika3.a` to `Suika3.xcframework/ios-arm64/libsuika3.a`
-* Copy `build-ios-simulator/libsuika3.a` to `Suika3.xcframework/ios-arm64_x86_64-simulator/libsuika3.a`
+その後、静的ライブラリを iOS プロジェクトにコピーします。
+* `build-ios-device/libsuika3.a` を `Suika3.xcframework/ios-arm64/libsuika3.a` にコピーする
+* `build-ios-simulator/libsuika3.a` を `Suika3.xcframework/ios-arm64_x86_64-simulator/libsuika3.a` にコピーする
 
-Overwrite the existing file.
+既存のファイルを上書きしてください。
 
 ### Android
 
-To build shared binaries, type:
+共有バイナリをビルドするには、次を入力します。
 ```
 cmake --preset android-arm64
 cmake --preset android-arvm7
@@ -98,17 +99,17 @@ cmake --build --preset android-x86
 cmake --build --preset android-x86_64
 ```
 
-After that, copy the shared libraries to your Android project:
-* Copy `build-android-arm64/libsuika3.so` to `app/src/main/jniLibs/arm64-v8a/libplayfield.so`
-* Copy `build-android-armv7/libsuika3.so` to `app/src/main/jniLibs/armeabi-v7a/libplayfield.so`
-* Copy `build-android-x86/libsuika3.so` to `app/src/main/jniLibs/x86/libplayfield.so`
-* Copy `build-android-x86_64/libsuika3.so` to `app/src/main/jniLibs/x86_64/libplayfield.so`
+その後、共有ライブラリを Android プロジェクトにコピーします。
+* `build-android-arm64/libsuika3.so` を `app/src/main/jniLibs/arm64-v8a/libplayfield.so` にコピーする
+* `build-android-armv7/libsuika3.so` を `app/src/main/jniLibs/armeabi-v7a/libplayfield.so` にコピーする
+* `build-android-x86/libsuika3.so` を `app/src/main/jniLibs/x86/libplayfield.so` にコピーする
+* `build-android-x86_64/libsuika3.so` を `app/src/main/jniLibs/x86_64/libplayfield.so` にコピーする
 
-Overwrite the existing file.
+既存のファイルを上書きしてください。
 
 ### HarmonyOS NEXT
 
-To build shared binaries, type:
+共有バイナリをビルドするには、次を入力します。
 ```
 cmake --preset openharmony-arm64
 cmake --preset openharmony-x86_64
@@ -116,31 +117,31 @@ cmake --build --preset openharmony-x86
 cmake --build --preset openharmony-x86_64
 ```
 
-After that, copy the shared libraries to your HarmonyOS NEXT project:
-* Copy `build-openharmony-arm64/libsuika3.a` to `entry/libs/arm64-v8a/libsuika3.a`
-* Copy `build-openharmony-x86_64/libsuika3.a` to `entry/libs/x86_64/libsuika3.a`
+その後、共有ライブラリを HarmonyOS NEXT プロジェクトにコピーします。
+* `build-openharmony-arm64/libsuika3.a` を `entry/libs/arm64-v8a/libsuika3.a` にコピーする
+* `build-openharmony-x86_64/libsuika3.a` を `entry/libs/x86_64/libsuika3.a` にコピーする
 
-Overwrite the existing file.
+既存のファイルを上書きしてください。
 
 ### Unity Plugin
 
-To build shared binaries, type:
+共有バイナリをビルドするには、次を入力します。
 ```
 cmake --preset unity-win64
 cmake --build --preset unity-win64
 ```
 
-After that, copy the libraries to your Unity project:
-* Copy `build-unity-win64/libsuika3.dll` to `Assets/Plugins/x86_64/libplayfield.dll`
+その後、ライブラリを Unity プロジェクトにコピーします。
+* `build-unity-win64/libsuika3.dll` を `Assets/Plugins/x86_64/libplayfield.dll` にコピーする
 
-Overwrite the existing file.
+既存のファイルを上書きしてください。
 
 ---
 
-## Results
+## 結果
 
-Scripts are embedded directly into the executable, providing:
+スクリプトは実行ファイルに直接埋め込まれ、次の利点があります。
 
-* No JIT (for store review)
-* No runtime script loading
-* Faster startup
+* JIT が不要になる (ストア審査向け)
+* 実行時のスクリプト読み込みが不要になる
+* 起動が速くなる
