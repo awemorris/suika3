@@ -12,6 +12,8 @@ An anime file is a text file which describes sequences of layer transforms.
 To move the message box 100px right in a second, write the following sequence in an anime file.
 
 ```
+# A block describes a sequence for animation.
+# The name of a block can be whatever you like and it won't affect anything.
 move {
     # This is a layer specifier.
     layer: msg;
@@ -38,7 +40,7 @@ move {
 
 ## Layer Structure
 
-The following is our layer structure.
+The following is our layer structure in the bottom-to-top order.
 
 | Layer Name       | Description                                |
 |------------------|--------------------------------------------|
@@ -99,10 +101,43 @@ The following is our layer structure.
 | text6            | text layer 6                               |
 | text7            | text layer 7                               |
 | text8            | text layer 8                               |
+| gui-button-1     | GUI button ID 1                            |
+| gui-button-2     | GUI button ID 2                            |
+| gui-button-3     | GUI button ID 3                            |
+| gui-button-4     | GUI button ID 4                            |
+| gui-button-5     | GUI button ID 5                            |
+| gui-button-6     | GUI button ID 6                            |
+| gui-button-7     | GUI button ID 7                            |
+| gui-button-8     | GUI button ID 8                            |
+| gui-button-9     | GUI button ID 9                            |
+| gui-button-10    | GUI button ID 10                           |
+| gui-button-11    | GUI button ID 11                           |
+| gui-button-12    | GUI button ID 12                           |
+| gui-button-13    | GUI button ID 13                           |
+| gui-button-14    | GUI button ID 14                           |
+| gui-button-15    | GUI button ID 15                           |
+| gui-button-16    | GUI button ID 16                           |
+| gui-button-17    | GUI button ID 17                           |
+| gui-button-18    | GUI button ID 18                           |
+| gui-button-19    | GUI button ID 19                           |
+| gui-button-20    | GUI button ID 20                           |
+| gui-button-21    | GUI button ID 21                           |
+| gui-button-22    | GUI button ID 22                           |
+| gui-button-23    | GUI button ID 23                           |
+| gui-button-24    | GUI button ID 24                           |
+| gui-button-25    | GUI button ID 25                           |
+| gui-button-26    | GUI button ID 26                           |
+| gui-button-27    | GUI button ID 27                           |
+| gui-button-28    | GUI button ID 28                           |
+| gui-button-29    | GUI button ID 29                           |
+| gui-button-30    | GUI button ID 30                           |
+| gui-button-31    | GUI button ID 31                           |
+| gui-button-32    | GUI button ID 32                           |
 
 ## Scaling and Rotation
 
 ```
+# Scale-up and rotate the `effect1` layer to 2.0x and 360 deg in 3 seconds.
 test1 {
     layer: effect1;
  
@@ -132,6 +167,7 @@ test1 {
     to-rotate: -360;
 }
 
+# Reverse.
 test2 {
     layer: effect1;
 

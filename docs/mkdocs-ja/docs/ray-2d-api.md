@@ -1,19 +1,19 @@
-Ray Low Level API
+Ray 低レベル API
 =================
 
-The `Low Level API (Engine.*)` is designed for versatile 2D game creation.
+`Low Level API (Engine.*)` は、汎用的な 2D ゲーム制作向けに設計されています。
 
-Every API function takes one parameter.
-The parameter must be a dictionary, and arguments must be stored as key-and-value pairs.
+すべての API 関数は 1 つの引数を取ります。
+引数は辞書でなければならず、各引数値はキーと値のペアとして格納する必要があります。
 
-## Skelton
+## 骨組み
 
 ```
-// Do not define variables outside functions because it's a syntax error.
+// 関数の外で変数を定義しないでください。構文エラーになります。
 
-// Called when the window is created.
+// ウィンドウが作成されたときに呼び出されます。
 func setup() {
-    // Return the window configuration.
+    // ウィンドウ設定を返します。
     return {
         width: 1280,
         height: 720,
@@ -21,13 +21,13 @@ func setup() {
     };
 }
 
-// Called once when the game starts.
+// ゲーム開始時に一度だけ呼び出されます。
 func start() {
-    // Global variables should be defined here.
+    // グローバル変数はここで定義してください。
     posX = 0;
     posY = 0;
 
-    // Create a white 100x100 texture.
+    // 白い 100x100 のテクスチャを作成します。
     tex = Engine.createColorTexture({
         width: 100,
         height: 100,
@@ -35,45 +35,45 @@ func start() {
     });
 }
 
-// Called every frame before rendering.
+// 描画前に毎フレーム呼び出されます。
 func update() {
     posX = Engine.mousePosX;
     posY = Engine.mousePosY;
 }
 
-// Called every frame to render graphics.
+// グラフィックを描画するために毎フレーム呼び出されます。
 func render() {
     Engine.draw({ texture: tex, x: posX, y: posY });
 }
 ```
 
-## Debug
+## デバッグ
 
 ### print()
 
-This API prints a string or dumps an object.
-Only takes a non-dictionary argument.
+この API は文字列を表示するか、オブジェクトをダンプします。
+辞書ではない引数だけを取ります。
 
 ```
 func dumpEnemies() {
     if (Engine.isGamepadXPressed) {
-        print("[Current emenies]");
+        print("[現在の敵]");
         print(enemies);
     }
 }
 ```
 
-## Time
+## 時間
 
-### Absolute Time
+### 絶対時間
 
-|Variable                    |Description                                |
+|変数                        |説明                                       |
 |----------------------------|-------------------------------------------|
-|Engine.millisec             |Time in millisec.                          |
+|Engine.millisec             |ミリ秒単位の時刻。                        |
 
 ```
 func update() {
-    // Get the seconds since the last call.
+    // 前回の呼び出しからの経過秒数を取得します。
     var curTime = Engine.millisec;
     var dt = (curTime - lastTime) * 0.001;
     lastTime = curTime;
@@ -84,7 +84,7 @@ func update() {
 
 ### Engine.getDate()
 
-Returns a date dictionary.
+日付の辞書を返します。
 
 ```
 func frame() {
@@ -99,97 +99,97 @@ func frame() {
 }
 ```
 
-## Input
+## 入力
 
-These are variables, not functions.
+これらは関数ではなく変数です。
 
-|Variable                        |Description                                |
+|変数                            |説明                                       |
 |--------------------------------|-------------------------------------------|
-|Engine.mousePosX                |Mouse position X.                          |
-|Engine.mousePosY                |Mouse position Y.                          |
-|Engine.isMouseLeftPressed       |Left mouse button state.                   |
-|Engine.isMouseRightPressed      |Right mouse button state.                  |
-|Engine.isEscapeKeyPressed       |Escape key state.                          |
-|Engine.isReturnKeyPressed       |Return key state.                          |
-|Engine.isSpaceKeyPressed        |Space key state.                           |
-|Engine.isTabKeyPressed          |Tab key state.                             |
-|Engine.isBackspaceKeyPressed    |Backspace key state.                       |
-|Engine.isDeleteKeyPressed       |Delete key state.                          |
-|Engine.isHomeKeyPressed         |Home key state.                            |
-|Engine.isEndKeyPressed          |End key state.                             |
-|Engine.isPageupKeyPressed       |PageUp key state.                          |
-|Engine.isPagedownKeyPressed     |PageDown key state.                        |
-|Engine.isShiftKeyPressed        |Shift key state.                           |
-|Engine.isControlKeyPressed      |Control key state.                         |
-|Engine.isAltKeyPressed          |Alt key state.                             |
-|Engine.isUpKeyPressed           |Up arrow key state.                        |
-|Engine.isDownKeyPressed         |Down arrow key state.                      |
-|Engine.isRightKeyPressed        |Right arrow key state.                     |
-|Engine.isLeftKeyPressed         |Left arrow key state.                      |
-|Engine.isAKeyPressed            |'A' key state.                             |
-|Engine.isBKeyPressed            |'B' key state.                             |
-|Engine.isCKeyPressed            |'C' key state.                             |
-|Engine.isDKeyPressed            |'D' key state.                             |
-|Engine.isEKeyPressed            |'E' key state.                             |
-|Engine.isFKeyPressed            |'F' key state.                             |
-|Engine.isGKeyPressed            |'G' key state.                             |
-|Engine.isHKeyPressed            |'H' key state.                             |
-|Engine.isIKeyPressed            |'I' key state.                             |
-|Engine.isJKeyPressed            |'J' key state.                             |
-|Engine.isKKeyPressed            |'K' key state.                             |
-|Engine.isLKeyPressed            |'L' key state.                             |
-|Engine.isMKeyPressed            |'M' key state.                             |
-|Engine.isNKeyPressed            |'N' key state.                             |
-|Engine.isOKeyPressed            |'O' key state.                             |
-|Engine.isPKeyPressed            |'P' key state.                             |
-|Engine.isQKeyPressed            |'Q' key state.                             |
-|Engine.isRKeyPressed            |'R' key state.                             |
-|Engine.isSKeyPressed            |'S' key state.                             |
-|Engine.isTKeyPressed            |'T' key state.                             |
-|Engine.isUKeyPressed            |'U' key state.                             |
-|Engine.isVKeyPressed            |'V' key state.                             |
-|Engine.isWKeyPressed            |'W' key state.                             |
-|Engine.isXKeyPressed            |'X' key state.                             |
-|Engine.isYKeyPressed            |'Y' key state.                             |
-|Engine.isZKeyPressed            |'Z' key state.                             |
-|Engine.is1KeyPressed            |'1' key state.                             |
-|Engine.is2KeyPressed            |'2' key state.                             |
-|Engine.is3KeyPressed            |'3' key state.                             |
-|Engine.is4KeyPressed            |'4' key state.                             |
-|Engine.is5KeyPressed            |'5' key state.                             |
-|Engine.is6KeyPressed            |'6' key state.                             |
-|Engine.is7KeyPressed            |'7' key state.                             |
-|Engine.is8KeyPressed            |'8' key state.                             |
-|Engine.is9KeyPressed            |'9' key state.                             |
-|Engine.is0KeyPressed            |'0' key state.                             |
-|Engine.isF1KeyPressed           |F1 key state.                              |
-|Engine.isF2KeyPressed           |F2 key state.                              |
-|Engine.isF3KeyPressed           |F3 key state.                              |
-|Engine.isF4KeyPressed           |F4 key state.                              |
-|Engine.isF5KeyPressed           |F5 key state.                              |
-|Engine.isF6KeyPressed           |F6 key state.                              |
-|Engine.isF7KeyPressed           |F7 key state.                              |
-|Engine.isF8KeyPressed           |F8 key state.                              |
-|Engine.isF9KeyPressed           |F9 key state.                              |
-|Engine.isF10KeyPressed          |F10 key state.                             |
-|Engine.isF11KeyPressed          |F11 key state.                             |
-|Engine.isF12KeyPressed          |F12 key state.                             |
-|Engine.isGamepadUpPressed       |Gamepad up arrow state.                    |
-|Engine.isGamepadDownPressed     |Gamepad down arrow state.                  |
-|Engine.isGamepadLeftPressed     |Gamepad left arrow state.                  |
-|Engine.isGamepadRightPressed    |Gamepad right arrow state.                 |
-|Engine.isGamepadAPressed        |Gamepad A button state.                    |
-|Engine.isGamepadBPressed        |Gamepad B button state.                    |
-|Engine.isGamepadXPressed        |Gamepad X button state.                    |
-|Engine.isGamepadYPressed        |Gamepad Y button state.                    |
-|Engine.isGamepadLPressed        |Gamepad L button state.                    |
-|Engine.isGamepadRPressed        |Gamepad R button state.                    |
-|Engine.gamepadAnalogX1          |Gamepad analog 1 X (-32768, 32767)         |
-|Engine.gamepadAnalogY1          |Gamepad analog 1 Y (-32768, 32767)         |
-|Engine.gamepadAnalogX2          |Gamepad analog 2 X (-32768, 32767)         |
-|Engine.gamepadAnalogY2          |Gamepad analog 2 Y (-32768, 32767)         |
-|Engine.gamepadAnalogL           |Gamepad analog L (-32768, 32767)           |
-|Engine.gamepadAnalogR           |Gamepad analog R (-32768, 32767)           |
+|Engine.mousePosX                |マウス位置 X。                            |
+|Engine.mousePosY                |マウス位置 Y。                            |
+|Engine.isMouseLeftPressed       |マウス左ボタンの状態。                    |
+|Engine.isMouseRightPressed      |マウス右ボタンの状態。                    |
+|Engine.isEscapeKeyPressed       |Escape キーの状態。                       |
+|Engine.isReturnKeyPressed       |Return キーの状態。                       |
+|Engine.isSpaceKeyPressed        |Space キーの状態。                        |
+|Engine.isTabKeyPressed          |Tab キーの状態。                          |
+|Engine.isBackspaceKeyPressed    |Backspace キーの状態。                    |
+|Engine.isDeleteKeyPressed       |Delete キーの状態。                       |
+|Engine.isHomeKeyPressed         |Home キーの状態。                         |
+|Engine.isEndKeyPressed          |End キーの状態。                          |
+|Engine.isPageupKeyPressed       |PageUp キーの状態。                       |
+|Engine.isPagedownKeyPressed     |PageDown キーの状態。                     |
+|Engine.isShiftKeyPressed        |Shift キーの状態。                        |
+|Engine.isControlKeyPressed      |Control キーの状態。                      |
+|Engine.isAltKeyPressed          |Alt キーの状態。                          |
+|Engine.isUpKeyPressed           |上矢印キーの状態。                        |
+|Engine.isDownKeyPressed         |下矢印キーの状態。                        |
+|Engine.isRightKeyPressed        |右矢印キーの状態。                        |
+|Engine.isLeftKeyPressed         |左矢印キーの状態。                        |
+|Engine.isAKeyPressed            |'A' キーの状態。                          |
+|Engine.isBKeyPressed            |'B' キーの状態。                          |
+|Engine.isCKeyPressed            |'C' キーの状態。                          |
+|Engine.isDKeyPressed            |'D' キーの状態。                          |
+|Engine.isEKeyPressed            |'E' キーの状態。                          |
+|Engine.isFKeyPressed            |'F' キーの状態。                          |
+|Engine.isGKeyPressed            |'G' キーの状態。                          |
+|Engine.isHKeyPressed            |'H' キーの状態。                          |
+|Engine.isIKeyPressed            |'I' キーの状態。                          |
+|Engine.isJKeyPressed            |'J' キーの状態。                          |
+|Engine.isKKeyPressed            |'K' キーの状態。                          |
+|Engine.isLKeyPressed            |'L' キーの状態。                          |
+|Engine.isMKeyPressed            |'M' キーの状態。                          |
+|Engine.isNKeyPressed            |'N' キーの状態。                          |
+|Engine.isOKeyPressed            |'O' キーの状態。                          |
+|Engine.isPKeyPressed            |'P' キーの状態。                          |
+|Engine.isQKeyPressed            |'Q' キーの状態。                          |
+|Engine.isRKeyPressed            |'R' キーの状態。                          |
+|Engine.isSKeyPressed            |'S' キーの状態。                          |
+|Engine.isTKeyPressed            |'T' キーの状態。                          |
+|Engine.isUKeyPressed            |'U' キーの状態。                          |
+|Engine.isVKeyPressed            |'V' キーの状態。                          |
+|Engine.isWKeyPressed            |'W' キーの状態。                          |
+|Engine.isXKeyPressed            |'X' キーの状態。                          |
+|Engine.isYKeyPressed            |'Y' キーの状態。                          |
+|Engine.isZKeyPressed            |'Z' キーの状態。                          |
+|Engine.is1KeyPressed            |'1' キーの状態。                          |
+|Engine.is2KeyPressed            |'2' キーの状態。                          |
+|Engine.is3KeyPressed            |'3' キーの状態。                          |
+|Engine.is4KeyPressed            |'4' キーの状態。                          |
+|Engine.is5KeyPressed            |'5' キーの状態。                          |
+|Engine.is6KeyPressed            |'6' キーの状態。                          |
+|Engine.is7KeyPressed            |'7' キーの状態。                          |
+|Engine.is8KeyPressed            |'8' キーの状態。                          |
+|Engine.is9KeyPressed            |'9' キーの状態。                          |
+|Engine.is0KeyPressed            |'0' キーの状態。                          |
+|Engine.isF1KeyPressed           |F1 キーの状態。                           |
+|Engine.isF2KeyPressed           |F2 キーの状態。                           |
+|Engine.isF3KeyPressed           |F3 キーの状態。                           |
+|Engine.isF4KeyPressed           |F4 キーの状態。                           |
+|Engine.isF5KeyPressed           |F5 キーの状態。                           |
+|Engine.isF6KeyPressed           |F6 キーの状態。                           |
+|Engine.isF7KeyPressed           |F7 キーの状態。                           |
+|Engine.isF8KeyPressed           |F8 キーの状態。                           |
+|Engine.isF9KeyPressed           |F9 キーの状態。                           |
+|Engine.isF10KeyPressed          |F10 キーの状態。                          |
+|Engine.isF11KeyPressed          |F11 キーの状態。                          |
+|Engine.isF12KeyPressed          |F12 キーの状態。                          |
+|Engine.isGamepadUpPressed       |ゲームパッド上方向の状態。                |
+|Engine.isGamepadDownPressed     |ゲームパッド下方向の状態。                |
+|Engine.isGamepadLeftPressed     |ゲームパッド左方向の状態。                |
+|Engine.isGamepadRightPressed    |ゲームパッド右方向の状態。                |
+|Engine.isGamepadAPressed        |ゲームパッド A ボタンの状態。             |
+|Engine.isGamepadBPressed        |ゲームパッド B ボタンの状態。             |
+|Engine.isGamepadXPressed        |ゲームパッド X ボタンの状態。             |
+|Engine.isGamepadYPressed        |ゲームパッド Y ボタンの状態。             |
+|Engine.isGamepadLPressed        |ゲームパッド L ボタンの状態。             |
+|Engine.isGamepadRPressed        |ゲームパッド R ボタンの状態。             |
+|Engine.gamepadAnalogX1          |ゲームパッドアナログ 1 X (-32768, 32767)。|
+|Engine.gamepadAnalogY1          |ゲームパッドアナログ 1 Y (-32768, 32767)。|
+|Engine.gamepadAnalogX2          |ゲームパッドアナログ 2 X (-32768, 32767)。|
+|Engine.gamepadAnalogY2          |ゲームパッドアナログ 2 Y (-32768, 32767)。|
+|Engine.gamepadAnalogL           |ゲームパッドアナログ L (-32768, 32767)。  |
+|Engine.gamepadAnalogR           |ゲームパッドアナログ R (-32768, 32767)。  |
 
 ```
 func update() {
@@ -199,20 +199,20 @@ func update() {
 }
 ```
 
-## Rendering
+## 描画
 
 ### Engine.createColorTexture()
 
-This API creates a texture with the specified color, and returns a texture.
+この API は指定された色のテクスチャを作成し、テクスチャを返します。
 
-|Argument Name       |Description                                                   |
+|引数名              |説明                                                          |
 |--------------------|--------------------------------------------------------------|
-|width               |Texture width.                                                |
-|height              |Texture height.                                               |
-|r                   |Red color.                                                    |
-|g                   |Green color.                                                  |
-|b                   |Blue color.                                                   |
-|a                   |Alpha color.                                                  |
+|width               |テクスチャの幅。                                             |
+|height              |テクスチャの高さ。                                           |
+|r                   |赤色。                                                       |
+|g                   |緑色。                                                       |
+|b                   |青色。                                                       |
+|a                   |アルファ値。                                                 |
 
 ```
 func createBlockTexture() {
@@ -229,11 +229,11 @@ func createBlockTexture() {
 
 ### Engine.loadTexture()
 
-This API loads a texture from assets, and returns a texture.
+この API はアセットからテクスチャを読み込み、テクスチャを返します。
 
-|Argument Name       |Description                                                   |
+|引数名              |説明                                                          |
 |--------------------|--------------------------------------------------------------|
-|file                |File name to load.                                            |
+|file                |読み込むファイル名。                                         |
 
 ```
 func loadPlayerTexture() {
@@ -248,11 +248,11 @@ func loadPlayerTexture() {
 
 ### Engine.destroyTexture()
 
-This API destroys a texture.
+この API はテクスチャを破棄します。
 
-|Argument Name       |Description                                                   |
+|引数名              |説明                                                          |
 |--------------------|--------------------------------------------------------------|
-|texture             |Texture.                                                      |
+|texture             |テクスチャ。                                                 |
 
 ```
 func destroyPlayerTexture() {
@@ -264,20 +264,20 @@ func destroyPlayerTexture() {
 
 ### Engine.renderTexture()
 
-This API renders a texture to the screen.
+この API はテクスチャを画面に描画します。
 
-|Argument Name       |Description                                                   |
+|引数名              |説明                                                          |
 |--------------------|--------------------------------------------------------------|
-|dstLeft             |Screen coordinate X.                                          |
-|dstTop              |Screen coordinate Y.                                          |
-|dstWidth            |Width in screen.                                              |
-|dstHeight           |Height in screen.                                             |
-|texture             |Texture.                                                      |
-|srcLeft             |Texture top left X.                                           |
-|srcTop              |Texture top left Y.                                           |
-|srcWidth            |Texture rectangle width.                                      |
-|srcHeight           |Texture rectangle height.                                     |
-|alpha               |Alpha value (0-255)                                           |
+|dstLeft             |画面座標 X。                                                 |
+|dstTop              |画面座標 Y。                                                 |
+|dstWidth            |画面上の幅。                                                 |
+|dstHeight           |画面上の高さ。                                               |
+|texture             |テクスチャ。                                                 |
+|srcLeft             |テクスチャ左上 X。                                           |
+|srcTop              |テクスチャ左上 Y。                                           |
+|srcWidth            |テクスチャ矩形の幅。                                         |
+|srcHeight           |テクスチャ矩形の高さ。                                       |
+|alpha               |アルファ値 (0-255)。                                         |
 
 ```
 func renderPlayer() {
@@ -298,13 +298,13 @@ func renderPlayer() {
 
 ### Engine.draw()
 
-This API renders a texture to the screen (a simpler version of `Engine.renderTexture()`.)
+この API はテクスチャを画面に描画します (`Engine.renderTexture()` の簡易版です)。
 
-|Argument Name       |Description                                                   |
+|引数名              |説明                                                          |
 |--------------------|--------------------------------------------------------------|
-|texture             |Texture.                                                      |
-|x                   |Screen coordinate X.                                          |
-|y                   |Screen coordinate Y.                                          |
+|texture             |テクスチャ。                                                 |
+|x                   |画面座標 X。                                                 |
+|y                   |画面座標 Y。                                                 |
 
 ```
 func renderPlayer() {
@@ -318,24 +318,24 @@ func renderPlayer() {
 
 ### Engine.renderTexture3D()
 
-This API renders a texture to the screen.
+この API はテクスチャを画面に描画します。
 
-|Argument Name       |Description                                                   |
+|引数名              |説明                                                          |
 |--------------------|--------------------------------------------------------------|
-|x1                  |Screen coordinate X1.                                         |
-|y1                  |Screen coordinate Y1.                                         |
-|x2                  |Screen coordinate X2.                                         |
-|y2                  |Screen coordinate Y2.                                         |
-|x3                  |Screen coordinate X3.                                         |
-|y3                  |Screen coordinate Y3.                                         |
-|x4                  |Screen coordinate X4.                                         |
-|y4                  |Screen coordinate Y4.                                         |
-|texture             |Texture.                                                      |
-|srcLeft             |Texture top left X.                                           |
-|srcTop              |Texture top left Y.                                           |
-|srcWidth            |Texture rectangle width.                                      |
-|srcHeight           |Texture rectangle height.                                     |
-|alpha               |Alpha value (0-255)                                           |
+|x1                  |画面座標 X1。                                                |
+|y1                  |画面座標 Y1。                                                |
+|x2                  |画面座標 X2。                                                |
+|y2                  |画面座標 Y2。                                                |
+|x3                  |画面座標 X3。                                                |
+|y3                  |画面座標 Y3。                                                |
+|x4                  |画面座標 X4。                                                |
+|y4                  |画面座標 Y4。                                                |
+|texture             |テクスチャ。                                                 |
+|srcLeft             |テクスチャ左上 X。                                           |
+|srcTop              |テクスチャ左上 Y。                                           |
+|srcWidth            |テクスチャ矩形の幅。                                         |
+|srcHeight           |テクスチャ矩形の高さ。                                       |
+|alpha               |アルファ値 (0-255)。                                         |
 
 ```
 func renderPlayer() {
@@ -356,12 +356,12 @@ func renderPlayer() {
 
 ### Engine.loadFont()
 
-This API loads an asset font file to a specified font slot.
+この API はアセットのフォントファイルを指定されたフォントスロットに読み込みます。
 
-|Argument Name       |Description                                                   |
+|引数名              |説明                                                          |
 |--------------------|--------------------------------------------------------------|
-|slot                |Font slot index. (0-3)                                        |
-|file                |File name to load.                                            |
+|slot                |フォントスロットのインデックス (0-3)。                       |
+|file                |読み込むファイル名。                                         |
 
 ```
 func loadNotoSansFont() {
@@ -371,17 +371,17 @@ func loadNotoSansFont() {
 
 ### Engine.createTextTexture()
 
-This API creates a texture and draws a text on it.
+この API はテクスチャを作成し、その上にテキストを描画します。
      	 	 
-|Argument Name       |Description                                                   |
+|引数名              |説明                                                          |
 |--------------------|--------------------------------------------------------------|
-|slot                |Font slot index. (0-3)                                        |
-|text                |Text to draw.                                                 |
-|size                |Font size.                                                    |
-|r                   |Red color.                                                    |
-|g                   |Green color.                                                  |
-|b                   |Blue color.                                                   |
-|a                   |Alpha color.                                                  |
+|slot                |フォントスロットのインデックス (0-3)。                       |
+|text                |描画するテキスト。                                           |
+|size                |フォントサイズ。                                             |
+|r                   |赤色。                                                       |
+|g                   |緑色。                                                       |
+|b                   |青色。                                                       |
+|a                   |アルファ値。                                                 |
 
 ```
 func createScoreTexture() {
@@ -397,16 +397,16 @@ func createScoreTexture() {
 }
 ```
 
-## Sound
+## サウンド
 
 ### Engine.playSound()
 
-This API starts playing a sound asset file on a specified sound track.
+この API は指定されたサウンドトラックでサウンドアセットファイルの再生を開始します。
 
-|Argument Name       |Description                                                   |
+|引数名              |説明                                                          |
 |--------------------|--------------------------------------------------------------|
-|stream              |Track index. (0-3)                                            |
-|file                |File to play.                                                 |
+|stream              |トラックのインデックス (0-3)。                               |
+|file                |再生するファイル。                                           |
 
 ```
 func playJumpSound() {
@@ -416,12 +416,12 @@ func playJumpSound() {
 
 ### Engine.playSoundLoop()
 
-This API starts playing a sound asset file on a specified sound track.
+この API は指定されたサウンドトラックでサウンドアセットファイルのループ再生を開始します。
 
-|Argument Name       |Description                                                   |
+|引数名              |説明                                                          |
 |--------------------|--------------------------------------------------------------|
-|stream              |Track index. (0-3)                                            |
-|file                |File to play.                                                 |
+|stream              |トラックのインデックス (0-3)。                               |
+|file                |再生するファイル。                                           |
 
 ```
 func playBGM() {
@@ -431,11 +431,11 @@ func playBGM() {
 
 ### Engine.stopSound()
 
-This API stops a sound playback on a specified sound track.
+この API は指定されたサウンドトラックのサウンド再生を停止します。
 
-|Argument Name       |Description                                                   |
+|引数名              |説明                                                          |
 |--------------------|--------------------------------------------------------------|
-|stream              |Track index. (0-3)                                            |
+|stream              |トラックのインデックス (0-3)。                               |
 
 ```
 func playJumpSound() {
@@ -445,12 +445,12 @@ func playJumpSound() {
 
 ### Engine.setSoundVolume()
 
-This API sets a sound volume on a specified sound track.
+この API は指定されたサウンドトラックの音量を設定します。
 
-|Argument Name       |Description                                                   |
+|引数名              |説明                                                          |
 |--------------------|--------------------------------------------------------------|
-|stream              |Track index. (0-3, -1 for master)                             |
-|volume              |Volume value. (0-1.0)                                         |
+|stream              |トラックのインデックス (0-3、-1 はマスター)。                |
+|volume              |音量値 (0-1.0)。                                             |
 
 ```
 func playJumpSound() {
@@ -461,33 +461,33 @@ func playJumpSound() {
 }
 ```
 
-## Save Data
+## セーブデータ
 
 ### Engine.writeSaveData()
 
-This API writes a save data value that corresponds to a key string.
-If the save data value is too large, this API will fail.
+この API はキー文字列に対応するセーブデータ値を書き込みます。
+セーブデータ値が大きすぎる場合、この API は失敗します。
 
-|Argument Name       |Description                                                   |
+|引数名              |説明                                                          |
 |--------------------|--------------------------------------------------------------|
-|key                 |Key string.                                                   |
-|value               |Value. (integer, floating point, array, or dictionary)        |
+|key                 |キー文字列。                                                 |
+|value               |値 (整数、浮動小数点数、配列、または辞書)。                  |
 
 ### Engine.readSaveData()
 
-This API reads save data value that corresponds to a key string.
-The return value will be an object that represents a save data value.
-This API will fail when the specified key is not available.
+この API はキー文字列に対応するセーブデータ値を読み込みます。
+戻り値はセーブデータ値を表すオブジェクトです。
+指定されたキーが利用できない場合、この API は失敗します。
 
-|Argument Name       |Description                                                   |
+|引数名              |説明                                                          |
 |--------------------|--------------------------------------------------------------|
-|key                 |Key string.                                                   |
+|key                 |キー文字列。                                                 |
 
 ### Engine.checkSaveData()
 
-This API checks whether the save data exists for a key string or not.
-The return value is a boolean.
+この API はキー文字列に対応するセーブデータが存在するかどうかを確認します。
+戻り値は真偽値です。
 
-|Argument Name       |Description                                                   |
+|引数名              |説明                                                          |
 |--------------------|--------------------------------------------------------------|
-|key                 |Key string.                                                   |
+|key                 |キー文字列。                                                 |

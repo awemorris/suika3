@@ -1,96 +1,104 @@
 GUI
 ===
 
-## Introduction
+## はじめに
 
-GUI is Suika3's UI/UX creation feature.
+GUI は Suika3 の UI/UX 作成機能です。
 
-In Suika3, buttons are defined in a dedicated GUI mode and operate in
-a synchronous manner, that is, calling a GUI results in a button click or
-a cancel.
+Suika3 では、ボタンは専用の GUI モードで定義され、同期的に動作します。つまり、GUI を呼び出すと、ボタンのクリックまたはキャンセルのいずれかの結果になります。
 
-Asynchronous callbacks such as showing buttons while text tag
-execution are intentionally avoided because they can be difficult for
-beginner programmers to understand and manage.
+テキストタグの実行中にボタンを表示するような非同期コールバックは、初心者のプログラマーにとって理解や管理が難しくなりやすいため、意図的に避けています。
 
-A GUI file contains a list of button definitions. Each button includes
-a behavior type, idle and hover images, and additional
-properties. Buttons are mapped to animation layers, and animation
-files can be triggered when a button's state changes.
+GUI ファイルには、ボタン定義の一覧を記述します。各ボタンには、動作タイプ、通常時とホバー時の画像、追加のプロパティが含まれます。ボタンはアニメーションレイヤーに対応付けられ、ボタンの状態が変化したときにアニメーションファイルを実行できます。
 
 ---
 
-## GUI Sample
+## GUI のサンプル
 
 ```
+# グローバル設定セクション。
 global {
-    fadein:       0.2;            # Fading-in time in seconds.
-    fadeout:      0.2;            # Fading-out time in seconds.
+    fadein:       0.2;            # フェードイン時間（秒）。
+    fadeout:      0.2;            # フェードアウト時間（秒）。
 }
 
+# ブロックはボタンを表します。
+# ブロック名は自由に付けることができ、動作には影響しません。
 button1 {
-    # Layer ID (1-32)
+    # レイヤー ID（`1`-`32`）
+    # GUI レイヤーでは、`1` が最前面、`32` が最背面を表します。
     id: 1;
-
-    # Behavior Type (Go to a label)
+ 
+    # 動作タイプ（`goto` はクリック時にラベルへ移動することを意味します）
     type: goto;
 
-    # Label to go to.
-    label: button1_clicked;   
+    # 移動先のラベル。
+    label: button1_clicked;
 
-    # Position
+    # 位置
     x: 39;
     y: 99;
 
-    # Images
-    image-idle:  gui/item-idle.png;
-    image-hover: gui/item-hover.png;
+    # `width:` と `height:` は画像サイズから推測できるため省略できます。
+
+    # 画像
+    image-idle:  gui/item-idle.png;    # ボタンがポイントされていないときに表示されます。
+    image-hover: gui/item-hover.png;   # ボタンがポイントされているときに表示されます。
+    image-press: gui/item-press.png;   # ボタンが押されているときに表示されます。
+
+    # アニメーション
+    anime-idle:  gui/item-idle.anime;   # ボタンの状態が `idle` に変化したときに実行されます。
+    anime-hover: gui/item-hover.anime;  # ボタンの状態が `hover` に変化したときに実行されます。
+    anime-press: gui/item-press.anime;  # ボタンが押されたときに実行されます。
+
+    # `press` は独立した状態ではなく、`hover` 状態に付くフラグです。
+    # `hover` アニメーションが実行されると、`idle` アニメーションはキャンセルされます。
+    # また、`idle` アニメーションが実行されると、`hover` アニメーションはキャンセルされます。
+    # ただし、`press` アニメーションは何もキャンセルしません。
 }
 ```
 
-In the `global` section, you can specify options for the GUI.
+`global` セクションでは、GUI のオプションを指定できます。
 
-Other sections are interpreted as button definitions.
-Here, `button1` makes a button at position (39, 99).
-If the button is clicked, a `go to` jump will happen.
+その他のセクションはボタン定義として解釈されます。ここでは、`button1` が位置 `(39, 99)` にボタンを作成します。ボタンがクリックされると、`goto` と呼ばれるジャンプが発生します。
 
 ---
 
-## Button Types
+## ボタンタイプ
 
-| Description                     | Meaning                                           |
-|---------------------------------|---------------------------------------------------|
-| type: noaction;                 | Non-clickable image.                              |
-| type: goto;                     | Jumps to a label when clicked.                    |
-| type: gui;                      | Jumps to a GUI when clicked.                      |
-| type: mastervol;                | Shown as a master volume slider.                  |
-| type: bgmvol;                   | Shown as a BGM volume slider.                     |
-| type: sevol;                    | Shown as an SE volume slider.                     |
-| type: voicevol;                 | Shown as an voice volume slider.                  |
-| type: charactervol;             | Shown as a character volume slider.               |
-| type: textspeed;                | Shown as a text speed slider.                     |
-| type: autospeed;                | Shown as an auto mode speed slider.               |
-| type: preview;                  | Shown as a text preview area.                     |
-| type: fullscreen;               | Shown as a full screen mode button.               |
-| type: window;                   | Shown as s windoe mode button.                    |
-| type: default;                  | Resets settings when pressed.                     |
-| type: savepage;                 | Shown as a save/load page button.                 |
-| type: save;                     | Shown as a save slot.                             |
-| type: load;                     | Shown as a load slot.                             |
-| type: auto;                     | Shown as an auto mode button.                     |
-| type: skip;                     | Shown as a skip mode button.                      |
-| type: title;                    | Shown as a back-to-title button.                  |
-| type: history;                  | Shown as a history button.                        |
-| type: historyscroll;            | Shown as a vertical history scroll slider.        |
-| type: historyscroll-horizontal; | Shown as a horizontal history scroll slider.      |
-| type: cancel;                   | Shown as a cancel button.                         |
-| type: namevar;                  | Shown as a area to preview a name variable value. |
-| type: char;                     | Shown as a button to input a character.           |
-| type: language                  | Change the language when clicked.                 |
+| 記述                            | 意味                                                |
+|---------------------------------|-----------------------------------------------------|
+| type: noaction;                 | クリックできない画像。                              |
+| type: goto;                     | クリック時にラベルへジャンプします。                |
+| type: gui;                      | クリック時に GUI へジャンプします。                 |
+| type: mastervol;                | マスター音量スライダーとして表示されます。          |
+| type: bgmvol;                   | BGM 音量スライダーとして表示されます。              |
+| type: sevol;                    | SE 音量スライダーとして表示されます。               |
+| type: voicevol;                 | ボイス音量スライダーとして表示されます。            |
+| type: charactervol;             | キャラクター音量スライダーとして表示されます。      |
+| type: textspeed;                | テキスト速度スライダーとして表示されます。          |
+| type: autospeed;                | オートモード速度スライダーとして表示されます。      |
+| type: preview;                  | テキストプレビュー領域として表示されます。          |
+| type: fullscreen;               | フルスクリーンモードボタンとして表示されます。      |
+| type: window;                   | ウィンドウモードボタンとして表示されます。          |
+| type: default;                  | 押すと設定をリセットします。                        |
+| type: savepage;                 | セーブ/ロードページボタンとして表示されます。       |
+| type: save;                     | セーブスロットとして表示されます。                  |
+| type: load;                     | ロードスロットとして表示されます。                  |
+| type: auto;                     | オートモードボタンとして表示されます。              |
+| type: skip;                     | スキップモードボタンとして表示されます。            |
+| type: title;                    | タイトルへ戻るボタンとして表示されます。            |
+| type: history;                  | 履歴ボタンとして表示されます。                      |
+| type: historyscroll;            | 縦方向の履歴スクロールスライダーとして表示されます。|
+| type: historyscroll-horizontal; | 横方向の履歴スクロールスライダーとして表示されます。|
+| type: cancel;                   | キャンセルボタンとして表示されます。                |
+| type: namevar;                  | 名前変数の値をプレビューする領域として表示されます。|
+| type: char;                     | 文字を入力するボタンとして表示されます。            |
+| type: language                  | クリック時に言語を変更します。                      |
 
 ### `noaction`
 
-A non-clickable image.
+クリックできない画像です。
 
 ```
 background {
@@ -103,7 +111,7 @@ background {
 
 ### `goto`
 
-A clickable button. When clicked, tag execution jumps to a label specified by `label:` parameter.
+クリック可能なボタンです。クリックされると、タグの実行は `label:` パラメータで指定されたラベルへジャンプします。
 
 ```
 button1 {
@@ -118,7 +126,7 @@ button1 {
 
 ### `gui`
 
-A clickable button. When clicked, GUI execution is chained to a new GUI specified by `file:` parameter.
+クリック可能なボタンです。クリックされると、GUI の実行は `file:` パラメータで指定された新しい GUI へ連鎖します。
 
 ```
 button1 {
@@ -133,125 +141,121 @@ button1 {
 
 ### `mastervol`
 
-A slider to set the master volume.
+マスター音量を設定するスライダーです。
 
 ```
 slider1 {
     type: mastervol;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # スライダーのベースバー
+    image-hover: hover.png;  # スライダーのベースバー（明るい状態）
+    image-knob:  knob.png;   # スライダーのつまみ
 }
 ```
 
 ### `bgmvol`
 
-A slider to set the BGM volume.
+BGM 音量を設定するスライダーです。
 
-This slider sets the volume to be stored in the global save data file.
-This is defferent than the volume to be set by the `[volume]` tag and stored in the local save data.
+このスライダーは、グローバルセーブデータファイルに保存される音量を設定します。これは `[volume]` タグで設定され、ローカルセーブデータに保存される音量とは異なります。
 
 ```
 slider1 {
     type: bgmvol;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # スライダーのベースバー
+    image-hover: hover.png;  # スライダーのベースバー（明るい状態）
+    image-knob:  knob.png;   # スライダーのつまみ
 }
 ```
 
 ### `sevol`
 
-A slider to set the SE volume.
+SE 音量を設定するスライダーです。
 
-This slider sets the volume to be stored in the global save data file.
-This is defferent than the volume to be set by the `[volume]` tag and stored in the local save data.
+このスライダーは、グローバルセーブデータファイルに保存される音量を設定します。これは `[volume]` タグで設定され、ローカルセーブデータに保存される音量とは異なります。
 
 ```
 slider1 {
     type: bgmvol;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # スライダーのベースバー
+    image-hover: hover.png;  # スライダーのベースバー（明るい状態）
+    image-knob:  knob.png;   # スライダーのつまみ
 }
 ```
 
 ### `voicevol`
 
-A slider to set the SE volume.
+ボイス音量を設定するスライダーです。
 
-This slider sets the volume to be stored in the global save data file.
-This is defferent than the volume to be set by the `[volume]` tag and stored in the local save data.
+このスライダーは、グローバルセーブデータファイルに保存される音量を設定します。これは `[volume]` タグで設定され、ローカルセーブデータに保存される音量とは異なります。
 
 ```
 slider1 {
     type: bgmvol;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # スライダーのベースバー
+    image-hover: hover.png;  # スライダーのベースバー（明るい状態）
+    image-knob:  knob.png;   # スライダーのつまみ
 }
 ```
 
 ### `charactervol`
 
-A slider to set a per-character volume.
+キャラクターごとの音量を設定するスライダーです。
 
-Character index is passed by the `index:` parameter.
-index 0 is for non-defined character, and 1-32 for defined characters.
+キャラクターのインデックスは `index:` パラメータで渡します。インデックス 0 は未定義のキャラクター用で、1-32 は定義済みキャラクター用です。
 
 ```
 slider1 {
     type: charactervol;
-    index: 1;  # Character Index
+    index: 1;  # キャラクターインデックス
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # スライダーのベースバー
+    image-hover: hover.png;  # スライダーのベースバー（明るい状態）
+    image-knob:  knob.png;   # スライダーのつまみ
 }
 ```
 
 ### `textspeed`
 
-A slider to set the text speed.
+テキスト速度を設定するスライダーです。
 
 ```
 slider1 {
     type: textspeed;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # スライダーのベースバー
+    image-hover: hover.png;  # スライダーのベースバー（明るい状態）
+    image-knob:  knob.png;   # スライダーのつまみ
 }
 ```
 
 ### `autospeed`
 
-A slider to set the auto mode speed.
+オートモード速度を設定するスライダーです。
 
 ```
 slider1 {
     type: textspeed;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # スライダーのベースバー
+    image-hover: hover.png;  # スライダーのベースバー（明るい状態）
+    image-knob:  knob.png;   # スライダーのつまみ
 }
 ```
 
 ### `preview`
 
-A text area to preview the font, language, and speed.
+フォント、言語、速度をプレビューするテキスト領域です。
 
 ```
 preview1 {
@@ -264,8 +268,7 @@ preview1 {
 
 ### `fullscreen`
 
-A clickable button.
-When clicked, the engine will enter a full screen mode.
+クリック可能なボタンです。クリックされると、エンジンはフルスクリーンモードに入ります。
 
 ```
 fullscreen1 {
@@ -274,14 +277,13 @@ fullscreen1 {
     y: 0;
     image-idle:    idle.png;
     image-hover:   hover.png;
-    image-disable: disable.png;  # For when in the full screen mode.
+    image-disable: disable.png;  # フルスクリーンモード中に使用します。
 }
 ```
 
 ### `window`
 
-A clickable button.
-When clicked, the engine will enter a windowed mode.
+クリック可能なボタンです。クリックされると、エンジンはウィンドウモードに入ります。
 
 ```
 window1 {
@@ -290,14 +292,13 @@ window1 {
     y: 0;
     image-idle:    idle.png;
     image-hover:   hover.png;
-    image-disable: disable.png;  # For when in the windowed mode.
+    image-disable: disable.png;  # ウィンドウモード中に使用します。
 }
 ```
 
 ### `default`
 
-A clickable button.
-When clicked, it resets all settings.
+クリック可能なボタンです。クリックされると、すべての設定をリセットします。
 
 ```
 reset1 {
@@ -311,30 +312,28 @@ reset1 {
 
 ### `savepage`
 
-A clickable button.
-When clicked, it switches the save screen page.
+クリック可能なボタンです。クリックされると、セーブ画面のページを切り替えます。
 
 ```
 savepage1 {
     type: savepage;
-    index: 0; # Page index (0-)
+    index: 0; # ページインデックス（0 から）
     x: 0;
     y: 0;
     image-idle:    idle.png;
     image-hover:   hover.png;
-    image-active:  active.png;  # For when the page is active.
+    image-active:  active.png;  # ページがアクティブなときに使用します。
 }
 ```
 
 ### `save`
 
-A clickable button.
-When clicked, it executes a save.
+クリック可能なボタンです。クリックされると、セーブを実行します。
 
 ```
 save1 {
     type: save;
-    index: 0; # Index in apage. actual save slot = page * saveslots + index
+    index: 0; # ページ内のインデックス。実際のセーブスロット = page * saveslots + index
 
     x: 0;
     y: 0;
@@ -342,28 +341,27 @@ save1 {
     image-idle: system/save/save-item-idle.png;
     image-hover: system/save/save-item-hover.png;
 
-    index-x:   10;   # Number
+    index-x:   10;   # 番号
     index-y:   0;
-    date-x:    60;   # Date
+    date-x:    60;   # 日付
     date-y:    0;
-    thumb-x:   27;   # Thumbnail
+    thumb-x:   27;   # サムネイル
     thumb-y:   77;
-    chapter-x: 260;  # Chapter title
+    chapter-x: 260;  # チャプタータイトル
     chapter-y: 48;
-    msg-x:     260;  # Last message
+    msg-x:     260;  # 最後のメッセージ
     msg-y:     96;
 }
 ```
 
 ### `load`
 
-A clickable button.
-When clicked, it executes a load.
+クリック可能なボタンです。クリックされると、ロードを実行します。
 
 ```
 load1 {
     type: load;
-    index: 0; # Index in apage. actual save slot = page * saveslots + index
+    index: 0; # ページ内のインデックス。実際のセーブスロット = page * saveslots + index
 
     x: 0;
     y: 0;
@@ -371,23 +369,22 @@ load1 {
     image-idle: system/load/load-item-idle.png;
     image-hover: system/load/load-item-hover.png;
 
-    index-x:   10;   # Number
+    index-x:   10;   # 番号
     index-y:   0;
-    date-x:    60;   # Date
+    date-x:    60;   # 日付
     date-y:    0;
-    thumb-x:   27;   # Thumbnail
+    thumb-x:   27;   # サムネイル
     thumb-y:   77;
-    chapter-x: 260;  # Chapter title
+    chapter-x: 260;  # チャプタータイトル
     chapter-y: 48;
-    msg-x:     260;  # Last message
+    msg-x:     260;  # 最後のメッセージ
     msg-y:     96;
 }
 ```
 
 ### `auto`
 
-A clickable button.
-When clicked, it start Auto Mode.
+クリック可能なボタンです。クリックされると、オートモードを開始します。
 
 ```
 auto1 {
@@ -401,8 +398,7 @@ auto1 {
 
 ### `skip`
 
-A clickable button.
-When clicked, it start Skip Mode.
+クリック可能なボタンです。クリックされると、スキップモードを開始します。
 
 ```
 skip1 {
@@ -416,8 +412,7 @@ skip1 {
 
 ### `title`
 
-A clickable button.
-When clicked, the engine goes back to the specified NovelML file.
+クリック可能なボタンです。クリックされると、エンジンは指定された NovelML ファイルへ戻ります。
 
 ```
 title1 {
@@ -432,30 +427,29 @@ title1 {
 
 ### `history`
 
-A clickable button.
-It shows a message history item.
+クリック可能なボタンです。メッセージ履歴の項目を表示します。
 
 ```
 history {
     type: history;
-    index: 0; # Index in a page
+    index: 0; # ページ内のインデックス
     x: 0;
     y: 0;
     image-idle:    idle.png;
     image-hover:   hover.png;
 
-    name-x: 20;   # Name
+    name-x: 20;   # 名前
     name-y: 10;
-    text-x:  20;  # Text (for when there is a name)
+    text-x:  20;  # テキスト（名前がある場合）
     text-y:  50;
-    msg-x:  20;   # Message (for when no name)
+    msg-x:  20;   # メッセージ（名前がない場合）
     msg-y:  10;
 }
 ```
 
 ### `historyscroll`
 
-A vertical scroll bar for history screen.
+履歴画面用の縦方向スクロールバーです。
 
 ```
 scroll1 {
@@ -471,7 +465,7 @@ scroll1 {
 
 ### `historyscroll-horizontal`
 
-A horizontal scroll bar for vertical writing history screen.
+縦書きの履歴画面用の横方向スクロールバーです。
 
 ```
 scroll1 {
@@ -487,8 +481,7 @@ scroll1 {
 
 ### `cancel`
 
-A clickable button.
-When clicked, the GUI will be canceled.
+クリック可能なボタンです。クリックされると、GUI はキャンセルされます。
 
 ```
 cancel1 {
@@ -502,8 +495,7 @@ cancel1 {
 
 ### `var`
 
-A text area to show a variable value.
-It is used for name editing.
+変数の値を表示するテキスト領域です。名前編集に使用します。
 
 ```
 var1 {
@@ -517,14 +509,13 @@ var1 {
 
 ### `char`
 
-A button to append a character to a variable.
-It is used for name editing.
+変数に文字を追加するボタンです。名前編集に使用します。
 
 ```
 char1 {
     type: char;
-    variable: variable_name; # Variable name.
-    msg: A;                  # Text to append.
+    variable: variable_name; # 変数名。
+    msg: A;                  # 追加するテキスト。
     x: 0;
     y: 0;
     image-idle:    idle.png;
@@ -534,7 +525,7 @@ char1 {
 
 ### `language`
 
-A button to switch the language.
+言語を切り替えるボタンです。
 
 ```
 language_english1 {
@@ -544,30 +535,28 @@ language_english1 {
     y: 0;
     image-idle:    idle.png;
     image-hover:   hover.png;
-    image-disable: disable.png; # For when English is active.
+    image-disable: disable.png; # 英語がアクティブなときに使用します。
 }
 ```
 
 ---
 
-## Common Button Options
+## 共通のボタンオプション
 
-| Description           |Meaning                                                      |
+| 記述                  | 意味                                                        |
 |-----------------------|-------------------------------------------------------------|
-| type:                 | Type of the button.                                         |
-| x:                    | X position of the button.                                   |
-| y:                    | Y position of the button.                                   |
-| width:                | Width of the button. (by default, sets to idle image width) |
-| height:               | Height of the button.                                       |
-| pointse:              | Sound effect for when the button is pointed.                |
-| clickse:              | Sound effect for when the button is clicked.                |
+| type:                 | ボタンのタイプ。                                            |
+| x:                    | ボタンの X 位置。                                           |
+| y:                    | ボタンの Y 位置。                                           |
+| width:                | ボタンの幅。（デフォルトでは通常時画像の幅に設定されます）  |
+| height:               | ボタンの高さ。                                              |
+| pointse:              | ボタンがポイントされたときの効果音。                        |
+| clickse:              | ボタンがクリックされたときの効果音。                        |
 
 ### pointse:
 
-`pointse: btn-change.ogg;` indicates a sound effect file is played
-back when the mouse cursor enters the button.
+`pointse: btn-change.ogg;` は、マウスカーソルがボタンに入ったときに効果音ファイルを再生することを示します。
 
 ### clickse:
 
-`clickse: click.ogg;` indicates a sound effect file is played back
-when the button is clicked.
+`clickse: click.ogg;` は、ボタンがクリックされたときに効果音ファイルを再生することを示します。
