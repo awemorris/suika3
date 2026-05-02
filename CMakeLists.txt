@@ -179,10 +179,10 @@ option(SUIKA_ENABLE_PORTAL "Enable XDG Portal" OFF)
 # Path Options
 #
 
-set(SUIKA_DIR_DOCS      "share/suika3" CACHE STRING "Document installation destination")
-set(SUIKA_DIR_SAMPLE    "share/suika3" CACHE STRING "Example installation destination")
-set(SUIKA_DIR_LAUNCHER  "share/suika3" CACHE STRING "Launcher installation destination")
-set(SUIKA_DIR_ELISP     "share/suika3" CACHE STRING "Elisp installation destination")
+set(SUIKA_DIR_DOCS      "share/suika3/doc"      CACHE STRING "Document installation destination")
+set(SUIKA_DIR_SAMPLE    "share/suika3/game"     CACHE STRING "Example installation destination")
+set(SUIKA_DIR_LAUNCHER  "share/suika3/launcher" CACHE STRING "Launcher installation destination")
+set(SUIKA_DIR_ELISP     "share/suika3/elisp"    CACHE STRING "Elisp installation destination")
 
 # ---
 
@@ -1132,7 +1132,7 @@ if(SUIKA_ENABLE_INSTALL)
 
   if(NOT SUIKA_ENABLE_FLATPAK)
     install(
-      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/docs/mkdocs-en/docs"
+      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/docs/mkdocs-en/docs/"
       DESTINATION ${SUIKA_DIR_DOCS}
     )
   endif()
@@ -1145,24 +1145,24 @@ if(SUIKA_ENABLE_INSTALL)
     # Exclude the font when packaging.
     # (A symlink to a system font should be created by packaging process.)
     install(
-      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game"
+      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game/"
       DESTINATION "${SUIKA_DIR_SAMPLE}"
       FILES_MATCHING
       PATTERN "*"
       PATTERN "system/font/*" EXCLUDE
     )
     install(
-      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/elisp"
+      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/elisp/"
       DESTINATION "${SUIKA_DIR_ELISP}"
     )
   else()
     # Include the font.
     install(
-      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game"
+      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game/"
       DESTINATION "${SUIKA_DIR_SAMPLE}"
     )
     install(
-      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/elisp"
+      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/elisp/"
       DESTINATION "${SUIKA_DIR_ELISP}"
     )
   endif()
@@ -1175,7 +1175,7 @@ if(SUIKA_ENABLE_INSTALL)
     # Exclude the font when packaging.
     # (A symlink to a system font should be created by packaging process.)
     install(
-      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/launcher"
+      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/launcher/"
       DESTINATION "${SUIKA_DIR_LAUNCHER}"
       FILES_MATCHING
       PATTERN "*"
@@ -1184,7 +1184,7 @@ if(SUIKA_ENABLE_INSTALL)
   else()
     # Include the font.
     install(
-      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/launcher"
+      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/launcher/"
       DESTINATION "${SUIKA_DIR_LAUNCHER}"
     )
   endif()
