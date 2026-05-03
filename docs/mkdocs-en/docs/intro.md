@@ -3,19 +3,27 @@ Suika3 Documentation
 
 Welcome to the `Suika3` documentation.
 
-- For Basic Usage:
-    - [Getting Started Guide](getting-started.md)
-    - [NovelML Syntax Reference](novelml-syntax.md)
-    - [NovelML Tag Reference](novelml-tags.md)
-    - [Animation](anime.md)
-    - [GUI](gui.md)
-    - [Lip Sync](lip-sync.md)
-    - [Eye Blink](eye-blink.md)
-- For Advanced Usage:
-    - [Ray Syntax Reference](ray-syntax.md)
-    - [Ray Low Level API Reference](ray-2d-api.md)
-    - [Ray High Level API Reference](ray-vn-api.md)
-    - [Ray Plugin Development](plugin.md)
-    - [AOT Deployment Instructions](aot.md)
-- For Community Developers:
-    - [Build Instructions](build.md)
+For New Developers:
+- [Getting Started](getting-started.md)
+
+For those who want to understand the overall architecture:
+- [Design](design.md)
+
+For Visual Novel Developers:
+- [NovelML Syntax](novelml-syntax.md)
+- [NovelML Tags](novelml-tags.md)
+- [Animation](anime.md)
+- [GUI](gui.md)
+- [System Menu](sysmenu.md)
+- [Config](config.md)
+- [Lip Sync](lip-sync.md)
+- [Eye Blink](eye-blink.md)
+
+For Advanced Developers:
+- [Ray Syntax](ray-syntax.md)
+- [Ray 2D API](ray-2d-api.md)
+- [Ray VN API](ray-vn-api.md)
+- [Plugin Development](plugin.md)
+- [AOT Deployment](aot.md)
+- [Build Instructions](build.md)
+- [System Requirement Specification](srs.md)

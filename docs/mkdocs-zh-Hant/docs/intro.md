@@ -7,8 +7,10 @@ Suika3 檔案
     - [入門指南](getting-started.md)
     - [NovelML 語法參考](novelml-syntax.md)
     - [NovelML 標籤參考](novelml-tags.md)
-    - [動畫](anime.md)
+    - [Anime](anime.md)
     - [GUI](gui.md)
+    - [System Menu](sysmenu.md)
+    - [Config](config.md)
     - [口型同步](lip-sync.md)
     - [眨眼](eye-blink.md)
 - 進階用法：
@@ -19,3 +21,8 @@ Suika3 檔案
     - [AOT 部署說明](aot.md)
 - 給社群開發者：
     - [建置說明](build.md)
+    - [Design](design.md)
+    - [Plugin Development](plugin.md)
+    - [AOT Deployment](aot.md)
+    - [Build Instructions](build.md)
+    - [System Requirement Specification](srs.md)

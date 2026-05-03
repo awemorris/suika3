@@ -1045,25 +1045,17 @@ supporting legacy systems through older runtimes.
 
 ## Documentation
 
-Documentation is also available at [the Website](https://suika3.vn/docs/)
-and it is synchronized to the latest.
-
-- For Basic Usage:
-    - [Getting Started Guide](docs/mkdocs-en/docs/getting-started.md)
-    - [NovelML Syntax Reference](docs/mkdocs-en/docs/novelml-syntax.md)
-    - [NovelML Tag Reference](docs/mkdocs-en/docs/novelml-tags.md)
-    - [Animation](docs/mkdocs-en/docs/anime.md)
-    - [GUI](docs/mkdocs-en/docs/gui.md)
-    - [Lip Sync](docs/mkdocs-en/docs/lip-sync.md)
-    - [Eye Blink](docs/mkdocs-en/docs/eye-bink.md)
-- For Advanced Usage:
-    - [Ray Syntax Reference](docs/mkdocs-en/docs/ray-syntax.md)
-    - [Ray Low Level API Reference](docs/mkdocs-en/docs/ray-2d-api.md)
-    - [Ray High Level Reference](docs/mkdocs-en/docs/ray-vn-api.md)
-    - [Ray Plugin Development](docs/mkdocs-en/docs/plugin.md)
-    - [AOT Deployment Instructions](docs/mkdocs-en/docs/aot.md)
-- For Community Developers:
-    - [Build Instructions](docs/mkdocs-en/docs/build.md)
+Documentation is available at the Website:
+- [English](https://suika3.vn/en/docs/)
+- [Spanish](https://suika3.vn/es/docs/)
+- [French](https://suika3.vn/fr/docs/)
+- [German](https://suika3.vn/de/docs/)
+- Italian (now translating)
+- [Russian](https://suika3.vn/ru/docs/)
+- Greek (now translating)
+- [簡体中文](https://suika3.vn/zh-Hans/docs/)
+- [繁体中文](https://suika3.vn/zh-Hant/docs/)
+- [日本語](https://suika3.vn/ja/docs/)
 
 ---
 
@@ -1644,43 +1636,6 @@ barriers.
 Our commitment to the permissive license is for those people who
 publish and sell original visual novels on the App Store and Google
 Play, regardless of their software, hardware, and budget limitations.
-
----
-
-## Binary Downloads
-
-Now preparing...
-
-**Documents:**
-| Type                    | Link                                                      |
-|-------------------------|-----------------------------------------------------------|
-| Sample Game             | -                                                         |
-| Documents (English)     | -                                                         |
-
-**Binaries:**
-| Platform                                        | Link                                                      |
-|-------------------------------------------------|-----------------------------------------------------------|
-| Microsoft Windows 64-bit (11/10/8/7/Vista)      | -                                                         |
-| Microsoft Windows Arm64 (11/10)                 | -                                                         |
-| Microsoft Windows 32-bit (10/8/7/Vista/XP/2000) | -                                                         |
-| Linux (AppImage x86_64)                         | -                                                         |
-| Apple macOS (10.11+ Universal)                  | -                                                         |
-| Apple iOS Xcode Project                         | -                                                         |
-| Android Studio Project                          | -                                                         |
-| HarmonyOS NEXT DevEco Project                   | -                                                         |
-| WebAssembly (HTML5)                             | -                                                         |
-| Unity Native Plugin                             | -                                                         |
-
-| Platform                                  | Steps                                                     |
-|-------------------------------------------|-----------------------------------------------------------|
-| macOS Homebrew                            | brew tap awemorris/suika3<br>brew install suika3          |
-| Debian                                    | -                                                         |
-| FreeBSD 15                                | -                                                         |
-| NetBSD 10                                 | -                                                         |
-| OpenBSD                                   | -                                                         |
-| Solaris 11                                | -                                                         |
-| Solaris 10                                | -                                                         |
-| Haiku                                     | -                                                         |
 
 ---
 
