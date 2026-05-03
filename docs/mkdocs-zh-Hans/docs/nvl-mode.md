@@ -1,9 +1,9 @@
-NVL Mode Reference
+NVL 模式参考
 ==================
 
-Suika3 support the full screen novel style, so called NVL mode.
+Suika3 支援全萤幕小说风格，也就是所谓的 NVL 模式。
 
-## Overview
+## 概观
 
 ```
 # New page.
@@ -33,16 +33,16 @@ Suika3 support the full screen novel style, so called NVL mode.
 [text text="This is why NVL is called Page Mode in Suika3!"]
 ```
 
-## Switch
+## 切换
 
-Add two macros at the end of your `start.novel`:
+在 `start.novel` 的结尾加入两个巨集：
 ```
 #
-# Macro to start NVL mode.
+# 启动 NVL 模式的巨集。
 #
 [defmacro name="nvl-mode"]
    [text action="hide"]
-   [wait time="0.3"] # Wait for the message box to hide.
+   [wait time="0.3"] # 等待讯息视窗隐藏。
    [config name="game.novel" value="true"]
    [config name="msgbox.image" value="system/message/msgbox-nvl.png"]
    [config name="msgbox.x" value="0"]
@@ -66,11 +66,11 @@ Add two macros at the end of your `start.novel`:
 [endmacro]
 
 #
-# Macro to go back ADV mode.
+# 切回 ADV 模式的巨集。
 #
 [defmacro name="adv-mode"]
    [text action="hide"]
-   [wait time="0.3"] # Wait for the message box to hide.
+   [wait time="0.3"] # 等待讯息视窗隐藏。
    [config name="game.novel" value="false"]
    [config name="msgbox.image" value="system/message/msgbox.png"]
    [config name="msgbox.x" value="0"]
@@ -93,12 +93,12 @@ Add two macros at the end of your `start.novel`:
 [endmacro]
 ```
 
-Then call the `nvl-mode` macro to switch to NVL mode.
+接著呼叫 `nvl-mode` 巨集，就会切换到 NVL 模式。
 ```
 [callmacro name="nvl-mode"]
 ```
 
-If you want to switch back to ADV mode (normal message mode), call the `adv-mode` macro:
+如果你想切回 ADV 模式（一般讯息模式），就呼叫 `adv-mode` 巨集：
 ```
 [callmacro name="adv-mode"]
 ```

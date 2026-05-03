@@ -1,113 +1,106 @@
 GUI
 ===
 
-## Introduction
+## 简介
 
-GUI is Suika3's UI/UX creation feature.
+GUI 是 Suika3 的 UI/UX 建置功能。
 
-In Suika3, buttons are defined in a dedicated GUI mode and operate in
-a synchronous manner, that is, calling a GUI results in a button click or
-a cancel.
+在 Suika3 中，按钮会定义在专门的 GUI 模式里，并以同步方式运作，也就是说，呼叫一个 GUI 会导致按钮点选或取消。
 
-Asynchronous callbacks such as showing buttons while text tag
-execution are intentionally avoided because they can be difficult for
-beginner programmers to understand and manage.
+像是在文字标签执行时同时显示按钮这类非同步回呼，则是刻意避免的，因为这对初学者来说可能不太容易理解和管理。
 
-A GUI file contains a list of button definitions. Each button includes
-a behavior type, idle and hover images, and additional
-properties. Buttons are mapped to animation layers, and animation
-files can be triggered when a button's state changes.
+GUI 档案包含一串按钮定义。每个按钮都包含行为型别、闲置与滑入图片，以及额外属性。按钮会对应到动画图层，而当按钮状态改变时，也可以触发动画档。
 
 ---
 
-## GUI Sample
+## GUI 范例
 
 ```
-# Global settings section.
+# 全域设定区段。
 global {
-    fadein:       0.2;            # Fading-in time in seconds.
-    fadeout:      0.2;            # Fading-out time in seconds.
+    fadein:       0.2;            # 淡入时间（秒）。
+    fadeout:      0.2;            # 淡出时间（秒）。
 }
 
-# A block describes a button.
-# The name of a block can be whatever you like and it won't affect anything.
+# 区块描述一个按钮。
+# 区块名称可以随意命名，不会影响任何事。
 button1 {
-    # Layer ID (`1`-`32`)
-    # `1` means the top-most and `32` means the bottom-most in the GUI layers, respectively.
+    # 图层 ID（`1`-`32`）
+    # `1` 表示 GUI 图层最上层，`32` 表示最下层。
     id: 1;
  
-    # Behavior Type (`goto` means go to a label when clicked.)
+    # 行为型别（`goto` 代表点选时跳到某个标签。）
     type: goto;
 
-    # Label to go to.
+    # 要前往的标签。
     label: button1_clicked;
 
-    # Position
+    # 位置
     x: 39;
     y: 99;
 
-    # `width:` and `height:` are omissible as they can be inferred from the image size.
+    # `width:` 与 `height:` 可省略，因为可以从图片大小推算。
 
-    # Images
-    image-idle:  gui/item-idle.png;    # Shown when the button is not pointed.
-    image-hover: gui/item-hover.png;   # Shown when the button is pointed.
-    image-press: gui/item-press.png;   # Shown when the button is pressed.
+    # 图片
+    image-idle:  gui/item-idle.png;    # 按钮未被指到时显示。
+    image-hover: gui/item-hover.png;   # 按钮被指到时显示。
+    image-press: gui/item-press.png;   # 按钮被按下时显示。
 
-    # Animations
-    anime-idle:  gui/item-idle.anime;   # Executed when the button state is changed to `idle`.
-    anime-hover: gui/item-hover.anime;  # Executed when the button state is changed to `hover`.
-    anime-press: gui/item-press.anime;  # Executed when the button is pressed.
+    # 动画
+    anime-idle:  gui/item-idle.anime;   # 按钮状态变成 `idle` 时执行。
+    anime-hover: gui/item-hover.anime;  # 按钮状态变成 `hover` 时执行。
+    anime-press: gui/item-press.anime;  # 按钮被按下时执行。
 
-    # Note that `press` is not an independent state, it's an additional flag to the state `hover`.
-    # When a `hover` anime runs, `idle` anime will be canceled.
-    # And when `idle` anime runs, `hover` anime will be canceled.
-    # However, `press` anime doesn't cancel anything.
+    # 注意 `press` 不是独立状态，而是 `hover` 状态的附加旗标。
+    # 当 `hover` 动画执行时，`idle` 动画会被取消。
+    # 而当 `idle` 动画执行时，`hover` 动画会被取消。
+    # 但是 `press` 动画不会取消任何东西。
 }
 ```
 
-In the `global` section, you can specify options for the GUI.
+在 `global` 区段中，你可以指定 GUI 的选项。
 
-Other sections are interpreted as button definitions.
-Here, `button1` makes a button at position `(39, 99)`.
-If the button is clicked, a jump so called `goto` will happen.
+其他区段则会被解读为按钮定义。
+这里的 `button1` 会在位置 `(39, 99)` 建立一个按钮。
+如果按钮被点选，就会发生称为 `goto` 的跳转。
 
 ---
 
-## Button Types
+## 按钮型别
 
-| Description                     | Meaning                                           |
-|---------------------------------|---------------------------------------------------|
-| type: noaction;                 | Non-clickable image.                              |
-| type: goto;                     | Jumps to a label when clicked.                    |
-| type: gui;                      | Jumps to a GUI when clicked.                      |
-| type: mastervol;                | Shown as a master volume slider.                  |
-| type: bgmvol;                   | Shown as a BGM volume slider.                     |
-| type: sevol;                    | Shown as an SE volume slider.                     |
-| type: voicevol;                 | Shown as an voice volume slider.                  |
-| type: charactervol;             | Shown as a character volume slider.               |
-| type: textspeed;                | Shown as a text speed slider.                     |
-| type: autospeed;                | Shown as an auto mode speed slider.               |
-| type: preview;                  | Shown as a text preview area.                     |
-| type: fullscreen;               | Shown as a full screen mode button.               |
-| type: window;                   | Shown as s windoe mode button.                    |
-| type: default;                  | Resets settings when pressed.                     |
-| type: savepage;                 | Shown as a save/load page button.                 |
-| type: save;                     | Shown as a save slot.                             |
-| type: load;                     | Shown as a load slot.                             |
-| type: auto;                     | Shown as an auto mode button.                     |
-| type: skip;                     | Shown as a skip mode button.                      |
-| type: title;                    | Shown as a back-to-title button.                  |
-| type: history;                  | Shown as a history button.                        |
-| type: historyscroll;            | Shown as a vertical history scroll slider.        |
-| type: historyscroll-horizontal; | Shown as a horizontal history scroll slider.      |
-| type: cancel;                   | Shown as a cancel button.                         |
-| type: namevar;                  | Shown as a area to preview a name variable value. |
-| type: char;                     | Shown as a button to input a character.           |
-| type: language                  | Change the language when clicked.                 |
+| 说明                           | 意义                                               |
+|--------------------------------|----------------------------------------------------|
+| type: noaction;                | 不可点选的图片。                                   |
+| type: goto;                    | 点选时跳到某个标签。                               |
+| type: gui;                     | 点选时跳到某个 GUI。                               |
+| type: mastervol;               | 显示为主音量滑杆。                                 |
+| type: bgmvol;                  | 显示为 BGM 音量滑杆。                              |
+| type: sevol;                   | 显示为 SE 音量滑杆。                               |
+| type: voicevol;                | 显示为语音音量滑杆。                               |
+| type: charactervol;            | 显示为角色音量滑杆。                               |
+| type: textspeed;               | 显示为文字速度滑杆。                               |
+| type: autospeed;               | 显示为自动模式速度滑杆。                           |
+| type: preview;                 | 显示为文字预览区域。                               |
+| type: fullscreen;              | 显示为全萤幕模式按钮。                             |
+| type: window;                  | 显示为视窗模式按钮。                               |
+| type: default;                 | 按下时重设设定。                                   |
+| type: savepage;                | 显示为储存/读取页面按钮。                          |
+| type: save;                    | 显示为储存槽。                                     |
+| type: load;                    | 显示为读取槽。                                     |
+| type: auto;                    | 显示为自动模式按钮。                               |
+| type: skip;                    | 显示为跳过模式按钮。                               |
+| type: title;                   | 显示为回到标题按钮。                               |
+| type: history;                 | 显示为历史纪录按钮。                               |
+| type: historyscroll;           | 显示为垂直历史纪录卷轴。                           |
+| type: historyscroll-horizontal;| 显示为水平历史纪录卷轴。                           |
+| type: cancel;                  | 显示为取消按钮。                                   |
+| type: namevar;                 | 显示为预览名称变数值的区域。                       |
+| type: char;                    | 显示为输入字元的按钮。                             |
+| type: language                 | 点选时切换语言。                                   |
 
 ### `noaction`
 
-A non-clickable image.
+不可点选的图片。
 
 ```
 background {
@@ -120,7 +113,7 @@ background {
 
 ### `goto`
 
-A clickable button. When clicked, tag execution jumps to a label specified by `label:` parameter.
+可点选的按钮。点选时，标签执行会跳到 `label:` 引数指定的标签。
 
 ```
 button1 {
@@ -135,7 +128,7 @@ button1 {
 
 ### `gui`
 
-A clickable button. When clicked, GUI execution is chained to a new GUI specified by `file:` parameter.
+可点选的按钮。点选时，GUI 执行会接续到 `file:` 引数指定的新 GUI。
 
 ```
 button1 {
@@ -150,125 +143,125 @@ button1 {
 
 ### `mastervol`
 
-A slider to set the master volume.
+用来设定主音量的滑杆。
 
 ```
 slider1 {
     type: mastervol;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # 滑杆基底条
+    image-hover: hover.png;  # 滑杆基底条（高亮）
+    image-knob:  knob.png;   # 滑杆旋钮
 }
 ```
 
 ### `bgmvol`
 
-A slider to set the BGM volume.
+用来设定 BGM 音量的滑杆。
 
-This slider sets the volume to be stored in the global save data file.
-This is defferent than the volume to be set by the `[volume]` tag and stored in the local save data.
+这个滑杆会把音量储存在全域存档中。
+它和 `[volume]` 标签设定的音量不同，后者会储存在本地存档中。
 
 ```
 slider1 {
     type: bgmvol;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # 滑杆基底条
+    image-hover: hover.png;  # 滑杆基底条（高亮）
+    image-knob:  knob.png;   # 滑杆旋钮
 }
 ```
 
 ### `sevol`
 
-A slider to set the SE volume.
+用来设定 SE 音量的滑杆。
 
-This slider sets the volume to be stored in the global save data file.
-This is defferent than the volume to be set by the `[volume]` tag and stored in the local save data.
+这个滑杆会把音量储存在全域存档中。
+它和 `[volume]` 标签设定的音量不同，后者会储存在本地存档中。
 
 ```
 slider1 {
     type: bgmvol;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # 滑杆基底条
+    image-hover: hover.png;  # 滑杆基底条（高亮）
+    image-knob:  knob.png;   # 滑杆旋钮
 }
 ```
 
 ### `voicevol`
 
-A slider to set the SE volume.
+用来设定 SE 音量的滑杆。
 
-This slider sets the volume to be stored in the global save data file.
-This is defferent than the volume to be set by the `[volume]` tag and stored in the local save data.
+这个滑杆会把音量储存在全域存档中。
+它和 `[volume]` 标签设定的音量不同，后者会储存在本地存档中。
 
 ```
 slider1 {
     type: bgmvol;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # 滑杆基底条
+    image-hover: hover.png;  # 滑杆基底条（高亮）
+    image-knob:  knob.png;   # 滑杆旋钮
 }
 ```
 
 ### `charactervol`
 
-A slider to set a per-character volume.
+用来设定每个角色个别音量的滑杆。
 
-Character index is passed by the `index:` parameter.
-index 0 is for non-defined character, and 1-32 for defined characters.
+角色索引由 `index:` 引数传入。
+index 0 代表未定义角色，1-32 则代表已定义角色。
 
 ```
 slider1 {
     type: charactervol;
-    index: 1;  # Character Index
+    index: 1;  # 角色索引
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # 滑杆基底条
+    image-hover: hover.png;  # 滑杆基底条（高亮）
+    image-knob:  knob.png;   # 滑杆旋钮
 }
 ```
 
 ### `textspeed`
 
-A slider to set the text speed.
+用来设定文字速度的滑杆。
 
 ```
 slider1 {
     type: textspeed;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # 滑杆基底条
+    image-hover: hover.png;  # 滑杆基底条（高亮）
+    image-knob:  knob.png;   # 滑杆旋钮
 }
 ```
 
 ### `autospeed`
 
-A slider to set the auto mode speed.
+用来设定自动模式速度的滑杆。
 
 ```
 slider1 {
     type: textspeed;
     x: 0;
     y: 0;
-    image-idle:  idle.png;   # Slider base bar
-    image-hover: hover.png;  # Slider base bar (bright)
-    image-knob:  knob.png;   # Slider knob
+    image-idle:  idle.png;   # 滑杆基底条
+    image-hover: hover.png;  # 滑杆基底条（高亮）
+    image-knob:  knob.png;   # 滑杆旋钮
 }
 ```
 
 ### `preview`
 
-A text area to preview the font, language, and speed.
+用来预览字型、语言与速度的文字区域。
 
 ```
 preview1 {
@@ -281,8 +274,8 @@ preview1 {
 
 ### `fullscreen`
 
-A clickable button.
-When clicked, the engine will enter a full screen mode.
+可点选的按钮。
+点选时，引擎会进入全萤幕模式。
 
 ```
 fullscreen1 {
@@ -291,14 +284,14 @@ fullscreen1 {
     y: 0;
     image-idle:    idle.png;
     image-hover:   hover.png;
-    image-disable: disable.png;  # For when in the full screen mode.
+    image-disable: disable.png;  # 全萤幕模式时使用。
 }
 ```
 
 ### `window`
 
-A clickable button.
-When clicked, the engine will enter a windowed mode.
+可点选的按钮。
+点选时，引擎会进入视窗模式。
 
 ```
 window1 {
@@ -307,14 +300,14 @@ window1 {
     y: 0;
     image-idle:    idle.png;
     image-hover:   hover.png;
-    image-disable: disable.png;  # For when in the windowed mode.
+    image-disable: disable.png;  # 视窗模式时使用。
 }
 ```
 
 ### `default`
 
-A clickable button.
-When clicked, it resets all settings.
+可点选的按钮。
+点选时，会重设所有设定。
 
 ```
 reset1 {
@@ -328,30 +321,30 @@ reset1 {
 
 ### `savepage`
 
-A clickable button.
-When clicked, it switches the save screen page.
+可点选的按钮。
+点选时，会切换储存画面的页面。
 
 ```
 savepage1 {
     type: savepage;
-    index: 0; # Page index (0-)
+    index: 0; # 页面索引（0-）
     x: 0;
     y: 0;
     image-idle:    idle.png;
     image-hover:   hover.png;
-    image-active:  active.png;  # For when the page is active.
+    image-active:  active.png;  # 页面启用时使用。
 }
 ```
 
 ### `save`
 
-A clickable button.
-When clicked, it executes a save.
+可点选的按钮。
+点选时，会执行储存。
 
 ```
 save1 {
     type: save;
-    index: 0; # Index in apage. actual save slot = page * saveslots + index
+    index: 0; # 页面中的索引。实际储存槽 = page * saveslots + index
 
     x: 0;
     y: 0;
@@ -359,28 +352,28 @@ save1 {
     image-idle: system/save/save-item-idle.png;
     image-hover: system/save/save-item-hover.png;
 
-    index-x:   10;   # Number
+    index-x:   10;   # 编号
     index-y:   0;
-    date-x:    60;   # Date
+    date-x:    60;   # 日期
     date-y:    0;
-    thumb-x:   27;   # Thumbnail
+    thumb-x:   27;   # 缩图
     thumb-y:   77;
-    chapter-x: 260;  # Chapter title
+    chapter-x: 260;  # 章节标题
     chapter-y: 48;
-    msg-x:     260;  # Last message
+    msg-x:     260;  # 最后讯息
     msg-y:     96;
 }
 ```
 
 ### `load`
 
-A clickable button.
-When clicked, it executes a load.
+可点选的按钮。
+点选时，会执行读取。
 
 ```
 load1 {
     type: load;
-    index: 0; # Index in apage. actual save slot = page * saveslots + index
+    index: 0; # 页面中的索引。实际储存槽 = page * saveslots + index
 
     x: 0;
     y: 0;
@@ -388,23 +381,23 @@ load1 {
     image-idle: system/load/load-item-idle.png;
     image-hover: system/load/load-item-hover.png;
 
-    index-x:   10;   # Number
+    index-x:   10;   # 编号
     index-y:   0;
-    date-x:    60;   # Date
+    date-x:    60;   # 日期
     date-y:    0;
-    thumb-x:   27;   # Thumbnail
+    thumb-x:   27;   # 缩图
     thumb-y:   77;
-    chapter-x: 260;  # Chapter title
+    chapter-x: 260;  # 章节标题
     chapter-y: 48;
-    msg-x:     260;  # Last message
+    msg-x:     260;  # 最后讯息
     msg-y:     96;
 }
 ```
 
 ### `auto`
 
-A clickable button.
-When clicked, it start Auto Mode.
+可点选的按钮。
+点选时，会启动自动模式。
 
 ```
 auto1 {
@@ -418,8 +411,8 @@ auto1 {
 
 ### `skip`
 
-A clickable button.
-When clicked, it start Skip Mode.
+可点选的按钮。
+点选时，会启动跳过模式。
 
 ```
 skip1 {
@@ -433,8 +426,8 @@ skip1 {
 
 ### `title`
 
-A clickable button.
-When clicked, the engine goes back to the specified NovelML file.
+可点选的按钮。
+点选时，引擎会回到指定的 NovelML 档案。
 
 ```
 title1 {
@@ -449,30 +442,30 @@ title1 {
 
 ### `history`
 
-A clickable button.
-It shows a message history item.
+可点选的按钮。
+它会显示一则讯息历史专案。
 
 ```
 history {
     type: history;
-    index: 0; # Index in a page
+    index: 0; # 页面中的索引
     x: 0;
     y: 0;
     image-idle:    idle.png;
     image-hover:   hover.png;
 
-    name-x: 20;   # Name
+    name-x: 20;   # 名称
     name-y: 10;
-    text-x:  20;  # Text (for when there is a name)
+    text-x:  20;  # 有名称时的文字
     text-y:  50;
-    msg-x:  20;   # Message (for when no name)
+    msg-x:  20;   # 无名称时的讯息
     msg-y:  10;
 }
 ```
 
 ### `historyscroll`
 
-A vertical scroll bar for history screen.
+用于历史纪录画面的垂直卷轴。
 
 ```
 scroll1 {
@@ -488,7 +481,7 @@ scroll1 {
 
 ### `historyscroll-horizontal`
 
-A horizontal scroll bar for vertical writing history screen.
+用于直排历史纪录画面的水平卷轴。
 
 ```
 scroll1 {
@@ -504,8 +497,8 @@ scroll1 {
 
 ### `cancel`
 
-A clickable button.
-When clicked, the GUI will be canceled.
+可点选的按钮。
+点选时，GUI 会被取消。
 
 ```
 cancel1 {
@@ -519,8 +512,8 @@ cancel1 {
 
 ### `var`
 
-A text area to show a variable value.
-It is used for name editing.
+用来显示变数值的文字区域。
+它用于名称编辑。
 
 ```
 var1 {
@@ -534,14 +527,14 @@ var1 {
 
 ### `char`
 
-A button to append a character to a variable.
-It is used for name editing.
+用来把字元附加到变数上的按钮。
+它用于名称编辑。
 
 ```
 char1 {
     type: char;
-    variable: variable_name; # Variable name.
-    msg: A;                  # Text to append.
+    variable: variable_name; # 变数名称。
+    msg: A;                  # 要附加的文字。
     x: 0;
     y: 0;
     image-idle:    idle.png;
@@ -551,7 +544,7 @@ char1 {
 
 ### `language`
 
-A button to switch the language.
+用来切换语言的按钮。
 
 ```
 language_english1 {
@@ -561,30 +554,28 @@ language_english1 {
     y: 0;
     image-idle:    idle.png;
     image-hover:   hover.png;
-    image-disable: disable.png; # For when English is active.
+    image-disable: disable.png; # 英文启用时使用。
 }
 ```
 
 ---
 
-## Common Button Options
+## 常见按钮选项
 
-| Description           |Meaning                                                      |
+| 说明                  | 意义                                                        |
 |-----------------------|-------------------------------------------------------------|
-| type:                 | Type of the button.                                         |
-| x:                    | X position of the button.                                   |
-| y:                    | Y position of the button.                                   |
-| width:                | Width of the button. (by default, sets to idle image width) |
-| height:               | Height of the button.                                       |
-| pointse:              | Sound effect for when the button is pointed.                |
-| clickse:              | Sound effect for when the button is clicked.                |
+| type:                 | 按钮的型别。                                                |
+| x:                    | 按钮的 X 座标。                                             |
+| y:                    | 按钮的 Y 座标。                                             |
+| width:                | 按钮宽度。（预设会设成 idle 图片宽度）                      |
+| height:               | 按钮高度。                                                  |
+| pointse:              | 按钮被指到时播放的音效。                                    |
+| clickse:              | 按钮被点选时播放的音效。                                    |
 
 ### pointse:
 
-`pointse: btn-change.ogg;` indicates a sound effect file is played
-back when the mouse cursor enters the button.
+`pointse: btn-change.ogg;` 表示滑鼠游标进入按钮时会播放这个音效档。
 
 ### clickse:
 
-`clickse: click.ogg;` indicates a sound effect file is played back
-when the button is clicked.
+`clickse: click.ogg;` 表示按钮被点选时会播放这个音效档。

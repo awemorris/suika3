@@ -1,64 +1,49 @@
-System Requirement Specifications for Suika3
+Suika3 系统需求规格
 ===========================================
 
-## 1. Overview
+## 1. 概观
 
-Suika3 is a high-performance scripting runtime optimized for Visual
-Novels (VN) and 2D games. It provides a multi-layered DSL environment
-to balance ease of use with professional-grade extensibility.
+Suika3 是一个高效能的指令码执行环境，针对视觉小说（VN）与 2D 游戏进行最佳化。它提供多层次的 DSL 环境，在易用性与专业级扩充性之间取得平衡。
 
-## 2. Core Components (The DSL Stack)
+## 2. 核心元件（DSL 堆叠）
 
-Suika3 empowers creators through four specialized languages:
+Suika3 透过四种专门语言来支援创作：
 
-- NovelML (Tag-based DSL): A straightforward markup language using
-  `[]` tags for rapid VN scenario development.
+- NovelML（以标签为基础的 DSL）：使用 `[]` 标签的简洁标记语言，可快速开发 VN 剧本。
 
-- Anime (Animation DSL): A dedicated system for layer-based raster
-  image animations, controlling affine transform sequences.
+- Anime（动画 DSL）：专门用于图层式点阵图动画的系统，可控制仿射转换序列。
 
-- GUI (UI/UX DSL): A flexible toolset for building interactive screens
-   with buttons optimized for VN requirements.
+- GUI（UI/UX DSL）：一套弹性的工具组，用来建立符合 VN 需求的互动画面与按钮。
 
-- Ray (General-purpose Scripting): A powerful scripting
-  language with VN API.
-    - Customization: Define bespoke NovelML tags.
-    - Performance: JIT-compiled on PC for fast iteration; AOT-compiled
-      to native binaries for iOS compliance.
-    - Low-level Access: Direct hooks into the Suika3 Core C APIs.
+- Ray（通用指令码语言）：具备 VN API 的强大指令码语言。
+    - 客制化：可定义自订的 NovelML 标签。
+    - 效能：在 PC 上以 JIT 编译加快开发迭代；为符合 iOS 规范，也可 AOT 编译成原生二进位档。
+    - 低阶存取：可直接连线 Suika3 Core C API。
 
-## 3. Key Objectives & Design Philosophy
+## 3. 主要目标与设计理念
 
-- Mobile-First Experience: Designed with the belief that smartphones
-  are a primary computing device. It avoids PC-centric UI/UX in
-  favor of a native mobile feel.
+- 行动优先体验：基于智慧型手机已是主要运算装置的前提设计。它避免 PC 导向的 UI/UX，而是采用原生的行动装置感受。
 
-- Store Publishing Compatibility: Fully compliant with iOS/Android store
-  policies via AOT compilation and responsive design.
+- 商店释出相容性：透过 AOT 编译与响应式设计，完全符合 iOS/Android 商店政策。
 
-- High Portability:
-    - Tier 1: iOS, Android, HarmonyOS NEXT, Windows, macOS, Linux
-    - Tier 2: Gaming Consoles
-    - Tier 3: Chromebook, Wasm (WebAssembly)
+- 高可携性：
+    - 第一层级：iOS、Android、HarmonyOS NEXT、Windows、macOS、Linux
+    - 第二层级：游戏主机
+    - 第三层级：Chromebook、Wasm（WebAssembly）
 
-- Beyond Visual Novels: While VN-centric, the underlying 2D foundation
-  allows for genre-fusing (e.g., VN + RPG or Action).
+- 不只限于视觉小说：虽然以 VN 为中心，但底层 2D 基础可延伸到混合型别，例如 VN + RPG 或动作游戏。
 
-## 4. Out of Scope / Constraints
+## 4. 不在范围内 / 限制
 
-To maintain portability and performance, Suika3 explicitly excludes:
+为了维持可携性与效能，Suika3 明确排除以下专案：
 
-- PC-Exclusive Features: Suika3 is not a replacement for legacy
-  PC-only VN engines.
+- PC 专属功能：Suika3 不是传统仅限 PC 的 VN 引擎替代品。
 
-- Full-scale Web Deployment: The Wasm port is intended for demos, not
-  primary distribution.
+- 全规模网页部署：Wasm 版本主要用于展示与试作，不作为主要释出管道。
 
-- 3D Graphics: Currently focused on 2D (future 3D support is planned
-  alongside AI-driven asset generation).
+- 3D 图形：目前专注于 2D，未来会与 AI 驱动的素材生成一起规划 3D 支援。
 
-- Proprietary Middleware: No support for closed technologies like
-  Live2D to ensure maximum engine portability.
+- 专有中介软体：不支援 Live2D 这类封闭技术，以确保引擎最大程度的可携性。
 
 ## 5. NovelML
 
@@ -69,4 +54,3 @@ To maintain portability and performance, Suika3 explicitly excludes:
 ## 8. GUI
 
 ## 9. Config
-

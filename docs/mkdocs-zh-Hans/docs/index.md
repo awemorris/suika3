@@ -1,21 +1,21 @@
-Suika3 Documentation
+Suika3 档案
 ====================
 
-Welcome to the `Suika3` documentation.
+欢迎来到 `Suika3` 档案。
 
-- For Basic Usage:
-    - [Getting Started Guide](getting-started.md)
-    - [NovelML Syntax Reference](novelml-syntax.md)
-    - [NovelML Tag Reference](novelml-tags.md)
-    - [Animation](anime.md)
+- 基本用法：
+    - [入门指南](getting-started.md)
+    - [NovelML 语法参考](novelml-syntax.md)
+    - [NovelML 标签参考](novelml-tags.md)
+    - [动画](anime.md)
     - [GUI](gui.md)
-    - [Lip Sync](lip-sync.md)
-    - [Eye Blink](eye-blink.md)
-- For Advanced Usage:
-    - [Ray Syntax Reference](ray-syntax.md)
-    - [Ray Low Level API Reference](ray-2d-api.md)
-    - [Ray High Level API Reference](ray-vn-api.md)
-    - [Ray Plugin Development](plugin.md)
-    - [AOT Deployment Instructions](aot.md)
-- For Community Developers:
-    - [Build Instructions](build.md)
+    - [口型同步](lip-sync.md)
+    - [眨眼](eye-blink.md)
+- 进阶用法：
+    - [Ray 语法参考](ray-syntax.md)
+    - [Ray 低阶 API 参考](ray-2d-api.md)
+    - [Ray 高阶 API 参考](ray-vn-api.md)
+    - [Ray 外挂开发](plugin.md)
+    - [AOT 部署说明](aot.md)
+- 给社群开发者：
+    - [建置说明](build.md)

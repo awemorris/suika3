@@ -1,17 +1,17 @@
-Ray VN API Reference
+Ray VN API 参考
 ====================
 
-The `VN API (Suika.*)` is designed for Visual Novel creation.
+《VN API (Suika.*)》是为视觉小说创作而设计的。
 
-Every `Suika.*` API function takes only one argument.
-The argument must be a dictionary, and options to a function must be stored as key-and-value pairs in the dictionary.
-In this document, "parameter" means a key-value-pair in that dictionary.
+每个 `Suika.*` API 函数都只接受一个参数。
+该参数必须是一个字典, 并且函数的选项必须作为键值对存储在字典中。
+在本文档中，「参数」是指该字典中的键值对。
 
-## Index
+## 索引
 
-* Fundamental
+* 基础
     * [Suika.loadPlugin()](#suikaloadplugin)
-* Config
+* 配置
     * [Suika.setConfig()](#suikasetconfig)
     * [Suika.getConfigCount()](#suikagetconfigcount)
     * [Suika.getConfigKey()](#suikagetconfigkey)
@@ -24,7 +24,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.getFloatConfig()](#suikagetfloatconfig)
     * [Suika.getConfigAsString()](#suikagetconfigasstring)
     * [Suika.compareLocale()](#suikacomparelocale)
-* Input
+* 输入
     * [Suika.getMousePosX()](#suikagetmouseposx)
     * [Suika.getMousePosY()](#suikagetmouseposy)
     * [Suika.isMouseLeftPressed()](#suikaismouseleftpressed)
@@ -33,7 +33,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.isMouseRightClicked()](#suikaismouserightclicked)
     * [Suika.isMouseDragging()](#suikaismousedragging)
     * [Suika.isReturnKeyPressed()](#suikaisreturnkeypressed)
-    * [Suika.isSpaceKeyPressed()](#suikaisspacekeypressed)
+    * [Suika.isSpaceKeyPressed()](#suikaisspaceKeypressed)
     * [Suika.isEscapeKeyPressed()](#suikaisescapekeypressed)
     * [Suika.isUpKeyPressed()](#suikaisupkeypressed)
     * [Suika.isDownKeyPressed()](#suikaisdownkeypressed)
@@ -48,7 +48,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.isTouchCanceled()](#suikaistouchcanceled)
     * [Suika.isSwiped()](#suikaisswiped)
     * [Suika.clearInputState()](#suikaclearinputstate)
-* Game
+* 游戏
     * [Suika.startCommandRepetition()](#suikastartcommandrepetition)
     * [Suika.stopCommandRepetition()](#suikastopcommandrepetition)
     * [Suika.isInCommandRepetition()](#suikaisincommandrepetition)
@@ -97,22 +97,22 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.getLastEnglishTagIndex()](#suikagetlastenglishtagindex)
     * [Suika.clearLastEnglishTagIndex()](#suikaclearlastenglishtagindex)
     * [Suika.getLastTagName()](#suikagetlasttagname)
-* Image
+* 图像
     * [Suika.createImageFromFile()](#suikacreateimagefromfile)
     * [Suika.createImage()](#suikacreateimage)
-    * [Suika.getImageWidth()](#suikagetimagewidth)
-    * [Suika.getImageHeight()](#suikagetimageheight)
+    * [Suika.getImage宽度()](#suikagetimagewidth)
+    * [Suika.getImage高度()](#suikagetimageheight)
     * [Suika.destroyImage()](#suikadestroyimage)
     * [Suika.drawImage()](#suikadrawimage)
     * [Suika.drawImage3D()](#suikadrawimage3d)
     * [Suika.makeColor()](#suikamakecolor)
     * [Suika.fillImageRect()](#suikafillimagerect)
-* Stage
+* 舞台
     * [Suika.reloadStageImages()](#suikareloadstageimages)
-    * [Suika.reloadStagePositions()](#suikareloadstagepositions)
+    * [Suika.reloadStage位置s()](#suikareloadstagepositions)
     * [Suika.getLayerX()](#suikagetlayerx)
     * [Suika.getLayerY()](#suikagetlayery)
-    * [Suika.setLayerPosition()](#suikasetlayerposition)
+    * [Suika.setLayer位置()](#suikasetlayerposition)
     * [Suika.getLayerScaleX()](#suikagetlayerscalex)
     * [Suika.getLayerScaleY()](#suikagetlayerscaley)
     * [Suika.setLayerScale()](#suikasetlayerscale)
@@ -123,7 +123,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.getLayerAlpha()](#suikagetlayeralpha)
     * [Suika.setLayerAlpha()](#suikasetlayeralpha)
     * [Suika.setLayerBlend()](#suikasetlayerblend)
-    * [Suika.setLayerFileName()](#suikasetlayerfilename)
+    * [Suika.setLayerFileName()](#suikasetlayerfile名称)
     * [Suika.setLayerFrame()](#suikasetlayerframe)
     * [Suika.getLayerText()](#suikagetlayertext)
     * [Suika.setLayerText()](#suikasetlayertext)
@@ -145,7 +145,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.setShakeOffset()](#suikasetshakeoffset)
     * [Suika.isFadeRunning()](#suikaisfaderunning)
     * [Suika.finishFade()](#suikafinishfade)
-    * [Suika.setChNameMapping()](#suikasetchnamemapping)
+    * [Suika.setChNameMapping()](#suikasetch名称mapping)
     * [Suika.getTalkingChpos()](#suikagettalkingchpos)
     * [Suika.setChTalking()](#suikasetchtalking)
     * [Suika.getTalkingChpos()](#suikagettalkingchpos)
@@ -156,24 +156,24 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.fillMessageBox()](#suikafillmessagebox)
     * [Suika.showMessageBox()](#suikashowmessagebox)
     * [Suika.getMessageBoxRect()](#suikagetmessageboxrect]
-    * [Suika.fillNameBox()](#suikafillnamebox)
-    * [Suika.showNameBox()](#suikashownamebox)
-    * [Suika.getNameBoxRect()](#suikagetnameboxrect)
+    * [Suika.fillNameBox()](#suikafill名称box)
+    * [Suika.showNameBox()](#suikashow名称box)
+    * [Suika.getNameBoxRect()](#suikaget名称boxrect)
     * [Suika.showChoosebox()](#suikashowchoosebox)
     * [Suika.showAutoModeBanner()](#suikashowautomodebanner)
     * [Suika.showSkipModeBanner()](#suikashowskipmodebanner)
     * [Suika.renderImage()](#suikarenderimage)
     * [Suika.renderImage3d()](#suikarenderimage3d)
-    * [Suika.setClickPosition()](#suikasetclickposition)
+    * [Suika.setClick位置()](#suikasetclickposition)
     * [Suika.showClick()](#suikashowclick)
-    * [Suika.setClickIndex()](#suikasetclickindex]
+    * [Suika.setClickIndex()](#suikasetclick索引]
     * [Suika.getClickRect()](#suikagetclickrect)
     * [Suika.fillChooseBoxIdleImage()](#suikafillchooseboxidleimage)
     * [Suika.fillChooseBoxHoverImage()](#suikafillchooseboxhoverimage)
     * [Suika.getChooseBoxRect()](#suikagetchooseboxrect)
     * [Suika.startKirakira()](#suikastartkirakira)
     * [Suika.renderKirakira()](#suikarenderkirakira)
-* Mixer
+* 混音器
     * [Suika.setMixerInputFile()](#suikasetmixerinputfile)
     * [Suika.setMixerVolume()](#suikasetmixervolume)
     * [Suika.getMixerVolume()](#suikagetmixervolume)
@@ -184,26 +184,26 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.setCharacterVolume()](#suikasetcharactervolume)
     * [Suika.getCharacterVolume()](#suikagetcharactervolume)
     * [Suika.isMixerSoundFinished()](#suikaismixersoundfinished)
-    * [Suika.getTrackFileName()](#suikagettrackfilename)
+    * [Suika.getTrackFileName()](#suikagettrackfile名称)
     * [Suika.applyCharacterVolume()](#suikaapplycharactervolume)
-* SysBtn
+* 系统按钮
     * [Suika.enableSysBtn()](#suikaenablesysbtn)
     * [Suika.isSysBtnVisible()](#suikaisysbtnvisible)
     * [Suika.updateSysBtnState()](#suikaupdatesysbtnstate)
     * [Suika.isSysBtnPointed()](#suikaisysbtnpointed)
     * [Suika.isSysBtnClicked()](#suikaisysbtnclicked)
-* Text
+* 文本
     * [Suika.drawTextOnLayer()](#suikadrawtextonlayer)
-    * [Suika.getStringWidth()](#suikagetstringwidth)
-    * [Suika.getStringHeight()](#suikagetstringheight)
+    * [Suika.getString宽度()](#suikagetstringwidth)
+    * [Suika.getString高度()](#suikagetstringheight)
     * [Suika.drawGlyph()](#suikadrawglyph)
-    * [Suika.createDrawMsg()](#suikacreatedrawmsg)
-    * [Suika.destroyDrawMsg()](#suikadestroydrawmsg)
-    * [Suika.countDrawMsgChars()](#suikacountdrawmsgchars)
-    * [Suika.drawMessage()](#suikadrawmsgcommon)
+    * [Suika.createDrawMsg()](#suikacreatedraw消息)
+    * [Suika.destroyDrawMsg()](#suikadestroydraw消息)
+    * [Suika.countDrawMsgChars()](#suikacountdraw消息chars)
+    * [Suika.drawMessage()](#suikadraw消息common)
     * [Suika.getDrawMsgPenPosition()](#suikagetpenpositioncommon)
     * [Suika.isEscapeSequenceChar()](#suikaisescapesequencechar)
-* Tag
+* 标签
     * [Suika.getTagCount()](#suikagettagcount)
     * [Suika.moveToTagFile()](#suikamovetotagfile)
     * [Suika.moveToTagIndex()](#suikamovetotagindex)
@@ -213,11 +213,11 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.moveToElseTag()](#suikamovetoelsetag)
     * [Suika.moveToEndIfTag()](#suikamovetoendiftag)
     * [Suika.moveToEndMacroTag()](#suikamovetoendmacrotag)
-    * [Suika.getTagFileName()](#suikagettagfilename)
+    * [Suika.getTagFileName()](#suikagettagfile名称)
     * [Suika.getTagName()](#suikagettagname)
     * [Suika.getTagPropertyCount()](#suikagettagpropertycount)
-    * [Suika.getTagPropertyName()](#suikagettagpropertyname)
-    * [Suika.getTagPropertyValue()](#suikagettagpropertyvalue)
+    * [Suika.getTagPropertyName()](#suikagettagproperty名称)
+    * [Suika.getTagPropertyValue()](#suikagettagproperty值)
     * [Suika.getTagArgBool()](#suikagettagargbool)
     * [Suika.getTagArgInt()](#suikagettagargint)
     * [Suika.getTagArgFloat()](#suikagettagargfloat)
@@ -227,7 +227,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.popTagStackIf()](#suikapoptagstackif)
     * [Suika.pushTagStackWhile()](#suikapushtagstackwhile)
     * [Suika.pushTagStackFor()](#suikapushtagstackfor)
-* Anime
+* 动画
     * [Suika.loadAnimeFromFile()](#suikaloadanimefromfile)
     * [Suika.newAnimeSequence()](#suikanewanimesequence)
     * [Suika.addAnimeSequencePropertyF()](#suikaaddanimesequencepropertyf)
@@ -242,7 +242,7 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.stopLipAnime()](#suikastoplipanime)
     * [Suika.clearLayerAnimeSequence()](#suikaclearlayeranimesequence)
     * [Suika.clearAllAnimeSequence()](#suikaclearallanimesequnce)
-* Variable
+* 变量
     * [Suika.setVariableInt()](#suikasetvariableint)
     * [Suika.setVariableFloat()](#suikasetvariablefloat)
     * [Suika.setVariableString()](#suikasetvariablestring)
@@ -254,10 +254,10 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.makeVariableGlobal()](#suikamakevariableglobal)
     * [Suika.isGlobalVariable()](#suikaisglobalvariable)
     * [Suika.getVariableCount()](#suikagetvariablecount)
-    * [Suika.getVariableName()](#suikagetvariablename)
+    * [Suika.getVariableName()](#suikagetvariable名称)
     * [Suika.checkVariableExists()](#suikacheckvariableexists)
     * [Suika.expandStringWithVariable()](#suikaexpandstringwithvariable)
-* Save
+* 保存
     * [Suika.executeSaveGlobal()](#suikaexecutesaveglobal)
     * [Suika.executeLoadGlobal()](#suikaexecuteloadglobal)
     * [Suika.executeSaveLocal()](#suikaexecutesavelocal)
@@ -267,23 +267,23 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.deleteGlobalSave()](#suikadeleteglobalsave)
     * [Suika.checkRightAfterLoad()](#suikacheckrightafterload)
     * [Suika.getSaveTimestamp()](#suikagetsavetimestamp)
-    * [Suika.getLatestSaveIndex()](#suikagetlatestsaveindex)
+    * [Suika.getLatestSaveIndex()](#suikagetlatestsave索引)
     * [Suika.getSaveChapterName()](#suikagetsavechaptername)
     * [Suika.getSaveLastMessage()](#suikagetsavelastmessage)
     * [Suika.getSaveThumbnail()](#suikagetsavethumbnail)
-* History
+* 历史
     * [Suika.clearHistory()](#suikaclearhistory)
     * [Suika.addHistory()](#suikaaddhistory)
     * [Suika.getHistoryCount()](#suikagethistorycount)
-    * [Suika.getHistoryName()](#suikagethistoryname)
+    * [Suika.getHistoryName()](#suikagethistory名称)
     * [Suika.getHistoryMessage()](#suikagethistorymessage)
     * [Suika.getHistoryVoice()](#suikagethistoryvoice)
-* Seen
+* 已读
     * [Suika.loadSeen()](#suikaloadseen)
     * [Suika.saveSeen()](#suikasaveseen)
     * [Suika.getSeenFlags()](#suikagetseenflags)
     * [Suika.setSeenFlags()](#suikasetseenflags)
-* GUI
+* 图形用户界面
     * [Suika.loadGUIFile()](#suikaloadguifile)
     * [Suika.startGUI()](#suikastartgui)
     * [Suika.stopGUI()](#suikastopgui)
@@ -319,273 +319,273 @@ In this document, "parameter" means a key-value-pair in that dictionary.
 
 ## Suika.loadPlugin()
 
-Loads a plugin.
+加载插件。
 
-Only this API takes a non-dictionary argument.
+只有这个 API 接受非字典参数。
 
-### Parameters (Direct)
+### 参数（直接）
 
-| Parameter | Type   | Description     |
+| 参数 | 类型 | 说明 |
 |-----------|--------|-----------------|
-| name      | String | Plugin name.    |
+| 名称      | String | 插件名称。    |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.setConfig()
 
-Set a config.
+设置配置。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key of the config.                         |
-| value     | String | Value of the config.                       |
+| 键       | String | 配置的键。                         |
+| 值     | String | 配置的值。                       |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.getConfigCount()
 
-Get the number of the config keys.
+获取配置键的数量。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Integer that represents a number of config keys.
+代表配置键数量的整数。
 
 ---
 
 ## Suika.getConfigKey()
 
-Get a config key's index.
+获取配置键的索引。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| index     | Integer | Index of a config.                         |
+| 索引     | Integer | 配置的索引。                         |
 
-### Return
+### 返回
 
-String that represents a key of the config at the specified index.
+代表指定索引处配置键的字符串。
 
 ---
 
 ## Suika.isGlobalSaveConfig()
 
-Check if a config key is stored to global save data.
+检查配置键是否存储到全局保存数据。
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| 键       | String | 键名。                                  |
 
-### Return
+### 返回
 
-Boolean that represents whether the config is global-saved or not.
+表示配置是否全局保存的布尔值。
 
 ---
 
 ## Suika.isLocalSaveConfig()
 
-Check if a config key is stored to local save data.
+检查配置键是否存储到本地保存数据。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| 键       | String | 键名。                                  |
 
-### Return
+### 返回
 
-Boolean that represents whether the config is local-saved or not.
+表示配置是否本地保存的布尔值。
 
 ---
 
 ## Suika.getConfigType()
 
-Get a config value type. ("s", "b", "i", "f")
+获取配置值类型。("s", "b", "i", "f")
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| 键       | String | 键名。                                  |
 
-### Return
+### 返回
 
-One of the following strings.
+以下字符串之一。
 
-| Value      | Meaning                  |
+| 值 | 含义 |
 |------------|--------------------------|
-| "s"        | Config is string.        |
-| "b"        | Config is boolean.       |
-| "i"        | Config is integer.       |
-| "f"        | Config is float.         |
+| "s" | 配置是字符串。 |
+| "b" | 配置是布尔值。 |
+| "i" | 配置是整数。 |
+| "f" | 配置是浮点数。 |
 
 ---
 
 ## Suika.getStringConfig()
 
-Get a string config value.
+获取字符串配置值。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| 键       | String | 键名。                                  |
 
-### Return
+### 返回
 
-String value of the config.
+配置的字符串值。
 
 ---
 
 ## Suika.getBoolConfig()
 
-Get a boolean config value.
+获取布尔配置值。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| 键       | String | 键名。                                  |
 
-### Return
+### 返回
 
-Boolean value of the config.
+配置的布尔值。
 
 ---
 
 ## Suika.getIntConfig()
 
-Get an integer config value.
+获取整数配置值。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| 键       | String | 键名。                                  |
 
-### Return
+### 返回
 
-Integer value of the config.
+配置的整数值。
 
 ---
 
 ## Suika.getFloatConfig()
 
-Get a float config value.
+获取浮点配置值。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| 键       | String | 键名。                                  |
 
-### Return
+### 返回
 
-Float value of the config.
+配置的浮点值。
 
 ---
 
 ## Suika.getConfigAsString()
 
-Get a config value as a string.
+Get a config 值 as a string.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| key       | String | Key name.                                  |
+| 键       | String | 键名。                                  |
 
-### Return
+### 返回
 
-Stringified value of the config.
+Stringified 值 of the config.
 
 ---
 
 ## Suika.compareLocale()
 
-Check if the specified locale is same as the current locale.
+检查指定的语言环境是否与当前语言环境相同。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| locale    | String | Locale name.                               |
+| locale    | String | Locale 名称.                               |
 
 
-### Return
+### 返回
 
-Bolean that represents whether the specified locale is matched to the
+表示指定语言环境是否匹配的布尔值
 current one.
 
 ---
 
 ## Suika.getMousePosX()
 
-Get the mouse X position.
+获取鼠标 X 位置。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Integer that represents the current mouse X coordinate.
+代表当前鼠标 X 座标的整数。
 
 ---
 
 ## Suika.getMousePosY()
 
-Get the mouse Y position.
+获取鼠标 Y 位置。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Integer that represents the current mouse Y coordinate.
+代表当前鼠标 Y 座标的整数。
 
 ---
 
 ## Suika.isMouseLeftPressed()
 
-Check if mouse left button is pressed.
+检查鼠标左按钮是否被按下。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean that represents whether the left button is currently held down.
+表示左按钮是否当前被按住的布尔值.
 
 ---
 
 ## Suika.isMouseRightPressed()
 
-Check if mouse right button is pressed.
+检查鼠标右按钮是否被按下。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean that represents whether the right button is currently held down.
+表示右按钮是否当前被按住的布尔值n.
 
 ---
 
@@ -593,11 +593,11 @@ Boolean that represents whether the right button is currently held down.
 
 Check if mouse left button is pressed then released.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Boolean that represents whether a left-click occurred in the current frame.
 
@@ -607,11 +607,11 @@ Boolean that represents whether a left-click occurred in the current frame.
 
 Check if mouse right button is pressed then released.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Boolean that represents whether a right-click occurred in the current frame.
 
@@ -621,11 +621,11 @@ Boolean that represents whether a right-click occurred in the current frame.
 
 Check if mouse is dragging.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Boolean that represents whether the mouse is being moved while a button is pressed.
 
@@ -633,197 +633,197 @@ Boolean that represents whether the mouse is being moved while a button is press
 
 ## Suika.isReturnKeyPressed()
 
-Check if return key is pressed.
+Check if return 键 is pressed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.isSpaceKeyPressed()
 
-Check if space key is pressed.
+Check if space 键 is pressed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.isEscapeKeyPressed()
 
-Check if escape key is pressed.
+Check if escape 键 is pressed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.isUpKeyPressed()
 
-Check if up key is pressed.
+Check if up 键 is pressed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.isDownKeyPressed()
 
-Check if down key is pressed.
+Check if down 键 is pressed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.isLeftKeyPressed()
 
-Check if left key is pressed.
+Check if left 键 is pressed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.isRightKeyPressed()
 
-Check if right key is pressed.
+Check if right 键 is pressed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.isPageUpKeyPressed()
 
-Check if pageup key is pressed.
+Check if pageup 键 is pressed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.isPageDownKeyPressed()
 
-Check if pagedown key is pressed.
+Check if pagedown 键 is pressed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.isControlKeyPressed()
 
-Check if control key is pressed.
+Check if control 键 is pressed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.isSKeyPressed()
 
-Check if S key is pressed.
+Check if S 键 is pressed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.isLKeyPressed()
 
-Check if L key is pressed.
+Check if L 键 is pressed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.isHKeyPressed()
 
-Check if H key is pressed.
+Check if H 键 is pressed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.isTouchCanceled()
 
-Check if touch is canceled.
+检查触摸是否被取消。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -831,13 +831,13 @@ Boolean value.
 
 Check if swiped.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -845,13 +845,13 @@ Boolean value.
 
 Clear input states to avoid further input processing in the current frame.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 
 ---
@@ -860,13 +860,13 @@ No return.
 
 Start a multiple-frame command execution.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -874,13 +874,13 @@ No return.
 
 Stop a multiple-frame command execution.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -888,13 +888,13 @@ No return.
 
 Check whether we are in a multiple-frame command execution or not.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -902,13 +902,13 @@ Boolean value.
 
 Set the message showing state to active.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -916,13 +916,13 @@ No return.
 
 Reset the message showing state.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -930,13 +930,13 @@ No return.
 
 Check whether the message showing state is set or not.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -944,13 +944,13 @@ Boolean value.
 
 Start the auto-mode.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -958,13 +958,13 @@ No return.
 
 Stop the auto-mode.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -972,13 +972,13 @@ No return.
 
 Check whether we are in the auto-mode or not.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -986,71 +986,71 @@ Boolean value.
 
 Start the skip-mode.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.stopSkipMode()
 
-Stop the skip-mode.
+停止跳过模式。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.isSkipMode()
 
-Check whether we are in the skip-mode or not.
+检查我们是否在跳过模式中。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.setSaveLoad()
 
-Set the save/load enable setting.
+设置保存/加载启用设置。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                       |
+| 参数 | 类型 | 说明 |
 |-----------|---------|-----------------------------------|
-| enable    | Boolean | Whether to enable save and load.  |
+| enable    | Boolean | 是否启用保存和加载。  |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.isSaveLoadEnabled()
 
-Get the save/load enable setting.
+获取保存/加载启用设置。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -1058,15 +1058,15 @@ Boolean value.
 
 Set the non-interruptible mode setting.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
 | enable    | Boolean | Non-interruptible mode.    |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1074,13 +1074,13 @@ No return.
 
 Get the non-interruptible mode setting.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -1088,16 +1088,16 @@ Boolean value.
 
 Set the pen position for text drawing.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
 | x         | Integer | X coordinate.         |
 | y         | Integer | Y coordinate.         |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1105,13 +1105,13 @@ No return.
 
 Get the pen X position.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Integer value.
+Integer 值.
 
 ---
 
@@ -1119,13 +1119,13 @@ Integer value.
 
 Get the pen Y position.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Integer value.
+Integer 值.
 
 ---
 
@@ -1133,14 +1133,14 @@ Integer value.
 
 Push the return point to the call stack.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
-| file      | String  | Script file name.     |
-| index     | Integer | Command index.        |
+| file      | String  | Script file 名称.     |
+| 索引     | Integer | Command 索引.        |
 
-### Return
+### 返回
 
 Boolean that represents success or failure.
 
@@ -1150,53 +1150,53 @@ Boolean that represents success or failure.
 
 Pop the return point from the call stack.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Returns a dictionary that contains:
 
-* obj.file: File name
-* obj.index: Tag index
+* obj.file: File 名称
+* obj.索引: Tag 索引
 
 ---
 
 ## Suika.readCallStack()
 
-Read the call stack element at the specified index.
+Read the call stack element at the specified 索引.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
-| sp        | Integer | Stack element index.  |
+| sp        | Integer | Stack element 索引.  |
 
-### Return
+### 返回
 
 Returns a dictionary that contains:
 
-* obj.file: File name
-* obj.index: Tag index
+* obj.file: File 名称
+* obj.索引: Tag 索引
 
 ---
 
 ## Suika.writeCallStack()
 
-Write the call stack element at the specified index.
+Write the call stack element at the specified 索引.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
-| sp        | Integer | Stack element index.  |
-| file      | String  | Script file name.     |
-| index     | Integer | Tag index.            |
+| sp        | Integer | Stack element 索引.  |
+| file      | String  | Script file 名称.     |
+| 索引     | Integer | Tag 索引.            |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1204,16 +1204,16 @@ No return.
 
 Set a calling argument for GUI or anime.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
-| index     | Integer | Argument index.       |
-| value     | String  | Argument value.       |
+| 索引     | Integer | 参数索引。       |
+| 值     | String  | 参数值。       |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -1221,15 +1221,15 @@ Boolean value.
 
 Get a calling argument.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
-| index     | Integer | Argument index.       |
+| 索引     | Integer | 参数索引。       |
 
-### Return
+### 返回
 
-String value.
+String 值.
 
 ---
 
@@ -1237,13 +1237,13 @@ String value.
 
 Check if the script page mode is enabled.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Returns boolean.
+返回布尔值。
 
 ---
 
@@ -1251,15 +1251,15 @@ Returns boolean.
 
 Append a string to the page mode buffer string.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
 | message   | String  | Message.              |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1267,11 +1267,11 @@ No return.
 
 Get the page mode buffer string.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Returns a string.
 
@@ -1281,13 +1281,13 @@ Returns a string.
 
 Clear the page mode buffer string.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1295,13 +1295,13 @@ No return.
 
 Reset the message line count in a page.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1309,13 +1309,13 @@ No return.
 
 Increment the line count in a page.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1323,13 +1323,13 @@ No return.
 
 Check if we are at the first line in a page.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1337,15 +1337,15 @@ No return.
 
 Register a BGVoice.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
 | file      | String  | BGVoice file.         |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1353,13 +1353,13 @@ No return.
 
 Get the BGVoice.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Returns a file name string.
+Returns a file 名称 string.
 
 ---
 
@@ -1367,15 +1367,15 @@ Returns a file name string.
 
 Set the BGVoice state playing.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
 | isPlaying | Boolean | State.                |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1383,41 +1383,41 @@ No return.
 
 Check if the BGVoice is playing.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Returns boolean.
+返回布尔值。
 
 ---
 
 ## Suika.setChapterName()
 
-Set the chapter name.
+Set the chapter 名称.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
-| name      | String  | Chapter name.         |
+| 名称      | String  | 章节名称。         |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.getChapterName()
 
-Get the chapter name.
+Get the chapter 名称.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Returns a string.
 
@@ -1425,30 +1425,30 @@ Returns a string.
 
 ## Suika.setLastMessage()
 
-Set the last message.
+设置最后一条消息。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
 | message   | String  | Message.              |
 | isAppend  | Boolean | Append or replace.    |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.getLastMessage()
 
-Get the last message.
+获取最后一条消息。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Returns a string.
 
@@ -1458,15 +1458,15 @@ Returns a string.
 
 Set the text speed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
 | speed     | Float   | Text speed.           |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1474,11 +1474,11 @@ No return.
 
 Get the text speed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Returns a float.
 
@@ -1488,15 +1488,15 @@ Returns a float.
 
 Set the auto mode speed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
 | speed     | Float   | Auto speed.           |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1504,11 +1504,11 @@ No return.
 
 Get the auto speed.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Returns a float.
 
@@ -1516,27 +1516,27 @@ Returns a float.
 
 ## Suika.markLastEnglishTagIndex()
 
-Mark the last English index.
+Mark the last English 索引.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.getLastEnglishTagIndex()
 
-Get the last English index.
+Get the last English 索引.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Returns an integer.
 
@@ -1544,28 +1544,28 @@ Returns an integer.
 
 ## Suika.clearLastEnglishTagIndex()
 
-Clear the last English index.
+Clear the last English 索引.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.getLastTagName()
 
-Get the last tag name.
+Get the last tag 名称.
 
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Returns a string.
 
@@ -1575,13 +1575,13 @@ Returns a string.
 
 Load an image from a file.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type   | Description                   |
 |-----------|--------|-------------------------------|
 | file      | String | Path to the image file.       |
 
-### Return
+### 返回
 
 An image object, or null on failure.
 
@@ -1591,46 +1591,46 @@ An image object, or null on failure.
 
 Create a new blank image.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description                   |
 |-----------|---------|-------------------------------|
-| width     | Integer | Width of the image.           |
-| height    | Integer | Height of the image.          |
+| width     | Integer | 宽度 of the image.           |
+| height    | Integer | 高度 of the image.          |
 
-### Return
+### 返回
 
 An image object.
 
 ---
 
-## Suika.getImageWidth()
+## Suika.getImage宽度()
 
-Get the width of an image.
+获取图像的宽度。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type   | Description                   |
 |-----------|--------|-------------------------------|
 | img       | Object | Image object.                 |
 
-### Return
+### 返回
 
 Integer that represents the width.
 
 ---
 
-## Suika.getImageHeight()
+## Suika.getImage高度()
 
-Get the height of an image.
+获取图像的高度。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type   | Description                   |
 |-----------|--------|-------------------------------|
 | image     | Object | Image object.                 |
 
-### Return
+### 返回
 
 Integer that represents the height.
 
@@ -1640,15 +1640,15 @@ Integer that represents the height.
 
 Destroy an image and free its memory.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type   | Description                   |
 |-----------|--------|-------------------------------|
 | image     | Object | Image object to destroy.      |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1656,7 +1656,7 @@ No return.
 
 Copy an image to another image (no blending).
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter  | Type    | Description                      |
 |------------|---------|----------------------------------|
@@ -1664,8 +1664,8 @@ Copy an image to another image (no blending).
 | dstLeft    | Integer | X coordinate in destination.     |
 | dstTop     | Integer | Y coordinate in destination.     |
 | srcImage   | Object  | Source image.                    |
-| dstWidth   | Integer | Width to draw.                   |
-| dstHeight  | Integer | Height to draw.                  |
+| dst宽度   | Integer | 宽度 to draw.                   |
+| dst高度  | Integer | 高度 to draw.                  |
 | srcLeft    | Integer | X coordinate in source.          |
 | srcTop     | Integer | Y coordinate in source.          |
 | alpha      | Integer | 0-255                            |
@@ -1683,9 +1683,9 @@ Copy an image to another image (no blending).
 | Suika.BLEND_GLYPH   | Alpha blending for normal glyphs.  |
 | Suika.BLEND_EMOJI   | Alpha blending for emoji glyphs.   |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1693,7 +1693,7 @@ No return.
 
 Copy an image to another image (no blending).
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter  | Type    | Description                      |
 |------------|---------|----------------------------------|
@@ -1709,8 +1709,8 @@ Copy an image to another image (no blending).
 | srcImage   | Object  | Source image.                    |
 | srcLeft    | Integer | X coordinate in source.          |
 | srcTop     | Integer | Y coordinate in source.          |
-| srcWidth   | Integer | Width in source.                 |
-| srcHeight  | Integer | Height in source.                |
+| src宽度   | Integer | 宽度 in source.                 |
+| src高度  | Integer | 高度 in source.                |
 | alpha      | Integer | 0-255                            |
 | blend      | Integer | Blending type.                   |
 
@@ -1723,9 +1723,9 @@ Copy an image to another image (no blending).
 | Suika.BLEND_SUB     | Sub blending.                      |
 | Suika.BLEND_DIM     | RGB 50% alpha blending.            |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1733,23 +1733,23 @@ No return.
 
 Draw an image with alpha blending.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description                      |
 |-----------|---------|----------------------------------|
 | dstImage  | Object  | Destination image.               |
 | dstLeft   | Integer | X coordinate in destination.     |
 | dstTop    | Integer | Y coordinate in destination.     |
-| dstWidth  | Integer | Width to draw.                   |
-| dstHeight | Integer | Height to draw.                  |
+| dst宽度  | Integer | 宽度 to draw.                   |
+| dst高度 | Integer | 高度 to draw.                  |
 | srcImage  | Object  | Source image.                    |
 | srcLeft   | Integer | X coordinate in source.          |
 | srcTop    | Integer | Y coordinate in source.          |
-| alpha     | Integer | Alpha value (`0`-`255`).         |
+| alpha     | Integer | Alpha 值 (`0`-`255`).         |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1757,23 +1757,23 @@ No return.
 
 Draw an image with additive blending.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description                      |
 |-----------|---------|----------------------------------|
 | dstImage  | Object  | Destination image.               |
 | dstLeft   | Integer | X coordinate in destination.     |
 | dstTop    | Integer | Y coordinate in destination.     |
-| dstWidth  | Integer | Width to draw.                   |
-| dstHeight | Integer | Height to draw.                  |
+| dst宽度  | Integer | 宽度 to draw.                   |
+| dst高度 | Integer | 高度 to draw.                  |
 | srcImage  | Object  | Source image.                    |
 | srcLeft   | Integer | X coordinate in source.          |
 | srcTop    | Integer | Y coordinate in source.          |
-| alpha     | Integer | Alpha value (`0`-`255`).         |
+| alpha     | Integer | Alpha 值 (`0`-`255`).         |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1781,31 +1781,31 @@ No return.
 
 Draw an image with subtractive blending.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description                      |
 |-----------|---------|----------------------------------|
 | dstImage  | Object  | Destination image.               |
 | dstLeft   | Integer | X coordinate in destination.     |
 | dstTop    | Integer | Y coordinate in destination.     |
-| dstWidth  | Integer | Width to draw.                   |
-| dstHeight | Integer | Height to draw.                  |
+| dst宽度  | Integer | 宽度 to draw.                   |
+| dst高度 | Integer | 高度 to draw.                  |
 | srcImage  | Object  | Source image.                    |
 | srcLeft   | Integer | X coordinate in source.          |
 | srcTop    | Integer | Y coordinate in source.          |
-| alpha     | Integer | Alpha value (`0`-`255`).         |
+| alpha     | Integer | Alpha 值 (`0`-`255`).         |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.makeColor()
 
-Create a pixel value from RGBA components.
+Create a pixel 值 from RGBA components.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description      |
 |-----------|---------|------------------|
@@ -1814,9 +1814,9 @@ Create a pixel value from RGBA components.
 | b         | Integer | Blue (0-255).    |
 | a         | Integer | Alpha (0-255).   |
 
-### Return
+### 返回
 
-A pixel value.
+A pixel 值.
 
 ---
 
@@ -1824,20 +1824,20 @@ A pixel value.
 
 Fill a rectangular area on an image with a color.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description                         |
 |-----------|---------|-------------------------------------|
 | image     | Object  | Target image.                       |
 | left      | Integer | X coordinate.                       |
 | top       | Integer | Y coordinate.                       |
-| width     | Integer | Width.                              |
-| height    | Integer | Height.                             |
+| width     | Integer | 宽度.                              |
+| height    | Integer | 高度.                             |
 | color     | Integer | Color created by Suika.makeColor(). |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1845,27 +1845,27 @@ No return.
 
 Reload the stage images by the config.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Boolean that represents success or failure.
 
 ---
 
-## Suika.reloadStagePositions()
+## Suika.reloadStage位置s()
 
 Reload the stage positions by the config.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1873,15 +1873,15 @@ No return.
 
 Get the current position of a specific layer.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | 舞台图层的索引。 |
 
-### Return
+### 返回
 
-Integer value of the coordinate.
+Integer 值 of the coordinate.
 
 ---
 
@@ -1889,33 +1889,33 @@ Integer value of the coordinate.
 
 Get the current position of a specific layer.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | 舞台图层的索引。 |
 
-### Return
+### 返回
 
-Integer value of the coordinate.
+Integer 值 of the coordinate.
 
 ---
 
-## Suika.setLayerPosition()
+## Suika.setLayer位置()
 
 Set the position of a specific layer.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | 舞台图层的索引。 |
 | x         | Integer | X coordinate.              |
 | y         | Integer | Y coordinate.              |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1923,15 +1923,15 @@ No return.
 
 Get the X scaling factor of a specific layer.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | 舞台图层的索引。 |
 
-### Return
+### 返回
 
-Float value of the scale.
+Float 值 of the scale.
 
 ---
 
@@ -1939,15 +1939,15 @@ Float value of the scale.
 
 Get the Y scaling factor of a specific layer.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | 舞台图层的索引。 |
 
-### Return
+### 返回
 
-Float value of the scale.
+Float 值 of the scale.
 
 ---
 
@@ -1955,17 +1955,17 @@ Float value of the scale.
 
 Set the scaling factor of a specific layer.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | 舞台图层的索引。 |
 | scale_x   | Float   | Horizontal scale.          |
 | scale_y   | Float   | Vertical scale.            |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -1973,15 +1973,15 @@ No return.
 
 Get the rotation angle of a specific layer.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | 舞台图层的索引。 |
 
-### Return
+### 返回
 
-Returns float.
+返回浮点数。
 
 ---
 
@@ -1989,82 +1989,82 @@ Returns float.
 
 Set the rotation angle of a specific layer.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| rot       | Float   | Rotation angle in radians. |
+| layer     | Integer | 舞台图层的索引。 |
+| rot       | Float   | 旋转角度 in radians. |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.getLayerDim()
 
-Get the dimming state of a specific layer.
+获取特定图层的昏暗状态。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | 舞台图层的索引。 |
 
-### Return
+### 返回
 
-Returns boolean.
+返回布尔值。
 
 ---
 
 ## Suika.setLayerDim()
 
-Set the dimming state of a specific layer.
+设置特定图层的昏暗状态。
 
-### Parameters (Dictionary) (Set)
+### 参数（字典） (Set)
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| dim       | Boolean | Whether to dim the layer.  |
+| layer     | Integer | 舞台图层的索引。 |
+| dim       | Boolean | 是否昏暗图层。 |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.getLayerAlpha()
 
-Get the transparency of a specific layer.
+获取特定图层的透明度。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | 舞台图层的索引。 |
 
-### Return
+### 返回
 
-Returns integer.
+返回整数。
 
 ---
 
 ## Suika.setLayerAlpha()
 
-Set the transparency of a specific layer.
+设置特定图层的透明度。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| alpha     | Integer | Alpha value (0-255).       |
+| layer     | Integer | 舞台图层的索引。 |
+| alpha     | Integer | Alpha 值 (0-255).       |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2072,16 +2072,16 @@ No return.
 
 Set the blending mode for a layer.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
+| layer     | Integer | 舞台图层的索引。 |
 | blend     | Integer | Blend mode (Alpha, Add, Sub). |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2089,14 +2089,14 @@ No return.
 
 Set a file to be displayed on a layer.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| file_name | String  | Path to the image file.    |
+| layer     | Integer | 舞台图层的索引。 |
+| file_名称 | String  | Path to the image file.    |
 
-### Return
+### 返回
 
 Boolean that represents success or failure.
 
@@ -2104,18 +2104,18 @@ Boolean that represents success or failure.
 
 ## Suika.setLayerFrame()
 
-Set the frame index for eye blinking and lip synchronization.
+Set the frame 索引 for eye blinking and lip synchronization.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Index of the stage layer.  |
-| frame     | Integer | Frame index.               |
+| layer     | Integer | 舞台图层的索引。 |
+| frame     | Integer | Frame 索引.               |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2123,15 +2123,15 @@ No return.
 
 Get the string displayed on a text layer.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the text layer.   |
+| 索引     | Integer | Index of the text layer.   |
 
-### Return
+### 返回
 
-Returns string.
+返回字符串。
 
 ---
 
@@ -2139,16 +2139,16 @@ Returns string.
 
 Set the string displayed on a text layer.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the text layer.   |
+| 索引     | Integer | Index of the text layer.   |
 | text      | String  | Text message to set.       |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2156,11 +2156,11 @@ No return.
 
 Get the sysbtn idle image.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Returns an image object.
 
@@ -2170,11 +2170,11 @@ Returns an image object.
 
 Get the sysbtn hover image.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Returns an image object.
 
@@ -2184,11 +2184,11 @@ Returns an image object.
 
 Clear the basic layers.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Returns an image object.
 
@@ -2198,11 +2198,11 @@ Returns an image object.
 
 Clear the stage and make it initial state.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Returns an image object.
 
@@ -2210,15 +2210,15 @@ Returns an image object.
 
 ## Suika.chposToLayer()
 
-Convert a character position to a stage layer index.
+Convert a character position to a stage layer 索引.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
-| chpos     | Integer | Character position.   |
+| chpos     | Integer | 字符位置。   |
 
-### Return
+### 返回
 
 Returns an integer.
 
@@ -2226,15 +2226,15 @@ Returns an integer.
 
 ## Suika.chposToEyeLayer()
 
-Convert a character position to a stage layer index (character eye).
+Convert a character position to a stage layer 索引 (character eye).
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
-| chpos     | Integer | Character position.   |
+| chpos     | Integer | 字符位置。   |
 
-### Return
+### 返回
 
 Returns an integer.
 
@@ -2242,15 +2242,15 @@ Returns an integer.
 
 ## Suika.chposToLipLayer()
 
-Convert a character position to a stage layer index (character lip).
+Convert a character position to a stage layer 索引 (character lip).
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
-| chpos     | Integer | Character position.   |
+| chpos     | Integer | 字符位置。   |
 
-### Return
+### 返回
 
 Returns an integer.
 
@@ -2258,15 +2258,15 @@ Returns an integer.
 
 ## Suika.layerToChpos()
 
-Convert a stage layer index to a character position.
+Convert a stage layer 索引 to a character position.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description           |
 |-----------|---------|-----------------------|
-| layer     | Integer | Layer index.          |
+| layer     | Integer | 图层索引。          |
 
-### Return
+### 返回
 
 Returns an integer.
 
@@ -2276,13 +2276,13 @@ Returns an integer.
 
 Render the stage with all stage layers.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2290,7 +2290,7 @@ No return.
 
 Start a transition effect.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description                                  |
 |-----------|---------|----------------------------------------------|
@@ -2299,9 +2299,9 @@ Start a transition effect.
 | time      | Float   | Duration in seconds.                         |
 | ruleImage | Object  | Rule image object (optional).                |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -2309,11 +2309,11 @@ Boolean value.
 
 Get the offset for the shake command.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 An object that contains:
 * x
@@ -2325,16 +2325,16 @@ An object that contains:
 
 Set the offset for the shake command.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description    |
 |-----------|---------|----------------|
 | x         | Integer | X offset.      |
 | y         | Integer | Y offset.      |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2342,13 +2342,13 @@ No return.
 
 Check if the fading is running.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -2356,30 +2356,30 @@ Boolean value.
 
 Immediately end the fading effect.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.setChNameMapping()
 
-Specify a character name index for a character position.
+Specify a character 名称 索引 for a character position.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter   | Type    | Description                |
 |-------------|---------|----------------------------|
-| chpos       | Integer | Character position.        |
-| chNameIndex | Integer | Character name index.      |
+| chpos       | Integer | 字符位置。        |
+| chNameIndex | Integer | Character 名称 索引.      |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2387,11 +2387,11 @@ No return.
 
 Get the position of the character currently speaking.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Returns an integer.
 
@@ -2399,17 +2399,17 @@ Returns an integer.
 
 ## Suika.setChTalking()
 
-Set the talking character.
+设置正在说话的字符。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| chpos     | Integer | Character position.        |
+| chpos     | Integer | 字符位置。        |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2417,11 +2417,11 @@ No return.
 
 Get the talker character position.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Returns an integer.
 
@@ -2431,13 +2431,13 @@ Returns an integer.
 
 Automatically update character dimming based on who is speaking.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2445,16 +2445,16 @@ No return.
 
 Update the character dimming manually.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| chpos     | Integer | Character position.        |
+| chpos     | Integer | 字符位置。        |
 | dim       | Boolean | Dim or not.                |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2462,13 +2462,13 @@ No return.
 
 Get the dimming state.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| chpos     | Integer | Character position.        |
+| chpos     | Integer | 字符位置。        |
 
-### Return
+### 返回
 
 Returns a boolean.
 
@@ -2476,27 +2476,27 @@ Returns a boolean.
 
 ## Suika.fillNameBox()
 
-Fill the name box by the name box image.
+Fill the 名称 box by the 名称 box image.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.getNameBoxRect()
 
-Get the name box position and size.
+Get the 名称 box position and size.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Object.
 
@@ -2509,17 +2509,17 @@ Object.
 
 ## Suika.showNameBox()
 
-Show or hides the name box.
+Show or hides the 名称 box.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
 | show      | Boolean | Show or hide.              |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2527,13 +2527,13 @@ No return.
 
 Fill the message box by the message box image.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2541,15 +2541,15 @@ No return.
 
 Show or hide the message box.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
 | show      | Boolean | Whether to show the box.   |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2557,11 +2557,11 @@ No return.
 
 Get the message box rect.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 An object that contains:
 * `x`
@@ -2571,20 +2571,20 @@ An object that contains:
 
 ---
 
-## Suika.setClickPosition()
+## Suika.setClick位置()
 
 Set the click animation position.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| x         | Integer | X position.                |
-| y         | Integer | Y position.                |
+| x | Integer | X 位置。 |
+| y | Integer | Y 位置。 |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2592,31 +2592,31 @@ No return.
 
 Show or hide the click animation.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
 | show      | Boolean | Show or hide.              |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.setClickIndex()
 
-Set the index of the click animation frame.
+Set the 索引 of the click animation frame.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Frame index.               |
+| 索引     | Integer | Frame 索引.               |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2624,11 +2624,11 @@ No return.
 
 Get the click animation rect.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 An object that contains:
 * `x`
@@ -2642,15 +2642,15 @@ An object that contains:
 
 Fill a choose box idle layer by the choose box idle image.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Choose box index.          |
+| 索引     | Integer | Choose box 索引.          |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2658,15 +2658,15 @@ No return.
 
 Fill a choose box hover layer by the choose box hover image.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Choose box index.          |
+| 索引     | Integer | Choose box 索引.          |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2674,17 +2674,17 @@ No return.
 
 Show or hide a choice box.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter  | Type    | Description                 |
 |------------|---------|-----------------------------|
-| index      | Integer | Choice box index. (`0`-`7`) |
+| 索引      | Integer | Choice box 索引. (`0`-`7`) |
 | showIdle   | Boolean | Show idle state.            |
 | showHover  | Boolean | Show hover state.           |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2692,11 +2692,11 @@ No return.
 
 Get the choose box rect.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 An object that contains:
 * `x`
@@ -2710,15 +2710,15 @@ An object that contains:
 
 Show or hide the auto mode banner.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter  | Type    | Description                 |
 |------------|---------|-----------------------------|
 | show       | Boolean | Show or hide.               |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2726,15 +2726,15 @@ No return.
 
 Show or hide the skip mode banner.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter  | Type    | Description                 |
 |------------|---------|-----------------------------|
 | show       | Boolean | Show or hide.               |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2745,7 +2745,7 @@ Perform direct rendering of an image to the screen.
 Note that you should consider using the stage layers for normal rendering.
 This API is useful for effects.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Omissible    | Type    | Description                                |
 |-----------|--------------|---------|--------------------------------------------|
@@ -2754,9 +2754,9 @@ This API is useful for effects.
 | image     | No           | Object  | Image.                                     |
 | srcLeft   | No           | Integer | Source top-left X position.                |
 | srcTop    | No           | Integer | Source top-left Y position.                |
-| srcWidth  | No           | Integer | Source width.                              |
-| srcHeight | No           | Integer | Source height.                             |
-| alpha     | No           | Integer | Alpha value. (`0`-`255`)                   |
+| src宽度  | No           | Integer | Source width.                              |
+| src高度 | No           | Integer | Source height.                             |
+| alpha     | No           | Integer | Alpha 值. (`0`-`255`)                   |
 | blend     | No           | Integer | Blend type.                                |
 
 ### Blend Types
@@ -2767,9 +2767,9 @@ This API is useful for effects.
 | Suika.BLEND_ADD      | Add blending.     |
 | Suika.BLEND_SUB      | Sub blending.     |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2780,7 +2780,7 @@ Perform direct rendering of an image to the screen with 3D transformation.
 Note that you should consider using the stage layers for normal rendering.
 This API is useful for effects.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Omissible    | Type    | Description                                |
 |-----------|--------------|---------|--------------------------------------------|
@@ -2795,13 +2795,13 @@ This API is useful for effects.
 | tex       | No           | Object  | Image.                                     |
 | srcLeft   | No           | Integer | Source top-left X position.                |
 | srcTop    | No           | Integer | Source top-left Y position.                |
-| srcWidth  | No           | Integer | Source width.                              |
-| srcHeight | No           | Integer | Source height.                             |
-| alpha     | No           | Integer | Alpha value. (`0`-`255`)                   |
+| src宽度  | No           | Integer | Source width.                              |
+| src高度 | No           | Integer | Source height.                             |
+| alpha     | No           | Integer | Alpha 值. (`0`-`255`)                   |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2811,13 +2811,13 @@ Start Kirakira effect.
 
 Kirakira effect is an animation that is shown at the screen position where the mouse cursor is clicked.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2831,11 +2831,11 @@ Render Kirakira effect.
 
 Play a sound file on a specific mixer track.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Omissible    | Type    | Description                                |
 |-----------|--------------|---------|--------------------------------------------|
-| track     | No           | String  | Mixer track name.                          |
+| track     | No           | String  | Mixer track 名称.                          |
 | file      | No           | String  | Path to the sound file.                    |
 | isLooped  | Yes(`false`) | Boolean | Whether to loop the playback.              |
 
@@ -2848,7 +2848,7 @@ Play a sound file on a specific mixer track.
 | voice  | Character voice track.   |
 | sys    | System sound track.      |
 
-### Return
+### 返回
 
 Boolean that represents whether the file was opened successfully.
 
@@ -2858,12 +2858,12 @@ Boolean that represents whether the file was opened successfully.
 
 Set the volume for a specific mixer track.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| track     | String  | Mixer track name.                          |
-| vol       | Float   | Volume level (0.0 to 1.0).                 |
+| track     | String  | Mixer track 名称.                          |
+| vol       | Float   | 音量级别 (0.0 to 1.0).                 |
 | span      | Float   | Fade duration in seconds.                  |
 
 ### Track Names
@@ -2875,9 +2875,9 @@ Set the volume for a specific mixer track.
 | voice  | Character voice track.   |
 | sys    | System sound track.      |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2885,12 +2885,12 @@ No return.
 
 Get the volume for a specific mixer track.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| track     | String  | Mixer track name.                          |
-| volume    | Float   | Volume level (0.0 to 1.0).                 |
+| track     | String  | Mixer track 名称.                          |
+| volume    | Float   | 音量级别 (0.0 to 1.0).                 |
 | span      | Float   | Fade duration in seconds.                  |
 
 ### Track Names
@@ -2902,9 +2902,9 @@ Get the volume for a specific mixer track.
 | voice  | Character voice track.   |
 | sys    | System sound track.      |
 
-### Return
+### 返回
 
-Returns float.
+返回浮点数。
 
 ---
 
@@ -2912,15 +2912,15 @@ Returns float.
 
 Set the master volume affecting all tracks.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| volume    | Float   | Master volume level (0.0 to 1.0).          |
+| volume    | Float   | 主音量 level (0.0 to 1.0).          |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2928,13 +2928,13 @@ No return.
 
 Get the master volume affecting all tracks.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Returns float.
+返回浮点数。
 
 ---
 
@@ -2942,12 +2942,12 @@ Returns float.
 
 Set the global volume for a track (often used for config settings).
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| track     | String  | Mixer track name.                          |
-| vol       | Float   | Global volume level.                       |
+| track     | String  | Mixer track 名称.                          |
+| vol       | Float   | 全局音量 level.                       |
 
 ### Track Names
 
@@ -2958,9 +2958,9 @@ Set the global volume for a track (often used for config settings).
 | voice  | Character voice track.   |
 | sys    | System sound track.      |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -2968,11 +2968,11 @@ No return.
 
 Get the global volume for a track (often used for config settings).
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| track     | String  | Mixer track name.                          |
+| track     | String  | Mixer track 名称.                          |
 
 ### Track Names
 
@@ -2983,9 +2983,9 @@ Get the global volume for a track (often used for config settings).
 | voice  | Character voice track.   |
 | sys    | System sound track.      |
 
-### Return
+### 返回
 
-Returns float.
+返回浮点数。
 
 ---
 
@@ -2993,62 +2993,62 @@ Returns float.
 
 Set the volume for a specific character's voice.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| index     | Integer | Character name index.                      |
-| vol       | Float   | Volume level.                              |
+| 索引     | Integer | Character 名称 索引.                      |
+| vol       | Float   | 音量级别.                              |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.getCharacterVolume()
 
-Get the volume for a specific character's voice.
+获取特定字符声音的音量。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| ch_index  | Integer | Character name index.                      |
+| ch_索引  | Integer | Character 名称 索引.                      |
 
-### Return
+### 返回
 
-Get returns float.
+返回浮点数。
 
 ---
 
 ## Suika.isMixerSoundFinished()
 
-Check if the playback on a specific track is finished.
+检查特定轨道上的播放是否已完成。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| track     | Integer | Mixer track index.                         |
+| track     | Integer | Mixer track 索引.                         |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.getTrackFileName()
 
-Get the file name of the sound currently loaded in a track.
+Get the file 名称 of the sound currently loaded in a track.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| track     | Integer | Mixer track index.                         |
+| track     | Integer | Mixer track 索引.                         |
 
-### Return
+### 返回
 
 String representing the file path.
 
@@ -3058,15 +3058,15 @@ String representing the file path.
 
 Apply a character's specific volume setting to the VOICE track.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| ch        | Integer | Character name index.                      |
+| ch        | Integer | Character 名称 索引.                      |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -3074,15 +3074,15 @@ No return.
 
 Control the system button.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
 | isEnabled | Boolean | Enable the system button or not.           |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -3092,11 +3092,11 @@ Check if the system button is enabled.
 
 ### Parameters
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Returns a boolean value. 
+Returns a boolean 值. 
 
 ---
 
@@ -3106,11 +3106,11 @@ Update the mouse tracking for the system button.
 
 ### Parameters
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -3120,11 +3120,11 @@ Check if the system button is pointed.
 
 ### Parameters
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Returns a boolean value.
+Returns a boolean 值.
 
 ---
 
@@ -3134,11 +3134,11 @@ Check if the system button is clicked.
 
 ### Parameters
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Returns a boolean value.
+Returns a boolean 值.
 
 ---
 
@@ -3146,15 +3146,15 @@ Returns a boolean value.
 
 Draw a text on a specified layer.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter    | Type    | Description               |
 |--------------|---------|---------------------------|
-| layer        | Integer | Target stage layer index. |
-| fontType     | Integer | Font selection index.     |
+| layer        | Integer | Target stage layer 索引. |
+| fontType     | Integer | Font selection 索引.     |
 | fontSize     | Integer | Size of the font.         |
 | color        | Integer | Color.                    |
-| outlineWidth | Integer | Outline width.            |
+| outline宽度 | Integer | Outline width.            |
 | outlineColor | Integer | Outline color.            |
 | lineMargin   | Integer | Line margin.              |
 | charMargin   | Integer | Character margin.         |
@@ -3164,61 +3164,61 @@ Draw a text on a specified layer.
 | height       | Integer | Bounding box height.      |
 | text         | String  | Text.                     |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
-## Suika.getStringWidth()
+## Suika.getString宽度()
 
 Get the total width of a UTF-8 string.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description            |
 |-----------|---------|------------------------|
-| fontType  | Integer | Font selection index.  |
+| fontType  | Integer | Font selection 索引.  |
 | fontSize  | Integer | Size of the font.      |
 | text      | String  | Text.                  |
 
-### Return
+### 返回
 
-Integer value of the width in pixels.
+Integer 值 of the width in pixels.
 
 ---
 
-## Suika.getStringHeight()
+## Suika.getString高度()
 
 Get the total height of a UTF-8 string.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description            |
 |-----------|---------|------------------------|
-| fontType  | Integer | Font selection index.  |
+| fontType  | Integer | Font selection 索引.  |
 | fontSize  | Integer | Size of the font.      |
 | text      | String  | Text.                  |
 
-### Return
+### 返回
 
-Integer value of the height in pixels.
+Integer 值 of the height in pixels.
 
 ---
 
 ## Suika.drawGlyph()
 
-Draw a single glyph onto an image.
+绘制单个字形 onto an image.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter     | Type    | Description                                |
 |---------------|---------|--------------------------------------------|
 | img           | Object  | Target image.                              |
-| font_type     | Integer | Font selection index.                      |
+| font_type     | Integer | Font selection 索引.                      |
 | font_size     | Integer | Rendering font size.                       |
 | base_font_size| Integer | Base font size for metrics.                |
-| outline_size  | Integer | Width of the outline.                      |
+| outline_size  | Integer | 宽度 of the outline.                      |
 | x             | Integer | X coordinate.                              |
 | y             | Integer | Y coordinate.                              |
 | color         | Pixel   | Main text color.                           |
@@ -3226,7 +3226,7 @@ Draw a single glyph onto an image.
 | codepoint     | Integer | UTF-32 code point.                         |
 | is_dim        | Boolean | Whether to apply dimming.                  |
 
-### Return
+### 返回
 
 Boolean that represents success.
 
@@ -3236,7 +3236,7 @@ Boolean that represents success.
 
 Create a complex message drawing context for high-level text rendering.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter      | Type     | Description            |
 |----------------|----------|------------------------|
@@ -3249,8 +3249,8 @@ Create a complex message drawing context for high-level text rendering.
 | outlineSize    | Integer  | Outline width.         |
 | penX           | Integer  | Pen X position.        |
 | penY           | Integer  | Pen Y position.        |
-| areaWidth      | Integer  | Draw area width.       |
-| areaHeight     | Integer  | Draw area height.      |
+| area宽度      | Integer  | Draw area width.       |
+| area高度     | Integer  | Draw area height.      |
 | leftMargin     | Integer  | Left margin.           |
 | rightMargin    | Integer  | Right margin.          |
 | topMargin      | Integer  | Top margin.            |
@@ -3267,13 +3267,13 @@ Create a complex message drawing context for high-level text rendering.
 | ignoreOutline  | Boolean  | Ignore outline change? |
 | ignoreColor    | Boolean  | Ignore color change?   |
 | ignoreSize     | Boolean  | Ignore size change?    |
-| ignorePosition | Boolean  | Ignore cursor change?  |
+| ignore位置 | Boolean  | Ignore cursor change?  |
 | ignoreRuby     | Boolean  | Ignore ruby?           |
 | ignoreWait     | Boolean  | Ignore inline wait?    |
 | inlineWaitHook | Function | Inline wait hook.      |
 | tategaki       | Boolean  | Use tategaki?          |
 
-### Return
+### 返回
 
 A message drawing context object.
 
@@ -3283,15 +3283,15 @@ A message drawing context object.
 
 Destroy a message drawing context.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter      | Type     | Description            |
 |----------------|----------|------------------------|
 | context        | Object   | Draw message context.  |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -3299,13 +3299,13 @@ No return.
 
 Count the remaining characters excluding escape sequences.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter      | Type     | Description            |
 |----------------|----------|------------------------|
 | context        | Object   | Draw message context.  |
 
-### Return
+### 返回
 
 Returns an integer.
 
@@ -3315,14 +3315,14 @@ Returns an integer.
 
 Draw characters in a message up to (maxChars) characters.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter      | Type     | Description            |
 |----------------|----------|------------------------|
 | context        | Object   | Draw message context.  |
 | maxChars       | Integer  | Max chars.             |
 
-### Return
+### 返回
 
 Returns an integer that indicates the count of characters drawn in the call.
 
@@ -3332,13 +3332,13 @@ Returns an integer that indicates the count of characters drawn in the call.
 
 Get the current pen position from a drawing context.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
 | context   | Object  | Drawing context.                           |
 
-### Return
+### 返回
 
 An object containing `x` and `y`.
 
@@ -3348,15 +3348,15 @@ An object containing `x` and `y`.
 
 Check if a character is part of an escape sequence.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
 | c         | String | Character to check.                        |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3364,13 +3364,13 @@ Boolean value.
 
 Load a new tag file and move the execution point to its beginning.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
 | file      | String | Path to the .novel or script file. |
 
-### Return
+### 返回
 
 Boolean that represents success or failure.
 
@@ -3380,11 +3380,11 @@ Boolean that represents success or failure.
 
 Get the total number of tags in the current script file.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Integer representing the tag count.
 
@@ -3392,17 +3392,17 @@ Integer representing the tag count.
 
 ## Suika.moveToTagIndex()
 
-Move the execution pointer to a specific tag index.
+Move the execution pointer to a specific tag 索引.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Target tag index. |
+| 索引     | Integer | Target tag 索引. |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3410,13 +3410,13 @@ Boolean value.
 
 Move the execution pointer to the very next tag.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3424,31 +3424,31 @@ Boolean value.
 
 Jump to a specific label.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type   | Description             |
 |-----------|--------|-------------------------|
-| name      | String | Target label name.      |
+| 名称      | String | Target label 名称.      |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.moveToMacroTag()
 
-Jump to a specific macro by name.
+Jump to a specific macro by 名称.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type   | Description             |
 |-----------|--------|-------------------------|
-| name      | String | Target macro name.      |
+| 名称      | String | Target macro 名称.      |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3456,15 +3456,15 @@ Boolean value.
 
 Jump to a correspoinding else/elseif/endif tag.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type   | Description             |
 |-----------|--------|-------------------------|
-| name      | String | Target macro name.      |
+| 名称      | String | Target macro 名称.      |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3472,15 +3472,15 @@ Boolean value.
 
 Jump to a correspoinding endif tag.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type   | Description             |
 |-----------|--------|-------------------------|
-| name      | String | Target macro name.      |
+| 名称      | String | Target macro 名称.      |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3488,43 +3488,43 @@ Boolean value.
 
 Jump to a correspoinding endmacro tag.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type   | Description             |
 |-----------|--------|-------------------------|
-| name      | String | Target macro name.      |
+| 名称      | String | Target macro 名称.      |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
 ## Suika.getTagFileName()
 
-Get the current script file name current tag.
+Get the current script file 名称 current tag.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-String representing the file name.
+String representing the file 名称.
 
 ---
 
 ## Suika.getTagName()
 
-Get the name of the current tag.
+获取当前标签的名称。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-String representing the tag name.
+String representing the tag 名称.
 
 ---
 
@@ -3532,13 +3532,13 @@ String representing the tag name.
 
 Get the number of the properties of the current tag.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-String representing the name or value.
+String representing the 名称 or 值.
 
 ---
 
@@ -3547,15 +3547,15 @@ String representing the name or value.
 Iterate through and retrieve the properties (arguments) of the current
 tag.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description       |
 |-----------|---------|-------------------|
-| index     | Integer | Property index.   |
+| 索引     | Integer | Property 索引.   |
 
-### Return
+### 返回
 
-String representing the name.
+String representing the 名称.
 
 ---
 
@@ -3564,108 +3564,108 @@ String representing the name.
 Iterate through and retrieve the properties (arguments) of the current
 tag.
 
-### Parameters (Dictionary) (for PropertyName/Value)
+### 参数（字典） (for PropertyName/Value)
 
 | Parameter | Type    | Description       |
 |-----------|---------|-------------------|
-| index     | Integer | Property index.   |
+| 索引     | Integer | Property 索引.   |
 
-### Return
+### 返回
 
-String representing the value.
+String representing the 值.
 
 ---
 
 ## Suika.getTagArgBool()
 
 Get a specific argument of the current tag, with support for default
-values and optionality.
+值s and optionality.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                       |
+| 参数 | 类型 | 说明 |
 |-----------|---------|-----------------------------------|
-| name      | String  | Name of the argument.             |
+| 名称      | String  | Name of the argument.             |
 | omissible | Boolean | Whether the argument is optional. |
-| defVal    | Boolean | Default value if missing.         |
+| defVal    | Boolean | Default 值 if missing.         |
 
-### Return
+### 返回
 
-The value of the argument in the requested type.
+The 值 of the argument in the requested type.
 
 ---
 
 ## Suika.getTagArgInt()
 
 Get a specific argument of the current tag, with support for default
-values and optionality.
+值s and optionality.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                       |
+| 参数 | 类型 | 说明 |
 |-----------|---------|-----------------------------------|
-| name      | String  | Name of the argument.             |
+| 名称      | String  | Name of the argument.             |
 | omissible | Boolean | Whether the argument is optional. |
-| defVal    | Integer | Default value if missing.         |
+| defVal    | Integer | Default 值 if missing.         |
 
-### Return
+### 返回
 
-The value of the argument in the requested type.
+The 值 of the argument in the requested type.
 
 ---
 
 ## Suika.getTagArgFloat()
 
 Get a specific argument of the current tag, with support for default
-values and optionality.
+值s and optionality.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                       |
+| 参数 | 类型 | 说明 |
 |-----------|---------|-----------------------------------|
-| name      | String  | Name of the argument.             |
+| 名称      | String  | Name of the argument.             |
 | omissible | Boolean | Whether the argument is optional. |
-| defVal    | Float   | Default value if missing.         |
+| defVal    | Float   | Default 值 if missing.         |
 
-### Return
+### 返回
 
-The value of the argument in the requested type.
+The 值 of the argument in the requested type.
 
 ---
 
 ## Suika.getTagArgString()
 
 Get a specific argument of the current tag, with support for default
-values and optionality.
+值s and optionality.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                       |
+| 参数 | 类型 | 说明 |
 |-----------|---------|-----------------------------------|
-| name      | String  | Name of the argument.             |
+| 名称      | String  | Name of the argument.             |
 | omissible | Boolean | Whether the argument is optional. |
-| defVal    | String  | Default value if missing.         |
+| defVal    | String  | Default 值 if missing.         |
 
-### Return
+### 返回
 
-The value of the argument in the requested type.
+The 值 of the argument in the requested type.
 
 ---
 
 ## Suika.evaluateTag()
 
-Evaluate the property values of the current tag to expand inline
-variables. (`${varname}` form)
+Evaluate the property 值s of the current tag to expand inline
+variables. (`${var名称}` form)
 
-Calling this API updates the cache for the property values.
+Calling this API updates the cache for the property 值s.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3675,13 +3675,13 @@ Manage the internal stack for `[if]` conditional blocks.
 
 This API marks the `if` block position for nested block processing.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -3691,13 +3691,13 @@ Manage the internal stack for `if` conditional blocks.
 
 This API marks the end of `if` block for nested block processing.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -3707,13 +3707,13 @@ Manage the internal stack for loops (`while`).
 
 This API marks the `while` block for nested block processing.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3723,13 +3723,13 @@ Manage the internal stack for loops (`while`).
 
 This API marks the end of `while` block for nested block processing.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3739,13 +3739,13 @@ Manage the internal stack for loops (`for`).
 
 This API marks the `for` block for nested block processing.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3755,13 +3755,13 @@ Manage the internal stack for loops (`for`).
 
 This API marks the end of `for` block for nested block processing.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3769,14 +3769,14 @@ Boolean value.
 
 Load an animation definition from a file and register it.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
 | file      | String  | Path to the anime file.                    |
-| reg_name  | String  | Registration name for the anime.           |
+| reg_名称  | String  | Registration 名称 for the anime.           |
 
-### Return
+### 返回
 
 An array of boolean that indicate each layer is loaded or not.
 
@@ -3787,13 +3787,13 @@ An array of boolean that indicate each layer is loaded or not.
 Begin describing a new animation sequence for a specific layer.
 This API is used for manually generated animations.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| layer     | Integer | Target stage layer index.                  |
+| layer     | Integer | Target stage layer 索引.                  |
 
-### Return
+### 返回
 
 Boolean that represents success.
 
@@ -3804,16 +3804,16 @@ Boolean that represents success.
 Add a float property (e.g., position, alpha) to the current anime sequence.
 This API is used for manually generated animations.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| key       | String  | Property key (e.g., "x", "y", "a").        |
-| val       | Float   | Target value.                              |
+| 键       | String  | Property 键 (e.g., "x", "y", "a").        |
+| val       | Float   | Target 值.                              |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3822,16 +3822,16 @@ Boolean value.
 Add an integer property (e.g., position, alpha) to the current anime sequence.
 This API is used for manually generated animations.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| key       | String  | Property key (e.g., "x", "y", "a").        |
-| val       | Integer | Target value.                              |
+| 键       | String  | Property 键 (e.g., "x", "y", "a").        |
+| val       | Integer | Target 值.                              |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3839,15 +3839,15 @@ Boolean value.
 
 Start the registered animation sequence for a specific layer.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| layer     | Integer | Target stage layer index.                  |
+| layer     | Integer | Target stage layer 索引.                  |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3855,13 +3855,13 @@ Boolean value.
 
 Check the overall animation status.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3869,15 +3869,15 @@ Boolean value.
 
 Check if a specific layer's animation has ended.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Target stage layer index.  |
+| layer     | Integer | Target stage layer 索引.  |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3885,13 +3885,13 @@ Boolean value.
 
 Update the animation frame state. Usually called once per frame.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -3899,16 +3899,16 @@ No return.
 
 Manage eye-blinking (eye-patch) image and animation for a character position.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
 | chpos     | Integer | Character position (Left, Center, etc.).   |
 | file      | String  | Path to the eye image file.                |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3916,15 +3916,15 @@ Boolean value.
 
 Restart the eye-blinking (eye-patch) animation for a character position.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
 | chpos     | Integer | Character position (Left, Center, etc.).   |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -3932,16 +3932,16 @@ Boolean value.
 
 Start lip-sync animation based on the message content for a character.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| chpos     | Integer | Character position.                        |
+| chpos     | Integer | 字符位置。                        |
 | text      | String  | The message text to sync with.             |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -3949,15 +3949,15 @@ No return.
 
 Stop lip-sync animation.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| chpos     | Integer | Character position.                        |
+| chpos     | Integer | 字符位置。                        |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -3965,15 +3965,15 @@ No return.
 
 Clear animation sequences for a specific layer.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| layer     | Integer | Target stage layer index.  |
+| layer     | Integer | Target stage layer 索引.  |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -3981,28 +3981,28 @@ No return.
 
 Clear animation sequences for all layers.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.setVariableInt()
 
-Set a value to a local or global variable.
+Set a 值 to a local or global variable.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description            |
 |-----------|---------|------------------------|
-| name      | String  | Name of the variable.  |
-| value     | Integer | Value to set           |
+| 名称      | String  | Name of the variable.  |
+| 值     | Integer | Value to set           |
 
-### Return
+### 返回
 
 Boolean that represents success or failure.
 
@@ -4010,16 +4010,16 @@ Boolean that represents success or failure.
 
 ## Suika.setVariableFloat()
 
-Set a value to a local or global variable.
+Set a 值 to a local or global variable.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description             |
 |-----------|---------|-------------------------|
-| name      | String  | Name of the variable.   |
-| value     | Float   | Value to set            |
+| 名称      | String  | Name of the variable.   |
+| 值     | Float   | Value to set            |
 
-### Return
+### 返回
 
 Boolean that represents success or failure.
 
@@ -4027,16 +4027,16 @@ Boolean that represents success or failure.
 
 ## Suika.setVariableString()
 
-Set a value to a local or global variable.
+Set a 值 to a local or global variable.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter | Type    | Description             |
 |-----------|---------|-------------------------|
-| name      | String  | Name of the variable.   |
-| value     | String  | Value to set            |
+| 名称      | String  | Name of the variable.   |
+| 值     | String  | Value to set            |
 
-### Return
+### 返回
 
 Boolean that represents success or failure.
 
@@ -4044,79 +4044,79 @@ Boolean that represents success or failure.
 
 ## Suika.getVariableInt()
 
-Get the current value of a variable.
+Get the current 值 of a variable.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| name      | String | Name of the variable.                      |
+| 名称      | String | Name of the variable.                      |
 
-### Return
+### 返回
 
-The value of the variable in integer.
+The 值 of the variable in integer.
 
 ---
 
 ## Suika.getVariableFloat()
 
-Get the current value of a variable.
+Get the current 值 of a variable.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| name      | String | Name of the variable.                      |
+| 名称      | String | Name of the variable.                      |
 
-### Return
+### 返回
 
-The value of the variable in float.
+The 值 of the variable in float.
 
 ---
 
 ## Suika.getVariableString()
 
-Get the current value of a variable.
+Get the current 值 of a variable.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| name      | String | Name of the variable.                      |
+| 名称      | String | Name of the variable.                      |
 
-### Return
+### 返回
 
-The value of the variable in string
+The 值 of the variable in string
 
 ---
 
 ## Suika.unsetVariable()
 
-Unset (delete) a specific variable.
+取消设置 (delete) a specific variable.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| name      | String | Name of the variable to unset.             |
+| 名称      | String | Name of the variable to unset.             |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.unsetLocalVariables()
 
-Unset (delete) all local variables.
+取消设置 (delete) all local variables.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -4124,16 +4124,16 @@ No return.
 
 Set a variable to be global (persistent across saves).
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| name      | String  | Name of the variable.                      |
+| 名称      | String  | Name of the variable.                      |
 | is_global | Boolean | Whether to make it global.                 |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -4141,15 +4141,15 @@ Boolean value.
 
 Check the variable's global status.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
-| name      | String  | Name of the variable.                      |
+| 名称      | String  | Name of the variable.                      |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -4157,11 +4157,11 @@ Boolean value.
 
 Get the number of variables.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Integer for count.
 
@@ -4171,31 +4171,31 @@ Integer for count.
 
 Iterate through the registered variables.
 
-### Parameters (Dictionary) (for getVariableName)
+### 参数（字典） (for getVariableName)
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the variable.     |
+| 索引     | Integer | Index of the variable.     |
 
-### Return
+### 返回
 
-String for name.
+String for 名称.
 
 ---
 
 ## Suika.checkVariableExists()
 
-Check if a variable with the specified name exists.
+Check if a variable with the specified 名称 exists.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| name      | String | Name to check.                             |
+| 名称      | String | Name to check.                             |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -4204,11 +4204,11 @@ Boolean value.
 Execute a global save.
 Global data typically includes persistent settings.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Boolean that represents success or failure.
 
@@ -4219,11 +4219,11 @@ Boolean that represents success or failure.
 Execute a global load.
 Global data typically includes persistent settings.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Boolean that represents success or failure.
 
@@ -4233,13 +4233,13 @@ Boolean that represents success or failure.
 
 Save the game progress to a specific slot.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| 索引     | Integer | Index of the save slot.    |
 
-### Return
+### 返回
 
 Boolean that represents success or failure.
 
@@ -4249,13 +4249,13 @@ Boolean that represents success or failure.
 
 Load game progress from a specific slot.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| 索引     | Integer | Index of the save slot.    |
 
-### Return
+### 返回
 
 Boolean that represents success or failure.
 
@@ -4263,17 +4263,17 @@ Boolean that represents success or failure.
 
 ## Suika.checkSaveExists()
 
-Check if the save data exists for the specified slot index.
+Check if the save data exists for the specified slot 索引.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| 索引     | Integer | Index of the save slot.    |
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -4281,15 +4281,15 @@ Boolean value.
 
 Delete a local save slot.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| 索引     | Integer | Index of the save slot.    |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -4297,13 +4297,13 @@ No return.
 
 Delete the entire global save data.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -4311,13 +4311,13 @@ No return.
 
 Check if the current frame is immediately following a successful load operation.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -4325,13 +4325,13 @@ Boolean value.
 
 Get the timestamp (Unix time) when the save data was created.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| 索引     | Integer | Index of the save slot.    |
 
-### Return
+### 返回
 
 Integer (timestamp).
 
@@ -4339,15 +4339,15 @@ Integer (timestamp).
 
 ## Suika.getLatestSaveIndex()
 
-Get the index of the most recently updated save slot.
+Get the 索引 of the most recently updated save slot.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Integer representing the slot index.
+Integer representing the slot 索引.
 
 ---
 
@@ -4355,15 +4355,15 @@ Integer representing the slot index.
 
 Retrieve the chapter title stored in a save slot.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| 索引     | Integer | Index of the save slot.    |
 
-### Return
+### 返回
 
-String representing the chapter name.
+String representing the chapter 名称.
 
 ---
 
@@ -4371,13 +4371,13 @@ String representing the chapter name.
 
 Retrieve the last displayed message stored in a save slot.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| 索引     | Integer | Index of the save slot.    |
 
-### Return
+### 返回
 
 String representing the message.
 
@@ -4387,13 +4387,13 @@ String representing the message.
 
 Get the thumbnail image associated with a save slot.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Index of the save slot.    |
+| 索引     | Integer | Index of the save slot.    |
 
-### Return
+### 返回
 
 An image object.
 
@@ -4403,13 +4403,13 @@ An image object.
 
 Clear all messages from the history (backlog).
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -4417,19 +4417,19 @@ No return.
 
 Add a new entry to the history.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
 | Parameter        | Type    | Description                                |
 |------------------|---------|--------------------------------------------|
-| name             | String  | Character name.                            |
-| msg              | String  | Message text.                              |
+| 名称             | String  | Character 名称.                            |
+| 消息              | String  | 消息文本。                              |
 | voice            | String  | Path to the voice file.                    |
 | bodyColor        | Integer | Body color.                                |
 | bodyOutlineColor | Integer | Body outline color.                        |
-| nameColor        | Integer | Name color.                                |
-| nameOutlineColor | Integer | Name outline color.                        |
+| 名称Color        | Integer | Name color.                                |
+| 名称OutlineColor | Integer | Name outline color.                        |
 
-### Return
+### 返回
 
 Boolean that represents success.
 
@@ -4439,11 +4439,11 @@ Boolean that represents success.
 
 Get the total number of entries currently in the history.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Integer representing the history count.
 
@@ -4451,49 +4451,49 @@ Integer representing the history count.
 
 ## Suika.getHistoryName()
 
-Retrieve the name at a specific history index.
+Retrieve the 名称 at a specific history 索引.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Index in the history.      |
+| 索引     | Integer | Index in the history.      |
 
-### Return
+### 返回
 
-String value.
+String 值.
 
 ---
 
 ## Suika.getHistoryMessage()
 
-Retrieve the message at a specific history index.
+Retrieve the message at a specific history 索引.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Index in the history.      |
+| 索引     | Integer | Index in the history.      |
 
-### Return
+### 返回
 
-String value.
+String 值.
 
 ---
 
 ## Suika.getHistoryVoice()
 
-Retrieve the voice path at a specific history index.
+Retrieve the voice path at a specific history 索引.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
-| index     | Integer | Index in the history.      |
+| 索引     | Integer | Index in the history.      |
 
-### Return
+### 返回
 
-String value.
+String 值.
 
 ---
 
@@ -4501,11 +4501,11 @@ String value.
 
 Load the seen (read) flags for the current script file.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Boolean that represents success.
 
@@ -4515,11 +4515,11 @@ Boolean that represents success.
 
 Save the seen (read) flags for the current script file.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Boolean that represents success.
 
@@ -4529,11 +4529,11 @@ Boolean that represents success.
 
 Get the seen status for the current tag.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Get returns Integer.
 
@@ -4547,15 +4547,15 @@ For a `[choose]` tag, each bit indicates the option is selected before.
 
 Set the seen status for the current tag.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|----------------------------|
 | flag      | Integer | Seen status flag.          |
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -4563,9 +4563,9 @@ No return.
 
 Load a GUI definition file and prepare it for execution.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type    | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|---------|--------------------------------------------|
 | file      | String  | Path to the .gui file.                     |
 | sys       | Boolean | Whether it's a system GUI (Save/Load/etc). |
@@ -4575,7 +4575,7 @@ Load a GUI definition file and prepare it for execution.
 System GUI is typically called when `[text]` or `[choose]` is running,
 and the control will return to the interrupted tag.
 
-### Return
+### 返回
 
 Boolean that represents success or failure.
 
@@ -4585,13 +4585,13 @@ Boolean that represents success or failure.
 
 Start the loaded GUI.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -4599,13 +4599,13 @@ No return.
 
 Stop the currently running GUI.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
@@ -4613,13 +4613,13 @@ No return.
 
 Check if a GUI is currently active.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -4627,13 +4627,13 @@ Boolean value.
 
 Check if a GUI has completed its operation.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -4641,11 +4641,11 @@ Boolean value.
 
 Get the label of the button that was selected to finish the GUI.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 String representing the result label.
 
@@ -4655,13 +4655,13 @@ String representing the result label.
 
 Check if the GUI was closed with a "back to title" action.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -4669,13 +4669,13 @@ Boolean value.
 
 Check if a save operation was performed while the GUI was active.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -4683,13 +4683,13 @@ Boolean value.
 
 Check if a load operation was performed while the GUI was active.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -4697,13 +4697,13 @@ Boolean value.
 
 Check if the current frame is immediately following a return from a system GUI.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean value.
+Boolean 值.
 
 ---
 
@@ -4711,11 +4711,11 @@ Boolean value.
 
 Get a lap time since the time origin in milliseconds.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
 Integer in milliseconds.
 
@@ -4725,15 +4725,15 @@ Integer in milliseconds.
 
 Check if a file exists.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
 | file      | String | Path to the file.                          |
 
-### Return
+### 返回
 
-Returns boolean.
+返回布尔值。
 
 ---
 
@@ -4741,13 +4741,13 @@ Returns boolean.
 
 Read an entire file content.
 
-### Parameters (Dictionary) (for readFileContent)
+### 参数（字典） (for readFileContent)
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
 | file      | String | Path to the file.                          |
 
-### Return
+### 返回
 
 Returns a string.
 
@@ -4755,16 +4755,16 @@ Returns a string.
 
 ## Suika.writeSaveData()
 
-Directly write raw save data associated with a key.
+Directly write raw save data associated with a 键.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| key       | String | Unique key for the data.                   |
+| 键       | String | Unique 键 for the data.                   |
 | data      | String | Data to write/read.                        |
 
-### Return
+### 返回
 
 Boolean that represents success or failure.
 
@@ -4772,15 +4772,15 @@ Boolean that represents success or failure.
 
 ## Suika.readSaveData()
 
-Directly read raw save data associated with a key.
+Directly read raw save data associated with a 键.
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| key       | String | Unique key for the data.                   |
+| 键       | String | Unique 键 for the data.                   |
 
-### Return
+### 返回
 
 Boolean that represents success or failure.
 
@@ -4790,85 +4790,85 @@ Boolean that represents success or failure.
 
 Control video playback.
 
-### Parameters (Dictionary) (for playVideo)
+### 参数（字典） (for playVideo)
 
 | Parameter    | Type    | Description                          |
 |--------------|---------|--------------------------------------|
 | file         | String  | Path to the video file.              |
 | is_skippable | Boolean | Whether the user can skip the video. |
 
-### Return
+### 返回
 
-Play returns Boolean; IsPlaying returns Boolean.
+Play 返回布尔值；IsPlaying 返回布尔值。
 
 ---
 
 ## Suika.stopVideo()
 
-Stop the video playback.
+停止视频播放。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.isVideoPlaying()
 
-Check if a video is playing back.
+检查视频是否正在播放。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Returns boolean.
+返回布尔值。
 
 ---
 
 ## Suika.isFullScreenSupported()
 
-Check for full-screen mode ability.
+检查全屏模式能力。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-Boolean.
+布尔值。
 
 ---
 
 ## Suika.enterFullScreenMode()
 
-Enter the full-screen mode.
+进入全屏模式。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-No parameters.
+无参数。
 
-### Return
+### 返回
 
-No return.
+无返回。
 
 ---
 
 ## Suika.speakText()
 
-Execute Text-to-Speech (TTS) for the given message.
+执行给定消息的文本到语音(TTS)。
 
-### Parameters (Dictionary)
+### 参数（字典）
 
-| Parameter | Type   | Description                                |
+| 参数 | 类型 | 说明 |
 |-----------|--------|--------------------------------------------|
-| msg       | String | Text to be spoken.                         |
+| 消息       | String | 要朗读的文本。                         |
 
-### Return
+### 返回
 
-No return.
+无返回。

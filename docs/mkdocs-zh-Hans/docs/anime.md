@@ -1,143 +1,143 @@
-Anime
+动画
 =====
 
-Anime is a feature to play layer-based animations via the anime tag.
+Anime 是一个透过 anime 标签播放以图层为基础的动画功能。
 
-## Anime File
+## Anime 档案
 
-An anime file is a text file which describes sequences of layer transforms.
+Anime 档案是一种文字档，用来描述图层转换的序列。
 
-## Sequence
+## 序列
 
-To move the message box 100px right in a second, write the following sequence in an anime file.
+若要让讯息视窗在一秒内向右移动 100px，请在 anime 档案中写入以下序列。
 
 ```
-# A block describes a sequence for animation.
-# The name of a block can be whatever you like and it won't affect anything.
+# 一个区块描述一段动画序列。
+# 区块名称可以随意命名，不会影响任何事。
 move {
-    # This is a layer specifier.
+    # 这是图层指定子。
     layer: msg;
 
-    # These are time specifiers. (in second)
+    # 这些是时间指定子。（单位：秒）
     start: 0.0;
     end: 1.0;
 
-    # These are origin position specifiers. 'r0' means relative '0'.
+    # 这些是起始位置指定子。`r0` 代表相对位置 0。
     from-x: r0;
     from-y: r0;
 
-    # This is an origin alpha specifier.
+    # 这是起始 alpha 指定子。
     from-a: 255;
 
-    # These are final position specifiers. 'r100' means relative '100'.
+    # 这些是结束位置指定子。`r100` 代表相对位置 100。
     to-x: r100;
     to-y: r0;
 
-    # This is a final alpha specifier.
+    # 这是结束 alpha 指定子。
     to-a: 255;
 }
 ```
 
-## Layer Structure
+## 图层结构
 
-The following is our layer structure in the bottom-to-top order.
+以下是我们由下到上的图层结构。
 
-| Layer Name       | Description                                |
-|------------------|--------------------------------------------|
-| bg               | background                                 |
-| bg2              | second background (for seemless scrolling) |
-| efb1             | effect on back 1                           |
-| efb2             | effect on back 2                           |
-| efb3             | effect on back 3                           |
-| efb4             | effect on back 4                           |
-| chb              | character at back center                   |
-| chb-eye          | character at back center                   |
-| chb-lip          | character at back center                   |
-| chl              | character at left                          |
-| chl-eye          | character at left                          |
-| chl-lip          | character at left                          |
-| chlc             | character at left center                   |
-| chlc-eye         | character at left center                   |
-| chlc-lip         | character at left center                   |
-| chr              | character at right                         |
-| chr-eye          | character at right                         |
-| chr-lip          | character at right                         |
-| chrc             | character at right center                  |
-| chrc-eye         | character at right center                  |
-| chrc-lip         | character at right center                  |
-| eff1             | effect on front 1                          |
-| eff2             | effect on front 2                          |
-| eff3             | effect on front 3                          |
-| eff4             | effect on front 4                          |
-| msgbox           | message box                                |
-| namebox          | name box                                   |
-| choose1-idle     | choose box 1 (idle)                        |
-| choose1-hover    | choose box 1 (hover)                       |
-| choose2-idle     | choose box 2 (idle)                        |
-| choose2-hover    | choose box 2 (hover)                       |
-| choose3-idle     | choose box 3 (idle)                        |
-| choose3-hover    | choose box 3 (hover)                       |
-| choose4-idle     | choose box 4 (idle)                        |
-| choose4-hover    | choose box 4 (hover)                       |
-| choose5-idle     | choose box 5 (idle)                        |
-| choose5-hover    | choose box 5 (hover)                       |
-| choose6-idle     | choose box 6 (idle)                        |
-| choose6-hover    | choose box 6 (hover)                       |
-| choose7-idle     | choose box 7 (idle)                        |
-| choose7-hover    | choose box 7 (hover)                       |
-| choose8-idle     | choose box 8 (idle)                        |
-| choose8-hover    | choose box 8 (hover)                       |
-| chf              | character face                             |
-| chf-eye          | character face                             |
-| chf-lip          | character face                             |
-| click            | click animation                            |
-| auto             | auto mode banner                           |
-| skip             | skip mode banner                           |
-| text1            | text layer 1                               |
-| text2            | text layer 2                               |
-| text3            | text layer 3                               |
-| text4            | text layer 4                               |
-| text5            | text layer 5                               |
-| text6            | text layer 6                               |
-| text7            | text layer 7                               |
-| text8            | text layer 8                               |
-| gui-button-1     | GUI button ID 1                            |
-| gui-button-2     | GUI button ID 2                            |
-| gui-button-3     | GUI button ID 3                            |
-| gui-button-4     | GUI button ID 4                            |
-| gui-button-5     | GUI button ID 5                            |
-| gui-button-6     | GUI button ID 6                            |
-| gui-button-7     | GUI button ID 7                            |
-| gui-button-8     | GUI button ID 8                            |
-| gui-button-9     | GUI button ID 9                            |
-| gui-button-10    | GUI button ID 10                           |
-| gui-button-11    | GUI button ID 11                           |
-| gui-button-12    | GUI button ID 12                           |
-| gui-button-13    | GUI button ID 13                           |
-| gui-button-14    | GUI button ID 14                           |
-| gui-button-15    | GUI button ID 15                           |
-| gui-button-16    | GUI button ID 16                           |
-| gui-button-17    | GUI button ID 17                           |
-| gui-button-18    | GUI button ID 18                           |
-| gui-button-19    | GUI button ID 19                           |
-| gui-button-20    | GUI button ID 20                           |
-| gui-button-21    | GUI button ID 21                           |
-| gui-button-22    | GUI button ID 22                           |
-| gui-button-23    | GUI button ID 23                           |
-| gui-button-24    | GUI button ID 24                           |
-| gui-button-25    | GUI button ID 25                           |
-| gui-button-26    | GUI button ID 26                           |
-| gui-button-27    | GUI button ID 27                           |
-| gui-button-28    | GUI button ID 28                           |
-| gui-button-29    | GUI button ID 29                           |
-| gui-button-30    | GUI button ID 30                           |
-| gui-button-31    | GUI button ID 31                           |
-| gui-button-32    | GUI button ID 32                           |
+| 图层名称         | 说明                                   |
+|------------------|----------------------------------------|
+| bg               | 背景                                   |
+| bg2              | 第二背景（用于无缝卷动）               |
+| efb1             | 背景特效 1                             |
+| efb2             | 背景特效 2                             |
+| efb3             | 背景特效 3                             |
+| efb4             | 背景特效 4                             |
+| chb              | 后方中央角色                           |
+| chb-eye          | 后方中央角色                           |
+| chb-lip          | 后方中央角色                           |
+| chl              | 左侧角色                               |
+| chl-eye          | 左侧角色                               |
+| chl-lip          | 左侧角色                               |
+| chlc             | 左中角色                               |
+| chlc-eye         | 左中角色                               |
+| chlc-lip         | 左中角色                               |
+| chr              | 右侧角色                               |
+| chr-eye          | 右侧角色                               |
+| chr-lip          | 右侧角色                               |
+| chrc             | 右中角色                               |
+| chrc-eye         | 右中角色                               |
+| chrc-lip         | 右中角色                               |
+| eff1             | 前景特效 1                             |
+| eff2             | 前景特效 2                             |
+| eff3             | 前景特效 3                             |
+| eff4             | 前景特效 4                             |
+| msgbox           | 讯息视窗                               |
+| namebox          | 名称框                                 |
+| choose1-idle     | 选项框 1（闲置）                       |
+| choose1-hover    | 选项框 1（滑入）                       |
+| choose2-idle     | 选项框 2（闲置）                       |
+| choose2-hover    | 选项框 2（滑入）                       |
+| choose3-idle     | 选项框 3（闲置）                       |
+| choose3-hover    | 选项框 3（滑入）                       |
+| choose4-idle     | 选项框 4（闲置）                       |
+| choose4-hover    | 选项框 4（滑入）                       |
+| choose5-idle     | 选项框 5（闲置）                       |
+| choose5-hover    | 选项框 5（滑入）                       |
+| choose6-idle     | 选项框 6（闲置）                       |
+| choose6-hover    | 选项框 6（滑入）                       |
+| choose7-idle     | 选项框 7（闲置）                       |
+| choose7-hover    | 选项框 7（滑入）                       |
+| choose8-idle     | 选项框 8（闲置）                       |
+| choose8-hover    | 选项框 8（滑入）                       |
+| chf              | 角色脸部                               |
+| chf-eye          | 角色脸部                               |
+| chf-lip          | 角色脸部                               |
+| click            | 点选动画                               |
+| auto             | 自动模式横幅                           |
+| skip             | 跳过模式横幅                           |
+| text1            | 文字图层 1                             |
+| text2            | 文字图层 2                             |
+| text3            | 文字图层 3                             |
+| text4            | 文字图层 4                             |
+| text5            | 文字图层 5                             |
+| text6            | 文字图层 6                             |
+| text7            | 文字图层 7                             |
+| text8            | 文字图层 8                             |
+| gui-button-1     | GUI 按钮 ID 1                          |
+| gui-button-2     | GUI 按钮 ID 2                          |
+| gui-button-3     | GUI 按钮 ID 3                          |
+| gui-button-4     | GUI 按钮 ID 4                          |
+| gui-button-5     | GUI 按钮 ID 5                          |
+| gui-button-6     | GUI 按钮 ID 6                          |
+| gui-button-7     | GUI 按钮 ID 7                          |
+| gui-button-8     | GUI 按钮 ID 8                          |
+| gui-button-9     | GUI 按钮 ID 9                          |
+| gui-button-10    | GUI 按钮 ID 10                         |
+| gui-button-11    | GUI 按钮 ID 11                         |
+| gui-button-12    | GUI 按钮 ID 12                         |
+| gui-button-13    | GUI 按钮 ID 13                         |
+| gui-button-14    | GUI 按钮 ID 14                         |
+| gui-button-15    | GUI 按钮 ID 15                         |
+| gui-button-16    | GUI 按钮 ID 16                         |
+| gui-button-17    | GUI 按钮 ID 17                         |
+| gui-button-18    | GUI 按钮 ID 18                         |
+| gui-button-19    | GUI 按钮 ID 19                         |
+| gui-button-20    | GUI 按钮 ID 20                         |
+| gui-button-21    | GUI 按钮 ID 21                         |
+| gui-button-22    | GUI 按钮 ID 22                         |
+| gui-button-23    | GUI 按钮 ID 23                         |
+| gui-button-24    | GUI 按钮 ID 24                         |
+| gui-button-25    | GUI 按钮 ID 25                         |
+| gui-button-26    | GUI 按钮 ID 26                         |
+| gui-button-27    | GUI 按钮 ID 27                         |
+| gui-button-28    | GUI 按钮 ID 28                         |
+| gui-button-29    | GUI 按钮 ID 29                         |
+| gui-button-30    | GUI 按钮 ID 30                         |
+| gui-button-31    | GUI 按钮 ID 31                         |
+| gui-button-32    | GUI 按钮 ID 32                         |
 
-## Scaling and Rotation
+## 缩放与旋转
 
 ```
-# Scale-up and rotate the `effect1` layer to 2.0x and 360 deg in 3 seconds.
+# 将 `effect1` 图层在 3 秒内放大到 2.0 倍并旋转 360 度。
 test1 {
     layer: effect1;
  
@@ -152,22 +152,22 @@ test1 {
     to-y: 400;
     to-a: 255;
 
-    # Scaling and rotation origin
+    # 缩放与旋转的中心点
     center-x: 600;
     center-y: 100;
 
-    # Scaling factors
+    # 缩放系数
     from-scale-x: 1.0;
     from-scale-y: 1.0;
     to-scale-x: 2.0;
     to-scale-y: 2.0;
  
-    # Rotation (+ for right, - for left)
+    # 旋转（正值向右，负值向左）
     from-rotate: 0.0;
     to-rotate: -360;
 }
 
-# Reverse.
+# 反向。
 test2 {
     layer: effect1;
 

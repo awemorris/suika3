@@ -1,76 +1,75 @@
-How to Use AOT
+如何使用 AOT
 ==============
 
-Suika3 supports **Ahead-of-Time (AOT) compilation** of scripts.
-That is, an app may run completely native code instead of as a bytecode interpreter.
+Suika3 支援指令码的 **Ahead-of-Time（AOT）编译**。
+也就是说，应用程式可以完全以原生程式码执行，而不是以位元组码直译器运作。
 
-The `suika3-aotcomp` command converts `.ray` scripts into **ANSI C source code**.
-The generated `library.c` file will be compiled with the entire engine.
+`suika3-aotcomp` 指令会把 `.ray` 指令码转换成 **ANSI C 原始码**。
+产生的 `library.c` 档案会与整个引擎一起编译。
 
 ---
 
-## 1. Modify `main.ray`
+## 1. 修改 `main.ray`
 
-Because the scripts will be compiled into native code,
-loading the runtime library is no longer needed.
+由于指令码会被编译成原生程式码，
+因此不再需要载入执行期函式库。
 
-Open `main.ray` and comment out the loadLibrary() calls.
+开启 `main.ray`，并把 `loadLibrary()` 呼叫注解掉。
 
-Example:
+范例：
 ```
 // Suika.loadPlugin("system")
 ```
 
-Please note that you should not call `Suika.loadPlugin()` outside the
-`main.ray` file.
+请注意，`Suika.loadPlugin()` 不应该在 `main.ray` 以外的地方呼叫。
 
 ---
 
-## 2. Generate C Source
+## 2. 产生 C 原始码
 
-To compile scripts into C source code, run:
+要把指令码编译成 C 原始码，请执行：
 
 ```sh
 suika3-aotcomp main.ray script1.ray script2.ray ...
 ```
 
-This command generates the following file:
+这个指令会产生以下档案：
 ```
 library.c
 ```
 
-The generated file contains the compiled script library.
+产生的档案包含已编译的指令码函式库。
 
 > [!TIPS]
-> Specify all script files in the command line, including `main.ray`.
+> 请在命令列中指定所有指令码档，包括 `main.ray`。
 
-Example:
+范例：
 ```
 suika3-aotcomp main.ray system.ray scenario1.ray scenario2.ray
 ```
 
 --
 
-## 3. Replace the Engine Library
+## 3. 取代引擎函式库
 
-Copy the generated `library.c` file to the engine source tree:
+将产生的 `library.c` 档案复制到引擎原始码树中：
 ```
 external/PlayfieldEngine/src/library.c
 ```
 
-Overwrite the existing file.
+覆盖既有档案。
 
 ---
 
-## 4. Build the Engine
+## 4. 建置引擎
 
-Build the Suika3 project using CMake as usual.
+照常使用 CMake 建置 Suika3 专案。
 
-The compiled scripts will now be linked into the engine binary.
+编译后的指令码现在会被连结进引擎二进位档中。
 
 ### iOS
 
-To build static binaries, type:
+若要建置静态二进位档，请输入：
 ```
 cmake --preset ios-device
 cmake --preset ios-simulator
@@ -78,15 +77,15 @@ cmake --build --preset ios-device
 cmake --build --preset ios-simulator
 ```
 
-After that, copy the static libraries to your iOS project:
-* Copy `build-ios-device/libsuika3.a` to `Suika3.xcframework/ios-arm64/libsuika3.a`
-* Copy `build-ios-simulator/libsuika3.a` to `Suika3.xcframework/ios-arm64_x86_64-simulator/libsuika3.a`
+接著，将静态函式库复制到你的 iOS 专案：
+* 将 `build-ios-device/libsuika3.a` 复制到 `Suika3.xcframework/ios-arm64/libsuika3.a`
+* 将 `build-ios-simulator/libsuika3.a` 复制到 `Suika3.xcframework/ios-arm64_x86_64-simulator/libsuika3.a`
 
-Overwrite the existing file.
+覆盖既有档案。
 
 ### Android
 
-To build shared binaries, type:
+若要建置共享二进位档，请输入：
 ```
 cmake --preset android-arm64
 cmake --preset android-arvm7
@@ -98,17 +97,17 @@ cmake --build --preset android-x86
 cmake --build --preset android-x86_64
 ```
 
-After that, copy the shared libraries to your Android project:
-* Copy `build-android-arm64/libsuika3.so` to `app/src/main/jniLibs/arm64-v8a/libplayfield.so`
-* Copy `build-android-armv7/libsuika3.so` to `app/src/main/jniLibs/armeabi-v7a/libplayfield.so`
-* Copy `build-android-x86/libsuika3.so` to `app/src/main/jniLibs/x86/libplayfield.so`
-* Copy `build-android-x86_64/libsuika3.so` to `app/src/main/jniLibs/x86_64/libplayfield.so`
+接著，将共享函式库复制到你的 Android 专案：
+* 将 `build-android-arm64/libsuika3.so` 复制到 `app/src/main/jniLibs/arm64-v8a/libplayfield.so`
+* 将 `build-android-armv7/libsuika3.so` 复制到 `app/src/main/jniLibs/armeabi-v7a/libplayfield.so`
+* 将 `build-android-x86/libsuika3.so` 复制到 `app/src/main/jniLibs/x86/libplayfield.so`
+* 将 `build-android-x86_64/libsuika3.so` 复制到 `app/src/main/jniLibs/x86_64/libplayfield.so`
 
-Overwrite the existing file.
+覆盖既有档案。
 
 ### HarmonyOS NEXT
 
-To build shared binaries, type:
+若要建置共享二进位档，请输入：
 ```
 cmake --preset openharmony-arm64
 cmake --preset openharmony-x86_64
@@ -116,31 +115,31 @@ cmake --build --preset openharmony-x86
 cmake --build --preset openharmony-x86_64
 ```
 
-After that, copy the shared libraries to your HarmonyOS NEXT project:
-* Copy `build-openharmony-arm64/libsuika3.a` to `entry/libs/arm64-v8a/libsuika3.a`
-* Copy `build-openharmony-x86_64/libsuika3.a` to `entry/libs/x86_64/libsuika3.a`
+接著，将共享函式库复制到你的 HarmonyOS NEXT 专案：
+* 将 `build-openharmony-arm64/libsuika3.a` 复制到 `entry/libs/arm64-v8a/libsuika3.a`
+* 将 `build-openharmony-x86_64/libsuika3.a` 复制到 `entry/libs/x86_64/libsuika3.a`
 
-Overwrite the existing file.
+覆盖既有档案。
 
 ### Unity Plugin
 
-To build shared binaries, type:
+若要建置共享二进位档，请输入：
 ```
 cmake --preset unity-win64
 cmake --build --preset unity-win64
 ```
 
-After that, copy the libraries to your Unity project:
-* Copy `build-unity-win64/libsuika3.dll` to `Assets/Plugins/x86_64/libplayfield.dll`
+接著，将函式库复制到你的 Unity 专案：
+* 将 `build-unity-win64/libsuika3.dll` 复制到 `Assets/Plugins/x86_64/libplayfield.dll`
 
-Overwrite the existing file.
+覆盖既有档案。
 
 ---
 
-## Results
+## 结果
 
-Scripts are embedded directly into the executable, providing:
+指令码会直接嵌入执行档，带来以下好处：
 
-* No JIT (for store review)
-* No runtime script loading
-* Faster startup
+* 没有 JIT（可透过商店稽核）
+* 不需要在执行期载入指令码
+* 启动更快
