@@ -1,27 +1,29 @@
-Suika3 档案
+Suika3 文档
 ====================
 
-欢迎来到 `Suika3` 档案。
+欢迎查阅 `Suika3` 文档。
 
-- 基本用法：
-    - [入门指南](getting-started.md)
-    - [NovelML 语法参考](novelml-syntax.md)
-    - [NovelML 标签参考](novelml-tags.md)
-    - [Anime](anime.md)
-    - [GUI](gui.md)
-    - [System Menu](sysmenu.md)
-    - [Config](config.md)
-    - [口型同步](lip-sync.md)
-    - [眨眼](eye-blink.md)
-- 进阶用法：
-    - [Ray 语法参考](ray-syntax.md)
-    - [Ray 低阶 API 参考](ray-2d-api.md)
-    - [Ray 高阶 API 参考](ray-vn-api.md)
-    - [Ray 外挂开发](plugin.md)
-    - [AOT 部署说明](aot.md)
-- 给社群开发者：
-    - [建置说明](build.md)
-    - [Design](design.md)
-    - [Plugin Development](plugin.md)
-    - [AOT Deploy](aot.md)
-    - [System Requirement Specification](srs.md)
+面向新开发者：
+- [入门指南](getting-started.md)
+
+想要了解整体架构的人员：
+- [设计文档](design.md)
+
+面向视觉小说开发者：
+- [NovelML 语法](novelml-syntax.md)
+- [NovelML 标签](novelml-tags.md)
+- [动画](anime.md)
+- [图形用户界面 (GUI)](gui.md)
+- [System Menu](sysmenu.md)
+- [Config](config.md)
+- [口型同步](lip-sync.md)
+- [眨眼效果](eye-blink.md)
+
+面向高级开发者：
+- [Ray 语法](ray-syntax.md)
+- [Ray 2D API](ray-2d-api.md)
+- [Ray VN API](ray-vn-api.md)
+- [插件开发](plugin.md)
+- [AOT 部署](aot.md)
+- [构建说明](build.md)
+- [系统需求规格](srs.md)
