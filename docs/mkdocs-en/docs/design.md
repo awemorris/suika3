@@ -58,7 +58,7 @@ The reason for improved portability is that the bottom layer is a "hardware abst
 - StratoHAL: Game Loop:
     - StratoHAL: Calls `on_hal_callback_update()` in `Playfield Engine`.
         - Playfield Engine: `on_hal_callback_update()` is called.
-		- Playfield Engine: Calls `update()` in the `main.ray`.
+        - Playfield Engine: Calls `update()` in the `main.ray`.
             - Suika3 Game: `update()` is called.
             - Suika3 Game: Calls `Suika.update()`.
                 - Suika3 Internal: `Suika.update()` is called.
@@ -68,7 +68,7 @@ The reason for improved portability is that the bottom layer is a "hardware abst
                     - Tag_*: Moves to the next tag if finished.
                     - Tag_*: Returns.
             - Suika3 Game: Returns.
-		- Playfield Engine: Calls `render()` in the `main.ray`.
+        - Playfield Engine: Calls `render()` in the `main.ray`.
             - Suika3: `render()` is called.
             - Suika3: Calls `Suika.render()`.
                 - Suika3 Internal: Renders the stage layers.
