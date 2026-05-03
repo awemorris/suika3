@@ -635,7 +635,38 @@ character.name2=Xiaoling character.name2.en=Xiaoling character.name2.zh-cn=小�
 # Unterordner für Charakterbilder (für Lippensynchronisation und automatischen Fokus)
 #
 
-character.folder1=ch/midori/ character.folder2=ch/xiaoling/ #character.folder3= #character.folder4= #character.folder5= #character.folder6= #character.folder7= #character.folder8= #character.folder9= #character.folder10= #character.folder11= #character.folder12= #character.folder13= #character.folder14= #character.folder15= #character.folder16= #character.folder17= #character.folder18= #character.folder19= #character.folder20= #character.folder21= #character.folder22= #character.folder23= #character.folder24= #character.folder25= #character.folder26= #character.folder27= #character.folder28= #character.folder29= #character.folder30= #character.folder31= #character.folder32=
+character.folder1=ch/midori/
+character.folder2=ch/xiaoling/
+#character.folder3=
+#character.folder4=
+#character.folder5=
+#character.folder6=
+#character.folder7=
+#character.folder8=
+#character.folder9=
+#character.folder10=
+#character.folder11=
+#character.folder12=
+#character.folder13=
+#character.folder14=
+#character.folder15=
+#character.folder16=
+#character.folder17=
+#character.folder18=
+#character.folder19=
+#character.folder20=
+#character.folder21=
+#character.folder22=
+#character.folder23=
+#character.folder24=
+#character.folder25=
+#character.folder26=
+#character.folder27=
+#character.folder28=
+#character.folder29=
+#character.folder30=
+#character.folder31=
+#character.folder32=
 
 #
 # Eye blinking interval in seconds
