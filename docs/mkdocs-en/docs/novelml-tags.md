@@ -257,10 +257,10 @@ Specify a filename to load an image onto a layer. Set to `none` to unload (hide)
 | `bg`           | Background layer.                         |
 | `back          | Back-Center character.                    |
 | `left`         | Left character.                           |
-| `right`        | Right character.                          |
-| `center`       | Center character.                         |
 | `left-center`  | Left-Center character.                    |
-| `right-center` | Intermediate character.                   |
+| `center`       | Center character.                         |
+| `right-center` | Right-center character.                   |
+| `right`        | Right character.                          |
 | `face`         | Face character.                           |
 
 #### Layer Parameter Arguments
