@@ -2,17 +2,16 @@
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-mid.png" alt="Suika3 Logo" width="480" hspace="20">
   <h1 align="center" style="border-bottom: none">
     <a href="https://suika3.vn">Suika3</a>:<br>
-    Standard Universal Infrastructure<br>
-    for Kinetic Arts<br>
-    The Third Generation
+    Modern, Ultra-Portable, Full-Stack<br>
+    Visual Novel Engine
   </h1>
   <p>
-    Suika3 is a modern, ultra-portable, full-stack<br>
-    Infrastructure on Compiler / Virtual Machine / HAL<br>
-    for interactive entertainment.<br>
-    It's a next-generation open-source game OS or runtime at low-level.<br>
-    In a nutshell, it's like Unity with the 3D and editor removed,<br>
-    and visual novel added by default.<br>
+    Suika3 is a yet another Visual Novel Engine<br>
+    for 2030s and beyond.<br>
+    It consists of state-of-the-art low-level runtimes,<br>
+    including JIT VM and AOT compilers.<br>
+    The name stands for<br>
+    Standard Universal Infrastructure for Kinetic Arts.<br>
   </p>
   <p>
     We've brought Suika3 to life<br>
