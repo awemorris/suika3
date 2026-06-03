@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-tokyo2026.png" alt="Suika3 Logo" width="480" hspace="20">
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-tokyo2026.webp" alt="Suika3 Logo" width="480" hspace="20">
   <h1 align="center" style="border-bottom: none">
     <a href="https://suika3.vn">Suika3</a>:<br>
     Modern, Ultra-Portable, Full-Stack<br>
