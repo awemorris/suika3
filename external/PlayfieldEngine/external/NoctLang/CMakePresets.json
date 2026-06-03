@@ -1,9 +1,70 @@
 {
     "version": 3,
     "cmakeMinimumRequired": {
-        "major": 3, "minor": 22, "patch": 0
+        "major": 3, "minor": 9, "patch": 0
     },
     "configurePresets": [
+        {
+            "name":           "static",
+            "displayName":    "Default Config",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-static",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":         "Release",
+                "NOCT_ENABLE_STATIC":       "ON",
+                "NOCT_ENABLE_CLI":          "ON",
+                "NOCT_ENABLE_JIT":          "ON",
+                "NOCT_ENABLE_I18N":         "ON",
+                "NOCT_ENABLE_API":          "ON",
+                "NOCT_ENABLE_INSTALL":      "ON",
+                "NOCT_ENABLE_BCBACKEND":    "ON",
+                "NOCT_ENABLE_CBACKEND":     "ON",
+                "NOCT_ENABLE_ELBACKEND":    "ON",
+                "NOCT_ENABLE_SCMBACKEND":   "ON",
+                "NOCT_ENABLE_REPL":         "ON"
+            }
+        },
+        {
+            "name":           "shared",
+            "displayName":    "Default Config",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-shared",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":         "Release",
+                "NOCT_ENABLE_STATIC":       "ON",
+                "NOCT_ENABLE_CLI":          "ON",
+                "NOCT_ENABLE_JIT":          "ON",
+                "NOCT_ENABLE_I18N":         "ON",
+                "NOCT_ENABLE_I18N_LIBINTL": "ON",
+                "NOCT_ENABLE_API":          "ON",
+                "NOCT_ENABLE_INSTALL":      "ON",
+                "NOCT_ENABLE_BCBACKEND":    "ON",
+                "NOCT_ENABLE_CBACKEND":     "ON",
+                "NOCT_ENABLE_ELBACKEND":    "ON",
+                "NOCT_ENABLE_SCMBACKEND":   "ON",
+                "NOCT_ENABLE_REPL":         "ON"
+            }
+        },
+        {
+            "name":           "debug",
+            "displayName":    "Default Config",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":         "Release",
+                "NOCT_ENABLE_STATIC":       "ON",
+                "NOCT_ENABLE_CLI":          "ON",
+                "NOCT_ENABLE_JIT":          "ON",
+                "NOCT_ENABLE_I18N":         "ON",
+                "NOCT_ENABLE_API":          "ON",
+                "NOCT_ENABLE_INSTALL":      "ON",
+                "NOCT_ENABLE_BCBACKEND":    "ON",
+                "NOCT_ENABLE_CBACKEND":     "ON",
+                "NOCT_ENABLE_ELBACKEND":    "ON",
+                "NOCT_ENABLE_SCMBACKEND":   "ON",
+                "NOCT_ENABLE_REPL":         "ON"
+            }
+        },
         {
             "name":           "windows-vs2022-x86",
             "displayName":    "VS2022 MSVC x86",
@@ -12,11 +73,16 @@
             "toolset":        "v143",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON"
+                "NOCT_ENABLE_CLI":        "ON",
+                "NOCT_ENABLE_JIT":        "ON",
+                "NOCT_ENABLE_I18N":       "ON",
+                "NOCT_ENABLE_API":        "ON",
+                "NOCT_ENABLE_INSTALL":    "ON",
+                "NOCT_ENABLE_BCBACKEND":  "ON",
+                "NOCT_ENABLE_CBACKEND":   "ON",
+                "NOCT_ENABLE_ELBACKEND":  "ON",
+                "NOCT_ENABLE_SCMBACKEND": "ON",
+                "NOCT_ENABLE_REPL":       "ON"
             },
             "condition": {
                 "type": "equals",
@@ -32,11 +98,16 @@
             "toolset":        "v143",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON"
+                "NOCT_ENABLE_CLI":        "ON",
+                "NOCT_ENABLE_JIT":        "ON",
+                "NOCT_ENABLE_I18N":       "ON",
+                "NOCT_ENABLE_API":        "ON",
+                "NOCT_ENABLE_INSTALL":    "ON",
+                "NOCT_ENABLE_BCBACKEND":  "ON",
+                "NOCT_ENABLE_CBACKEND":   "ON",
+                "NOCT_ENABLE_ELBACKEND":  "ON",
+                "NOCT_ENABLE_SCMBACKEND": "ON",
+                "NOCT_ENABLE_REPL":       "ON"
             },
             "condition": {
                 "type": "equals",
@@ -52,11 +123,16 @@
             "toolset":        "v143",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON"
+                "NOCT_ENABLE_CLI":        "ON",
+                "NOCT_ENABLE_JIT":        "ON",
+                "NOCT_ENABLE_I18N":       "ON",
+                "NOCT_ENABLE_API":        "ON",
+                "NOCT_ENABLE_INSTALL":    "ON",
+                "NOCT_ENABLE_BCBACKEND":  "ON",
+                "NOCT_ENABLE_CBACKEND":   "ON",
+                "NOCT_ENABLE_ELBACKEND":  "ON",
+                "NOCT_ENABLE_SCMBACKEND": "ON",
+                "NOCT_ENABLE_REPL":       "ON"
             },
             "condition": {
                 "type": "equals",
@@ -72,11 +148,16 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON"
+                "NOCT_ENABLE_CLI":        "ON",
+                "NOCT_ENABLE_JIT":        "ON",
+                "NOCT_ENABLE_I18N":       "ON",
+                "NOCT_ENABLE_API":        "ON",
+                "NOCT_ENABLE_INSTALL":    "ON",
+                "NOCT_ENABLE_BCBACKEND":  "ON",
+                "NOCT_ENABLE_CBACKEND":   "ON",
+                "NOCT_ENABLE_ELBACKEND":  "ON",
+                "NOCT_ENABLE_SCMBACKEND": "ON",
+                "NOCT_ENABLE_REPL":       "ON"
             },
             "condition": {
                 "type": "equals",
@@ -92,11 +173,16 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON"
+                "NOCT_ENABLE_CLI":        "ON",
+                "NOCT_ENABLE_JIT":        "ON",
+                "NOCT_ENABLE_I18N":       "ON",
+                "NOCT_ENABLE_API":        "ON",
+                "NOCT_ENABLE_INSTALL":    "ON",
+                "NOCT_ENABLE_BCBACKEND":  "ON",
+                "NOCT_ENABLE_CBACKEND":   "ON",
+                "NOCT_ENABLE_ELBACKEND":  "ON",
+                "NOCT_ENABLE_SCMBACKEND": "ON",
+                "NOCT_ENABLE_REPL":       "ON"
             },
             "condition": {
                 "type": "equals",
@@ -112,11 +198,16 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON"
+                "NOCT_ENABLE_CLI":        "ON",
+                "NOCT_ENABLE_JIT":        "ON",
+                "NOCT_ENABLE_I18N":       "ON",
+                "NOCT_ENABLE_API":        "ON",
+                "NOCT_ENABLE_INSTALL":    "ON",
+                "NOCT_ENABLE_BCBACKEND":  "ON",
+                "NOCT_ENABLE_CBACKEND":   "ON",
+                "NOCT_ENABLE_ELBACKEND":  "ON",
+                "NOCT_ENABLE_SCMBACKEND": "ON",
+                "NOCT_ENABLE_REPL":       "ON"
             },
             "condition": {
                 "type": "equals",
@@ -131,12 +222,18 @@
             "binaryDir":      "${sourceDir}/build-mingw-x86",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-x86.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "ON",
+                "NOCT_ENABLE_JIT":        "ON",
+                "NOCT_ENABLE_I18N":       "ON",
+                "NOCT_ENABLE_API":        "ON",
+                "NOCT_ENABLE_INSTALL":    "ON",
+                "NOCT_ENABLE_BCBACKEND":  "ON",
+                "NOCT_ENABLE_CBACKEND":   "ON",
+                "NOCT_ENABLE_ELBACKEND":  "ON",
+                "NOCT_ENABLE_SCMBACKEND": "ON",
+                "NOCT_ENABLE_REPL":       "ON"
             }
         },
         {
@@ -146,12 +243,18 @@
             "binaryDir":      "${sourceDir}/build-mingw-x86_64",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-x86_64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "ON",
+                "NOCT_ENABLE_JIT":        "ON",
+                "NOCT_ENABLE_I18N":       "ON",
+                "NOCT_ENABLE_API":        "ON",
+                "NOCT_ENABLE_INSTALL":    "ON",
+                "NOCT_ENABLE_BCBACKEND":  "ON",
+                "NOCT_ENABLE_CBACKEND":   "ON",
+                "NOCT_ENABLE_ELBACKEND":  "ON",
+                "NOCT_ENABLE_SCMBACKEND": "ON",
+                "NOCT_ENABLE_REPL":       "ON"
             }
         },
         {
@@ -161,13 +264,18 @@
             "binaryDir":      "${sourceDir}/build-mingw-arm64",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-arm64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON"
-
+                "CMAKE_BUILD_TYPE":       "Release",
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "ON",
+                "NOCT_ENABLE_JIT":        "ON",
+                "NOCT_ENABLE_I18N":       "ON",
+                "NOCT_ENABLE_API":        "ON",
+                "NOCT_ENABLE_INSTALL":    "ON",
+                "NOCT_ENABLE_BCBACKEND":  "ON",
+                "NOCT_ENABLE_CBACKEND":   "ON",
+                "NOCT_ENABLE_ELBACKEND":  "ON",
+                "NOCT_ENABLE_SCMBACKEND": "ON",
+                "NOCT_ENABLE_REPL":       "ON"
             }
         },
         {
@@ -177,12 +285,18 @@
             "binaryDir":      "${sourceDir}/build-macos",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/macos.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "ON",
+                "NOCT_ENABLE_JIT":        "ON",
+                "NOCT_ENABLE_I18N":       "ON",
+                "NOCT_ENABLE_API":        "ON",
+                "NOCT_ENABLE_INSTALL":    "ON",
+                "NOCT_ENABLE_BCBACKEND":  "ON",
+                "NOCT_ENABLE_CBACKEND":   "ON",
+                "NOCT_ENABLE_ELBACKEND":  "ON",
+                "NOCT_ENABLE_SCMBACKEND": "ON",
+                "NOCT_ENABLE_REPL":       "ON"
             }
         },
         {
@@ -192,12 +306,18 @@
             "binaryDir":      "${sourceDir}/build-macos-arm64",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/macos-arm64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "ON",
+                "NOCT_ENABLE_JIT":        "ON",
+                "NOCT_ENABLE_I18N":       "ON",
+                "NOCT_ENABLE_API":        "ON",
+                "NOCT_ENABLE_INSTALL":    "ON",
+                "NOCT_ENABLE_BCBACKEND":  "ON",
+                "NOCT_ENABLE_CBACKEND":   "ON",
+                "NOCT_ENABLE_ELBACKEND":  "ON",
+                "NOCT_ENABLE_SCMBACKEND": "ON",
+                "NOCT_ENABLE_REPL":       "ON"
             }
         },
         {
@@ -207,56 +327,18 @@
             "binaryDir":      "${sourceDir}/build-macos-x86_64",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/macos-x86_64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON"
-            }
-        },
-        {
-            "name":           "linux",
-            "displayName":    "Linux Wayland/X11 Dual OpenGL",
-            "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-linux",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON"
-            }
-        },
-        {
-            "name":           "linux-debug",
-            "displayName":    "Linux Wayland/X11 Dual OpenGL Debug",
-            "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-linux-debug",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Debug",
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON"
-            }
-        },
-        {
-            "name":           "linux-debian",
-            "displayName":    "Linux Debian Package",
-            "generator":      "Unix Makefiles",
-            "binaryDir":      "${sourceDir}/build-linux-debian",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":         "Release",
-                "NOCT_ENABLE_SHARED":       "ON",
-                "NOCT_ENABLE_INSTALL":      "ON",
-                "NOCT_ENABLE_I18N":         "ON",
-                "NOCT_ENABLE_I18N_LIBINTL": "ON",
-                "NOCT_ENABLE_BCBACKEND":    "ON",
-                "NOCT_ENABLE_ELBACKEND":    "ON",
-                "NOCT_ENABLE_CBACKEND":     "ON"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "ON",
+                "NOCT_ENABLE_JIT":        "ON",
+                "NOCT_ENABLE_I18N":       "ON",
+                "NOCT_ENABLE_API":        "ON",
+                "NOCT_ENABLE_INSTALL":    "ON",
+                "NOCT_ENABLE_BCBACKEND":  "ON",
+                "NOCT_ENABLE_CBACKEND":   "ON",
+                "NOCT_ENABLE_ELBACKEND":  "ON",
+                "NOCT_ENABLE_SCMBACKEND": "ON",
+                "NOCT_ENABLE_REPL":       "ON"
             }
         },
         {
@@ -266,16 +348,18 @@
             "binaryDir":      "${sourceDir}/build-ios-device",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/ios-device.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_CLI":       "OFF",
-                "NOCT_ENABLE_JIT":       "OFF",
-                "NOCT_ENABLE_I18N":      "OFF",
-                "NOCT_ENABLE_API":       "OFF",
-                "NOCT_ENABLE_INSTALL":   "OFF",
-                "NOCT_ENABLE_CBACKEND":  "OFF",
-                "NOCT_ENABLE_BCBACKEND": "OFF",
-                "NOCT_ENABLE_ELBACKEND": "OFF"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "OFF",
+                "NOCT_ENABLE_JIT":        "OFF",
+                "NOCT_ENABLE_I18N":       "OFF",
+                "NOCT_ENABLE_API":        "OFF",
+                "NOCT_ENABLE_INSTALL":    "OFF",
+                "NOCT_ENABLE_BCBACKEND":  "OFF",
+                "NOCT_ENABLE_CBACKEND":   "OFF",
+                "NOCT_ENABLE_ELBACKEND":  "OFF",
+                "NOCT_ENABLE_SCMBACKEND": "OFF",
+                "NOCT_ENABLE_REPL":       "OFF"
             }
         },
         {
@@ -285,16 +369,18 @@
             "binaryDir":      "${sourceDir}/build-ios-simulator",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/ios-simulator.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_CLI":       "OFF",
-                "NOCT_ENABLE_JIT":       "OFF",
-                "NOCT_ENABLE_I18N":      "OFF",
-                "NOCT_ENABLE_API":       "OFF",
-                "NOCT_ENABLE_INSTALL":   "OFF",
-                "NOCT_ENABLE_CBACKEND":  "OFF",
-                "NOCT_ENABLE_BCBACKEND": "OFF",
-                "NOCT_ENABLE_ELBACKEND": "OFF"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "OFF",
+                "NOCT_ENABLE_JIT":        "OFF",
+                "NOCT_ENABLE_I18N":       "OFF",
+                "NOCT_ENABLE_API":        "OFF",
+                "NOCT_ENABLE_INSTALL":    "OFF",
+                "NOCT_ENABLE_BCBACKEND":  "OFF",
+                "NOCT_ENABLE_CBACKEND":   "OFF",
+                "NOCT_ENABLE_ELBACKEND":  "OFF",
+                "NOCT_ENABLE_SCMBACKEND": "OFF",
+                "NOCT_ENABLE_REPL":       "OFF"
             }
         },
         {
@@ -318,11 +404,20 @@
             "binaryDir":      "${sourceDir}/build-android-x86_64",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":   "Release",
-                "ANDROID_PLATFORM":   "30",
-                "ANDROID_ABI":        "x86_64",
-                "NOCT_ENABLE_STATIC": "ON",
-                "NOCT_ENABLE_CLI":    "OFF"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "ANDROID_PLATFORM":       "30",
+                "ANDROID_ABI":            "x86_64",
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "OFF",
+                "NOCT_ENABLE_JIT":        "OFF",
+                "NOCT_ENABLE_I18N":       "OFF",
+                "NOCT_ENABLE_API":        "OFF",
+                "NOCT_ENABLE_INSTALL":    "OFF",
+                "NOCT_ENABLE_BCBACKEND":  "OFF",
+                "NOCT_ENABLE_CBACKEND":   "OFF",
+                "NOCT_ENABLE_ELBACKEND":  "OFF",
+                "NOCT_ENABLE_SCMBACKEND": "OFF",
+                "NOCT_ENABLE_REPL":       "OFF"
             }
         },
         {
@@ -332,11 +427,20 @@
             "binaryDir":      "${sourceDir}/build-android-armv7",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":   "Release",
-                "ANDROID_PLATFORM":   "30",
-                "ANDROID_ABI":        "armeabi-v7a",
-                "NOCT_ENABLE_STATIC": "ON",
-                "NOCT_ENABLE_CLI":    "OFF"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "ANDROID_PLATFORM":       "30",
+                "ANDROID_ABI":            "armeabi-v7a",
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "OFF",
+                "NOCT_ENABLE_JIT":        "OFF",
+                "NOCT_ENABLE_I18N":       "OFF",
+                "NOCT_ENABLE_API":        "OFF",
+                "NOCT_ENABLE_INSTALL":    "OFF",
+                "NOCT_ENABLE_BCBACKEND":  "OFF",
+                "NOCT_ENABLE_CBACKEND":   "OFF",
+                "NOCT_ENABLE_ELBACKEND":  "OFF",
+                "NOCT_ENABLE_SCMBACKEND": "OFF",
+                "NOCT_ENABLE_REPL":       "OFF"
             }
         },
         {
@@ -346,11 +450,20 @@
             "binaryDir":      "${sourceDir}/build-android-arm64",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":   "Release",
-                "ANDROID_PLATFORM":   "30",
-                "ANDROID_ABI":        "arm64-v8a",
-                "NOCT_ENABLE_STATIC": "ON",
-                "NOCT_ENABLE_CLI":    "OFF"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "ANDROID_PLATFORM":       "30",
+                "ANDROID_ABI":            "arm64-v8a",
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "OFF",
+                "NOCT_ENABLE_JIT":        "OFF",
+                "NOCT_ENABLE_I18N":       "OFF",
+                "NOCT_ENABLE_API":        "OFF",
+                "NOCT_ENABLE_INSTALL":    "OFF",
+                "NOCT_ENABLE_BCBACKEND":  "OFF",
+                "NOCT_ENABLE_CBACKEND":   "OFF",
+                "NOCT_ENABLE_ELBACKEND":  "OFF",
+                "NOCT_ENABLE_SCMBACKEND": "OFF",
+                "NOCT_ENABLE_REPL":       "OFF"
             }
         },
         {
@@ -360,11 +473,20 @@
             "binaryDir":      "${sourceDir}/build-android-riscv64",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":   "Release",
-                "ANDROID_PLATFORM":   "30",
-                "ANDROID_ABI":        "riscv64",
-                "NOCT_ENABLE_STATIC": "ON",
-                "NOCT_ENABLE_CLI":    "OFF"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "ANDROID_PLATFORM":       "30",
+                "ANDROID_ABI":            "riscv64",
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "OFF",
+                "NOCT_ENABLE_JIT":        "OFF",
+                "NOCT_ENABLE_I18N":       "OFF",
+                "NOCT_ENABLE_API":        "OFF",
+                "NOCT_ENABLE_INSTALL":    "OFF",
+                "NOCT_ENABLE_BCBACKEND":  "OFF",
+                "NOCT_ENABLE_CBACKEND":   "OFF",
+                "NOCT_ENABLE_ELBACKEND":  "OFF",
+                "NOCT_ENABLE_SCMBACKEND": "OFF",
+                "NOCT_ENABLE_REPL":       "OFF"
             }
         },
         {
@@ -379,7 +501,16 @@
                 "OHOS_ARCH":               "x86_64",
                 "NOCT_TARGET_OPENHARMONY": "ON",
                 "NOCT_ENABLE_STATIC":      "ON",
-                "NOCT_ENABLE_CLI":         "OFF"
+                "NOCT_ENABLE_CLI":         "OFF",
+                "NOCT_ENABLE_JIT":         "OFF",
+                "NOCT_ENABLE_I18N":        "OFF",
+                "NOCT_ENABLE_API":         "OFF",
+                "NOCT_ENABLE_INSTALL":     "OFF",
+                "NOCT_ENABLE_BCBACKEND":   "OFF",
+                "NOCT_ENABLE_CBACKEND":    "OFF",
+                "NOCT_ENABLE_ELBACKEND":   "OFF",
+                "NOCT_ENABLE_SCMBACKEND":  "OFF",
+                "NOCT_ENABLE_REPL":        "OFF"
             }
         },
         {
@@ -394,7 +525,16 @@
                 "OHOS_ARCH":               "arm64-v8a",
                 "NOCT_TARGET_OPENHARMONY": "ON",
                 "NOCT_ENABLE_STATIC":      "ON",
-                "NOCT_ENABLE_CLI":         "OFF"
+                "NOCT_ENABLE_CLI":         "OFF",
+                "NOCT_ENABLE_JIT":         "OFF",
+                "NOCT_ENABLE_I18N":        "OFF",
+                "NOCT_ENABLE_API":         "OFF",
+                "NOCT_ENABLE_INSTALL":     "OFF",
+                "NOCT_ENABLE_BCBACKEND":   "OFF",
+                "NOCT_ENABLE_CBACKEND":    "OFF",
+                "NOCT_ENABLE_ELBACKEND":   "OFF",
+                "NOCT_ENABLE_SCMBACKEND":  "OFF",
+                "NOCT_ENABLE_REPL":        "OFF"
             }
         },
         {
@@ -409,7 +549,16 @@
                 "OHOS_ARCH":               "armeabi-v7a",
                 "NOCT_TARGET_OPENHARMONY": "ON",
                 "NOCT_ENABLE_STATIC":      "ON",
-                "NOCT_ENABLE_CLI":         "OFF"
+                "NOCT_ENABLE_CLI":         "OFF",
+                "NOCT_ENABLE_JIT":         "OFF",
+                "NOCT_ENABLE_I18N":        "OFF",
+                "NOCT_ENABLE_API":         "OFF",
+                "NOCT_ENABLE_INSTALL":     "OFF",
+                "NOCT_ENABLE_BCBACKEND":   "OFF",
+                "NOCT_ENABLE_CBACKEND":    "OFF",
+                "NOCT_ENABLE_ELBACKEND":   "OFF",
+                "NOCT_ENABLE_SCMBACKEND":  "OFF",
+                "NOCT_ENABLE_REPL":        "OFF"
             }
         },
         {
@@ -419,23 +568,18 @@
             "binaryDir":      "${sourceDir}/build-wasm",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/wasm.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":   "Release",
-                "NOCT_TARGET_WASM":   "ON",
-                "NOCT_ENABLE_STATIC": "ON",
-                "NOCT_ENABLE_CLI":    "OFF"
-            }
-        },
-        {
-            "name":           "wasm-local",
-            "displayName":    "Wasm Local File",
-            "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-wasm-local",
-            "toolchainFile":  "${sourceDir}/cmake/toolchains/wasm.cmake",
-            "cacheVariables": {
                 "CMAKE_BUILD_TYPE":       "Release",
-                "NOCT_TARGET_WASM_LOCAL": "ON",
                 "NOCT_ENABLE_STATIC":     "ON",
-                "NOCT_ENABLE_CLI":        "OFF"
+                "NOCT_ENABLE_CLI":        "OFF",
+                "NOCT_ENABLE_JIT":        "OFF",
+                "NOCT_ENABLE_I18N":       "OFF",
+                "NOCT_ENABLE_API":        "OFF",
+                "NOCT_ENABLE_INSTALL":    "OFF",
+                "NOCT_ENABLE_BCBACKEND":  "OFF",
+                "NOCT_ENABLE_CBACKEND":   "OFF",
+                "NOCT_ENABLE_ELBACKEND":  "OFF",
+                "NOCT_ENABLE_SCMBACKEND": "OFF",
+                "NOCT_ENABLE_REPL":       "OFF"
             }
         },
         {
@@ -445,17 +589,19 @@
             "binaryDir":      "${sourceDir}/build-unity-win64",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-win64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "NOCT_TARGET_UNITY":     "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_CLI":       "OFF",
-                "NOCT_ENABLE_JIT":       "OFF",
-                "NOCT_ENABLE_I18N":      "OFF",
-                "NOCT_ENABLE_API":       "OFF",
-                "NOCT_ENABLE_INSTALL":   "OFF",
-                "NOCT_ENABLE_CBACKEND":  "OFF",
-                "NOCT_ENABLE_BCBACKEND": "OFF",
-                "NOCT_ENABLE_ELBACKEND": "OFF"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "NOCT_TARGET_UNITY":      "ON",
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "OFF",
+                "NOCT_ENABLE_JIT":        "OFF",
+                "NOCT_ENABLE_I18N":       "OFF",
+                "NOCT_ENABLE_API":        "OFF",
+                "NOCT_ENABLE_INSTALL":    "OFF",
+                "NOCT_ENABLE_BCBACKEND":  "OFF",
+                "NOCT_ENABLE_CBACKEND":   "OFF",
+                "NOCT_ENABLE_ELBACKEND":  "OFF",
+                "NOCT_ENABLE_SCMBACKEND": "OFF",
+                "NOCT_ENABLE_REPL":       "OFF"
             }
         },
         {
@@ -465,17 +611,19 @@
             "binaryDir":      "${sourceDir}/build-unity-winarm64",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-winarm64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "NOCT_TARGET_UNITY":     "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_CLI":       "OFF",
-                "NOCT_ENABLE_JIT":       "OFF",
-                "NOCT_ENABLE_I18N":      "OFF",
-                "NOCT_ENABLE_API":       "OFF",
-                "NOCT_ENABLE_INSTALL":   "OFF",
-                "NOCT_ENABLE_CBACKEND":  "OFF",
-                "NOCT_ENABLE_BCBACKEND": "OFF",
-                "NOCT_ENABLE_ELBACKEND": "OFF"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "NOCT_TARGET_UNITY":      "ON",
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "OFF",
+                "NOCT_ENABLE_JIT":        "OFF",
+                "NOCT_ENABLE_I18N":       "OFF",
+                "NOCT_ENABLE_API":        "OFF",
+                "NOCT_ENABLE_INSTALL":    "OFF",
+                "NOCT_ENABLE_BCBACKEND":  "OFF",
+                "NOCT_ENABLE_CBACKEND":   "OFF",
+                "NOCT_ENABLE_ELBACKEND":  "OFF",
+                "NOCT_ENABLE_SCMBACKEND": "OFF",
+                "NOCT_ENABLE_REPL":       "OFF"
             }
         },
         {
@@ -494,9 +642,11 @@
                 "NOCT_ENABLE_I18N":         "OFF",
                 "NOCT_ENABLE_API":          "OFF",
                 "NOCT_ENABLE_INSTALL":      "OFF",
-                "NOCT_ENABLE_CBACKEND":     "OFF",
                 "NOCT_ENABLE_BCBACKEND":    "OFF",
-                "NOCT_ENABLE_ELBACKEND":    "OFF"
+                "NOCT_ENABLE_CBACKEND":     "OFF",
+                "NOCT_ENABLE_ELBACKEND":    "OFF",
+                "NOCT_ENABLE_SCMBACKEND":   "OFF",
+                "NOCT_ENABLE_REPL":         "OFF"
             }
         },
         {
@@ -506,18 +656,20 @@
             "binaryDir":      "${sourceDir}/build-unity-ps5",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-ps5.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "NOCT_TARGET_UNITY":     "ON",
-                "NOCT_TARGET_UNITY_PS5": "ON",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_CLI":       "OFF",
-                "NOCT_ENABLE_JIT":       "OFF",
-                "NOCT_ENABLE_I18N":      "OFF",
-                "NOCT_ENABLE_API":       "OFF",
-                "NOCT_ENABLE_INSTALL":   "OFF",
-                "NOCT_ENABLE_CBACKEND":  "OFF",
-                "NOCT_ENABLE_BCBACKEND": "OFF",
-                "NOCT_ENABLE_ELBACKEND": "OFF"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "NOCT_TARGET_UNITY":      "ON",
+                "NOCT_TARGET_UNITY_PS5":  "ON",
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "OFF",
+                "NOCT_ENABLE_JIT":        "OFF",
+                "NOCT_ENABLE_I18N":       "OFF",
+                "NOCT_ENABLE_API":        "OFF",
+                "NOCT_ENABLE_INSTALL":    "OFF",
+                "NOCT_ENABLE_BCBACKEND":  "OFF",
+                "NOCT_ENABLE_CBACKEND":   "OFF",
+                "NOCT_ENABLE_ELBACKEND":  "OFF",
+                "NOCT_ENABLE_SCMBACKEND": "OFF",
+                "NOCT_ENABLE_REPL":       "OFF"
             }
         },
         {
@@ -536,146 +688,11 @@
                 "NOCT_ENABLE_I18N":       "OFF",
                 "NOCT_ENABLE_API":        "OFF",
                 "NOCT_ENABLE_INSTALL":    "OFF",
-                "NOCT_ENABLE_CBACKEND":   "OFF",
                 "NOCT_ENABLE_BCBACKEND":  "OFF",
-                "NOCT_ENABLE_ELBACKEND":  "OFF"
-            }
-        },
-        {
-            "name":           "freebsd",
-            "displayName":    "FreeBSD Wayland/X11 Dual OpenGL",
-            "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-freebsd",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":       "Release",
-                "NOCT_ENABLE_STATIC":     "ON",
-                "NOCT_ENABLE_I18N":       "ON",
-                "NOCT_ENABLE_PACK":       "ON",
-                "NOCT_ENABLE_CLI":        "OFF"
-            }
-        },
-        {
-            "name":           "netbsd",
-            "displayName":    "NetBSD",
-            "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-netbsd",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON"
-            }
-        },
-        {
-            "name":           "openbsd",
-            "displayName":    "OpenBSD",
-            "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-openbsd",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON"
-            }
-        },
-        {
-            "name":           "solaris11",
-            "displayName":    "Solaris 11",
-            "generator":      "Unix Makefiles",
-            "binaryDir":      "${sourceDir}/build-solaris11",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "CMAKE_C_COMPILER":      "cc",
-                "CMAKE_CXX_COMPILER":    "CC",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON"
-            }
-        },
-        {
-            "name":           "solaris10",
-            "displayName":    "Solaris 10 X11 Soft3D",
-            "generator":      "Unix Makefiles",
-            "binaryDir":      "${sourceDir}/build-solaris10",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "CMAKE_C_COMPILER":      "cc",
-                "CMAKE_CXX_COMPILER":    "CC",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON"
-            }
-        },
-        {
-            "name":           "aix",
-            "displayName":    "AIX",
-            "generator":      "Unix Makefiles",
-            "binaryDir":      "${sourceDir}/build-aix",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "CMAKE_C_COMPILER":      "xlc",
-                "CMAKE_CXX_COMPILER":    "xlc++",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON"
-            }
-        },
-        {
-            "name":           "hpux",
-            "displayName":    "HP-UX",
-            "generator":      "Unix Makefiles",
-            "binaryDir":      "${sourceDir}/build-hpux",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "CMAKE_C_COMPILER":      "cc",
-                "CMAKE_CXX_COMPILER":    "aCC",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON"
-            }
-        },
-        {
-            "name":           "unix",
-            "displayName":    "Generic Unknown UNIX",
-            "generator":      "Unix Makefiles",
-            "binaryDir":      "${sourceDir}/build-unix",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "CMAKE_C_COMPILER":      "cc",
-                "CMAKE_CXX_COMPILER":    "c++",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON"
-            }
-        },
-        {
-            "name":           "haiku",
-            "displayName":    "Haiku",
-            "generator":      "Unix Makefiles",
-            "binaryDir":      "${sourceDir}/build-haiku",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "CMAKE_C_COMPILER":      "gcc",
-                "CMAKE_CXX_COMPILER":    "g++",
-                "NOCT_ENABLE_STATIC":    "ON",
-                "NOCT_ENABLE_I18N":      "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON"
+                "NOCT_ENABLE_CBACKEND":   "OFF",
+                "NOCT_ENABLE_ELBACKEND":  "OFF",
+                "NOCT_ENABLE_SCMBACKEND": "OFF",
+                "NOCT_ENABLE_REPL":       "OFF"
             }
         },
         {
@@ -685,38 +702,44 @@
             "binaryDir":      "${sourceDir}/build-msdos",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/openwatcom-dos4gw.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "NOCT_TARGET_DOS4G":     "ON",
-                "NOCT_ENABLE_CLI":       "ON",
-                "NOCT_ENABLE_JIT":       "ON",
-                "NOCT_ENABLE_I18N":      "OFF",
-                "NOCT_ENABLE_API":       "ON",
-                "NOCT_ENABLE_BCBACKEND": "ON",
-                "NOCT_ENABLE_CBACKEND":  "ON",
-                "NOCT_ENABLE_ELBACKEND": "ON"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "NOCT_TARGET_DOS4G":      "ON",
+                "NOCT_ENABLE_STATIC":     "ON",
+                "NOCT_ENABLE_CLI":        "ON",
+                "NOCT_ENABLE_JIT":        "ON",
+                "NOCT_ENABLE_I18N":       "OFF",
+                "NOCT_ENABLE_API":        "ON",
+                "NOCT_ENABLE_INSTALL":    "OFF",
+                "NOCT_ENABLE_BCBACKEND":  "OFF",
+                "NOCT_ENABLE_CBACKEND":   "OFF",
+                "NOCT_ENABLE_ELBACKEND":  "OFF",
+                "NOCT_ENABLE_SCMBACKEND": "OFF",
+                "NOCT_ENABLE_REPL":       "ON"
 	    }
         }
     ],
     "buildPresets": [
         {
-            "name": "windows-vs2022-x86",
+            "name":            "static",
+            "configurePreset": "static"
+        },
+        {
+            "name":            "shared",
+            "configurePreset": "shared"
+        },
+        {
+            "name":            "debug",
+            "configurePreset": "debug"
+        },
+        {
+            "name":            "windows-vs2022-x86",
             "configurePreset": "windows-vs2022-x86",
 	    "configuration":   "Release"
         },
         {
-            "name": "windows-vs2022-x86-debug",
-            "configurePreset": "windows-vs2022-x86",
-	    "configuration":   "Debug"
-        },
-        {
-            "name": "windows-vs2022-x64",
+            "name":            "windows-vs2022-x64",
             "configurePreset": "windows-vs2022-x64",
 	    "configuration":   "Release"
-        },
-        {
-            "name": "windows-vs2022-x64-debug",
-            "configurePreset": "windows-vs2022-x64",
-	    "configuration":   "Debug"
         },
         {
             "name": "windows-vs2022-arm64",
@@ -724,24 +747,14 @@
 	    "configuration":   "Release"
         },
         {
-            "name": "windows-vs2022-arm64-debug",
-            "configurePreset": "windows-vs2022-arm64",
-	    "configuration":   "Debug"
-        },
-        {
             "name": "windows-vs2026-x86",
             "configurePreset": "windows-vs2026-x86",
-	    "configuration":   "Release"
+	    "configuration": "Release"
         },
         {
-            "name": "windows-vs2026-x86-debug",
-            "configurePreset": "windows-vs2026-x86",
-	    "configuration":   "Debug"
-        },
-        {
-            "name":            "windows-vs2026-x64",
+            "name": "windows-vs2026-x64",
             "configurePreset": "windows-vs2026-x64",
-	    "configuration":   "Release"
+	    "configuration": "Release"
         },
         {
             "name":            "windows-vs2026-x64-debug",
@@ -752,11 +765,6 @@
             "name": "windows-vs2026-arm64",
             "configurePreset": "windows-vs2026-arm64",
 	    "configuration":   "Release"
-        },
-        {
-            "name": "windows-vs2026-arm64-debug",
-            "configurePreset": "windows-vs2026-arm64",
-	    "configuration":   "Debug"
         },
         {
             "name": "windows-mingw-x86",
@@ -781,18 +789,6 @@
         {
             "name": "macos-x86_64",
             "configurePreset": "macos-x86_64"
-        },
-        {
-            "name": "linux",
-            "configurePreset": "linux"
-        },
-        {
-            "name": "linux-debug",
-            "configurePreset": "linux-debug"
-        },
-        {
-            "name": "linux-debian",
-            "configurePreset": "linux-debian"
         },
         {
             "name": "ios-device",
@@ -840,10 +836,6 @@
             "configurePreset": "wasm"
         },
         {
-            "name": "wasm-local",
-            "configurePreset": "wasm-local"
-        },
-        {
             "name": "unity-win64",
             "configurePreset": "unity-win64"
         },
@@ -858,42 +850,6 @@
         {
             "name": "unity-xbox",
             "configurePreset": "unity-xbox"
-        },
-        {
-            "name": "freebsd",
-            "configurePreset": "freebsd"
-        },
-        {
-            "name": "netbsd",
-            "configurePreset": "netbsd"
-        },
-        {
-            "name": "openbsd",
-            "configurePreset": "openbsd"
-        },
-        {
-            "name": "solaris11",
-            "configurePreset": "solaris11"
-        },
-        {
-            "name": "solaris10",
-            "configurePreset": "solaris10"
-        },
-        {
-            "name": "aix",
-            "configurePreset": "aix"
-        },
-        {
-            "name": "hpux",
-            "configurePreset": "hpux"
-        },
-        {
-            "name": "unix",
-            "configurePreset": "unix"
-        },
-        {
-            "name": "haiku",
-            "configurePreset": "haiku"
         },
         {
             "name": "msdos",

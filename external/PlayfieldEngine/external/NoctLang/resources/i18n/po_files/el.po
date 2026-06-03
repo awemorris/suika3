@@ -234,36 +234,39 @@ msgstr "Η μεταγλώττιση JIT είναι ενεργοποιημένη.
 msgid "Usage\n"
 msgstr "Χρήση\n"
 
-msgid "noct <vm-options> <files>          ... run a program\n"
-msgstr "noct <vm-options> <files>          ... εκτέλεση προγράμματος\n"
+msgid "  noct <vm-options> <files>           ... run a program\n"
+msgstr "  noct <vm-options> <files>           ... εκτέλεση προγράμματος\n"
 
-msgid "noct --ansic <out-file> <in-files> ... convert to a C source file\n"
-msgstr "noct --ansic <out-file> <in-files> ... μετατροπή σε αρχείο πηγαίου κώδικα C\n"
+msgid "  noct --ansic <out-file> <in-files>  ... convert to a C source file\n"
+msgstr "  noct --ansic <out-file> <in-files>  ... μετατροπή σε αρχείο πηγαίου κώδικα C\n"
 
-msgid "noct --elisp <out-file> <in-files> ... convert to an Emacs Lisp source file\n"
-msgstr "noct --elisp <out-file> <in-files> ... μετατροπή σε αρχείο πηγαίου κώδικα Emacs Lisp\n"
+msgid "  noct --elisp <out-file> <in-files>  ... convert to an Emacs Lisp source file\n"
+msgstr "  noct --elisp <out-file> <in-files>  ... μετατροπή σε αρχείο πηγαίου κώδικα Emacs Lisp\n"
 
-msgid "--disable-jit        ... disable JIT\n"
-msgstr "--disable-jit        ... απενεργοποίηση JIT\n"
+msgid "  noct --scheme <out-file> <in-files> ... convert to an Scheme source file\n"
+msgstr "  noct --scheme <out-file> <in-files> ... μετατροπή σε αρχείο πηγαίου κώδικα Scheme\n"
 
-msgid "--force-jit          ... equivalent to --jit-threshold=0\n"
-msgstr "--force-jit          ... ισοδύναμο με --jit-threshold=0\n"
+msgid "  --disable-jit        ... disable JIT\n"
+msgstr "  --disable-jit        ... απενεργοποίηση JIT\n"
 
-msgid "--jit-threshold=N    ... call-count threshold for compilation\n"
-msgstr "--jit-threshold=N    ... όριο αριθμού κλήσεων για μεταγλώττιση\n"
+msgid "  --force-jit          ... equivalent to --jit-threshold=0\n"
+msgstr "  --force-jit          ... ισοδύναμο με --jit-threshold=0\n"
 
-msgid "--optimize-level=N   ... optimize level (0/1)\n"
-msgstr "--optimize-level=N   ... επίπεδο βελτιστοποίησης (0/1)\n"
+msgid "  --jit-threshold=N    ... call-count threshold for compilation\n"
+msgstr "  --jit-threshold=N    ... όριο αριθμού κλήσεων για μεταγλώττιση\n"
 
-msgid "--gc-nursery-size=N  ... first GC space size in bytes\n"
-msgstr "--gc-nursery-size=N  ... μέγεθος του πρώτου χώρου GC σε byte\n"
+msgid "  --optimize-level=N   ... optimize level (0/1)\n"
+msgstr "  --optimize-level=N   ... επίπεδο βελτιστοποίησης (0/1)\n"
 
-msgid "--gc-graduate-size=N ... second GC space size in bytes\n"
-msgstr "--gc-graduate-size=N ... μέγεθος του δεύτερου χώρου GC σε byte\n"
+msgid "  --gc-nursery-size=N  ... first GC space size in bytes\n"
+msgstr "  --gc-nursery-size=N  ... μέγεθος του πρώτου χώρου GC σε byte\n"
 
-msgid "--gc-tenure-size=N   ... final GC space size in bytes\n"
-msgstr "--gc-tenure-size=N   ... μέγεθος του τελικού χώρου GC σε byte\n"
+msgid "  --gc-graduate-size=N ... second GC space size in bytes\n"
+msgstr "  --gc-graduate-size=N ... μέγεθος του δεύτερου χώρου GC σε byte\n"
 
-msgid "--gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n"
-msgstr "--gc-lop-threshold=N ... μεταφορά αντικειμένων μεγαλύτερων από N byte στον τελικό χώρο GC\n"
+msgid "  --gc-tenure-size=N   ... final GC space size in bytes\n"
+msgstr "  --gc-tenure-size=N   ... μέγεθος του τελικού χώρου GC σε byte\n"
+
+msgid "  --gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n"
+msgstr "  --gc-lop-threshold=N ... μεταφορά αντικειμένων μεγαλύτερων από N byte στον τελικό χώρο GC\n"
 

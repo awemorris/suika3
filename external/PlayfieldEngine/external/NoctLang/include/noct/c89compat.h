@@ -167,26 +167,28 @@ extern "C" {
  * Here, we define two macros that indicates the target platform and
  * its characteristics.
  *
- * |Macro               |Platform              |Description                 |
- * |--------------------|----------------------|----------------------------|
- * |NOCT_TARGET_WINDOWS   |Windows               |                            |
- * |NOCT_TARGET_MACOS     |macOS                 |                            |
- * |NOCT_TARGET_LINUX     |Linux                 |Excluding Android           |
- * |NOCT_TARGET_IOS       |iOS                   |                            |
- * |NOCT_TARGET_ANDROID   |Android NDK           |                            |
- * |NOCT_TARGET_WASM      |Wasm                  |Emscripten                  |
- * |NOCT_TARGET_UNITY     |Unity                 |Gaming Consoles             |
- * |NOCT_TARGET_FREEBSD   |FreeBSD               |Excluding Gaming Consoles   |
- * |NOCT_TARGET_NETBSD    |NetBSD                |                            |
- * |NOCT_TARGET_OPENBSD   |OpenBSD               |                            |
- * |NOCT_TARGET_SOLARIS11 |Solaris               |                            |
- * |NOCT_TARGET_SOLARIS10 |Solaris               |                            |
- * |NOCT_TARGET_BEOS      |BeOS and Haiku        |                            |
- * |NOCT_TARGET_DOS4G     |DOS4G                 |                            |
+ * | Macro                 | Platform       | Description                 |
+ * |-----------------------|----------------|-----------------------------|
+ * | NOCT_TARGET_WINDOWS   | Windows        |                             |
+ * | NOCT_TARGET_MACOS     | macOS          |                             |
+ * | NOCT_TARGET_LINUX     | Linux          | Excluding Android           |
+ * | NOCT_TARGET_IOS       | iOS            |                             |
+ * | NOCT_TARGET_ANDROID   | Android NDK    |                             |
+ * | NOCT_TARGET_WASM      | Wasm           | Emscripten                  |
+ * | NOCT_TARGET_UNITY     | Unity          | Gaming Consoles             |
+ * | NOCT_TARGET_FREEBSD   | FreeBSD        | Excluding Gaming Consoles   |
+ * | NOCT_TARGET_NETBSD    | NetBSD         |                             |
+ * | NOCT_TARGET_OPENBSD   | OpenBSD        |                             |
+ * | NOCT_TARGET_SOLARIS11 | Solaris        |                             |
+ * | NOCT_TARGET_SOLARIS10 | Solaris        |                             |
+ * | NOCT_TARGET_BEOS      | BeOS and Haiku |                             |
+ * | NOCT_TARGET_DOS4G     | DOS4G          |                             |
  *
- * |Macro               |Description                     |
- * |--------------------|--------------------------------|
- * |NOCT_TARGET_POSIX     |Generic POSIX compliant systems |
+ * Additional:
+
+ * | Macro               | Description             |
+ * |---------------------|-------------------------|
+ * | NOCT_TARGET_POSIX   | POSIX compliant systems |
  */
 
 /* Windows */
@@ -201,8 +203,14 @@ extern "C" {
 #include <TargetConditionals.h>
 #if TARGET_OS_IPHONE
 #define NOCT_TARGET_IOS
+#ifndef NOCT_TARGET_POSIX
+#define NOCT_TARGET_POSIX
+#endif
 #elif TARGET_OS_OSX
 #define NOCT_TARGET_MACOS
+#ifndef NOCT_TARGET_POSIX
+#define NOCT_TARGET_POSIX
+#endif
 #endif
 #endif
 #endif
@@ -274,6 +282,9 @@ extern "C" {
 /* BeOS / Haiku */
 #if defined(__BEOS__) || defined(__HAIKU__)
 #define NOCT_TARGET_BEOS
+#ifndef NOCT_TARGET_POSIX
+#define NOCT_TARGET_POSIX
+#endif
 #endif
 
 /* Error: No target detected. */

@@ -75,7 +75,7 @@ static bool deserialize_save_data(NoctEnv *env, NoctValue *value, void *data, si
 static bool install_api(NoctEnv *env);
 
 /* External. */
-bool init_aot_code(struct rt_env *env);
+PF_DLL extern bool (*pf_init_aot_code_ptr)(struct rt_env *);
 bool noct_init_locale(void);
 
 /*
@@ -98,8 +98,10 @@ pfi_create_vm(
 		return false;
 
 	/* Call AOT code registration. */
-	if (!init_aot_code(env))
-		return false;
+	if (pf_init_aot_code_ptr != NULL) {
+		if (!pf_init_aot_code_ptr(env))
+			return false;
+	}
 
 	/* Load the startup file if there is no native function called "setup()". */
 	if (!noct_check_global(env, "setup")) {

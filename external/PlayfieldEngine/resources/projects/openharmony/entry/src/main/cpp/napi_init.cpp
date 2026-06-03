@@ -1,5 +1,3 @@
-#include <playfield/playfield.h>
-
 //
 // Screen Config
 //
@@ -15,17 +13,3 @@ __attribute__((constructor)) void DLLInit(void)
 {
     onLoadSharedObject();
 }
-
-//
-// Initialization.
-//
-bool
-pf_init_hook(
-	int width,
-	int height)
-{
-	return true;
-}
-
-// Entrypoint.
-PF_DEFINE_MAIN()

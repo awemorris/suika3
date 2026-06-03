@@ -98,6 +98,12 @@ struct rt_dict {
 	/* Copy-On-Resize forwarding. (RCU-style) */
 	struct rt_dict *newer;
 
+	/* Native object pointer. */
+	void *native_pointer;
+
+	/* Native object finalizer. */
+	void (*native_finalizer)(void *native_pointer);
+
 #if defined(NOCT_USE_MULTITHREAD)
 	/* Atomic counter. */
 	int counter;
@@ -528,6 +534,35 @@ rt_make_dict_copy(
 	struct rt_env *env,
 	struct rt_dict **dst,
 	struct rt_dict *src);
+
+/*
+ * Merges a dictionary.
+ */
+bool
+rt_merge_dict(
+	struct rt_env *env,
+	struct rt_dict *dst,
+	struct rt_dict *src);
+
+/*
+ * Sets the native pointers to a dictionary.
+ */
+bool
+rt_set_dict_native_pointer(
+	struct rt_env *env,
+	struct rt_dict *dict,
+	void *native_pointer,
+	void (*native_finalizer)(void *native_pointer));
+
+/*
+ * Gets the native pointer from a dictionary.
+ */
+bool
+rt_get_dict_native_pointer(
+	struct rt_env *env,
+	struct rt_dict *dict,
+	void **native_pointer,
+	void (**native_finalizer)(void *native_pointer));
 
 /*
  * Global Variable

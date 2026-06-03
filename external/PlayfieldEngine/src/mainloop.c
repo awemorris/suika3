@@ -194,7 +194,7 @@ hal_bootstrap(
 	cb->on_swipe_down    = on_swipe_down;
 	cb->on_swipe_up      = on_swipe_up;
 
-#ifdef USE_TRANSLATION
+#ifdef PF_USE_LIBINTL
 	/* Initialize the locale. */
 	pf_init_locale();
 #endif

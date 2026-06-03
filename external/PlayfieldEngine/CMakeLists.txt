@@ -10,7 +10,6 @@ option(PLAYFIELD_TARGET_WINDOWS          "Build for Windows XP or later"        
 option(PLAYFIELD_TARGET_WINDOWS95        "Build for Windows 95/98/Me/2000"            OFF)
 option(PLAYFIELD_TARGET_MACOS            "Build for macOS (app)"                      OFF)
 option(PLAYFIELD_TARGET_MACOS_CLI        "Build for macOS (CLI)"                      OFF)
-option(PLAYFIELD_TARGET_MACOS_LIB        "Build for macOS (library)"                  OFF)
 option(PLAYFIELD_TARGET_LINUX            "Build for Linux (Wayland/X11 Dual)"         OFF)
 option(PLAYFIELD_TARGET_LINUX_X11        "Build for Linux (X11, OpenGL)"              OFF)
 option(PLAYFIELD_TARGET_LINUX_WAYLAND    "Build for Linux (Wayland, OpenGL)"          OFF)
@@ -72,7 +71,6 @@ if(   PLAYFIELD_TARGET_WINDOWS
    OR PLAYFIELD_TARGET_WINDOWS95
    OR PLAYFIELD_TARGET_MACOS
    OR PLAYFIELD_TARGET_MACOS_CLI
-   OR PLAYFIELD_TARGET_MACOS_LIB
    OR PLAYFIELD_TARGET_LINUX
    OR PLAYFIELD_TARGET_LINUX_WAYLAND
    OR PLAYFIELD_TARGET_LINUX_DRI
@@ -190,70 +188,56 @@ endif()
 # ---
 
 #
-# NoctLang Configuration Propagation
+# Noct Configuration Propagation
 # (For Static Link)
 #
 
 if(NOT PLAYFIELD_ENABLE_DIST)
-  # Disable API for embedded environments.
-  if(NOT PLAYFIELD_ENABLE_UNSAFE)
+  # Merge object files
+  set(NOCT_ENABLE_OBJECT ON)
+
+  # JIT
+  if(PLAYFIELD_ENABLE_JIT)
+    set(NOCT_ENABLE_JIT ON)
+  endif()
+
+  # API
+  if(PLAYFIELD_ENABLE_UNSAFE)
+    set(NOCT_ENABLE_API ON)
+  else()
     set(NOCT_ENABLE_API OFF)
   endif()
 
-  # If building with JIT.
-  if(PLAYFIELD_ENABLE_JIT)
-    set(NOCT_ENABLE_JIT ON)
-  else()
-    set(NOCT_ENABLE_JIT OFF)
-  endif()
-
-  # If building with translation.
+  # I18N
   if(PLAYFIELD_ENABLE_I18N)
     set(NOCT_ENABLE_I18N ON)
   else()
     set(NOCT_ENABLE_I18N OFF)
   endif()
 
-  # If building for Emscripten.
-  if(   PLAYFIELD_TARGET_WASM
-     OR PLAYFIELD_TARGET_WASM_LOCAL)
-    set(NOCT_TARGET_WASM ON)
+  # I18N (libintl)
+  if(PLAYFIELD_ENABLE_I18N_LIBINTL)
+    set(NOCT_ENABLE_I18N_LIBINTL ON)
   endif()
 
-  # If building for Unity.
+  # AOTC
+  if(PLAYFIELD_ENABLE_AOTC)
+    set(NOCT_ENABLE_CBACKEND ON)
+  endif()
+
+  # BCC
+  if(PLAYFIELD_ENABLE_BCC)
+    set(NOCT_ENABLE_BCBACKEND ON)
+  endif()
+
+  # Unity
   if(PLAYFIELD_TARGET_UNITY)
     set(NOCT_TARGET_UNITY ON)
   endif()
 
-  # If building for PC98.
-  if(PLAYFIELD_TARGET_PC98)
+  # DOS
+  if(PLAYFIELD_TARGET_PC98 OR PLAYFIELD_TARGET_PCAT)
     set(NOCT_TARGET_DOS4G ON)
-  endif()
-
-  # If building for PC/AT.
-  if(PLAYFIELD_TARGET_PCAT)
-    set(NOCT_TARGET_DOS4G ON)
-  endif()
-
-  # Others
-  set(NOCT_ENABLE_CLI OFF)
-  set(NOCT_ENABLE_INSTALL OFF)
-
-  # Magic:
-  #  merge object files that consists in libnoct.a into libplayfield.a.
-  if(   PLAYFIELD_ENABLE_STATIC
-     OR PLAYFIELD_ENABLE_SHARED
-     OR PLAYFIELD_ENABLE_OBJECT)
-    # For library generation.
-    set(NOCT_ENABLE_OBJECT ON)
-  else()
-    if(PLAYFIELD_ENABLE_DIST)
-      # For dynamically linked binaries.
-      set(NOCT_ENABLE_STATIC ON)  # This will be changed to SHARED after NoctLang is packaged by OS.
-    else()
-      # For statically linked binaries.
-      set(NOCT_ENABLE_STATIC ON)
-    endif()
   endif()
 endif()
 
@@ -265,7 +249,10 @@ endif()
 #
 
 if(NOT PLAYFIELD_ENABLE_DIST)
-  # Set the target and its specific options.
+  # Merge object files
+  set(STRATO_ENABLE_OBJECT ON)
+
+  # Propagate the target and its specific options.
   if(PLAYFIELD_TARGET_WINDOWS)
     set(STRATO_TARGET_WINDOWS ON)
   elseif(PLAYFIELD_TARGET_WINDOWS95)
@@ -273,8 +260,6 @@ if(NOT PLAYFIELD_ENABLE_DIST)
   elseif(PLAYFIELD_TARGET_MACOS)
     set(STRATO_TARGET_MACOS ON)
   elseif(PLAYFIELD_TARGET_MACOS_CLI)
-    set(STRATO_TARGET_MACOS ON)
-  elseif(PLAYFIELD_TARGET_MACOS_LIB)
     set(STRATO_TARGET_MACOS ON)
   elseif(PLAYFIELD_TARGET_LINUX)
     set(STRATO_TARGET_LINUX ON)
@@ -346,44 +331,37 @@ if(NOT PLAYFIELD_ENABLE_DIST)
     set(STRATO_TARGET_UNITY_XBOX)
   endif()
 
-  # Linking
-  if(   PLAYFIELD_ENABLE_STATIC
-     OR PLAYFIELD_ENABLE_SHARED
-     OR PLAYFIELD_ENABLE_OBJECT)
-    # If we make a library, StratoHAL must be objects.
-    set(STRATO_ENABLE_OBJECT ON)
-  else()
-    # If we make an executable, StratoHAL should be a static library.
-    set(STRATO_ENABLE_STATIC ON)
-  endif()
-
-  # If we use dynamic link for dependencies.
-  if(PLAYFIELD_ENABLE_DIST)
-    set(STRATO_ENABLE_DIST ON)
-  endif()
-
-  # Use translation.
+  # I18N
   if(PLAYFIELD_ENABLE_I18N)
     set(STRATO_ENABLE_I18N ON)
   endif()
 
-  # Screen rotate
+  # I18N (libintl)
+  if(PLAYFIELD_ENABLE_I18N_LIBINTL)
+    set(STRATO_ENABLE_I18N_LIBINTL ON)
+  endif()
+
+  # ROT90
   if(PLAYFIELD_ENABLE_ROT90)
     set(STRATO_ENABLE_ROT90 ON)
   endif()
 
+  # Gstreamer
   if(PLAYFIELD_ENABLE_GST)
     set(STRATO_ENABLE_GST ON)
   endif()
 
+  # Console output
   if(PLAYFIELD_ENABLE_CONSOLE)
     set(STRATO_ENABLE_CONSOLE)
   endif()
 
+  # XDG-Portal
   if(PLAYFIELD_ENABLE_PORTAL)
     set(STRATO_ENABLE_PORTAL ON)
   endif()
 
+  # PACK
   if(PLAYFIELD_ENABLE_PACK)
     set(STRATO_ENABLE_PACK ON)
   endif()
@@ -433,24 +411,11 @@ endif()
 # ---
 
 #
-# Apple Quirks
-#
-
-if(   PLAYFIELD_TARGET_MACOS
-   OR PLAYFIELD_TARGET_MACOS_CLI
-   OR PLAYFIELD_TARGET_MACOS_LIB)
-  set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "" FORCE)
-endif()
-
-# ---
-
-#
 # Dependencies
 #
 
 if(NOT PLAYFIELD_ENABLE_DIST)
   # NoctLang
-  set(NOCT_ENABLE_INSTALL OFF)
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/NoctLang)
 
   # StratoHAL
@@ -501,10 +466,16 @@ set(PLAYFIELD_BASE_SOURCES
 
 # I18N Source
 if(PLAYFIELD_ENABLE_I18N)
-  set(PLAYFIELD_I18N_SOURCES
-    src/i18n.c
-    src/translation.c
-  )
+  if(NOT PLAYFIELD_ENABLE_I18N_LIBINTL)
+    set(PLAYFIELD_I18N_SOURCES
+      src/i18n.c
+      src/translation.c
+    )
+  else()
+    set(PLAYFIELD_I18N_SOURCES
+      src/i18n.c
+    )
+  endif()
 endif()
 
 # Determine the library type.
@@ -549,14 +520,7 @@ endif()
 
 # If building to merge into a downstream library,
 # don't include aot_init_code() because the downstream defines it.
-if(   PLAYFIELD_TARGET_IOS
-   OR PLAYFIELD_TARGET_ANDROID
-   OR PLAYFIELD_TARGET_OPENHARMONY
-   OR PLAYFIELD_TARGET_UNITY)
-  if(PLAYFIELD_ENABLE_APPMAIN)
-    set(PLAYFIELD_AOT_SOURCES src/library.c)
-  endif()
-else()
+if(PLAYFIELD_ENABLE_APPMAIN)
   set(PLAYFIELD_AOT_SOURCES src/library.c)
 endif()
 
@@ -745,6 +709,7 @@ if(PLAYFIELD_ENABLE_BIN)
   add_executable(
     playfieldbin
     src/app.c
+    src/library.c
     ${PLAYFIELD_RESOURCES}
   )
 
@@ -1165,7 +1130,7 @@ if(PLAYFIELD_ENABLE_INSTALL)
   endif()
 
   # gettext
-  if(PF_ENABLE_I18N_LIBINTL)
+  if(PLAYFIELD_ENABLE_I18N_LIBINTL)
     install(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/locale/
             DESTINATION ${CMAKE_INSTALL_FULL_LOCALEDIR})
   endif()

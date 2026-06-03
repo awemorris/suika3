@@ -147,23 +147,19 @@ hal_main(
 	if (!prefer_x11 && getenv("WAYLAND_DISPLAY") != NULL) {
 		mode = MODE_WAYLAND;
 		if (!main_init_wl(argc, argv)) {
-			printf("Failed to initialize.\n");
 			return 1;
 		}
 	} else if (getenv("DISPLAY") != NULL) {
 		mode = MODE_X11;
 		if (!main_init_x11(argc, argv)) {
-			printf("Failed to initialize.\n");
 			return 1;
 		}
 	} else if (getenv("WAYLAND_DISPLAY") != NULL) {
 		mode = MODE_WAYLAND;
 		if (!main_init_wl(argc, argv)) {
-			printf("Failed to initialize.\n");
 			return 1;
 		}
 	} else {
-		printf("Failed to initialize.\n");
 		return 1;
 	}
 

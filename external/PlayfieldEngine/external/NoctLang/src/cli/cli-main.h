@@ -24,6 +24,7 @@ bool add_file(const char *fname, bool (*add_file_hook)(const char *));
 int command_compile(int argc, char *argv[]);
 int command_transpile_c(int argc, char *argv[]);
 int command_transpile_elisp(int argc, char *argv[]);
+int command_transpile_scheme(int argc, char *argv[]);
 int command_run(int argc, char *argv[]);
 int command_repl(void);
 

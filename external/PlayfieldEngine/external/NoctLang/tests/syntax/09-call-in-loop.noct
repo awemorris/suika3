@@ -1,10 +1,10 @@
 func main() {
      for (i in 0..100) {
-         loop();
+         inner_loop();
      }
 }
 
-func loop() {
+func inner_loop() {
      sum = 0;
      for (i in 0..100) {
          sum = sum + i;

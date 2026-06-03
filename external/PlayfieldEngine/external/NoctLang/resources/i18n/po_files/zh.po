@@ -234,36 +234,39 @@ msgstr "触发编译已启用。正在启动快速虚拟机...\n"
 msgid "Usage\n"
 msgstr "用法\n"
 
-msgid "noct <vm-options> <files>          ... run a program\n"
-msgstr "noct <vm-options> <files>          ... 运行程序\n"
+msgid "  noct <vm-options> <files>           ... run a program\n"
+msgstr "  noct <vm-options> <files>           ... 运行程序\n"
 
-msgid "noct --ansic <out-file> <in-files> ... convert to a C source file\n"
-msgstr "noct --ansic <out-file> <in-files> ... 转换为 C 源代码文件\n"
+msgid "  noct --ansic <out-file> <in-files>  ... convert to a C source file\n"
+msgstr "  noct --ansic <out-file> <in-files>  ... 转换为 C 源代码文件\n"
 
-msgid "noct --elisp <out-file> <in-files> ... convert to an Emacs Lisp source file\n"
-msgstr "noct --elisp <out-file> <in-files> ... 转换为 Emacs Lisp 源代码文件\n"
+msgid "  noct --elisp <out-file> <in-files>  ... convert to an Emacs Lisp source file\n"
+msgstr "  noct --elisp <out-file> <in-files>  ... 转换为 Emacs Lisp 源代码文件\n"
 
-msgid "--disable-jit        ... disable JIT\n"
-msgstr "--disable-jit        ... 禁用 JIT\n"
+msgid "  noct --scheme <out-file> <in-files> ... convert to an Scheme source file\n"
+msgstr "  noct --scheme <out-file> <in-files> ... 转换为 Scheme 源代码文件\n"
 
-msgid "--force-jit          ... equivalent to --jit-threshold=0\n"
-msgstr "--force-jit          ... 等同于 --jit-threshold=0\n"
+msgid "  --disable-jit        ... disable JIT\n"
+msgstr "  --disable-jit        ... 禁用 JIT\n"
 
-msgid "--jit-threshold=N    ... call-count threshold for compilation\n"
-msgstr "--jit-threshold=N    ... 触发编译的调用次数阈值\n"
+msgid "  --force-jit          ... equivalent to --jit-threshold=0\n"
+msgstr "  --force-jit          ... 等同于 --jit-threshold=0\n"
 
-msgid "--optimize-level=N   ... optimize level (0/1)\n"
-msgstr "--optimize-level=N   ... 优化级别 (0/1)\n"
+msgid "  --jit-threshold=N    ... call-count threshold for compilation\n"
+msgstr "  --jit-threshold=N    ... 触发编译的调用次数阈值\n"
 
-msgid "--gc-nursery-size=N  ... first GC space size in bytes\n"
-msgstr "--gc-nursery-size=N  ... 第一 GC 空间大小（字节）\n"
+msgid "  --optimize-level=N   ... optimize level (0/1)\n"
+msgstr "  --optimize-level=N   ... 优化级别 (0/1)\n"
 
-msgid "--gc-graduate-size=N ... second GC space size in bytes\n"
-msgstr "--gc-graduate-size=N ... 第二 GC 空间大小（字节）\n"
+msgid "  --gc-nursery-size=N  ... first GC space size in bytes\n"
+msgstr "  --gc-nursery-size=N  ... 第一 GC 空间大小（字节）\n"
 
-msgid "--gc-tenure-size=N   ... final GC space size in bytes\n"
-msgstr "--gc-tenure-size=N   ... 最终 GC 空间大小（字节）\n"
+msgid "  --gc-graduate-size=N ... second GC space size in bytes\n"
+msgstr "  --gc-graduate-size=N ... 第二 GC 空间大小（字节）\n"
 
-msgid "--gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n"
-msgstr "--gc-lop-threshold=N ... 将大于 N 字节的对象移动到最终 GC 空间\n"
+msgid "  --gc-tenure-size=N   ... final GC space size in bytes\n"
+msgstr "  --gc-tenure-size=N   ... 最终 GC 空间大小（字节）\n"
+
+msgid "  --gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n"
+msgstr "  --gc-lop-threshold=N ... 将大于 N 字节的对象移动到最终 GC 空间\n"
 

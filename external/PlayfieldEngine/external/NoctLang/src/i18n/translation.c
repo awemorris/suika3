@@ -1021,58 +1021,71 @@ NOCT_DLL const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "ja", 2) == 0) return "使い方\n";
         return "Usage\n";
     }
-    if (strcmp(msg, "  noct <vm-options> <files>          ... run a program\n") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "  noct <vm-options> <files>          ... run a program\n";
-        if (strncmp(lang_code, "es", 2) == 0) return "  noct <vm-options> <files>          ... ejecutar un programa\n";
-        if (strncmp(lang_code, "fr", 2) == 0) return "  noct <vm-options> <files>          ... exécuter un programme\n";
-        if (strncmp(lang_code, "de", 2) == 0) return "  noct <vm-options> <files>          ... ein Programm ausführen\n";
-        if (strncmp(lang_code, "it", 2) == 0) return "  noct <vm-options> <files>          ... eseguire un programma\n";
-        if (strncmp(lang_code, "el", 2) == 0) return "  noct <vm-options> <files>          ... εκτέλεση προγράμματος\n";
-        if (strncmp(lang_code, "ru", 2) == 0) return "  noct <vm-options> <files>          ... запуск программы\n";
-        if (strncmp(lang_code, "zh", 2) == 0) return "  noct <vm-options> <files>          ... 运行程序\n";
-        if (strncmp(lang_code, "tw", 2) == 0) return "  noct <vm-options> <files>          ... 執行程式\n";
-        if (strncmp(lang_code, "ja", 2) == 0) return "  noct <vm-options> <入力...>        ... プログラムを実行します\n";
-        return "  noct <vm-options> <files>          ... run a program\n";
+    if (strcmp(msg, "  noct <vm-options> <files>           ... run a program\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  noct <vm-options> <files>           ... run a program\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  noct <vm-options> <files>           ... ejecutar un programa\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  noct <vm-options> <files>           ... exécuter un programme\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  noct <vm-options> <files>           ... ein Programm ausführen\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  noct <vm-options> <files>           ... eseguire un programma\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  noct <vm-options> <files>           ... εκτέλεση προγράμματος\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  noct <vm-options> <files>           ... запуск программы\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  noct <vm-options> <files>           ... 运行程序\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  noct <vm-options> <files>           ... 執行程式\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  noct <vm-options> <入力...>         ... プログラムを実行します\n";
+        return "  noct <vm-options> <files>           ... run a program\n";
     }
-        if (strncmp(lang_code, "  ", 2) == 0) return "  noct --compile <in-files>          ... convert to bytecode files\n\"));";
-    if (strcmp(msg, "  noct --compile <in-files>          ... convert to bytecode files\n") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "  noct --compile <in-files>          ... convert to bytecode files\n";
-        if (strncmp(lang_code, "es", 2) == 0) return "  noct --compile <in-files>          ... convertir en archivos de bytecode\n";
-        if (strncmp(lang_code, "fr", 2) == 0) return "  noct --compile <in-files>          ... convertir en fichiers bytecode\n";
-        if (strncmp(lang_code, "de", 2) == 0) return "  noct --compile <in-files>          ... in Bytecode-Dateien umwandeln\n";
-        if (strncmp(lang_code, "it", 2) == 0) return "  noct --compile <in-files>          ... convertire in file di bytecode\n";
-        if (strncmp(lang_code, "el", 2) == 0) return "  noct --compile <in-files>          ... μετατροπή σε αρχεία bytecode\n";
-        if (strncmp(lang_code, "ru", 2) == 0) return "  noct --compile <in-files>          ... преобразовать в байткод-файлы\n";
-        if (strncmp(lang_code, "zh", 2) == 0) return "  noct --compile <in-files>          ... 转换为字节码文件\n";
-        if (strncmp(lang_code, "tw", 2) == 0) return "  noct --compile <in-files>          ... 轉換為位元組碼檔案\n";
-        if (strncmp(lang_code, "ja", 2) == 0) return "  noct --compile <入力...>           ... バイトコードに変換します\n";
-        return "  noct --compile <in-files>          ... convert to bytecode files\n";
+        if (strncmp(lang_code, "  ", 2) == 0) return "  noct --compile <in-files>           ... convert to bytecode files\n\"));";
+    if (strcmp(msg, "  noct --compile <in-files>           ... convert to bytecode files\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  noct --compile <in-files>           ... convert to bytecode files\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  noct --compile <in-files>           ... convertir en archivos de bytecode\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  noct --compile <in-files>           ... convertir en fichiers bytecode\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  noct --compile <in-files>           ... in Bytecode-Dateien umwandeln\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  noct --compile <in-files>           ... convertire in file di bytecode\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  noct --compile <in-files>           ... μετατροπή σε αρχεία bytecode\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  noct --compile <in-files>           ... преобразовать в байткод-файлы\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  noct --compile <in-files>           ... 转换为字节码文件\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  noct --compile <in-files>           ... 轉換為位元組碼檔案\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  noct --compile <入力...>            ... バイトコードに変換します\n";
+        return "  noct --compile <in-files>           ... convert to bytecode files\n";
     }
-    if (strcmp(msg, "  noct --ansic <out-file> <in-files> ... convert to a C source file\n") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "  noct --ansic <out-file> <in-files> ... convert to a C source file\n";
-        if (strncmp(lang_code, "es", 2) == 0) return "  noct --ansic <out-file> <in-files> ... convertir en un archivo fuente en C\n";
-        if (strncmp(lang_code, "fr", 2) == 0) return "  noct --ansic <out-file> <in-files> ... convertir en un fichier source C\n";
-        if (strncmp(lang_code, "de", 2) == 0) return "  noct --ansic <out-file> <in-files> ... in eine C-Quelldatei umwandeln\n";
-        if (strncmp(lang_code, "it", 2) == 0) return "  noct --ansic <out-file> <in-files> ... convertire in un file sorgente C\n";
-        if (strncmp(lang_code, "el", 2) == 0) return "  noct --ansic <out-file> <in-files> ... μετατροπή σε αρχείο πηγαίου κώδικα C\n";
-        if (strncmp(lang_code, "ru", 2) == 0) return "  noct --ansic <out-file> <in-files> ... преобразовать в исходный файл C\n";
-        if (strncmp(lang_code, "zh", 2) == 0) return "  noct --ansic <out-file> <in-files> ... 转换为 C 源代码文件\n";
-        if (strncmp(lang_code, "tw", 2) == 0) return "  noct --ansic <out-file> <in-files> ... 轉換為 C 原始碼檔案\n";
-        if (strncmp(lang_code, "ja", 2) == 0) return "  noct --ansic <出力> <入力...>      ... C ソースに変換します\n";
-        return "  noct --ansic <out-file> <in-files> ... convert to a C source file\n";
+    if (strcmp(msg, "  noct --ansic <out-file> <in-files>  ... convert to a C source file\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  noct --ansic <out-file> <in-files>  ... convert to a C source file\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  noct --ansic <out-file> <in-files>  ... convertir en un archivo fuente en C\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  noct --ansic <out-file> <in-files>  ... convertir en un fichier source C\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  noct --ansic <out-file> <in-files>  ... in eine C-Quelldatei umwandeln\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  noct --ansic <out-file> <in-files>  ... convertire in un file sorgente C\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  noct --ansic <out-file> <in-files>  ... μετατροπή σε αρχείο πηγαίου κώδικα C\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  noct --ansic <out-file> <in-files>  ... преобразовать в исходный файл C\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  noct --ansic <out-file> <in-files>  ... 转换为 C 源代码文件\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  noct --ansic <out-file> <in-files>  ... 轉換為 C 原始碼檔案\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  noct --ansic <出力> <入力...>       ... C ソースに変換します\n";
+        return "  noct --ansic <out-file> <in-files>  ... convert to a C source file\n";
     }
-    if (strcmp(msg, "  noct --elisp <out-file> <in-files> ... convert to an Emacs Lisp source file\n") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "  noct --elisp <out-file> <in-files> ... convert to an Emacs Lisp source file\n";
-        if (strncmp(lang_code, "es", 2) == 0) return "  noct --elisp <out-file> <in-files> ... convertir en un archivo fuente Emacs Lisp\n";
-        if (strncmp(lang_code, "fr", 2) == 0) return "  noct --elisp <out-file> <in-files> ... convertir en un fichier source Emacs Lisp\n";
-        if (strncmp(lang_code, "de", 2) == 0) return "  noct --elisp <out-file> <in-files> ... in eine Emacs-Lisp-Quelldatei umwandeln\n";
-        if (strncmp(lang_code, "it", 2) == 0) return "  noct --elisp <out-file> <in-files> ... convertire in un file sorgente Emacs Lisp\n";
-        if (strncmp(lang_code, "el", 2) == 0) return "  noct --elisp <out-file> <in-files> ... μετατροπή σε αρχείο πηγαίου κώδικα Emacs Lisp\n";
-        if (strncmp(lang_code, "ru", 2) == 0) return "  noct --elisp <out-file> <in-files> ... преобразовать в исходный файл Emacs Lisp\n";
-        if (strncmp(lang_code, "zh", 2) == 0) return "  noct --elisp <out-file> <in-files> ... 转换为 Emacs Lisp 源代码文件\n";
-        if (strncmp(lang_code, "tw", 2) == 0) return "  noct --elisp <out-file> <in-files> ... 轉換為 Emacs Lisp 原始碼檔案\n";
-        if (strncmp(lang_code, "ja", 2) == 0) return "  noct --elisp <出力> <入力...>      ... Emacs Lisp ソースに変換します\n";
-        return "  noct --elisp <out-file> <in-files> ... convert to an Emacs Lisp source file\n";
+    if (strcmp(msg, "  noct --elisp <out-file> <in-files>  ... convert to an Emacs Lisp source file\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  noct --elisp <out-file> <in-files>  ... convert to an Emacs Lisp source file\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  noct --elisp <out-file> <in-files>  ... convertir en un archivo fuente Emacs Lisp\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  noct --elisp <out-file> <in-files>  ... convertir en un fichier source Emacs Lisp\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  noct --elisp <out-file> <in-files>  ... in eine Emacs-Lisp-Quelldatei umwandeln\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  noct --elisp <out-file> <in-files>  ... convertire in un file sorgente Emacs Lisp\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  noct --elisp <out-file> <in-files>  ... μετατροπή σε αρχείο πηγαίου κώδικα Emacs Lisp\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  noct --elisp <out-file> <in-files>  ... преобразовать в исходный файл Emacs Lisp\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  noct --elisp <out-file> <in-files>  ... 转换为 Emacs Lisp 源代码文件\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  noct --elisp <out-file> <in-files>  ... 轉換為 Emacs Lisp 原始碼檔案\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  noct --elisp <出力> <入力...>       ... Emacs Lisp ソースに変換します\n";
+        return "  noct --elisp <out-file> <in-files>  ... convert to an Emacs Lisp source file\n";
+    }
+    if (strcmp(msg, "  noct --scheme <out-file> <in-files> ... convert to an Scheme source file\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "  noct --scheme <out-file> <in-files> ... convert to an Scheme source file\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "  noct --scheme <out-file> <in-files> ... convertir en un archivo fuente Scheme\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "  noct --scheme <out-file> <in-files> ... convertir en un fichier source Scheme\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "  noct --scheme <out-file> <in-files> ... in eine Scheme-Quelldatei umwandeln\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "  noct --scheme <out-file> <in-files> ... convertire in un file sorgente Scheme\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "  noct --scheme <out-file> <in-files> ... μετατροπή σε αρχείο πηγαίου κώδικα Scheme\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "  noct --scheme <out-file> <in-files> ... преобразовать в исходный файл Scheme\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "  noct --scheme <out-file> <in-files> ... 转换为 Scheme 源代码文件\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "  noct --scheme <out-file> <in-files> ... 轉換為 Scheme 原始碼檔案\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "  noct --scheme <出力> <入力...>      ... Scheme ソースに変換します\n";
+        return "  noct --scheme <out-file> <in-files> ... convert to an Scheme source file\n";
     }
     if (strcmp(msg, "  --disable-jit        ... disable JIT\n") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "  --disable-jit        ... disable JIT\n";

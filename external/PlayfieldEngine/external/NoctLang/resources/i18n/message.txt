@@ -929,54 +929,66 @@ zh:用法\n
 tw:用法\n
 ja:使い方\n
 ---
-ID:  noct <vm-options> <files>          ... run a program\n
-en:  noct <vm-options> <files>          ... run a program\n
-es:  noct <vm-options> <files>          ... ejecutar un programa\n
-fr:  noct <vm-options> <files>          ... exécuter un programme\n
-de:  noct <vm-options> <files>          ... ein Programm ausführen\n
-it:  noct <vm-options> <files>          ... eseguire un programma\n
-el:  noct <vm-options> <files>          ... εκτέλεση προγράμματος\n
-ru:  noct <vm-options> <files>          ... запуск программы\n
-zh:  noct <vm-options> <files>          ... 运行程序\n
-tw:  noct <vm-options> <files>          ... 執行程式\n
-ja:  noct <vm-options> <入力...>        ... プログラムを実行します\n
+ID:  noct <vm-options> <files>           ... run a program\n
+en:  noct <vm-options> <files>           ... run a program\n
+es:  noct <vm-options> <files>           ... ejecutar un programa\n
+fr:  noct <vm-options> <files>           ... exécuter un programme\n
+de:  noct <vm-options> <files>           ... ein Programm ausführen\n
+it:  noct <vm-options> <files>           ... eseguire un programma\n
+el:  noct <vm-options> <files>           ... εκτέλεση προγράμματος\n
+ru:  noct <vm-options> <files>           ... запуск программы\n
+zh:  noct <vm-options> <files>           ... 运行程序\n
+tw:  noct <vm-options> <files>           ... 執行程式\n
+ja:  noct <vm-options> <入力...>         ... プログラムを実行します\n
 ---
-     noct --compile <in-files>          ... convert to bytecode files\n"));
-ID:  noct --compile <in-files>          ... convert to bytecode files\n
-en:  noct --compile <in-files>          ... convert to bytecode files\n
-es:  noct --compile <in-files>          ... convertir en archivos de bytecode\n
-fr:  noct --compile <in-files>          ... convertir en fichiers bytecode\n
-de:  noct --compile <in-files>          ... in Bytecode-Dateien umwandeln\n
-it:  noct --compile <in-files>          ... convertire in file di bytecode\n
-el:  noct --compile <in-files>          ... μετατροπή σε αρχεία bytecode\n
-ru:  noct --compile <in-files>          ... преобразовать в байткод-файлы\n
-zh:  noct --compile <in-files>          ... 转换为字节码文件\n
-tw:  noct --compile <in-files>          ... 轉換為位元組碼檔案\n
-ja:  noct --compile <入力...>           ... バイトコードに変換します\n
+     noct --compile <in-files>           ... convert to bytecode files\n"));
+ID:  noct --compile <in-files>           ... convert to bytecode files\n
+en:  noct --compile <in-files>           ... convert to bytecode files\n
+es:  noct --compile <in-files>           ... convertir en archivos de bytecode\n
+fr:  noct --compile <in-files>           ... convertir en fichiers bytecode\n
+de:  noct --compile <in-files>           ... in Bytecode-Dateien umwandeln\n
+it:  noct --compile <in-files>           ... convertire in file di bytecode\n
+el:  noct --compile <in-files>           ... μετατροπή σε αρχεία bytecode\n
+ru:  noct --compile <in-files>           ... преобразовать в байткод-файлы\n
+zh:  noct --compile <in-files>           ... 转换为字节码文件\n
+tw:  noct --compile <in-files>           ... 轉換為位元組碼檔案\n
+ja:  noct --compile <入力...>            ... バイトコードに変換します\n
 ---
-ID:  noct --ansic <out-file> <in-files> ... convert to a C source file\n
-en:  noct --ansic <out-file> <in-files> ... convert to a C source file\n
-es:  noct --ansic <out-file> <in-files> ... convertir en un archivo fuente en C\n
-fr:  noct --ansic <out-file> <in-files> ... convertir en un fichier source C\n
-de:  noct --ansic <out-file> <in-files> ... in eine C-Quelldatei umwandeln\n
-it:  noct --ansic <out-file> <in-files> ... convertire in un file sorgente C\n
-el:  noct --ansic <out-file> <in-files> ... μετατροπή σε αρχείο πηγαίου κώδικα C\n
-ru:  noct --ansic <out-file> <in-files> ... преобразовать в исходный файл C\n
-zh:  noct --ansic <out-file> <in-files> ... 转换为 C 源代码文件\n
-tw:  noct --ansic <out-file> <in-files> ... 轉換為 C 原始碼檔案\n
-ja:  noct --ansic <出力> <入力...>      ... C ソースに変換します\n
+ID:  noct --ansic <out-file> <in-files>  ... convert to a C source file\n
+en:  noct --ansic <out-file> <in-files>  ... convert to a C source file\n
+es:  noct --ansic <out-file> <in-files>  ... convertir en un archivo fuente en C\n
+fr:  noct --ansic <out-file> <in-files>  ... convertir en un fichier source C\n
+de:  noct --ansic <out-file> <in-files>  ... in eine C-Quelldatei umwandeln\n
+it:  noct --ansic <out-file> <in-files>  ... convertire in un file sorgente C\n
+el:  noct --ansic <out-file> <in-files>  ... μετατροπή σε αρχείο πηγαίου κώδικα C\n
+ru:  noct --ansic <out-file> <in-files>  ... преобразовать в исходный файл C\n
+zh:  noct --ansic <out-file> <in-files>  ... 转换为 C 源代码文件\n
+tw:  noct --ansic <out-file> <in-files>  ... 轉換為 C 原始碼檔案\n
+ja:  noct --ansic <出力> <入力...>       ... C ソースに変換します\n
 ---
-ID:  noct --elisp <out-file> <in-files> ... convert to an Emacs Lisp source file\n
-en:  noct --elisp <out-file> <in-files> ... convert to an Emacs Lisp source file\n
-es:  noct --elisp <out-file> <in-files> ... convertir en un archivo fuente Emacs Lisp\n
-fr:  noct --elisp <out-file> <in-files> ... convertir en un fichier source Emacs Lisp\n
-de:  noct --elisp <out-file> <in-files> ... in eine Emacs-Lisp-Quelldatei umwandeln\n
-it:  noct --elisp <out-file> <in-files> ... convertire in un file sorgente Emacs Lisp\n
-el:  noct --elisp <out-file> <in-files> ... μετατροπή σε αρχείο πηγαίου κώδικα Emacs Lisp\n
-ru:  noct --elisp <out-file> <in-files> ... преобразовать в исходный файл Emacs Lisp\n
-zh:  noct --elisp <out-file> <in-files> ... 转换为 Emacs Lisp 源代码文件\n
-tw:  noct --elisp <out-file> <in-files> ... 轉換為 Emacs Lisp 原始碼檔案\n
-ja:  noct --elisp <出力> <入力...>      ... Emacs Lisp ソースに変換します\n
+ID:  noct --elisp <out-file> <in-files>  ... convert to an Emacs Lisp source file\n
+en:  noct --elisp <out-file> <in-files>  ... convert to an Emacs Lisp source file\n
+es:  noct --elisp <out-file> <in-files>  ... convertir en un archivo fuente Emacs Lisp\n
+fr:  noct --elisp <out-file> <in-files>  ... convertir en un fichier source Emacs Lisp\n
+de:  noct --elisp <out-file> <in-files>  ... in eine Emacs-Lisp-Quelldatei umwandeln\n
+it:  noct --elisp <out-file> <in-files>  ... convertire in un file sorgente Emacs Lisp\n
+el:  noct --elisp <out-file> <in-files>  ... μετατροπή σε αρχείο πηγαίου κώδικα Emacs Lisp\n
+ru:  noct --elisp <out-file> <in-files>  ... преобразовать в исходный файл Emacs Lisp\n
+zh:  noct --elisp <out-file> <in-files>  ... 转换为 Emacs Lisp 源代码文件\n
+tw:  noct --elisp <out-file> <in-files>  ... 轉換為 Emacs Lisp 原始碼檔案\n
+ja:  noct --elisp <出力> <入力...>       ... Emacs Lisp ソースに変換します\n
+---
+ID:  noct --scheme <out-file> <in-files> ... convert to an Scheme source file\n
+en:  noct --scheme <out-file> <in-files> ... convert to an Scheme source file\n
+es:  noct --scheme <out-file> <in-files> ... convertir en un archivo fuente Scheme\n
+fr:  noct --scheme <out-file> <in-files> ... convertir en un fichier source Scheme\n
+de:  noct --scheme <out-file> <in-files> ... in eine Scheme-Quelldatei umwandeln\n
+it:  noct --scheme <out-file> <in-files> ... convertire in un file sorgente Scheme\n
+el:  noct --scheme <out-file> <in-files> ... μετατροπή σε αρχείο πηγαίου κώδικα Scheme\n
+ru:  noct --scheme <out-file> <in-files> ... преобразовать в исходный файл Scheme\n
+zh:  noct --scheme <out-file> <in-files> ... 转换为 Scheme 源代码文件\n
+tw:  noct --scheme <out-file> <in-files> ... 轉換為 Scheme 原始碼檔案\n
+ja:  noct --scheme <出力> <入力...>      ... Scheme ソースに変換します\n
 ---
 ID:  --disable-jit        ... disable JIT\n
 en:  --disable-jit        ... disable JIT\n

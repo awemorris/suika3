@@ -1328,6 +1328,10 @@ if(STRATO_ENABLE_PACK)
     VERSION 1.0.0
     SOVERSION 1
   )
+  set_target_properties(strato PROPERTIES
+    C_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN ON
+  )
   target_include_directories(stratopack PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 endif()
 

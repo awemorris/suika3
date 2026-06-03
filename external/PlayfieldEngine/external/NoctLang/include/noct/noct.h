@@ -92,7 +92,6 @@ struct rt_value {
 		struct rt_gc_object *obj;
 	} val;
 };
-typedef struct rt_value NoctValue;
 
 /* Configuration  */
 struct rt_config {
@@ -123,6 +122,15 @@ struct rt_config {
 	uint64_t reserved[56];
 };
 typedef struct rt_config NoctConfig;
+
+
+/*
+ * Local Variable Declaration
+ */
+
+#define NOCT_LOCAL(env, name)		\
+	NoctValue name = NOCT_ZERO;	\
+	noct_pin_local(env, 1, &name)
 
 /*
  * Core Functions
@@ -163,7 +171,7 @@ noct_destroy_vm(
 NOCT_DLL
 bool
 noct_create_thread_env(
-	NoctEnv *prev_evm,
+	NoctEnv *prev_env,
 	NoctEnv **new_env);
 #endif
 
@@ -546,6 +554,38 @@ noct_make_dict_copy(
 	NoctValue *src);
 
 /*
+ * Merges a dictionary.
+ */
+NOCT_DLL
+bool
+noct_merge_dict(
+	NoctEnv *env,
+	NoctValue *dst,
+	NoctValue *src);
+
+/*
+ * Sets the native pointers to a dictionary.
+ */
+NOCT_DLL
+bool
+noct_set_dict_native_pointer(
+	NoctEnv *env,
+	NoctValue *dict,
+	void *native_pointer,
+	void (*native_finalizer)(void *native_pointer));
+
+/*
+ * Gets the native pointer from a dictionary.
+ */
+NOCT_DLL
+bool
+noct_get_dict_native_pointer(
+	NoctEnv *env,
+	NoctValue *dict,
+	void **native_pointer,
+	void (**native_finalizer)(void *native_pointer));
+
+/*
  * Retrieves a tmpvar size from the current stack frame.
  */
 NOCT_DLL
@@ -656,6 +696,9 @@ noct_pin_local(
 
 /*
  * Undeclares a native local variables for use within a native API function.
+ *
+ * Note: When a native function returns, pinned local variables will be
+ * automatically unpinned.
  */
 NOCT_DLL
 bool
@@ -738,12 +781,17 @@ noct_out_of_memory(
  * Convenience function to retrieve an integer element from an array
  * with type checking.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
  *
+ * Note: Although the current integer type does not require GC
+ * allocation, `val` is required here for API consistency and to
+ * allow future numeric types (e.g. bigdecimal) to be introduced without
+ * breaking the calling convention.
+
  * Fails if the element at the given index is not of integer type.
  */
 NOCT_DLL
@@ -759,11 +807,16 @@ noct_get_array_elem_check_int(
  * Convenience function to retrieve a float element from an array with
  * type checking.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
+ *
+ * Note: Although the current integer type does not require GC
+ * allocation, `val` is required here for API consistency and to
+ * allow future numeric types (e.g. bigdecimal) to be introduced without
+ * breaking the calling convention.
  *
  * Fails if the element at the given index is not of float type.
  */
@@ -776,16 +829,15 @@ noct_get_array_elem_check_float(
 	NoctValue *val,
 	float *f);
 
-
 /*
  * Convenience function to retrieve a string element from an array
  * with type checking.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
  *
  * Fails if the element at the given index is not of string type.
  */
@@ -802,11 +854,11 @@ noct_get_array_elem_check_string(
  * Convenience function to retrieve an array element from an array
  * with type checking.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
  *
  * Fails if the element at the given index is not of array type.
  */
@@ -822,11 +874,11 @@ noct_get_array_elem_check_array(
  * Convenience function to retrieve an array element from a dictionary
  * with type checking.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
  *
  * Fails if the element at the given index is not of dictionary type.
  */
@@ -842,11 +894,11 @@ noct_get_array_elem_check_dict(
  * Convenience function to retrieve a function element from a
  * dictionary with type checking.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
  *
  * Fails if the element at the given index is not of function type.
  */
@@ -862,11 +914,16 @@ noct_get_array_elem_check_func(
 /*
  * Convenience function to set an integer element in an array.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
+ *
+ * Note: Although the current integer type does not require GC
+ * allocation, `val` is required here for API consistency and to
+ * allow future numeric types (e.g. bigdecimal) to be introduced without
+ * breaking the calling convention.
  *
  * Semantically equivalent to wrapping the integer in a NoctValue
  * and calling noct_set_array_elem().
@@ -883,11 +940,16 @@ noct_set_array_elem_make_int(
 /*
  * Convenience function to set a float element in an array.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
+ *
+ * Note: Although the current float type does not require GC
+ * allocation, `val` is required here for API consistency and to
+ * allow future numeric types (e.g. bigdecimal) to be introduced without
+ * breaking the calling convention.
  *
  * Semantically equivalent to wrapping the float in a NoctValue
  * and calling noct_set_array_elem().
@@ -904,11 +966,11 @@ noct_set_array_elem_make_float(
 /*
  * Convenience function to set a string element in an array.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
  *
  * Semantically equivalent to creating a string NoctValue with
  * noct_make_string() and passing it to noct_set_array_elem().
@@ -928,11 +990,16 @@ noct_set_array_elem_make_string(
  * Convenience function to retrieve an integer value associated with a
  * key in a dictionary with type checking.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
+ *
+ * Note: Although the current integer type does not require GC
+ * allocation, `val` is required here for API consistency and to
+ * allow future numeric types (e.g. bigdecimal) to be introduced without
+ * breaking the calling convention.
  *
  * Fails if the key does not exist.
  * Fails if the associated value is not of integer type.
@@ -950,11 +1017,16 @@ noct_get_dict_elem_check_int(
  * Convenience function to retrieve a float value associated with a
  * key in a dictionary with type checking.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
+ *
+ * Note: Although the current float type does not require GC
+ * allocation, `val` is required here for API consistency and to
+ * allow future numeric types (e.g. bigdecimal) to be introduced without
+ * breaking the calling convention.
  *
  * Fails if the key does not exist.
  * Fails if the associated value is not of float type.
@@ -972,11 +1044,11 @@ noct_get_dict_elem_check_float(
  * Convenience function to retrieve a string value associated with a
  * key in a dictionary with type checking.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
  *
  * Fails if the key does not exist.
  * Fails if the associated value is not of string type.
@@ -994,6 +1066,12 @@ noct_get_dict_elem_check_string(
  * Convenience function to retrieve an array value associated with a
  * key in a dictionary with type checking.
  *
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
+ *
  * Fails if the key does not exist.
  * Fails if the associated value is not of array type.
  */
@@ -1008,6 +1086,12 @@ noct_get_dict_elem_check_array(
 /*
  * Convenience function to retrieve a dictionary value associated with a
  * key in a dictionary with type checking.
+ *
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
  *
  * Fails if the key does not exist.
  * Fails if the associated value is not of dictionary type.
@@ -1024,11 +1108,11 @@ noct_get_dict_elem_check_dict(
  * Convenience function to retrieve a function value associated with a
  * key in a dictionary with type checking.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
  *
  * Fails if the key does not exist.
  * Fails if the associated value is not of function type.
@@ -1045,11 +1129,16 @@ noct_get_dict_elem_check_func(
 /*
  * Convenience function to set an integer value for a key in a dictionary.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
+ *
+ * Note: Although the current integer type does not require GC
+ * allocation, `val` is required here for API consistency and to
+ * allow future numeric types (e.g. bigdecimal) to be introduced without
+ * breaking the calling convention.
  */
 NOCT_DLL
 bool
@@ -1063,11 +1152,16 @@ noct_set_dict_elem_make_int(
 /*
  * Convenience function to set a float value for a key in a dictionary.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
+ *
+ * Note: Although the current float type does not require GC
+ * allocation, `val` is required here for API consistency and to
+ * allow future numeric types (e.g. bigdecimal) to be introduced without
+ * breaking the calling convention.
  */
 NOCT_DLL
 bool
@@ -1081,11 +1175,11 @@ noct_set_dict_elem_make_float(
 /*
  * Convenience function to set a string value for a key in a dictionary.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
  */
 NOCT_DLL
 bool
@@ -1102,11 +1196,16 @@ noct_set_dict_elem_make_string(
  * Convenience function to retrieve an integer function argument with
  * type checking.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
+ *
+ * Note: Although the current integer type does not require GC
+ * allocation, `val` is required here for API consistency and to
+ * allow future numeric types (e.g. bigdecimal) to be introduced without
+ * breaking the calling convention.
  */
 NOCT_DLL
 bool
@@ -1120,11 +1219,16 @@ noct_get_arg_check_int(
  * Convenience function to retrieve a float function argument with
  * type checking.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
+ *
+ * Note: Although the current float type does not require GC
+ * allocation, `val` is required here for API consistency and to
+ * allow future numeric types (e.g. bigdecimal) to be introduced without
+ * breaking the calling convention.
  */
 NOCT_DLL
 bool
@@ -1138,11 +1242,11 @@ noct_get_arg_check_float(
  * Convenience function to retrieve a string function argument with
  * type checking.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
  */
 NOCT_DLL
 bool
@@ -1178,11 +1282,11 @@ noct_get_arg_check_dict(
  * Convenience function to retrieve a function argument of function
  * type with type checking.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
  */
 NOCT_DLL
 bool
@@ -1198,11 +1302,16 @@ noct_get_arg_check_func(
  * Convenience function to set an integer return value for the current
  * stack frame.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
+ *
+ * Note: Although the current integer type does not require GC
+ * allocation, `val` is required here for API consistency and to
+ * allow future numeric types (e.g. bigdecimal) to be introduced without
+ * breaking the calling convention.
  */
 NOCT_DLL
 bool
@@ -1215,11 +1324,16 @@ noct_set_return_make_int(
  * Convenience function to set a float return value for the current
  * stack frame.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
+ *
+ * Note: Although the current float type does not require GC
+ * allocation, `val` is required here for API consistency and to
+ * allow future numeric types (e.g. bigdecimal) to be introduced without
+ * breaking the calling convention.
  */
 NOCT_DLL
 bool
@@ -1232,11 +1346,11 @@ noct_set_return_make_float(
  * Convenience function to set a string return value for the current
  * stack frame.
  *
- * The `backing_val` parameter must point to a variable previously
- * declared via `noct_declare_c_local()`. This variable serves as a
- * pinned storage location: during the call, it temporarily holds the
- * element's value so that, even if a parallel GC is triggered midway,
- * the value remains protected and stable.
+ * The `val` parameter must point to a variable previously pinned via
+ * `noct_pin_local()`. This variable serves as a pinned storage
+ * location: during the call, it temporarily holds the element's value
+ * so that, even if a parallel GC is triggered midway, the value
+ * remains protected and stable.
  */
 NOCT_DLL
 bool
@@ -1286,385 +1400,10 @@ noct_register_api_math(
 	NoctEnv *env);
 
 /*
- * AOT Execution Helpers
- *
- * Some exotic compilers for x86 including Watcom utilize registers to
- * pass function arguments. However, our JIT-generated code for x86
- * passes function arguments via the stack. To bridge this gap, we use
- * the CDECL keyword in these helpers to be properly called from the
- * JIT-generated code.
- */
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_make_string_with_hash(
-	NoctEnv *env,
-	NoctValue *val,
-	const char *data,
-	size_t len,
-	uint32_t hash);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_make_empty_array(
-	NoctEnv *env,
-	NoctValue *val);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_make_empty_dict(
-	NoctEnv *env,
-	NoctValue *val);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_assign_helper(
-	NoctEnv *rt,
-	int dst,
-	int src);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_add_helper(
-	NoctEnv *rt,
-	int dst,
-	int src1,
-	int src2);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_sub_helper(
-	NoctEnv *rt,
-	int dst,
-	int src1,
-	int src2);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_mul_helper(
-	NoctEnv *rt,
-	int dst,
-	int src1,
-	int src2);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_div_helper(
-	NoctEnv *rt,
-	int dst,
-	int src1,
-	int src2);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_mod_helper(
-	NoctEnv *rt,
-	int dst,
-	int src1,
-	int src2);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_and_helper(
-	NoctEnv *rt,
-	int dst,
-	int src1,
-	int src2);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_or_helper(
-	NoctEnv *rt,
-	int dst,
-	int src1,
-	int src2);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_xor_helper(
-	NoctEnv *rt,
-	int dst,
-	int src1,
-	int src2);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_shl_helper(
-	NoctEnv *rt,
-	int dst,
-	int src1,
-	int src2);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_shr_helper(
-	NoctEnv *rt,
-	int dst,
-	int src1,
-	int src2);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_neg_helper(
-	NoctEnv *rt,
-	int dst,
-	int src);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_not_helper(
-	NoctEnv *rt,
-	int dst,
-	int src);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_lt_helper(
-	NoctEnv *rt,
-	int dst,
-	int src1,
-	int src2);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_lte_helper(
-	NoctEnv *rt,
-	int dst,
-	int src1,
-	int src2);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_eq_helper(
-	NoctEnv *rt,
-	int dst,
-	int src1,
-	int src2);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_neq_helper(
-	NoctEnv *rt,
-	int dst,
-	int src1,
-	int src2);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_gte_helper(
-	NoctEnv *rt,
-	int dst,
-	int src1,
-	int src2);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_gt_helper(
-	NoctEnv *rt,
-	int dst,
-	int src1,
-	int src2);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_storearray_helper(
-	NoctEnv *rt,
-	int arr,
-	int subscr,
-	int val);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_loadarray_helper(
-	NoctEnv *rt,
-	int dst,
-	int arr,
-	int subscr);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_len_helper(
-	NoctEnv *rt,
-	int dst,
-	int src);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_getdictkeybyindex_helper(
-	NoctEnv *rt,
-	int dst,
-	int dict,
-	int subscr);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_getdictvalbyindex_helper(
-	NoctEnv *rt,
-	int dst,
-	int dict,
-	int subscr);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_loadsymbol_helper(
-	NoctEnv *rt,
-	int dst,
-	const char *symbol,
-	uint32_t symbol_len,
-	uint32_t symbol_hash);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_storesymbol_helper(
-	NoctEnv *rt,
-	const char *symbol,
-	uint32_t symbol_len,
-	uint32_t symbol_hash,
-	int src);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_loaddot_helper(
-	NoctEnv *rt,
-	int dst,
-	int dict,
-	const char *field,
-	uint32_t field_len,
-	uint32_t field_hash);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_storedot_helper(
-	NoctEnv *rt,
-	int dict,
-	const char *field,
-	uint32_t field_len,
-	uint32_t field_hash,
-	int src);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_call_helper(
-	NoctEnv *rt,
-	int dst,
-	int func,
-	int arg_count,
-	int *arg);
-
-NOCT_DLL
-bool
-CDECL
-noct_ex_thiscall_helper(
-	NoctEnv *rt,
-	int dst,
-	int obj,
-	const char *name,
-	uint32_t name_len,
-	uint32_t name_hash,
-	int arg_count,
-	int *arg);
-
-/*
- * Bytecode Backend
- */
-
-/* Start the BC backend. */
-NOCT_DLL
-bool
-noct_bcback_start(
-	const char *out_file_name);
-
-/* Translate a file using BC backend. */
-NOCT_DLL
-bool
-noct_bcback_translate(
-	const char *source_file_name,
-	const char *source_data);
-
-/* Finalize the BC backend. */
-NOCT_DLL
-bool
-noct_bcback_finalize(void);
-
-/*
- * C Backend
- */
-
-/* Start the C backend. */
-NOCT_DLL
-bool
-noct_cback_start(
-	const char *fname);
-
-/* Translate a file using C backend. */
-NOCT_DLL
-bool
-noct_cback_translate(
-	const char *fname,
-	const char *data);
-
-/* Finalize the C backend. */
-NOCT_DLL
-bool
-noct_cback_finalize(void);
-
-/*
- * Emacs Lisp Backend
- */
-
-/* Start EL backend. */
-NOCT_DLL
-bool
-noct_elback_start(
-	const char *fname);
-
-/* Translate a file using EL backend. */
-NOCT_DLL
-bool
-noct_elback_translate(
-	const char *fname,
-	const char *data);
-
-/* Finalize the EL backend. */
-NOCT_DLL
-bool
-noct_elback_finalize(void);
-
-/*
  * Custom Allocators
  *  - Override the macros and build a custom library.
+ *  - We don't use indirect calls for allocation because it's slow on
+ *    Linux due to Spectre mitigation.
  */
 
 #ifndef noct_malloc
@@ -1682,5 +1421,12 @@ noct_elback_finalize(void);
 #ifndef noct_free
 #define noct_free	free
 #endif
+
+/*
+ * Other divided headers.
+ */
+
+#include <noct/aot.h>
+#include <noct/backend.h>
 
 #endif

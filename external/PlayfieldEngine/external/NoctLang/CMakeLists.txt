@@ -11,23 +11,22 @@ option(NOCT_ENABLE_SHARED       "Build a shared library"      OFF)
 option(NOCT_ENABLE_OBJECT       "Build objects only"          OFF)
 
 # Options
-option(NOCT_ENABLE_CLI          "Build a CLI binary"          ON)
-option(NOCT_ENABLE_JIT          "Enable JIT compilation"      ON)
-option(NOCT_ENABLE_I18N         "Enable translation feature"  ON)
+option(NOCT_ENABLE_CLI          "Build a CLI binary"          OFF)
+option(NOCT_ENABLE_JIT          "Enable JIT compilation"      OFF)
+option(NOCT_ENABLE_I18N         "Enable translation feature"  OFF)
 option(NOCT_ENABLE_I18N_LIBINTL "Enable gettext"              OFF)
-option(NOCT_ENABLE_API          "Enable standard API"         ON)
-option(NOCT_ENABLE_INSTALL      "Enable installation"         ON)
-option(NOCT_ENABLE_CBACKEND     "Enable C backend"            ON)
-option(NOCT_ENABLE_ELBACKEND    "Enable Emacs Lisp backend"   ON)
-option(NOCT_ENABLE_BCBACKEND    "Enable bytecode backend"     ON)
+option(NOCT_ENABLE_API          "Enable standard API"         OFF)
+option(NOCT_ENABLE_INSTALL      "Enable installation"         OFF)
+option(NOCT_ENABLE_BCBACKEND    "Enable bytecode backend"     OFF)
+option(NOCT_ENABLE_CBACKEND     "Enable C backend"            OFF)
+option(NOCT_ENABLE_ELBACKEND    "Enable Emacs Lisp backend"   OFF)
+option(NOCT_ENABLE_SCMBACKEND   "Enable Scheme backend"       OFF)
+option(NOCT_ENABLE_REPL         "Enable REPL"                 OFF)
 option(NOCT_ENABLE_MDOC         "Install mdoc(7) man page"    OFF)
 
 # Choose one if needed.
-option(NOCT_TARGET_WASM         "Build for Emscripten"        OFF)
+# (These targets cannot be automatically determined.)
 option(NOCT_TARGET_UNITY        "Build for Unity"             OFF)
-option(NOCT_TARGET_UNITY_PS5    "Build for Unity PS5"         OFF)
-option(NOCT_TARGET_UNITY_SWITCH "Build for Unity Switch"      OFF)
-option(NOCT_TARGET_UNITY_XBOX   "Build for Unity Xbox"        OFF)
 option(NOCT_TARGET_OPENHARMONY  "Build for OpenHarmony"       OFF)
 option(NOCT_TARGET_DOS4G        "Build for Unity"             OFF)
 
@@ -42,13 +41,13 @@ option(NOCT_ENABLE_MULTITHREAD  "Enable multithread support"  OFF)
 
 # Debug Configuration
 if(MSVC)
-    # MSVC
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Od /Zi /DDEBUG /UNDEBUG")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Od /Zi /DDEBUG /UNDEBUG")
+  # MSVC
+  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Od /Zi /DDEBUG /UNDEBUG")
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Od /Zi /DDEBUG /UNDEBUG")
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
-    # GCC/Clang
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g3 -DDEBUG -Wall -Werror -Wextra -Wundef -Wconversion")
-    set(CMAKE_OBJC_FLAGS_DEBUG "${CMAKE_OBJC_FLAGS_DEBUG} -O0 -g3 -DNDEBUG -Wall -Werror -Wextra -Wundef -Wconversion")
+  # GCC/Clang
+  set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g3 -DDEBUG -Wall -Werror -Wextra -Wundef -Wconversion")
+  set(CMAKE_OBJC_FLAGS_DEBUG "${CMAKE_OBJC_FLAGS_DEBUG} -O0 -g3 -DNDEBUG -Wall -Werror -Wextra -Wundef -Wconversion")
 endif()
 
 # Release Configuration
@@ -185,6 +184,14 @@ if(NOCT_ENABLE_ELBACKEND)
   )
 endif()
 
+# Determine the Scheme backend files.
+if(NOCT_ENABLE_SCMBACKEND)
+  set(
+    NOCT_SCMBE_SOURCE
+    src/backend/scmback.c
+  )
+endif()
+
 # Determine the i18n files.
 if(NOCT_ENABLE_I18N)
   if(NOT NOCT_ENABLE_I18N_LIBINTL)
@@ -210,6 +217,7 @@ add_library(
   ${NOCT_CBE_SOURCE}
   ${NOCT_BCBE_SOURCE}
   ${NOCT_ELBE_SOURCE}
+  ${NOCT_SCMBE_SOURCE}
   ${NOCT_I18N_SOURCE}
 
   # Mandatory libraries here.
@@ -276,7 +284,8 @@ if(NOCT_ENABLE_SHARED)
 endif()
 
 # NOCT_USE_JIT
-if(NOCT_ENABLE_JIT)
+if(    NOCT_ENABLE_JIT AND
+   NOT CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")
   target_compile_definitions(noct PRIVATE NOCT_USE_JIT)
   if(NOCT_ENABLE_API)
     target_compile_definitions(noctapi PRIVATE NOCT_USE_JIT)
@@ -423,15 +432,36 @@ set(NOCT_LIBRARIES    ${NOCT_LIBRARY})
 #
 
 if(NOCT_ENABLE_CLI)
+  if(NOCT_ENABLE_BCBACKEND)
+    set(CLI_BCBACK_SOURCES src/cli/cli-compile.c)
+  endif()
+  
+  if(NOCT_ENABLE_CBACKEND)
+    set(CLI_CBACK_SOURCES src/cli/cli-ctrans.c)
+  endif()
+  
+  if(NOCT_ENABLE_ELBACKEND)
+    set(CLI_ELBACK_SOURCES src/cli/cli-eltrans.c)
+  endif()
+
+  if(NOCT_ENABLE_SCMBACKEND)
+    set(CLI_SCMBACK_SOURCES src/cli/cli-scmtrans.c)
+  endif()
+
+  if(NOCT_ENABLE_REPL)
+    set(CLI_REPL_SOURCES src/cli/cli-repl.c)
+  endif()
+
   add_executable(
     noctcli
     src/cli/cli-main.c
     src/cli/cli-run.c
-    src/cli/cli-compile.c
-    src/cli/cli-ctrans.c
-    src/cli/cli-eltrans.c
-    src/cli/cli-repl.c
     src/cli/cli-cfunc.c
+    ${CLI_BCBACK_SOURCES}
+    ${CLI_CBACK_SOURCES}
+    ${CLI_ELBACK_SOURCES}
+    ${CLI_SCMBACK_SOURCES}
+    ${CLI_REPL_SOURCES}
   )
 
   # Set the executable name.
@@ -449,6 +479,24 @@ if(NOCT_ENABLE_CLI)
   endif()  
   if(NOCT_ENABLE_I18N_LIBINTL)
     target_compile_definitions(noctcli PRIVATE NOCT_USE_LIBINTL)
+  endif()
+  if(NOCT_ENABLE_CBACKEND)
+    target_compile_definitions(noctcli PRIVATE NOCT_USE_CBACKEND)
+  endif()
+  if(NOCT_ENABLE_BCBACKEND)
+    target_compile_definitions(noctcli PRIVATE NOCT_USE_BCBACKEND)
+  endif()
+  if(NOCT_ENABLE_ELBACKEND)
+    target_compile_definitions(noctcli PRIVATE NOCT_USE_ELBACKEND)
+  endif()
+  if(NOCT_ENABLE_SCMBACKEND)
+    target_compile_definitions(noctcli PRIVATE NOCT_USE_SCMBACKEND)
+  endif()
+  if(NOCT_ENABLE_REPL)
+    target_compile_definitions(noctcli PRIVATE NOCT_USE_REPL)
+  endif()
+  if(NOT NOCT_VERSION)
+    set(NOCT_VERSION "1.0-current")
   endif()
   target_compile_definitions(noctcli PRIVATE NOCT_VERSION="${NOCT_VERSION}")
 
@@ -486,11 +534,20 @@ endif()
 if(NOCT_ENABLE_INSTALL)
   include(GNUInstallDirs)
 
+  # Check for BSD.
+  if(   CMAKE_SYSTEM_NAME STREQUAL "FreeBSD"
+     OR CMAKE_SYSTEM_NAME STREQUAL "NetBSD"
+     OR CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")
+    set(NOCT_ENABLE_MDOC ON)
+  endif()
+
   # Headers
   install(
     FILES
       "${CMAKE_CURRENT_SOURCE_DIR}/include/noct/noct.h"
       "${CMAKE_CURRENT_SOURCE_DIR}/include/noct/c89compat.h"
+      "${CMAKE_CURRENT_SOURCE_DIR}/include/noct/aot.h"
+      "${CMAKE_CURRENT_SOURCE_DIR}/include/noct/backend.h"
     DESTINATION
       "${CMAKE_INSTALL_INCLUDEDIR}/noct"
   )
@@ -564,4 +621,14 @@ if(NOCT_ENABLE_INSTALL)
       DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig"
     )
   endif()
+
+  # Uninstall
+  configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/cmake/cmake_uninstall.cmake.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+    IMMEDIATE @ONLY
+  )
+  add_custom_target(uninstall
+    COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+  )
 endif()

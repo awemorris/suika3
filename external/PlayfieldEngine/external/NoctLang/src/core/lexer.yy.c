@@ -2650,6 +2650,7 @@ YY_BUFFER_STATE yy_scan_bytes  (const char * yybytes, int  _yybytes_len , yyscan
 static void yy_fatal_error (const char* msg , yyscan_t yyscanner)
 {
 	struct yyguts_t * yyg = (struct yyguts_t*)yyscanner;
+	(void)msg;
 	(void)yyg;
 	/*printf("%s\n", msg);*/
 	/*exit( YY_EXIT_FAILURE );*/

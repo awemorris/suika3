@@ -36,8 +36,14 @@ int main(int argc, char *argv[])
 	noct_init_locale();
 #endif
 
-	if (argc <= 1)
+	if (argc <= 1) {
+#if defined(NOCT_USE_REPL)
 		return command_repl();
+#else
+		show_usage();
+		return 1;
+#endif
+	}
 
 	if (strcmp(argv[1], "--version") == 0) {
 		wide_printf("Noct " NOCT_VERSION "\n");
@@ -49,14 +55,27 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+#if defined(NOCT_USE_BCBACKEND)
 	if (strcmp(argv[1], "--compile") == 0)
 		return command_compile(argc, argv);
-	else if (strcmp(argv[1], "--ansic") == 0)
+#endif
+
+#if defined(NOCT_USE_CBACKEND)
+	if (strcmp(argv[1], "--ansic") == 0)
 		return command_transpile_c(argc, argv);
-	else if (strcmp(argv[1], "--elisp") == 0)
+#endif
+
+#if defined(NOCT_USE_ELBACKEND)
+	if (strcmp(argv[1], "--elisp") == 0)
 		return command_transpile_elisp(argc, argv);
-	else
-		return command_run(argc, argv);
+#endif
+
+#if defined(NOCT_USE_SCMBACKEND)
+	if (strcmp(argv[1], "--scheme") == 0)
+		return command_transpile_scheme(argc, argv);
+#endif
+
+	return command_run(argc, argv);
 }
 
 /*
@@ -85,11 +104,22 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 void show_usage(void)
 {
 	wide_printf(N_TR("Noct Programming Language\n"));
+	wide_printf(N_TR("Version %s\n"), NOCT_VERSION);
+	wide_printf("\n");
 	wide_printf(N_TR("Usage\n"));
-	wide_printf(N_TR("  noct <vm-options> <files>          ... run a program\n"));
-	wide_printf(N_TR("  noct --compile <in-files>          ... convert to bytecode files\n"));
-	wide_printf(N_TR("  noct --ansic <out-file> <in-files> ... convert to a C source file\n"));
-	wide_printf(N_TR("  noct --elisp <out-file> <in-files> ... convert to an Emacs Lisp source file\n"));
+	wide_printf(N_TR("  noct <vm-options> <files>           ... run a program\n"));
+#if defined(NOCT_USE_BCBACKEND)
+	wide_printf(N_TR("  noct --compile <in-files>           ... convert to bytecode files\n"));
+#endif
+#if defined(NOCT_USE_CBACKEND)
+	wide_printf(N_TR("  noct --ansic <out-file> <in-files>  ... convert to a C source file\n"));
+#endif
+#if defined(NOCT_USE_ELBACKEND)
+	wide_printf(N_TR("  noct --elisp <out-file> <in-files>  ... convert to an Emacs Lisp source file\n"));
+#endif
+#if defined(NOCT_USE_SCMBACKEND)
+	wide_printf(N_TR("  noct --scheme <out-file> <in-files> ... convert to an Scheme source file\n"));
+#endif
 	wide_printf("\n");
 	wide_printf(N_TR("vm-options:\n"));
 	wide_printf(N_TR("  --disable-jit        ... disable JIT\n"));

@@ -97,9 +97,7 @@ static void *nursery_alloc(struct rt_env *env, size_t size);
 static void *graduate_alloc(struct rt_env *env, size_t size);
 static void *rt_gc_tenure_alloc(struct rt_env *env, size_t size);
 static void rt_gc_tenure_free(struct rt_env *env, void *p);
-#if defined(NOCT_USE_MULTITHREAD)
-static void rt_gc_multithread_gc_wrapper(struct rt_env *env, void (*gc)(struct rt_env *));
-#endif
+static void rt_gc_multithread_call_wrapper(struct rt_env *env, void (*gc)(struct rt_env *env));
 
 /*
  * Initializes the garbage collector and allocate memory regions.
@@ -563,6 +561,9 @@ rt_gc_alloc_dict(
 		dict->key = key_table;
 		dict->value = value_table;
 		dict->newer = NULL;
+		dict->native_pointer = NULL;
+		dict->native_finalizer = NULL;
+
 #if defined(NOCT_USE_MULTITHREAD)
 		dict->counter = 0;
 #endif
@@ -621,6 +622,9 @@ rt_gc_alloc_dict_graduate(
 		dict->key = key_table;
 		dict->value = value_table;
 		dict->newer = NULL;
+		dict->native_pointer = NULL;
+		dict->native_finalizer = NULL;
+
 #if defined(NOCT_USE_MULTITHREAD)
 		dict->counter = 0;
 #endif
@@ -693,6 +697,9 @@ rt_gc_alloc_dict_tenure(
 		dict->key = key_table;
 		dict->value = value_table;
 		dict->newer = NULL;
+		dict->native_pointer = NULL;
+		dict->native_finalizer = NULL;
+
 #if defined(NOCT_USE_MULTITHREAD)
 		dict->counter = 0;
 #endif
@@ -769,7 +776,7 @@ rt_gc_young_gc(
 	struct rt_env *env)
 {
 #if defined(NOCT_USE_MULTITHREAD)
-	rt_gc_multithread_gc_wrapper(env, rt_gc_young_gc_body);
+	rt_gc_multithread_call_wrapper(env, rt_gc_young_gc_body);
 #else
 	rt_gc_young_gc_body(env);
 #endif
@@ -784,8 +791,17 @@ rt_gc_young_gc_body(
 	struct rt_frame *frame;
 	uint32_t i;
 	int sp;
+	struct finalize_table {
+		void *native_pointer;
+		void (*native_finalizer)(void *native_pointer);
+	} *finalize_table;
+	uint32_t finalize_size;
+	uint32_t finalize_count;
 
 	env->vm->gc.graduate_new_list = NULL;
+	finalize_table = NULL;
+	finalize_size = 0;
+	finalize_count = 0;
 
 	/*
 	 * Clear marks.
@@ -796,6 +812,10 @@ rt_gc_young_gc_body(
 	while (obj != NULL) {
 		obj->is_marked = false;
 		obj->forward = NULL;
+		if (obj->type == RT_GC_TYPE_DICT) {
+			if (((struct rt_dict *)obj)->native_finalizer != NULL)
+				finalize_size++;
+		}
 		obj = obj->next;
 	}
 
@@ -942,7 +962,30 @@ rt_gc_young_gc_body(
 	}
 
 	/*
-	 * Finalize.
+	 * Make finalize table.
+	 */
+
+	if (finalize_size > 0) {
+		finalize_table = malloc(sizeof(struct finalize_table) * finalize_size);
+		if (finalize_table == NULL)
+			return;
+
+		/* For all nursery objects. */
+		obj = env->vm->gc.nursery_list;
+		while (obj != NULL) {
+			if (!obj->is_marked &&
+			    obj->type == RT_GC_TYPE_DICT &&
+			    ((struct rt_dict *)obj)->native_finalizer != NULL) {
+				finalize_table[finalize_count].native_pointer = ((struct rt_dict *)obj)->native_pointer;
+				finalize_table[finalize_count].native_finalizer = ((struct rt_dict *)obj)->native_finalizer;
+				finalize_count++;
+			}
+			obj = obj->next;
+		}
+	}
+
+	/*
+	 * Finish.
 	 */
 
 	/* Clear the nursery. */
@@ -964,6 +1007,13 @@ rt_gc_young_gc_body(
 	}
 	env->vm->gc.graduate_list = env->vm->gc.graduate_new_list;
 	env->vm->gc.graduate_new_list = NULL;
+
+	/*
+	 * Call native finalizers.
+	 */
+
+	for (i = 0; i < finalize_count; i++)
+		finalize_table[i].native_finalizer(finalize_table[i].native_pointer);
 }
 
 /* Marks-and-copies objects recursively. */
@@ -1287,6 +1337,9 @@ rt_gc_promote_dict(
 	/* Set the forwarding pointer. */
 	obj->forward = &new_dict->head;
 
+	new_dict->native_pointer = old_dict->native_pointer;
+	new_dict->native_finalizer = old_dict->native_finalizer;
+
 	return &new_dict->head;
 }
 
@@ -1410,9 +1463,8 @@ rt_gc_copy_dict_to_graduate(
 		}
 	}
 
-	/* Check for failure. */
-	if (new_obj == NULL)
-		return NULL;
+	new_obj->native_pointer = old_obj->native_pointer;
+	new_obj->native_finalizer = old_obj->native_finalizer;
 
 	/* Succeeded. */
 	return &new_obj->head;
@@ -1424,7 +1476,7 @@ rt_gc_old_gc(
 	struct rt_env *env)
 {
 #if defined(NOCT_USE_MULTITHREAD)
-	rt_gc_multithread_gc_wrapper(env, rt_gc_old_gc_body);
+	rt_gc_multithread_call_wrapper(env, rt_gc_old_gc_body);
 #else
 	rt_gc_old_gc_body(env);
 #endif
@@ -2135,12 +2187,13 @@ rt_gc_safepoint(
 }
 
 /*
- * Run a GC in a multithreaded manner.
+ * Run a function in a multithreaded manner.
+ * The term "inflight" means a thread is executing and not waiting at a GC-safe point.
  */
 static void
-rt_gc_multithread_gc_wrapper(
+rt_gc_multithread_call_wrapper(
 	struct rt_env *env,
-	void (*gc)(struct rt_env *))
+	void (*gc)(struct rt_env *env))
 {
 	bool is_executor = false;
 
@@ -2148,14 +2201,17 @@ rt_gc_multithread_gc_wrapper(
 
 	/* If this is not a recursive GC call. */
 	if (atomic_load_acquire(&env->gc_in_progress_counter) == 0) {
-		// Make this thread non-inflight, and enter a GC safe point.
+		/* Make this thread non-inflight, and enter a GC safe point. */
 		atomic_fetch_sub_release(&env->vm->in_flight_counter, 1);
 
-		/* Wait for all other threads entering GC safe points. */
+		/*
+		 * Wait for all other threads entering GC safe points,
+		 * ant this thread getting the right to enter GC section.
+		 */
 		while (1) {
 			/* Try acquire the right to execute GC. */
 			int old = atomic_fetch_add_acquire(&env->vm->gc_stw_counter, 1);
-			if (env->vm->in_flight_counter == 0 && old == 0) {
+			if (old == 0 && atomic_load_acquire(&env->vm->in_flight_counter) == 0) {
 				/* Succeeded, entering the GC section. */
 				is_executor = true;
 				break;
@@ -2167,7 +2223,7 @@ rt_gc_multithread_gc_wrapper(
 			/* If another thread got the right to execute GC. */
 			if (old > 0) {
 				/* Wait for the GC finishes. */
-				while (env->vm->gc_stw_counter > 0)
+				while (atomic_load_acquire(&env->vm->gc_stw_counter) > 0)
 					cpu_relax();
 
 				/* Don't execute a GC in this thread this time. */
@@ -2175,7 +2231,7 @@ rt_gc_multithread_gc_wrapper(
 			}
 
 			/* Wait for all other threads get non-inflight. */
-			while (env->vm->in_flight_counter > 0)
+			while (atomic_load_acquire(&env->vm->in_flight_counter) > 0)
 				cpu_relax();
 		}
 	} else {
@@ -2188,7 +2244,7 @@ rt_gc_multithread_gc_wrapper(
 	/* Count-up for recursive GC calls. */
 	atomic_fetch_add_acquire(&env->gc_in_progress_counter, 1);
 
-	/* Run GC. */
+	/* Do GC. */
 	gc(env);
 
 	/* Count-down for recursive GC calls. */

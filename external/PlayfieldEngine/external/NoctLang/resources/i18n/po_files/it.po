@@ -234,36 +234,39 @@ msgstr "La compilazione JIT è attivata. Avvio della VM veloce...\n"
 msgid "Usage\n"
 msgstr "Utilizzo\n"
 
-msgid "noct <vm-options> <files>          ... run a program\n"
-msgstr "noct <vm-options> <files>          ... eseguire un programma\n"
+msgid "  noct <vm-options> <files>           ... run a program\n"
+msgstr "  noct <vm-options> <files>           ... eseguire un programma\n"
 
-msgid "noct --ansic <out-file> <in-files> ... convert to a C source file\n"
-msgstr "noct --ansic <out-file> <in-files> ... convertire in un file sorgente C\n"
+msgid "  noct --ansic <out-file> <in-files>  ... convert to a C source file\n"
+msgstr "  noct --ansic <out-file> <in-files>  ... convertire in un file sorgente C\n"
 
-msgid "noct --elisp <out-file> <in-files> ... convert to an Emacs Lisp source file\n"
-msgstr "noct --elisp <out-file> <in-files> ... convertire in un file sorgente Emacs Lisp\n"
+msgid "  noct --elisp <out-file> <in-files>  ... convert to an Emacs Lisp source file\n"
+msgstr "  noct --elisp <out-file> <in-files>  ... convertire in un file sorgente Emacs Lisp\n"
 
-msgid "--disable-jit        ... disable JIT\n"
-msgstr "--disable-jit        ... disabilita JIT\n"
+msgid "  noct --scheme <out-file> <in-files> ... convert to an Scheme source file\n"
+msgstr "  noct --scheme <out-file> <in-files> ... convertire in un file sorgente Scheme\n"
 
-msgid "--force-jit          ... equivalent to --jit-threshold=0\n"
-msgstr "--force-jit          ... equivalente a --jit-threshold=0\n"
+msgid "  --disable-jit        ... disable JIT\n"
+msgstr "  --disable-jit        ... disabilita JIT\n"
 
-msgid "--jit-threshold=N    ... call-count threshold for compilation\n"
-msgstr "--jit-threshold=N    ... soglia del numero di chiamate per la compilazione\n"
+msgid "  --force-jit          ... equivalent to --jit-threshold=0\n"
+msgstr "  --force-jit          ... equivalente a --jit-threshold=0\n"
 
-msgid "--optimize-level=N   ... optimize level (0/1)\n"
-msgstr "--optimize-level=N   ... livello di ottimizzazione (0/1)\n"
+msgid "  --jit-threshold=N    ... call-count threshold for compilation\n"
+msgstr "  --jit-threshold=N    ... soglia del numero di chiamate per la compilazione\n"
 
-msgid "--gc-nursery-size=N  ... first GC space size in bytes\n"
-msgstr "--gc-nursery-size=N  ... dimensione del primo spazio GC in byte\n"
+msgid "  --optimize-level=N   ... optimize level (0/1)\n"
+msgstr "  --optimize-level=N   ... livello di ottimizzazione (0/1)\n"
 
-msgid "--gc-graduate-size=N ... second GC space size in bytes\n"
-msgstr "--gc-graduate-size=N ... dimensione del secondo spazio GC in byte\n"
+msgid "  --gc-nursery-size=N  ... first GC space size in bytes\n"
+msgstr "  --gc-nursery-size=N  ... dimensione del primo spazio GC in byte\n"
 
-msgid "--gc-tenure-size=N   ... final GC space size in bytes\n"
-msgstr "--gc-tenure-size=N   ... dimensione dello spazio GC finale in byte\n"
+msgid "  --gc-graduate-size=N ... second GC space size in bytes\n"
+msgstr "  --gc-graduate-size=N ... dimensione del secondo spazio GC in byte\n"
 
-msgid "--gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n"
-msgstr "--gc-lop-threshold=N ... sposta gli oggetti più grandi di N byte nello spazio GC finale\n"
+msgid "  --gc-tenure-size=N   ... final GC space size in bytes\n"
+msgstr "  --gc-tenure-size=N   ... dimensione dello spazio GC finale in byte\n"
+
+msgid "  --gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n"
+msgstr "  --gc-lop-threshold=N ... sposta gli oggetti più grandi di N byte nello spazio GC finale\n"
 

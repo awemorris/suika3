@@ -713,10 +713,6 @@ noct_set_dict_elem(
 	return true;
 }
 
-/*
- * The following is not thread-safe.
- */
-#if !defined(NOCT_USE_MULTITHREAD)
 NOCT_DLL
 bool
 noct_remove_dict_elem(
@@ -740,7 +736,6 @@ noct_remove_dict_elem(
 
 	return true;
 }
-#endif
 
 NOCT_DLL
 bool
@@ -768,6 +763,54 @@ noct_make_dict_copy(
 	}
 
 	return true;
+}
+
+NOCT_DLL
+bool
+noct_set_dict_native_pointer(
+	NoctEnv *env,
+	NoctValue *dict,
+	void *native_pointer,
+	void (*native_finalizer)(void *native_pointer))
+{
+	assert(env != NULL);
+	assert(dict != NULL);
+	
+	/* Check the type. */
+	if (dict->type != NOCT_VALUE_DICT) {
+		rt_error(env, N_TR("Not a dictionary."));
+		return false;
+	}
+
+	/* Remove the element. */
+	if (!rt_set_dict_native_pointer(env, dict->val.dict, native_pointer, native_finalizer))
+		return false;
+
+	return true;	
+}
+
+NOCT_DLL
+bool
+noct_get_dict_native_pointer(
+	NoctEnv *env,
+	NoctValue *dict,
+	void **native_pointer,
+	void (**native_finalizer)(void *native_pointer))
+{
+	assert(env != NULL);
+	assert(dict != NULL);
+	
+	/* Check the type. */
+	if (dict->type != NOCT_VALUE_DICT) {
+		rt_error(env, N_TR("Not a dictionary."));
+		return false;
+	}
+
+	/* Get the native pointer. */
+	if (!rt_get_dict_native_pointer(env, dict->val.dict, native_pointer, native_finalizer))
+		return false;
+
+	return true;	
 }
 
 NOCT_DLL

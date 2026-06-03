@@ -72,7 +72,7 @@ struct file_entry {
 };
 
 /* File entry */
-struct file_entry entry[FILE_ENTRY_SIZE];
+static struct file_entry entry[FILE_ENTRY_SIZE];
 
 /* File count */
 static uint64_t file_count;

@@ -89,8 +89,14 @@ int command_run(int argc, char *argv[])
 	/* Check if a file is specified. */
 	if (file_arg == (uint32_t)argc) {
 		/* No file specified, enter REPL. */
-		if (argc == 1)
+		if (argc == 1) {
+#if defined(NOCT_USE_REPL)
 			return command_repl();
+#else
+			show_usage();
+			return 1;
+#endif
+		}
 		return 1;
 	}
 

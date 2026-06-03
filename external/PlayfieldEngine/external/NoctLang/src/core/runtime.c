@@ -40,6 +40,120 @@
 #define IS_DICT_KEY_REMOVED(k)	(k.type == NOCT_VALUE_FLOAT)
 #define REMOVE_DICT_KEY(k)	do { k.type = NOCT_VALUE_FLOAT; } while (0)
 
+#if !defined(NOCT_USE_MULTITHREAD)
+
+#define ACQUIRE_OBJ(obj, real_obj)				\
+	/* Get the newer reference. */				\
+	real_obj = (obj);					\
+	while (real_obj->newer != NULL)				\
+		real_obj = real_obj->newer;
+
+#define RELEASE_OBJ(real_obj)
+
+#define ACQUIRE_OBJ2(obj1, real_obj1, obj2, real_obj2)		\
+	/* Get the newer reference of obj1. */			\
+	real_obj1 = (obj1);					\
+	while (real_obj1->newer != NULL)			\
+		real_obj1 = real_obj1->newer;			\
+	/* Get the newer reference of obj2. */			\
+	real_obj2 = (obj2);					\
+	while (real_obj2->newer != NULL)			\
+		real_obj2 = real_obj2->newer;
+
+#define RELEASE_OBJ2(real_obj1, real_obj2)
+
+#else
+
+#define ACQUIRE_OBJ(obj, real_obj)								\
+	/* Acquire the array. */								\
+	while (1) {										\
+		/* Get the newer reference. */							\
+		real_obj = atomic_load_relaxed_ptr((void**)&(obj));				\
+		while (atomic_load_relaxed_ptr((void **)&real_obj->newer) != NULL)		\
+			real_obj = atomic_load_relaxed_ptr((void **)&real_obj->newer);		\
+												\
+		/* Try acquire. */								\
+		int old = atomic_fetch_add_acquire(&real_obj->counter, 1);			\
+		if (old == 0 && atomic_load_acquire_ptr((void **)&real_obj->newer) == NULL)	\
+			break;									\
+												\
+		/* Failed, release. */								\
+		atomic_fetch_sub_release(&real_obj->counter, 1);				\
+												\
+		/* Allow GC in other threads because they may cause GC. */			\
+		while (1) {									\
+			atomic_fetch_sub_release(&env->vm->in_flight_counter, 1);		\
+			while (atomic_load_acquire(&env->vm->gc_stw_counter) > 0)		\
+				cpu_relax();							\
+			atomic_fetch_add_acquire(&env->vm->in_flight_counter, 1);		\
+			if (atomic_load_acquire(&env->vm->gc_stw_counter) == 0)			\
+				break;								\
+		}										\
+	}
+
+#define ACQUIRE_OBJ2(obj1, real_obj1, obj2, real_obj2)						\
+	/* Acquire two objects atomically. obj1 and obj2 must differ. */			\
+	while (1) {										\
+		/* Get the newer reference of obj1. */						\
+		real_obj1 = atomic_load_relaxed_ptr((void **)&(obj1));				\
+		while (atomic_load_relaxed_ptr((void **)&real_obj1->newer) != NULL)		\
+			real_obj1 = atomic_load_relaxed_ptr((void **)&real_obj1->newer);	\
+												\
+		/* Try acquire obj1. */								\
+		int _old1 = atomic_fetch_add_acquire(&real_obj1->counter, 1);			\
+		if (_old1 != 0 ||								\
+		    atomic_load_acquire_ptr((void **)&real_obj1->newer) != NULL) {		\
+			/* Failed to acquire obj1, release and wait for GC. */			\
+			atomic_fetch_sub_release(&real_obj1->counter, 1);			\
+			while (1) {								\
+				atomic_fetch_sub_release(&env->vm->in_flight_counter, 1);	\
+				while (atomic_load_acquire(&env->vm->gc_stw_counter) > 0)	\
+					cpu_relax();						\
+				atomic_fetch_add_acquire(&env->vm->in_flight_counter, 1);	\
+				if (atomic_load_acquire(&env->vm->gc_stw_counter) == 0)		\
+					break;							\
+			}									\
+			continue;								\
+		}										\
+												\
+		/* obj1 acquired. Now try acquire obj2. */					\
+		real_obj2 = atomic_load_relaxed_ptr((void **)&(obj2));				\
+		while (atomic_load_relaxed_ptr((void **)&real_obj2->newer) != NULL)		\
+			real_obj2 = atomic_load_relaxed_ptr((void **)&real_obj2->newer);	\
+												\
+		int _old2 = atomic_fetch_add_acquire(&real_obj2->counter, 1);			\
+		if (_old2 == 0 &&								\
+		    atomic_load_acquire_ptr((void **)&real_obj2->newer) == NULL)		\
+			break; /* Both acquired. */						\
+												\
+		/* Failed to acquire obj2.  Release obj2 and obj1, then wait. */		\
+		atomic_fetch_sub_release(&real_obj2->counter, 1);				\
+		atomic_fetch_sub_release(&real_obj1->counter, 1);				\
+		while (1) {									\
+			atomic_fetch_sub_release(						\
+				&env->vm->in_flight_counter, 1);				\
+			while (atomic_load_acquire(						\
+				&env->vm->gc_stw_counter) > 0)					\
+				cpu_relax();							\
+			atomic_fetch_add_acquire(						\
+				&env->vm->in_flight_counter, 1);				\
+			if (atomic_load_acquire(						\
+				&env->vm->gc_stw_counter) == 0)					\
+				break;								\
+		}										\
+	}
+
+#define RELEASE_OBJ(real_obj)									\
+	/* Failed, release. */									\
+	atomic_fetch_sub_release(&real_obj->counter, 1);
+
+#define RELEASE_OBJ2(real_obj1, real_obj2)							\
+	/* Release in reverse acquisition order. */						\
+	atomic_fetch_sub_release(&real_obj2->counter, 1);					\
+	atomic_fetch_sub_release(&real_obj1->counter, 1);
+
+#endif
+
 /* Forward declarations. */
 static void rt_free_func(struct rt_env *rt, struct rt_func *func);
 static bool rt_register_lir(struct rt_env *rt, struct lir_func *lir);
@@ -831,6 +945,7 @@ rt_make_string(
 {
 	size_t len;
 	uint32_t hash;
+	struct rt_string *rts;
 
 	len = strlen(data) + 1;
 	hash = 0;
@@ -860,10 +975,14 @@ rt_make_string_with_hash(
 		return false;
 	}
 
+	/*
+	 * Here, this thread is "in-fligth" and GC won't be executed
+	 * in other threads.
+	 */
+
 	/* Setup a value. */
 	val->type = NOCT_VALUE_STRING;
 	val->val.str = rts;
-	val->val.str->hash = hash;
 
 	return true;
 }
@@ -912,56 +1031,9 @@ rt_string_hash_and_len(
 	}
 }
 
-
-
 /*
  * Arrays and Dictionaries
  */
-
-#if !defined(NOCT_USE_MULTITHREAD)
-
-#define ACQUIRE_OBJ(obj, real_obj)							\
-	/* Get the newer reference. */							\
-	real_obj = (obj);								\
-	while (real_obj->newer != NULL)							\
-		real_obj = real_obj->newer;
-
-#define RELEASE_OBJ(real_obj)
-
-#else
-
-#define ACQUIRE_OBJ(obj, real_obj)								\
-	/* Acquire the array. */								\
-	while (1) {										\
-		/* Get the newer reference. */							\
-		real_obj = atomic_load_relaxed_ptr((void**)&(obj));				\
-		while (atomic_load_relaxed_ptr((void **)&real_obj->newer) != NULL)		\
-			real_obj = atomic_load_relaxed_ptr((void **)&real_obj->newer);		\
-												\
-		/* Try acquire. */								\
-		int old = atomic_fetch_add_acquire(&real_obj->counter, 1);			\
-		if (old == 0 && atomic_load_acquire_ptr((void **)&real_obj->newer) == NULL)	\
-			break;									\
-												\
-		/* Failed, release. */								\
-		atomic_fetch_sub_release(&real_obj->counter, 1);				\
-												\
-		/* Allow GC in other threads because they may cause GC. */			\
-		while (1) {									\
-			atomic_fetch_sub_release(&env->vm->in_flight_counter, 1);		\
-			while (atomic_load_acquire(&env->vm->gc_stw_counter) > 0)		\
-				cpu_relax();							\
-			atomic_fetch_add_acquire(&env->vm->in_flight_counter, 1);		\
-			if (atomic_load_acquire(&env->vm->gc_stw_counter) == 0)			\
-				break;								\
-		}										\
-	}
-
-#define RELEASE_OBJ(real_obj)									\
-	/* Failed, release. */									\
-	atomic_fetch_sub_release(&real_obj->counter, 1);
-
-#endif
 
 /*
  * Make an empty array.
@@ -980,6 +1052,11 @@ rt_make_empty_array(
 		rt_out_of_memory(env);
 		return false;
 	}
+
+	/*
+	 * Here, this thread is "in-fligth" and GC won't be executed
+	 * in other threads.
+	 */
 
 	/* Setup a value. */
 	val->type = NOCT_VALUE_ARRAY;
@@ -1005,6 +1082,7 @@ rt_get_array_size(
 	assert(arr != NULL);
 	assert(size != NULL);
 
+	/* Acquire the object with GC cooperation. */
 	ACQUIRE_OBJ(arr, real_arr);
 
 	/* Get the size. */
@@ -1234,6 +1312,12 @@ rt_make_array_copy(
 		return false;
 	}
 
+	/*
+	 * In this section, it is guaranteed that GC is not executed
+	 * in other threads because this thread is "in-flight" and
+	 * a GC execution waits for all threads become not in-flight.
+	 */
+
 	/* Copy the array with write-barrier. */
 	(*dst)->size = src_real->size;
 	for (i = 0; i < src_real->size; i++) {
@@ -1245,6 +1329,7 @@ rt_make_array_copy(
 	}
 
 	RELEASE_OBJ(src_real);
+
 	return true;
 }
 
@@ -1266,6 +1351,11 @@ rt_make_empty_dict(
 		rt_out_of_memory(env);
 		return false;
 	}
+
+	/*
+	 * Here, this thread is "in-fligth" and GC won't be executed
+	 * in other threads.
+	 */
 
 	/* Setup a value. */
 	val->type = NOCT_VALUE_DICT;
@@ -1297,6 +1387,7 @@ rt_get_dict_size(
 	*size = (uint32_t)real_dict->size;
 
 	RELEASE_OBJ(real_dict);
+
 	return true;
 }
 
@@ -1394,7 +1485,9 @@ rt_get_dict_key_by_index(
 	}
 
 	assert(NEVER_COME_HERE);
+
 	RELEASE_OBJ(real_dict);
+
 	return false;
 }
 
@@ -1440,7 +1533,9 @@ rt_get_dict_value_by_index(
 	}
 
 	assert(NEVER_COME_HERE);
+
 	RELEASE_OBJ(real_dict);
+
 	return true;
 }
 
@@ -1454,8 +1549,11 @@ rt_get_dict_elem(
 	const char *key,
 	struct rt_value *val)
 {
+	struct rt_dict *real_dict;
 	size_t len;
 	uint32_t hash;
+
+	/* This function is a wrapper and doesn't need a acquire/release. */
 
 	len = strlen(key) + 1;
 	hash = rt_string_hash(key);
@@ -1513,7 +1611,9 @@ rt_get_dict_elem_with_hash(
 
 	/* Not found. */
 	RELEASE_OBJ(real_dict);
+
 	rt_error(env, N_TR("Dictionary key \"%s\" not found."), key);
+
 	return false;
 }
 
@@ -1529,6 +1629,8 @@ rt_set_dict_elem(
 {
 	size_t len;
 	uint32_t hash;
+
+	/* This function is a wrapper and doesn't need a acquire/release. */
 
 	len = strlen(key) + 1;	/* Including NUL. */
 	hash = rt_string_hash(key);
@@ -1580,7 +1682,15 @@ rt_set_dict_elem_with_hash(
 		    strcmp(real_dict->key[i].val.str->data, key) == 0) {
 			/* Found, replace the value. */
 			real_dict->value[i] = *val;
+
+			/* GC: Write barrier for the remember set. */
+			if (val->type == NOCT_VALUE_STRING ||
+			    val->type == NOCT_VALUE_ARRAY ||
+			    val->type == NOCT_VALUE_DICT)
+				rt_gc_dict_write_barrier(env, real_dict, val);
+
 			RELEASE_OBJ(real_dict);
+
 			return true;
 		}
 	}
@@ -1614,22 +1724,28 @@ rt_set_dict_elem_with_hash(
 				RELEASE_OBJ(real_dict);
 				return false;
 			}
+
 			append_dict->value[i] = *val;
+
+			/* GC: Write barrier for the remember set. */
+			if (val->type == NOCT_VALUE_STRING ||
+			    val->type == NOCT_VALUE_ARRAY ||
+			    val->type == NOCT_VALUE_DICT) {
+				rt_gc_dict_write_barrier(env, append_dict, &append_dict->key[i]);
+				rt_gc_dict_write_barrier(env, append_dict, val);
+			}
+
+			append_dict->size++;
 			break;
 		}
 	}
-	append_dict->size++;
 
-	/* GC: Write barrier for the remember set. */
-	if (val->type == NOCT_VALUE_STRING ||
-	    val->type == NOCT_VALUE_ARRAY ||
-	    val->type == NOCT_VALUE_DICT) {
-		rt_gc_dict_write_barrier(env, append_dict, &real_dict->key[real_dict->size]);
-		rt_gc_dict_write_barrier(env, append_dict, val);
-	}
-
-	/* Publication. (In case of expand, the new dictionaty will appear to other threads.) */
+	/*
+	 * Release real_dict, also do publication for append_dict.
+	 * In case of expand, the new dictionaty will appear to other threads.
+	 */
 	RELEASE_OBJ(real_dict);
+
 	return true;
 }
 
@@ -1703,6 +1819,8 @@ rt_remove_dict_elem(
 	size_t len;
 	uint32_t hash;
 
+	/* This function is a wrapper and doesn't need a acquire/release. */
+
 	len = strlen(key) + 1;	/* Including NUL. */
 	hash = rt_string_hash(key);
 	if (!rt_remove_dict_elem_with_hash(env, dict, key, len, hash))
@@ -1760,7 +1878,7 @@ rt_remove_dict_elem_with_hash(
 	}
 
 	/* Not found. */
-	RELEASE_OBJ(d);
+	RELEASE_OBJ(real_dict);
 	rt_error(env, N_TR("Dictionary key \"%s\" not found."), key);
 	return false;
 }
@@ -1774,21 +1892,27 @@ rt_make_dict_copy(
 	struct rt_dict **dst,
 	struct rt_dict *src)
 {
-	struct rt_dict *d, *src_real;
+	struct rt_dict *d, *real_d, *src_real;
 	int i;
 
 	assert(env != NULL);
 	assert(src != NULL);
 	assert(dst != NULL);
 
+	/* Acquire src. */
 	ACQUIRE_OBJ(src, src_real);
 
-	/* Make a dictionary */
+	/* Make a dictionary. */
 	d = rt_gc_alloc_dict(env, src_real->alloc_size);
 	if (d == NULL) {
 		RELEASE_OBJ(src_real);
 		return false;
 	}
+
+	/*
+	 * Here, this thread is "in-fligth" and GC won't be executed
+	 * in other threads.
+	 */
 
 	/* Copy the array with write-barrier. */
 	d->size = src_real->size;
@@ -1808,6 +1932,166 @@ rt_make_dict_copy(
 	RELEASE_OBJ(src_real);
 
 	*dst = d;
+
+	return true;
+}
+
+/*
+ * Merges a dictionary.
+ */
+bool
+rt_merge_dict(
+	struct rt_env *env,
+	struct rt_dict *dst,
+	struct rt_dict *src)
+{
+	struct rt_dict *real_src, *real_dst, *orig_real_dst, *new_dict;
+	const char *key;
+	uint32_t i, j, index, len, hash;
+	bool is_replaced;
+
+	/* Acquire 2 dictionaries. */
+	ACQUIRE_OBJ2(src, real_src, dst, real_dst);
+
+	/*
+	 * Save real_dst because it will be overwritten to a new one
+	 * when expanded, and we must do release to the original one.
+	 */
+	orig_real_dst = real_dst;
+
+	for (i = 0; i < real_src->alloc_size; i++) {
+		if (IS_DICT_KEY_REMOVED(real_src->key[i]) ||
+		    IS_DICT_KEY_EMPTY(real_src->key[i]))
+			continue;
+
+		len = real_src->key[i].val.str->len;
+		hash = real_src->key[i].val.str->hash;
+		key = real_src->key[i].val.str->data;
+
+		/* Search for the key to replace the value. */
+		index = hash & ((uint32_t)real_dst->alloc_size - 1);
+		is_replaced = false;
+		for (j = index;
+		     j != ((index - 1 + real_dst->alloc_size) & (real_dst->alloc_size - 1));
+		     j = (j + 1) & ((uint32_t)real_dst->alloc_size - 1)) {
+			if (IS_DICT_KEY_REMOVED(real_dst->key[j]) ||
+			    IS_DICT_KEY_EMPTY(real_dst->key[j]))
+				break;
+
+			/* Make a hash cache. */
+			if (real_dst->key[j].val.str->hash == 0)
+				real_dst->key[j].val.str->hash = rt_string_hash(real_dst->key[j].val.str->data);
+
+			if (real_dst->key[j].val.str->len == len &&
+			    real_dst->key[j].val.str->hash == hash &&
+			    strcmp(real_dst->key[j].val.str->data, key) == 0) {
+				/* Found, replace the value. */
+				real_dst->value[j] = real_src->value[i];
+
+				/* GC: Write barrier for the remember set. */
+				if (real_src->value[i].type == NOCT_VALUE_STRING ||
+				    real_src->value[i].type == NOCT_VALUE_ARRAY ||
+				    real_src->value[i].type == NOCT_VALUE_DICT) {
+					rt_gc_dict_write_barrier(env, real_dst, &real_dst->key[j]);
+					rt_gc_dict_write_barrier(env, real_dst, &real_dst->value[j]);
+				}
+
+				is_replaced = true;
+				break;
+			}
+		}
+		if (is_replaced)
+			continue;
+
+		/* Key doesn't exist. Add new one. */
+
+		/* Expand the size if 75% is used. */
+		if (real_dst->size >= real_dst->alloc_size / 4 * 3) {
+			/* Reallocate a dictionary. */
+			if (!rt_expand_dict(env, real_dst, &new_dict)) {
+				RELEASE_OBJ2(real_src, real_dst);
+				return false;
+			}
+			real_dst = new_dict;
+		}
+
+		/* Append. */
+		index = hash & ((uint32_t)real_dst->alloc_size - 1);
+		for (j = index;
+		     j != ((index - 1 + real_dst->alloc_size) & (real_dst->alloc_size - 1));
+		     j = (j + 1) & ((uint32_t)real_dst->alloc_size - 1)) {
+			if (IS_DICT_KEY_REMOVED(real_dst->key[j]) ||
+			    IS_DICT_KEY_EMPTY(real_dst->key[j])) {
+				/* Make a key value. */
+				if (!rt_make_string_with_hash(env, &real_dst->key[j], key, len, hash)) {
+					RELEASE_OBJ2(real_src, real_dst);
+					return false;
+				}
+				real_dst->value[j] = real_src->value[i];
+
+				/* GC: Write barrier for the remember set. */
+				if (real_src->value[i].type == NOCT_VALUE_STRING ||
+				    real_src->value[i].type == NOCT_VALUE_ARRAY ||
+				    real_src->value[i].type == NOCT_VALUE_DICT) {
+					rt_gc_dict_write_barrier(env, real_dst, &real_dst->key[j]);
+					rt_gc_dict_write_barrier(env, real_dst, &real_dst->value[j]);
+				}
+
+				break;
+			}
+		}
+		real_dst->size++;
+	}
+
+	/*
+	 * Release real_src and real_dst.
+	 * In case of expand, the new dictionaty will appear to other threads. (publication)
+	 */
+	RELEASE_OBJ2(real_src, orig_real_dst);
+
+	return true;
+}
+
+/*
+ * Sets the native pointers to a dictionary.
+ */
+bool
+rt_set_dict_native_pointer(
+	struct rt_env *env,
+	struct rt_dict *dict,
+	void *native_pointer,
+	void (*native_finalizer)(void *native_pointer))
+{
+	struct rt_dict *real_dict;
+
+	ACQUIRE_OBJ(dict, real_dict);
+
+	real_dict->native_pointer = native_pointer;
+	real_dict->native_finalizer = native_finalizer;
+
+	RELEASE_OBJ(real_dict);
+
+	return true;
+}
+
+/*
+ * Gets the native pointer from a dictionary.
+ */
+bool
+rt_get_dict_native_pointer(
+	struct rt_env *env,
+	struct rt_dict *dict,
+	void **native_pointer,
+	void (**native_finalizer)(void *native_pointer))
+{
+	struct rt_dict *real_dict;
+
+	ACQUIRE_OBJ(dict, real_dict);
+
+	*native_pointer = real_dict->native_pointer;
+	*native_finalizer = real_dict->native_finalizer;
+
+	RELEASE_OBJ(real_dict);
 
 	return true;
 }
@@ -2110,7 +2394,7 @@ rt_expand_global(
 }
 
 /*
- * FFI Pin
+ * Native API Pin
  */
 
 /*
