@@ -868,8 +868,8 @@ static struct const_int_item const_int_item[] = {
 	{"BUTTON_LAYERS",		S3_BUTTON_LAYERS},
 	{"CHOOSEBOX_COUNT",		S3_CHOOSEBOX_COUNT},
 	{"CLICK_FRAMES",		S3_CLICK_FRAMES},
-	{"BASIC_LAYERS",		S3_CH_BASIC_LAYERS},
-	{"ALL_LAYERS",			S3_CH_ALL_LAYERS},
+	{"CH_BASIC_LAYERS",		S3_CH_BASIC_LAYERS},
+	{"CH_ALL_LAYERS",		S3_CH_ALL_LAYERS},
 	{"KIRAKIRA_FRAMES",		S3_KIRAKIRA_FRAMES},
 
 	/* Character Position (chpos) */
@@ -931,10 +931,6 @@ static struct const_int_item const_int_item[] = {
 	{"FONT_SELECT4",		S3_FONT_SELECT4},
 	{"FONT_COUNT",			S3_FONT_COUNT},
 	{"EMOJI_COUNT",			S3_EMOJI_COUNT},
-
-	/* Blend */
-	{"BLEND_ALPHA",			S3_BLEND_ALPHA},
-	{"BLEND_ADD",			S3_BLEND_ADD},	{"BLEND_SUB",			S3_BLEND_SUB},
 
 	/* Call Stack */
 	{"CALL_STACK_MAX",		S3_CALL_STACK_MAX},
@@ -5364,7 +5360,7 @@ Suika_renderImage3d(
 			break;
 		if (!pf_get_call_arg_int("alpha", &alpha, true, 0))
 			break;
-		if (!pf_get_call_arg_int("beldn", &blend, true, 0))
+		if (!pf_get_call_arg_int("blend", &blend, true, 0))
 			break;
 
 		img = s3i_int_to_image(image);

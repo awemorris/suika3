@@ -4872,3 +4872,251 @@ Execute Text-to-Speech (TTS) for the given message.
 ### Return
 
 No return.
+
+---
+
+## Constanss
+
+### Paths
+
+| Name                          | Description                          |
+|-------------------------------|--------------------------------------|
+| Suika.PATH_START_TAG          | "start.novel"                        |
+| Suika.PATH_CONFIG             | "config.ini"                         |
+| Suika.PATH_SYSMENU_GUI        | "system/sysmenu/sysmenu.gui"         |
+| Suika.PATH_SAVE_GUI           | "system/save/save.gui"               |
+| Suika.PATH_LOAD_GUI           | "system/load/load.gui"               |
+| Suika.PATH_HISTORY_GUI        | "system/history/history.gui"         |
+| Suika.PATH_CONFIG_GUI         | "system/config/config.gui"           |
+
+### Layers
+
+| Name                          | Description                          |
+|-------------------------------|--------------------------------------|
+| Suika.LAYER_BG                | Background                           |
+| Suika.LAYER_BG_FO             | Background (Fadeout)                 |
+| Suika.LAYER_BG2               | Background 2                         |
+| Suika.LAYER_EFB1              | Effect Back1                         |
+| Suika.LAYER_EFB2              | Effect Back2                         |
+| Suika.LAYER_EFB3              | Effect Back3                         |
+| Suika.LAYER_EFB4              | Effect Back4                         |
+| Suika.LAYER_CHB               | Chracter Back                        |
+| Suika.LAYER_CHB_EYE           | Chracter Back (Eyes)                 |
+| Suika.LAYER_CHB_LIP           | Chracter Back (Lips)                 |
+| Suika.LAYER_CHB_FO            | Chracter Back (Fadeout)              |
+| Suika.LAYER_CHL               | Character Left                       |
+| Suika.LAYER_CHL_EYE           | Character Left (Eyes)                |
+| Suika.LAYER_CHL_LIP           | Character Left (Lips)                |
+| Suika.LAYER_CHL_FO            | Character Left (Fadeout)             |
+| Suika.LAYER_CHLC              | Character Left Center                |
+| Suika.LAYER_CHLC_EYE          | Character Left Center (Eyes)         |
+| Suika.LAYER_CHLC_LIP          | Character Left Center (Lips)         |
+| Suika.LAYER_CHLC_FO           | Character Left Center (Fadeout)      |
+| Suika.LAYER_CHR               | Character Right                      |
+| Suika.LAYER_CHR_EYE           | Character Right (Eyes)               |
+| Suika.LAYER_CHR_LIP           | Character Right (Lips)               |
+| Suika.LAYER_CHR_FO            | Character Right (Fadeout)            |
+| Suika.LAYER_CHRC              | Character Right Center               |
+| Suika.LAYER_CHRC_EYE          | Character Right Center (Eyes)        |
+| Suika.LAYER_CHRC_LIP          | Character Right Center (Lips)        |
+| Suika.LAYER_CHRC_FO           | Character Right Center (Fadeout)     |
+| Suika.LAYER_CHC               | Character Center                     |
+| Suika.LAYER_CHC_EYE           | Character Center (Eyes)              |
+| Suika.LAYER_CHC_LIP           | Character Center (Lips)              |
+| Suika.LAYER_CHC_FO            | Character Center (Fadeout)           |
+| Suika.LAYER_EFF1              | Effect Front 1                       |
+| Suika.LAYER_EFF2              | Effect Front 2                       |
+| Suika.LAYER_EFF3              | Effect Front 3                       |
+| Suika.LAYER_EFF4              | Effect Front 4                       |
+| Suika.LAYER_MSGBOX            | Message Box                          |
+| Suika.LAYER_NAMEBOX           | Name Box                             |
+| Suika.LAYER_CHOOSE1_IDLE      | Choose Box 1 (Idle)                  |
+| Suika.LAYER_CHOOSE1_HOVER     | Choose Box 1 (Hover)                 |
+| Suika.LAYER_CHOOSE2_IDLE      | Choose Box 2 (Idle)                  |
+| Suika.LAYER_CHOOSE2_HOVER     | Choose Box 2 (Hover)                 |
+| Suika.LAYER_CHOOSE3_IDLE      | Choose Box 3 (Idle)                  |
+| Suika.LAYER_CHOOSE3_HOVER     | Choose Box 3 (Hover)                 |
+| Suika.LAYER_CHOOSE4_IDLE      | Choose Box 4 (Idle)                  |
+| Suika.LAYER_CHOOSE4_HOVER     | Choose Box 4 (Hover)                 |
+| Suika.LAYER_CHOOSE5_IDLE      | Choose Box 5 (Idle)                  |
+| Suika.LAYER_CHOOSE5_HOVER     | Choose Box 5 (Hover)                 |
+| Suika.LAYER_CHOOSE6_IDLE      | Choose Box 6 (Idle)                  |
+| Suika.LAYER_CHOOSE6_HOVER     | Choose Box 6 (Hover)                 |
+| Suika.LAYER_CHOOSE7_IDLE      | Choose Box 7 (Idle)                  |
+| Suika.LAYER_CHOOSE7_HOVER     | Choose Box 7 (Hover)                 |
+| Suika.LAYER_CHOOSE8_IDLE      | Choose Box 8 (Idle)                  |
+| Suika.LAYER_CHOOSE8_HOVER     | Choose Box 8 (Hover)                 |
+| Suika.LAYER_CHF               | Character Face                       |
+| Suika.LAYER_CHF_EYE           | Character Face (Eyes)                |
+| Suika.LAYER_CHF_LIP           | Character Face (Lips)                |
+| Suika.LAYER_CHF_FO            | Character Face (Fadeout)             |
+| Suika.LAYER_CLICK             | Click Animation                      |
+| Suika.LAYER_AUTO              | Auto Mode Banner                     |
+| Suika.LAYER_SKIP              | Skip Mode Banner                     |
+| Suika.LAYER_TEXT1             | Text Box 1                           |
+| Suika.LAYER_TEXT2             | Text Box 2                           |
+| Suika.LAYER_TEXT3             | Text Box 3                           |
+| Suika.LAYER_TEXT4             | Text Box 4                           |
+| Suika.LAYER_TEXT5             | Text Box 5                           |
+| Suika.LAYER_TEXT6             | Text Box 6                           |
+| Suika.LAYER_TEXT7             | Text Box 7                           |
+| Suika.LAYER_TEXT8             | Text Box 8                           |
+| Suika.LAYER_GUI_BTN1          | GUI Button 1                         |
+| Suika.LAYER_GUI_BTN2          | GUI Button 2                         |
+| Suika.LAYER_GUI_BTN3          | GUI Button 3                         |
+| Suika.LAYER_GUI_BTN4          | GUI Button 4                         |
+| Suika.LAYER_GUI_BTN5          | GUI Button 5                         |
+| Suika.LAYER_GUI_BTN6          | GUI Button 6                         |
+| Suika.LAYER_GUI_BTN7          | GUI Button 7                         |
+| Suika.LAYER_GUI_BTN8          | GUI Button 8                         |
+| Suika.LAYER_GUI_BTN9          | GUI Button 9                         |
+| Suika.LAYER_GUI_BTN10         | GUI Button 10                        |
+| Suika.LAYER_GUI_BTN11         | GUI Button 11                        |
+| Suika.LAYER_GUI_BTN12         | GUI Button 12                        |
+| Suika.LAYER_GUI_BTN13         | GUI Button 13                        |
+| Suika.LAYER_GUI_BTN14         | GUI Button 14                        |
+| Suika.LAYER_GUI_BTN15         | GUI Button 15                        |
+| Suika.LAYER_GUI_BTN16         | GUI Button 16                        |
+| Suika.LAYER_GUI_BTN17         | GUI Button 17                        |
+| Suika.LAYER_GUI_BTN18         | GUI Button 18                        |
+| Suika.LAYER_GUI_BTN19         | GUI Button 19                        |
+| Suika.LAYER_GUI_BTN20         | GUI Button 20                        |
+| Suika.LAYER_GUI_BTN21         | GUI Button 21                        |
+| Suika.LAYER_GUI_BTN22         | GUI Button 22                        |
+| Suika.LAYER_GUI_BTN23         | GUI Button 23                        |
+| Suika.LAYER_GUI_BTN24         | GUI Button 24                        |
+| Suika.LAYER_GUI_BTN25         | GUI Button 25                        |
+| Suika.LAYER_GUI_BTN26         | GUI Button 26                        |
+| Suika.LAYER_GUI_BTN27         | GUI Button 27                        |
+| Suika.LAYER_GUI_BTN28         | GUI Button 28                        |
+| Suika.LAYER_GUI_BTN29         | GUI Button 29                        |
+| Suika.LAYER_GUI_BTN30         | GUI Button 30                        |
+| Suika.LAYER_GUI_BTN31         | GUI Button 31                        |
+| Suika.LAYER_GUI_BTN32         | GUI Button 32                        |
+
+
+| Name                          | Description                          |
+|-------------------------------|--------------------------------------|
+| Suika.STAGE_LAYERS            | All Layer Count                      |
+| Suika.TEXT_LAYERS             | Text Layer Count                     |
+| Suika.EFFECT_LAYERS           | Effect Layer Count                   |
+| Suika.BUTTON_LAYERS           | GUI Button Layer Count               |
+| Suika.CHOOSEBOX_COUNT         | Choose Box Count                     |
+| Suika.CLICK_FRAMES            | Click Animation Frame Count          |
+| Suika.CH_BASIC_LAYERS         | Character Basic Layer Count (excluding CHF) |
+| Suika.CH_ALL_LAYERS           | Character All Layer Count (including CHF)   |
+| Suika.KIRAKIRA_FRAMES         | Kirakira Frame Count                 |
+
+### Character Position
+
+| Name                          | Description                          |
+|-------------------------------|--------------------------------------|
+| Suika.CH_BACK                 | Back                                 | 
+| Suika.CH_LEFT                 | Left                                 |
+| Suika.CH_LEFT_CENTER          | Left Center                          |
+| Suika.CH_RIGHT                | Right                                |
+| Suika.CH_RIGHT_CENTER         | Right Center                         |
+| Suika.CH_CENTER               | Center                               |
+| Suika.CH_FACE                 | Face                                 |
+
+### Fading Method
+
+| Name                          | Description                          |
+|-------------------------------|--------------------------------------|
+| Suika.FADE_INVALID            | Invalid                              |
+| Suika.FADE_NORMAL             | Normal Alpha Blending                |
+| Suika.FADE_RULE               | Rule (1-bit universal transition)    |
+| Suika.FADE_MELT               | Melt (8-bit universal transition)    |
+
+### Blend Type
+
+| Name                          | Description                          |
+|-------------------------------|--------------------------------------|
+| Suika.BLEND_ALPHA             | Alpha Blending                       |
+| Suika.BLEND_ADD               | Add                                  |
+| Suika.BLEND_SUB               | Sub                                  |
+
+### Fade Descriptor
+
+| Name                          | Description                          |
+|-------------------------------|--------------------------------------|
+| Suika.FADE_DESC_BG            | Background                           |
+| Suika.FADE_DESC_CHB           | Character Back                       |
+| Suika.FADE_DESC_CHL           | Character Left                       |
+| Suika.FADE_DESC_CHLC          | Character Left Center                |
+| Suika.FADE_DESC_CHR           | Character Right                      |
+| Suika.FADE_DESC_CHRC          | Character Right Center               |
+| Suika.FADE_DESC_CHC           | Character Center                     |
+| Suika.FADE_DESC_CHF           | Character Face                       |
+| Suika.FADE_DESC_COUNT         | Count                                |
+
+### Mixer
+
+| Name                          | Description                          |
+|-------------------------------|--------------------------------------|
+| Suika.MIXER_TRACKS            | Track Count                          |
+| Suika.TRACK_BGM               | BGM Track                            |
+| Suika.TRACK_VOICE             | Voice Track                          |
+| Suika.TRACK_SE                | SE Track                             |
+| Suika.TRACK_SYS               | System SE Track                      |
+
+### Character Voice Slots
+
+| Name                          | Description                          |
+|-------------------------------|--------------------------------------|
+| Suika.CH_VOL_SLOTS            | Character Volume Slot Count          |
+| Suika.CH_VOL_SLOT_DEFAULT     | Slot Index for Unknown Character     |
+
+### Character Map
+
+| Name                          | Description                          |
+|-------------------------------|--------------------------------------|
+| Suika.CHARACTER_MAP_COUNT     | Character Map Count                  |
+
+
+### Anime
+
+| Name                          | Description                          |
+|-------------------------------|--------------------------------------|
+| Suika.REG_ANIME_COUNT         | Registered Anime Count               |
+
+| Name                          | Description                          |
+|-------------------------------|--------------------------------------|
+| Suika.ANIME_ACCEL_INVALID     | Invalid Acceleration Value           |
+| Suika.ANIME_ACCEL_UNIFORM     | Uniform                              |
+| Suika.ANIME_ACCEL_ACCEL       | Accelerated                          |
+| Suika.ANIME_ACCEL_DEACCEL     | Deaccelerated                        |
+| Suika.ANIME_ACCEL_SMOOTHSTEP  | Smoothstep                           |
+| Suika.ANIME_ACCEL_INVSMOOTHSTEP | Inverse Smoothstep                 |
+
+### Font
+
+| Name                          | Description                          |
+|-------------------------------|--------------------------------------|
+| Suika.FONT_SELECT1            | Font 1                               |
+| Suika.FONT_SELECT2            | Font 2                               |
+| Suika.FONT_SELECT3            | Font 3                               |
+| Suika.FONT_SELECT4            | Font 4                               |
+| Suika.FONT_COUNT              | Font Count                           |
+| Suika.EMOJI_COUNT             | Emoji Count                          |
+
+### Call Stack
+
+| Name                          | Description                          |
+|-------------------------------|--------------------------------------|
+| Suika.CALL_STACK_MAX          | Call Stack Max Depth                 |
+
+
+### Call Arguments
+
+| Name                          | Description                          |
+|-------------------------------|--------------------------------------|
+| Suika.CALL_ARGS               | Call Argument Max Count              |
+
+### Save
+
+| Name                          | Description                          |
+|-------------------------------|--------------------------------------|
+| Suika.ALL_SAVE_SLOTS          | Save Slot Count                      |
+| Suika.NORMAL_SAVE_SLOTS       | Normal Save Slots                    |
+| Suika.QUICK_SAVE_INDEX        | Quick Save Slot Index                |
