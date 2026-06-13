@@ -58,6 +58,9 @@ open_portal_and_set_work_dir(int argc, char *argv[])
 	guint sub_id;
 	gboolean ok = FALSE;
 
+	(void)argc;
+	(void)argv;
+
 	conn = g_bus_get_sync(G_BUS_TYPE_SESSION, NULL, &error);
 	if (conn == NULL) {
 		if (error) g_error_free(error);
@@ -165,6 +168,14 @@ on_response(
 	GVariant *results;
 	GVariant *uris;
 	const char *uri;
+
+	(void)conn;
+	(void)sender_name;
+	(void)object_path;
+	(void)interface_name;
+	(void)signal_name;
+	(void)parameters;
+	(void)user_data;
 
 	g_variant_get(parameters, "(u@a{sv})", &response, &results);
 

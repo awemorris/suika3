@@ -97,7 +97,6 @@ static void *nursery_alloc(struct rt_env *env, size_t size);
 static void *graduate_alloc(struct rt_env *env, size_t size);
 static void *rt_gc_tenure_alloc(struct rt_env *env, size_t size);
 static void rt_gc_tenure_free(struct rt_env *env, void *p);
-static void rt_gc_multithread_call_wrapper(struct rt_env *env, void (*gc)(struct rt_env *env));
 
 /*
  * Initializes the garbage collector and allocate memory regions.

@@ -100,7 +100,7 @@ static Pixmap icon_mask = BadAlloc;
 static Atom delete_message = BadAlloc;
 static XImage *ximage;
 
-/* Image. */
+/* Image */
 static struct hal_image *back_image;
 static uint8_t *low_bpp_pixels;
 
@@ -123,7 +123,9 @@ static bool is_gst_skippable;
 /* Icon */
 extern char *icon_xpm[35];
 
-/* Images. */
+/* Callback */
+struct hal_callback hal_callback;
+HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
 
 /* forward declaration */
 static void init_locale(void);
@@ -162,7 +164,7 @@ static void event_resize(XEvent *event);
  * Main
  */
 int
-main(
+hal_main(
 	int argc,
 	char *argv[])
 {
@@ -171,14 +173,14 @@ main(
 		return 1;
 
 	/* Do a start callback. */
-	if (!hal_callback_on_event_start())
+	if (!hal_callback.on_start())
 		return 1;
 
 	/* Run game loop. */
 	run_game_loop();
 
 	/* Do a stop callback.. */
-	hal_callback_on_event_stop();
+	hal_callback.on_stop();
 
 	/* Cleanup HAL. */
 	cleanup_hal();
@@ -233,7 +235,7 @@ static bool init_hal(int argc, char *argv[])
 		return false;
 
 	/* Do a boot callback. */
-	if (!hal_callback_on_event_boot(&window_title, &screen_width, &screen_height))
+	if (!hal_bootstrap_ptr(&window_title, &screen_width, &screen_height, &hal_callback))
 		return false;
 
 	/* Initialize the sound HAL. */
@@ -881,7 +883,8 @@ run_frame(void)
 		}
 
 		/* Call a frame event. */
-		cont = hal_callback_on_event_frame();
+		cont = hal_callback.on_update();
+		hal_callback.on_render();
 	}
 
 	/* Flip. */
@@ -1092,7 +1095,7 @@ event_key_press(
 		return;
 
 	/* Call an event handler. */
-	hal_callback_on_event_key_press(key);
+	hal_callback.on_key_press(key);
 }
 
 /* Process a KeyRelease event. */
@@ -1120,7 +1123,7 @@ event_key_release(
 		return;
 
 	/* Call an event handler. */
-	hal_callback_on_event_key_release(key);
+	hal_callback.on_key_release(key);
 }
 
 /* Convert 'KeySym' to 'enum key_code'. */
@@ -1284,24 +1287,24 @@ event_button_press(
 	/* See the button type and dispatch. */
 	switch (event->xbutton.button) {
 	case Button1:
-		hal_callback_on_event_mouse_press(
+		hal_callback.on_mouse_press(
 			HAL_MOUSE_LEFT,
 			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
 			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
 		break;
 	case Button3:
-		hal_callback_on_event_mouse_press(
+		hal_callback.on_mouse_press(
 			HAL_MOUSE_RIGHT,
 			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
 			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
 		break;
 	case Button4:
-		hal_callback_on_event_key_press(HAL_KEY_UP);
-		hal_callback_on_event_key_release(HAL_KEY_UP);
+		hal_callback.on_key_press(HAL_KEY_UP);
+		hal_callback.on_key_release(HAL_KEY_UP);
 		break;
 	case Button5:
-		hal_callback_on_event_key_press(HAL_KEY_DOWN);
-		hal_callback_on_event_key_release(HAL_KEY_DOWN);
+		hal_callback.on_key_press(HAL_KEY_DOWN);
+		hal_callback.on_key_release(HAL_KEY_DOWN);
 		break;
 	default:
 		break;
@@ -1316,13 +1319,13 @@ event_button_release(
 	/* See the button type and dispatch. */
 	switch (event->xbutton.button) {
 	case Button1:
-		hal_callback_on_event_mouse_release(
+		hal_callback.on_mouse_release(
 			HAL_MOUSE_LEFT,
 			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
 			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
 		break;
 	case Button3:
-		hal_callback_on_event_mouse_release(
+		hal_callback.on_mouse_release(
 			HAL_MOUSE_RIGHT,
 			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
 			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
@@ -1334,7 +1337,7 @@ event_button_release(
 static void event_motion_notify(XEvent *event)
 {
 	/* Call an event handler. */
-	hal_callback_on_event_mouse_move(
+	hal_callback.on_mouse_move(
 		(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
 		(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
 }

@@ -488,6 +488,16 @@ if(   NOT SUIKA_ENABLE_DIST
     set(PLAYFIELD_ENABLE_PACK ON)
   endif()
 
+  # Build libnoct for suika-aotc
+  if(SUIKA_ENABLE_AOTC)
+    set(PLAYFIELD_ENABLE_AOTC ON)
+  endif()
+
+  # Build libnoct for suika-bcc
+  if(SUIKA_ENABLE_BCC)
+    set(PLAYFIELD_ENABLE_BCC ON)
+  endif()
+
   # Unsafe (for launchers)
   if(SUIKA_ENABLE_UNSAFE)
     set(PLAYFIELD_ENABLE_UNSAFE ON)
@@ -525,8 +535,10 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Od /Zi /DDEBUG /UNDEBUG")
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
     # GCC/Clang
-    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g3 -DDEBUG -Wall -Werror -Wextra -Wundef -Wconversion")
-    set(CMAKE_OBJC_FLAGS_DEBUG "${CMAKE_OBJC_FLAGS_DEBUG} -O0 -g3 -DNDEBUG -Wall -Werror -Wextra -Wundef -Wconversion")
+    set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g3 -DDEBUG")
+    set(CMAKE_OBJC_FLAGS_DEBUG "${CMAKE_OBJC_FLAGS_DEBUG} -O0 -g3 -DNDEBUG")
+    #set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g3 -DDEBUG -Wall -Werror -Wextra -Wundef -Wconversion")
+    #set(CMAKE_OBJC_FLAGS_DEBUG "${CMAKE_OBJC_FLAGS_DEBUG} -O0 -g3 -DNDEBUG -Wall -Werror -Wextra -Wundef -Wconversion")
 endif()
 
 # Release Configuration

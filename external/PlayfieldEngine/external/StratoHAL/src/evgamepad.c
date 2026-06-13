@@ -50,6 +50,8 @@
 
 static int fd = -1;
 
+extern struct hal_callback hal_callback;
+
 static bool is_gamepad(int fd);
 static void on_press_button(int button);
 static void on_release_button(int button);

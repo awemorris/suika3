@@ -945,7 +945,6 @@ rt_make_string(
 {
 	size_t len;
 	uint32_t hash;
-	struct rt_string *rts;
 
 	len = strlen(data) + 1;
 	hash = 0;
@@ -1549,7 +1548,6 @@ rt_get_dict_elem(
 	const char *key,
 	struct rt_value *val)
 {
-	struct rt_dict *real_dict;
 	size_t len;
 	uint32_t hash;
 
@@ -1892,7 +1890,7 @@ rt_make_dict_copy(
 	struct rt_dict **dst,
 	struct rt_dict *src)
 {
-	struct rt_dict *d, *real_d, *src_real;
+	struct rt_dict *d, *src_real;
 	int i;
 
 	assert(env != NULL);
@@ -1964,7 +1962,7 @@ rt_merge_dict(
 		    IS_DICT_KEY_EMPTY(real_src->key[i]))
 			continue;
 
-		len = real_src->key[i].val.str->len;
+		len = (uint32_t)real_src->key[i].val.str->len;
 		hash = real_src->key[i].val.str->hash;
 		key = real_src->key[i].val.str->data;
 
@@ -2049,6 +2047,8 @@ rt_merge_dict(
 	 */
 	RELEASE_OBJ2(real_src, orig_real_dst);
 
+	UNUSED_PARAMETER(orig_real_dst);
+
 	return true;
 }
 
@@ -2063,6 +2063,8 @@ rt_set_dict_native_pointer(
 	void (*native_finalizer)(void *native_pointer))
 {
 	struct rt_dict *real_dict;
+
+	UNUSED_PARAMETER(env);
 
 	ACQUIRE_OBJ(dict, real_dict);
 
@@ -2085,6 +2087,8 @@ rt_get_dict_native_pointer(
 	void (**native_finalizer)(void *native_pointer))
 {
 	struct rt_dict *real_dict;
+
+	UNUSED_PARAMETER(env);
 
 	ACQUIRE_OBJ(dict, real_dict);
 

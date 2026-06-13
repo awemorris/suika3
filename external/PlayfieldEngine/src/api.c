@@ -141,7 +141,7 @@ pf_load_texture(
 	    strcmp(ext, ".JPG") == 0 ||
 	    strcmp(ext, ".jpeg") == 0 ||
 	    strcmp(ext, ".JPEG") == 0) {
-		if (!hal_create_image_with_webp((const uint8_t *)data, size, &tex_tbl[index].img)) {
+		if (!hal_create_image_with_jpeg((const uint8_t *)data, size, &tex_tbl[index].img)) {
 			hal_log_error(PF_TR("Cannot load an image \"%s\"."), fname);
 			return false;
 		}
