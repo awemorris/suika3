@@ -50,7 +50,7 @@
 #define TAG_NAME_MAX		128
 #define PROP_NAME_MAX		128
 #define PROP_VALUE_MAX		4096
-#define TAG_MAX			128
+#define TAG_MAX			(32 * 1024)
 #define STACK_MAX		128
 #endif
 
