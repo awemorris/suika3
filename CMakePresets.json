@@ -49,6 +49,28 @@
             }
         },
         {
+            "name":           "windows-vs2026-arm64",
+            "displayName":    "VS2026 arm64 Release",
+            "generator":      "Visual Studio 18 2026",
+            "architecture":   "arm64",
+            "toolset":        "v145",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "SUIKA_TARGET_WINDOWS":         "ON",
+                "SUIKA_ENABLE_JIT":             "ON",
+                "SUIKA_ENABLE_I18N":            "ON",
+                "SUIKA_ENABLE_PACK":            "ON",
+                "SUIKA_ENABLE_BCC":             "ON",
+                "SUIKA_ENABLE_AOTC":            "ON",
+                "SUIKA_ENABLE_WEBSERVER":       "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
             "name":           "windows-vs2026-x64-pdb",
             "displayName":    "VS2026 x64 Release",
             "generator":      "Visual Studio 18 2026",
@@ -68,31 +90,6 @@
                 "CMAKE_CXX_FLAGS_RELEASE":             "/O2 /Zi",
                 "CMAKE_EXE_LINKER_FLAGS_RELEASE":      "/DEBUG",
                 "CMAKE_SHARED_LINKER_FLAGS_RELEASE":   "/DEBUG"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
-            "name":           "windows-vs2026-arm64",
-            "displayName":    "VS2026 arm64 Release",
-            "generator":      "Visual Studio 18 2026",
-            "architecture":   "arm64",
-            "toolset":        "v145",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_CONFIGURATION_TYPES":    "Release",
-                "CMAKE_BUILD_TYPE":             "Release",
-                "CMAKE_MSVC_RUNTIME_LIBRARY":   "MultiThreaded$<$<CONFIG:Debug>:Debug>",
-                "SUIKA_TARGET_WINDOWS":         "ON",
-                "SUIKA_ENABLE_JIT":             "ON",
-                "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":             "ON",
-                "SUIKA_ENABLE_AOTC":            "ON",
-                "SUIKA_ENABLE_WEBSERVER":       "ON"
             },
             "condition": {
                 "type": "equals",
@@ -124,7 +121,7 @@
             }
         },
         {
-            "name":           "windows-vs2026-console-x64",
+            "name":           "windows-vs2026-x64-console",
             "displayName":    "VS2026 MSVC x64 Console Release",
             "generator":      "Visual Studio 18 2026",
             "architecture":   "x64",
@@ -1056,8 +1053,8 @@
 	    "configuration":   "Release"
         },
         {
-            "name": "windows-vs2026-console-x64",
-            "configurePreset": "windows-vs2026-console-x64",
+            "name": "windows-vs2026-x64-console",
+            "configurePreset": "windows-vs2026-x64-console",
 	    "configuration":   "Release"
         },
         {
