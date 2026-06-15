@@ -61,6 +61,7 @@ bool s3i_tag_load(void *p);
 bool s3i_tag_move(void *p);
 bool s3i_tag_pencil(void *p);
 bool s3i_tag_returnmacro(void *p);
+bool s3i_tag_se(void *p);
 bool s3i_tag_set(void *p);
 bool s3i_tag_text(void *p);
 bool s3i_tag_video(void *p);
@@ -92,6 +93,7 @@ static struct tag_func tag_func[] = {
 	{"Tag_move",		s3i_tag_move},
 	{"Tag_pencil",		s3i_tag_pencil},
 	{"Tag_returnmacro",	s3i_tag_returnmacro},
+	{"Tag_se",		s3i_tag_se},
 	{"Tag_set",		s3i_tag_set},
 	{"Tag_text",		s3i_tag_text},
 	{"Tag_video",		s3i_tag_video},
