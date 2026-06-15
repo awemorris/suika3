@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  build-windows-vs2022:
+  build-windows-vs2026:
     if: |
       github.event_name != 'push' ||
       !contains(github.event.head_commit.message, '[docs]')
@@ -22,25 +22,25 @@ jobs:
 
       - name: Build
         run: |
-          cmake --preset windows-vs2022-x86
-          cmake --build --preset windows-vs2022-x86 --config Release
-          cp out/build/windows-vs2022-x86/Release/suika3.exe suika3-win32.exe
+          cmake --preset windows-vs2026-x86
+          cmake --build --preset windows-vs2026-x86 --config Release
+          cp out/build/windows-vs2026-x86/Release/suika3.exe suika3-win32.exe
 
-          cmake --preset windows-vs2022-x64
-          cmake --build --preset windows-vs2022-x64 --config Release
-          cp out/build/windows-vs2022-x64/Release/suika3.exe suika3-win64.exe
-          cp out/build/windows-vs2022-x64/Release/suika3-aotc.exe suika3-aotc.exe
-          cp out/build/windows-vs2022-x64/Release/suika3-bcc.exe suika3-bcc.exe
-          cp out/build/windows-vs2022-x64/Release/suika3-pack.exe suika3-pack.exe
-          cp out/build/windows-vs2022-x64/Release/suika3-web.exe suika3-web.exe
+          cmake --preset windows-vs2026-x64
+          cmake --build --preset windows-vs2026-x64 --config Release
+          cp out/build/windows-vs2026-x64/Release/suika3.exe suika3-win64.exe
+          cp out/build/windows-vs2026-x64/Release/suika3-aotc.exe suika3-aotc.exe
+          cp out/build/windows-vs2026-x64/Release/suika3-bcc.exe suika3-bcc.exe
+          cp out/build/windows-vs2026-x64/Release/suika3-pack.exe suika3-pack.exe
+          cp out/build/windows-vs2026-x64/Release/suika3-web.exe suika3-web.exe
 
-          cmake --preset windows-vs2022-x64-console
-          cmake --build --preset windows-vs2022-x64-console --config Release
-          cp out/build/windows-vs2022-x64-console/Release/suika3.exe suika3-debug.exe
+          cmake --preset windows-vs2026-x64-console
+          cmake --build --preset windows-vs2026-x64-console --config Release
+          cp out/build/windows-vs2026-x64-console/Release/suika3.exe suika3-debug.exe
 
-          cmake --preset windows-vs2022-arm64
-          cmake --build --preset windows-vs2022-arm64 --config Release
-          cp out/build/windows-vs2022-arm64/Release/suika3.exe suika3-arm64.exe
+          cmake --preset windows-vs2026-arm64
+          cmake --build --preset windows-vs2026-arm64 --config Release
+          cp out/build/windows-vs2026-arm64/Release/suika3.exe suika3-arm64.exe
 
       - name: Upload Windows EXEs
         uses: actions/upload-artifact@v4
@@ -684,7 +684,7 @@ jobs:
       github.event_name != 'push' ||
       !contains(github.event.head_commit.message, '[docs]')
     needs:
-      - build-windows-vs2022
+      - build-windows-vs2026
       - build-windows-mingw-w64
       - build-macos
       - build-flatpak-x86_64
