@@ -1036,46 +1036,6 @@
     ],
     "buildPresets": [
         {
-            "name": "windows-vs2022-x86",
-            "configurePreset": "windows-vs2022-x86",
-	    "configuration":   "Release"
-        },
-        {
-            "name": "windows-vs2022-x64",
-            "configurePreset": "windows-vs2022-x64",
-	    "configuration":   "Release"
-        },
-        {
-            "name": "windows-vs2022-arm64",
-            "configurePreset": "windows-vs2022-arm64",
-	    "configuration":   "Release"
-        },
-        {
-            "name": "windows-vs2022-x64-console",
-            "configurePreset": "windows-vs2022-x64-console",
-	    "configuration":   "Release"
-        },
-        {
-            "name": "windows-vs2022-x64-launcher",
-            "configurePreset": "windows-vs2022-x64-launcher",
-	    "configuration":   "Release"
-        },
-        {
-            "name": "windows-vs2022-gdk-desktop",
-            "configurePreset": "windows-vs2022-gdk-desktop",
-	    "configuration":   "Release"
-        },
-        {
-            "name": "windows-vs2022-gdk-xbox-xs",
-            "configurePreset": "windows-vs2022-gdk-xbox-xs",
-	    "configuration":   "Release"
-        },
-        {
-            "name": "windows-vs2022-uwp",
-            "configurePreset": "windows-vs2022-uwp",
-	    "configuration":   "Release"
-        },
-        {
             "name": "windows-vs2026-x86",
             "configurePreset": "windows-vs2026-x86",
 	    "configuration":   "Release"
