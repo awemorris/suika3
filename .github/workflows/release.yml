@@ -34,9 +34,9 @@ jobs:
           cp out/build/windows-vs2026-x64/Release/suika3-pack.exe suika3-pack.exe
           cp out/build/windows-vs2026-x64/Release/suika3-web.exe suika3-web.exe
 
-          cmake --preset windows-vs2026-x64-console
-          cmake --build --preset windows-vs2026-x64-console --config Release
-          cp out/build/windows-vs2026-x64-console/Release/suika3.exe suika3-debug.exe
+          cmake --preset windows-vs2026-console-x64
+          cmake --build --preset windows-vs2026-console-x64 --config Release
+          cp out/build/windows-vs2026-console-x64/Release/suika3.exe suika3-debug.exe
 
           cmake --preset windows-vs2026-arm64
           cmake --build --preset windows-vs2026-arm64 --config Release
