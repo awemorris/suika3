@@ -231,7 +231,10 @@
                 "SUIKA_TARGET_WINDOWS":         "ON",
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_PACK":            "ON"
+                "SUIKA_ENABLE_PACK":            "ON",
+                "SUIKA_ENABLE_BCC":             "ON",
+                "SUIKA_ENABLE_AOTC":            "ON",
+                "SUIKA_ENABLE_WEBSERVER":       "ON"
             },
             "condition": {
                 "type": "equals",
