@@ -54,7 +54,7 @@ s3i_tag_set(
 	name = s3_get_tag_arg_string("name", false, NULL);
 
 	/* Get the variable value. */
-	value = s3_get_tag_arg_string("value", false, NULL);
+	value = s3_get_tag_arg_string("value", true, NULL);
 	if (value != NULL) {
 		/* Simply assign the variable. */
 		if (!s3_set_variable_string(name, value))

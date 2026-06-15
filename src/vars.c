@@ -151,7 +151,7 @@ s3_set_variable_string(
 			break;
 		if (tbl[i].len == len &&
 		    tbl[i].hash == hash &&
-		    strcmp(tbl[i].value, name) == 0) {
+		    strcmp(tbl[i].key, name) == 0) {
 			/* Found, replace the value. */
 			free(tbl[i].value);
 			tbl[i].value = strdup(val);
