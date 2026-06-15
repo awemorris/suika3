@@ -5,200 +5,6 @@
     },
     "configurePresets": [
         {
-            "name":           "windows-vs2022-x86",
-            "displayName":    "VS2022 MSVC x86 Release",
-            "generator":      "Visual Studio 17 2022",
-            "architecture":   "Win32",
-            "toolset":        "v143",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "SUIKA_TARGET_WINDOWS":         "ON",
-                "SUIKA_ENABLE_JIT":             "ON",
-                "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":             "ON",
-                "SUIKA_ENABLE_AOTC":            "ON",
-                "SUIKA_ENABLE_WEBSERVER":       "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
-            "name":           "windows-vs2022-x64",
-            "displayName":    "VS2022 MSVC x64 Release",
-            "generator":      "Visual Studio 17 2022",
-            "architecture":   "x64",
-            "toolset":        "v143",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "SUIKA_TARGET_WINDOWS":         "ON",
-                "SUIKA_ENABLE_JIT":             "ON",
-                "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":             "ON",
-                "SUIKA_ENABLE_AOTC":            "ON",
-                "SUIKA_ENABLE_WEBSERVER":       "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
-            "name":           "windows-vs2022-arm64",
-            "displayName":    "VS2022 MSVC arm64 Release",
-            "generator":      "Visual Studio 17 2022",
-            "architecture":   "arm64",
-            "toolset":        "v143",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "SUIKA_TARGET_WINDOWS":         "ON",
-                "SUIKA_ENABLE_JIT":             "ON",
-                "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":             "ON",
-                "SUIKA_ENABLE_AOTC":            "ON",
-                "SUIKA_ENABLE_WEBSERVER":       "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
-            "name":           "windows-vs2022-x86-xp",
-            "displayName":    "VS2022 MSVC x86 Release",
-            "generator":      "Visual Studio 17 2022",
-            "architecture":   "Win32",
-            "toolset":        "v141_xp",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_EXE_LINKER_FLAGS":       "/SUBSYSTEM:WINDOWS,5.01",
-                "SUIKA_TARGET_WINDOWS":         "ON",
-                "SUIKA_ENABLE_JIT":             "ON",
-                "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":             "ON",
-                "SUIKA_ENABLE_AOTC":            "ON",
-                "SUIKA_ENABLE_WEBSERVER":       "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
-            "name":           "windows-vs2022-x64-console",
-            "displayName":    "VS2022 MSVC x64 Console Release",
-            "generator":      "Visual Studio 17 2022",
-            "architecture":   "x64",
-            "toolset":        "v143",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "SUIKA_TARGET_WINDOWS":         "ON",
-                "SUIKA_ENABLE_JIT":             "ON",
-                "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_CONSOLE":         "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
-            "name":           "windows-vs2022-x64-launcher",
-            "displayName":    "VS2022 MSVC x64 Launcher Release",
-            "generator":      "Visual Studio 17 2022",
-            "architecture":   "x64",
-            "toolset":        "v143",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "SUIKA_TARGET_WINDOWS":         "ON",
-                "SUIKA_ENABLE_UNSAFE":          "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
-            "name":           "windows-vs2022-gdk-desktop",
-            "displayName":    "VS2022 GDK Windows",
-            "generator":      "Visual Studio 17 2022",
-            "architecture":   "Gaming.Desktop.x64",
-            "toolset":        "v143",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "SUIKA_TARGET_GDK_WINDOWS":     "ON",
-                "SUIKA_ENABLE_JIT":             "ON",
-                "SUIKA_ENABLE_I18N":            "OFF",
-                "SUIKA_ENABLE_PACK":            "OFF",
-                "SUIKA_ENABLE_BCC":             "OFF",
-                "SUIKA_ENABLE_AOTC":            "OFF",
-                "SUIKA_ENABLE_WEBSERVER":       "OFF"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
-            "name":           "windows-vs2022-gdk-xbox-xs",
-            "displayName":    "VS2022 GDK Xbox Series X|S",
-            "generator":      "Visual Studio 17 2022",
-            "architecture":   "Gaming.Xbox.Scarlett",
-            "toolset":        "v143",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "SUIKA_TARGET_GDK_XBOX_XS":     "ON",
-                "SUIKA_ENABLE_JIT":             "OFF",
-                "SUIKA_ENABLE_I18N":            "OFF",
-                "SUIKA_ENABLE_PACK":            "OFF",
-                "SUIKA_ENABLE_BCC":             "OFF",
-                "SUIKA_ENABLE_AOTC":            "OFF",
-                "SUIKA_ENABLE_WEBSERVER":       "OFF"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
-            "name":           "windows-vs2022-uwp",
-            "displayName":    "VS2022 UWP x64",
-            "generator":      "Visual Studio 17 2022",
-            "architecture":   "x64",
-            "toolset":        "v143",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "CMAKE_SYSTEM_NAME":                        "WindowsStore",
-                "CMAKE_SYSTEM_VERSION":                     "10.0",
-                "CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION": "10.0",
-                "SUIKA_TARGET_UWP":                         "ON",
-                "SUIKA_ENABLE_JIT":                         "OFF",
-                "SUIKA_ENABLE_I18N":                        "OFF",
-                "SUIKA_ENABLE_PACK":                        "OFF",
-                "SUIKA_ENABLE_BCC":                         "OFF",
-                "SUIKA_ENABLE_AOTC":                        "OFF",
-                "SUIKA_ENABLE_WEBSERVER":                   "OFF"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
             "name":           "windows-vs2026-x86",
             "displayName":    "VS2026 x86 Release",
             "generator":      "Visual Studio 18 2026",
@@ -231,7 +37,10 @@
                 "SUIKA_TARGET_WINDOWS":         "ON",
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_PACK":            "ON"
+                "SUIKA_ENABLE_PACK":            "ON",
+                "SUIKA_ENABLE_BCC":             "ON",
+                "SUIKA_ENABLE_AOTC":            "ON",
+                "SUIKA_ENABLE_WEBSERVER":       "ON"
             },
             "condition": {
                 "type": "equals",
@@ -251,6 +60,9 @@
                 "SUIKA_ENABLE_JIT":                    "ON",
                 "SUIKA_ENABLE_I18N":                   "ON",
                 "SUIKA_ENABLE_PACK":                   "ON",
+                "SUIKA_ENABLE_BCC":                    "ON",
+                "SUIKA_ENABLE_AOTC":                   "ON",
+                "SUIKA_ENABLE_WEBSERVER":              "ON",
                 "CMAKE_MSVC_DEBUG_INFORMATION_FORMAT": "ProgramDatabase",
                 "CMAKE_C_FLAGS_RELEASE":               "/O2 /Zi",
                 "CMAKE_CXX_FLAGS_RELEASE":             "/O2 /Zi",
@@ -322,7 +134,8 @@
                 "SUIKA_TARGET_WINDOWS":         "ON",
                 "SUIKA_ENABLE_JIT":             "ON",
                 "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_CONSOLE":         "ON"
+                "SUIKA_ENABLE_CONSOLE":         "ON",
+                "SUIKA_ENABLE_UNSAFE":          "ON"
             },
             "condition": {
                 "type": "equals",
@@ -339,6 +152,8 @@
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
                 "SUIKA_TARGET_WINDOWS":         "ON",
+                "SUIKA_ENABLE_JIT":             "ON",
+                "SUIKA_ENABLE_I18N":            "ON",
                 "SUIKA_ENABLE_UNSAFE":          "ON"
             },
             "condition": {
