@@ -11,7 +11,7 @@
     It consists of state-of-the-art low-level runtimes,<br>
     including JIT VM and AOT compilers.<br>
     The name stands for<br>
-    Standard Universal Infrastructure for Kinetic Arts.<br>
+    <i>Standard Universal Infrastructure for Kinetic Arts</i><br>
   </p>
   <p>
     We've brought Suika3 to life<br>
