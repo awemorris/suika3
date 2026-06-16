@@ -675,7 +675,7 @@ to cover most gaming consoles and smartphones, including:
 
 - ✅ Intel x86 (Xbox) [jit-x86.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-x86.c)
 - ✅ AMD64/x86_64 (PS4/PS5/Xbox One/Xbox series X|S) [jit-x86_64.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-x86_64.c)
-- ✅ ARMv5-ARMv7 (Nintendo DS/PS Vita) [jit-arm32.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-arm32.c)
+- ✅ ARMv7 (PS Vita) [jit-arm32.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-arm32.c)
 - ✅ Arm64 (Switch/Switch2) [jit-arm64.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-arm64.c)
 - ✅ PowerPC 32 (Wii/GameCube) [jit-ppc32.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-ppc32.c)
 - ✅ PowerPC 64 (PS3/Xbox 360) [jit-ppc64.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-ppc64.c)
@@ -688,12 +688,12 @@ These architectures are well-supported, we can say at least they all pass [the t
 
 However, the following are not supported yet (interpreter-only) because of the lack of development machines:
 
-- ❌ SH-4 (Dreamcast) (Runs interpreter)
-- ❌ Sun SPARC (Runs interpreter)
-- ❌ HP PA-RISC (Runs interpreter)
-- ❌ Motorola 68000 (Runs interpreter)
-- ❌ Loongson (Runs interpreter)
-- ❌ IBM Z (Runs interpreter)
+- SH-4 (Dreamcast) (Runs interpreter)
+- Sun SPARC (Runs interpreter)
+- HP PA-RISC (Runs interpreter)
+- Motorola 68000 (Runs interpreter)
+- Loongson (Runs interpreter)
+- IBM Z (Runs interpreter)
 - **Challenge:** If you have one, please provide a ssh access to the development environment for 3 days. We can port there ;-)
 
 ### AOT Compilation
