@@ -104,7 +104,7 @@ static bool serialize_printer(
 	case NOCT_VALUE_LONG:
 		if (!noct_get_long(env, value, &lval))
 			return false;
-		snprintf(digits, sizeof(digits), PRId64, lval);
+		snprintf(digits, sizeof(digits), "%" PRId64, lval);
 		strncat(buf, digits, size);
 		break;
 	case NOCT_VALUE_FLOAT:

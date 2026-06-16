@@ -90,6 +90,28 @@ Note: On major smartphones and consoles, runtime code generation (JIT)
 is generally prohibited or tightly restricted by platform
 policies. Noct runs there with interpreter or AOT compilation.
 
+### Speedup
+
+A synthetic benchmark shows that our JIT compiler speeds up execution
+time by 4.11-11.15 times.
+
+```
+func main() {
+    var sum = 0;
+    for(i in 0..10000) {
+        for(j in 0..100000) {
+            sum = sum + 1;
+        }
+    }
+}
+```
+
+| CPU                     | Arch      | Interpreter (s) | JIT (s)  | Speedup   |
+|-------------------------|-----------|-----------------|----------|-----------|
+| Apple M5                | Arm64     | 11.34           | 2.76     | x4.11     |
+| Intel Core Ultra 5 228V | x86_64    | 34.95           | 5.93     | x5.89     |
+| Ingenic JZ4770          | MIPS32    | 1447.36         | 129.75   | x11.15    |
+
 ---
 
 ## Core Design & Features
@@ -285,6 +307,42 @@ func main() {
     };
     var y = 2;
     var z = g(1, {y: y});
+}
+```
+
+### Typed Array (Packed)
+
+```
+func main() {
+    // Allocate uint8.
+    // (Available Types: int8/int16/int32/int64/uint8/uint16/uint32/uint64/float32/float64)
+    var a = Packed.uint8(1024);
+
+    // Access via [] notation.
+    for(i in 0..Packed.size(a))
+        a[i] = i;
+}
+```
+
+### File I/O
+
+```
+func main() {
+    // Read the entire text.
+    var text = File.readText("text.txt");
+
+    // Read lines.
+    File.readForEachLine("text.txt", (line) => { print(line); });
+}
+```
+
+```
+func main() {
+    // Write a string.
+    File.writeText("text.txt", "aaa\nbbb");
+
+    // Write lines.
+    File.writeForEachLine("text.txt", ["aaa", "bbb"]);
 }
 ```
 
@@ -491,12 +549,43 @@ Our CI is running on GitHub Actions. Each push to the main branch
 triggers builds and binary releases, ensuring stability across
 supported platforms.
 
+### Testing Machines
+
+| Target          | Board                   | Processor                           | OS                     |
+|-----------------|-------------------------|-------------------------------------|------------------------|
+| x86 / x86_64    | Fujitsu Primergy        | Intel Xeon Gold 6130                | Linux                  |
+| x86 / x86_64    | Fujitsu Primergy        | Intel Xeon Silver 4114              | Linux                  |
+| x86 / x86_64    | Lenovo ThinkPad         | Intel Core Ultra 5 228V             | Windows, Linux         |
+| x86 / x86_64    | Generic Desktop PC      | Intel Core i5-13400                 | Windows, Linux         |
+| x86 / x86_64    | Generic Desktop PC      | Intel Core i9-12900H                | Windows, Linux         |
+| x86_64          | MacBook Air             | Intel Core i5                       | macOS 10.13            |
+| x86_64          | ThinkPad X260           | Intel Core i5-6500U                 | Solaris 11, Haiku      |
+| x86_64          | Panasonic Let's Note    | Intel Core i5-7200U                 | Windows                |
+| x86_64          | Panasonic Let's Note    | Intel Core i5-8250U                 | Windows                |
+| x86_64          | Dell Latitude           | Intel Core i5-1135G7                | FreeBSD                |
+| x86_64          | Dell Latitude           | Intel Core i5-1240P                 | Linux                  |
+| Armv7           | Raspberry Pi Zero 2     | Broadcom RP3A0 Arm Cortex-A53       | Raspberry Pi OS 32-bit |
+| Armv7           | Raspberry Pi 4          | Broadcom BCM2711 Arm Cortex-A72     | Raspberry Pi OS 32-bit |
+| Arm64           | Raspberry Pi 4          | Broadcom BCM2711 Arm Cortex-A72     | Raspberry Pi OS 64-bit |
+| Arm64           | MacBook Air M1          | Apple M1                            | macOS 15               |
+| Arm64           | MacBook Pro M4 Pro      | Apple M4 Pro                        | macOS 15               |
+| Arm64           | MacBook Pro M5          | Apple M5                            | macOS 26               |
+| RISC-V 32       | qemu                    | qemu-user RV32GC                    | Linux                  |
+| RISC-V 64       | VisionFive 2            | StarFive JH7110 RV64GC              | Linux                  |
+| MIPS32          | Anbernic RG350          | Ingenic JZ4770 MIPS32r2             | Linux                  |
+| MIPS32          | Cobalt Qube 2700        | QED RM5230                          | Linux, NetBSD          |
+| MIPS64          | qemu                    | qemu-user mips64                    | Linux                  |
+| MIPS64          | EdgeRouter Lite 3       | Cavium Octeon CN5020 MIPS64         | Linux                  |
+| PowerPC 32/64   | PowerMac G5             | PowerPC G5                          | Mac OS X 10.4          |
+| PowerPC 64      | IBM Power8 S814         | IBM POWER8                          | Linux (ppc64le)        |
+| 68000           | Macintosh LC630         | Motorola 68040                      | NetBSD                 |
+
 ---
 
 ## Documentation
 
 - [Syntax](docs/syntax.md)
-- [Standard API](docs/api.md)
+- [Library](docs/library.md)
 - [Native API](docs/napi.md)
 - [Virtual Machine Specification](docs/vmspec.md)
 

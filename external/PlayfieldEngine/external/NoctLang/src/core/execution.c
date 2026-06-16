@@ -188,7 +188,7 @@ noct_ex_add_helper(
 			break;
 		case NOCT_VALUE_DOUBLE:
 			dst_val->type = NOCT_VALUE_DOUBLE;
-			dst_val->val.lf = src1_val->val.f + src2_val->val.lf;
+			dst_val->val.lf = src1_val->val.lf + src2_val->val.lf;
 			break;
 		case NOCT_VALUE_STRING:
 			if (!noct_make_string_format(env, dst_val, "%f%s", src1_val->val.f, src2_val->val.str->data))

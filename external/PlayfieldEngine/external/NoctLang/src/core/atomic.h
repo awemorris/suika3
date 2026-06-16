@@ -36,16 +36,6 @@ static INLINE void *atomic_load_acquire_ptr(void **pp)
 	return __atomic_load_n(pp, __ATOMIC_ACQUIRE);
 }
 
-static INLINE int atomic_load_release_int(int *v)
-{
-	return __atomic_load_n(v, __ATOMIC_RELEASE);
-}
-
-static INLINE void *atomic_load_release_ptr(void **pp)
-{
-	return __atomic_load_n(pp, __ATOMIC_RELEASE);
-}
-
 static INLINE void atomic_store_release_int(int *p, int v)
 {
 	__atomic_store_n(p, v, __ATOMIC_RELEASE);
