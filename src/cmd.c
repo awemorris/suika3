@@ -63,6 +63,7 @@ bool s3i_tag_pencil(void *p);
 bool s3i_tag_returnmacro(void *p);
 bool s3i_tag_se(void *p);
 bool s3i_tag_set(void *p);
+bool s3i_tag_skip(void *p);
 bool s3i_tag_text(void *p);
 bool s3i_tag_video(void *p);
 bool s3i_tag_volume(void *p);
@@ -74,11 +75,11 @@ static struct tag_func tag_func[] = {
 	{"Tag_bg",		s3i_tag_bg},
 	{"Tag_bgm",		s3i_tag_bgm},
 	{"Tag_callmacro",	s3i_tag_callmacro},
+	{"Tag_click",		s3i_tag_click},
 	{"Tag_ch",		s3i_tag_ch},
 	{"Tag_chapter",		s3i_tag_chapter},
 	{"Tag_choose",		s3i_tag_choose},
 	{"Tag_config",		s3i_tag_config},
-	{"Tag_click",		s3i_tag_click},
 	{"Tag_defmacro",	s3i_tag_defmacro},
 	{"Tag_else",		s3i_tag_else},
 	{"Tag_elseif",		s3i_tag_elseif},
@@ -95,6 +96,7 @@ static struct tag_func tag_func[] = {
 	{"Tag_returnmacro",	s3i_tag_returnmacro},
 	{"Tag_se",		s3i_tag_se},
 	{"Tag_set",		s3i_tag_set},
+	{"Tag_skip",		s3i_tag_skip},
 	{"Tag_text",		s3i_tag_text},
 	{"Tag_video",		s3i_tag_video},
 	{"Tag_volume",		s3i_tag_volume},
