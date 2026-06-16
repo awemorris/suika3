@@ -156,11 +156,14 @@ s3_install_api(
 	NoctEnv *env;
 	NoctValue dict;
 	NoctValue funcval;
+	bool has_suika;
 
 	env = pf_get_vm_env();
 
 	/* If the "Suika" variable does not exist. */
-	if (!noct_check_global(env, "Suika")) {
+	if (!noct_check_global(env, "Suika", &has_suika))
+		return false;
+	if (!has_suika) {
 		/* Make a global variable "Suika". */
 		if (!noct_make_empty_dict(env, &dict))
 			return false;
@@ -181,7 +184,7 @@ s3_install_api(
 		return false;
 
 	/* Add to the "Suika" API dictionary. */
-	if (!noct_set_dict_elem(env, &dict, name, &funcval))
+	if (!noct_set_dict_elem_cstr(env, &dict, name, &funcval))
 		return false;
 
 	return true;
@@ -291,7 +294,7 @@ s3_set_vm_int(
 			return false;
 	if (!noct_make_int(env, &value, val))
 		return false;
-	if (!noct_set_dict_elem(env, &dict, name, &value))
+	if (!noct_set_dict_elem_cstr(env, &dict, name, &value))
 		return false;
 
 	return true;
@@ -314,7 +317,7 @@ s3_set_vm_float(
 			return false;
 	if (!noct_make_float(env, &value, val))
 		return false;
-	if (!noct_set_dict_elem(env, &dict, name, &value))
+	if (!noct_set_dict_elem_cstr(env, &dict, name, &value))
 		return false;
 
 	return true;
@@ -337,7 +340,7 @@ s3_set_vm_string(
 			return false;
 	if (!noct_make_string(env, &value, val))
 		return false;
-	if (!noct_set_dict_elem(env, &dict, name, &value))
+	if (!noct_set_dict_elem_cstr(env, &dict, name, &value))
 		return false;
 
 	return true;
@@ -405,7 +408,7 @@ s3_call_vm_tag_function(
 				     s3_get_tag_line());
 			return false;
 		}
-		if (!noct_set_dict_elem(env, &dict, prop_name, &str)) {
+		if (!noct_set_dict_elem_cstr(env, &dict, prop_name, &str)) {
 			s3_log_error(S3_TR("Error: %s:%d: Runtime error"),
 				     s3_get_tag_file(),
 				     s3_get_tag_line());

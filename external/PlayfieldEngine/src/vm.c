@@ -88,6 +88,8 @@ pfi_create_vm(
 	int *height,
 	bool *fullscreen)
 {
+	bool has_setup;
+
 	/* Initialize the NoctLang's i18n system. */
 #ifdef PF_USE_TRANSLATION
 	noct_init_locale();
@@ -104,7 +106,9 @@ pfi_create_vm(
 	}
 
 	/* Load the startup file if there is no native function called "setup()". */
-	if (!noct_check_global(env, "setup")) {
+	if (!noct_check_global(env, "setup", &has_setup))
+		return false;
+	if (!has_setup) {
 		if (!load_startup_file())
 			return false;
 	}
@@ -121,13 +125,13 @@ pfi_create_vm(
 		return false;
 	}
 
-	/* Install Math.* API. */
-	if (!noct_register_api_math(env))
-		return false;
-
 #if defined(PF_USE_UNSAFE)
 	/* Install System.* API. */
 	if (!noct_register_api_system(env))
+		return false;
+
+	/* Install File.* API. */
+	if (!noct_register_api_file(env))
 		return false;
 #endif
 
@@ -199,7 +203,7 @@ call_setup(
 
 		/* Get the "title" element from the dictionary. */
 		if (title != NULL) {
-			if (!noct_get_dict_elem(env, &ret, "title", &title_val))
+			if (!noct_get_dict_elem_cstr(env, &ret, "title", &title_val))
 				break;
 			if (!noct_get_string(env, &title_val, &title_s))
 				break;
@@ -208,7 +212,7 @@ call_setup(
 
 		/* Get the "width" element from the dictionary. */
 		if (width != NULL) {
-			if (!noct_get_dict_elem(env, &ret, "width", &width_val))
+			if (!noct_get_dict_elem_cstr(env, &ret, "width", &width_val))
 				break;
 			if (!noct_get_int(env, &width_val, width))
 				break;
@@ -216,7 +220,7 @@ call_setup(
 
 		/* Get the "height" element from the dictionary. */
 		if (height != NULL) {
-			if (!noct_get_dict_elem(env, &ret, "height", &height_val))
+			if (!noct_get_dict_elem_cstr(env, &ret, "height", &height_val))
 				break;
 			if (!noct_get_int(env, &height_val, height))
 				break;
@@ -225,10 +229,10 @@ call_setup(
 		/* Get the "fullscreen" element from the dictionary. */
 		if (fullscreen != NULL) {
 			bool fullscreen_exist;
-			if (!noct_check_dict_key(env, &ret, "fullscreen", &fullscreen_exist))
+			if (!noct_check_dict_key_cstr(env, &ret, "fullscreen", &fullscreen_exist))
 				break;
 			if (fullscreen_exist) {
-				if (!noct_get_dict_elem(env, &ret, "fullscreen", &fullscreen_val))
+				if (!noct_get_dict_elem_cstr(env, &ret, "fullscreen", &fullscreen_val))
 					break;
 				*fullscreen = fullscreen_val.val.i;
 			} else {
@@ -387,7 +391,7 @@ static bool serialize_printer(NoctEnv *env, char *buf, size_t size, NoctValue *v
 	int ival;
 	float fval;
 	const char *sval;
-	uint32_t i, items;
+	size_t i, items;
 	char digits[1024];
 
 	if (!noct_get_value_type(env, value, &type))
@@ -1002,7 +1006,7 @@ static bool get_int_param(NoctEnv *env, const char *name, int *ret)
 		return false;
 	}
 
-	if (!noct_get_dict_elem(env, &param, name, &elem)) {
+	if (!noct_get_dict_elem_cstr(env, &param, name, &elem)) {
 		noct_error(env, PF_TR("Parameter \"%s\" is not set."), name);
 		noct_unpin_local(env, 2, &param, &elem);
 		return false;
@@ -1041,7 +1045,7 @@ static bool get_string_param(NoctEnv *env, const char *name, const char **ret)
 		return false;
 	}
 
-	if (!noct_get_dict_elem(env, &param, name, &elem)) {
+	if (!noct_get_dict_elem_cstr(env, &param, name, &elem)) {
 		noct_error(env, PF_TR("Parameter \"%s\" is not set."), name);
 		noct_unpin_local(env, 2, &param, &elem);
 		return false;
@@ -1087,7 +1091,7 @@ static bool get_value_param(NoctEnv *env, const char *name, NoctValue *value)
 		return false;
 	}
 
-	if (!noct_get_dict_elem(env, &param, name, value)) {
+	if (!noct_get_dict_elem_cstr(env, &param, name, value)) {
 		noct_error(env, PF_TR("Parameter \"%s\" is not set."), name);
 		noct_unpin_local(env, 1, &param);
 		return false;
@@ -1107,7 +1111,7 @@ static bool get_dict_elem_int_param(NoctEnv *env, const char *name, const char *
 		return false;
 	}
 
-	if (!noct_get_dict_elem(env, &param, name, &elem)) {
+	if (!noct_get_dict_elem_cstr(env, &param, name, &elem)) {
 		noct_error(env, PF_TR("Parameter \"%s\" is not set."), name);
 		noct_unpin_local(env, 3, &param, &elem, &ival);
 		return false;
@@ -1119,7 +1123,7 @@ static bool get_dict_elem_int_param(NoctEnv *env, const char *name, const char *
 		return false;
 	}
 
-	if (!noct_get_dict_elem(env, &elem, key, &ival)) {
+	if (!noct_get_dict_elem_cstr(env, &elem, key, &ival)) {
 		noct_error(env, PF_TR("Parameter \"%s\" doesn't have the key \"%s\"."), name, key);
 		noct_unpin_local(env, 3, &param, &elem, &ival);
 		return false;
@@ -1201,7 +1205,7 @@ install_api(
 				return false;
 
 			/* Make a dictionary element. */
-			if (!noct_set_dict_elem(env, &dict, funcs[i].field, &funcval))
+			if (!noct_set_dict_elem_cstr(env, &dict, funcs[i].field, &funcval))
 				return false;
 		}
 	}
@@ -1279,7 +1283,7 @@ serialize_save_data_recursively(
 	int ival;
 	float fval;
 	const char *sval;
-	uint32_t i, size;
+	size_t i, size;
 
 	if (!noct_get_value_type(env, value, &type))
 		return false;
@@ -1442,7 +1446,7 @@ deserialize_save_data_recursively(
 			strcpy(key, sval);
 			if (!deserialize_save_data_recursively(env, &elem, ctx))
 				return false;
-			if (!noct_set_dict_elem(env, value, key, &elem))
+			if (!noct_set_dict_elem_cstr(env, value, key, &elem))
 				return false;
 		}
 		return true;

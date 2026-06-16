@@ -1519,11 +1519,14 @@ pf_install_package_api(
 	NoctValue dict;
 	NoctValue funcval;
 	char full_name[256];
+	bool has_engine;
 
 	env = pfi_get_vm_env();
 
 	/* Make a global variable "Engine". */
-	if (!noct_check_global(env, package)) {
+	if (!noct_check_global(env, package, &has_engine))
+		return false;
+	if (!has_engine) {
 		if (!noct_make_empty_dict(env, &dict))
 			return false;
 		if (!noct_set_global(env, package, &dict))
@@ -1542,7 +1545,7 @@ pf_install_package_api(
 		return false;
 
 	/* Make a dictionary element. */
-	if (!noct_set_dict_elem(env, &dict, name, &funcval))
+	if (!noct_set_dict_elem_cstr(env, &dict, name, &funcval))
 		return false;
 
 	return true;
@@ -1570,7 +1573,7 @@ pf_get_call_arg_int(
 		return false;
 
 	/* Check for the argument. */
-	if (!noct_check_dict_key(env, &param, name, &exists))
+	if (!noct_check_dict_key_cstr(env, &param, name, &exists))
 		return false;
 
 	if (exists || !omissible) {
@@ -1609,7 +1612,7 @@ pf_get_call_arg_float(
 		return false;
 
 	/* Check for the argument. */
-	if (!noct_check_dict_key(env, &param, name, &exists))
+	if (!noct_check_dict_key_cstr(env, &param, name, &exists))
 		return false;
 
 	if (exists || !omissible) {
@@ -1646,7 +1649,7 @@ pf_get_call_arg_string(
 		return false;
 
 	/* Check for the argument. */
-	if (!noct_check_dict_key(env, &param, name, &exists))
+	if (!noct_check_dict_key_cstr(env, &param, name, &exists))
 		return false;
 
 	if (exists || !omissible) {
@@ -1686,7 +1689,7 @@ pf_get_call_arg_array_length(
 {
 	NoctEnv *env;
 	NoctValue param, value;
-	uint32_t size;
+	size_t size;
 
 	env = pfi_get_vm_env();
 
@@ -1831,7 +1834,7 @@ pf_get_call_arg_dict_int(
 		return false;
 
 	/* Check for the argument. */
-	if (!noct_check_dict_key(env, &dict, key, &exists))
+	if (!noct_check_dict_key_cstr(env, &dict, key, &exists))
 		return false;
 
 	if (exists || !omissible) {
@@ -1872,7 +1875,7 @@ pf_get_call_arg_dict_float(
 		return false;
 
 	/* Check for the argument. */
-	if (!noct_check_dict_key(env, &dict, key, &exists))
+	if (!noct_check_dict_key_cstr(env, &dict, key, &exists))
 		return false;
 
 	if (exists || !omissible) {
@@ -1914,7 +1917,7 @@ pf_get_call_arg_dict_string(
 		return false;
 
 	/* Check for the argument. */
-	if (!noct_check_dict_key(env, &dict, key, &exists))
+	if (!noct_check_dict_key_cstr(env, &dict, key, &exists))
 		return false;
 
 	if (exists || !omissible) {
