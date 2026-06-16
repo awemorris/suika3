@@ -88,6 +88,15 @@ jit_build(
         if (!jit_visit_bytecode(&ctx))
                 return false;
 
+#if 0
+        {
+                uint8_t *dis = jit_code_region_cur;
+                printf("Dump\n");
+                while (dis != ctx.code)
+                        printf("%04u: %02x\n", dis, *dis++);
+        }
+#endif
+
         jit_code_region_cur = ctx.code;
 
         /* Patch branches. */
@@ -284,7 +293,7 @@ jit_visit_lineinfo_op(
 
                 /* movl $line, %eax */          IB(0xb8); ID(line);
                 /* movl -8(%ebp), %ebx */       IB(0x8b); IB(0x5d); IB(0xf8);
-                /* movl %eax, 4(%ebx) */        IB(0x89); IB(0x43); IB(0x04);
+                /* movl %eax, 8(%ebx) */        IB(0x89); IB(0x43); IB(0x08);
         }
 
         return true;
@@ -315,9 +324,9 @@ jit_visit_assign_op(
                 /* addl -4(%ebp), %eax */        IB(0x03); IB(0x45); IB(0xfc);
                 /* addl -4(%ebp), %ebx */        IB(0x03); IB(0x5d); IB(0xfc);
                 /* movl (%ebx), %ecx */          IB(0x8b); IB(0x0b);
-                /* movl 4(%ebx), %edx */         IB(0x8b); IB(0x53); IB(0x04);
+                /* movl 8(%ebx), %edx */         IB(0x8b); IB(0x53); IB(0x08);
                 /* movl %ecx, (%eax) */          IB(0x89); IB(0x08);
-                /* movl %edx, 4(%eax) */         IB(0x89); IB(0x50); IB(0x04);
+                /* movl %edx, 8(%eax) */         IB(0x89); IB(0x50); IB(0x08);
         }
 
         return true;
@@ -336,17 +345,57 @@ jit_visit_iconst_op(
 
         dst *= (int)sizeof(struct rt_value);
 
-        /* &env->frame->tmpvar[dst].type = RT_VALUE_INT; */
-        /* &env->frame->tmpvar[dst].val.i = val; */
+        /* env->frame->tmpvar[dst].type = NOCT_VALUE_INT; */
+        /* env->frame->tmpvar[dst].val.i = val; */
         ASM {
                 /* ebp-4: &env->frame->tmpvar[0] */
                 /* ebp-8: env */
                 /* ebp-12: exception_handler */
 
+                /* %eax = &env->frame->tmpvar[dst] */
                 /* movl $dst, %eax */          IB(0xb8); ID((uint32_t)dst);
                 /* addl -4(%ebp), %eax */      IB(0x03); IB(0x45); IB(0xfc);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_INT */
                 /* movl $0, (%eax) */          IB(0xc7); IB(0x00); ID(0);
-                /* movl $val, 4(%eax) */       IB(0xc7); IB(0x40); IB(0x04); ID(val);
+
+                /* env->frame->tmpvar[dst].val.i = val */
+                /* movl $val, 8(%eax) */       IB(0xc7); IB(0x40); IB(0x08); ID(val);
+        }
+
+        return true;
+}
+
+/* Visit a OP_LICONST instruction. */
+static INLINE bool
+jit_visit_liconst_op(
+        struct jit_context *ctx)
+{
+        int dst;
+        uint64_t val;
+
+        CONSUME_TMPVAR(dst);
+        CONSUME_IMM64(val);
+
+        dst *= (int)sizeof(struct rt_value);
+
+        /* env->frame->tmpvar[dst].type = NOCT_VALUE_LONG; */
+        /* env->frame->tmpvar[dst].val.l = val; */
+        ASM {
+                /* ebp-4: &env->frame->tmpvar[0] */
+                /* ebp-8: env */
+                /* ebp-12: exception_handler */
+
+                /* %eax = &env->frame->tmpvar[dst] */
+                /* movl $dst -> %eax */          IB(0xb8); ID((uint32_t)dst);
+                /* addl -4(%ebp) -> %eax */      IB(0x03); IB(0x45); IB(0xfc);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_LONG */
+                /* movl $5 -> (%eax) */          IB(0xc7); IB(0x00); ID(5);
+
+                /* env->frame->tmpvar[dst].val.i = val */
+                /* movl LO(val) -> 8(%eax) */    IB(0xc7); IB(0x40); IB(0x08); ID((uint32_t)val);
+                /* movl HI(val) -> 12(%eax) */   IB(0xc7); IB(0x40); IB(0x0c); ID((uint32_t)(val >> 32));
         }
 
         return true;
@@ -365,17 +414,57 @@ jit_visit_fconst_op(
 
         dst *= (int)sizeof(struct rt_value);
 
-        /* &env->frame->tmpvar[dst].type = RT_VALUE_INT; */
+        /* &env->frame->tmpvar[dst].type = NOCT_VALUE_FLOAT; */
         /* &env->frame->tmpvar[dst].val.i = val; */
         ASM {
                 /* ebp-4: &env->frame->tmpvar[0] */
                 /* ebp-8: env */
                 /* ebp-12: exception_handler */
 
-                /* movl $dst, %eax */          IB(0xb8); ID((uint32_t)dst);
-                /* addl -4(%ebp), %eax */      IB(0x03); IB(0x45); IB(0xfc);
-                /* movl $1, (%eax) */          IB(0xc7); IB(0x00); ID(1);
-                /* movl $val, 4(%eax) */       IB(0xc7); IB(0x40); IB(0x04); ID(val);
+                /* %eax = &env->frame->tmpvar[dst] */
+                /* movl $dst -> %eax */          IB(0xb8); ID((uint32_t)dst);
+                /* addl -4(%ebp) -> %eax */      IB(0x03); IB(0x45); IB(0xfc);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_DOUBLE */
+                /* movl $1 -> (%eax) */          IB(0xc7); IB(0x00); ID(1);
+
+                /* env->frame->tmpvar[dst].val.i = val */
+                /* movl $val -> 8(%eax) */       IB(0xc7); IB(0x40); IB(0x08); ID(val);
+        }
+
+        return true;
+}
+
+/* Visit a OP_LFCONST instruction. */
+static INLINE bool
+jit_visit_lfconst_op(
+        struct jit_context *ctx)
+{
+        int dst;
+        uint64_t val;
+
+        CONSUME_TMPVAR(dst);
+        CONSUME_IMM64(val);
+
+        dst *= (int)sizeof(struct rt_value);
+
+        /* env->frame->tmpvar[dst].type = NOCT_VALUE_DOUBLE; */
+        /* env->frame->tmpvar[dst].val.l = val; */
+        ASM {
+                /* ebp-4: &env->frame->tmpvar[0] */
+                /* ebp-8: env */
+                /* ebp-12: exception_handler */
+
+                /* %eax = &env->frame->tmpvar[dst] */
+                /* movl $dst -> %eax */          IB(0xb8); ID((uint32_t)dst);
+                /* addl -4(%ebp) -> %eax */      IB(0x03); IB(0x45); IB(0xfc);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_DOUBLE */
+                /* movl $6 -> (%eax) */          IB(0xc7); IB(0x00); ID(6);
+
+                /* env->frame->tmpvar[dst].val.i = val */
+                /* movl LO(val) -> 8(%eax) */    IB(0xc7); IB(0x40); IB(0x08); ID((uint32_t)val);
+                /* movl HI(val) -> 12(%eax) */   IB(0xc7); IB(0x40); IB(0x0c); ID((uint32_t)(val >> 32));
         }
 
         return true;
@@ -517,7 +606,7 @@ jit_visit_inc_op(
 
         dst *= (int)sizeof(struct rt_value);
 
-        /* &env->frame->tmpvar[dst].val.i++ */
+        /* env->frame->tmpvar[dst].val.i++ */
         ASM {
                 /* ebp-4: &env->frame->tmpvar[0] */
                 /* ebp-8: env */
@@ -525,7 +614,7 @@ jit_visit_inc_op(
 
                 /* movl $dst, %eax */                   IB(0xb8); ID((uint32_t)dst);
                 /* addl -4(%ebp), %eax */               IB(0x03); IB(0x45); IB(0xfc);
-                /* incl 4(%eax) */                      IB(0xff); IB(0x40); IB(0x04);
+                /* incl 8(%eax) */                      IB(0xff); IB(0x40); IB(0x08);
         }
 
         return true;
@@ -866,7 +955,7 @@ jit_visit_eqi_op(
         src1 *= (int)sizeof(struct rt_value);
         src2 *= (int)sizeof(struct rt_value);
 
-        /* Set EFLAGS by (src1 - src2) */
+        /* Set EFLAGS by (src2 - src1) */
         ASM {
                 /* ebp-4: &env->frame->tmpvar[0] */
                 /* ebp-8: env */
@@ -878,8 +967,8 @@ jit_visit_eqi_op(
                 /* movl $src2, %ebx */           IB(0xbb); ID((uint32_t)src2);
                 /* addl -4(%ebp), %ebx */        IB(0x03); IB(0x5d); IB(0xfc);
 
-                /* movl 4(%eax), %ecx */         IB(0x8b); IB(0x48); IB(0x04);
-                /* movl 4(%ebx), %edx */         IB(0x8b); IB(0x53); IB(0x04);
+                /* movl 8(%eax), %ecx */         IB(0x8b); IB(0x48); IB(0x08);
+                /* movl 8(%ebx), %edx */         IB(0x8b); IB(0x53); IB(0x08);
                 /* cmpl %ecx, %edx */            IB(0x39); IB(0xca);
         }
 
@@ -1379,15 +1468,16 @@ jit_visit_jmpiftrue_op(
                 return false;
         }
 
+        src *= (int)sizeof(struct rt_value);
+
         ASM {
                 /* ebp-4: &env->frame->tmpvar[0] */
                 /* ebp-8: env */
                 /* ebp-12: exception_handler */
 
                 /* movl $src, %eax */           IB(0xb8); ID((uint32_t)src);
-                /* shll $3, %eax */             IB(0xc1); IB(0xe0); IB(0x03);
                 /* addl -4(%ebp), %eax */       IB(0x03); IB(0x45); IB(0xfc);
-                /* movl 4(%eax), %eax */        IB(0x8b); IB(0x40); IB(0x04);
+                /* movl 8(%eax), %eax */        IB(0x8b); IB(0x40); IB(0x08);
 
                 /* Compare: env->frame->tmpvar[dst].val.i == 0 */
                 /* cmpl $0, %eax */             IB(0x83); IB(0xf8); IB(0x00);
@@ -1422,15 +1512,16 @@ jit_visit_jmpiffalse_op(
                 return false;
         }
 
+        src *= (int)sizeof(struct rt_value);
+
         ASM {
                 /* ebp-4: &env->frame->tmpvar[0] */
                 /* ebp-8: env */
                 /* ebp-12: exception_handler */
 
                 /* movl $src, %eax */           IB(0xb8); ID((uint32_t)src);
-                /* shll $3, %eax */             IB(0xc1); IB(0xe0); IB(0x03);
                 /* addl -4(%ebp), %eax */       IB(0x03); IB(0x45); IB(0xfc);
-                /* movl 4(%eax), %eax */        IB(0x8b); IB(0x40); IB(0x04);
+                /* movl 8(%eax), %eax */        IB(0x8b); IB(0x40); IB(0x08);
 
                 /* Compare: env->frame->tmpvar[dst].val.i == 0 */
                 /* cmpl $0, %eax */             IB(0x83); IB(0xf8); IB(0x00);
@@ -1479,6 +1570,42 @@ jit_visit_jmpifeq_op(
         return true;
 }
 
+/* Visit a OP_SAFEPOINT instruction. */
+static INLINE bool
+jit_visit_safepoint_op(
+        struct jit_context *ctx)
+{
+        int dst;
+        int dict;
+        const char *field;
+        uint32_t len, hash;
+
+        CONSUME_TMPVAR(dst);
+        CONSUME_TMPVAR(dict);
+        CONSUME_STRING(field, len, hash);
+
+        /* if (!rt_safepoint_helper(env)) return false; */
+        ASM {
+                /* ebp-4: &env->frame->tmpvar[0] */
+                /* ebp-8: env */
+                /* ebp-12: exception_handler */
+
+                /* movl -8(%ebp), %eax */            IB(0x8b); IB(0x45); IB(0xf8);
+                /* pushl %eax */                     IB(0x50);
+
+                /* movl $ex_safepoint_helper, %eax */IB(0xb8); ID((uint32_t)ex_safepoint_helper);
+                /* call *%eax */                     IB(0xff); IB(0xd0);
+                /* addl $4, %esp */                  IB(0x83); IB(0xc4); IB(4);
+
+                /* cmpl $0, %eax */                  IB(0x83); IB(0xf8); IB(0x00);
+                /* jne next */                       IB(0x75); IB(0x03);
+                /* jmp -12(%ebp) */                  IB(0xff); IB(0x65); IB(0xf4);
+        /* next:*/
+        }
+
+        return true;
+}
+
 /* Visit a bytecode of a function. */
 bool
 jit_visit_bytecode(
@@ -1489,7 +1616,7 @@ jit_visit_bytecode(
         /* Put a prologue. */
         ASM {
         /* prologue: */
-                /* mov 4(%esp), %eax; rt */             IB(0x8b); IB(0x44); IB(0x24); IB(0x04);
+                /* mov 4(%esp), %eax; env */            IB(0x8b); IB(0x44); IB(0x24); IB(0x04);
 
                 /* pushl %ebx */                        IB(0x53);
                 /* pushl %ecx */                        IB(0x51);
@@ -1558,8 +1685,16 @@ jit_visit_bytecode(
                         if (!jit_visit_iconst_op(ctx))
                                 return false;
                         break;
+                case OP_LICONST:
+                        if (!jit_visit_liconst_op(ctx))
+                                return false;
+                        break;
                 case OP_FCONST:
                         if (!jit_visit_fconst_op(ctx))
+                                return false;
+                        break;
+                case OP_LFCONST:
+                        if (!jit_visit_lfconst_op(ctx))
                                 return false;
                         break;
                 case OP_SCONST:
@@ -1651,8 +1786,12 @@ jit_visit_bytecode(
                                 return false;
                         break;
                 case OP_EQI:
+                        if (!jit_visit_eqi_op(ctx))
+                                return false;
+#if 0
                         if (!jit_visit_eq_op(ctx))
                                 return false;
+#endif
                         break;
                 case OP_LOADARRAY:
                         if (!jit_visit_loadarray_op(ctx))
@@ -1711,8 +1850,18 @@ jit_visit_bytecode(
                                 return false;
                         break;
                 case OP_JMPIFEQ:
+                        if (!jit_visit_jmpifeq_op(ctx))
+                                return false;
+#if 0
                         if (!jit_visit_jmpiftrue_op(ctx))
                                 return false;
+#endif
+                        break;
+                case OP_SAFEPOINT:
+#if defined(NOCT_USE_MULTITHREAD)
+                        if (!jit_visit_safepoint_op(ctx))
+                                return false;
+#endif
                         break;
                 default:
                         assert(JIT_OP_NOT_IMPLEMENTED);

@@ -11,6 +11,8 @@
 
 #include "runtime.h"
 #include "gc.h"
+#include "atomic.h"
+#include "objectmodel.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -75,6 +77,8 @@ static struct rt_array *rt_gc_alloc_array_graduate(struct rt_env *env, size_t si
 static struct rt_array *rt_gc_alloc_array_tenure(struct rt_env *env, size_t size);
 static struct rt_dict *rt_gc_alloc_dict_graduate(struct rt_env *env, size_t size);
 static struct rt_dict *rt_gc_alloc_dict_tenure(struct rt_env *env, size_t size);
+static struct rt_packed *rt_gc_alloc_packed_graduate(struct rt_env *env, int type, size_t size, size_t elem_size, void *preallocated);
+static struct rt_packed *rt_gc_alloc_packed_tenure(struct rt_env *env, int type, size_t size, size_t elem_size, void *preallocated);
 static void rt_gc_young_gc(struct rt_env *env);
 static void rt_gc_young_gc_body(struct rt_env *env);
 static bool rt_gc_copy_young_object_recursively(struct rt_env *env, struct rt_gc_object **obj);
@@ -83,9 +87,11 @@ static struct rt_gc_object *rt_gc_promote_object(struct rt_env *env, struct rt_g
 static struct rt_gc_object *rt_gc_promote_string(struct rt_env *env, struct rt_gc_object *obj);
 static struct rt_gc_object *rt_gc_promote_array(struct rt_env *env, struct rt_gc_object *obj);
 static struct rt_gc_object *rt_gc_promote_dict(struct rt_env *env, struct rt_gc_object *obj);
-struct rt_gc_object *rt_gc_copy_string_to_graduate(struct rt_env *env, struct rt_string *old_obj);
-struct rt_gc_object *rt_gc_copy_array_to_graduate(struct rt_env *env, struct rt_array *old_obj);
-struct rt_gc_object *rt_gc_copy_dict_to_graduate(struct rt_env *env, struct rt_dict *old_obj);
+static struct rt_gc_object *rt_gc_promote_packed(struct rt_env *env, struct rt_gc_object *obj);
+static struct rt_gc_object *rt_gc_copy_string_to_graduate(struct rt_env *env, struct rt_string *old_obj);
+static struct rt_gc_object *rt_gc_copy_array_to_graduate(struct rt_env *env, struct rt_array *old_obj);
+static struct rt_gc_object *rt_gc_copy_dict_to_graduate(struct rt_env *env, struct rt_dict *old_obj);
+static struct rt_gc_object *rt_gc_copy_packed_to_graduate(struct rt_env *env, struct rt_packed *old_obj);
 static void rt_gc_old_gc(struct rt_env *env);
 static void rt_gc_old_gc_body(struct rt_env *env);
 static void rt_gc_mark_old_object_recursively(struct rt_env *env, struct rt_gc_object **obj);
@@ -376,7 +382,8 @@ rt_gc_alloc_array(
 		arr->table = table;
 		arr->newer = NULL;
 #if defined(NOCT_USE_MULTITHREAD)
-		arr->counter = 0;
+		arr->shared = 0;
+		arr->write_lock = 0;
 #endif
 
 		/* Succeeded. */
@@ -426,7 +433,8 @@ rt_gc_alloc_array_graduate(
 		arr->table = table;
 		arr->newer = NULL;
 #if defined(NOCT_USE_MULTITHREAD)
-		arr->counter = 0;
+		arr->shared = 0;
+		arr->write_lock = 0;
 #endif
 
 		/* Succeeded. (graduate) */
@@ -490,7 +498,8 @@ rt_gc_alloc_array_tenure(
 		arr->table = table;
 		arr->newer = NULL;
 #if defined(NOCT_USE_MULTITHREAD)
-		arr->counter = 0;
+		arr->shared = 0;
+		arr->write_lock = 0;
 #endif
 
 		/* Succeeded. */
@@ -562,9 +571,9 @@ rt_gc_alloc_dict(
 		dict->newer = NULL;
 		dict->native_pointer = NULL;
 		dict->native_finalizer = NULL;
-
 #if defined(NOCT_USE_MULTITHREAD)
-		dict->counter = 0;
+		dict->shared = 0;
+		dict->write_lock = 0;
 #endif
 
 		/* Succeeded. */
@@ -623,9 +632,9 @@ rt_gc_alloc_dict_graduate(
 		dict->newer = NULL;
 		dict->native_pointer = NULL;
 		dict->native_finalizer = NULL;
-
 #if defined(NOCT_USE_MULTITHREAD)
-		dict->counter = 0;
+		dict->shared = 0;
+		dict->write_lock = 0;
 #endif
 
 		/* Succeeded. (graduate) */
@@ -698,13 +707,213 @@ rt_gc_alloc_dict_tenure(
 		dict->newer = NULL;
 		dict->native_pointer = NULL;
 		dict->native_finalizer = NULL;
-
 #if defined(NOCT_USE_MULTITHREAD)
-		dict->counter = 0;
+		dict->shared = 0;
+		dict->write_lock = 0;
 #endif
 
 		/* Succeeded. */
 		return dict;
+	}
+
+	/* Failed. */
+	rt_out_of_memory(env);
+	return NULL;
+}
+
+/*
+ * Allocates a packed object in the appropriate region.
+ */
+struct rt_packed *
+rt_gc_alloc_packed(
+	struct rt_env *env,
+	int type,
+	size_t size,
+	size_t elem_size,
+	void *preallocated)
+{
+	struct rt_packed *packed;
+	void *p;
+	int retry;
+
+	assert(env != NULL);
+	assert(size > 0);
+	assert(elem_size > 0);
+
+	/* If use a preallocated buffer. */
+	if (preallocated != NULL)
+		size = 0;
+
+	/*
+	 * [Large Object Promotion]
+	 *  - If the packed is large, allocate in the tenure region.
+	 */
+	if (size >= env->vm->config.gc_lop_threshold)
+		return rt_gc_alloc_packed_tenure(env, type, size, elem_size, preallocated);
+
+	/* Allocate in the nursery region. */
+	for (retry = 0; retry <= 1; retry++) {
+		/* Allocate a rt_packed buffer. */
+		packed = nursery_alloc(env, sizeof(struct rt_packed) + size);
+		if (packed == NULL) {
+			/* Retry. */
+			if (retry == 0) {
+				rt_gc_young_gc(env);
+				continue;
+			} else {
+				rt_out_of_memory(env);
+				return NULL;
+			}
+		}
+
+		/* Get the address of the table. */
+		if (preallocated == NULL)
+			p = (char *)packed + sizeof(struct rt_packed);
+		else
+			p = preallocated;			
+
+		/* Setup the struct. */
+		memset(&packed->head, 0, sizeof(struct rt_gc_object));
+		packed->head.type = RT_GC_TYPE_PACKED;
+		packed->head.region = RT_GC_REGION_NURSERY;
+		packed->head.size = sizeof(struct rt_packed) + size;
+		INSERT_TO_LIST(&packed->head, env->vm->gc.nursery_list, prev, next);
+		packed->type = type;
+		packed->size = size;
+		packed->elem_size = elem_size;
+		packed->packed_buffer = p;
+
+		/* Succeeded. */
+		return packed;
+	}
+
+	/* Failed. */
+	rt_out_of_memory(env);
+	return NULL;
+}
+
+/* Allocates ap packed object in the graduate region. */
+static struct rt_packed *
+rt_gc_alloc_packed_graduate(
+	struct rt_env *env,
+	int type,
+	size_t size,
+	size_t elem_size,
+	void *preallocated)
+{
+	struct rt_packed *packed;
+	void *p;
+
+	assert(env != NULL);
+	assert(size > 0);
+	assert(elem_size > 0);
+
+	/* If use a preallocated buffer. */
+	if (preallocated != NULL)
+		size = 0;
+
+	/*
+	 * This function is only called from the young GC,
+	 * and thus, we don't use young GC for a retry here.
+	 */
+
+	/* Try allocating in the graduate region. */
+	do {
+		/* Allocate a rt_packed buffer. */
+		packed = graduate_alloc(env, sizeof(struct rt_packed) + size);
+		if (packed == NULL)
+			break;
+
+		/* Get the address of the table. */
+		if (preallocated == NULL)
+			p = (char *)packed + sizeof(struct rt_packed);
+		else
+			p = preallocated;			
+
+		/* Setup the struct. */
+		memset(&packed->head, 0, sizeof(struct rt_gc_object));
+		packed->head.type = RT_GC_TYPE_PACKED;
+		packed->head.region = RT_GC_REGION_GRADUATE;
+		packed->head.size = sizeof(struct rt_packed) + size;
+		INSERT_TO_LIST(&packed->head, env->vm->gc.graduate_new_list, prev, next);
+		packed->type = type;
+		packed->size = size;
+		packed->elem_size = elem_size;
+		packed->packed_buffer = p;
+
+		/* Succeeded. (graduate) */
+		return packed;
+	} while (0);
+
+	/*
+	 * Failed to allocate in the graduate region.
+	 * Try allocating in the tenure region.
+	 */
+	packed = rt_gc_alloc_packed_tenure(env, type, size, elem_size, preallocated);
+	if (packed == NULL)
+		return NULL;
+
+	/* Succeeded. (tenure) */
+	return packed;
+}
+
+/* Allocates a large packed in the tenure region. */
+static struct rt_packed *
+rt_gc_alloc_packed_tenure(
+	struct rt_env *env,
+	int type,
+	size_t size,
+	size_t elem_size,
+	void *preallocated)
+{
+	struct rt_packed *packed;
+	void *p;
+	int retry;
+
+	assert(env != NULL);
+	assert(size > 0);
+
+	/* If use a preallocated buffer. */
+	if (preallocated != NULL)
+		size = 0;
+
+	/* Allocate in the tenure region. */
+	for (retry = 0; retry <= 2; retry++) {
+		/* Allocate a rt_packed buffer. */
+		packed = rt_gc_tenure_alloc(env, sizeof(struct rt_packed) + size);
+		if (packed == NULL) {
+			/* Retry. */
+			if (retry == 0) {
+				rt_gc_old_gc(env);
+				continue;
+			} if (retry == 1) {
+				rt_gc_compact_gc(env);
+				continue;
+			} else {
+				rt_out_of_memory(env);
+				return NULL;
+			}
+		}
+
+		/* Get the address of the table. */
+		if (preallocated == NULL)
+			p = (char *)packed + sizeof(struct rt_packed);
+		else
+			p = preallocated;			
+
+		/* Setup the struct. */
+		memset(&packed->head, 0, sizeof(struct rt_gc_object));
+		packed->head.type = RT_GC_TYPE_PACKED;
+		packed->head.region = RT_GC_REGION_TENURE;
+		packed->head.size = sizeof(struct rt_packed) + size;
+		INSERT_TO_LIST(&packed->head, env->vm->gc.tenure_list, prev, next);
+		packed->type = type;
+		packed->size = size;
+		packed->elem_size = elem_size;
+		packed->packed_buffer = p;
+
+		/* Succeeded. */
+		return packed;
 	}
 
 	/* Failed. */
@@ -720,7 +929,7 @@ void
 rt_gc_array_write_barrier(
 	struct rt_env *env,
 	struct rt_array *arr,
-	uint32_t index,
+	size_t index,
 	struct rt_value *val)
 {
 	UNUSED_PARAMETER(index);
@@ -774,11 +983,9 @@ static void
 rt_gc_young_gc(
 	struct rt_env *env)
 {
-#if defined(NOCT_USE_MULTITHREAD)
-	rt_gc_multithread_call_wrapper(env, rt_gc_young_gc_body);
-#else
+	om_enter_gc(env, RT_GC_LEVEL_0);
 	rt_gc_young_gc_body(env);
-#endif
+	om_leave_gc(env);
 }
 
 /* Executes a young GC. */
@@ -1059,6 +1266,9 @@ rt_gc_copy_young_object_recursively(
 			case RT_GC_TYPE_DICT:
 				new_obj = rt_gc_copy_dict_to_graduate(env, (struct rt_dict *)*obj);
 				break;
+			case RT_GC_TYPE_PACKED:
+				new_obj = rt_gc_copy_packed_to_graduate(env, (struct rt_packed *)*obj);
+				break;
 			default:
 				assert(NEVER_COME_HERE);
 				break;
@@ -1091,6 +1301,8 @@ rt_gc_copy_young_object_recursively(
 	/* Recursively copy. */
 	switch ((*obj)->type) {
 	case RT_GC_TYPE_STRING:
+	case RT_GC_TYPE_PACKED:
+		/* No inner values. */
 		break;
 	case RT_GC_TYPE_ARRAY:
 		arr = (struct rt_array *)*obj;
@@ -1231,6 +1443,11 @@ rt_gc_promote_object(
 		if (ret == NULL)
 			return NULL;
 		break;
+	case RT_GC_TYPE_PACKED:
+		ret = rt_gc_promote_packed(env, obj);
+		if (ret == NULL)
+			return NULL;
+		break;
 	default:
 		assert(NEVER_COME_HERE);
 		ret = NULL;
@@ -1342,8 +1559,32 @@ rt_gc_promote_dict(
 	return &new_dict->head;
 }
 
+/* Promotes a packed object. */
+static struct rt_gc_object *
+rt_gc_promote_packed(
+	struct rt_env *env,
+	struct rt_gc_object *obj)
+{
+	struct rt_packed *old_packed, *new_packed;
+
+	/* Allocate a string object. */
+	old_packed = (struct rt_packed *)obj;
+	new_packed = rt_gc_alloc_packed_tenure(env,
+					       old_packed->type,
+					       old_packed->size,
+					       old_packed->elem_size,
+					       (old_packed->size == 0) ? old_packed->packed_buffer : NULL);
+	if (new_packed == NULL)
+		return false;
+
+	/* Set the forwarding pointer. */
+	obj->forward = &new_packed->head;
+
+	return &new_packed->head;
+}
+
 /* Copies a string object to the graduate region. */
-struct rt_gc_object *
+static struct rt_gc_object *
 rt_gc_copy_string_to_graduate(
 	struct rt_env *env,
 	struct rt_string *old_obj)
@@ -1366,7 +1607,7 @@ rt_gc_copy_string_to_graduate(
 }
 
 /* Copies an array object to the graduate region. */
-struct rt_gc_object *
+static struct rt_gc_object *
 rt_gc_copy_array_to_graduate(
 	struct rt_env *env,
 	struct rt_array *old_obj)
@@ -1384,10 +1625,10 @@ rt_gc_copy_array_to_graduate(
 		size = old_obj->alloc_size;
 
 	/*
-	 * Arrays larger than noct_conf_gc_lop_threshold/sizeof(struct rt_value *) must not be in the
-	 * nursery or graduate regions.
+	 * Arrays larger than this size must not be in the nursery or
+	 * graduate regions.
 	 */
-	assert(size < env->vm->config.gc_lop_threshold / sizeof(struct rt_value *));
+	assert(size * sizeof(struct rt_value *) < env->vm->config.gc_lop_threshold);
 
 	/* Allocate in the graduate region. (If failed, in the tenure region.) */
 	new_obj = rt_gc_alloc_array_graduate(env, size);
@@ -1414,7 +1655,7 @@ rt_gc_copy_array_to_graduate(
 }
 
 /* Copies a dictionary object to the graduate region. */
-struct rt_gc_object *
+static struct rt_gc_object *
 rt_gc_copy_dict_to_graduate(
 	struct rt_env *env,
 	struct rt_dict *old_obj)
@@ -1430,10 +1671,10 @@ rt_gc_copy_dict_to_graduate(
 	size = old_obj->alloc_size;
 
 	/*
-	 * Arrays larger than noct_conf_gc_lop_threshold/sizeof(struct rt_value *)/2 must not be in the
+	 * Dictionaries larger than this value must not be in the
 	 * nursery or graduate regions.
 	 */
-	assert(size < env->vm->config.gc_lop_threshold / sizeof(struct rt_value *) / 2);
+	assert(size * sizeof(struct rt_value *) * 2 < env->vm->config.gc_lop_threshold);
 
 	/* Allocate in the graduate region. (If failed, in the tenure region.) */
 	new_obj = rt_gc_alloc_dict_graduate(env, size);
@@ -1469,16 +1710,45 @@ rt_gc_copy_dict_to_graduate(
 	return &new_obj->head;
 }
 
+/* Copies a string object to the graduate region. */
+static struct rt_gc_object *
+rt_gc_copy_packed_to_graduate(
+	struct rt_env *env,
+	struct rt_packed *old_obj)
+{
+	struct rt_packed *new_obj;
+
+	/*
+	 * Packed larger than noct_conf_gc_lop_threshold must not be in the
+	 * nursery or graduate regions.
+	 */
+	assert(old_obj->size < env->vm->config.gc_lop_threshold);
+
+	/* Allocate in the graduate region. */
+	new_obj = rt_gc_alloc_packed_graduate(env,
+					      old_obj->type,
+					      old_obj->size,
+					      old_obj->elem_size,
+					      (old_obj->size == 0) ? old_obj->packed_buffer : NULL);
+	if (new_obj == NULL)
+		return NULL;
+
+	/* If not a preallocated. (that means packed_buffer is not managed by GC)  */
+	if (old_obj->size != 0)
+		memcpy(new_obj->packed_buffer, old_obj->packed_buffer, old_obj->size);
+
+	/* Succeeded. */
+	return &new_obj->head;
+}
+
 /* Executes an old GC in the multithreaded manner. */
 static void
 rt_gc_old_gc(
 	struct rt_env *env)
 {
-#if defined(NOCT_USE_MULTITHREAD)
-	rt_gc_multithread_call_wrapper(env, rt_gc_old_gc_body);
-#else
+	om_enter_gc(env, RT_GC_LEVEL_1);
 	rt_gc_old_gc_body(env);
-#endif
+	om_leave_gc(env);
 }
 
 /* Executes an old GC. */
@@ -1641,6 +1911,10 @@ rt_gc_free_old_object(
 		struct rt_dict *dict;
 		dict = (struct rt_dict *)obj;
 		rt_gc_tenure_free(env, dict);
+	} else if (obj->type == RT_GC_TYPE_PACKED) {
+		struct rt_packed *packed;
+		packed = (struct rt_packed *)obj;
+		rt_gc_tenure_free(env, packed);
 	}
 }
 
@@ -1750,6 +2024,24 @@ rt_gc_compact_gc(
 	/* For all tenure list references. */
 	objpp = &env->vm->gc.tenure_list;
 	while (*objpp != NULL) {
+		/* Rewrite pointers. */
+		if ((*objpp)->type == RT_GC_TYPE_ARRAY) {
+			struct rt_array *arr;
+			arr = (struct rt_array *)*objpp;
+			arr->table = (struct rt_value *)((char *)arr + sizeof(struct rt_array));
+		} else if ((*objpp)->type == RT_GC_TYPE_DICT) {
+			struct rt_dict *dict;
+			dict = (struct rt_dict *)*objpp;
+			dict->key = (struct rt_value *)((char *)dict + sizeof(struct rt_dict));
+			dict->value = (struct rt_value *)((char *)dict + sizeof(struct rt_dict) + dict->alloc_size * sizeof(struct rt_value));
+		} else if ((*objpp)->type == RT_GC_TYPE_PACKED) {
+			struct rt_packed *packed;
+			packed = (struct rt_packed *)*objpp;
+			/* Move reference if not a preallocated buffer. */
+			if (packed->size != 0)
+				packed->packed_buffer = ((char *)packed + sizeof(struct rt_packed));
+		}
+
 		/* Rewrite ->next. */
 		rt_gc_update_tenure_ref(env, objpp);
 
@@ -1906,14 +2198,18 @@ rt_gc_unpin_global(
 	struct rt_env *env,
 	struct rt_value *val)
 {
-	uint32_t i;
+	int i;
 
 	assert(env != NULL);
 	assert(val != NULL);
 
-	for (i = 0; i < env->vm->pinned_count; i++) {
+	for (i = (int)env->vm->pinned_count - 1; i >= 0; i--) {
 		if (env->vm->pinned[i] == val) {
-			memmove(&env->vm->pinned[i], &env->vm->pinned[i+1], (RT_GLOBAL_PIN_MAX - i - 1) * sizeof(struct rt_value *));
+			if (i != (int)env->vm->pinned_count - 1) {
+				memmove(&env->vm->pinned[i],
+					&env->vm->pinned[i+1],
+					(size_t)(RT_GLOBAL_PIN_MAX - i - 1) * sizeof(struct rt_value *));
+			}
 			env->vm->pinned_count--;
 
 			/* Succeeded. */
@@ -2123,166 +2419,3 @@ rt_gc_tenure_free(
 	/* Erase the used bit. */
 	*header = size & RT_GC_FREELIST_SIZE_MASK;
 }
-
-/*
- * Multithread Support
- */
-
-#if defined(NOCT_USE_MULTITHREAD)
-
-#include "atomic.h"
-
-/*
- * Initialize an environment.
- */
-void
-rt_gc_init_env(
-	struct rt_env *env)
-{
-	env->gc_in_progress_counter = 0;
-
-	/* Make this thread inflight. */
-	while (1) {
-		/* Try acquire. */
-		atomic_fetch_add_acquire(&env->vm->in_flight_counter, 1);
-		if (atomic_load_acquire(&env->vm->gc_stw_counter) == 0)
-			break;
-
-		/* Failed, release. */
-		atomic_fetch_sub_release(&env->vm->in_flight_counter, 1);
-
-		/* Wait for GC. */
-		while (atomic_load_acquire(&env->vm->gc_stw_counter) > 0)
-			cpu_relax();
-	}
-}
-
-/*
- * Make a GC safe point.
- */
-void
-rt_gc_safepoint(
-	struct rt_env *env)
-{
-	/* Make this thread non-inflight. */
-	atomic_fetch_sub_release(&env->vm->in_flight_counter, 1);
-
-	/* Allow other threads to run GC in this point. */
-
-	/* Make this thread inflight again. */
-	while (1) {
-		/* Try acquire. */
-		atomic_fetch_add_acquire(&env->vm->in_flight_counter, 1);
-		if (atomic_load_acquire(&env->vm->gc_stw_counter) == 0)
-			break;
-
-		/* Failed, release. */
-		atomic_fetch_sub_release(&env->vm->in_flight_counter, 1);
-
-		/* Wait for GC. */
-		while (env->vm->gc_stw_counter > 0)
-			cpu_relax();
-	}
-}
-
-/*
- * Run a function in a multithreaded manner.
- * The term "inflight" means a thread is executing and not waiting at a GC-safe point.
- */
-static void
-rt_gc_multithread_call_wrapper(
-	struct rt_env *env,
-	void (*gc)(struct rt_env *env))
-{
-	bool is_executor = false;
-
-	/* This thread is inflight at this moment. */
-
-	/* If this is not a recursive GC call. */
-	if (atomic_load_acquire(&env->gc_in_progress_counter) == 0) {
-		/* Make this thread non-inflight, and enter a GC safe point. */
-		atomic_fetch_sub_release(&env->vm->in_flight_counter, 1);
-
-		/*
-		 * Wait for all other threads entering GC safe points,
-		 * ant this thread getting the right to enter GC section.
-		 */
-		while (1) {
-			/* Try acquire the right to execute GC. */
-			int old = atomic_fetch_add_acquire(&env->vm->gc_stw_counter, 1);
-			if (old == 0 && atomic_load_acquire(&env->vm->in_flight_counter) == 0) {
-				/* Succeeded, entering the GC section. */
-				is_executor = true;
-				break;
-			}
-
-			/* Failed, release.*/
-			atomic_fetch_sub_release(&env->vm->gc_stw_counter, 1);
-
-			/* If another thread got the right to execute GC. */
-			if (old > 0) {
-				/* Wait for the GC finishes. */
-				while (atomic_load_acquire(&env->vm->gc_stw_counter) > 0)
-					cpu_relax();
-
-				/* Don't execute a GC in this thread this time. */
-				goto back_to_inflight;
-			}
-
-			/* Wait for all other threads get non-inflight. */
-			while (atomic_load_acquire(&env->vm->in_flight_counter) > 0)
-				cpu_relax();
-		}
-	} else {
-		/*
-		 * Recursive call, this thread is non-inflight, and in
-		 * the GC section.
-		 */
-	}
-
-	/* Count-up for recursive GC calls. */
-	atomic_fetch_add_acquire(&env->gc_in_progress_counter, 1);
-
-	/* Do GC. */
-	gc(env);
-
-	/* Count-down for recursive GC calls. */
-	atomic_fetch_sub_release(&env->gc_in_progress_counter, 1);
-
-back_to_inflight:
-	/* If this is not a recursive GC call. */
-	if (env->gc_in_progress_counter == 0) {
-		if (is_executor) {
-			/* Exit a GC. */
-			atomic_fetch_sub_release(&env->vm->gc_stw_counter, 1);
-		}
-
-		/* At this moment, another thread may execute GC. */
-
-		/* Wait for GC, and make this thread inflight again. */
-		while (1) {
-			/* Try acquire. */
-			atomic_fetch_add_acquire(&env->vm->in_flight_counter, 1);
-			if (atomic_load_acquire(&env->vm->gc_stw_counter) == 0) {
-				/* Succeeded. */
-				break;
-			}
-
-			/* Failed, release. */
-			atomic_fetch_sub_release(&env->vm->in_flight_counter, 1);
-
-			/* Wait for GC. */
-			while (atomic_load_acquire(&env->vm->gc_stw_counter) > 0)
-				cpu_relax();
-		}
-
-		/* Now this thread is infligh. */
-        } else {
-		/*
-		 * Recursive call, this thread is still non-inflight,
-		 * and in the GC section.
-		 */
-	}
-}
-
-#endif /* defined(NOCT_USE_MULTITHREAD) */

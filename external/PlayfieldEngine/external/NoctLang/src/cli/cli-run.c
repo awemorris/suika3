@@ -21,18 +21,21 @@ int command_run(int argc, char *argv[])
 	NoctVM *vm;
 	NoctEnv *env;
 	NoctValue ret;
-	uint32_t file_arg;
-	uint32_t i;
+	int file_arg;
+	int prog_arg;
+	int i;
+	bool is_oneliner;
 	char *data;
 	size_t len;
-	uint32_t arg_count;
+	int arg_count;
 	NoctValue *arg_value;
 
 	noct_set_default_config(&config);
 
 	/* Parse options. */
 	file_arg = 1;
-	for (i = 1; i < (uint32_t)argc; i++) {
+	is_oneliner = false;
+	for (i = 1; i < argc; i++) {
 		if (argv[i][0] != '-')
 			break;
 
@@ -81,13 +84,25 @@ int command_run(int argc, char *argv[])
 			file_arg++;
 			continue;
 		}
+		if (strncmp(argv[i], "--one-line", 10) == 0 ||
+		    strcmp(argv[i], "-e") == 0) {
+			if (argc <= (int)i + 1) {
+				wide_printf(N_TR("Specify a command.\n"));
+				return 1;
+			}
+			is_oneliner = true;
+			prog_arg = i + 1;
+			i++;
+			file_arg++;
+			continue;
+		}
 
 		wide_printf(N_TR("Unknown option %s.\n"), argv[1]);
 		return 1;
 	}
 
 	/* Check if a file is specified. */
-	if (file_arg == (uint32_t)argc) {
+	if (file_arg == argc && !is_oneliner) {
 		/* No file specified, enter REPL. */
 		if (argc == 1) {
 #if defined(NOCT_USE_REPL)
@@ -107,15 +122,15 @@ int command_run(int argc, char *argv[])
 	}
 
 	/* Register libraries. */
-	if (!noct_register_api_math(env)) {
-		wide_printf(N_TR("Out of memory.\n"));
-		return false;
-	}
 	if (!noct_register_api_system(env)) {
 		wide_printf(N_TR("Out of memory.\n"));
 		return false;
 	}
 	if (!noct_register_api_console(env)) {
+		wide_printf(N_TR("Out of memory.\n"));
+		return false;
+	}
+	if (!noct_register_api_file(env)) {
 		wide_printf(N_TR("Out of memory.\n"));
 		return false;
 	}
@@ -126,45 +141,62 @@ int command_run(int argc, char *argv[])
 		return 1;
 	}
 
-	for (i = file_arg; i < (uint32_t)argc; i++) {
-		/* Load a file content. */
-		if (!load_file_content(argv[i], &data, &len))
+	/* Load an one liner if exists. */
+	if (is_oneliner) {
+		char entire[32768];
+
+		/* Make a function. */
+		snprintf(entire, sizeof(entire), "func main() { %s; }", argv[prog_arg]);
+		if (!noct_register_source(env, "oneliner", entire)) {
+			const char *file, *msg;
+			int line;
+			noct_get_error_file(env, &file);
+			noct_get_error_line(env, &line);
+			noct_get_error_message(env, &msg);
+			wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
+			free(data);
 			return 1;
-
-		/* Check for the bytecode header. */
-		if (strncmp(data, NOCT_BYTECODE_HEADER, strlen(NOCT_BYTECODE_HEADER)) != 0) {
-			/* It's a source file. */
-			if (!noct_register_source(env, argv[i], data)) {
-				const char *file, *msg;
-				int line;
-				noct_get_error_file(env, &file);
-				noct_get_error_line(env, &line);
-				noct_get_error_message(env, &msg);
-				wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
-				free(data);
-				return 1;
-			}
-		} else {
-			/* It's a bytecode file. */
-			if (!noct_register_bytecode(env, (void *)data, (uint32_t)len)) {
-				const char *file, *msg;
-				int line;
-				noct_get_error_file(env, &file);
-				noct_get_error_line(env, &line);
-				noct_get_error_message(env, &msg);
-				wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
-				free(data);
-				return 1;
-			}
 		}
+	} else {
+		for (i = file_arg; i < argc; i++) {
+			/* Load a file content. */
+			if (!load_file_content(argv[i], &data, &len))
+				return 1;
 
-		free(data);
+			/* Check for the bytecode header. */
+			if (strncmp(data, NOCT_BYTECODE_HEADER, strlen(NOCT_BYTECODE_HEADER)) != 0) {
+				/* It's a source file. */
+				if (!noct_register_source(env, argv[i], data)) {
+					const char *file, *msg;
+					int line;
+					noct_get_error_file(env, &file);
+					noct_get_error_line(env, &line);
+					noct_get_error_message(env, &msg);
+					wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
+					free(data);
+					return 1;
+				}
+			} else {
+				/* It's a bytecode file. */
+				if (!noct_register_bytecode(env, (void *)data, (uint32_t)len)) {
+					const char *file, *msg;
+					int line;
+					noct_get_error_file(env, &file);
+					noct_get_error_line(env, &line);
+					noct_get_error_message(env, &msg);
+					wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
+					free(data);
+					return 1;
+				}
+			}
+			free(data);
+		}
 	}
 
 	/* Make the arguments for "main()". */
-	arg_count = (uint32_t)argc - file_arg - 1;
+	arg_count = argc - file_arg - 1;
 	if (arg_count > 0) {
-		arg_value = malloc(sizeof(NoctValue) * arg_count);
+		arg_value = malloc(sizeof(NoctValue) * (size_t)arg_count);
 		if (arg_value == NULL)
 			return 1;
 		for (i = 0; i < arg_count; i++) {
@@ -178,7 +210,7 @@ int command_run(int argc, char *argv[])
 	}
 
 	/* Run the "main()" function. */
-	if (!noct_enter_vm(env, "main", arg_count, arg_value, &ret)) {
+	if (!noct_enter_vm(env, "main", (uint32_t)arg_count, arg_value, &ret)) {
 		const char *file, *msg;
 		int line;
 		noct_get_error_file(env, &file);

@@ -59,7 +59,9 @@ enum hir_expr_type {
 enum hir_term_type {
 	HIR_TERM_SYMBOL,
 	HIR_TERM_INT,
+	HIR_TERM_LONG,
 	HIR_TERM_FLOAT,
+	HIR_TERM_DOUBLE,
 	HIR_TERM_STRING,
 	HIR_TERM_EMPTY_ARRAY,
 	HIR_TERM_EMPTY_DICT,
@@ -296,8 +298,14 @@ struct hir_term {
 		/* Integer value. */
 		int i;
 
+		/* Long value. */
+		int64_t l;
+
 		/* Float value. */
 		float f;
+
+		/* Double value. */
+		double lf;
 
 		/* String value. */
 		char *s;

@@ -25,7 +25,7 @@ func start() {
     // Put initial emenies.
     for (i in 0..7) {
         var ex = 40 + i*70;
-        enemies->push({ x: ex, y: 40, vy: 40, w:16, h:16 });
+        Array.push(enemies, { x: ex, y: 40, vy: 40, w:16, h:16 });
     }
     lastTime = Engine.millisec;
 }
@@ -59,7 +59,7 @@ func update() {
     // Shooting.
     fireCooldown -= dt;
     if ((Engine.isSpaceKeyPressed || Engine.isGamepadAPressed || Engine.isMouseLeftPressed) && fireCooldown <= 0.0) {
-        bullets->push({ x: player.x+6, y: player.y-10, vy: -400 });
+        Array.push(bullets, { x: player.x+6, y: player.y-10, vy: -400 });
         fireCooldown = 0.08;
         // Engine.playSound({ stream:0, file:"shot.ogg" });
     }
@@ -69,7 +69,7 @@ func update() {
     for (b in bullets) {
         b.y += b.vy * dt;
         if (b.y > -10)
-            aliveBullets->push(b);
+            Array.push(aliveBullets, b);
     }
     bullets = aliveBullets;
 
@@ -84,7 +84,7 @@ func update() {
         if (e.y > 480)
             e.y = 0;
 
-        aliveEnemies->push(e);
+        Array.push(aliveEnemies, e);
     }
     enemies = aliveEnemies;
 
@@ -98,15 +98,15 @@ func update() {
                 hit = true; // Hide the bullet.
                 score += 10;
             } else {
-                keepBullets->push(b);
+                Array.push(keepBullets, b);
             }
         }
         bullets = keepBullets;
         if (!hit) {
-            nextEnemies->push(e);
+            Array.push(nextEnemies, e);
         } else {
             // Respawn.
-            nextEnemies->push({ x: randRange(20, 620), y: -randRange(10,80), vy: 60, w:16, h:16 });
+            Array.push(nextEnemies, { x: randRange(20, 620), y: -randRange(10,80), vy: 60, w:16, h:16 });
         }
     }
     enemies = nextEnemies;

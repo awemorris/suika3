@@ -19,7 +19,7 @@ func main() {
         var017: 0
     };
 
-    fast_gc();
+    GC.youngGC();
 
     print(dict.var001);
 }

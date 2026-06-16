@@ -380,17 +380,57 @@ jit_visit_iconst_op(
 
         dst *= (int)sizeof(struct rt_value);
 
-        /* &env->frame->tmpvar[dst].type = RT_VALUE_INT; */
-        /* &env->frame->tmpvar[dst].val.i = val; */
+        /* env->frame->tmpvar[dst].type = NOCT_VALUE_INT; */
+        /* env->frame->tmpvar[dst].val.i = val; */
         ASM {
                 /* r13: exception_handler */
                 /* r14: env */
                 /* r15: &env->frame->tmpvar[0] */
 
+                /* %rax = &env->frame->tmpvar[dst] */
                 /* movq $dst -> %rax */            IB(0x48); IB(0xc7); IB(0xc0); ID((uint32_t)dst);
                 /* addq %r15 -> %rax */            IB(0x4c); IB(0x01); IB(0xf8);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_INT */
                 /* movl $0 -> (%rax) */            IB(0xc7); IB(0x00); ID(0);
-                /* movl $val ->8(%rax) */          IB(0xc7); IB(0x40); IB(0x08); ID((uint32_t)val);
+
+                /* env->frame->tmpvar[dst].val.i = val */
+                /* movl $val ->8 (%rax) */         IB(0xc7); IB(0x40); IB(0x08); ID((uint32_t)val);
+        }
+
+        return true;
+}
+
+/* Visit a OP_LICONST instruction. */
+static INLINE bool
+jit_visit_liconst_op(
+        struct jit_context *ctx)
+{
+        int dst;
+        uint64_t val;
+
+        CONSUME_TMPVAR(dst);
+        CONSUME_IMM64(val);
+
+        dst *= (int)sizeof(struct rt_value);
+
+        /* env->frame->tmpvar[dst].type = RT_VALUE_LONG; */
+        /* env->frame->tmpvar[dst].val.l = val; */
+        ASM {
+                /* r13: exception_handler */
+                /* r14: env */
+                /* r15: &env->frame->tmpvar[0] */
+
+                /* %rax = &env->frame->tmpvar[dst] */
+                /* movq $dst -> %rax */            IB(0x48); IB(0xc7); IB(0xc0); ID((uint32_t)dst);
+                /* addq %r15 -> %rax */            IB(0x4c); IB(0x01); IB(0xf8);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_LONG */
+                /* movl $5 -> 0(%rax) */           IB(0xc7); IB(0x00); ID(5);
+
+                /* env->frame->tmpvar[dst].val.l = val */
+                /* movabs $val -> %rcx */          IB(0x48); IB(0xb9); IQ(val);
+                /* movl %rcx -> 8(%rax) */         IB(0x48); IB(0x89); IB(0x48); IB(0x08);
         }
 
         return true;
@@ -420,6 +460,41 @@ jit_visit_fconst_op(
                 /* addq %r15 -> %rax */             IB(0x4c); IB(0x01); IB(0xf8);
                 /* movl $1 -> (%rax) */             IB(0xc7); IB(0x00); ID(1);
                 /* movl $val -> 8(%rax) */          IB(0xc7); IB(0x40); IB(0x08); ID(val);
+        }
+
+        return true;
+}
+
+/* Visit a OP_LFCONST instruction. */
+static INLINE bool
+jit_visit_lfconst_op(
+        struct jit_context *ctx)
+{
+        int dst;
+        uint64_t val;
+
+        CONSUME_TMPVAR(dst);
+        CONSUME_IMM64(val);
+
+        dst *= (int)sizeof(struct rt_value);
+
+        /* env->frame->tmpvar[dst].type = RT_VALUE_DOUBLE; */
+        /* env->frame->tmpvar[dst].val.lf = val; */
+        ASM {
+                /* r13: exception_handler */
+                /* r14: env */
+                /* r15: &env->frame->tmpvar[0] */
+
+                /* %rax = &env->frame->tmpvar[dst] */
+                /* movq $dst -> %rax */            IB(0x48); IB(0xc7); IB(0xc0); ID((uint32_t)dst);
+                /* addq %r15 -> %rax */            IB(0x4c); IB(0x01); IB(0xf8);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_DOUBLE */
+                /* movl $5 -> 0(%rax) */           IB(0xc7); IB(0x00); ID(6);
+
+                /* env->frame->tmpvar[dst].val.l = val */
+                /* movabs $val -> %rcx */          IB(0x48); IB(0xb9); IQ(val);
+                /* movl %rcx -> 8(%rax) */         IB(0x48); IB(0x89); IB(0x48); IB(0x08);
         }
 
         return true;
@@ -1667,6 +1742,50 @@ jit_visit_jmpifeq_op(
         return true;
 }
 
+/* Visit a OP_SAFEPOINT instruction. */
+static INLINE bool
+jit_visit_safepoint_op(
+        struct jit_context *ctx)
+{
+        if (IS_MSABI) {
+                /* if (!rt_safepoint_helper(env)) return false; */
+                ASM {
+                        /* r13: exception_handler */
+                        /* r14: env */
+                        /* r14: &env->frame->tmpvar[0] */
+
+                        /* subq %rsp, $32 */                      IB(0x48); IB(0x83); IB(0xec); IB(0x20);
+                        /* (1st) movq %r14 -> %rcx */             IB(0x4c); IB(0x89); IB(0xf1);
+                        /* movabs rt_safepoint_helper -> %rax */  IB(0x48); IB(0xb8); IQ((uint64_t)ex_safepoint_helper);
+                        /* call *%rax */                          IB(0xff); IB(0xd0);
+                        /* addq %rsp, $32 */                      IB(0x48); IB(0x83); IB(0xc4); IB(0x20);
+
+                        /* testl %eax, %eax */                    IB(0x83); IB(0xf8); IB(0x00);
+                        /* jne 8 <next> */                        IB(0x75); IB(0x03);
+                        /* jmp *%r13 */                           IB(0x41); IB(0xff); IB(0xe5);
+                /* next: */
+                }
+        } else {
+                /* if (!rt_safepoint_helper(env)) return false; */
+                ASM {
+                        /* r13: exception_handler */
+                        /* r14: env */
+                        /* r14: &env->frame->tmpvar[0] */
+
+                        /* (1st) movq %r14, %rdi */               IB(0x4c); IB(0x89); IB(0xf7);
+                        /* movabs rt_safepoint_helper -> %rax */  IB(0x48); IB(0xb8); IQ((uint64_t)ex_safepoint_helper);
+                        /* call *%rax */                          IB(0xff); IB(0xd0);
+
+                        /* testl %eax, %eax */                    IB(0x83); IB(0xf8); IB(0x00);
+                        /* jne 8 <next> */                        IB(0x75); IB(0x03);
+                        /* jmp *%r13 */                           IB(0x41); IB(0xff); IB(0xe5);
+                /* next:*/
+                }
+        }
+
+        return true;
+}
+
 /* Visit a bytecode of a function. */
 bool
 jit_visit_bytecode(
@@ -1800,8 +1919,16 @@ jit_visit_bytecode(
                         if (!jit_visit_iconst_op(ctx))
                                 return false;
                         break;
+                case OP_LICONST:
+                        if (!jit_visit_liconst_op(ctx))
+                                return false;
+                        break;
                 case OP_FCONST:
                         if (!jit_visit_fconst_op(ctx))
+                                return false;
+                        break;
+                case OP_LFCONST:
+                        if (!jit_visit_lfconst_op(ctx))
                                 return false;
                         break;
                 case OP_SCONST:
@@ -1955,6 +2082,12 @@ jit_visit_bytecode(
                 case OP_JMPIFEQ:
                         if (!jit_visit_jmpifeq_op(ctx))
                                 return false;
+                        break;
+                case OP_SAFEPOINT:
+#if defined(NOCT_USE_MULTITHREAD)
+                        if (!jit_visit_safepoint_op(ctx))
+                                return false;
+#endif
                         break;
                 default:
                         assert(JIT_OP_NOT_IMPLEMENTED);

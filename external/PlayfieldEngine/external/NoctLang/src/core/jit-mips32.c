@@ -126,6 +126,8 @@ void
 jit_commit(
         struct rt_env *env)
 {
+        UNUSED_PARAMETER(env);
+
         /* Make code executable and non-writable. */
         jit_map_executable(jit_code_region, JIT_CODE_MAX);
 
@@ -292,7 +294,7 @@ jit_visit_lineinfo_op(
 
                 /* env->line = line; */
                 /* li $t0, line */      IW(0x24080000 | lo16(line));
-                /* sw $t0, 4($s0) */    IW(0xae080004);
+                /* sw $t0, 8($s0) */    IW(0xae080008);
         }
 
         return true;
@@ -330,6 +332,10 @@ jit_visit_assign_op(
                 /* lw $t3, 4($t1) */            IW(0x8d2b0004);
                 /* sw $t2, 0($t0) */            IW(0xad0a0000);
                 /* sw $t3, 4($t0) */            IW(0xad0b0004);
+                /* lw $t2, 8($t1) */            IW(0x8d2a0008);
+                /* lw $t3, 12($t1) */           IW(0x8d2b000c);
+                /* sw $t2, 8($t0) */            IW(0xad0a0008);
+                /* sw $t3, 12($t0) */           IW(0xad0b000c);
         }
 
         return true;
@@ -357,14 +363,61 @@ jit_visit_iconst_op(
                 /* li $t0, dst */               IW(0x24080000 | lo16((uint32_t)dst));
                 /* addu $t0, $t0, $s1 */        IW(0x01114021);
 
-                /* env->frame->tmpvar[dst].type = RT_VALUE_INT */
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_INT */
                 /* li $t1, 0 */                 IW(0x24090000);
                 /* sw $t1, 0($t0) */            IW(0xad090000);
 
                 /* env->frame->tmpvar[dst].val.i = val */
                 /* lui $t1, val@h */            IW(0x3c090000 | hi16(val));
                 /* ori $t1, $t1, val@l */       IW(0x35290000 | lo16(val));
-                /* sw  $t1, 4($t0) */           IW(0xad090004);
+                /* sw  $t1, 8($t0) */           IW(0xad090008);
+        }
+
+        return true;
+}
+
+/* Visit a OP_LICONST instruction. */
+static INLINE bool
+jit_visit_liconst_op(
+        struct jit_context *ctx)
+{
+        int dst;
+        uint64_t val;
+
+        CONSUME_TMPVAR(dst);
+        CONSUME_IMM64(val);
+
+        dst *= (int)sizeof(struct rt_value);
+
+        /* Set a long integer constant. */
+        ASM {
+                /* $s0: env */
+                /* $s1: &env->frame->tmpvar[0] */
+
+                /* $t0 = dst_addr = &env->frame->tmpvar[dst] */
+                /* li $t0, dst */               IW(0x24080000 | lo16((uint32_t)dst));
+                /* addu $t0, $t0, $s1 */        IW(0x01114021);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_LONG */
+                /* li $t1, 5 */                 IW(0x24090005);
+                /* sw $t1, 0($t0) */            IW(0xad090000);
+
+                /* env->frame->tmpvar[dst].val.i = val */
+#if defined(NOCT_ARCH_LE)
+                /* lui $t1, val@lh */           IW(0x3c090000 | hi16((uint32_t)(val & 0xffffffff)));
+                /* ori $t1, $t1, val@ll */      IW(0x35290000 | lo16((uint32_t)(val & 0xffffffff)));
+                /* sw  $t1, 8($t0) */           IW(0xad090008);
+                /* lui $t1, val@h */            IW(0x3c090000 | hi16((uint32_t)((val >> 32) & 0xffffffff)));
+                /* ori $t1, $t1, val@l */       IW(0x35290000 | lo16((uint32_t)((val >> 32) & 0xffffffff)));
+                /* sw  $t1, 12($t0) */          IW(0xad09000c);
+#else
+                /* lui $t1, val@lh */           IW(0x3c090000 | hi16((uint32_t)((val >> 32) & 0xffffffff)));
+                /* ori $t1, $t1, val@ll */      IW(0x35290000 | lo16((uint32_t)((val >> 32) & 0xffffffff)));
+                /* sw  $t1, 8($t0) */           IW(0xad090008);
+                /* lui $t1, val@h */            IW(0x3c090000 | hi16((uint32_t)(val & 0xffffffff)));
+                /* ori $t1, $t1, val@l */       IW(0x35290000 | lo16((uint32_t)(val & 0xffffffff))); 
+                /* sw  $t1, 12($t0) */          IW(0xad09000c);
+#endif
         }
 
         return true;
@@ -392,14 +445,61 @@ jit_visit_fconst_op(
                 /* li $t0, dst */               IW(0x24080000 | lo16((uint32_t)dst));
                 /* addu $t0, $t0, $s1 */        IW(0x01114021);
 
-                /* env->frame->tmpvar[dst].type = RT_VALUE_FLOAT */
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_FLOAT */
                 /* li $t1, 1 */                 IW(0x24090001);
                 /* sw $t1, 0($t0) */            IW(0xad090000);
 
                 /* env->frame->tmpvar[dst].val.i = val */
                 /* lui $t1, val@h */            IW(0x3c090000 | hi16(val));
                 /* ori $t1, $t1, val@l */       IW(0x35290000 | lo16(val));
-                /* sw  $t1, 4($t0) */           IW(0xad090004);
+                /* sw  $t1, 8($t0) */           IW(0xad090008);
+        }
+
+        return true;
+}
+
+/* Visit a OP_LFCONST instruction. */
+static INLINE bool
+jit_visit_lfconst_op(
+        struct jit_context *ctx)
+{
+        int dst;
+        uint64_t val;
+
+        CONSUME_TMPVAR(dst);
+        CONSUME_IMM64(val);
+
+        dst *= (int)sizeof(struct rt_value);
+
+        /* Set a long integer constant. */
+        ASM {
+                /* $s0: env */
+                /* $s1: &env->frame->tmpvar[0] */
+
+                /* $t0 = dst_addr = &env->frame->tmpvar[dst] */
+                /* li $t0, dst */               IW(0x24080000 | lo16((uint32_t)dst));
+                /* addu $t0, $t0, $s1 */        IW(0x01114021);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_DOUBLE */
+                /* li $t1, 6 */                 IW(0x24090006);
+                /* sw $t1, 0($t0) */            IW(0xad090000);
+
+                /* env->frame->tmpvar[dst].val.i = val */
+#if defined(NOCT_ARCH_LE)
+                /* lui $t1, val@lh */           IW(0x3c090000 | hi16((uint32_t)(val & 0xffffffff)));
+                /* ori $t1, $t1, val@ll */      IW(0x35290000 | lo16((uint32_t)(val & 0xffffffff)));
+                /* sw  $t1, 8($t0) */           IW(0xad090008);
+                /* lui $t1, val@h */            IW(0x3c090000 | hi16((uint32_t)((val >> 32) & 0xffffffff)));
+                /* ori $t1, $t1, val@l */       IW(0x35290000 | lo16((uint32_t)((val >> 32) & 0xffffffff)));
+                /* sw  $t1, 12($t0) */          IW(0xad09000c);
+#else
+                /* lui $t1, val@lh */           IW(0x3c090000 | hi16((uint32_t)((val >> 32) & 0xffffffff)));
+                /* ori $t1, $t1, val@ll */      IW(0x35290000 | lo16((uint32_t)((val >> 32) & 0xffffffff)));
+                /* sw  $t1, 8($t0) */           IW(0xad090008);
+                /* lui $t1, val@h */            IW(0x3c090000 | hi16((uint32_t)(val & 0xffffffff)));
+                /* ori $t1, $t1, val@l */       IW(0x35290000 | lo16((uint32_t)(val & 0xffffffff))); 
+                /* sw  $t1, 12($t0) */          IW(0xad09000c);
+#endif
         }
 
         return true;
@@ -572,9 +672,9 @@ jit_visit_inc_op(
                 /* addu $t0, $t0, $s1 */        IW(0x01114021);
 
                 /* env->frame->tmpvar[dst].val.i++ */
-                /* lw    $t1, 4($t0) */         IW(0x8d090004);
+                /* lw    $t1, 8($t0) */         IW(0x8d090008);
                 /* addiu $t1, $t1, 1 */         IW(0x25290001);
-                /* sw    $t1, 4($t0) */         IW(0xad090004);
+                /* sw    $t1, 8($t0) */         IW(0xad090008);
         }
 
         return true;
@@ -943,12 +1043,12 @@ jit_visit_eqi_op(
                 /* $t0 = env->frame->tmpvar[src1].val.i */
                 /* li $t0, src1 */              IW(0x24080000 | lo16((uint32_t)src1));
                 /* addu $t0, $t0, $s1 */        IW(0x01114021);
-                /* lw $t0, 4($t0) */            IW(0x8d080004);
+                /* lw $t0, 8($t0) */            IW(0x8d080008);
 
                 /* $t1 = env->frame->tmpvar[src2].val.i */
                 /* li $t1, src2 */              IW(0x24090000 | lo16((uint32_t)src2));
                 /* addu $t1, $t1, $s1 */        IW(0x01314821);
-                /* lw $t1, 4($t1) */            IW(0x8d290004);
+                /* lw $t1, 8($t1) */            IW(0x8d290008);
 
                 /* src1 == src2 */
                 /* subu $at, $t0, $t1 */        IW(0x01090823);
@@ -1295,7 +1395,7 @@ jit_visit_storedot_op(
                 /* sw $t0, 16($sp) */           IW(0xafa80010);
 
                 /* Arg6 [sp+20] = src */
-                /* ori $t0, $zero, src */       IW(0x24080000 | lo16(src));
+                /* ori $t0, $zero, src */       IW(0x24080000 | lo16((uint32_t)src));
                 /* sw $t0, 20($sp) */           IW(0xafa80014);
 
                 /* Call ex_storedot_helper(). */
@@ -1475,7 +1575,7 @@ jit_visit_thiscall_op(
                 /* sw $t0, 20($sp) */           IW(0xafa80014);
 
                 /* Arg7 [sp+24] = argc_count */
-                /* ori $t0, $zero, arg_count */ IW(0x24080000 | lo16(arg_count));
+                /* ori $t0, $zero, arg_count */ IW(0x24080000 | lo16((uint32_t)arg_count));
                 /* sw $t0, 24($sp) */           IW(0xafa80018);
 
                 /* Arg8 [sp+28] = arg */
@@ -1552,7 +1652,7 @@ jit_visit_jmpiftrue_op(
                 /* $at = env->frame->tmpvar[src].val.i */
                 /* li $t0, src */               IW(0x24080000 | tvar16(src));
                 /* addu $t0, $t0, $s1 */        IW(0x01114021);
-                /* lw $at, 4($t0) */            IW(0x8d010004);
+                /* lw $at, 8($t0) */            IW(0x8d010008);
         }
 
         /* Patch later. */
@@ -1594,7 +1694,7 @@ jit_visit_jmpiffalse_op(
                 /* $at = env->frame->tmpvar[src].val.i */
                 /* li $t0, src */               IW(0x24080000 | tvar16(src));
                 /* addu $t0, $t0, $s1 */        IW(0x01114021);
-                /* lw $at, 4($t0) */            IW(0x8d010004);
+                /* lw $at, 8($t0) */            IW(0x8d010008);
         }
         
         /* Patch later. */
@@ -1636,6 +1736,39 @@ jit_visit_jmpifeq_op(
         ASM {
                 /* Patched later. */
                 /* beq $at, 0, taget */         IW(0x10200000);
+                /* nop */                       IW(0x00000000);
+        }
+
+        return true;
+}
+
+/* Visit a OP_SAFEPOINT instruction. */
+static inline bool
+jit_visit_safepoint_op(
+        struct jit_context *ctx)
+{
+        uint32_t f;
+
+        f = (uint32_t)ex_safepoint_helper;
+
+        /* if (!ex_safepoint_helper(env)) return false; */
+        ASM {
+                /* $s0: env */
+                /* $s1: &env->frame->tmpvar[0] */
+
+                /* Arg1 $a0 = env */
+                /* move $a0, $s0 */             IW(0x02002025);
+
+                /* Call ex_call_helper(). */
+                /* lui  $t9, f@h */             IW(0x3c190000 | hi16(f));
+                /* ori  $t9, $t9, f@l */        IW(0x37390000 | lo16(f));
+                /* move $s2, $ra */             IW(0x03e09025);
+                /* jalr $t9 */                  IW(0x0320f809);
+                /* nop */                       IW(0x00000000);
+                /* move $ra, $s2 */             IW(0x0240f825);
+
+                /* If failed: */
+                /* beqz $v0, $zero, exc */      IW(0x10400000 | EXC());
                 /* nop */                       IW(0x00000000);
         }
 
@@ -1723,8 +1856,16 @@ jit_visit_bytecode(
                         if (!jit_visit_iconst_op(ctx))
                                 return false;
                         break;
+                case OP_LICONST:
+                        if (!jit_visit_liconst_op(ctx))
+                                return false;
+                        break;
                 case OP_FCONST:
                         if (!jit_visit_fconst_op(ctx))
+                                return false;
+                        break;
+                case OP_LFCONST:
+                        if (!jit_visit_lfconst_op(ctx))
                                 return false;
                         break;
                 case OP_SCONST:
@@ -1879,6 +2020,12 @@ jit_visit_bytecode(
                         if (!jit_visit_jmpifeq_op(ctx))
                                 return false;
                         break;
+                case OP_SAFEPOINT:
+#if defined(NOCT_USE_MULTITHREAD)
+                        if (!jit_visit_safepoint_op(ctx))
+                                return false;
+#endif
+                        break;
                 default:
                         assert(JIT_OP_NOT_IMPLEMENTED);
                         break;
@@ -1924,7 +2071,7 @@ jit_patch_branch(
 
         /* Search a code addr at lpc. */
         target_code = NULL;
-        for (i = 0; i < ctx->pc_entry_count; i++) {
+        for (i = 0; i < (int)ctx->pc_entry_count; i++) {
                 if (ctx->pc_entry[i].lpc == ctx->branch_patch[patch_index].lpc) {
                         target_code = ctx->pc_entry[i].code;
                         break;

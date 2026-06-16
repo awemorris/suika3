@@ -35,8 +35,8 @@
    especially those whose name start with YY_ or yy_.  They are
    private implementation details that can be changed or removed.  */
 
-#ifndef YY_AST_YY_NOCTLANG_PARSER_TAB_H_INCLUDED
-# define YY_AST_YY_NOCTLANG_PARSER_TAB_H_INCLUDED
+#ifndef YY_AST_YY_HOME_AWE_SRC_NOCT_BUILD_DEBUG_PARSER_TAB_H_INCLUDED
+# define YY_AST_YY_HOME_AWE_SRC_NOCT_BUILD_DEBUG_PARSER_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -57,70 +57,72 @@ extern int ast_yydebug;
     TOKEN_SYMBOL = 258,            /* TOKEN_SYMBOL  */
     TOKEN_STR = 259,               /* TOKEN_STR  */
     TOKEN_INT = 260,               /* TOKEN_INT  */
-    TOKEN_FLOAT = 261,             /* TOKEN_FLOAT  */
-    TOKEN_FUNC = 262,              /* TOKEN_FUNC  */
-    TOKEN_CLASS = 263,             /* TOKEN_CLASS  */
-    TOKEN_NEW = 264,               /* TOKEN_NEW  */
-    TOKEN_LAMBDA = 265,            /* TOKEN_LAMBDA  */
-    TOKEN_LARR = 266,              /* TOKEN_LARR  */
-    TOKEN_RARR = 267,              /* TOKEN_RARR  */
-    TOKEN_PLUS = 268,              /* TOKEN_PLUS  */
-    TOKEN_MINUS = 269,             /* TOKEN_MINUS  */
-    TOKEN_MUL = 270,               /* TOKEN_MUL  */
-    TOKEN_DIV = 271,               /* TOKEN_DIV  */
-    TOKEN_MOD = 272,               /* TOKEN_MOD  */
-    TOKEN_SHL = 273,               /* TOKEN_SHL  */
-    TOKEN_SHR = 274,               /* TOKEN_SHR  */
-    TOKEN_ASSIGN = 275,            /* TOKEN_ASSIGN  */
-    TOKEN_PLUSASSIGN = 276,        /* TOKEN_PLUSASSIGN  */
-    TOKEN_MINUSASSIGN = 277,       /* TOKEN_MINUSASSIGN  */
-    TOKEN_MULASSIGN = 278,         /* TOKEN_MULASSIGN  */
-    TOKEN_DIVASSIGN = 279,         /* TOKEN_DIVASSIGN  */
-    TOKEN_MODASSIGN = 280,         /* TOKEN_MODASSIGN  */
-    TOKEN_ANDASSIGN = 281,         /* TOKEN_ANDASSIGN  */
-    TOKEN_ORASSIGN = 282,          /* TOKEN_ORASSIGN  */
-    TOKEN_SHLASSIGN = 283,         /* TOKEN_SHLASSIGN  */
-    TOKEN_SHRASSIGN = 284,         /* TOKEN_SHRASSIGN  */
-    TOKEN_PLUSPLUS = 285,          /* TOKEN_PLUSPLUS  */
-    TOKEN_MINUSMINUS = 286,        /* TOKEN_MINUSMINUS  */
-    TOKEN_ANDAND = 287,            /* TOKEN_ANDAND  */
-    TOKEN_OROR = 288,              /* TOKEN_OROR  */
-    TOKEN_LPAR = 289,              /* TOKEN_LPAR  */
-    TOKEN_RPAR = 290,              /* TOKEN_RPAR  */
-    TOKEN_RPAR_LBLK = 291,         /* TOKEN_RPAR_LBLK  */
-    TOKEN_LBLK = 292,              /* TOKEN_LBLK  */
-    TOKEN_LBLK_BLK = 293,          /* TOKEN_LBLK_BLK  */
-    TOKEN_RBLK = 294,              /* TOKEN_RBLK  */
-    TOKEN_SEMICOLON = 295,         /* TOKEN_SEMICOLON  */
-    TOKEN_COLON = 296,             /* TOKEN_COLON  */
-    TOKEN_DOT = 297,               /* TOKEN_DOT  */
-    TOKEN_COMMA = 298,             /* TOKEN_COMMA  */
-    TOKEN_IF = 299,                /* TOKEN_IF  */
-    TOKEN_ELSE = 300,              /* TOKEN_ELSE  */
-    TOKEN_ELSE_LBLK = 301,         /* TOKEN_ELSE_LBLK  */
-    TOKEN_ELSEIF = 302,            /* TOKEN_ELSEIF  */
-    TOKEN_WHILE = 303,             /* TOKEN_WHILE  */
-    TOKEN_FOR = 304,               /* TOKEN_FOR  */
-    TOKEN_IN = 305,                /* TOKEN_IN  */
-    TOKEN_DOTDOT = 306,            /* TOKEN_DOTDOT  */
-    TOKEN_GT = 307,                /* TOKEN_GT  */
-    TOKEN_GTE = 308,               /* TOKEN_GTE  */
-    TOKEN_LT = 309,                /* TOKEN_LT  */
-    TOKEN_LTE = 310,               /* TOKEN_LTE  */
-    TOKEN_EQ = 311,                /* TOKEN_EQ  */
-    TOKEN_NEQ = 312,               /* TOKEN_NEQ  */
-    TOKEN_RETURN = 313,            /* TOKEN_RETURN  */
-    TOKEN_BREAK = 314,             /* TOKEN_BREAK  */
-    TOKEN_CONTINUE = 315,          /* TOKEN_CONTINUE  */
-    TOKEN_ARROW = 316,             /* TOKEN_ARROW  */
-    TOKEN_RPAR_DARROW_LBLK = 317,  /* TOKEN_RPAR_DARROW_LBLK  */
-    TOKEN_AND = 318,               /* TOKEN_AND  */
-    TOKEN_OR = 319,                /* TOKEN_OR  */
-    TOKEN_XOR = 320,               /* TOKEN_XOR  */
-    TOKEN_VAR = 321,               /* TOKEN_VAR  */
-    UNARYMINUS = 322,              /* UNARYMINUS  */
-    TOKEN_NOT = 323,               /* TOKEN_NOT  */
-    CALL = 324                     /* CALL  */
+    TOKEN_LONG = 261,              /* TOKEN_LONG  */
+    TOKEN_FLOAT = 262,             /* TOKEN_FLOAT  */
+    TOKEN_DOUBLE = 263,            /* TOKEN_DOUBLE  */
+    TOKEN_FUNC = 264,              /* TOKEN_FUNC  */
+    TOKEN_CLASS = 265,             /* TOKEN_CLASS  */
+    TOKEN_NEW = 266,               /* TOKEN_NEW  */
+    TOKEN_LAMBDA = 267,            /* TOKEN_LAMBDA  */
+    TOKEN_LARR = 268,              /* TOKEN_LARR  */
+    TOKEN_RARR = 269,              /* TOKEN_RARR  */
+    TOKEN_PLUS = 270,              /* TOKEN_PLUS  */
+    TOKEN_MINUS = 271,             /* TOKEN_MINUS  */
+    TOKEN_MUL = 272,               /* TOKEN_MUL  */
+    TOKEN_DIV = 273,               /* TOKEN_DIV  */
+    TOKEN_MOD = 274,               /* TOKEN_MOD  */
+    TOKEN_SHL = 275,               /* TOKEN_SHL  */
+    TOKEN_SHR = 276,               /* TOKEN_SHR  */
+    TOKEN_ASSIGN = 277,            /* TOKEN_ASSIGN  */
+    TOKEN_PLUSASSIGN = 278,        /* TOKEN_PLUSASSIGN  */
+    TOKEN_MINUSASSIGN = 279,       /* TOKEN_MINUSASSIGN  */
+    TOKEN_MULASSIGN = 280,         /* TOKEN_MULASSIGN  */
+    TOKEN_DIVASSIGN = 281,         /* TOKEN_DIVASSIGN  */
+    TOKEN_MODASSIGN = 282,         /* TOKEN_MODASSIGN  */
+    TOKEN_ANDASSIGN = 283,         /* TOKEN_ANDASSIGN  */
+    TOKEN_ORASSIGN = 284,          /* TOKEN_ORASSIGN  */
+    TOKEN_SHLASSIGN = 285,         /* TOKEN_SHLASSIGN  */
+    TOKEN_SHRASSIGN = 286,         /* TOKEN_SHRASSIGN  */
+    TOKEN_PLUSPLUS = 287,          /* TOKEN_PLUSPLUS  */
+    TOKEN_MINUSMINUS = 288,        /* TOKEN_MINUSMINUS  */
+    TOKEN_ANDAND = 289,            /* TOKEN_ANDAND  */
+    TOKEN_OROR = 290,              /* TOKEN_OROR  */
+    TOKEN_LPAR = 291,              /* TOKEN_LPAR  */
+    TOKEN_RPAR = 292,              /* TOKEN_RPAR  */
+    TOKEN_RPAR_LBLK = 293,         /* TOKEN_RPAR_LBLK  */
+    TOKEN_LBLK = 294,              /* TOKEN_LBLK  */
+    TOKEN_LBLK_BLK = 295,          /* TOKEN_LBLK_BLK  */
+    TOKEN_RBLK = 296,              /* TOKEN_RBLK  */
+    TOKEN_SEMICOLON = 297,         /* TOKEN_SEMICOLON  */
+    TOKEN_COLON = 298,             /* TOKEN_COLON  */
+    TOKEN_DOT = 299,               /* TOKEN_DOT  */
+    TOKEN_COMMA = 300,             /* TOKEN_COMMA  */
+    TOKEN_IF = 301,                /* TOKEN_IF  */
+    TOKEN_ELSE = 302,              /* TOKEN_ELSE  */
+    TOKEN_ELSE_LBLK = 303,         /* TOKEN_ELSE_LBLK  */
+    TOKEN_ELSEIF = 304,            /* TOKEN_ELSEIF  */
+    TOKEN_WHILE = 305,             /* TOKEN_WHILE  */
+    TOKEN_FOR = 306,               /* TOKEN_FOR  */
+    TOKEN_IN = 307,                /* TOKEN_IN  */
+    TOKEN_DOTDOT = 308,            /* TOKEN_DOTDOT  */
+    TOKEN_GT = 309,                /* TOKEN_GT  */
+    TOKEN_GTE = 310,               /* TOKEN_GTE  */
+    TOKEN_LT = 311,                /* TOKEN_LT  */
+    TOKEN_LTE = 312,               /* TOKEN_LTE  */
+    TOKEN_EQ = 313,                /* TOKEN_EQ  */
+    TOKEN_NEQ = 314,               /* TOKEN_NEQ  */
+    TOKEN_RETURN = 315,            /* TOKEN_RETURN  */
+    TOKEN_BREAK = 316,             /* TOKEN_BREAK  */
+    TOKEN_CONTINUE = 317,          /* TOKEN_CONTINUE  */
+    TOKEN_ARROW = 318,             /* TOKEN_ARROW  */
+    TOKEN_RPAR_DARROW_LBLK = 319,  /* TOKEN_RPAR_DARROW_LBLK  */
+    TOKEN_AND = 320,               /* TOKEN_AND  */
+    TOKEN_OR = 321,                /* TOKEN_OR  */
+    TOKEN_XOR = 322,               /* TOKEN_XOR  */
+    TOKEN_VAR = 323,               /* TOKEN_VAR  */
+    UNARYMINUS = 324,              /* UNARYMINUS  */
+    TOKEN_NOT = 325,               /* TOKEN_NOT  */
+    CALL = 326                     /* CALL  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -129,10 +131,12 @@ extern int ast_yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 117 "src/core/parser.y"
+#line 119 "/home/awe/src/noct/src/core/parser.y"
 
 	int ival;
-	double fval;
+	int64_t lval;
+	float fval;
+	double lfval;
 	char *sval;
 
 	struct ast_func_list *func_list;
@@ -146,7 +150,7 @@ union YYSTYPE
 	struct ast_kv_list *kv_list;
 	struct ast_kv *kv;
 
-#line 150 "src/core/parser.tab.h"
+#line 154 "/home/awe/src/noct/build-debug/parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
@@ -175,10 +179,10 @@ extern YYLTYPE ast_yylloc;
 int ast_yyparse (void *scanner);
 
 /* "%code provides" blocks.  */
-#line 113 "src/core/parser.y"
+#line 115 "/home/awe/src/noct/src/core/parser.y"
 
 #define YY_DECL int ast_yylex(void *yyscanner)
 
-#line 183 "src/core/parser.tab.h"
+#line 187 "/home/awe/src/noct/build-debug/parser.tab.h"
 
-#endif /* !YY_AST_YY_NOCTLANG_PARSER_TAB_H_INCLUDED  */
+#endif /* !YY_AST_YY_HOME_AWE_SRC_NOCT_BUILD_DEBUG_PARSER_TAB_H_INCLUDED  */

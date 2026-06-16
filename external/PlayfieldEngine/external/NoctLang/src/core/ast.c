@@ -1521,6 +1521,25 @@ ast_accept_int_term(
 	return term;
 }
 
+/* Called from the parser when it accepted a term with a long. */
+struct ast_term *
+ast_accept_long_term(
+	int64_t l)
+{
+	struct ast_term *term;
+
+	term = ast_malloc(sizeof(struct ast_term));
+	if (term == NULL) {
+		ast_out_of_memory();
+		return NULL;
+	}
+	memset(term, 0, sizeof(struct ast_term));
+	term->type = AST_TERM_LONG;
+	term->val.l = l;
+
+	return term;
+}
+
 /* Called from the parser when it accepted a term with a float. */
 struct ast_term *
 ast_accept_float_term(
@@ -1536,6 +1555,25 @@ ast_accept_float_term(
 	memset(term, 0, sizeof(struct ast_term));
 	term->type = AST_TERM_FLOAT;
 	term->val.f = f;
+
+	return term;
+}
+
+/* Called from the parser when it accepted a term with a double. */
+struct ast_term *
+ast_accept_double_term(
+	double lf)
+{
+	struct ast_term *term;
+
+	term = ast_malloc(sizeof(struct ast_term));
+	if (term == NULL) {
+		ast_out_of_memory();
+		return NULL;
+	}
+	memset(term, 0, sizeof(struct ast_term));
+	term->type = AST_TERM_DOUBLE;
+	term->val.lf = lf;
 
 	return term;
 }
@@ -2224,6 +2262,7 @@ ast_malloc(
 	void *ret;
 
 	ret = arena_alloc(&ast_arena, size);
+	assert((uintptr_t)ret % 8 == 0);
 	if (ret == NULL) {
 		ast_out_of_memory();
 		return NULL;

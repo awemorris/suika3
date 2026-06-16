@@ -30,15 +30,14 @@ static int console_wide_printf(const char *format, ...);
 struct ffi_item {
 	const char *global_name;
 	const char *field_name;
-	int param_count;
+	size_t param_count;
 	const char *param[NOCT_ARG_MAX];
 	bool (*cfunc)(NoctEnv *env);
 };
 static struct ffi_item ffi_items[] = {
-	{"__Console_print",	"print",	1,	{"msg"},	cfunc_Console_print},
+	{"Console.print",	"print",	1,	{"msg"},	cfunc_Console_print},
 };
 
-	
 /*
  * Register "Console.*" functions.
  */
@@ -64,7 +63,7 @@ noct_register_api_console(
 		if (!noct_register_cfunc(
 			    env,
 			    ffi_items[i].global_name,
-			    1,
+			    ffi_items[i].param_count,
 			    ffi_items[i].param,
 			    ffi_items[i].cfunc,
 			    NULL))
@@ -75,7 +74,7 @@ noct_register_api_console(
 			return false;
 
 		/* Make a dictionary element. */
-		if (!noct_set_dict_elem(
+		if (!noct_set_dict_elem_cstr(
 			    env,
 			    &dict,
 			    ffi_items[i].field_name,
@@ -123,7 +122,7 @@ static bool serialize_printer(
 	int ival;
 	float fval;
 	const char *sval;
-	uint32_t items;
+	size_t items;
 	uint32_t i;
 	char digits[1024];
 
@@ -168,7 +167,7 @@ static bool serialize_printer(
 		strncat(buf, "]", size);
 		break;
 	case NOCT_VALUE_DICT:
-		if (!noct_get_dict_size(env, value, (uint32_t *)&items))
+		if (!noct_get_dict_size(env, value, &items))
 			return false;
 		strncat(buf, "{", size);
 		for (i = 0; i < items; i++) {

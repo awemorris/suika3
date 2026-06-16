@@ -55,15 +55,15 @@ static bool run_repl(void)
 	}
 
 	/* Register libraries. */
-	if (!noct_register_api_math(env)) {
-		wide_printf(N_TR("Out of memory.\n"));
-		return false;
-	}
 	if (!noct_register_api_system(env)) {
 		wide_printf(N_TR("Out of memory.\n"));
 		return false;
 	}
 	if (!noct_register_api_console(env)) {
+		wide_printf(N_TR("Out of memory.\n"));
+		return false;
+	}
+	if (!noct_register_api_file(env)) {
 		wide_printf(N_TR("Out of memory.\n"));
 		return false;
 	}

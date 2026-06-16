@@ -43,35 +43,35 @@ struct ffi_item {
 };
 static struct ffi_item ffi_items[] = {
 	{
-		"__System_import",
+		"System.import",
 		"import",
 		1,
 		{"file"},
 		cfunc_System_import
 	},
 	{
-		"__System_shell",
+		"System.shell",
 		"shell",
 		1,
 		{"command"},
 		cfunc_System_shell
 	},
 	{
-		"__System_runCommand",
+		"System.runCommand",
 		"runCommand",
 		3,
 		{"command", "workDir", "waitForFinish"},
 		cfunc_System_runCommand
 	},
 	{
-		"__System_getOSName",
+		"System.getOSName",
 		"getOSName",
 		0,
 		{NULL},
 		cfunc_System_getOSName
 	},
 	{
-		"__System_checkFileExists",
+		"System.checkFileExists",
 		"checkFileExists",
 		1,
 		{"file"},
@@ -115,7 +115,7 @@ noct_register_api_system(
 			return false;
 
 		/* Make a dictionary element. */
-		if (!noct_set_dict_elem(
+		if (!noct_set_dict_elem_cstr(
 			    env,
 			    &dict,
 			    ffi_items[i].field_name,

@@ -2,7 +2,7 @@ func main() {
     App = {};
 
     // GC: Promote "App" to graduate when its size is zero.
-    fast_gc();
+    GC.youngGC();
 
     // STOREDOT
     App.key1 = "abc";

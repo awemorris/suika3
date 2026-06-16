@@ -52,6 +52,7 @@
 #define ex_storedot_helper noct_ex_storedot_helper
 #define ex_call_helper noct_ex_call_helper
 #define ex_thiscall_helper noct_ex_thiscall_helper
+#define ex_safepoint_helper noct_ex_safepoint_helper
 
 /* Generate a JIT-compiled code for a function. */
 bool
@@ -191,6 +192,35 @@ jit_get_opr_imm32(
 	     (uint32_t)ctx->func->bytecode[ctx->lpc + 3];
 
 	ctx->lpc += 4;
+
+	return true;
+}
+
+/*
+ * Get an imm64 operand.
+ */
+#define CONSUME_IMM64(d)	if (!jit_get_opr_imm64(ctx, &d)) return false
+static INLINE bool
+jit_get_opr_imm64(
+	struct jit_context *ctx,
+	uint64_t *d)
+{
+	if (ctx->lpc + 8 > ctx->func->bytecode_size) {
+		rt_error(ctx->env, BROKEN_BYTECODE);
+		*d = 0;
+		return false;
+	}
+
+	*d = ((uint64_t)ctx->func->bytecode[ctx->lpc + 0] << 56) |
+	     ((uint64_t)ctx->func->bytecode[ctx->lpc + 1] << 48) |
+	     ((uint64_t)ctx->func->bytecode[ctx->lpc + 2] << 40) |
+	     ((uint64_t)ctx->func->bytecode[ctx->lpc + 3] << 32) |
+	     ((uint64_t)ctx->func->bytecode[ctx->lpc + 4] << 24) |
+	     ((uint64_t)ctx->func->bytecode[ctx->lpc + 5] << 16) |
+	     ((uint64_t)ctx->func->bytecode[ctx->lpc + 6] << 8) |
+             ((uint64_t)ctx->func->bytecode[ctx->lpc + 7]);
+
+	ctx->lpc += 8;
 
 	return true;
 }

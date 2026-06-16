@@ -253,20 +253,10 @@ zh:不是数组。
 tw:不是陣列。
 ja:配列ではありません。
 ---
-ID:Array index %d is out-of-range.
-en:Array index %d is out-of-range.
-es:El índice %d del array se encuentra fuera de rango.
-fr:L'index de tableau %d est hors de portée.
-de:Array-Index %d ist außerhalb des gültigen Bereichs.
-it:L'indice %d dell'array è fuori dall'intervallo.
-el:Ο δείκτης πίνακα %d είναι εκτός ορίων.
-ru:Индекс массива %d находится вне допустимого диапазона.
-zh:数组索引 %d 超出范围。
-tw:陣列索引 %d 超出範圍。
-ja:配列の添字 %d は範囲外です。
+ID:Index %ld is out-of-range.
 ---
-ID:Dictionary index %d is out-of-range.
-en:Dictionary index %d is out-of-range.
+ID:Dictionary index %ld is out-of-range.
+en:Dictionary index %ld is out-of-range.
 es:El índice del diccionario %d está fuera de rango.
 fr:L'index du dictionnaire %d est hors de portée.
 de:Wörterbuch-Index %d ist außerhalb des Bereichs.
@@ -337,6 +327,8 @@ zh:值不是整数。
 tw:值不是整數。
 ja:値が整数ではありません。
 ---
+ID:Value is not a long.
+---
 ID:Value is not a string.
 en:Value is not a string.
 es:El valor no es un string.
@@ -385,17 +377,7 @@ zh:下标不是整数
 tw:下標不是整數。
 ja:添字が整数ではありません。
 ---
-ID:Not an array or a dictionary.
-en:Not an array or a dictionary.
-es:No es un array ni un diccionario.
-fr:Ce n'est ni un tableau ni un dictionnaire.
-de:Weder ein Array noch ein Dictionary.
-it:Non è un array né un dizionario.
-el:Δεν είναι ούτε πίνακας ούτε λεξικό.
-ru:Это не массив и не словарь.
-zh:不是数组或字典。
-tw:不是陣列或字典。
-ja:配列か辞書ではありません。
+ID:Not an array, dictionary, or packed.
 ---
 ID:Subscript not a string.
 en:Subscript not a string.
@@ -445,6 +427,8 @@ ru:Индекс словаря вне допустимого диапазона.
 zh:字典索引超出范围。
 tw:字典索引超出範圍。
 ja:辞書のインデックスが範囲外です。
+---
+ID:Not a packed.
 ---
 ID:Symbol "%s" not found.
 en:Symbol "%s" not found.
@@ -555,6 +539,8 @@ tw:鍵 %s 對應的值不是整數。
 ja:キー %s に対応する値が整数ではありません。
 ca:El valor per a la clau %s no és un nombre enter.
 ---
+ID:Value for key %s is not a long.
+---
 ID:Value for key %s is not a float.
 en:Value for key %s is not a float.
 es:El valor de la clave %s no es un número decimal.
@@ -567,6 +553,8 @@ zh:键 %s 对应的值不是浮点数。
 tw:鍵 %s 對應的值不是浮點數。
 ja:キー %s に対応する値が浮動小数点数ではありません。
 ca:El valor per a la clau %s no és un nombre amb coma flotant.
+---
+ID:Value for key %s is not a double.
 ---
 ID:Value for key %s is not a string.
 en:Value for key %s is not a string.
@@ -676,6 +664,8 @@ ru:Аргумент (%d: %s) не является словарем.
 zh:参数 (%d: %s) 不是字典。
 tw:參數 (%d: %s) 不是字典。
 ja:引数 (%d: %s) が辞書ではありません。
+---
+ID:Argument (%d: %s) not a packed.
 ---
 ID:Not a function.
 en:Not a function.

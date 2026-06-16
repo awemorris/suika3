@@ -4,6 +4,7 @@
  * Copyright (c) 2025, 2026, Awe Morris
  */
 
+#include <noct/c89compat.h>
 #include "parser.tab.h"
 
 #ifdef _MSC_VER
@@ -37,21 +38,61 @@ extern YYLTYPE yylloc;
 			ast_yylloc.last_line++;
 			ast_yylloc.last_column = 0;
 		}
-[0-9]*\.[0-9]+	{
-			sscanf(yytext, "%lf", &ast_yylval.fval);
+[0-9]*\.[0-9]+lf {
+                        double v;
+			sscanf(yytext, "%lf", &v);
+                        ast_yylval.lfval = v;
+			ast_yylloc.first_line = ast_yylloc.last_line;
+			ast_yylloc.first_column = ast_yylloc.last_column + 1;
+			ast_yylloc.last_column += yyleng;
+			return TOKEN_DOUBLE;
+		}
+[0-9]*\.[0-9]+f {
+                        double v;
+			sscanf(yytext, "%lf", &v);
+                        ast_yylval.fval = (float)v;
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
 			ast_yylloc.last_column += yyleng;
 			return TOKEN_FLOAT;
 		}
-[0-9]*		{
-			sscanf(yytext, "%d", &ast_yylval.ival);
+[0-9]*\.[0-9]+	{
+                        double v;
+			sscanf(yytext, "%lf", &v);
+                        ast_yylval.fval = (float)v;
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
 			ast_yylloc.last_column += yyleng;
-			return TOKEN_INT;
+			return TOKEN_FLOAT;
 		}
-0x[0-9a-fA-F]{1,8}	{
+[0-9]+[lL]      {
+			sscanf(yytext, "%" SCNd64, &ast_yylval.lval);
+			ast_yylloc.first_line = ast_yylloc.last_line;
+			ast_yylloc.first_column = ast_yylloc.last_column + 1;
+			ast_yylloc.last_column += yyleng;
+			return TOKEN_LONG;
+		}
+[0-9]*		{
+                        int64_t v;
+			sscanf(yytext, "%" SCNd64, &v);
+			ast_yylloc.first_line = ast_yylloc.last_line;
+			ast_yylloc.first_column = ast_yylloc.last_column + 1;
+			ast_yylloc.last_column += yyleng;
+                        if (v > INT_MAX) {
+                                ast_yylval.lval = v;
+                                return TOKEN_LONG;
+                        }
+                        ast_yylval.ival = (int)(uint64_t)v;
+ 			return TOKEN_INT;
+		}
+0x[0-9a-fA-F]{1,16}l {
+			sscanf(yytext, "%" SCNx64, &ast_yylval.lval);
+			ast_yylloc.first_line = ast_yylloc.last_line;
+			ast_yylloc.first_column = ast_yylloc.last_column + 1;
+			ast_yylloc.last_column += yyleng;
+			return TOKEN_LONG;
+		}
+0x[0-9a-fA-F]{1,8} {
 			sscanf(yytext, "%x", &ast_yylval.ival);
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;

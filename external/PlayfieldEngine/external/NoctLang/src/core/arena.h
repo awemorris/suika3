@@ -17,7 +17,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define ARENA_ALIGN	(sizeof(void *))
+#define ARENA_ALIGN	(8UL)
+#define HEADER_SIZE	((sizeof(size_t) + ARENA_ALIGN - 1UL) & ~(ARENA_ALIGN - 1UL))
 
 struct arena_info {
 	char *top;
@@ -60,13 +61,13 @@ arena_alloc(
 	size_t size)
 {
 	void *p;
-	size = (size + ARENA_ALIGN - 1) & ~(ARENA_ALIGN - 1);
-	if (arena->cur + sizeof(size_t) + size >= arena->top + arena->size) {
+	size = (size + ARENA_ALIGN - 1UL) & ~(ARENA_ALIGN - 1UL);
+	if (arena->cur + HEADER_SIZE + size >= arena->top + arena->size) {
 		return NULL;
 	}
-	p = arena->cur + sizeof(size_t);
+	p = arena->cur + HEADER_SIZE;
 	*(size_t *)arena->cur = size;
-	arena->cur += sizeof(size_t) + size;
+	arena->cur += HEADER_SIZE + size;
 	return p;
 }
 
@@ -77,7 +78,7 @@ static INLINE size_t
 arena_get_block_size(
 	const void *p)
 {
-	return *(size_t *)((const char *)p - sizeof(size_t));
+	return *(size_t *)((const char *)p - HEADER_SIZE);
 }
 
 /*

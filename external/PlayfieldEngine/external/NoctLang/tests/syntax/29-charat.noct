@@ -1,6 +1,6 @@
 func main() {
     var text = "abcdefg";
-    for (i in 0 .. text.length) {
-        print(text->charAt(i));
+    for (i in 0 .. String.charCount(text)) {
+        print(String.charAt(text, i));
     }
 }

@@ -559,6 +559,10 @@ jit_visit_assign_op(
 		LW	(REG_T3, 4, REG_T1);
 		SW	(REG_T2, 0, REG_T0);
 		SW	(REG_T3, 4, REG_T0);
+		LW	(REG_T2, 8, REG_T1);
+		LW	(REG_T3, 12, REG_T1);
+		SW	(REG_T2, 8, REG_T0);
+		SW	(REG_T3, 12, REG_T0);
 	}
 
 	return true;
@@ -592,7 +596,43 @@ jit_visit_iconst_op(
 
 		/* env->frame->tmpvar[dst].val.i = val */
 		LI_32	(REG_T2, IMM32(val));
-		SW	(REG_T2, 4, REG_T0);
+		SW	(REG_T2, 8, REG_T0);
+	}
+
+	return true;
+}
+
+/* Visit a OP_LICONST instruction. */
+static INLINE bool
+jit_visit_liconst_op(
+	struct jit_context *ctx)
+{
+	int dst;
+	uint64_t val;
+
+	CONSUME_TMPVAR(dst);
+	CONSUME_IMM64(val);
+
+	dst *= (int)sizeof(struct rt_value);
+
+	/* Set an integer constant. */
+	ASM {
+		/* s10: env */
+		/* s11: &env->frame->tmpvar[0] */
+
+		/* t0 = &env->frame->tmpvar[dst] */
+		ORI	(REG_T0, REG_ZERO, IMM12(dst));
+		ADD	(REG_T0, REG_S11, REG_T0);
+
+		/* env->frame->tmpvar[dst].type = NOCT_VALUE_LONG */
+		ORI	(REG_T1, REG_ZERO, IMM12(5));
+		SW	(REG_T1, 0, REG_T0);
+
+		/* env->frame->tmpvar[dst].val.i = val */
+		LI_32	(REG_T2, IMM32((uint32_t)(val & 0xffffffff)));
+		SW	(REG_T2, 8, REG_T0);
+		LI_32	(REG_T2, IMM32((uint32_t)((val >> 32) & 0xffffffff)));
+		SW	(REG_T2, 12, REG_T0);
 	}
 
 	return true;
@@ -626,7 +666,43 @@ jit_visit_fconst_op(
 
 		/* Assign env->frame->tmpvar[dst].val.f = val. */
 		LI_32	(REG_T2, IMM32(val));
-		SW	(REG_T2, 4, REG_T0);
+		SW	(REG_T2, 8, REG_T0);
+	}
+
+	return true;
+}
+
+/* Visit a OP_LFCONST instruction. */
+static INLINE bool
+jit_visit_lfconst_op(
+	struct jit_context *ctx)
+{
+	int dst;
+	uint64_t val;
+
+	CONSUME_TMPVAR(dst);
+	CONSUME_IMM64(val);
+
+	dst *= (int)sizeof(struct rt_value);
+
+	/* Set an integer constant. */
+	ASM {
+		/* s10: env */
+		/* s11: &env->frame->tmpvar[0] */
+
+		/* t0 = &env->frame->tmpvar[dst] */
+		ORI	(REG_T0, REG_ZERO, IMM12(dst));
+		ADD	(REG_T0, REG_S11, REG_T0);
+
+		/* env->frame->tmpvar[dst].type = NOCT_VALUE_DOUBLE */
+		ORI	(REG_T1, REG_ZERO, IMM12(6));
+		SW	(REG_T1, 0, REG_T0);
+
+		/* env->frame->tmpvar[dst].val.i = val */
+		LI_32	(REG_T2, IMM32((uint32_t)(val & 0xffffffff)));
+		SW	(REG_T2, 8, REG_T0);
+		LI_32	(REG_T2, IMM32((uint32_t)((val >> 32) & 0xffffffff)));
+		SW	(REG_T2, 12, REG_T0);
 	}
 
 	return true;
@@ -767,9 +843,9 @@ jit_visit_inc_op(
 		ADD	(REG_T0, REG_S11, REG_T0);
 
 		/* env->frame->tmpvar[dst].val.i++ */
-		LW	(REG_T1, 4, REG_T0);		/* tmp = &env->frame->tmpvar[dst].val.i */
+		LW	(REG_T1, 8, REG_T0);		/* tmp = &env->frame->tmpvar[dst].val.i */
 		ADDI	(REG_T1, REG_T1, IMM12(1));	/* tmp++ */
-		SW	(REG_T1, 4, REG_T0);		/* env->frame->tmpvar[dst].val.i = tmp */
+		SW	(REG_T1, 8, REG_T0);		/* env->frame->tmpvar[dst].val.i = tmp */
 	}
 
 	return true;
@@ -1137,12 +1213,12 @@ jit_visit_eqi_op(
 		/* t0 = &env->frame->tmpvar[src1].val.i */
 		ORI	(REG_T0, REG_ZERO, IMM12(src1));
 		ADD	(REG_T0, REG_T0, REG_S11);
-		LW	(REG_T0, 4, REG_T0);
+		LW	(REG_T0, 8, REG_T0);
 
 		/* t1 = &env->frame->tmpvar[src2].val.i */
 		ORI	(REG_T1, REG_ZERO, IMM12(src2));
 		ADD	(REG_T1, REG_T1, REG_S11);
-		LW	(REG_T1, 4, REG_T1);
+		LW	(REG_T1, 8, REG_T1);
 
 		/* Here, t0 = src1, t1 = src2 */
 	}
@@ -1623,7 +1699,7 @@ jit_visit_jmpiftrue_op(
 		/* t0 = &env->frame->tmpvar[src].val.i */
 		ORI	(REG_T0, REG_ZERO, IMM12(src));
 		ADD	(REG_T0, REG_S11, REG_T0);
-		LW	(REG_T0, 4, REG_T0);
+		LW	(REG_T0, 8, REG_T0);
 
 		/* Compare: env->frame->tmpvar[dst].val.i != 0 */
 		ORI	(REG_T1, REG_ZERO, IMM12(0));
@@ -1667,7 +1743,7 @@ jit_visit_jmpiffalse_op(
 		/* t0 = &env->frame->tmpvar[src].val.i */
 		ORI	(REG_T0, REG_ZERO, IMM12(src));
 		ADD	(REG_T0, REG_S11, REG_T0);
-		LW	(REG_T0, 4, REG_T0);
+		LW	(REG_T0, 8, REG_T0);
 
 		/* Compare: env->frame->tmpvar[dst].val.i == 0 */
 		ORI	(REG_T1, REG_ZERO, IMM12(0));
@@ -1714,6 +1790,30 @@ jit_visit_jmpifeq_op(
 
 		/* Patched later. */
 		BEQ	(REG_T0, REG_T1, IMM13(0));
+	}
+
+	return true;
+}
+
+/* Visit a OP_SAFEPOINT instruction. */
+static INLINE bool
+jit_visit_safepoint_op(
+	struct jit_context *ctx)
+{
+	/* if (!ex_safepoint_helper(env)) return false; */
+	ASM {
+		/* s10: env */
+		/* s11: &env->frame->tmpvar[0] */
+
+		/* Arg1 a0: env */
+		MV	(REG_A0, REG_S10);
+
+		/* Call ex_safepoint_helper(). */
+		LI_32	(REG_T0, IMM32((uint32_t)ex_safepoint_helper));
+		JALR	(REG_RA, IMM12(0), REG_T0);
+
+		/* If failed: */
+		BEQ	(REG_A0, REG_ZERO, IMM13((uint32_t)ctx->exception_code - (uint32_t)ctx->code));
 	}
 
 	return true;
@@ -1783,8 +1883,16 @@ jit_visit_bytecode(
 			if (!jit_visit_iconst_op(ctx))
 				return false;
 			break;
+		case OP_LICONST:
+			if (!jit_visit_liconst_op(ctx))
+				return false;
+			break;
 		case OP_FCONST:
 			if (!jit_visit_fconst_op(ctx))
+				return false;
+			break;
+		case OP_LFCONST:
+			if (!jit_visit_lfconst_op(ctx))
 				return false;
 			break;
 		case OP_SCONST:
@@ -1939,6 +2047,12 @@ jit_visit_bytecode(
 			if (!jit_visit_jmpifeq_op(ctx))
 				return false;
 			break;
+                case OP_SAFEPOINT:
+#if defined(NOCT_USE_MULTITHREAD)
+                        if (!jit_visit_safepoint_op(ctx))
+                                return false;
+#endif
+                        break;
 		default:
 			assert(JIT_OP_NOT_IMPLEMENTED);
 			break;

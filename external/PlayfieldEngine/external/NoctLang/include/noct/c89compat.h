@@ -360,6 +360,12 @@ typedef unsigned long uintptr_t;
 #endif
 #endif
 
+#if defined(HAVE_INTTYPES_H) && !defined(__WATCOMC__)
+#include <inttypes.h>
+#endif
+
+#include <limits.h>
+
 /*
  * Definition of the inline keyword.
  */
@@ -403,6 +409,24 @@ typedef unsigned long uintptr_t;
 #define CDECL __cdecl
 #else
 #define CDECL
+#endif
+#endif
+
+/*
+ * Definitions of PRId64 and SCNd64
+ */
+#if defined(__WATCOMC__)
+#ifndef PRId64
+#define PRId64 "lld"
+#endif
+#ifndef PRIx64
+#define PRIx64 "llx"
+#endif
+#ifndef SCNd64
+#define SCNd64 "lld"
+#endif
+#ifndef SCNx64
+#define SCNx64 "llx"
 #endif
 #endif
 

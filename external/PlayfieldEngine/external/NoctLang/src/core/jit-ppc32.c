@@ -238,7 +238,7 @@ static INLINE uint32_t exc(uint32_t handler, uint32_t cur)
                 /* R15: &env->frame->tmpvar[0] */                                               \
                 /* R31: saved LR */                                                             \
                                                                                                 \
-                /* Arg1 R3: rt */                                                               \
+                /* Arg1 R3: env */                                                               \
                 /* mr r3, r14 */                IW(0x7873c37d);                                 \
                                                                                                 \
                 /* Arg2 R4: dst */                                                              \
@@ -269,7 +269,7 @@ static INLINE uint32_t exc(uint32_t handler, uint32_t cur)
                 /* R15: &env->frame->tmpvar[0] */                                               \
                 /* R31: saved LR */                                                             \
                                                                                                 \
-                /* Arg1 R3: rt */                                                               \
+                /* Arg1 R3: env */                                                               \
                 /* mr r3, r14 */                IW(0x7873c37d);                                 \
                                                                                                 \
                 /* Arg2 R4: dst */                                                              \
@@ -311,7 +311,7 @@ jit_visit_lineinfo_op(
 
                 /* rt->line = line; */
                 /* li r0, line */       IW(0x00000038 | lo16(line));
-                /* stw r0, 4(r14) */    IW(0x04000e90);
+                /* stw r0, 8(r14) */    IW(0x08000e90);
         }
 
         return true;
@@ -350,6 +350,10 @@ jit_visit_assign_op(
                 /* lwz r6, 4(r4) */     IW(0x0400c480);
                 /* stw r5, 0(r3) */     IW(0x0000a390);
                 /* stw r6, 4(r3) */     IW(0x0400c390);
+                /* lwz r5, 8(r4) */     IW(0x0800a480);
+                /* lwz r6, 12(r4) */    IW(0x0c00c480);
+                /* stw r5, 8(r3) */     IW(0x0800a390);
+                /* stw r6, 12(r3) */    IW(0x0c00c390);
         }
 
         return true;
@@ -378,14 +382,62 @@ jit_visit_iconst_op(
                 /* li r3, dst */        IW(0x00006038 | tvar16(dst));
                 /* add r3, r3, r15 */   IW(0x147a637c);
 
-                /* env->frame->tmpvar[dst].type = RT_VALUE_INT */
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_INT */
                 /* li r4, 0 */          IW(0x00008038);
                 /* stw r4, 0(r3) */     IW(0x00008390);
 
                 /* env->frame->tmpvar[dst].val.i = val */
                 /* lis r4, val@h */     IW(0x0000803c | hi16(val));
                 /* ori r4, r4, val@l */ IW(0x00008460 | lo16(val));
-                /* stw r4, 4(r3) */     IW(0x04008390);
+                /* stw r4, 8(r3) */     IW(0x08008390);
+        }
+
+        return true;
+}
+
+/* Visit a OP_LICONST instruction. */
+static INLINE bool
+jit_visit_liconst_op(
+        struct jit_context *ctx)
+{
+        int dst;
+        uint64_t val;
+
+        CONSUME_TMPVAR(dst);
+        CONSUME_IMM64(val);
+
+        dst *= (int)sizeof(struct rt_value);
+
+        /* Set an integer constant. */
+        ASM {
+                /* R14: env */
+                /* R15: &env->frame->tmpvar[0] */
+                /* R31: saved LR */
+
+                /* R3 = dst_addr = &env->frame->tmpvar[dst] */
+                /* li r3, dst */        IW(0x00006038 | tvar16(dst));
+                /* add r3, r3, r15 */   IW(0x147a637c);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_LONG */
+                /* li r4, 5 */          IW(0x05008038);
+                /* stw r4, 0(r3) */     IW(0x00008390);
+
+                /* env->frame->tmpvar[dst].val.i = val */
+#if defined(NOCT_ARCH_LE)
+                /* lis r4, val@h */     IW(0x0000803c | hi16((uint32_t)(val & 0xffffffff)));
+                /* ori r4, r4, val@l */ IW(0x00008460 | lo16((uint32_t)(val & 0xffffffff)));
+                /* stw r4, 8(r3) */     IW(0x08008390);
+                /* lis r4, val@h */     IW(0x0000803c | hi16((uint32_t)((val >> 32) & 0xffffffff)));
+                /* ori r4, r4, val@l */ IW(0x00008460 | lo16((uint32_t)((val >> 32) & 0xffffffff)));
+                /* stw r4, 12(r3) */    IW(0x0c008390);
+#else
+                /* lis r4, val@h */     IW(0x0000803c | hi16((uint32_t)((val >> 32) & 0xffffffff)));
+                /* ori r4, r4, val@l */ IW(0x00008460 | lo16((uint32_t)((val >> 32) & 0xffffffff)));
+                /* stw r4, 8(r3) */     IW(0x08008390);
+                /* lis r4, val@h */     IW(0x0000803c | hi16((uint32_t)(val & 0xffffffff)));
+                /* ori r4, r4, val@l */ IW(0x00008460 | lo16((uint32_t)(val & 0xffffffff)));
+                /* stw r4, 12(r3) */    IW(0x0c008390);
+#endif
         }
 
         return true;
@@ -414,14 +466,62 @@ jit_visit_fconst_op(
                 /* li r3, dst */        IW(0x00006038 | lo16((uint32_t)dst));
                 /* add r3, r3, r15 */   IW(0x147a637c);
 
-                /* env->frame->tmpvar[dst].type = RT_VALUE_FLOAT */
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_FLOAT */
                 /* li r4, 1 */          IW(0x01008038);
                 /* stw r4, 0(r3) */     IW(0x00008390);
 
                 /* env->frame->tmpvar[dst].val.i = val */
                 /* lis r4, val@h */             IW(0x0000803c | hi16(val));
                 /* ori r4, r4, val@l */         IW(0x00008460 | lo16(val));
-                /* stw r4, 4(r3) */             IW(0x04008390);
+                /* stw r4, 8(r3) */             IW(0x08008390);
+        }
+
+        return true;
+}
+
+/* Visit a OP_LFCONST instruction. */
+static INLINE bool
+jit_visit_lfconst_op(
+        struct jit_context *ctx)
+{
+        int dst;
+        uint64_t val;
+
+        CONSUME_TMPVAR(dst);
+        CONSUME_IMM64(val);
+
+        dst *= (int)sizeof(struct rt_value);
+
+        /* Set an integer constant. */
+        ASM {
+                /* R14: env */
+                /* R15: &env->frame->tmpvar[0] */
+                /* R31: saved LR */
+
+                /* R3 = dst_addr = &env->frame->tmpvar[dst] */
+                /* li r3, dst */        IW(0x00006038 | tvar16(dst));
+                /* add r3, r3, r15 */   IW(0x147a637c);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_DOUBLE */
+                /* li r4, 6 */          IW(0x06008038);
+                /* stw r4, 0(r3) */     IW(0x00008390);
+
+                /* env->frame->tmpvar[dst].val.i = val */
+#if defined(NOCT_ARCH_LE)
+                /* lis r4, val@h */     IW(0x0000803c | hi16((uint32_t)(val & 0xffffffff)));
+                /* ori r4, r4, val@l */ IW(0x00008460 | lo16((uint32_t)(val & 0xffffffff)));
+                /* stw r4, 8(r3) */     IW(0x08008390);
+                /* lis r4, val@h */     IW(0x0000803c | hi16((uint32_t)((val >> 32) & 0xffffffff)));
+                /* ori r4, r4, val@l */ IW(0x00008460 | lo16((uint32_t)((val >> 32) & 0xffffffff)));
+                /* stw r4, 12(r3) */    IW(0x0c008390);
+#else
+                /* lis r4, val@h */     IW(0x0000803c | hi16((uint32_t)((val >> 32) & 0xffffffff)));
+                /* ori r4, r4, val@l */ IW(0x00008460 | lo16((uint32_t)((val >> 32) & 0xffffffff)));
+                /* stw r4, 8(r3) */     IW(0x08008390);
+                /* lis r4, val@h */     IW(0x0000803c | hi16((uint32_t)(val & 0xffffffff)));
+                /* ori r4, r4, val@l */ IW(0x00008460 | lo16((uint32_t)(val & 0xffffffff)));
+                /* stw r4, 12(r3) */    IW(0x0c008390);
+#endif
         }
 
         return true;
@@ -502,7 +602,7 @@ jit_visit_aconst_op(
                 /* R15: &env->frame->tmpvar[0] */
                 /* R31: saved LR */
 
-                /* Arg1 R3: rt */
+                /* Arg1 R3: env */
                 /* mr r3, r14 */                IW(0x7873c37d);
 
                 /* Arg2 R4 = dst_addr = &env->frame->tmpvar[dst] */
@@ -544,7 +644,7 @@ jit_visit_dconst_op(
                 /* R15: &env->frame->tmpvar[0] */
                 /* R31: saved LR */
 
-                /* Arg1 R3: rt */
+                /* Arg1 R3: env */
                 /* mr r3, r14 */                IW(0x7873c37d);
 
                 /* Arg2 R4 = dst_addr = &env->frame->tmpvar[dst] */
@@ -589,9 +689,9 @@ jit_visit_inc_op(
                 /* add r3, r3, r15 */   IW(0x147a637c);
 
                 /* env->frame->tmpvar[dst].val.i++ */
-                /* lwz r4, 4(r3) */     IW(0x04008380);
+                /* lwz r4, 8(r3) */     IW(0x08008380);
                 /* addi r4, r4, 1 */    IW(0x01008438);
-                /* stw r4, 4(r3) */     IW(0x04008390);
+                /* stw r4, 8(r3) */     IW(0x08008390);
         }
 
         return true;
@@ -961,12 +1061,12 @@ jit_visit_eqi_op(
                 /* R3 = src1_addr = &env->frame->tmpvar[src1] */
                 /* li r3, src */        IW(0x00006038 | lo16((uint32_t)src1));
                 /* add r3, r3, r15 */   IW(0x147a637c);
-                /* lwz r3, 4(r3) */     IW(0x04006380);
+                /* lwz r3, 8(r3) */     IW(0x08006380);
 
                 /* R4 = src2_addr = &env->frame->tmpvar[src2] */
                 /* li r4, src2 */       IW(0x00008038 | lo16((uint32_t)src2));
                 /* add r4, r4, r15 */   IW(0x147a847c);
-                /* lwz r4, 4(r4) */     IW(0x04008480);
+                /* lwz r4, 8(r4) */     IW(0x08008480);
 
                 /* src1 == src2 */
                 /* cmpw r3, r4 */       IW(0x0020037c);
@@ -1089,7 +1189,7 @@ jit_visit_loadsymbol_op(
                 /* R15: &env->frame->tmpvar[0] */
                 /* R31: saved LR */
 
-                /* Arg1 R3 = rt */
+                /* Arg1 R3 = env */
                 /* mr r3, r14 */                IW(0x7873c37d);
 
                 /* Arg2 R4 = dst */
@@ -1146,7 +1246,7 @@ jit_visit_storesymbol_op(
                 /* R15: &env->frame->tmpvar[0] */
                 /* R31: saved LR */
 
-                /* Arg1 R3 = rt */
+                /* Arg1 R3 = env */
                 /* mr r3, r14 */                IW(0x7873c37d);
 
                 /* Arg2: R4 = dst */
@@ -1164,7 +1264,7 @@ jit_visit_storesymbol_op(
                 /* Arg5 R7 = src */
                 /* li r7, src */                IW(0x0000e038 | lo16(src));
 
-                /* Call rt_storesymbol_helper(). */
+                /* Call ex_storesymbol_helper(). */
                 /* lis  r12, f[31:16] */        IW(0x0000803d | hi16(f));
                 /* ori  r12, r12, f[15:0] */    IW(0x00008c61 | lo16(f));
                 /* mflr r31 */                  IW(0xa602e87f);
@@ -1204,7 +1304,7 @@ jit_visit_loaddot_op(
                 /* R15: &env->frame->tmpvar[0] */
                 /* R31: saved LR */
 
-                /* Arg1 R3 = rt */
+                /* Arg1 R3 = env */
                 /* mr r3, r14 */                IW(0x7873c37d);
 
                 /* Arg2 R4 = dst */
@@ -1225,7 +1325,7 @@ jit_visit_loaddot_op(
                 /* lis  r8, hash[31:16] */      IW(0x0000003d | hi16(hash));
                 /* ori  r8, r8, hash[15:0] */   IW(0x00000861 | lo16(hash));
 
-                /* Call rt_loaddot_helper(). */
+                /* Call ex_loaddot_helper(). */
                 /* lis  r12, f[31:16] */        IW(0x0000803d | hi16(f));
                 /* ori  r12, r12, f[15:0] */    IW(0x00008c61 | lo16(f));
                 /* mflr r31 */                  IW(0xa602e87f);
@@ -1265,7 +1365,7 @@ jit_visit_storedot_op(
                 /* R15: &env->frame->tmpvar[0] */
                 /* R31: saved LR */
 
-                /* Arg1 R3 = rt */
+                /* Arg1 R3 = env */
                 /* mr r3, r14 */                IW(0x7873c37d);
 
                 /* Arg2 R4 = dict */
@@ -1286,7 +1386,7 @@ jit_visit_storedot_op(
                 /* Arg6 R8: src */
                 /* li r8, src */                IW(0x00000039 | tvar16(src));
 
-                /* Call rt_storedot_helper(). */
+                /* Call ex_storedot_helper(). */
                 /* lis  r12, f[31:16] */        IW(0x0000803d | hi16(f));
                 /* ori  r12, r12, f[15:0] */    IW(0x00008c61 | lo16(f));
                 /* mflr r31 */                  IW(0xa602e87f);
@@ -1349,7 +1449,7 @@ jit_visit_call_op(
                 /* R15: &env->frame->tmpvar[0] */
                 /* R31: saved LR */
 
-                /* Arg1 R3 = rt */
+                /* Arg1 R3 = env */
                 /* mr r3, r14 */                IW(0x7873c37d);
 
                 /* Arg2 R4 = dst */
@@ -1365,7 +1465,7 @@ jit_visit_call_op(
                 /* lis  r7, arg[31:16] */       IW(0x0000e03c | hi16(arg_addr));
                 /* ori  r7, r7, arg[15:0] */    IW(0x0000e760 | lo16(arg_addr));
 
-                /* Call rt_call_helper(). */
+                /* Call ex_call_helper(). */
                 /* lis  r12, f[31:16] */        IW(0x0000803d | hi16(f));
                 /* ori  r12, r12, f[15:0] */    IW(0x00008c61 | lo16(f));
                 /* mflr r31 */                  IW(0xa602e87f);
@@ -1431,7 +1531,7 @@ jit_visit_thiscall_op(
                 /* R15: &rhenv->frame->tmpvar[0] */
                 /* R31: saved LR */
 
-                /* Arg1 R3 = rt */
+                /* Arg1 R3 = env */
                 /* mr r3, r14 */                IW(0x7873c37d);
 
                 /* Arg2 R4 = dst */
@@ -1459,7 +1559,7 @@ jit_visit_thiscall_op(
                 /* lis  r10, arg[31:16] */      IW(0x0000403d | hi16(arg_addr));
                 /* ori  r10, r10, arg[15:0] */  IW(0x00004a61 | lo16(arg_addr));
 
-                /* Call rt_thiscall_helper(). */
+                /* Call ex_thiscall_helper(). */
                 /* lis  r12, f[31:16] */        IW(0x0000803d | hi16(f));
                 /* ori  r12, r12, f[15:0] */    IW(0x00008c61 | lo16(f));
                 /* mflr r31 */                  IW(0xa602e87f);
@@ -1527,7 +1627,7 @@ jit_visit_jmpiftrue_op(
                 /* R3 = env->frame->tmpvar[src].val.i */
                 /* li r3, src */                IW(0x00006038 | lo16((uint32_t)src));
                 /* add r3, r3, r15 */           IW(0x147a637c);
-                /* lwz r3, 4(r3) */             IW(0x04006380);
+                /* lwz r3, 8(r3) */             IW(0x08006380);
 
                 /* Compare: env->frame->tmpvar[dst].val.i == 1 */
                 /* cmpwi r3, 0 */               IW(0x0000032c);
@@ -1572,7 +1672,7 @@ jit_visit_jmpiffalse_op(
                 /* R3 = env->frame->tmpvar[src].val.i */
                 /* li r3, src */                IW(0x00006038 | lo16((uint32_t)src));
                 /* add r3, r3, r15 */           IW(0x147a637c);
-                /* lwz r3, 4(r3) */             IW(0x04006380);
+                /* lwz r3, 8(r3) */             IW(0x08006380);
 
                 /* Compare: env->frame->tmpvar[dst].val.i == 1 */
                 /* cmpwi r3, 0 */               IW(0x0000032c);
@@ -1616,6 +1716,40 @@ jit_visit_jmpifeq_op(
         ASM {
                 /* Patched later. */
                 /* beq 0 */     IW(0x00008241);
+        }
+
+        return true;
+}
+
+/* Visit a OP_SAFEPOINT instruction. */
+static INLINE bool
+jit_visit_safepoint_op(
+        struct jit_context *ctx)
+{
+        uint32_t f;
+
+        f = (uint32_t)ex_loaddot_helper;
+
+        /* if (!ex_safepoint_helper(env)) return false; */
+        ASM {
+                /* R14: env */
+                /* R15: &env->frame->tmpvar[0] */
+                /* R31: saved LR */
+
+                /* Arg1 R3 = env */
+                /* mr r3, r14 */                IW(0x7873c37d);
+
+                /* Call ex_safepoint_helper(). */
+                /* lis  r12, f[31:16] */        IW(0x0000803d | hi16(f));
+                /* ori  r12, r12, f[15:0] */    IW(0x00008c61 | lo16(f));
+                /* mflr r31 */                  IW(0xa602e87f);
+                /* mtctr r12 */                 IW(0xa603897d);
+                /* bctrl */                     IW(0x2104804e);
+                /* mtlr r31 */                  IW(0xa603e87f);
+
+                /* If failed: */
+                /* cmpwi r3, 0 */               IW(0x0000032c);
+                /* beq exception_handler */     IW(0x00008241 | (uint32_t)((((uint32_t)ctx->exception_code - (uint32_t)ctx->code) & 0xff) << 24) | (uint32_t)(((((uint32_t)ctx->exception_code - (uint32_t)ctx->code) >> 8) & 0xff) << 16));
         }
 
         return true;
@@ -1689,8 +1823,16 @@ jit_visit_bytecode(
                         if (!jit_visit_iconst_op(ctx))
                                 return false;
                         break;
+                case OP_LICONST:
+                        if (!jit_visit_liconst_op(ctx))
+                                return false;
+                        break;
                 case OP_FCONST:
                         if (!jit_visit_fconst_op(ctx))
+                                return false;
+                        break;
+                case OP_LFCONST:
+                        if (!jit_visit_lfconst_op(ctx))
                                 return false;
                         break;
                 case OP_SCONST:
@@ -1844,6 +1986,12 @@ jit_visit_bytecode(
                 case OP_JMPIFEQ:
                         if (!jit_visit_jmpifeq_op(ctx))
                                 return false;
+                        break;
+                case OP_SAFEPOINT:
+#if defined(NOCT_USE_MULTITHREAD)
+                        if (!jit_visit_safepoint_op(ctx))
+                                return false;
+#endif
                         break;
                 default:
                         assert(JIT_OP_NOT_IMPLEMENTED);

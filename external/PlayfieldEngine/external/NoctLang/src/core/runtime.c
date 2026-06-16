@@ -18,10 +18,7 @@
 #include "interpreter.h"
 #include "jit.h"
 #include "gc.h"
-
-#if defined(NOCT_USE_MULTITHREAD)
-#include "atomic.h"
-#endif
+#include "objectmodel.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,125 +32,6 @@
 #define NEVER_COME_HERE		0
 #define PINNED_VAR_NOT_FOUND	0
 
-/* Dictionary key. */
-#define IS_DICT_KEY_EMPTY(k)	(k.type == NOCT_VALUE_INT)
-#define IS_DICT_KEY_REMOVED(k)	(k.type == NOCT_VALUE_FLOAT)
-#define REMOVE_DICT_KEY(k)	do { k.type = NOCT_VALUE_FLOAT; } while (0)
-
-#if !defined(NOCT_USE_MULTITHREAD)
-
-#define ACQUIRE_OBJ(obj, real_obj)				\
-	/* Get the newer reference. */				\
-	real_obj = (obj);					\
-	while (real_obj->newer != NULL)				\
-		real_obj = real_obj->newer;
-
-#define RELEASE_OBJ(real_obj)
-
-#define ACQUIRE_OBJ2(obj1, real_obj1, obj2, real_obj2)		\
-	/* Get the newer reference of obj1. */			\
-	real_obj1 = (obj1);					\
-	while (real_obj1->newer != NULL)			\
-		real_obj1 = real_obj1->newer;			\
-	/* Get the newer reference of obj2. */			\
-	real_obj2 = (obj2);					\
-	while (real_obj2->newer != NULL)			\
-		real_obj2 = real_obj2->newer;
-
-#define RELEASE_OBJ2(real_obj1, real_obj2)
-
-#else
-
-#define ACQUIRE_OBJ(obj, real_obj)								\
-	/* Acquire the array. */								\
-	while (1) {										\
-		/* Get the newer reference. */							\
-		real_obj = atomic_load_relaxed_ptr((void**)&(obj));				\
-		while (atomic_load_relaxed_ptr((void **)&real_obj->newer) != NULL)		\
-			real_obj = atomic_load_relaxed_ptr((void **)&real_obj->newer);		\
-												\
-		/* Try acquire. */								\
-		int old = atomic_fetch_add_acquire(&real_obj->counter, 1);			\
-		if (old == 0 && atomic_load_acquire_ptr((void **)&real_obj->newer) == NULL)	\
-			break;									\
-												\
-		/* Failed, release. */								\
-		atomic_fetch_sub_release(&real_obj->counter, 1);				\
-												\
-		/* Allow GC in other threads because they may cause GC. */			\
-		while (1) {									\
-			atomic_fetch_sub_release(&env->vm->in_flight_counter, 1);		\
-			while (atomic_load_acquire(&env->vm->gc_stw_counter) > 0)		\
-				cpu_relax();							\
-			atomic_fetch_add_acquire(&env->vm->in_flight_counter, 1);		\
-			if (atomic_load_acquire(&env->vm->gc_stw_counter) == 0)			\
-				break;								\
-		}										\
-	}
-
-#define ACQUIRE_OBJ2(obj1, real_obj1, obj2, real_obj2)						\
-	/* Acquire two objects atomically. obj1 and obj2 must differ. */			\
-	while (1) {										\
-		/* Get the newer reference of obj1. */						\
-		real_obj1 = atomic_load_relaxed_ptr((void **)&(obj1));				\
-		while (atomic_load_relaxed_ptr((void **)&real_obj1->newer) != NULL)		\
-			real_obj1 = atomic_load_relaxed_ptr((void **)&real_obj1->newer);	\
-												\
-		/* Try acquire obj1. */								\
-		int _old1 = atomic_fetch_add_acquire(&real_obj1->counter, 1);			\
-		if (_old1 != 0 ||								\
-		    atomic_load_acquire_ptr((void **)&real_obj1->newer) != NULL) {		\
-			/* Failed to acquire obj1, release and wait for GC. */			\
-			atomic_fetch_sub_release(&real_obj1->counter, 1);			\
-			while (1) {								\
-				atomic_fetch_sub_release(&env->vm->in_flight_counter, 1);	\
-				while (atomic_load_acquire(&env->vm->gc_stw_counter) > 0)	\
-					cpu_relax();						\
-				atomic_fetch_add_acquire(&env->vm->in_flight_counter, 1);	\
-				if (atomic_load_acquire(&env->vm->gc_stw_counter) == 0)		\
-					break;							\
-			}									\
-			continue;								\
-		}										\
-												\
-		/* obj1 acquired. Now try acquire obj2. */					\
-		real_obj2 = atomic_load_relaxed_ptr((void **)&(obj2));				\
-		while (atomic_load_relaxed_ptr((void **)&real_obj2->newer) != NULL)		\
-			real_obj2 = atomic_load_relaxed_ptr((void **)&real_obj2->newer);	\
-												\
-		int _old2 = atomic_fetch_add_acquire(&real_obj2->counter, 1);			\
-		if (_old2 == 0 &&								\
-		    atomic_load_acquire_ptr((void **)&real_obj2->newer) == NULL)		\
-			break; /* Both acquired. */						\
-												\
-		/* Failed to acquire obj2.  Release obj2 and obj1, then wait. */		\
-		atomic_fetch_sub_release(&real_obj2->counter, 1);				\
-		atomic_fetch_sub_release(&real_obj1->counter, 1);				\
-		while (1) {									\
-			atomic_fetch_sub_release(						\
-				&env->vm->in_flight_counter, 1);				\
-			while (atomic_load_acquire(						\
-				&env->vm->gc_stw_counter) > 0)					\
-				cpu_relax();							\
-			atomic_fetch_add_acquire(						\
-				&env->vm->in_flight_counter, 1);				\
-			if (atomic_load_acquire(						\
-				&env->vm->gc_stw_counter) == 0)					\
-				break;								\
-		}										\
-	}
-
-#define RELEASE_OBJ(real_obj)									\
-	/* Failed, release. */									\
-	atomic_fetch_sub_release(&real_obj->counter, 1);
-
-#define RELEASE_OBJ2(real_obj1, real_obj2)							\
-	/* Release in reverse acquisition order. */						\
-	atomic_fetch_sub_release(&real_obj2->counter, 1);					\
-	atomic_fetch_sub_release(&real_obj1->counter, 1);
-
-#endif
-
 /* Forward declarations. */
 static void rt_free_func(struct rt_env *rt, struct rt_func *func);
 static bool rt_register_lir(struct rt_env *rt, struct lir_func *lir);
@@ -161,8 +39,6 @@ static bool rt_register_bytecode_function(struct rt_env *rt, uint8_t *data, size
 static const char *rt_read_bytecode_line(uint8_t *data, size_t size, uint32_t *pos);
 static bool rt_enter_frame(struct rt_env *env, struct rt_func *func);
 static void rt_leave_frame(struct rt_env *env);
-static bool rt_expand_array(struct rt_env *env, struct rt_array *old_arr, struct rt_array **new_arr_pp, size_t size);
-static bool rt_expand_dict(struct rt_env *env, struct rt_dict *old_dict, struct rt_dict **new_dict_pp);
 static bool rt_init_global(struct rt_env *env);
 static void rt_cleanup_global(struct rt_env *env);
 static bool rt_expand_global(struct rt_env *env);
@@ -212,10 +88,8 @@ rt_create_vm(
 	(*default_env)->frame->tmpvar_size = RT_TMPVAR_MAX;
 	memset((*default_env)->frame->tmpvar, 0, sizeof(struct rt_value) * RT_TMPVAR_MAX);
 
-#if defined(NOCT_USE_MULTITHREAD)
 	/* Initialize for GC. */
-	rt_gc_init_env(*default_env);
-#endif
+	om_init_env(*default_env);
 
 	/* Initialize the global variables. */
 	if (!rt_init_global(*default_env)) {
@@ -309,6 +183,8 @@ rt_free_func(
 
 	if (func->jit_code != NULL)
 		func->jit_code = NULL;
+
+	noct_free(func);
 }
 
 #if defined(NOCT_USE_MULTITHREAD)
@@ -706,7 +582,7 @@ bool
 rt_register_cfunc(
 	struct rt_env *env,
 	const char *name,
-	uint32_t param_count,
+	size_t param_count,
 	const char *param_name[],
 	bool (*cfunc)(struct rt_env *env),
 	struct rt_func **ret_func)
@@ -736,7 +612,7 @@ rt_register_cfunc(
 		}
 	}
 	func->cfunc = cfunc;
-	func->tmpvar_size = param_count + 1;
+	func->tmpvar_size = (uint32_t)param_count + 1;
 
 	global.type = NOCT_VALUE_FUNC;
 	global.val.func = func;
@@ -807,8 +683,8 @@ rt_call(
 	uint32_t i;
 
 #if defined(NOCT_USE_MULTITHREAD)
-	/* Make a GC safe point. */
-	rt_gc_safepoint(env);
+	/* Make a safepoint. */
+	om_safepoint(env);
 #endif
 
 	/* Do JIT compilation if needed. */
@@ -946,7 +822,7 @@ rt_make_string(
 	size_t len;
 	uint32_t hash;
 
-	len = strlen(data) + 1;
+	len = strlen(data) + 1; /* Including NUL. */
 	hash = 0;
 	if (!rt_make_string_with_hash(env, val, data, len, hash))
 		return false;
@@ -975,7 +851,7 @@ rt_make_string_with_hash(
 	}
 
 	/*
-	 * Here, this thread is "in-fligth" and GC won't be executed
+	 * Here, this thread is "in-flight" and GC won't be executed
 	 * in other threads.
 	 */
 
@@ -1042,24 +918,9 @@ rt_make_empty_array(
 	struct rt_env *env,
 	struct rt_value *val)
 {
-	struct rt_array *arr;
-	const uint32_t START_SIZE = 16;
-
-	/* Allocate an array. */
-	arr = rt_gc_alloc_array(env, START_SIZE);
-	if (arr == NULL) {
-		rt_out_of_memory(env);
+	/* Delegate to the object model implementation. */
+	if (!om_make_array(env, val))
 		return false;
-	}
-
-	/*
-	 * Here, this thread is "in-fligth" and GC won't be executed
-	 * in other threads.
-	 */
-
-	/* Setup a value. */
-	val->type = NOCT_VALUE_ARRAY;
-	val->val.arr = arr;
 
 	return true;
 }
@@ -1070,24 +931,12 @@ rt_make_empty_array(
 bool
 rt_get_array_size(
 	struct rt_env *env,
-	struct rt_array *arr,
-	uint32_t *size)
+	struct rt_value *arr,
+	size_t *size)
 {
-	struct rt_array *real_arr;
-
-	UNUSED_PARAMETER(env);
-
-	assert(env != NULL);
-	assert(arr != NULL);
-	assert(size != NULL);
-
-	/* Acquire the object with GC cooperation. */
-	ACQUIRE_OBJ(arr, real_arr);
-
-	/* Get the size. */
-	*size = (uint32_t)real_arr->size;
-
-	RELEASE_OBJ(real_arr);
+	/* Delegate to the object model implementation. */
+	if (!om_get_array_size(env, arr, size))
+		return false;
 
 	return true;
 }
@@ -1098,30 +947,13 @@ rt_get_array_size(
 bool
 rt_get_array_elem(
 	struct rt_env *env,
-	struct rt_array *arr,
-	uint32_t index,
+	struct rt_value *arr,
+	size_t index,
 	struct rt_value *val)
 {
-	struct rt_array *real_arr;
-
-	assert(env != NULL);
-	assert(arr != NULL);
-	assert(val != NULL);
-
-	ACQUIRE_OBJ(arr, real_arr);
-
-	/* Check the array boundary. */
-	if (index >= real_arr->size) {
-		RELEASE_OBJ(real_arr);
-
-		rt_error(env, N_TR("Array index %d is out-of-range."), index);
+	/* Delegate to the object model implementation. */
+	if (!om_read_array(env, arr, index, val))
 		return false;
-	}
-
-	/* Load. */
-	*val = real_arr->table[index];
-
-	RELEASE_OBJ(real_arr);
 
 	return true;
 }
@@ -1132,61 +964,14 @@ rt_get_array_elem(
 bool
 rt_set_array_elem(
 	struct rt_env *env,
-	struct rt_array **arr,
-	uint32_t index,
+	struct rt_value *arr,
+	size_t index,
 	NoctValue *val)
 {
-	struct rt_array *real_arr;
+	/* Delegate to the object model implementation. */
+	if (!om_write_array(env, arr, index, val))
+		return false;
 
-	assert(env != NULL);
-	assert(arr != NULL);
-	assert(*arr != NULL);
-	assert(val != NULL);
-
-	ACQUIRE_OBJ(*arr, real_arr);
-
-	/* Expand the array if needed.. */
-	if (index >= real_arr->alloc_size) {
-		struct rt_array *new_arr;
-
-		/* Reallocate an array. */
-		if (!rt_expand_array(env, real_arr, arr, index + 1)) {
-			RELEASE_OBJ(real_arr);
-			return false;
-		}
-
-		/* Get the new array which is only visible to this thread. */
-		new_arr = *arr;
-
-		/* Set the new size. */
-		new_arr->size = index + 1;
-
-		/* Store. */
-		new_arr->table[index] = *val;
-
-		/* GC: Write barrier for the remember set. */
-		if (val->type == NOCT_VALUE_STRING ||
-		    val->type == NOCT_VALUE_ARRAY ||
-		    val->type == NOCT_VALUE_DICT)
-			rt_gc_array_write_barrier(env, new_arr, index, val);
-
-		/* Publication is done by a release to the old array. */
-		RELEASE_OBJ(real_arr);
-		return true;
-	}
-
-	/* Store. */
-	real_arr->table[index] = *val;
-	if (index >= real_arr->size)
-		real_arr->size = index + 1;
-
-	/* GC: Write barrier for the remember set. */
-	if (val->type == NOCT_VALUE_STRING ||
-	    val->type == NOCT_VALUE_ARRAY ||
-	    val->type == NOCT_VALUE_DICT)
-		rt_gc_array_write_barrier(env, real_arr, index, val);
-
-	RELEASE_OBJ(real_arr);
 	return true;
 }
 
@@ -1196,92 +981,12 @@ rt_set_array_elem(
 bool
 rt_resize_array(
 	struct rt_env *env,
-	struct rt_array **arr,
-	uint32_t size)
-{
-	struct rt_array *real_arr;
-
-	assert(env != NULL);
-	assert(arr != NULL);
-
-	ACQUIRE_OBJ(*arr, real_arr);
-
-	if (size > real_arr->alloc_size) {
-		struct rt_array *new_arr;
-
-		/* Reallocate an array. */
-		if (!rt_expand_array(env, real_arr, arr, size)) {
-			RELEASE_OBJ(real_arr);
-			return false;
-		}
-
-		/* Get the new array which is only visible to this thread.. */
-		new_arr = *arr;
-
-		/* Set the element count. */
-		new_arr->size = size;
-
-		/* Publication is done by a release to the old array. */
-		RELEASE_OBJ(real_arr);
-	} else {
-		/* Remove (zero-fill) the reminder. */
-		memset(&real_arr->table[size], 0, sizeof(struct rt_value) * (size_t)(real_arr->alloc_size - size));
-
-		/* Set the element count. */
-		real_arr->size = size;
-
-		RELEASE_OBJ(real_arr);
-	}
-
-	return true;
-}
-
-/* Expand an array. */
-static bool
-rt_expand_array(
-	struct rt_env *env,
-	struct rt_array *old_arr,
-	struct rt_array **new_arr_pp,
+	struct rt_value *arr,
 	size_t size)
 {
-	struct rt_array *new_arr;
-	size_t old_size;
-	uint32_t i;
-
-	assert(env != NULL);
-	assert(old_arr->newer == NULL);
-	assert(old_arr->alloc_size < size);
-
-	old_size = old_arr->alloc_size;
-
-	/* Get the next size. */
-	if (size < old_size * 2)
-		size = old_size * 2;
-	else
-		size = size * 2;
-
-	/* Allocate the new array. */
-	new_arr = rt_gc_alloc_array(env, size);
-	if (new_arr == NULL) {
-		rt_out_of_memory(env);
+	/* Delegate to the object model implementation. */
+	if (!om_resize_array(env, arr, size))
 		return false;
-	}
-
-	/* Copy the values with write barrier. */
-	new_arr->size = old_arr->size;
-	for (i = 0; i < old_arr->size; i++) {
-		/* Copy. */
-		new_arr->table[i] = old_arr->table[i];
-
-		/* Write barrier. */
-		rt_gc_array_write_barrier(env, new_arr, i, &new_arr->table[i]);
-	}
-	
-	/* Set the forwaring pointer. */
-	old_arr->newer = new_arr;
-
-	/* Set the result. */
-	*new_arr_pp = new_arr;
 
 	return true;
 }
@@ -1292,42 +997,12 @@ rt_expand_array(
 bool
 rt_make_array_copy(
 	struct rt_env *env,
-	struct rt_array **dst,
-	struct rt_array *src)
+	struct rt_value *dst,
+	struct rt_value *src)
 {
-	struct rt_array *src_real;
-	uint32_t i;
-
-	assert(env != NULL);
-	assert(dst != NULL);
-	assert(src != NULL);
-
-	ACQUIRE_OBJ(src, src_real);
-
-	/* Allocate an array. */
-	*dst = rt_gc_alloc_array(env, src_real->size);
-	if (*dst == NULL) {
-		RELEASE_OBJ(src_real);
+	/* Delegate to the object model implementation. */
+	if (!om_copy_array(env, dst, src))
 		return false;
-	}
-
-	/*
-	 * In this section, it is guaranteed that GC is not executed
-	 * in other threads because this thread is "in-flight" and
-	 * a GC execution waits for all threads become not in-flight.
-	 */
-
-	/* Copy the array with write-barrier. */
-	(*dst)->size = src_real->size;
-	for (i = 0; i < src_real->size; i++) {
-		/* Copy. */
-		(*dst)->table[i] = src_real->table[i];
-
-		/* Write barrier. */
-		rt_gc_array_write_barrier(env, *dst, i, &(*dst)->table[i]);
-	}
-
-	RELEASE_OBJ(src_real);
 
 	return true;
 }
@@ -1340,25 +1015,9 @@ rt_make_empty_dict(
 	struct rt_env *env,
 	struct rt_value *val)
 {
-	struct rt_dict *dict;
-
-	const uint32_t START_SIZE = 2;
-
-	/* Allocate a dictionary. */
-	dict = rt_gc_alloc_dict(env, START_SIZE);
-	if (dict == NULL) {
-		rt_out_of_memory(env);
+	/* Delegate to the object model implementation. */
+	if (!om_make_dict(env, val))
 		return false;
-	}
-
-	/*
-	 * Here, this thread is "in-fligth" and GC won't be executed
-	 * in other threads.
-	 */
-
-	/* Setup a value. */
-	val->type = NOCT_VALUE_DICT;
-	val->val.dict = dict;
 
 	return true;
 }
@@ -1369,23 +1028,28 @@ rt_make_empty_dict(
 bool
 rt_get_dict_size(
 	struct rt_env *env,
-	struct rt_dict *dict,
-	uint32_t *size)
+	struct rt_value *dict,
+	size_t *size)
 {
-	struct rt_dict *real_dict;
+	/* Delegate to the object model implementation. */
+	if (!om_get_dict_size(env, dict, size))
+		return false;
 
-	UNUSED_PARAMETER(env);
+	return true;
+}
 
-	assert(env != NULL);
-	assert(dict != NULL);
-	assert(size != NULL);
-
-	ACQUIRE_OBJ(dict, real_dict);
-
-	/* Get the size. */
-	*size = (uint32_t)real_dict->size;
-
-	RELEASE_OBJ(real_dict);
+/*
+ * Get the allocation size of a dictionary.
+ */
+bool
+rt_get_dict_alloc_size(
+	struct rt_env *env,
+	struct rt_value *dict,
+	size_t *size)
+{
+	/* Delegate to the object model implementation. */
+	if (!om_get_dict_alloc_size(env, dict, size))
+		return false;
 
 	return true;
 }
@@ -1396,49 +1060,49 @@ rt_get_dict_size(
 bool
 rt_check_dict_key(
 	struct rt_env *env,
-	struct rt_dict *dict,
+	struct rt_value *dict,
+	struct rt_value *key,
+	bool *ret)
+{
+	/* Delegate to the object model implementation. */
+	if (!om_check_dict_key(env, dict, key, ret))
+		return false;
+
+	return true;
+}
+
+/*
+ * Checks if a key exists in a dictionary.
+ */
+bool
+rt_check_dict_key_cstr(
+	struct rt_env *env,
+	struct rt_value *dict,
 	const char *key,
 	bool *ret)
 {
-	struct rt_dict *real_dict;
-	size_t len;
-	uint32_t hash, i, index;
+	struct rt_value key_val;
 
-	UNUSED_PARAMETER(env);
+	if (env->frame != NULL)
+		rt_pin_local(env, &key_val);
+	else
+		rt_pin_global(env, &key_val);
 
-	ACQUIRE_OBJ(dict, real_dict);
+	if (!rt_make_string(env, &key_val, key))
+		return false;
+	
+	/* Delegate to the object model implementation. */
+	if (!om_check_dict_key(env, dict, &key_val, ret))
+		return false;
+		
+	if (env->frame != NULL)
+		rt_unpin_local(env, &key_val);
+	else
+		rt_unpin_global(env, &key_val);
+	
+	return true;
 
-	len = strlen(key) + 1; /* +1 for NUL */
-	hash = rt_string_hash(key);
-	index = hash & ((uint32_t)real_dict->alloc_size - 1);
 
-	/* Search the key. */
-	for (i = index;
-	     i != ((index - 1 + (uint32_t)real_dict->alloc_size) & ((uint32_t)real_dict->alloc_size - 1));
-	     i = (i + 1) & ((uint32_t)real_dict->alloc_size - 1)) {
-		if (IS_DICT_KEY_REMOVED(real_dict->key[i]) ||
-		    IS_DICT_KEY_EMPTY(real_dict->key[i]))
-			continue;
-
-		/* Make a hash cache. */
-		if (real_dict->key[i].val.str->hash == 0)
-			real_dict->key[i].val.str->hash = rt_string_hash(real_dict->key[i].val.str->data);
-
-		if (real_dict->key[i].val.str->len == len &&
-		    real_dict->key[i].val.str->hash == hash &&
-		    strcmp(real_dict->key[i].val.str->data, key) == 0) {
-			/* Found. */
-			RELEASE_OBJ(real_dict);
-			*ret = true;
-			return true;
-		}
-	}
-
-	/* Not found. */
-	RELEASE_OBJ(real_dict);
-	*ret = false;
-
-	/* Note: this is not an error, so just return true. */
 	return true;
 }
 
@@ -1448,46 +1112,17 @@ rt_check_dict_key(
 bool
 rt_get_dict_key_by_index(
 	struct rt_env *env,
-	struct rt_dict *dict,
-	uint32_t index,
+	struct rt_value *dict,
+	size_t index,
 	struct rt_value *key)
 {
-	struct rt_dict *real_dict;
-	uint32_t count, i;
+	struct rt_value val;
 
-	assert(env != NULL);
-	assert(dict != NULL);
-	assert(key != NULL);
-	
-	ACQUIRE_OBJ(dict, real_dict);
-
-	/* Check the boundary. */
-	if (index >= real_dict->size) {
-		RELEASE_OBJ(real_dict);
-
-		rt_error(env, N_TR("Dictionary index %d is out-of-range."), index);
+	/* Delegate to the object model implementation. */
+	if (!om_read_dict_index(env, dict, index, key, &val))
 		return false;
-	}
 
-	count = 0;
-	for (i = 0; i < real_dict->alloc_size; i++) {
-		if (IS_DICT_KEY_REMOVED(real_dict->key[i]) ||
-		    IS_DICT_KEY_EMPTY(real_dict->key[i]))
-			continue;
-		if (count == index) {
-			/* Load the key. */
-			*key = real_dict->key[i];
-			RELEASE_OBJ(real_dict);
-			return true;
-		}
-		count++;
-	}
-
-	assert(NEVER_COME_HERE);
-
-	RELEASE_OBJ(real_dict);
-
-	return false;
+	return true;
 }
 
 /*
@@ -1496,44 +1131,15 @@ rt_get_dict_key_by_index(
 bool
 rt_get_dict_value_by_index(
 	struct rt_env *env,
-	struct rt_dict *dict,
-	uint32_t index,
+	struct rt_value *dict,
+	size_t index,
 	struct rt_value *val)
 {
-	struct rt_dict *real_dict;
-	uint32_t count, i;
+	struct rt_value key;
 
-	assert(env != NULL);
-	assert(dict != NULL);
-	assert(val != NULL);
-	
-	ACQUIRE_OBJ(dict, real_dict);
-
-	/* Check the boundary. */
-	if (index >= real_dict->size) {
-		RELEASE_OBJ(real_dict);
-
-		rt_error(env, N_TR("Dictionary index %d is out-of-range."), index);
+	/* Delegate to the object model implementation. */
+	if (!om_read_dict_index(env, dict, index, &key, val))
 		return false;
-	}
-
-	count = 0;
-	for (i = 0; i < real_dict->alloc_size; i++) {
-		if (IS_DICT_KEY_REMOVED(real_dict->key[i]) ||
-		    IS_DICT_KEY_EMPTY(real_dict->key[i]))
-			continue;
-		if (count == index) {
-			/* Load the value. */
-			*val = real_dict->value[i];
-			RELEASE_OBJ(real_dict);
-			return true;
-		}
-		count++;
-	}
-
-	assert(NEVER_COME_HERE);
-
-	RELEASE_OBJ(real_dict);
 
 	return true;
 }
@@ -1544,20 +1150,41 @@ rt_get_dict_value_by_index(
 bool
 rt_get_dict_elem(
 	struct rt_env *env,
-	struct rt_dict *dict,
+	struct rt_value *dict,
+	struct rt_value *key,
+	struct rt_value *val)
+{
+	/* Delegate to the object model implementation. */
+	if (!om_read_dict(env, dict, key, val))
+		return false;
+
+	return true;	
+}
+
+/*
+ * Retrieves the value by a key in a dictionary.
+ */
+bool
+rt_get_dict_elem_cstr(
+	struct rt_env *env,
+	struct rt_value *dict,
 	const char *key,
 	struct rt_value *val)
 {
 	size_t len;
-	uint32_t hash;
 
-	/* This function is a wrapper and doesn't need a acquire/release. */
-
+	/* Including NUL. */
 	len = strlen(key) + 1;
-	hash = rt_string_hash(key);
-	if (!rt_get_dict_elem_with_hash(env, dict, key, len, hash, val))
-		return false;
 
+	/* Delegate to the object model implementation. */
+	if (!om_read_dict_with_hash(env,
+				    dict,
+				    key,
+				    len,
+				    rt_string_hash(key),
+				    val))
+		return false;
+		
 	return true;
 }
 
@@ -1567,52 +1194,17 @@ rt_get_dict_elem(
 bool
 rt_get_dict_elem_with_hash(
 	struct rt_env *env,
-	struct rt_dict *dict,
+	struct rt_value *dict,
 	const char *key,
 	size_t len,
 	uint32_t hash,
 	struct rt_value *val)
 {
-	struct rt_dict *real_dict;
-	uint32_t index, i;
+	/* Delegate to the object model implementation. */
+	if (!om_read_dict_with_hash(env, dict, key, len, hash, val))
+		return false;
 
-	assert(env != NULL);
-	assert(dict != NULL);
-	assert(key != NULL);
-	assert(val != NULL);
-	assert(hash != 0);
-
-	ACQUIRE_OBJ(dict, real_dict);
-
-	index = hash & (uint32_t)(real_dict->alloc_size - 1);
-	for (i = index;
-	     i != ((index - 1 + real_dict->alloc_size) & (real_dict->alloc_size - 1));
-	     i = (i + 1) & ((uint32_t)real_dict->alloc_size - 1)) {
-		if (IS_DICT_KEY_REMOVED(real_dict->key[i]))
-			continue;
-		if (IS_DICT_KEY_EMPTY(real_dict->key[i]))
-			break;
-
-		/* Make a hash cache. */
-		if (real_dict->key[i].val.str->hash == 0)
-			real_dict->key[i].val.str->hash = rt_string_hash(real_dict->key[i].val.str->data);
-		
-		if (real_dict->key[i].val.str->len == len &&
-		    real_dict->key[i].val.str->hash == hash &&
-		    strcmp(real_dict->key[i].val.str->data, key) == 0) {
-			/* Succeeded. */
-			*val = real_dict->value[i];
-			RELEASE_OBJ(real_dict);
-			return true;
-		}
-	}
-
-	/* Not found. */
-	RELEASE_OBJ(real_dict);
-
-	rt_error(env, N_TR("Dictionary key \"%s\" not found."), key);
-
-	return false;
+	return true;
 }
 
 /*
@@ -1621,187 +1213,65 @@ rt_get_dict_elem_with_hash(
 bool
 rt_set_dict_elem(
 	struct rt_env *env,
-	struct rt_dict **dict,
-	const char *key,
+	struct rt_value *dict,
+	struct rt_value *key,
 	struct rt_value *val)
 {
-	size_t len;
-	uint32_t hash;
-
-	/* This function is a wrapper and doesn't need a acquire/release. */
-
-	len = strlen(key) + 1;	/* Including NUL. */
-	hash = rt_string_hash(key);
-	if (!rt_set_dict_elem_with_hash(env, dict, key, len, hash, val))
+	/* Delegate to the object model implementation. */
+	if (!om_write_dict(env, dict, key, val))
 		return false;
-
+		
 	return true;
 }
 
 /*
- * Stores a key-value-pair to a dictionary. (hash version)
+ * Stores a key-value-pair to a dictionary.
+ */
+bool
+rt_set_dict_elem_cstr(
+	struct rt_env *env,
+	struct rt_value *dict,
+	const char *key,
+	struct rt_value *val)
+{
+	size_t len;
+
+	/* Including NUL. */
+	len = strlen(key) + 1;
+
+	/* Delegate to the object model implementation. */
+	if (!om_write_dict_with_hash(env,
+				     dict,
+				     key,
+				     len,
+				     rt_string_hash(key),
+				     val))
+		return false;
+	
+	return true;
+}
+
+/*
+ * Stores a key-value-pair to a dictionary.
  */
 bool
 rt_set_dict_elem_with_hash(
 	struct rt_env *env,
-	struct rt_dict **dict,
+	struct rt_value *dict,
 	const char *key,
 	size_t len,
 	uint32_t hash,
 	struct rt_value *val)
 {
-	struct rt_dict *real_dict, *append_dict;
-	uint32_t index, i;
-
-	assert(env != NULL);
-	assert(dict != NULL);
-	assert(*dict != NULL);
-	assert(key != NULL);
-	assert(val != NULL);
-	assert(hash != 0);
-
-	ACQUIRE_OBJ(*dict, real_dict);
-
-	/* Search for the key to replace the value. */
-	index = hash & ((uint32_t)real_dict->alloc_size - 1);
-	for (i = index;
-	     i != ((index - 1 + real_dict->alloc_size) & (real_dict->alloc_size - 1));
-	     i = (i + 1) & ((uint32_t)real_dict->alloc_size - 1)) {
-		if (IS_DICT_KEY_REMOVED(real_dict->key[i]) ||
-		    IS_DICT_KEY_EMPTY(real_dict->key[i]))
-			break;
-
-		/* Make a hash cache. */
-		if (real_dict->key[i].val.str->hash == 0)
-			real_dict->key[i].val.str->hash = rt_string_hash(real_dict->key[i].val.str->data);
-
-		if (real_dict->key[i].val.str->len == len &&
-		    real_dict->key[i].val.str->hash == hash &&
-		    strcmp(real_dict->key[i].val.str->data, key) == 0) {
-			/* Found, replace the value. */
-			real_dict->value[i] = *val;
-
-			/* GC: Write barrier for the remember set. */
-			if (val->type == NOCT_VALUE_STRING ||
-			    val->type == NOCT_VALUE_ARRAY ||
-			    val->type == NOCT_VALUE_DICT)
-				rt_gc_dict_write_barrier(env, real_dict, val);
-
-			RELEASE_OBJ(real_dict);
-
-			return true;
-		}
-	}
-
-	/* Key doesn't exist. Add new one. */
-
-	/* Expand the size if 75% is used. */
-	if (real_dict->size >= real_dict->alloc_size / 4 * 3) {
-		/* Reallocate a dictionary. */
-		if (!rt_expand_dict(env, real_dict, dict)) {
-			RELEASE_OBJ(real_dict);
-			return false;
-		}
-
-		/* Get the new dictionary which is only visible to this thread until a publication. */
-		append_dict = *dict;
-	} else {
-		append_dict = real_dict;
-	}
-	assert(append_dict->size < append_dict->alloc_size);
-
-	/* Append. */
-	index = hash & ((uint32_t)append_dict->alloc_size - 1);
-	for (i = index;
-	     i != ((index - 1 + append_dict->alloc_size) & (append_dict->alloc_size - 1));
-	     i = (i + 1) & ((uint32_t)append_dict->alloc_size - 1)) {
-		if (IS_DICT_KEY_REMOVED(append_dict->key[i]) ||
-		    IS_DICT_KEY_EMPTY(append_dict->key[i])) {
-			/* Make a key value. */
-			if (!rt_make_string_with_hash(env, &append_dict->key[i], key, len, hash)) {
-				RELEASE_OBJ(real_dict);
-				return false;
-			}
-
-			append_dict->value[i] = *val;
-
-			/* GC: Write barrier for the remember set. */
-			if (val->type == NOCT_VALUE_STRING ||
-			    val->type == NOCT_VALUE_ARRAY ||
-			    val->type == NOCT_VALUE_DICT) {
-				rt_gc_dict_write_barrier(env, append_dict, &append_dict->key[i]);
-				rt_gc_dict_write_barrier(env, append_dict, val);
-			}
-
-			append_dict->size++;
-			break;
-		}
-	}
-
-	/*
-	 * Release real_dict, also do publication for append_dict.
-	 * In case of expand, the new dictionaty will appear to other threads.
-	 */
-	RELEASE_OBJ(real_dict);
-
-	return true;
-}
-
-/* Expand an array. */
-static bool
-rt_expand_dict(
-	struct rt_env *env,
-	struct rt_dict *old_dict,
-	struct rt_dict **new_dict_pp)
-{
-	struct rt_dict *new_dict;
-	size_t old_size, new_size;
-	uint32_t index, i, j;
-
-	assert(env != NULL);
-	assert(old_dict != NULL);
-	assert(old_dict->newer == NULL);
-	assert(new_dict_pp != NULL);
-
-	old_size = old_dict->alloc_size;
-	new_size = old_size * 2;
-
-	/* Allocate the new array. */
-	new_dict = rt_gc_alloc_dict(env, new_size);
-	if (new_dict == NULL) {
-		rt_out_of_memory(env);
+	/* Delegate to the object model implementation. */
+	if (!om_write_dict_with_hash(env,
+				     dict,
+				     key,
+				     len,
+				     hash,
+				     val))
 		return false;
-	}
-
-	/* Rehash. (Copy the values with write barrier.) */
-	for (i = 0; i < old_size; i++) {
-		if (IS_DICT_KEY_REMOVED(old_dict->key[i]) || IS_DICT_KEY_EMPTY(old_dict->key[i]))
-			continue;
-
-		index = rt_string_hash(old_dict->key[i].val.str->data) & ((uint32_t)new_dict->alloc_size - 1);
-		for (j = index;
-		     j != ((index - 1 + new_dict->alloc_size) & (new_dict->alloc_size - 1));
-		     j = (j + 1) & ((uint32_t)new_dict->alloc_size - 1)) {
-			if (IS_DICT_KEY_EMPTY(new_dict->key[j])) {
-				/* Copy the key and values. */
-				new_dict->key[j] = old_dict->key[i];
-				new_dict->value[j] = old_dict->value[i];
-
-				/* Write barrier. */
-				rt_gc_dict_write_barrier(env, new_dict, &new_dict->key[j]);
-				rt_gc_dict_write_barrier(env, new_dict, &new_dict->value[j]);
-				break;
-			}
-		}
-	}
-	new_dict->size = old_dict->size;
-
-	/* Set the forwarding pointer. */
-	old_dict->newer = new_dict;
-
-	/* Set the result */
-	*new_dict_pp = new_dict;
-
+	
 	return true;
 }
 
@@ -1811,17 +1281,11 @@ rt_expand_dict(
 bool
 rt_remove_dict_elem(
 	struct rt_env *env,
-	struct rt_dict *dict,
-	const char *key)
+	struct rt_value *dict,
+	struct rt_value *key)
 {
-	size_t len;
-	uint32_t hash;
-
-	/* This function is a wrapper and doesn't need a acquire/release. */
-
-	len = strlen(key) + 1;	/* Including NUL. */
-	hash = rt_string_hash(key);
-	if (!rt_remove_dict_elem_with_hash(env, dict, key, len, hash))
+	/* Delegate to the object model implementation. */
+	if (!om_erase_dict_entry(env, dict, key))
 		return false;
 
 	return true;
@@ -1831,54 +1295,33 @@ rt_remove_dict_elem(
  * Remove a dictionary key. (hash version)
  */
 bool
-rt_remove_dict_elem_with_hash(
+rt_remove_dict_elem_cstr(
 	struct rt_env *env,
-	struct rt_dict *dict,
-	const char *key,
-	size_t len,
-	uint32_t hash)
+	struct rt_value *dict,
+	const char *key)
 {
-	struct rt_dict *real_dict;
-	uint32_t index, i;
+	struct rt_value key_val;
 
-	assert(env != NULL);
-	assert(dict != NULL);
-	assert(key != NULL);
-	assert(hash != 0);
+	if (env->frame != NULL)
+		rt_pin_local(env, &key_val);
+	else
+		rt_pin_global(env, &key_val);
 
-	ACQUIRE_OBJ(dict, real_dict);
-
-	/* Search for the key. */
-	index = hash & ((uint32_t)real_dict->alloc_size - 1);
-	for (i = index;
-	     i != ((index - 1 + real_dict->alloc_size) & (real_dict->alloc_size - 1));
-	     i = (i + 1) & ((uint32_t)real_dict->alloc_size - 1)) {
-		if (IS_DICT_KEY_REMOVED(real_dict->key[i]))
-			continue;
-		if (IS_DICT_KEY_EMPTY(real_dict->key[i]))
-			break;
-
-		/* Make a hash cache. */
-		if (real_dict->key[i].val.str->hash == 0)
-			real_dict->key[i].val.str->hash = rt_string_hash(real_dict->key[i].val.str->data);
-		
-		if (real_dict->key[i].val.str->len == len &&
-		    real_dict->key[i].val.str->hash == hash &&
-		    strcmp(real_dict->key[i].val.str->data, key) == 0) {
-			REMOVE_DICT_KEY(real_dict->key[i]);
-			real_dict->value[i].type = NOCT_VALUE_INT;
-			real_dict->value[i].val.i = 0;
-
-			/* Succeeded. */
-			RELEASE_OBJ(real_dict);
-			return true;
-		}
+	if (!rt_make_string(env, &key_val, key))
+		return false;
+	
+	/* Delegate to the object model implementation. */
+	if (!om_erase_dict_entry(env, dict, &key_val)) {
+		rt_unpin_global(env, &key_val);
+		return false;
 	}
-
-	/* Not found. */
-	RELEASE_OBJ(real_dict);
-	rt_error(env, N_TR("Dictionary key \"%s\" not found."), key);
-	return false;
+		
+	if (env->frame != NULL)
+		rt_unpin_local(env, &key_val);
+	else
+		rt_unpin_global(env, &key_val);
+	
+	return true;
 }
 
 /*
@@ -1887,49 +1330,12 @@ rt_remove_dict_elem_with_hash(
 bool
 rt_make_dict_copy(
 	struct rt_env *env,
-	struct rt_dict **dst,
-	struct rt_dict *src)
+	struct rt_value *dst,
+	struct rt_value *src)
 {
-	struct rt_dict *d, *src_real;
-	int i;
-
-	assert(env != NULL);
-	assert(src != NULL);
-	assert(dst != NULL);
-
-	/* Acquire src. */
-	ACQUIRE_OBJ(src, src_real);
-
-	/* Make a dictionary. */
-	d = rt_gc_alloc_dict(env, src_real->alloc_size);
-	if (d == NULL) {
-		RELEASE_OBJ(src_real);
+	/* Delegate to the object model implementation. */
+	if (!om_copy_dict(env, dst, src))
 		return false;
-	}
-
-	/*
-	 * Here, this thread is "in-fligth" and GC won't be executed
-	 * in other threads.
-	 */
-
-	/* Copy the array with write-barrier. */
-	d->size = src_real->size;
-	for (i = 0; i < (int)src_real->alloc_size; i++) {
-		if (!IS_DICT_KEY_REMOVED(src_real->key[i]) &&
-		    !IS_DICT_KEY_EMPTY(src_real->key[i])) {
-			/* Copy the key and value. */
-			d->key[i] = src_real->key[i];
-			d->value[i] = src_real->value[i];
-
-			/* Write barrier. */
-			rt_gc_dict_write_barrier(env, d, &d->key[i]);
-			rt_gc_dict_write_barrier(env, d, &d->value[i]);
-		}
-	}
-
-	RELEASE_OBJ(src_real);
-
-	*dst = d;
 
 	return true;
 }
@@ -1940,114 +1346,13 @@ rt_make_dict_copy(
 bool
 rt_merge_dict(
 	struct rt_env *env,
-	struct rt_dict *dst,
-	struct rt_dict *src)
+	struct rt_value *dst,
+	struct rt_value *src1,
+	struct rt_value *src2)
 {
-	struct rt_dict *real_src, *real_dst, *orig_real_dst, *new_dict;
-	const char *key;
-	uint32_t i, j, index, len, hash;
-	bool is_replaced;
-
-	/* Acquire 2 dictionaries. */
-	ACQUIRE_OBJ2(src, real_src, dst, real_dst);
-
-	/*
-	 * Save real_dst because it will be overwritten to a new one
-	 * when expanded, and we must do release to the original one.
-	 */
-	orig_real_dst = real_dst;
-
-	for (i = 0; i < real_src->alloc_size; i++) {
-		if (IS_DICT_KEY_REMOVED(real_src->key[i]) ||
-		    IS_DICT_KEY_EMPTY(real_src->key[i]))
-			continue;
-
-		len = (uint32_t)real_src->key[i].val.str->len;
-		hash = real_src->key[i].val.str->hash;
-		key = real_src->key[i].val.str->data;
-
-		/* Search for the key to replace the value. */
-		index = hash & ((uint32_t)real_dst->alloc_size - 1);
-		is_replaced = false;
-		for (j = index;
-		     j != ((index - 1 + real_dst->alloc_size) & (real_dst->alloc_size - 1));
-		     j = (j + 1) & ((uint32_t)real_dst->alloc_size - 1)) {
-			if (IS_DICT_KEY_REMOVED(real_dst->key[j]) ||
-			    IS_DICT_KEY_EMPTY(real_dst->key[j]))
-				break;
-
-			/* Make a hash cache. */
-			if (real_dst->key[j].val.str->hash == 0)
-				real_dst->key[j].val.str->hash = rt_string_hash(real_dst->key[j].val.str->data);
-
-			if (real_dst->key[j].val.str->len == len &&
-			    real_dst->key[j].val.str->hash == hash &&
-			    strcmp(real_dst->key[j].val.str->data, key) == 0) {
-				/* Found, replace the value. */
-				real_dst->value[j] = real_src->value[i];
-
-				/* GC: Write barrier for the remember set. */
-				if (real_src->value[i].type == NOCT_VALUE_STRING ||
-				    real_src->value[i].type == NOCT_VALUE_ARRAY ||
-				    real_src->value[i].type == NOCT_VALUE_DICT) {
-					rt_gc_dict_write_barrier(env, real_dst, &real_dst->key[j]);
-					rt_gc_dict_write_barrier(env, real_dst, &real_dst->value[j]);
-				}
-
-				is_replaced = true;
-				break;
-			}
-		}
-		if (is_replaced)
-			continue;
-
-		/* Key doesn't exist. Add new one. */
-
-		/* Expand the size if 75% is used. */
-		if (real_dst->size >= real_dst->alloc_size / 4 * 3) {
-			/* Reallocate a dictionary. */
-			if (!rt_expand_dict(env, real_dst, &new_dict)) {
-				RELEASE_OBJ2(real_src, real_dst);
-				return false;
-			}
-			real_dst = new_dict;
-		}
-
-		/* Append. */
-		index = hash & ((uint32_t)real_dst->alloc_size - 1);
-		for (j = index;
-		     j != ((index - 1 + real_dst->alloc_size) & (real_dst->alloc_size - 1));
-		     j = (j + 1) & ((uint32_t)real_dst->alloc_size - 1)) {
-			if (IS_DICT_KEY_REMOVED(real_dst->key[j]) ||
-			    IS_DICT_KEY_EMPTY(real_dst->key[j])) {
-				/* Make a key value. */
-				if (!rt_make_string_with_hash(env, &real_dst->key[j], key, len, hash)) {
-					RELEASE_OBJ2(real_src, real_dst);
-					return false;
-				}
-				real_dst->value[j] = real_src->value[i];
-
-				/* GC: Write barrier for the remember set. */
-				if (real_src->value[i].type == NOCT_VALUE_STRING ||
-				    real_src->value[i].type == NOCT_VALUE_ARRAY ||
-				    real_src->value[i].type == NOCT_VALUE_DICT) {
-					rt_gc_dict_write_barrier(env, real_dst, &real_dst->key[j]);
-					rt_gc_dict_write_barrier(env, real_dst, &real_dst->value[j]);
-				}
-
-				break;
-			}
-		}
-		real_dst->size++;
-	}
-
-	/*
-	 * Release real_src and real_dst.
-	 * In case of expand, the new dictionaty will appear to other threads. (publication)
-	 */
-	RELEASE_OBJ2(real_src, orig_real_dst);
-
-	UNUSED_PARAMETER(orig_real_dst);
+	/* Delegate to the object model implementation. */
+	if (!om_merge_dict(env, dst, src1, src2))
+		return false;
 
 	return true;
 }
@@ -2058,7 +1363,7 @@ rt_merge_dict(
 bool
 rt_set_dict_native_pointer(
 	struct rt_env *env,
-	struct rt_dict *dict,
+	struct rt_value *dict,
 	void *native_pointer,
 	void (*native_finalizer)(void *native_pointer))
 {
@@ -2066,12 +1371,12 @@ rt_set_dict_native_pointer(
 
 	UNUSED_PARAMETER(env);
 
-	ACQUIRE_OBJ(dict, real_dict);
+	real_dict = dict->val.dict;
+	while (real_dict->newer != NULL)
+		real_dict = real_dict->newer;
 
 	real_dict->native_pointer = native_pointer;
 	real_dict->native_finalizer = native_finalizer;
-
-	RELEASE_OBJ(real_dict);
 
 	return true;
 }
@@ -2082,7 +1387,7 @@ rt_set_dict_native_pointer(
 bool
 rt_get_dict_native_pointer(
 	struct rt_env *env,
-	struct rt_dict *dict,
+	struct rt_value *dict,
 	void **native_pointer,
 	void (**native_finalizer)(void *native_pointer))
 {
@@ -2090,12 +1395,455 @@ rt_get_dict_native_pointer(
 
 	UNUSED_PARAMETER(env);
 
-	ACQUIRE_OBJ(dict, real_dict);
+	real_dict = dict->val.dict;
+	while (real_dict->newer != NULL)
+		real_dict = real_dict->newer;
 
 	*native_pointer = real_dict->native_pointer;
 	*native_finalizer = real_dict->native_finalizer;
 
-	RELEASE_OBJ(real_dict);
+	return true;
+}
+
+/*
+ * Make a packed.
+ */
+bool
+rt_make_packed(
+	struct rt_env *env,
+	struct rt_value *val,
+	int type,
+	size_t size,
+	size_t elem_size,
+	void *preallocated)
+{
+	struct rt_packed *packed;
+
+	assert(env != NULL);
+	assert(val != NULL);
+	assert((size > 0 && preallocated == NULL) ||
+	       (size == 0 && preallocated != NULL));
+	assert(elem_size > 0);
+
+	/* Allocate an array. */
+	packed = rt_gc_alloc_packed(env,
+				    type,
+				    size,
+				    elem_size,
+				    preallocated);
+	if (packed == NULL) {
+		rt_out_of_memory(env);
+		return false;
+	}
+
+	/*
+	 * Here, this thread is "in-flight" and GC won't be executed
+	 * in other threads.
+	 */
+
+	/* Setup a value. */
+	val->type = NOCT_VALUE_PACKED;
+	val->val.packed = packed;
+
+	return true;
+}
+
+/*
+ * Get the element type of a packed.
+ */
+bool
+rt_get_packed_type(
+	struct rt_env *env,
+	struct rt_value *packed,
+	int *type)
+{
+	UNUSED_PARAMETER(env);
+
+	assert(env != NULL);
+	assert(packed != NULL);
+	assert(packed->type == NOCT_VALUE_PACKED);
+	assert(packed->val.packed != NULL);
+	assert(type != NULL);
+
+	/* Get the type. */
+	*type = packed->val.packed->type;
+
+	return true;
+}
+
+/*
+ * Get the element count of a packed.
+ */
+bool
+rt_get_packed_size(
+	struct rt_env *env,
+	struct rt_value *packed,
+	size_t *size)
+{
+	UNUSED_PARAMETER(env);
+
+	assert(env != NULL);
+	assert(packed != NULL);
+	assert(packed->type == NOCT_VALUE_PACKED);
+	assert(packed->val.packed != NULL);
+	assert(size != NULL);
+
+	/* Get the type. */
+	*size = packed->val.packed->elem_size;
+
+	return true;
+}
+
+/*
+ * Retrieves an int8 packed element.
+ */
+bool
+rt_get_packed_elem(
+	struct rt_env *env,
+	struct rt_value *packed,
+	size_t index,
+	struct rt_value *val)
+{
+	UNUSED_PARAMETER(env);
+
+	assert(env != NULL);
+	assert(packed != NULL);
+	assert(packed->type == NOCT_VALUE_PACKED);
+	assert(packed->val.packed != NULL);
+	assert(val != NULL);
+
+	if (index >= packed->val.packed->elem_size) {
+		rt_error(env, N_TR("Array index %d is out-of-range."), index);
+		return false;
+	}
+
+	switch (packed->val.packed->type) {
+	case NOCT_PACKED_INT8:
+		val->type = NOCT_VALUE_INT;
+		val->val.i = *((int8_t *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_UINT8:
+		val->type = NOCT_VALUE_INT;
+		val->val.i = *((uint8_t *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_INT16:
+		val->type = NOCT_VALUE_INT;
+		val->val.i = *((int16_t *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_UINT16:
+		val->type = NOCT_VALUE_INT;
+		val->val.i = *((uint16_t *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_INT32:
+		val->type = NOCT_VALUE_INT;
+		val->val.i = *((int32_t *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_UINT32:
+		val->type = NOCT_VALUE_INT;
+		val->val.i = (int32_t)*((uint32_t *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_INT64:
+		val->type = NOCT_VALUE_LONG;
+		val->val.l = (int64_t)*((int64_t *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_UINT64:
+		val->type = NOCT_VALUE_LONG;
+		val->val.l = (int64_t)*((uint64_t *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_FLOAT32:
+		val->type = NOCT_VALUE_FLOAT;
+		val->val.f = *((float *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_FLOAT64:
+		val->type = NOCT_VALUE_DOUBLE;
+		val->val.lf = *((double *)(packed->val.packed->packed_buffer) + index);
+		break;
+	}
+
+	return true;
+}
+
+/*
+ * Stores an value to a packed.
+ */
+bool
+rt_set_packed_elem(
+	struct rt_env *env,
+	struct rt_value *packed,
+	size_t index,
+	struct rt_value *val)
+{
+	UNUSED_PARAMETER(env);
+
+	assert(env != NULL);
+	assert(packed != NULL);
+	assert(packed->type == NOCT_VALUE_PACKED);
+	assert(packed->val.packed != NULL);
+	assert(val != NULL);
+
+	if (index >= packed->val.packed->elem_size) {
+		rt_error(env, N_TR("Array index %d is out-of-range."), index);
+		return false;
+	}
+
+	switch (packed->val.packed->type) {
+	case NOCT_PACKED_INT8:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((int8_t *)packed->val.packed->packed_buffer + index) = (int8_t)(uint8_t)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((int8_t *)packed->val.packed->packed_buffer + index) = (int8_t)(uint8_t)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((int8_t *)packed->val.packed->packed_buffer + index) = (int8_t)(uint8_t)(int)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((int8_t *)packed->val.packed->packed_buffer + index) = (int8_t)(uint8_t)(int)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_UINT8:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((uint8_t *)packed->val.packed->packed_buffer + index) = (uint8_t)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((uint8_t *)packed->val.packed->packed_buffer + index) = (uint8_t)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((uint8_t *)packed->val.packed->packed_buffer + index) = (uint8_t)(int)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((uint8_t *)packed->val.packed->packed_buffer + index) = (uint8_t)(int)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_INT16:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((int16_t *)packed->val.packed->packed_buffer + index) = (int16_t)(uint16_t)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((int16_t *)packed->val.packed->packed_buffer + index) = (int16_t)(uint16_t)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((int16_t *)packed->val.packed->packed_buffer + index) = (int16_t)(uint16_t)(int)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((int16_t *)packed->val.packed->packed_buffer + index) = (int16_t)(uint16_t)(int)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_UINT16:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((uint16_t *)packed->val.packed->packed_buffer + index) = (uint16_t)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((uint16_t *)packed->val.packed->packed_buffer + index) = (uint16_t)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((uint16_t *)packed->val.packed->packed_buffer + index) = (uint16_t)(int)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((uint16_t *)packed->val.packed->packed_buffer + index) = (uint16_t)(int)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_INT32:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((int32_t *)packed->val.packed->packed_buffer + index) = (int32_t)(uint32_t)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((int32_t *)packed->val.packed->packed_buffer + index) = (int32_t)(uint32_t)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((int32_t *)packed->val.packed->packed_buffer + index) = (int32_t)(uint32_t)(int)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((int32_t *)packed->val.packed->packed_buffer + index) = (int32_t)(uint32_t)(int)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_UINT32:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((uint32_t *)packed->val.packed->packed_buffer + index) = (uint32_t)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((uint32_t *)packed->val.packed->packed_buffer + index) = (uint32_t)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((uint32_t *)packed->val.packed->packed_buffer + index) = (uint32_t)(int)val->val.f;
+ 			break;
+		case NOCT_VALUE_DOUBLE:
+			*((uint32_t *)packed->val.packed->packed_buffer + index) = (uint32_t)(int)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_INT64:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((int64_t *)packed->val.packed->packed_buffer + index) = (int64_t)(uint64_t)(uint32_t)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((int64_t *)packed->val.packed->packed_buffer + index) = (int64_t)(uint64_t)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((int64_t *)packed->val.packed->packed_buffer + index) = (int64_t)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((int64_t *)packed->val.packed->packed_buffer + index) = (int64_t)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_UINT64:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((uint64_t *)packed->val.packed->packed_buffer + index) = (uint64_t)(uint32_t)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((uint64_t *)packed->val.packed->packed_buffer + index) = (uint64_t)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((uint64_t *)packed->val.packed->packed_buffer + index) = (uint64_t)(int64_t)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((uint64_t *)packed->val.packed->packed_buffer + index) = (uint64_t)(int64_t)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_FLOAT32:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((float *)packed->val.packed->packed_buffer + index) = (float)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((float *)packed->val.packed->packed_buffer + index) = (float)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((float *)packed->val.packed->packed_buffer + index) = (float)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((float *)packed->val.packed->packed_buffer + index) = (float)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_FLOAT64:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((double *)packed->val.packed->packed_buffer + index) = (double)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((double *)packed->val.packed->packed_buffer + index) = (double)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((double *)packed->val.packed->packed_buffer + index) = (double)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((double *)packed->val.packed->packed_buffer + index) = (double)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	default:
+		assert(0);
+		break;
+	}
+
+	return true;
+}
+
+/*
+ * Make a copy of a packed.
+ */
+bool
+rt_make_packed_copy(
+	struct rt_env *env,
+	struct rt_value *dst,
+	struct rt_value *src)
+{
+	struct rt_packed *dst_packed;
+	size_t size;
+
+	assert(env != NULL);
+	assert(dst != NULL);
+	assert(src != NULL);
+
+	/* If src is preallocated. */
+	if (src->val.packed->size == 0) {
+		switch (src->val.packed->type) {
+		case NOCT_PACKED_INT8:
+		case NOCT_PACKED_UINT8:
+			size = src->val.packed->elem_size;
+			break;
+		case NOCT_PACKED_INT16:
+		case NOCT_PACKED_UINT16:
+			size = src->val.packed->elem_size * 2;
+			break;
+		case NOCT_PACKED_INT32:
+		case NOCT_PACKED_UINT32:
+		case NOCT_PACKED_FLOAT32:
+			size = src->val.packed->elem_size * 4;
+			break;
+		case NOCT_PACKED_INT64:
+		case NOCT_PACKED_UINT64:
+		case NOCT_PACKED_FLOAT64:
+			size = src->val.packed->elem_size * 8;
+			break;
+		}
+	}
+
+	/* Allocate an array. */
+	dst_packed = rt_gc_alloc_packed(env,
+					src->val.packed->type,
+					size,
+					src->val.packed->elem_size,
+					NULL);
+	if (dst_packed == NULL)
+		return false;
+
+	/*
+	 * In this section, it is guaranteed that GC is not executed
+	 * in other threads because this thread is "in-flight" and
+	 * a GC execution waits for all threads become not in-flight.
+	 */
+
+	memcpy(dst_packed->packed_buffer, src->val.packed->packed_buffer, src->val.packed->size);
+
+	dst->type = NOCT_VALUE_PACKED;
+	dst->val.packed = dst_packed;
 
 	return true;
 }
@@ -2220,7 +1968,7 @@ rt_get_global(
 	size_t len;
 	uint32_t hash;
 
-	len = strlen(name) + 1;
+	len = strlen(name) + 1; /* Including NUL. */
 	hash = rt_string_hash(name);
 
 	if (!rt_get_global_with_hash(env, name, len, hash, val))
@@ -2465,6 +2213,18 @@ rt_unpin_local(
 
 	if (!rt_gc_unpin_local(env, val))
 		return false;
+
+	return true;
+}
+
+/*
+ * Make a safepoint.
+ */
+bool
+rt_safepoint(
+	struct rt_env *env)
+{
+	om_safepoint(env);
 
 	return true;
 }

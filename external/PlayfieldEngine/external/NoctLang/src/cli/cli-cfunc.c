@@ -34,7 +34,6 @@ struct napi_item {
  */
 bool register_cli_cfunc(NoctEnv *env)
 {
-	NoctValue dict;
 	int i;
 
 	for (i = 0; i < (int)(sizeof(napi_items) / sizeof(struct napi_item)); i++) {
@@ -46,12 +45,6 @@ bool register_cli_cfunc(NoctEnv *env)
 					 NULL))
 			return false;
 	}
-
-	/* Add a global variable "App". */
-	if (!noct_make_empty_dict(env, &dict))
-		return false;
-	if (!noct_set_global(env, "App", &dict))
-		return false;
 
 	return true;
 }
@@ -91,9 +84,11 @@ static bool serialize_printer(
 {
 	int type;
 	int ival;
+	int64_t lval;
 	float fval;
+	double lfval;
 	const char *sval;
-	uint32_t items, i;
+	size_t items, i;
 	char digits[1024];
 
 	if (!noct_get_value_type(env, value, &type))
@@ -106,10 +101,22 @@ static bool serialize_printer(
 		snprintf(digits, sizeof(digits), "%d", ival);
 		strncat(buf, digits, size);
 		break;
+	case NOCT_VALUE_LONG:
+		if (!noct_get_long(env, value, &lval))
+			return false;
+		snprintf(digits, sizeof(digits), PRId64, lval);
+		strncat(buf, digits, size);
+		break;
 	case NOCT_VALUE_FLOAT:
 		if (!noct_get_float(env, value, &fval))
 			return false;
-		snprintf(digits, sizeof(digits), "%f", fval);
+		snprintf(digits, sizeof(digits), "%.7g", fval);
+		strncat(buf, digits, size);
+		break;
+	case NOCT_VALUE_DOUBLE:
+		if (!noct_get_double(env, value, &lfval))
+			return false;
+		snprintf(digits, sizeof(digits), "%.15g", lfval);
 		strncat(buf, digits, size);
 		break;
 	case NOCT_VALUE_STRING:

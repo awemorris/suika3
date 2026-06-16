@@ -94,7 +94,9 @@ struct ast_expr *ast_accept_new_expr(char *cls, struct ast_kv_list *kv_list);
 struct ast_kv_list *ast_accept_kv_list(struct ast_kv_list *kv_list, struct ast_kv *kv);
 struct ast_kv *ast_accept_kv(char *key, struct ast_expr *value);
 struct ast_term *ast_accept_int_term(int i);
+struct ast_term *ast_accept_long_term(int64_t i);
 struct ast_term *ast_accept_float_term(float f);
+struct ast_term *ast_accept_double_term(double lf);
 struct ast_term *ast_accept_str_term(char *s);
 struct ast_term *ast_accept_symbol_term(char *symbol);
 struct ast_term *ast_accept_empty_array_term(void);
@@ -104,7 +106,6 @@ struct ast_arg_list *ast_accept_arg_list(struct ast_arg_list *arg_list, struct a
 %}
 
 %{
-#include "stdio.h"
 extern void ast_yyerror(void *scanner, char *s);
 %}
 
@@ -117,7 +118,9 @@ extern void ast_yyerror(void *scanner, char *s);
 
 %union {
 	int ival;
-	double fval;
+	int64_t lval;
+	float fval;
+	double lfval;
 	char *sval;
 
 	struct ast_func_list *func_list;
@@ -134,7 +137,9 @@ extern void ast_yyerror(void *scanner, char *s);
 
 %token <sval> TOKEN_SYMBOL TOKEN_STR
 %token <ival> TOKEN_INT
+%token <lval> TOKEN_LONG
 %token <fval> TOKEN_FLOAT
+%token <lfval> TOKEN_DOUBLE
 %token TOKEN_FUNC TOKEN_CLASS TOKEN_NEW TOKEN_LAMBDA TOKEN_LARR TOKEN_RARR TOKEN_PLUS TOKEN_MINUS TOKEN_MUL
 %token TOKEN_DIV TOKEN_MOD TOKEN_SHL TOKEN_SHR
 %token TOKEN_ASSIGN TOKEN_PLUSASSIGN TOKEN_MINUSASSIGN TOKEN_MULASSIGN TOKEN_DIVASSIGN TOKEN_MODASSIGN TOKEN_ANDASSIGN TOKEN_ORASSIGN TOKEN_SHLASSIGN TOKEN_SHRASSIGN
@@ -761,10 +766,20 @@ term		: TOKEN_INT
 			$$ = ast_accept_int_term($1);
 			debug("term: int");
 		}
+		| TOKEN_LONG
+		{
+			$$ = ast_accept_long_term($1);
+			debug("term: long");
+		}
 		| TOKEN_FLOAT
 		{
-			$$ = ast_accept_float_term((float)$1);
+			$$ = ast_accept_float_term($1);
 			debug("term: float");
+		}
+		| TOKEN_DOUBLE
+		{
+			$$ = ast_accept_double_term($1);
+			debug("term: double");
 		}
 		| TOKEN_STR
 		{

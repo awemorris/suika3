@@ -31,7 +31,7 @@
             "binaryDir":      "${sourceDir}/build-shared",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":         "Release",
-                "NOCT_ENABLE_STATIC":       "ON",
+                "NOCT_ENABLE_SHARED":       "ON",
                 "NOCT_ENABLE_CLI":          "ON",
                 "NOCT_ENABLE_JIT":          "ON",
                 "NOCT_ENABLE_I18N":         "ON",
@@ -51,7 +51,7 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-debug",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":         "Release",
+                "CMAKE_BUILD_TYPE":         "Debug",
                 "NOCT_ENABLE_STATIC":       "ON",
                 "NOCT_ENABLE_CLI":          "ON",
                 "NOCT_ENABLE_JIT":          "ON",
@@ -63,81 +63,6 @@
                 "NOCT_ENABLE_ELBACKEND":    "ON",
                 "NOCT_ENABLE_SCMBACKEND":   "ON",
                 "NOCT_ENABLE_REPL":         "ON"
-            }
-        },
-        {
-            "name":           "windows-vs2022-x86",
-            "displayName":    "VS2022 MSVC x86",
-            "generator":      "Visual Studio 17 2022",
-            "architecture":   "Win32",
-            "toolset":        "v143",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "NOCT_ENABLE_CLI":        "ON",
-                "NOCT_ENABLE_JIT":        "ON",
-                "NOCT_ENABLE_I18N":       "ON",
-                "NOCT_ENABLE_API":        "ON",
-                "NOCT_ENABLE_INSTALL":    "ON",
-                "NOCT_ENABLE_BCBACKEND":  "ON",
-                "NOCT_ENABLE_CBACKEND":   "ON",
-                "NOCT_ENABLE_ELBACKEND":  "ON",
-                "NOCT_ENABLE_SCMBACKEND": "ON",
-                "NOCT_ENABLE_REPL":       "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
-            "name":           "windows-vs2022-x64",
-            "displayName":    "VS2022 MSVC x64",
-            "generator":      "Visual Studio 17 2022",
-            "architecture":   "x64",
-            "toolset":        "v143",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "NOCT_ENABLE_CLI":        "ON",
-                "NOCT_ENABLE_JIT":        "ON",
-                "NOCT_ENABLE_I18N":       "ON",
-                "NOCT_ENABLE_API":        "ON",
-                "NOCT_ENABLE_INSTALL":    "ON",
-                "NOCT_ENABLE_BCBACKEND":  "ON",
-                "NOCT_ENABLE_CBACKEND":   "ON",
-                "NOCT_ENABLE_ELBACKEND":  "ON",
-                "NOCT_ENABLE_SCMBACKEND": "ON",
-                "NOCT_ENABLE_REPL":       "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
-            }
-        },
-        {
-            "name":           "windows-vs2022-arm64",
-            "displayName":    "VS2022 MSVC arm64",
-            "generator":      "Visual Studio 17 2022",
-            "architecture":   "arm64",
-            "toolset":        "v143",
-            "binaryDir":      "${sourceDir}/out/build/${presetName}",
-            "cacheVariables": {
-                "NOCT_ENABLE_CLI":        "ON",
-                "NOCT_ENABLE_JIT":        "ON",
-                "NOCT_ENABLE_I18N":       "ON",
-                "NOCT_ENABLE_API":        "ON",
-                "NOCT_ENABLE_INSTALL":    "ON",
-                "NOCT_ENABLE_BCBACKEND":  "ON",
-                "NOCT_ENABLE_CBACKEND":   "ON",
-                "NOCT_ENABLE_ELBACKEND":  "ON",
-                "NOCT_ENABLE_SCMBACKEND": "ON",
-                "NOCT_ENABLE_REPL":       "ON"
-            },
-            "condition": {
-                "type": "equals",
-                "lhs": "${hostSystemName}",
-                "rhs": "Windows"
             }
         },
         {
@@ -715,7 +640,7 @@
                 "NOCT_ENABLE_ELBACKEND":  "OFF",
                 "NOCT_ENABLE_SCMBACKEND": "OFF",
                 "NOCT_ENABLE_REPL":       "ON"
-	    }
+            }
         }
     ],
     "buildPresets": [
@@ -732,39 +657,24 @@
             "configurePreset": "debug"
         },
         {
-            "name":            "windows-vs2022-x86",
-            "configurePreset": "windows-vs2022-x86",
-	    "configuration":   "Release"
-        },
-        {
-            "name":            "windows-vs2022-x64",
-            "configurePreset": "windows-vs2022-x64",
-	    "configuration":   "Release"
-        },
-        {
-            "name": "windows-vs2022-arm64",
-            "configurePreset": "windows-vs2022-arm64",
-	    "configuration":   "Release"
-        },
-        {
             "name": "windows-vs2026-x86",
             "configurePreset": "windows-vs2026-x86",
-	    "configuration": "Release"
+            "configuration": "Release"
         },
         {
             "name": "windows-vs2026-x64",
             "configurePreset": "windows-vs2026-x64",
-	    "configuration": "Release"
+            "configuration": "Release"
         },
         {
             "name":            "windows-vs2026-x64-debug",
             "configurePreset": "windows-vs2026-x64",
-	    "configuration":   "Debug"
+            "configuration":   "Debug"
         },
         {
             "name": "windows-vs2026-arm64",
             "configurePreset": "windows-vs2026-arm64",
-	    "configuration":   "Release"
+            "configuration":   "Release"
         },
         {
             "name": "windows-mingw-x86",
@@ -809,7 +719,7 @@
         {
             "name": "android-armv7",
             "configurePreset": "android-armv7",
-	    "configuration":   "Release"
+            "configuration":   "Release"
         },
         {
             "name": "android-arm64",

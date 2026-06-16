@@ -325,4 +325,10 @@ noct_ex_thiscall_helper(
 	int arg_count,
 	int *arg);
 
+NOCT_DLL
+bool
+CDECL
+noct_ex_safepoint_helper(
+	NoctEnv *rt);
+
 #endif

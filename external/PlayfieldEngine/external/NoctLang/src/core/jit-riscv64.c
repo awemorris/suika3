@@ -120,6 +120,8 @@ void
 jit_commit(
         struct rt_env *env)
 {
+        UNUSED_PARAMETER(env);
+
         /* Make code executable and non-writable. */
         jit_map_executable(jit_code_region, JIT_CODE_MAX);
 
@@ -653,13 +655,47 @@ jit_visit_iconst_op(
                 ORI     (REG_T0, REG_ZERO, IMM12(dst));
                 ADD     (REG_T0, REG_S11, REG_T0);
 
-                /* env->frame->tmpvar[dst].type = RT_VALUE_INT */
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_INT */
                 ORI     (REG_T1, REG_ZERO, IMM12(0));
                 SW      (REG_T1, 0, REG_T0);
 
                 /* env->frame->tmpvar[dst].val.i = val */
                 LI_32   (REG_T2, IMM32(val));
                 SW      (REG_T2, 8, REG_T0);
+        }
+
+        return true;
+}
+
+/* Visit a OP_LICONST instruction. */
+static INLINE bool
+jit_visit_liconst_op(
+        struct jit_context *ctx)
+{
+        int dst;
+        uint64_t val;
+
+        CONSUME_TMPVAR(dst);
+        CONSUME_IMM64(val);
+
+        dst *= (int)sizeof(struct rt_value);
+
+        /* Set an integer constant. */
+        ASM {
+                /* s10: env */
+                /* s11: &env->frame->tmpvar[0] */
+
+                /* t0 = &env->frame->tmpvar[dst] */
+                ORI     (REG_T0, REG_ZERO, IMM12(dst));
+                ADD     (REG_T0, REG_S11, REG_T0);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_LONG */
+                ORI     (REG_T1, REG_ZERO, IMM12(5));
+                SW      (REG_T1, 0, REG_T0);
+
+                /* env->frame->tmpvar[dst].val.i = val */
+                LI_64   (REG_T2, IMM64(val));
+                SD      (REG_T2, 8, REG_T0);
         }
 
         return true;
@@ -694,6 +730,40 @@ jit_visit_fconst_op(
                 /* Assign env->frame->tmpvar[dst].val.f = val. */
                 LI_32   (REG_T2, IMM32(val));
                 SW      (REG_T2, 8, REG_T0);
+        }
+
+        return true;
+}
+
+/* Visit a OP_LFCONST instruction. */
+static INLINE bool
+jit_visit_lfconst_op(
+        struct jit_context *ctx)
+{
+        int dst;
+        uint64_t val;
+
+        CONSUME_TMPVAR(dst);
+        CONSUME_IMM64(val);
+
+        dst *= (int)sizeof(struct rt_value);
+
+        /* Set an integer constant. */
+        ASM {
+                /* s10: env */
+                /* s11: &env->frame->tmpvar[0] */
+
+                /* t0 = &env->frame->tmpvar[dst] */
+                ORI     (REG_T0, REG_ZERO, IMM12(dst));
+                ADD     (REG_T0, REG_S11, REG_T0);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_DOUBLE */
+                ORI     (REG_T1, REG_ZERO, IMM12(6));
+                SW      (REG_T1, 0, REG_T0);
+
+                /* env->frame->tmpvar[dst].val.i = val */
+                LI_64   (REG_T2, IMM64(val));
+                SD      (REG_T2, 8, REG_T0);
         }
 
         return true;
@@ -1685,7 +1755,7 @@ jit_visit_jmpiftrue_op(
                 return false;
         }
 
-        src *= sizeof(struct rt_value);
+        src *= (int)sizeof(struct rt_value);
 
         ASM {
                 /* s10: env */
@@ -1729,7 +1799,7 @@ jit_visit_jmpiffalse_op(
                 return false;
         }
 
-        src *= sizeof(struct rt_value);
+        src *= (int)sizeof(struct rt_value);
 
         ASM {
                 /* s10: env */
@@ -1785,6 +1855,30 @@ jit_visit_jmpifeq_op(
 
                 /* Patched later. */
                 BEQ     (REG_T0, REG_T1, IMM13(0));
+        }
+
+        return true;
+}
+
+/* Visit a OP_SAFEPOINT instruction. */
+static INLINE bool
+jit_visit_safepoint_op(
+        struct jit_context *ctx)
+{
+        /* if (!ex_safepoint_helper(env)) return false; */
+        ASM {
+                /* s10: env */
+                /* s11: &env->frame->tmpvar[0] */
+
+                /* Arg1 a0: env */
+                MV      (REG_A0, REG_S10);
+
+                /* Call ex_safepoint_helper(). */
+                LI_64   (REG_T0, IMM64((uint64_t)ex_safepoint_helper));
+                JALR    (REG_RA, IMM12(0), REG_T0);
+
+                /* If failed: */
+                BEQ     (REG_A0, REG_ZERO, IMM13((uint32_t)(ptrdiff_t)((uint64_t)ctx->exception_code - (uint64_t)ctx->code)));
         }
 
         return true;
@@ -1854,8 +1948,16 @@ jit_visit_bytecode(
                         if (!jit_visit_iconst_op(ctx))
                                 return false;
                         break;
+                case OP_LICONST:
+                        if (!jit_visit_liconst_op(ctx))
+                                return false;
+                        break;
                 case OP_FCONST:
                         if (!jit_visit_fconst_op(ctx))
+                                return false;
+                        break;
+                case OP_LFCONST:
+                        if (!jit_visit_lfconst_op(ctx))
                                 return false;
                         break;
                 case OP_SCONST:
@@ -2010,6 +2112,12 @@ jit_visit_bytecode(
                         if (!jit_visit_jmpifeq_op(ctx))
                                 return false;
                         break;
+                case OP_SAFEPOINT:
+#if defined(NOCT_USE_MULTITHREAD)
+                        if (!jit_visit_safepoint_op(ctx))
+                                return false;
+#endif
+                        break;
                 default:
                         assert(JIT_OP_NOT_IMPLEMENTED);
                         break;
@@ -2042,7 +2150,7 @@ jit_patch_branch(
 {
         uint32_t *target_code;
         int offset;
-        int i;
+        uint32_t i;
 
         if (ctx->pc_entry_count == 0)
                 return true;

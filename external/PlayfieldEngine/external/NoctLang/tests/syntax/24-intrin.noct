@@ -1,7 +1,7 @@
 func main() {
-    var i = int("100");
+    var i = Int.from("100");
     print(i);
 
-    var f = float("100.0");
+    var f = Float.from("100.0");
     print(f);
 }

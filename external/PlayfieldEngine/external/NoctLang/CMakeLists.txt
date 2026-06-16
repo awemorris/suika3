@@ -6,32 +6,32 @@ project(Noct VERSION 1.0 LANGUAGES C)
 #
 
 # Choose one.
-option(NOCT_ENABLE_STATIC       "Build a static library"      OFF)
-option(NOCT_ENABLE_SHARED       "Build a shared library"      OFF)
-option(NOCT_ENABLE_OBJECT       "Build objects only"          OFF)
+option(NOCT_ENABLE_STATIC       "Build a static library"           OFF)
+option(NOCT_ENABLE_SHARED       "Build a shared library"           OFF)
+option(NOCT_ENABLE_OBJECT       "Build objects only"               OFF)
 
 # Options
-option(NOCT_ENABLE_CLI          "Build a CLI binary"          OFF)
-option(NOCT_ENABLE_JIT          "Enable JIT compilation"      OFF)
-option(NOCT_ENABLE_I18N         "Enable translation feature"  OFF)
-option(NOCT_ENABLE_I18N_LIBINTL "Enable gettext"              OFF)
-option(NOCT_ENABLE_API          "Enable standard API"         OFF)
-option(NOCT_ENABLE_INSTALL      "Enable installation"         OFF)
-option(NOCT_ENABLE_BCBACKEND    "Enable bytecode backend"     OFF)
-option(NOCT_ENABLE_CBACKEND     "Enable C backend"            OFF)
-option(NOCT_ENABLE_ELBACKEND    "Enable Emacs Lisp backend"   OFF)
-option(NOCT_ENABLE_SCMBACKEND   "Enable Scheme backend"       OFF)
-option(NOCT_ENABLE_REPL         "Enable REPL"                 OFF)
-option(NOCT_ENABLE_MDOC         "Install mdoc(7) man page"    OFF)
+option(NOCT_ENABLE_CLI          "Enable CLI"                       OFF)
+option(NOCT_ENABLE_JIT          "Enable JIT compilation"           OFF)
+option(NOCT_ENABLE_MULTITHREAD  "Enable multithread support"       OFF)
+option(NOCT_ENABLE_I18N         "Enable translation (built-in)"    OFF)
+option(NOCT_ENABLE_I18N_LIBINTL "Enable translation (gettext)"     OFF)
+option(NOCT_ENABLE_API          "Enable standard API"              OFF)
+option(NOCT_ENABLE_INSTALL      "Enable installation"              OFF)
+option(NOCT_ENABLE_BCBACKEND    "Enable bytecode backend"          OFF)
+option(NOCT_ENABLE_CBACKEND     "Enable C backend"                 OFF)
+option(NOCT_ENABLE_ELBACKEND    "Enable Emacs Lisp backend"        OFF)
+option(NOCT_ENABLE_SCMBACKEND   "Enable Scheme backend"            OFF)
+option(NOCT_ENABLE_REPL         "Enable REPL"                      OFF)
+option(NOCT_ENABLE_MDOC         "Install mdoc(7) man page"         OFF)
 
+#
 # Choose one if needed.
-# (These targets cannot be automatically determined.)
-option(NOCT_TARGET_UNITY        "Build for Unity"             OFF)
-option(NOCT_TARGET_OPENHARMONY  "Build for OpenHarmony"       OFF)
-option(NOCT_TARGET_DOS4G        "Build for Unity"             OFF)
-
-# Experimental.
-option(NOCT_ENABLE_MULTITHREAD  "Enable multithread support"  OFF)
+#  - These targets cannot be automatically determined.
+#
+option(NOCT_TARGET_UNITY        "Build for Unity"                  OFF)
+option(NOCT_TARGET_OPENHARMONY  "Build for OpenHarmony"            OFF)
+option(NOCT_TARGET_DOS4G        "Build for Unity"                  OFF)
 
 # ---
 
@@ -43,22 +43,18 @@ option(NOCT_ENABLE_MULTITHREAD  "Enable multithread support"  OFF)
 if(MSVC)
   # MSVC
   set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /Od /Zi /DDEBUG /UNDEBUG")
-  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Od /Zi /DDEBUG /UNDEBUG")
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
   # GCC/Clang
   set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -O0 -g3 -DDEBUG -Wall -Werror -Wextra -Wundef -Wconversion")
-  set(CMAKE_OBJC_FLAGS_DEBUG "${CMAKE_OBJC_FLAGS_DEBUG} -O0 -g3 -DNDEBUG -Wall -Werror -Wextra -Wundef -Wconversion")
 endif()
 
 # Release Configuration
 if(MSVC)
   # MSVC
   set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /O2 /DNDEBUG")
-  set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /O2 /DNDEBUG")
 elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
   # GCC/Clang
-  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O2 -g -DNDEBUG")
-  set(CMAKE_OBJC_FLAGS_RELEASE "${CMAKE_OBJC_FLAGS_RELEASE} -O2 -g -DNDEBUG")
+  set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -Os -g -DNDEBUG")
 endif()
 
 # ---
@@ -144,21 +140,35 @@ endif()
 # Determine the base files.
 set(
   NOCT_BASE_SOURCE
-  src/core/ast.c
-  src/core/hir.c
-  src/core/lir.c
-  src/core/noct.c
-  src/core/runtime.c
-  src/core/interpreter.c
-  src/core/jit.c
-  src/core/execution.c
-  src/core/intrinsics.c
-  src/core/gc.c
-  src/core/lexer.yy.c
-  src/core/parser.tab.c
+  src/core/lexer.yy.c      # Lexer
+  src/core/parser.tab.c    # Parser
+  src/core/ast.c           # AST construction (called from parser)
+  src/core/hir.c           # HIR (AST->HIR construction)
+  src/core/lir.c           # LIR (HIR->LIR construction)
+  src/core/noct.c          # Public functions
+  src/core/runtime.c       # Runtime main part
+  src/core/interpreter.c   # Runtime interpreter part
+  src/core/jit.c           # Runtime JIT part
+  src/core/execution.c     # Runtime execution helper part
+  src/core/gc.c            # Runtime GC part
+  src/core/intrinsics.c    # Intrinsics
   ${FLEX_Lexer_OUTPUTS}
   ${BISON_Parser_OUTPUT_SOURCE}
 )
+
+# Determine the object model source file.
+if(NOCT_ENABLE_MULTITHREAD)
+  set(
+    NOCT_OBJMODEL_SOURCE
+    src/core/objectmodel-mt.c  # Multi-threaded Object Model
+  )
+else()
+  set(
+    NOCT_OBJMODEL_SOURCE
+    src/core/objectmodel-st.c  # Single-threaded Object Model
+  )
+endif()
+
 
 # Determine the C backend files.
 if(NOCT_ENABLE_CBACKEND)
@@ -214,14 +224,12 @@ add_library(
   ${NOCT_LIB_TYPE}
 
   ${NOCT_BASE_SOURCE}
+  ${NOCT_OBJMODEL_SOURCE}
   ${NOCT_CBE_SOURCE}
   ${NOCT_BCBE_SOURCE}
   ${NOCT_ELBE_SOURCE}
   ${NOCT_SCMBE_SOURCE}
   ${NOCT_I18N_SOURCE}
-
-  # Mandatory libraries here.
-  src/api/api-math.c
 )
 if(NOCT_ENABLE_SHARED)
   set_target_properties(noct PROPERTIES 
@@ -243,6 +251,7 @@ if(NOCT_ENABLE_API)
     # Optional libraries here.
     src/api/api-system.c
     src/api/api-console.c
+    src/api/api-file.c
   )
   if(NOCT_ENABLE_SHARED)
     set_target_properties(noctapi PROPERTIES 
@@ -263,103 +272,82 @@ endif()
 # CPPFLAGS
 #
 
-# -Iinclude
-target_include_directories(noct PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+set(NOCT_PUBLIC_CPPFLAGS)
+set(NOCT_PRIVATE_CPPFLAGS)
+
+# Include Path (./include and ./src/core)
+target_include_directories(noct PUBLIC
+  ${CMAKE_CURRENT_SOURCE_DIR}/include
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/core
+)
 if(NOCT_ENABLE_API)
-  target_include_directories(noctapi PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+  target_include_directories(noctapi PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/core
+  )
 endif()
 
-# -Isrc/core
-target_include_directories(noct PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/core)
-if(NOCT_ENABLE_API)
-  target_include_directories(noctapi PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src/core)
-endif()
-
-# NOCT_USE_DLL -DNOCT_DLL_IMPL
-if(NOCT_ENABLE_SHARED)
-  target_compile_definitions(noct PRIVATE NOCT_USE_DLL NOCT_DLL_IMPL)
-  if(NOCT_ENABLE_API)
-    target_compile_definitions(noctapi PRIVATE NOCT_USE_DLL NOCT_DLL_IMPL)
-  endif()
-endif()
-
-# NOCT_USE_JIT
-if(    NOCT_ENABLE_JIT AND
-   NOT CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")
-  target_compile_definitions(noct PRIVATE NOCT_USE_JIT)
-  if(NOCT_ENABLE_API)
-    target_compile_definitions(noctapi PRIVATE NOCT_USE_JIT)
-  endif()
-endif()
-
-# NOCT_USE_MULTITHREAD
+# Multithread Support
 if(NOCT_ENABLE_MULTITHREAD)
-  target_compile_definitions(noct PRIVATE NOCT_USE_MULTITHREAD)
-  if(NOCT_ENABLE_API)
-    target_compile_definitions(noctapi PRIVATE NOCT_USE_MULTITHREAD)
+  list(APPEND NOCT_PUBLIC_CPPFLAGS NOCT_USE_MULTITHREAD)
+endif()
+
+# If building a shared library.
+if(NOCT_ENABLE_SHARED)
+  list(APPEND NOCT_PUBLIC_CPPFLAGS NOCT_USE_DLL)
+endif()
+
+# JIT Support
+if(NOCT_ENABLE_JIT)
+  # Exclude OpenBSD
+  if(NOT CMAKE_SYSTEM_NAME STREQUAL "OpenBSD")
+    list(APPEND NOCT_PUBLIC_CPPFLAGS NOCT_USE_JIT)
   endif()
 endif()
 
-# NOCT_USE_TRANSLATION
+# Translation
 if(NOCT_ENABLE_I18N)
-  target_compile_definitions(noct PRIVATE NOCT_USE_TRANSLATION)
-  if(NOCT_ENABLE_API)
-    target_compile_definitions(noctapi PRIVATE NOCT_USE_TRANSLATION)
-  endif()
+  list(APPEND NOCT_PUBLIC_CPPFLAGS NOCT_USE_TRANSLATION)
 endif()  
 
-# NOCT_USE_LIBINTL
+# Translation (gettext)
 if(NOCT_ENABLE_I18N_LIBINTL)
-  target_compile_definitions(noct PRIVATE NOCT_USE_LIBINTL)
-  if(NOCT_ENABLE_API)
-    target_compile_definitions(noctapi PRIVATE NOCT_USE_LIBINTL)
-  endif()
-endif()  
+  list(APPEND NOCT_PUBLIC_CPPFLAGS NOCT_USE_LIBINTL)
+endif()
 
-# NOCT_TARGET_OPENHARMONY
+# OpenHarmony Target
 if(NOCT_TARGET_OPENHARMONY)
-  target_compile_definitions(noct PUBLIC NOCT_TARGET_OPENHARMONY)
-  if(NOCT_ENABLE_API)
-    target_compile_definitions(noctapi PUBLIC NOCT_TARGET_OPENHARMONY)
-  endif()
+  list(APPEND NOCT_PUBLIC_CPPFLAGS NOCT_TARGET_OPENHARMONY)
 endif()
 
-# NOCT_TARGET_UNITY
+# Unity Target
 if(NOCT_TARGET_UNITY)
-  target_compile_definitions(noct PUBLIC NOCT_TARGET_UNITY)
-  if(NOCT_ENABLE_API)
-    target_compile_definitions(noctapi PUBLIC NOCT_TARGET_UNITY)
-  endif()
-
+  list(APPEND NOCT_PUBLIC_CPPFLAGS NOCT_TARGET_UNITY)
   if(NOCT_TARGET_UNITY_SWITCH)
-    target_compile_definitions(noct PRIVATE NOCT_UNITY_SWITCH)
-    if(NOCT_ENABLE_API)
-      target_compile_definitions(noctapi PUBLIC NOCT_UNITY_SWITCH)
-    endif()
+    list(APPEND NOCT_PUBLIC_CPPFLAGS NOCT_TARGET_UNITY_SWITCH)
   elseif(NOCT_TARGET_UNITY_PS5)
-    target_compile_definitions(noct PRIVATE NOCT_UNITY_PS5)
-    if(NOCT_ENABLE_API)
-      target_compile_definitions(noctapi PUBLIC NOCT_UNITY_PS5)
-    endif()
+    list(APPEND NOCT_PUBLIC_CPPFLAGS NOCT_TARGET_UNITY_PS5)
   elseif(NOCT_TARGET_UNITY_XBOX)
-    target_compile_definitions(noct PRIVATE NOCT_UNITY_GAMECORE_XBOXSERIES)
-    if(NOCT_ENABLE_API)
-      target_compile_definitions(noctapi PUBLIC NOCT_UNITY_GAMECORE_XBOXSERIES)
-    endif()
+    list(APPEND NOCT_PUBLIC_CPPFLAGS NOCT_TARGET_UNITY_XBOXSERIES)
   endif()
 endif()
 
-# NOCT_TARGET_DOS4G
+# DOS4G Target
 if(NOCT_TARGET_DOS4G)
-  target_compile_definitions(noct PUBLIC NOCT_TARGET_DOS4G)
-  if(NOCT_ENABLE_API)
-    target_compile_definitions(noctapi PUBLIC NOCT_TARGET_DOS4G)
-  endif()
+  list(APPEND NOCT_PUBLIC_CPPFLAGS NOCT_TARGET_DOS4G)
 endif()
 
 # _CRT_SECURE_NO_WARNINGS
 if(WIN32 AND MSVC)
-  add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
+  list(APPEND NOCT_PUBLIC_CPPFLAGS _CRT_SECURE_NO_WARNINGS)
+endif()
+
+# Add compile definitions.
+target_compile_definitions(noct PUBLIC ${NOCT_PUBLIC_CPPFLAGS})
+target_compile_definitions(noct PRIVATE ${NOCT_PRIVATE_CPPFLAGS})
+if(NOCT_ENABLE_API)
+  target_compile_definitions(noctapi PUBLIC ${NOCT_PUBLIC_CPPFLAGS})
+  target_compile_definitions(noctapi PRIVATE ${NOCT_PRIVATE_CPPFLAGS})
 endif()
 
 # ---
@@ -368,7 +356,7 @@ endif()
 # CFLAGS
 #
 
-# -fPIC
+# PIC
 if(NOCT_ENABLE_SHARED)
   set_target_properties(noct PROPERTIES POSITION_INDEPENDENT_CODE ON)
   if(NOCT_ENABLE_API)
@@ -503,6 +491,7 @@ if(NOCT_ENABLE_CLI)
   # Include include/noct/, src/core/, and src/backend/
   target_include_directories(noctcli PRIVATE
      ${NOCT_INCLUDE_DIRS}
+     ${CMAKE_CURRENT_SOURCE_DIR}/include
      ${CMAKE_CURRENT_SOURCE_DIR}/src/core
      ${CMAKE_CURRENT_SOURCE_DIR}/src/backend
   )

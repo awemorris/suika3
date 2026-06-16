@@ -116,7 +116,9 @@ static bool lir_visit_new_expr(int dst_tmpvar, struct hir_expr *expr, struct hir
 static bool lir_visit_term(int dst_tmpvar, struct hir_term *term, struct hir_block *block);
 static bool lir_visit_symbol_term(int dst_tmpvar, struct hir_term *term, struct hir_block *block);
 static bool lir_visit_int_term(int dst_tmpvar, struct hir_term *term);
+static bool lir_visit_long_term(int dst_tmpvar, struct hir_term *term);
 static bool lir_visit_float_term(int dst_tmpvar, struct hir_term *term);
+static bool lir_visit_double_term(int dst_tmpvar, struct hir_term *term);
 static bool lir_visit_string_term(int dst_tmpvar, struct hir_term *term);
 static bool lir_visit_empty_array_term(int dst_tmpvar, struct hir_term *term);
 static bool lir_visit_empty_dict_term(int dst_tmpvar, struct hir_term *term);
@@ -126,12 +128,14 @@ static bool lir_put_opcode(uint8_t op);
 static bool lir_put_tmpvar(uint16_t index);
 static bool lir_put_imm8(uint8_t imm);
 static bool lir_put_imm32(uint32_t imm);
+static bool lir_put_imm64(uint64_t imm);
 static bool lir_put_string(const char *data);
 static bool lir_put_branch_addr(struct hir_block *block);
 static bool lir_put_incrementer_addr(struct hir_block *block);
 static bool lir_put_u8(uint8_t b);
 static bool lir_put_u16(uint16_t b);
 static bool lir_put_u32(uint32_t b);
+static bool lir_put_u64(uint64_t b);
 static void patch_block_address(void);
 static void lir_fatal(const char *msg, ...);
 static void lir_out_of_memory(void);
@@ -354,6 +358,10 @@ lir_visit_basic_block(
 
 		/* Check if succ is a loop head. */
 		if (lir_check_succ_loop_head(block, &loop)) {
+			/* Put a safepoint. */
+			if (!lir_put_opcode(OP_SAFEPOINT))
+				return false;
+
 			/* Continue edge. */
 			if (!lir_put_opcode(OP_JMP))
 				return false;
@@ -1579,7 +1587,7 @@ lir_visit_new_expr(
 		return false;
 	if (!lir_put_tmpvar((uint16_t)new_tmpvar))
 		return false;
-	if (!lir_put_string("new"))
+	if (!lir_put_string("Dict.merge"))
 		return false;
 
 	/* Load the class name. */
@@ -1643,8 +1651,16 @@ lir_visit_term(
 		if (!lir_visit_int_term(dst_tmpvar, term))
 			return false;
 		break;
+	case HIR_TERM_LONG:
+		if (!lir_visit_long_term(dst_tmpvar, term))
+			return false;
+		break;
 	case HIR_TERM_FLOAT:
 		if (!lir_visit_float_term(dst_tmpvar, term))
+			return false;
+		break;
+	case HIR_TERM_DOUBLE:
+		if (!lir_visit_double_term(dst_tmpvar, term))
 			return false;
 		break;
 	case HIR_TERM_STRING:
@@ -1733,6 +1749,24 @@ lir_visit_int_term(
 }
 
 static bool
+lir_visit_long_term(
+	int dst_tmpvar,
+	struct hir_term *term)
+{
+	assert(term != NULL);
+	assert(term->type == HIR_TERM_LONG);
+
+	if (!lir_put_opcode(OP_LICONST))
+		return false;
+	if (!lir_put_tmpvar((uint16_t)dst_tmpvar))
+		return false;
+	if (!lir_put_imm64((uint64_t)term->val.l))
+		return false;
+
+	return true;
+}
+
+static bool
 lir_visit_float_term(
 	int dst_tmpvar,
 	struct hir_term *term)
@@ -1749,6 +1783,28 @@ lir_visit_float_term(
 	if (!lir_put_tmpvar((uint16_t)dst_tmpvar))
 		return false;
 	if (!lir_put_imm32(data))
+		return false;
+
+	return true;
+}
+
+static bool
+lir_visit_double_term(
+	int dst_tmpvar,
+	struct hir_term *term)
+{
+	uint64_t data;
+
+	assert(term != NULL);
+	assert(term->type == HIR_TERM_DOUBLE);
+
+	data = *(uint64_t *)&term->val.lf;
+
+	if (!lir_put_opcode(OP_LFCONST))
+		return false;
+	if (!lir_put_tmpvar((uint16_t)dst_tmpvar))
+		return false;
+	if (!lir_put_imm64(data))
 		return false;
 
 	return true;
@@ -1881,6 +1937,16 @@ lir_put_imm32(
 	return true;
 }
 
+static bool
+lir_put_imm64(
+	uint64_t imm)
+{
+	if (!lir_put_u64(imm))
+		return false;
+
+	return true;
+}
+
 static bool lir_put_branch_addr(
 	struct hir_block *block)
 {
@@ -1976,6 +2042,7 @@ lir_put_u16(
 	if (bytecode_top + 2 > BYTECODE_BUF_SIZE)
 		return false;
 
+	/* MSB-first. */
 	bytecode[bytecode_top] = (uint8_t)((b >> 8) & 0xff);
 	bytecode[bytecode_top + 1] = (uint8_t)(b & 0xff);
 
@@ -1991,12 +2058,35 @@ lir_put_u32(
 	if (bytecode_top + 4 > BYTECODE_BUF_SIZE)
 		return false;
 
+	/* MSB-first. */
 	bytecode[bytecode_top] = (uint8_t)((b >> 24) & 0xff);
 	bytecode[bytecode_top + 1] = (uint8_t)((b >> 16) & 0xff);
 	bytecode[bytecode_top + 2] = (uint8_t)((b >> 8) & 0xff);
 	bytecode[bytecode_top + 3] = (uint8_t)(b & 0xff);
 
 	bytecode_top += 4;
+
+	return true;
+}
+
+static bool
+lir_put_u64(
+	uint64_t b)
+{
+	if (bytecode_top + 8 > BYTECODE_BUF_SIZE)
+		return false;
+
+	/* MSB-first. */
+	bytecode[bytecode_top] = (uint8_t)((b >> 56) & 0xff);
+	bytecode[bytecode_top + 1] = (uint8_t)((b >> 48) & 0xff);
+	bytecode[bytecode_top + 2] = (uint8_t)((b >> 40) & 0xff);
+	bytecode[bytecode_top + 3] = (uint8_t)((b >> 32) & 0xff);
+	bytecode[bytecode_top + 4] = (uint8_t)((b >> 24) & 0xff);
+	bytecode[bytecode_top + 5] = (uint8_t)((b >> 16) & 0xff);
+	bytecode[bytecode_top + 6] = (uint8_t)((b >> 8) & 0xff);
+	bytecode[bytecode_top + 7] = (uint8_t)(b & 0xff);
+
+	bytecode_top += 8;
 
 	return true;
 }
@@ -2047,6 +2137,8 @@ lir_cleanup(struct lir_func *func)
 		noct_free(func->param_name[i]);
 	noct_free(func->bytecode);
 	memset(func, 0, sizeof(struct lir_func));
+	noct_free(lir_file_name);
+	lir_file_name = NULL;
 }
 
 /*
@@ -2143,15 +2235,50 @@ static INLINE void imm4(uint8_t **pc, uint32_t *ret)
 	b2 = *((*pc) + 2);
 	b3 = *((*pc) + 3);
 
-	*ret = (uint32_t)((b0 << 24) | (b1 << 16) | (b2 << 8) | (b3 + 3));
+	*ret = (uint32_t)((b0 << 24) | (b1 << 16) | (b2 << 8) | b3);
 
 	(*pc) += 4;
+}
+
+/* IMM 8-byte */
+#define IMM8(d) imm8(&pc, &d)
+static INLINE void imm8(uint8_t **pc, uint64_t *ret)
+{
+	uint32_t b0;
+	uint32_t b1;
+	uint32_t b2;
+	uint32_t b3;
+	uint32_t b4;
+	uint32_t b5;
+	uint32_t b6;
+	uint32_t b7;
+
+	b0 = **pc;
+	b1 = *((*pc) + 1);
+	b2 = *((*pc) + 2);
+	b3 = *((*pc) + 3);
+	b4 = *((*pc) + 4);
+	b5 = *((*pc) + 5);
+	b6 = *((*pc) + 6);
+	b7 = *((*pc) + 7);
+
+	*ret = ((uint64_t)b0 << 56) |
+	       ((uint64_t)b1 << 48) |
+               ((uint64_t)b2 << 40) |
+               ((uint64_t)b3 << 32) |
+               ((uint64_t)b4 << 24) |
+               ((uint64_t)b5 << 16) |
+               ((uint64_t)b6 << 8) |
+               ((uint64_t)b7);
+
+	(*pc) += 8;
 }
 
 /* IMM string */
 #define IMMS(d) imms(&pc, &d)
 static INLINE void imms(uint8_t **pc, const char **ret)
 {
+	(*pc) += 8;
 	*ret = (const char *)*pc;
 	(*pc) += strlen((const char *)*pc) + 1;
 }
@@ -2200,6 +2327,15 @@ lir_dump(
 			printf("%04d: ICONST(dst:%d, val:%d)\n", ofs, dst, val);
 			break;
 		}
+		case OP_LICONST:
+		{
+			uint16_t dst;
+			uint64_t val;
+			IMM2(dst);
+			IMM8(val);
+			printf("%04d: LICONST(dst:%d, val:%" PRId64 ")\n", ofs, dst, val);
+			break;
+		}
 		case OP_FCONST:
 		{
 			uint16_t dst;
@@ -2209,6 +2345,17 @@ lir_dump(
 			IMM4(val);
 			val_f = *(float *)&val;
 			printf("%04d: FCONST(dst:%d, val:%f)\n", ofs, dst, val_f);
+			break;
+		}
+		case OP_LFCONST:
+		{
+			uint16_t dst;
+			uint64_t val = 0;
+			double val_f;
+			IMM2(dst);
+			IMM8(val);
+			val_f = *(double *)&val;
+			printf("%04d: LFCONST(dst:%d, val:%f)\n", ofs, dst, val_f);
 			break;
 		}
 		case OP_SCONST:
@@ -2587,9 +2734,17 @@ lir_dump(
 			printf("%04d: JMPIFEQ(src:%d, target:%d)\n", ofs, src, target);
 			break;
 		}
+		case OP_SAFEPOINT:
+		{
+			printf("%04d: SAFEPOINT()\n", ofs);
+			break;
+		}
 		default:
+		{
+			printf("Unknown Opcode: 0x%x\n", opcode);
 			assert(INVALID_OPCODE);
 			break;
+		}
 		}
 	}
 }

@@ -412,7 +412,7 @@ jit_visit_iconst_op(
                 /* li r3, dst */        IW(0x00006038 | lo16((uint32_t)dst));
                 /* add r3, r3, r15 */   IW(0x147a637c);
 
-                /* env->frame->tmpvar[dst].type = RT_VALUE_INT */
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_INT */
                 /* li r4, 0 */          IW(0x00008038);
                 /* std r4, 0(r3) */     IW(0x000083f8);
 
@@ -420,6 +420,45 @@ jit_visit_iconst_op(
                 /* lis r4, val@h */             IW(0x0000803c | hi16(val));
                 /* ori r4, r4, val@l */         IW(0x00008460 | lo16(val));
                 /* stw r4, 8(r3) */             IW(0x08008390);
+        }
+
+        return true;
+}
+
+/* Visit a OP_LICONST instruction. */
+static INLINE bool
+jit_visit_liconst_op(
+        struct jit_context *ctx)
+{
+        int dst;
+        uint64_t val;
+
+        CONSUME_TMPVAR(dst);
+        CONSUME_IMM64(val);
+
+        dst *= (int)sizeof(struct rt_value);
+
+        /* Set an integer constant. */
+        ASM {
+                /* R14: env */
+                /* R15: &env->frame->tmpvar[0] */
+                /* R31: saved LR */
+
+                /* R3 = dst_addr = &env->frame->tmpvar[dst] */
+                /* li r3, dst */           IW(0x00006038 | lo16((uint32_t)dst));
+                /* add r3, r3, r15 */      IW(0x147a637c);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_LONG */
+                /* li r4, 5 */             IW(0x05008038);
+                /* std r4, 0(r3) */        IW(0x000083f8);
+
+                /* env->frame->tmpvar[dst].val.i = val */
+                /* lis  r4, val@hh */      IW(0x0000803c | hihi16(val));
+                /* ori  r4, r4, val@hl */  IW(0x00008460 | hilo16(val));
+                /* sldi r4, r4, 32 */      IW(0xc6078478);
+                /* oris r4, r4, val@lh */  IW(0x00008464 | lohi16(val));
+                /* ori  r4, r4, val@ll */  IW(0x00008460 | lolo16(val));
+                /* std  r4, 8(r3) */       IW(0x080083f8);
         }
 
         return true;
@@ -448,7 +487,7 @@ jit_visit_fconst_op(
                 /* li r3, dst */        IW(0x00006038 | lo16((uint32_t)dst));
                 /* add r3, r3, r15 */   IW(0x147a637c);
 
-                /* env->frame->tmpvar[dst].type = RT_VALUE_FLOAT */
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_FLOAT */
                 /* li r4, 1 */          IW(0x01008038);
                 /* std r4, 0(r3) */     IW(0x000083f8);
 
@@ -456,6 +495,45 @@ jit_visit_fconst_op(
                 /* lis r4, val@h */             IW(0x0000803c | hi16(val));
                 /* ori r4, r4, val@l */         IW(0x00008460 | lo16(val));
                 /* stw r4, 8(r3) */             IW(0x08008390);
+        }
+
+        return true;
+}
+
+/* Visit a OP_LFCONST instruction. */
+static INLINE bool
+jit_visit_lfconst_op(
+        struct jit_context *ctx)
+{
+        int dst;
+        uint64_t val;
+
+        CONSUME_TMPVAR(dst);
+        CONSUME_IMM64(val);
+
+        dst *= (int)sizeof(struct rt_value);
+
+        /* Set an integer constant. */
+        ASM {
+                /* R14: env */
+                /* R15: &env->frame->tmpvar[0] */
+                /* R31: saved LR */
+
+                /* R3 = dst_addr = &env->frame->tmpvar[dst] */
+                /* li r3, dst */           IW(0x00006038 | lo16((uint32_t)dst));
+                /* add r3, r3, r15 */      IW(0x147a637c);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_DOUBLE */
+                /* li r4, 6 */             IW(0x06008038);
+                /* std r4, 0(r3) */        IW(0x000083f8);
+
+                /* env->frame->tmpvar[dst].val.i = val */
+                /* lis  r4, val@hh */      IW(0x0000803c | hihi16(val));
+                /* ori  r4, r4, val@hl */  IW(0x00008460 | hilo16(val));
+                /* sldi r4, r4, 32 */      IW(0xc6078478);
+                /* oris r4, r4, val@lh */  IW(0x00008464 | lohi16(val));
+                /* ori  r4, r4, val@ll */  IW(0x00008460 | lolo16(val));
+                /* std  r4, 8(r3) */       IW(0x080083f8);
         }
 
         return true;
@@ -1711,6 +1789,43 @@ jit_visit_jmpifeq_op(
         return true;
 }
 
+/* Visit a OP_SAFEPOINT instruction. */
+static INLINE bool
+jit_visit_safepoint_op(
+        struct jit_context *ctx)
+{
+        uint64_t f;
+
+        f = (uint64_t)ex_loaddot_helper;
+
+        /* if (!ex_safepoint_helper(env)) return false; */
+        ASM {
+                /* R14: env */
+                /* R15: &env->frame->tmpvar[0] */
+                /* R31: saved LR */
+
+                /* Arg1 R3 = env */
+                /* mr r3, r14 */                IW(0x7873c37d);
+
+                /* Call ex_safepoint_helper(). */
+                /* lis  r12, f[63:48] */        IW(0x0000803d | hihi16(f));
+                /* ori  r12, r12, f[47:32] */   IW(0x00008c61 | hilo16(f));
+                /* sldi r12, r12, 32 */         IW(0xc6078c79);
+                /* oris r12, r12, f[31:16] */   IW(0x00008c65 | lohi16(f));
+                /* ori  r12, r12, f[15:0] */    IW(0x00008c61 | lolo16(f));
+                /* mflr r31 */                  IW(0xa602e87f);
+                /* mtctr r12 */                 IW(0xa603897d);
+                /* bctrl */                     IW(0x2104804e);
+                /* mtlr r31 */                  IW(0xa603e87f);
+
+                /* If failed: */
+                /* cmpwi r3, 0 */               IW(0x0000032c);
+                /* beq exception_handler */     IW(0x00008241 | EXC());
+        }
+
+        return true;
+}
+
 /* Visit a bytecode of a function. */
 bool
 jit_visit_bytecode(
@@ -1779,8 +1894,16 @@ jit_visit_bytecode(
                         if (!jit_visit_iconst_op(ctx))
                                 return false;
                         break;
+                case OP_LICONST:
+                        if (!jit_visit_liconst_op(ctx))
+                                return false;
+                        break;
                 case OP_FCONST:
                         if (!jit_visit_fconst_op(ctx))
+                                return false;
+                        break;
+                case OP_LFCONST:
+                        if (!jit_visit_lfconst_op(ctx))
                                 return false;
                         break;
                 case OP_SCONST:
@@ -1934,6 +2057,12 @@ jit_visit_bytecode(
                 case OP_JMPIFEQ:
                         if (!jit_visit_jmpifeq_op(ctx))
                                 return false;
+                        break;
+                case OP_SAFEPOINT:
+#if defined(NOCT_USE_MULTITHREAD)
+                        if (!jit_visit_safepoint_op(ctx))
+                                return false;
+#endif
                         break;
                 default:
                         assert(JIT_OP_NOT_IMPLEMENTED);

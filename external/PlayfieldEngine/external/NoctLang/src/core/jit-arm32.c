@@ -558,7 +558,7 @@ jit_visit_lineinfo_op(
 
                 /* rt->line = line; */
                 MOVW            (REG_R0, line);
-                STR             (REG_R0, REG_R11, 4);
+                STR             (REG_R0, REG_R11, 8);
         }
 
         return true;
@@ -596,6 +596,10 @@ jit_visit_assign_op(
                 LDR     (REG_R3, REG_R1, 4);
                 STR     (REG_R2, REG_R0, 0);
                 STR     (REG_R3, REG_R0, 4);
+                LDR     (REG_R2, REG_R1, 8);
+                LDR     (REG_R3, REG_R1, 12);
+                STR     (REG_R2, REG_R0, 8);
+                STR     (REG_R3, REG_R0, 12);
         }
 
         return true;
@@ -630,7 +634,45 @@ jit_visit_iconst_op(
                 /* env->frame->tmpvar[dst].val.i = val */
                 MOVW    (REG_R1, val & 0xffff);
                 MOVT    (REG_R1, (val >> 16) & 0xffff);
-                STR     (REG_R1, REG_R0, 4);
+                STR     (REG_R1, REG_R0, 8);
+        }
+
+        return true;
+}
+
+/* Visit a OP_LICONST instruction. */
+static INLINE bool
+jit_visit_liconst_op(
+        struct jit_context *ctx)
+{
+        int dst;
+        uint64_t val;
+
+        CONSUME_TMPVAR(dst);
+        CONSUME_IMM64(val);
+
+        dst *= (int)sizeof(struct rt_value);
+
+        /* Set an integer constant. */
+        ASM {
+                /* r11 = env */
+                /* r12 = &env->frame->tmpvar[0] */
+
+                /* r0 = &env->frame->tmpvar[dst] */
+                MOVW    (REG_R0, (uint32_t)dst);
+                ADD     (REG_R0, REG_R0, REG_R12);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_LONG */
+                MOVW    (REG_R1, 5);
+                STR     (REG_R1, REG_R0, 0);
+
+                /* env->frame->tmpvar[dst].val.i = val */
+                MOVW    (REG_R1, val & 0xffff);
+                MOVT    (REG_R1, (val >> 16) & 0xffff);
+                STR     (REG_R1, REG_R0, 8);
+                MOVW    (REG_R1, (val >> 32) & 0xffff);
+                MOVT    (REG_R1, (val >> 48) & 0xffff);
+                STR     (REG_R1, REG_R0, 12);
         }
 
         return true;
@@ -665,7 +707,45 @@ jit_visit_fconst_op(
                 /* Assign env->frame->tmpvar[dst].val.f = val. */
                 MOVW    (REG_R1, val & 0xffff);
                 MOVT    (REG_R1, (val >> 16) & 0xffff);
-                STR     (REG_R1, REG_R0, 4);
+                STR     (REG_R1, REG_R0, 8);
+        }
+
+        return true;
+}
+
+/* Visit a OP_LFCONST instruction. */
+static INLINE bool
+jit_visit_lfconst_op(
+        struct jit_context *ctx)
+{
+        int dst;
+        uint64_t val;
+
+        CONSUME_TMPVAR(dst);
+        CONSUME_IMM64(val);
+
+        dst *= (int)sizeof(struct rt_value);
+
+        /* Set an integer constant. */
+        ASM {
+                /* r11 = env */
+                /* r12 = &env->frame->tmpvar[0] */
+
+                /* r0 = &env->frame->tmpvar[dst] */
+                MOVW    (REG_R0, (uint32_t)dst);
+                ADD     (REG_R0, REG_R0, REG_R12);
+
+                /* env->frame->tmpvar[dst].type = NOCT_VALUE_DOUBLE */
+                MOVW    (REG_R1, 6);
+                STR     (REG_R1, REG_R0, 0);
+
+                /* env->frame->tmpvar[dst].val.i = val */
+                MOVW    (REG_R1, val & 0xffff);
+                MOVT    (REG_R1, (val >> 16) & 0xffff);
+                STR     (REG_R1, REG_R0, 8);
+                MOVW    (REG_R1, (val >> 32) & 0xffff);
+                MOVT    (REG_R1, (val >> 48) & 0xffff);
+                STR     (REG_R1, REG_R0, 12);
         }
 
         return true;
@@ -845,9 +925,9 @@ jit_visit_inc_op(
                 ADD     (REG_R0, REG_R0, REG_R12);      /* r0 = &env->frame->tmpvar[dst] = &env->frame->tmpvar[dst].type */
 
                 /* env->frame->tmpvar[dst].val.i++ */
-                LDR     (REG_R1, REG_R0, 4);            /* tmp = &env->frame->tmpvar[dst].val.i */
+                LDR     (REG_R1, REG_R0, 8);            /* tmp = &env->frame->tmpvar[dst].val.i */
                 ADD_IMM (REG_R1, REG_R1, 1);            /* tmp++ */
-                STR     (REG_R1, REG_R0, 4);            /* env->frame->tmpvar[dst].val.i = tmp */
+                STR     (REG_R1, REG_R0, 8);            /* env->frame->tmpvar[dst].val.i = tmp */
         }
 
         return true;
@@ -1215,12 +1295,12 @@ jit_visit_eqi_op(
                 /* r0 = &env->frame->tmpvar[src1].val.i */
                 MOVW            (REG_R0, (uint32_t)src1);       /* src1 */
                 ADD             (REG_R0, REG_R0, REG_R12);
-                LDR             (REG_R0, REG_R0, 4);
+                LDR             (REG_R0, REG_R0, 8);
 
                 /* r1 = &env->frame->tmpvar[src2].val.i */
-                MOVW            (REG_R1, (uint32_t)src2);       /* src1 */
+                MOVW            (REG_R1, (uint32_t)src2);       /* src2 */
                 ADD             (REG_R1, REG_R1, REG_R12);
-                LDR             (REG_R1, REG_R1, 4);
+                LDR             (REG_R1, REG_R1, 8);
 
                 /* src1 == src2 */
                 CMP_R0_R1       ();
@@ -1796,12 +1876,16 @@ jit_visit_jmpiftrue_op(
                 return false;
         }
 
+        src *= (int)sizeof(struct rt_value);
+
         ASM {
+                /* r11 = env */
+                /* r12 = &env->frame->tmpvar[0] */
+
                 /* r0 = &env->frame->tmpvar[src].val.i */
                 MOVW    (REG_R0, (uint32_t)src);
-                LSL_3   (REG_R0, REG_R0);               /* src * sizeof(struct rt_value) */
                 ADD     (REG_R0, REG_R0, REG_R12);
-                LDR     (REG_R1, REG_R0, 4);
+                LDR     (REG_R1, REG_R0, 8);
 
                 /* Compare: env->frame->tmpvar[dst].val.i == 1 */
                 CMP_IMM (REG_R1, 0);
@@ -1836,15 +1920,16 @@ jit_visit_jmpiffalse_op(
                 return false;
         }
 
+        src *= (int)sizeof(struct rt_value);
+
         ASM {
                 /* r11 = env */
                 /* r12 = &env->frame->tmpvar[0] */
 
                 /* r0 = &env->frame->tmpvar[src].val.i */
                 MOVW    (REG_R0, (uint32_t)src);
-                LSL_3   (REG_R0, REG_R0);               /* src * sizeof(struct rt_value) */
                 ADD     (REG_R0, REG_R0, REG_R12);
-                LDR     (REG_R1, REG_R0, 4);
+                LDR     (REG_R1, REG_R0, 8);
 
                 /* Compare: env->frame->tmpvar[dst].val.i == 0 */
                 CMP_IMM (REG_R1, IMM12(0));
@@ -1888,6 +1973,42 @@ jit_visit_jmpifeq_op(
         ASM {
                 /* Patched later. */
                 BEQ     (0);
+        }
+
+        return true;
+}
+
+/* Visit a OP_SAFEPOINT instruction. */
+static INLINE bool
+jit_visit_safepoint_op(
+        struct jit_context *ctx)
+{
+        /* if (!ex_safepoint_helper(env)) return false; */
+        ASM {
+                /* r11 = env */
+                /* r12 = &env->frame->tmpvar[0] */
+
+                PUSH            (REG_R4);
+                PUSH            (REG_R11);
+                PUSH            (REG_R12);
+                PUSH            (REG_LR);
+
+                /* Arg1 r0: env */
+                MOV             (REG_R0, REG_R11);
+
+                /* Call ex_safepoint_helper(). */
+                MOVW            (REG_R4, (uint32_t)ex_safepoint_helper & 0xffff);
+                MOVT            (REG_R4, ((uint32_t)ex_safepoint_helper >> 16) & 0xffff);
+                BLX             (REG_R4);
+                ADD_IMM         (REG_SP, REG_SP, IMM16(16));
+
+                /* If failed: */
+                CMP_IMM         (REG_R0, 0);
+                POP             (REG_LR);
+                POP             (REG_R12);
+                POP             (REG_R11);
+                POP             (REG_R4);
+                BEQ             ((uint32_t)ctx->exception_code - (uint32_t)ctx->code);
         }
 
         return true;
@@ -1986,8 +2107,16 @@ jit_visit_bytecode(
                         if (!jit_visit_iconst_op(ctx))
                                 return false;
                         break;
+                case OP_LICONST:
+                        if (!jit_visit_liconst_op(ctx))
+                                return false;
+                        break;
                 case OP_FCONST:
                         if (!jit_visit_fconst_op(ctx))
+                                return false;
+                        break;
+                case OP_LFCONST:
+                        if (!jit_visit_lfconst_op(ctx))
                                 return false;
                         break;
                 case OP_SCONST:
@@ -2141,6 +2270,12 @@ jit_visit_bytecode(
                 case OP_JMPIFEQ:
                         if (!jit_visit_jmpifeq_op(ctx))
                                 return false;
+                        break;
+                case OP_SAFEPOINT:
+#if defined(NOCT_USE_MULTITHREAD)
+                        if (!jit_visit_safepoint_op(ctx))
+                                return false;
+#endif
                         break;
                 default:
                         assert(JIT_OP_NOT_IMPLEMENTED);

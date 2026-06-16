@@ -64,7 +64,9 @@ enum ast_expr_type {
 /* Term Type */
 enum ast_term_type {
 	AST_TERM_INT,
+	AST_TERM_LONG,
 	AST_TERM_FLOAT,
+	AST_TERM_DOUBLE,
 	AST_TERM_STRING,
 	AST_TERM_SYMBOL,
 	AST_TERM_EMPTY_ARRAY,
@@ -324,7 +326,9 @@ struct ast_term {
 	union {
 		/* Value. */
 		int i;
+		int64_t l;
 		float f;
+		double lf;
 		char *s;
 		char *symbol;
 	} val;

@@ -6,10 +6,10 @@ func main() {
     print(arr1[63]);
 
     var arr2 = [];
-    arr2->resize(32);
+    Array.resize(arr2, 32);
     print(arr2[1]);  
-    print("size = " + arr2.length);
+    print("size = " + Array.size(arr2));
 
-    var arr3 = newArray(64);
-    print("size = " + arr3.length);
+    var arr3 = Array.make(64);
+    print("size = " + Array.size(arr3));
 }

@@ -4,18 +4,18 @@ func main() {
       print(v);
    }
 
-   print("Length = " + array1.length);
+   print("Length = " + Array.size(array1));
 
    array2 = [];
    array2[0] = 0;
    array2[1] = 1;
    array2[2] = 2;
-   array2->push(3);
+   Array.push(array2, 3);
    for (v in array2) {
       print(v);
    }
 
-   array2->resize(2);
+   Array.resize(array2, 2);
    for (v in array2) {
       print(v);
    }
