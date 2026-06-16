@@ -333,9 +333,9 @@ Suika3 is engineered with modern techniques, and delivers:
 
 ## Kanban (Status)
 
-**The current version is `26.05.x`:**
+**The current version is `26.06.x`:**
 
-- Quality is improving daily, and `26.05.x` is now considered stable.
+- Quality is improving daily, and `26.06.x` is now considered stable.
 - We are currently in the `Quality Stabilization Period` (April 1 - June 30, 2026)
   in preparation for the upcoming `Suika3 26.07 LTS` release (scheduled for July 1, 2026).
 - While some minor bugs may remain, they will be fully resolved by the LTS release.
@@ -356,7 +356,7 @@ Suika3 is engineered with modern techniques, and delivers:
 - ✅ Code Freeze (March 12, 2026)
 - ✅ Milestone: `Suika3 26.04 (=LTS RC1)` (April 1, 2026)
 - ✅ Milestone: `Suika3 26.05 (=LTS RC2)` (May 1, 2026)
-- Milestone: `Suika3 26.06 (=LTS RC3/GM)` (June 1, 2026)
+- ✅ Milestone: `Suika3 26.06 (=LTS RC3)` (June 1, 2026)
 - Goal: `Suika3 26.07 LTS` Public Release (July 1, 2026)
 
 **Remaining Tasks:**
