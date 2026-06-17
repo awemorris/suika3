@@ -214,6 +214,9 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.moveToEndIfTag()](#suikamovetoendiftag)
     * [Suika.moveToEndMacroTag()](#suikamovetoendmacrotag)
     * [Suika.getTagFileName()](#suikagettagfilename)
+    * [Suika.getTagIndex()](#suikagettagindex)
+    * [Suika.getTagLine()](#suikagettagline)
+    * [Suika.getTagBlockDepth()](#suikagettagblockdepth)
     * [Suika.getTagName()](#suikagettagname)
     * [Suika.getTagPropertyCount()](#suikagettagpropertycount)
     * [Suika.getTagPropertyName()](#suikagettagpropertyname)
@@ -3511,6 +3514,48 @@ No parameters.
 ### Return
 
 String representing the file name.
+
+---
+
+## Suika.getTagIndex()
+
+Get the current tag index.
+
+### Parameters (Dictionary)
+
+No parameters.
+
+### Return
+
+Integer representing the tag index.
+
+---
+
+## Suika.getTagLine()
+
+Get the line number of the current tag.
+
+### Parameters (Dictionary)
+
+No parameters.
+
+### Return
+
+Integer representing the line number.
+
+---
+
+## Suika.getTagBlockDepth()
+
+Get the block depth of the current tag.
+
+### Parameters (Dictionary)
+
+No parameters.
+
+### Return
+
+Integer representing the block depth.
 
 ---
 

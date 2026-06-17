@@ -268,6 +268,7 @@ static bool Suika_moveToEndMacroTag(void *p);
 static bool Suika_getTagFile(void *p);
 static bool Suika_getTagIndex(void *p);
 static bool Suika_getTagLine(void *p);
+static bool Suika_getTagBlockDepth(void *p);
 static bool Suika_getTagName(void *p);
 static bool Suika_getTagPropertyCount(void *p);
 static bool Suika_getTagPropertyName(void *p);
@@ -629,6 +630,7 @@ static struct api_func api_func[] = {
 	{"getTagFile",			Suika_getTagFile,		0, NULL},
 	{"getTagIndex",			Suika_getTagIndex,		0, NULL},
 	{"getTagLine",			Suika_getTagLine,		0, NULL},
+	{"getTagBlockDepth",		Suika_getTagBlockDepth,		0, NULL},
 	{"getTagName",			Suika_getTagName,		0, NULL},
 	{"getTagPropertyCount",		Suika_getTagPropertyCount,	0, NULL},
 	{"getTagPropertyName",		Suika_getTagPropertyName,	1, dict_param},
@@ -6781,6 +6783,23 @@ Suika_getTagLine(
 	UNUSED_PARAMETER(p);
 
 	val = s3_get_tag_line();
+
+	/* Set the return value. */
+	if (!pf_set_return_int(val))
+		return false;
+
+	return true;
+}
+
+static bool
+Suika_getTagBlockDepth(
+	void *p)
+{
+	int val;
+
+	UNUSED_PARAMETER(p);
+
+	val = s3_get_tag_block_depth();
 
 	/* Set the return value. */
 	if (!pf_set_return_int(val))

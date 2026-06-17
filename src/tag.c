@@ -74,6 +74,7 @@ struct s3i_tag {
 	char *prop_value[PROP_MAX];
 	char *prop_value_eval[PROP_MAX];
 	int line;
+	int block_depth;
 };
 
 /*
@@ -103,9 +104,11 @@ static int stack_pointer;
 /* Evaluation buffer. */
 static char eval_buf[65536];
 
+/* Parse info. */
 static char tag_name[TAG_NAME_MAX];
 static char prop_name[PROP_MAX][PROP_NAME_MAX];
 static char prop_val[PROP_MAX][PROP_VALUE_MAX];
+static int parse_block_depth;
 
 /* Forward declaration. */
 static void clear_tag_data(void);
@@ -249,6 +252,19 @@ s3_get_tag_line(void)
 }
 
 /*
+ * Get the block depth of the current tag.
+ */
+int
+s3_get_tag_block_depth(void)
+{
+	assert(cur_index < tag_size);
+	if (cur_index >= tag_size)
+		return -1;
+
+	return tag[cur_index].block_depth;
+}
+
+/*
  * Get the tag count.
  */
 int
@@ -366,34 +382,23 @@ s3_move_to_else_tag(void)
 	int depth;
 	int i;
 
-	depth = 0;
+	depth = tag[cur_index].block_depth;
 
 	for (i = cur_index + 1; i < tag_size; i++) {
-		if (strcmp(tag[i].tag_name, "endif") == 0) {
-			if (depth == 0) {
-				cur_index = i + 1;
-				return true;
-			}
-			depth--;
-			continue;
+		if (tag[i].block_depth == depth &&
+		    strcmp(tag[i].tag_name, "endif") == 0) {
+			cur_index = i + 1;
+			return true;
 		}
-		if (strcmp(tag[i].tag_name, "elseif") == 0) {
-			if (depth == 0) {
-				cur_index = i;
-				return true;
-			}
-			continue;
+		if (tag[i].block_depth == depth &&
+		    strcmp(tag[i].tag_name, "elseif") == 0) {
+			cur_index = i;
+			return true;
 		}
-		if (strcmp(tag[i].tag_name, "else") == 0) {
-			if (depth == 0) {
-				cur_index = i + 1;
-				return true;
-			}
-			continue;
-		}
-		if (strcmp(tag[i].tag_name, "if") == 0) {
-			depth++;
-			continue;
+		if (tag[i].block_depth == depth &&
+		    strcmp(tag[i].tag_name, "else") == 0) {
+			cur_index = i + 1;
+			return true;
 		}
 	}
 
@@ -410,20 +415,13 @@ s3_move_to_endif_tag(void)
 	int depth;
 	int i;
 
-	depth = 0;
+	depth = tag[cur_index].block_depth;
 
 	for (i = cur_index + 1; i < tag_size; i++) {
-		if (strcmp(tag[i].tag_name, "endif") == 0) {
-			if (depth == 0) {
-				cur_index = i + 1;
-				return true;
-			}
-			depth--;
-			continue;
-		}
-		if (strcmp(tag[i].tag_name, "if") == 0) {
-			depth++;
-			continue;
+		if (tag[i].block_depth == depth &&
+		    strcmp(tag[i].tag_name, "endif") == 0) {
+			cur_index = i;
+			return true;
 		}
 	}
 
@@ -1269,6 +1267,16 @@ parse_tag_callback(
 	}
 
 	t->line = line;
+
+	if (strcmp(name, "if") == 0) {
+		t->block_depth = parse_block_depth;
+		parse_block_depth++;
+	} else if (strcmp(name, "endif") == 0) {
+		parse_block_depth--;
+		t->block_depth = parse_block_depth;
+	} else {
+		t->block_depth = parse_block_depth - 1;
+	}
 
 	return true;
 }

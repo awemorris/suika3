@@ -2081,6 +2081,12 @@ int
 s3_get_tag_line(void);
 
 /*
+ * Get the block depth of the current tag.
+ */
+int
+s3_get_tag_block_depth(void);
+
+/*
  * Get the name of the current tag.
  */
 const char*

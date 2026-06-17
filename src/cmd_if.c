@@ -86,7 +86,7 @@ s3i_tag_if(
 	}
 
 	/* Set the continue flag to run also the next tag. */
-	s3_set_vm_int("s3Continue", 0);
+	s3_set_vm_int("s3Continue", 1);
 
 	/* If condition doesn't meet.  */
 	if (!cond) {
@@ -95,6 +95,6 @@ s3i_tag_if(
 		return true;
 	}
 
-	/* Move to the next tag if condition met.. */
+	/* Move to the next tag if condition is met. */
 	return s3_move_to_next_tag();
 }
