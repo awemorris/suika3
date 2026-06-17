@@ -203,6 +203,8 @@ init(void)
 
 	/* Get the result variable name. */
 	result_var_name = s3_get_tag_arg_string("name", false, NULL);
+	if (result_var_name == NULL)
+		return false;
 
 	/* Check for leftification. */
 	if (!s3_is_page_mode()) {
