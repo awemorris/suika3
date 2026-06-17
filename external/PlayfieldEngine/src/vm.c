@@ -1319,7 +1319,7 @@ serialize_save_data_recursively(
 			return false;
 		if (!ser_put_u8(ctx, SER_TYPE_ARRAY))
 			return false;
-		if (!ser_put_u32(ctx, size))
+		if (!ser_put_u32(ctx, (uint32_t)size))
 			return false;
 		for (i = 0; i < size; i++) {
 			NoctValue elem;
@@ -1334,7 +1334,7 @@ serialize_save_data_recursively(
 			return false;
 		if (!ser_put_u8(ctx, SER_TYPE_DICT))
 			return false;
-		if (!ser_put_u32(ctx, size))
+		if (!ser_put_u32(ctx, (uint32_t)size))
 			return false;
 		for (i = 0; i < size; i++) {
 			NoctValue k, v;

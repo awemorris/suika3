@@ -50,7 +50,7 @@
 #define TAG_NAME_MAX		128
 #define PROP_NAME_MAX		128
 #define PROP_VALUE_MAX		4096
-#define TAG_MAX			(32 * 1024)
+#define TAG_MAX			S3_TAG_MAX
 #define STACK_MAX		128
 #endif
 
@@ -108,6 +108,7 @@ static char prop_name[PROP_MAX][PROP_NAME_MAX];
 static char prop_val[PROP_MAX][PROP_VALUE_MAX];
 
 /* Forward declaration. */
+static void clear_tag_data(void);
 static const char *evaluate_prop_value(const char *prop_value);
 static bool parse_tag_document(const char *doc, bool (*callback)(const char *, int, const char **, const char **, int), char **error_msg, int *error_line);
 static bool parse_tag_callback(const char *name, int props, const char **prop_name, const char **prop_value, int line);
@@ -118,13 +119,13 @@ static bool parse_tag_callback(const char *name, int props, const char **prop_na
 bool
 s3i_init_tag(void)
 {
+	s3i_cleanup_tag();
+
 	tag = malloc(sizeof(struct s3i_tag) * TAG_MAX);
 	if (tag == NULL) {
 		s3_log_out_of_memory();
 		return false;
 	}
-
-	s3i_cleanup_tag();
 
 	if (!s3_move_to_tag_file(S3_PATH_START_TAG))
 		return false;
@@ -138,38 +139,47 @@ s3i_init_tag(void)
 void
 s3i_cleanup_tag(void)
 {
+	clear_tag_data();
+
+	if (tag != NULL) {
+		free(tag);
+		tag = NULL;
+	}
+}
+
+/* Clear the tag data. */
+static void
+clear_tag_data(void)
+{
 	struct s3i_tag *t;
 	int i, j;
 
 	cur_index = 0;
-
+	tag_size = 0;
+	stack_pointer = 0;
 	strcpy(cur_file, "");
 
-	if (tag == NULL)
-		return;
-
-	for (i = 0; i < tag_size; i++) {
-		t = &tag[i];
-		free(t->tag_name);
-		for (j = 0; j < PROP_MAX; j++) {
-			if (t->prop_name[j] != NULL) {
-				free(t->prop_name[j]);
-				t->prop_name[j] = NULL;
-			}
-			if (t->prop_value[j] != NULL) {
-				free(t->prop_value[j]);
-				t->prop_value[j] = NULL;
-			}
-			if (t->prop_value_eval[j] != NULL) {
-				free(t->prop_value_eval[j]);
-				t->prop_value_eval[j] = NULL;
+	if (tag != NULL) {
+		for (i = 0; i < tag_size; i++) {
+			t = &tag[i];
+			free(t->tag_name);
+			for (j = 0; j < PROP_MAX; j++) {
+				if (t->prop_name[j] != NULL) {
+					free(t->prop_name[j]);
+					t->prop_name[j] = NULL;
+				}
+				if (t->prop_value[j] != NULL) {
+					free(t->prop_value[j]);
+					t->prop_value[j] = NULL;
+				}
+				if (t->prop_value_eval[j] != NULL) {
+					free(t->prop_value_eval[j]);
+					t->prop_value_eval[j] = NULL;
+				}
 			}
 		}
 	}
-
-	tag_size = 0;
-	stack_pointer = 0;
-}
+}	
 
 /*
  * Move to a tag file.
@@ -186,7 +196,7 @@ s3_move_to_tag_file(const char *file)
 		return false;
 
 	/* Destroy the existing commands. */
-	s3i_cleanup_tag();
+	clear_tag_data();
 
 	/* Save the file name. */
 	strncpy(cur_file, file, sizeof(cur_file) - 1);

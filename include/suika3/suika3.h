@@ -77,6 +77,11 @@
 
 
 /*
+ * Maximum Tag Count
+ */
+#define S3_TAG_MAX		(32 * 1024)
+
+/*
  * Constants for Stage Subsystem (stage.c)
  */
 

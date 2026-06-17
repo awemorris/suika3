@@ -33,8 +33,11 @@
 #include <string.h>
 #include <assert.h>
 
-/* Maximum seen flags per tag file. */
-#define SEEN_COUNT	(8192)
+#if defined(S3_TARGET_PC98) || defined(S3_TARGET_PCAT)
+#define SEEN_COUNT		128
+#else
+#define SEEN_COUNT		S3_TAG_MAX
+#endif
 
 /*
  * Seen flag.
