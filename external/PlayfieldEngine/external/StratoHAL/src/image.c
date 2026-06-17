@@ -1723,7 +1723,7 @@ hal_create_image_with_jpeg(
 
 	/* Decode each line. */
 	p = (*img)->pixels;
-#if defined(HAL_TARGET_WINDOWS)
+#if defined(HAL_ORDER_OPENGL)
 	for (y = 0; y < height; y++) {
 		jpeg_read_scanlines(&jpeg, &line, 1);
 		for (x = 0; x < width; x++) {
