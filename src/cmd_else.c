@@ -46,7 +46,7 @@ s3i_tag_else(
 	UNUSED_PARAMETER(p);
 
 	/* Set the continue flag to run also the next tag. */
-	s3_set_vm_int("s3Continue", 0);
+	s3_set_vm_int("s3Continue", 1);
 
 	/* Is a if-elseif chain? (i.e., the last tag executed was "if") */
 	last_tag = s3_get_last_tag_name();

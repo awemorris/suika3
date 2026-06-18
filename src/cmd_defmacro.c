@@ -44,7 +44,7 @@ s3i_tag_defmacro(
 	UNUSED_PARAMETER(p);
 
 	/* Set the continue flag to run also the next tag. */
-	s3_set_vm_int("s3Continue", 0);
+	s3_set_vm_int("s3Continue", 1);
 
 	/* Jump over the macro body. */
 	if (!s3_move_to_endmacro_tag())

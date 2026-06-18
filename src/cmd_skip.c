@@ -68,7 +68,7 @@ s3i_tag_skip(
 	}
 
 	/* Set the continue flag to run also the next tag. */
-	s3_set_vm_int("s3Continue", 0);
+	s3_set_vm_int("s3Continue", 1);
 
 	/* Move to the next tag. */
 	return s3_move_to_next_tag();

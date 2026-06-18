@@ -75,7 +75,7 @@ s3i_tag_load(
 	}
 
 	/* Set the continue flag to run also the next tag. */
-	s3_set_vm_int("s3Continue", 0);
+	s3_set_vm_int("s3Continue", 1);
 
 	/* Jump to the file. */
 	if (!s3_move_to_tag_file(file_save)) {

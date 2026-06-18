@@ -92,7 +92,7 @@ s3i_tag_callmacro(
 	free(name_s);
 
 	/* Set the continue flag to run also the next tag. */
-	s3_set_vm_int("s3Continue", 0);
+	s3_set_vm_int("s3Continue", 1);
 
 	return true;
 }
