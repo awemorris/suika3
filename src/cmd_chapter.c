@@ -50,6 +50,8 @@ s3i_tag_chapter(
 
 	/* Get the argument. */
 	name = s3_get_tag_arg_string("name", false, NULL);
+	if (name == NULL)
+		return false;
 
 	/* Set the chapter title. */
 	if (!s3_set_chapter_name(name))

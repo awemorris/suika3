@@ -96,6 +96,8 @@ init(void)
 
 	/* Get the arguments. */
 	file = s3_get_tag_arg_string("file", false, NULL);
+	if (file == NULL)
+		return false;
 	is_async = s3_get_tag_arg_bool("async", true, false);
 	is_showsysbtn = s3_get_tag_arg_bool("showsysbtn", true, false);
 	is_showmsgbox = s3_get_tag_arg_bool("showmsgbox", true, false);

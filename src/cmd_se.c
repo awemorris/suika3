@@ -51,6 +51,8 @@ s3i_tag_se(
 
 	/* Get the arguments. */
 	file = s3_get_tag_arg_string("file", false, NULL);
+	if (file == NULL)
+		return false;
 	loop = s3_get_tag_arg_bool("loop", true, false);
 
 	/* Check if stop. */

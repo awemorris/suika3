@@ -52,6 +52,8 @@ s3i_tag_bgm(
 
 	/* Get the arguments. */
 	file = s3_get_tag_arg_string("file", false, NULL);
+	if (file == NULL)
+		return false;
 	once = s3_get_tag_arg_bool("once", true, false);
 
 	/* Check if stop. */

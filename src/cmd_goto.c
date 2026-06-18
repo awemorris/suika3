@@ -50,6 +50,8 @@ s3i_tag_goto(
 
 	/* Get the label. */
 	label = s3_get_tag_arg_string("name", false, NULL);
+	if (label == NULL)
+		return false;
 
 	/* Set the continue flag to run also the next tag. */
 	s3_set_vm_int("s3Continue", 0);

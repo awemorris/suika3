@@ -74,6 +74,8 @@ init(void)
 
 	/* Get the GUI file name. */
 	file = s3_get_tag_arg_string("file", false, NULL);
+	if (file == NULL)
+		return false;
 
 	/* Create a thumbnail for when saved. */
 	s3_draw_stage_to_thumb();

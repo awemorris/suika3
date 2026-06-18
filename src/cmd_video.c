@@ -71,6 +71,8 @@ init(void)
 
 	/* Get the parameters. */
 	file = s3_get_tag_arg_string("file", false, NULL);
+	if (file == NULL)
+		return false;
 	is_skippable = s3_get_tag_arg_bool("skippable", true, false);
 
 	/* Play the video. */

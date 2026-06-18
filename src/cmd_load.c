@@ -53,6 +53,8 @@ s3i_tag_load(
 
 	/* Get the file and label. */
 	file = s3_get_tag_arg_string("file", false, NULL);
+	if (file == NULL)
+		return false;
 	label = s3_get_tag_arg_string("label", true, NULL);
 
 	/* Save the strings. (due to destruction) */
