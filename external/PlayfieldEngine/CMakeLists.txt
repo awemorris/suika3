@@ -696,16 +696,17 @@ endif()
 # Executable Target
 #
 
-# Resource
-if(   PLAYFIELD_TARGET_WINDOWS
-   OR PLAYFIELD_TARGET_WINDOWS95)
-  if(NOT PLAYFIELD_ENABLE_STATIC)
-    set(PLAYFIELD_RESOURCES resources/windows/resource.rc)
-  endif()
-endif()
-
 # Make an executable.
 if(PLAYFIELD_ENABLE_BIN)
+  # Resource
+  if(   PLAYFIELD_TARGET_WINDOWS
+     OR PLAYFIELD_TARGET_WINDOWS95)
+    if(NOT PLAYFIELD_ENABLE_STATIC)
+      set(PLAYFIELD_RESOURCES resources/windows/resource.rc)
+    endif()
+  endif()
+
+  # Add the target
   add_executable(
     playfieldbin
     src/app.c
@@ -713,7 +714,8 @@ if(PLAYFIELD_ENABLE_BIN)
     ${PLAYFIELD_RESOURCES}
   )
 
-  if(PLAYFIELD_TARGET_MACOS AND PLAYFIELD_ENABLE_BIN)
+  # macOS target name
+  if(PLAYFIELD_TARGET_MACOS)
     set_target_properties(playfieldbin PROPERTIES OUTPUT_NAME "Playfield")
   else()
     set_target_properties(playfieldbin PROPERTIES OUTPUT_NAME "playfield")
@@ -727,22 +729,23 @@ endif()
 #
 
 if(PLAYFIELD_ENABLE_BIN)
+  # -I
   target_include_directories(
     playfieldbin
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${NOCT_INCLUDE_DIR}
   )
-endif()
 
-# PC98
-if(PLAYFIELD_TARGET_PC98 AND PLAYFIELD_ENABLE_BIN)
-  target_compile_definitions(playfieldbin PRIVATE PF_TARGET_PC98)
-endif()
+  # PC98
+  if(PLAYFIELD_TARGET_PC98)
+    target_compile_definitions(playfieldbin PRIVATE PF_TARGET_PC98)
+  endif()
 
-# PC/AT
-if(PLAYFIELD_TARGET_PCAT AND PLAYFIELD_ENABLE_BIN)
-  target_compile_definitions(playfieldbin PRIVATE PF_TARGET_PCAT)
+  # PC/AT
+  if(PLAYFIELD_TARGET_PCAT)
+    target_compile_definitions(playfieldbin PRIVATE PF_TARGET_PCAT)
+  endif()
 endif()
 
 # ---
@@ -757,9 +760,17 @@ if(PLAYFIELD_ENABLE_BIN)
   # Windows
   if(PLAYFIELD_TARGET_WINDOWS)
     if(MSVC)
-      target_link_options(playfieldbin PRIVATE /SUBSYSTEM:WINDOWS /ENTRY:wWinMainCRTStartup /MANIFEST:NO)
+      if(NOT PLAYFIELD_ENABLE_CONSOLE)
+        target_link_options(playfieldbin PRIVATE /SUBSYSTEM:WINDOWS /ENTRY:wWinMainCRTStartup /MANIFEST:NO)
+      else()
+        target_link_options(playfieldbin PRIVATE /SUBSYSTEM:CONSOLE /ENTRY:wWinMainCRTStartup /MANIFEST:NO)
+      endif()
     else()
-      target_link_options(playfieldbin PRIVATE -mwindows -static -Wl,-u,wWinMain -Wl,-u,_wWinMain@16)
+      if(NOT PLAYFIELD_ENABLE_CONSOLE)
+        target_link_options(playfieldbin PRIVATE -mwindows -static -static-libgcc -Wl,-u,wWinMain -Wl,-u,_wWinMain@16)
+      else()
+        target_link_options(playfieldbin PRIVATE -mconsole -static -static-libgcc -Wl,-u,wWinMain -Wl,-u,_wWinMain@16)
+      endif()
     endif()
   endif()
 
