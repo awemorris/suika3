@@ -1513,6 +1513,15 @@ Our server does not tolerate any form of discrimination. It is an
 inclusive space that embraces all human differences, including, but
 not limited to, race, gender, skill levels, and neurodiversity.
 
+### Active Maintainers
+
+* @awemorris ... Lead
+* @tenshi0xx ... Website
+* @lalalll-lalalll ... VSCode plugin, docs
+* @SandwichMan5 ... QA
+* @antonialoytorrens ... QA
+* @2439905184 ... QA
+
 ### Recruiting
 
 We are currently looking for contributors in the following areas:
