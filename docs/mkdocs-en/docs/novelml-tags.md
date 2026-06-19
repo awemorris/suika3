@@ -200,10 +200,11 @@ It allows you to trigger a specific sequence of commands, such as character entr
 
 ### Arguments
 
-| Argument | Omissible | Description                               | Notes                                              |
-|----------|-----------|-------------------------------------------|----------------------------------------------------|
-| `name`   | No        | The name of the macro to execute.         | Must match a name defined by a `[defmacro]` tag.   |
-| `file`   | Yes       | The file name where the macro is defined. | Omit this to call a macro inside the current file. |
+| Argument  | Omissible | Description                                  | Notes                                              |
+|-----------|-----------|----------------------------------------------|----------------------------------------------------|
+| `name`    | No        | The name of the macro to execute.            | Must match a name defined by a `[defmacro]` tag.   |
+| `file`    | Yes       | The file name where the macro is defined.    | Omit this to call a macro inside the current file. |
+| `arg1-10` | Yes       | Arguments.                                   | Can be referred as `${arg1}` to `${arg10}          |
 
 ### Tips
 

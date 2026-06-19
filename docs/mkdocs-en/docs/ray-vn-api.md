@@ -4613,7 +4613,7 @@ Load a GUI definition file and prepare it for execution.
 | Parameter | Type    | Description                                |
 |-----------|---------|--------------------------------------------|
 | file      | String  | Path to the .gui file.                     |
-| sys       | Boolean | Whether it's a system GUI (Save/Load/etc). |
+| isSys     | Boolean | Whether it's a system GUI (Save/Load/etc). |
 
 ### What is System GUI
 
