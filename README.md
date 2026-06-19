@@ -261,7 +261,7 @@ behind every great community.
 
 Suika3 is engineered with modern techniques, and delivers:
 
-- **High Performance**: Powered by Sun-Ray JIT, it delivers 2.5-4.5x
+- **High Performance**: Powered by Sun-Ray JIT, it delivers 4-13x
   faster execution speed compared to our interpreter backend in
   synthetic benchmarks.
 
@@ -1694,7 +1694,7 @@ Play, regardless of their software, hardware, and budget limitations.
 - [Is "Supports all modern platforms" really true?](#is-supports-all-modern-platforms-really-true)
 - [What does "via Unity" mean for console support?](#what-does-via-unity-mean-for-console-support)
 - [To what extent is HarmonyOS NEXT supported?](#to-what-extent-is-harmonyos-next-supported)
-- [Can you reproduce "2.5-4.5x times faster"? What are the measurement conditions?](#can-you-reproduce-25-45x-times-faster-what-are-the-measurement-conditions)
+- [Can you reproduce "4-13x times faster"? What are the measurement conditions?](#can-you-reproduce-4-13x-times-faster-what-are-the-measurement-conditions)
 - [Old GC takes 10 to 300ms, but does it cause frame drops?](#old-gc-takes-10-to-300ms-but-does-it-cause-frame-drops)
 - [How do I start making games? Any samples?](#how-do-i-start-making-games-any-samples)
 - [How do I go about developing plugins?](#how-do-i-go-about-developing-plugins)
@@ -1840,7 +1840,7 @@ All of the core developer resides outside China and does not possess
 the actual hardware sold in China. Consequently, functionality has
 only been verified using an emulator.
 
-### Can you reproduce "2.5-4.5x times faster"? What are the measurement conditions?
+### Can you reproduce "4-13x times faster"? What are the measurement conditions?
 
 This is a synthetic benchmark designed to measure the performance difference.
 
