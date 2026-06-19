@@ -688,12 +688,13 @@ These architectures are well-supported, we can say at least they all pass [the t
 
 However, the following are not supported yet (interpreter-only) because of the lack of development machines:
 
-- SH-4 (Dreamcast) (Runs interpreter)
-- Sun SPARC (Runs interpreter)
-- HP PA-RISC (Runs interpreter)
-- Motorola 68000 (Runs interpreter)
-- Loongson (Runs interpreter)
 - IBM Z (Runs interpreter)
+- Sun SPARC (Runs interpreter)
+- Motorola 68000 (Runs interpreter)
+- DEC Alpha (Runs interpreter)
+- SH-4 (Dreamcast) (Runs interpreter)
+- HP PA-RISC (Runs interpreter)
+- Loongson (Runs interpreter)
 - **Challenge:** If you have one, please provide a ssh access to the development environment for 3 days. We can port there ;-)
 
 ### AOT Compilation
@@ -1855,13 +1856,12 @@ func main() {
 }
 ```
 
-| Machine                 | JIT (s)      | Interpreter (s)       | Scaling (JIT vs Interpreter) |
-|-------------------------|--------------|-----------------------|------------------------------|
-| Intel Core i9 12900H    | 3.32         | 13.2s                 | 4.0x                         |
-| Intel Core Ultra 5 228V | 5.78s        | 15.6                  | 2.7x                         |
-| Intel Xeon Silver 4114  | 8.08         | 36.4s                 | 4.5x                         |
-| Apple M5                | 2.77         | 10.6s                 | 3.8x                         |
-| IBM POWER8              | 43.719       | 117.8s                | 2.7x                         |
+| CPU                     | Arch     | JIT (s) | Interpreter (s) | Scaling (JIT vs Interpreter) |
+|-------------------------|----------|---------|-----------------|------------------------------|
+| PowerPC 970FX           | ppc64    | 29.47   | 397.22          | 13.5x                        |
+| Ingenic JZ4770          | mips32   | 129.75  | 1447.36         | 11.2x                        |
+| Intel Core Ultra 5 228V | x86_64   | 5.93    | 34.95           | 5.9x                         |
+| Apple M5                | arm64    | 2.76    | 11.34           | 4.1x                         |
 
 In a real game app, the performance difference may vary depending on
 the your logic and the amount of script execution. However, we have
