@@ -28,6 +28,13 @@
  */
 
 #include <suika3/suika3.h>
+#include "tag.h"
+
+static const char *prop_names[] = {
+	"name",
+	"desc",
+	NULL,
+};
 
 /*
  * The "label" tag implementation.
@@ -37,6 +44,10 @@ s3i_tag_label(
 	void *p)
 {
 	UNUSED_PARAMETER(p);
+
+	/* Check properties. */
+	if (!s3i_check_tag_properties(prop_names))
+		return false;
 
 	/* Set the continue flag to run also the next tag. */
 	s3_set_vm_int("s3Continue", 1);

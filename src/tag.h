@@ -44,4 +44,11 @@ s3i_init_tag(void);
 void
 s3i_cleanup_tag(void);
 
+/*
+ * Check for unsupported parameters in the current tag.
+ */
+bool
+s3i_check_tag_properties(
+	const char **allowed_prop_names);
+
 #endif

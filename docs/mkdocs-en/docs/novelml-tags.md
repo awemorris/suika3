@@ -689,6 +689,7 @@ It acts as a bookmark for navigation within your story.
 | Argument | Omissible | Description                     | Notes                                                  |
 |----------|-----------|---------------------------------|--------------------------------------------------------|
 | `name`   | No        | The unique name for this label. | Case-sensitive. Avoid using spaces or special symbols. |
+| `desc`   | Yes       | Comment.                        | No effect.                                             |
 
 ### Tips
 

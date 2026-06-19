@@ -121,6 +121,7 @@ static const char *result_var_name;
  */
 
 static bool init(void);
+static bool check_props(void);
 static bool main_process(void);
 static bool get_text_arg(int index, const char **text, const char **value);
 static void get_choosebox_rect(int index, int *x, int *y, int *w, int *h);
@@ -170,6 +171,10 @@ init(void)
 {
 	int i;
 	int actual_option_count;
+
+	/* Check the properties. */
+	if (!check_props())
+		return false;
 
 	/* Clear variables. */
 	pointed_index = -1;
@@ -309,6 +314,79 @@ init(void)
 	s3_set_ch_talking(-1);
 	if (conf_autofocus_on_choose)
 		s3_update_ch_dim_by_talking_ch();
+
+	return true;
+}
+
+/* Check the properties */
+static bool
+check_props(void)
+{
+	int i, actual_prop_count;
+	const char *name;
+
+	actual_prop_count = s3_get_tag_property_count();
+	for (i = 0; i < actual_prop_count; i++) {
+		name = s3_get_tag_property_name(i);
+
+		if (strcmp(name, "name") == 0)
+			continue;
+		if (strcmp(name, "leftify") == 0)
+			continue;
+		if (strcmp(name, "time") == 0)
+			continue;
+		if (strcmp(name, "text1") == 0)
+			continue;
+		if (strcmp(name, "text2") == 0)
+			continue;
+		if (strcmp(name, "text3") == 0)
+			continue;
+		if (strcmp(name, "text4") == 0)
+			continue;
+		if (strcmp(name, "text5") == 0)
+			continue;
+		if (strcmp(name, "text6") == 0)
+			continue;
+		if (strcmp(name, "text7") == 0)
+			continue;
+		if (strcmp(name, "text8") == 0)
+			continue;
+		if (strncmp(name, "text1-", 6) == 0)
+			continue;
+		if (strncmp(name, "text2-", 6) == 0)
+			continue;
+		if (strncmp(name, "text3-", 6) == 0)
+			continue;
+		if (strncmp(name, "text4-", 6) == 0)
+			continue;
+		if (strncmp(name, "text5-", 6) == 0)
+			continue;
+		if (strncmp(name, "text6-", 6) == 0)
+			continue;
+		if (strncmp(name, "text7-", 6) == 0)
+			continue;
+		if (strncmp(name, "text8-", 6) == 0)
+			continue;
+		if (strcmp(name, "value1") == 0)
+			continue;
+		if (strcmp(name, "value2") == 0)
+			continue;
+		if (strcmp(name, "value3") == 0)
+			continue;
+		if (strcmp(name, "value4") == 0)
+			continue;
+		if (strcmp(name, "value5") == 0)
+			continue;
+		if (strcmp(name, "value6") == 0)
+			continue;
+		if (strcmp(name, "value7") == 0)
+			continue;
+		if (strcmp(name, "value8") == 0)
+			continue;
+
+		s3_log_error(S3_TR("Property %s is not allowed for tag %s."), name, s3_get_tag_name());
+		return false;
+	}
 
 	return true;
 }

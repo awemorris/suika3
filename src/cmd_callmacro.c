@@ -29,10 +29,31 @@
 
 #include <suika3/suika3.h>
 #include "conf.h"
+#include "tag.h"
 
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
+#define ARG_MAX 10
+
+static const char *prop_names[] = {
+	"file",
+	"name",
+	"arg1",
+	"arg2",
+	"arg3",
+	"arg4",
+	"arg5",
+	"arg6",
+	"arg7",
+	"arg8",
+	"arg9",
+	"arg10",
+	NULL,
+};
+
 
 /*
  * The "callmacro" tag implementation.
@@ -45,14 +66,32 @@ s3i_tag_callmacro(
 	char *file_s;
 	const char *name;
 	char *name_s;
+	int i;
 
 	UNUSED_PARAMETER(p);
+
+	/* Check properties. */
+	if (!s3i_check_tag_properties(prop_names))
+		return false;
 
 	/* Get the arguments. */
 	file = s3_get_tag_arg_string("file", true, NULL);
 	name = s3_get_tag_arg_string("name", false, NULL);
 	if (name == NULL)
 		return false;
+
+	/* Copy argN to variables. */
+	for (i = 0; i < ARG_MAX; i++) {
+		char buf[10];
+		const char *arg;
+
+		snprintf(buf, sizeof(buf), "arg%d", i);
+		arg = s3_get_tag_arg_string(buf, true, NULL);
+		if (arg == NULL)
+			continue;
+		if (!s3_set_variable_string(buf, arg))
+			return false;
+	}
 
 	/* Save the arguments. (will be destroyed by a tag file load.) */
 	file_s = NULL;

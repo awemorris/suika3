@@ -29,10 +29,18 @@
 
 #include <suika3/suika3.h>
 #include "conf.h"
+#include "tag.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
+static const char *prop_names[] = {
+	"lhs",
+	"op",
+	"rhs",
+	NULL,
+};
 
 /*
  * The "if" tag implementation.
@@ -47,6 +55,10 @@ s3i_tag_if(
 	bool cond;
 
 	UNUSED_PARAMETER(p);
+
+	/* Check properties. */
+	if (!s3i_check_tag_properties(prop_names))
+		return false;
 
 	/* Update the tag values by variable values. */
 	s3_evaluate_tag();

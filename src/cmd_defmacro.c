@@ -29,10 +29,16 @@
 
 #include <suika3/suika3.h>
 #include "conf.h"
+#include "tag.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
+static const char *prop_names[] = {
+	"name",
+	NULL,
+};
 
 /*
  * The "defmacro" tag implementation.
@@ -42,6 +48,10 @@ s3i_tag_defmacro(
 	void *p)
 {
 	UNUSED_PARAMETER(p);
+
+	/* Check properties. */
+	if (!s3i_check_tag_properties(prop_names))
+		return false;
 
 	/* Set the continue flag to run also the next tag. */
 	s3_set_vm_int("s3Continue", 1);

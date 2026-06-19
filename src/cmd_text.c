@@ -264,6 +264,14 @@ static bool no_show;
 static char *last_lang;
 
 /*
+ * Properties
+ */
+
+static const char *prop_names[] = {
+	
+};
+	
+/*
  * Forward declarations
  */
 
@@ -274,6 +282,7 @@ static void postprocess(void);
 
 /* Initialization */
 static bool init(bool *cont);
+static bool check_props(void);
 static bool init_special_action(bool *exit);
 static void clear_msgbox(void);
 static void init_flags_and_vars(void);
@@ -490,6 +499,10 @@ init(
 
 	*cont = false;
 
+	/* Check properties. */
+	if (!check_props())
+		return false;
+
 	/* Apply inline variable references. */
 	s3_evaluate_tag();
 
@@ -582,6 +595,39 @@ init(
 
 	/* Enable skip behavior by continuous swipe */
 	s3_set_continuous_swipe_enabled(true);
+
+	return true;
+}
+
+/* Check properties. */
+static bool
+check_props(void)
+{
+	int i, actual_prop_count;
+	const char *name;
+
+	actual_prop_count = s3_get_tag_property_count();
+	for (i = 0; i < actual_prop_count; i++) {
+		name = s3_get_tag_property_name(i);
+
+		if (strcmp(name, "name") == 0)
+			continue;
+		if (strcmp(name, "text") == 0)
+			continue;
+		if (strncmp(name, "text-", 5) == 0)
+			continue;
+		if (strcmp(name, "only-history") == 0)
+			continue;
+		if (strcmp(name, "action") == 0)
+			continue;
+		if (strcmp(name, "voice") == 0)
+			continue;
+		if (strncmp(name, "voice-", 6) == 0)
+			continue;
+
+		s3_log_error(S3_TR("Property %s is not allowed for tag %s."), name, s3_get_tag_name());
+		return false;
+	}
 
 	return true;
 }

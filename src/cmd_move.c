@@ -29,10 +29,97 @@
 
 #include <suika3/suika3.h>
 #include "conf.h"
+#include "tag.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
+static const char *prop_names[] = {
+	"time",
+	"accel",
+	"async",
+	"bg-x",
+	"bg-y",
+	"bg-a",
+	"bg-scale-x",
+	"bg-scale-y",
+	"bg-bg-x",
+	"bg-bg-y",
+	"bg-rotate",
+	"bg2-x",
+	"bg2-y",
+	"bg2-a",
+	"bg2-scale-x",
+	"bg2-scale-y",
+	"bg2-bg-x",
+	"bg2-bg-y",
+	"bg2-rotate",
+	"back-x",
+	"back-y",
+	"back-a",
+	"back-scale-x",
+	"back-scale-y",
+	"back-back-x",
+	"back-back-y",
+	"back-rotate",
+	"back-dim",
+	"left-x",
+	"left-y",
+	"left-a",
+	"left-scale-x",
+	"left-scale-y",
+	"left-left-x",
+	"left-left-y",
+	"left-rotate",
+	"left-dim",
+	"left-center-x",
+	"left-center-y",
+	"left-center-a",
+	"left-center-scale-x",
+	"left-center-scale-y",
+	"left-center-left-center-x",
+	"left-center-left-center-y",
+	"left-center-rotate",
+	"left-center-dim",
+	"right-x",
+	"right-y",
+	"right-a",
+	"right-scale-x",
+	"right-scale-y",
+	"right-right-x",
+	"right-right-y",
+	"right-rotate",
+	"right-dim",
+	"right-center-x",
+	"right-center-y",
+	"right-center-a",
+	"right-center-scale-x",
+	"right-center-scale-y",
+	"right-center-right-center-x",
+	"right-center-right-center-y",
+	"right-center-rotate",
+	"right-center-dim",
+	"center-x",
+	"center-y",
+	"center-a",
+	"center-scale-x",
+	"center-scale-y",
+	"center-center-x",
+	"center-center-y",
+	"center-rotate",
+	"center-dim",
+	"face-x",
+	"face-y",
+	"face-a",
+	"face-scale-x",
+	"face-scale-y",
+	"face-face-x",
+	"face-face-y",
+	"face-rotate",
+	"face-dim",
+	NULL,
+};
 
 /*
  * List of parameters for each layer.
@@ -207,6 +294,10 @@ init(void)
 	const char *s;
 	uint32_t i;
 	int accel;
+
+	/* Check properties. */
+	if (!s3i_check_tag_properties(prop_names))
+		return false;
 
 	/* Get the animation time. */
 	span = s3_get_tag_arg_float("time", true, 0);

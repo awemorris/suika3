@@ -30,6 +30,7 @@
 #include <suika3/suika3.h>
 #include "conf.h"
 #include "sysbtn.h"
+#include "tag.h"
 
 #include <string.h>
 
@@ -37,6 +38,12 @@
 #define AUTO_MODE_WAIT (2000)
 
 static uint64_t sw;
+
+static const char *prop_names[] = {
+	"hidemsgbox",
+	"hidenamebox",
+	NULL,
+};
 
 /*
  * The "click" tag implementation.
@@ -52,6 +59,10 @@ s3i_tag_click(
 
 	/* Perform initialization on the first invocation. */
 	if (!s3_is_in_command_repetition()) {
+		/* Check properties. */
+		if (!s3i_check_tag_properties(prop_names))
+			return false;
+
 		/* Get the arguments. */
 		hide_msgbox = s3_get_tag_arg_bool("hidemsgbox", true, false);
 		hide_namebox = s3_get_tag_arg_bool("hidenamebox", true, false);

@@ -41,6 +41,18 @@ static bool is_shownamebox;
 static bool is_layer_used[S3_STAGE_LAYERS];
 static uint64_t sw;
 
+static const char *prop_names[] = {
+	"stop",
+	"register",
+	"file",
+	"async",
+	"showsysbtn",
+	"showmsgbox",
+	"shownamebox",
+	"register",
+	NULL,
+};
+
 static bool init(void);
 static void process_frame(void);
 static bool cleanup(void);

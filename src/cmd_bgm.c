@@ -29,10 +29,17 @@
 
 #include <suika3/suika3.h>
 #include "conf.h"
+#include "tag.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
+static const char *prop_names[] = {
+	"file",
+	"once",
+	NULL,
+};
 
 /*
  * The "bgm" tag implementation.
@@ -46,6 +53,10 @@ s3i_tag_bgm(
 	bool stop;
 
 	UNUSED_PARAMETER(p);
+
+	/* Check properties. */
+	if (!s3i_check_tag_properties(prop_names))
+		return false;
 
 	/* Update the tag values by variable values. */
 	s3_evaluate_tag();

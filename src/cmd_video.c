@@ -29,10 +29,17 @@
 
 #include <suika3/suika3.h>
 #include "conf.h"
+#include "tag.h"
 
 #include <string.h>
 
 static bool is_skippable;
+
+static const char *prop_names[] = {
+	"file",
+	"skippable",
+	NULL,
+};
 
 /*
  * Forward delclarations.
@@ -68,6 +75,10 @@ static bool
 init(void)
 {
 	const char *file;
+
+	/* Check properties. */
+	if (!s3i_check_tag_properties(prop_names))
+		return false;
 
 	/* Get the parameters. */
 	file = s3_get_tag_arg_string("file", false, NULL);

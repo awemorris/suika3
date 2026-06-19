@@ -29,10 +29,97 @@
 
 #include <suika3/suika3.h>
 #include "conf.h"
+#include "tag.h"
 
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
+static const char *prop_names[] = {
+	"fade",
+	"rule",
+	"time",
+	"bg",
+	"bg-x",
+	"bg-y",
+	"bg-a",
+	"bg-sx",
+	"bg-sy",
+	"bg-cx",
+	"bg-cy",
+	"bg-rotate",
+	"back",
+	"back-x",
+	"back-y",
+	"back-a",
+	"back-scale-x",
+	"back-scale-y",
+	"back-center-x",
+	"back-center-y",
+	"back-rotate",
+	"back-dim",
+	"left",
+	"left-x",
+	"left-y",
+	"left-a",
+	"left-scale-x",
+	"left-scale-y",
+	"left-center-x",
+	"left-center-y",
+	"left-rotate",
+	"left-dim",
+	"left-center",
+	"left-center-x",
+	"left-center-y",
+	"left-center-a",
+	"left-center-scale-x",
+	"left-center-scale-y",
+	"left-center-center-x",
+	"left-center-center-y",
+	"left-center-rotate",
+	"left-center-dim",
+	"right",
+	"right-x",
+	"right-y",
+	"right-a",
+	"right-scale-x",
+	"right-scale-y",
+	"right-center-x",
+	"right-center-y",
+	"right-rotate",
+	"right-dim",
+	"right-center",
+	"right-center-x",
+	"right-center-y",
+	"right-center-a",
+	"right-center-scale-x",
+	"right-center-scale-y",
+	"right-center-center-x",
+	"right-center-center-y",
+	"right-center-rotate",
+	"right-center-dim",
+	"center",
+	"center-x",
+	"center-y",
+	"center-a",
+	"center-scale-x",
+	"center-scale-y",
+	"center-center-x",
+	"center-center-y",
+	"center-rotate",
+	"center-dim",
+	"face",
+	"face-x",
+	"face-y",
+	"face-a",
+	"face-scale-x",
+	"face-scale-y",
+	"face-center-x",
+	"face-center-y",
+	"face-rotate",
+	"face-dim",
+	NULL,
+};
 
 /*
  * List of parameters for each layer.
@@ -208,6 +295,10 @@ init(void)
 	const char *fade;
 	int fade_method;
 	int i;
+
+	/* Check properties. */
+	if (!s3i_check_tag_properties(prop_names))
+		return false;
 
 	memset(desc, 0, sizeof(desc));
 	memset(change_chpos, 0, sizeof(change_chpos));

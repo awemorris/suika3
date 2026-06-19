@@ -828,6 +828,41 @@ s3_push_tag_stack_if(void)
 }
 
 /*
+ * Check for unsupported parameters in the current tag.
+ */
+bool
+s3i_check_tag_properties(
+	const char **allowed_prop_names)
+{
+	int i, j, actual_prop_count;
+	const char *name;
+	bool found;
+
+	/* Check for all actual properties. */
+	actual_prop_count = s3_get_tag_property_count();
+	for (i = 0; i < actual_prop_count; i++) {
+		name = s3_get_tag_property_name(i);
+
+		/* Does the property exist in the allowed table? */
+		j = 0;
+		found = false;
+		while (allowed_prop_names[j] != NULL) {
+			if (strcmp(allowed_prop_names[j], name) == 0) {
+				found = true;
+				break;
+			}
+			j++;
+		}
+		if (!found) {
+			s3_log_error(S3_TR("Property %s is not allowed for tag %s."), name, s3_get_tag_name());
+			return false;
+		}
+	}
+
+	return true;
+}
+
+/*
  * Pop an "if" from the tag stack.
  */
 bool

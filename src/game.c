@@ -869,7 +869,7 @@ s3_pop_for_return(
 	int *index)
 {
 	if (stack_pointer == 0) {
-		s3_log_tag_error(S3_TR("Too many macro calls."));
+		s3_log_tag_error(S3_TR("endmacro outside a macro call."));
 		return false;
 	}
 

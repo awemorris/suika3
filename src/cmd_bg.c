@@ -29,11 +29,22 @@
 
 #include <suika3/suika3.h>
 #include "conf.h"
+#include "tag.h"
 
 #include <string.h>
 
 static uint64_t sw;
 static float span;
+
+static const char *prop_names[] = {
+	"file",
+	"time",
+	"method",
+	"x",
+	"y",
+	"rule",
+	NULL,
+};
 
 /*
  * Forward delclarations.
@@ -72,6 +83,10 @@ init(void)
 	const char *fname, *method;
 	int fade_method, ofs_x, ofs_y;
 	struct s3_fade_desc desc[S3_FADE_DESC_COUNT];
+
+	/* Check properties. */
+	if (!s3i_check_tag_properties(prop_names))
+		return false;
 
 	/* Get the parameters. */
 	fname = s3_get_tag_arg_string("file", false, NULL);

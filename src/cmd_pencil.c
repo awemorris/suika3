@@ -30,11 +30,29 @@
 #include <suika3/suika3.h>
 #include "conf.h"
 #include "image.h"
+#include "tag.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
+
+static const char *prop_names[] = {
+	"layer",
+	"font-type",
+	"font-size",
+	"color",
+	"outline-width",
+	"outline-color",
+	"line-margin",
+	"char-margin",
+	"x",
+	"y",
+	"width",
+	"height",
+	"text",
+	NULL,
+};
 
 struct layer_name {
 	const char *name;
@@ -101,6 +119,10 @@ s3i_tag_pencil(
 	struct s3_drawmsg *context;
 
 	UNUSED_PARAMETER(p);
+
+	/* Check properties. */
+	if (!s3i_check_tag_properties(prop_names))
+		return false;
 
 	/* Update the tag values by variable values. */
 	s3_evaluate_tag();
