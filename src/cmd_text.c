@@ -264,14 +264,6 @@ static bool no_show;
 static char *last_lang;
 
 /*
- * Properties
- */
-
-static const char *prop_names[] = {
-	
-};
-	
-/*
  * Forward declarations
  */
 
