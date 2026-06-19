@@ -12,7 +12,7 @@ feature requests, testing, and discussions for this release:
 * @lalalll-lalalll ... VSCode plugin, docs
 * @SandwichMan5 ... QA
 * @antonialoytorrens ... QA
-* @2439905184 ... QA
+* @2439905184 ... reporting critical bugs
 * @jhq223 ... reporting critical bugs
 * @Kotsuider ... reporting critical bugs
 

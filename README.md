@@ -1520,7 +1520,6 @@ not limited to, race, gender, skill levels, and neurodiversity.
 * @lalalll-lalalll ... VSCode plugin, docs
 * @SandwichMan5 ... QA
 * @antonialoytorrens ... QA
-* @2439905184 ... QA
 
 ### Recruiting
 
