@@ -559,6 +559,9 @@ jobs:
           retention-days: 7
 
   build-pc98:
+    if: |
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, '[docs]')
     name: Build for NEC PC-9801
     runs-on: ubuntu-latest
     steps:
@@ -604,6 +607,9 @@ jobs:
           path: suika-98.exe
 
   build-pcat:
+    if: |
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, '[docs]')
     name: Build for IBM PC/AT
     runs-on: ubuntu-latest
     steps:
