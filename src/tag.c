@@ -49,7 +49,7 @@
 #else
 #define TAG_NAME_MAX		128
 #define PROP_NAME_MAX		128
-#define PROP_VALUE_MAX		4096
+#define PROP_VALUE_MAX		8192
 #define TAG_MAX			S3_TAG_MAX
 #define STACK_MAX		128
 #endif
@@ -1160,7 +1160,6 @@ parse_tag_document(
 				continue;
 			}
 			if (c == '\"') {
-
 				if (multiline) {
 					if (*top != '\0' && *(top + 1) != '\0' &&
 					    *top == '\"' && *(top + 1) == '\"') {

@@ -867,12 +867,12 @@ s3_draw_message(
 		next_glyph_width = s3_get_glyph_width(context->font, context->font_size, wc_next);
 		next_glyph_height = s3_get_glyph_height(context->font, context->font_size, wc_next);
 
-		/* Check for bottom space. */
-		if (!process_bottom_space(context, glyph_width, glyph_height))
-			return i;
-
 		/* If the right space is not enough, do a line feed. */
 		if (!process_lf(context, wc, glyph_width, glyph_height, wc_next, next_glyph_width, next_glyph_height))
+			return i;
+
+		/* Check for bottom space. */
+		if (!process_bottom_space(context, glyph_width, glyph_height))
 			return i;
 
 		/* Calculate the offsets of the small hiragara or katakana. */
