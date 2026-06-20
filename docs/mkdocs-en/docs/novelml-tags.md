@@ -1636,7 +1636,8 @@ This tag does not take any arguments.
 Play Video
 
 The `video` tag plays a movie file on the screen.
-It is ideal for opening cinematics, transitional cutscenes, or high-impact visual effects that are best rendered as full-motion video.
+It is ideal for opening cinematics, transitional cutscenes,
+or high-impact visual effects that are best rendered as full-motion video.
 
 ### Basic Usage
 
@@ -1660,6 +1661,7 @@ It is ideal for opening cinematics, transitional cutscenes, or high-impact visua
 **File Support**:
 * Ensure your video file is .mp4 (H.264 + AAC) format.
 * If you want to support 32-bit Windows, prepare .wmv file alongside .mp4 file, then remove extension e.g., `[video file="opening"]`.
+* Video files cannot be packed into `assets.arc`.
 
 **Transitioning**:
 * Once the video finishes playing (or is skipped), the engine automatically proceeds to the next command in your script.
