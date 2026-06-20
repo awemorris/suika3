@@ -8815,7 +8815,7 @@ Suika_loadGUIFile(
 		/* Get the argument. */
 		if (!pf_get_call_arg_string("file", &file, false, NULL))
 			break;
-		if (!pf_get_call_arg_bool("isSys", &is_sys, false, -1))
+		if (!pf_get_call_arg_int("isSys", &is_sys, false, -1))
 			break;
 
 		if (!s3_load_gui_file(file, is_sys ? true : false))

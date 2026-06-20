@@ -854,7 +854,7 @@ s3i_check_tag_properties(
 			j++;
 		}
 		if (!found) {
-			s3_log_error(S3_TR("Property %s is not allowed for tag %s."), name, s3_get_tag_name());
+			s3_log_tag_error(S3_TR("Property %s is not allowed for tag %s."), name, s3_get_tag_name());
 			return false;
 		}
 	}
