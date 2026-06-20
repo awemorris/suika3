@@ -743,3 +743,5 @@ ja:テキストのローカライズ版がマッチしませんでした。
 ---
 ID:Property %s is not allowed for tag %s.
 ---
+ID:Cannot play video file %s.
+---

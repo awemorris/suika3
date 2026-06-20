@@ -87,8 +87,10 @@ init(void)
 	is_skippable = s3_get_tag_arg_bool("skippable", true, false);
 
 	/* Play the video. */
-	if (!s3_play_video(file, is_skippable))
+	if (!s3_play_video(file, is_skippable)) {
+		s3_log_tag_error(S3_TR("Cannot play video file %s."), file);
 		return false;
+	}
 
 	/* Start repetition. */
 	s3_start_command_repetition();
