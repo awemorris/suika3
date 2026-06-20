@@ -1205,11 +1205,12 @@ It's perfect for ensuring that your background music doesn't drown out important
 
 ### Arguments
 
-| Argument | Omissible | Description                           | Notes                                     |
-|----------|-----------|---------------------------------------|-------------------------------------------|
-| `track`  | No        | The audio track to adjust.            | See the "Tracks" table below.             |
-| `volume` | No        | The volume level from `0.0` to `1.0`. | `0.0` is silent, `1.0` is maximum volume. |
-| `time`   | Yes (`0`) | Fading time in seconds.               | `0` means instant change.                 |
+| Argument          | Omissible | Description                           | Notes                                     |
+|-------------------|-----------|---------------------------------------|-------------------------------------------|
+| `track`           | No        | The audio track to adjust.            | See the "Tracks" table below.             |
+| `volume` or `vol` | No        | The volume level from `0.0` to `1.0`. | `0.0` is silent, `1.0` is maximum volume. |
+| `time`            | Yes (`0`) | Fading time in seconds.               | `0` means instant change.                 |
+
 ### Track Types (`track`)
 
 Suika3 categorizes audio into three main tracks:
@@ -1225,6 +1226,10 @@ Suika3 categorizes audio into three main tracks:
 **Immediate Change**:
 * The volume change happens gradually when `time` is greater than `0`.
 * `time="0"` means an immediate change.
+
+**Asynchronous:**
+* Even if `time > 0`, the tag immediately exists.
+* The volume will be changed asynchronously.
 
 **Default Levels**:
 * It's a good idea to set your preferred volume levels at the start of your game (e.g., in a `start` label) so the player has a consistent experience from the beginning.

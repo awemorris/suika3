@@ -37,8 +37,9 @@
 
 static const char *prop_names[] = {
 	"track",
+	"volume",
 	"vol",
-	"span",
+	"time",
 	NULL,
 };
 
@@ -65,10 +66,13 @@ s3i_tag_volume(
 	track = s3_get_tag_arg_string("track", false, NULL);
 	if (track == NULL)
 		return false;
-	vol = s3_get_tag_arg_float("vol", false, -1.0f);
-	if (vol == -1.0f)
-		return false;
-	span = s3_get_tag_arg_float("span", true, 0.0f);
+	vol = s3_get_tag_arg_float("volume", false, -1.0f);
+	if (vol == -1.0f) {
+		vol = s3_get_tag_arg_float("vol", false, -1.0f);
+		if (vol == -1.0f)
+			return false;
+	}
+	span = s3_get_tag_arg_float("time", true, 0.0f);
 
 	if (vol < 0)
 		vol = 0;
