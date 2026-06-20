@@ -271,7 +271,7 @@ s3_unset_variable(
 			break;
 		if (tbl[i].len == len &&
 		    tbl[i].hash == hash &&
-		    strcmp(tbl[i].value, name) == 0) {
+		    strcmp(tbl[i].key, name) == 0) {
 			/* Found, remove it. */
 			free(tbl[i].key);
 			free(tbl[i].value);
@@ -312,7 +312,7 @@ s3_make_variable_global(
 			break;
 		if (tbl[i].len == len &&
 		    tbl[i].hash == hash &&
-		    strcmp(tbl[i].value, name) == 0) {
+		    strcmp(tbl[i].key, name) == 0) {
 			/* Found, make it global or not. */
 			tbl[i].is_global = is_global;
 			return true;
@@ -481,7 +481,7 @@ s3_is_global_variable(
 			break;
 		if (tbl[i].len == len &&
 		    tbl[i].hash == hash &&
-		    strcmp(tbl[i].value, name) == 0) {
+		    strcmp(tbl[i].key, name) == 0) {
 			/* Found. */
 			return tbl[i].is_global;
 		}

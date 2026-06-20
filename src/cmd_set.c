@@ -42,6 +42,7 @@ static const char *prop_names[] = {
 	"value1",
 	"op",
 	"value2",
+	"global",
 	NULL,
 };
 
@@ -148,6 +149,15 @@ s3i_tag_set(
 			if (!s3_set_variable_int(name, v3))
 				return false;
 		}
+	}
+
+	/* Check the global option. */
+	if (s3_check_tag_arg("global")) {
+		bool is_global = s3_get_tag_arg_int("global", false, -1);
+
+		/* Make the variable global or local. */
+		if (!s3_make_variable_global(name, is_global))
+			return false;
 	}
 
 	/* Set the continue flag to run also the next tag. */
