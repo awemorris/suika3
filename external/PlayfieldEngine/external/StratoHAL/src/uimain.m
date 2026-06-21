@@ -284,6 +284,7 @@ static void initGamepad(void)
             } else {
                 if (hal_callback.on_key_release != NULL)
                     hal_callback.on_key_release(HAL_KEY_GAMEPAD_X);
+            }
         };
         controller.extendedGamepad.buttonY.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
             UNUSED_PARAMETER(button);
