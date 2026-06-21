@@ -1343,7 +1343,8 @@ event_key_press(
 		return;
 
 	/* Call an event handler. */
-	hal_callback.on_key_press(key);
+	if (hal_callback.on_key_press != NULL)
+		hal_callback.on_key_press(key);
 }
 
 /* Process a KeyRelease event. */
@@ -1371,7 +1372,8 @@ event_key_release(
 		return;
 
 	/* Call an event handler. */
-	hal_callback.on_key_release(key);
+	if (hal_callback.on_key_release != NULL)
+		hal_callback.on_key_release(key);
 }
 
 /* Convert 'KeySym' to 'enum key_code'. */
@@ -1561,24 +1563,28 @@ event_button_press(
 	/* See the button type and dispatch. */
 	switch (event->xbutton.button) {
 	case Button1:
-		hal_callback.on_mouse_press(
-			HAL_MOUSE_LEFT,
-			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
-			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
+		if (hal_callback.on_mouse_press != NULL) {
+			hal_callback.on_mouse_press(
+				HAL_MOUSE_LEFT,
+				(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
+				(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
+		}
 		break;
 	case Button3:
-		hal_callback.on_mouse_press(
-			HAL_MOUSE_RIGHT,
-			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
-			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
+		if (hal_callback.on_mouse_press != NULL) {
+			hal_callback.on_mouse_press(
+				HAL_MOUSE_RIGHT,
+				(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
+				(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
+		}
 		break;
 	case Button4:
-		hal_callback.on_key_press(HAL_KEY_UP);
-		hal_callback.on_key_release(HAL_KEY_UP);
+		if (hal_callback.on_mouse_wheel != NULL)
+			hal_callback.on_mouse_wheel(1, 0);
 		break;
 	case Button5:
-		hal_callback.on_key_press(HAL_KEY_DOWN);
-		hal_callback.on_key_release(HAL_KEY_DOWN);
+		if (hal_callback.on_mouse_wheel != NULL)
+			hal_callback.on_mouse_wheel(-1, 0);
 		break;
 	default:
 		break;
@@ -1593,16 +1599,20 @@ event_button_release(
 	/* See the button type and dispatch. */
 	switch (event->xbutton.button) {
 	case Button1:
-		hal_callback.on_mouse_release(
-			HAL_MOUSE_LEFT,
-			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
-			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
+		if (hal_callback.on_mouse_release != NULL) {
+			hal_callback.on_mouse_release(
+				HAL_MOUSE_LEFT,
+				(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
+				(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
+		}
 		break;
 	case Button3:
-		hal_callback.on_mouse_release(
-			HAL_MOUSE_RIGHT,
-			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
-			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
+		if (hal_callback.on_mouse_release != NULL) {
+			hal_callback.on_mouse_release(
+				HAL_MOUSE_RIGHT,
+				(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
+				(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
+		}
 		break;
 	}
 }
@@ -1611,9 +1621,11 @@ event_button_release(
 static void event_motion_notify(XEvent *event)
 {
 	/* Call an event handler. */
-	hal_callback.on_mouse_move(
-		(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
-		(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
+	if (hal_callback.on_mouse_move != NULL) {
+		hal_callback.on_mouse_move(
+			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
+			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
+	}
 }
 
 /* Process a ConfigureNotify event. */

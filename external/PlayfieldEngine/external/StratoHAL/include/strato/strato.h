@@ -183,6 +183,9 @@ struct hal_callback {
 	/* Callback for mouse move or finger move. */
 	void (*on_mouse_move)(int x, int y);
 
+	/* Callback for mouse wheel. */
+	void (*on_mouse_wheel)(int v, int h);
+
 	/* Callback for one-finger cancel. (outside the screen) */
 	void (*on_touch_cancel)(void);
 
@@ -198,7 +201,7 @@ struct hal_callback {
 	/* Callback for two-finger swipe up.*/
 	void (*on_swipe_up)(float speed, float amount);
 
-	void *reserved[49];
+	void *reserved[48];
 };
 
 /* --- */

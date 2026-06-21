@@ -570,6 +570,18 @@ bool
 s3_is_mouse_dragging(void);
 
 /*
+ * Get the mouse wheel delta. (vertical)
+ */
+int
+s3_get_mouse_wheel(void);
+
+/*
+ * Get the mouse wheel delta. (horizontal)
+ */
+int
+s3_get_mouse_wheel_horizontal(void);
+
+/*
  * Check if return key is pressed.
  */
 bool

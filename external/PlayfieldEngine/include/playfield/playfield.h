@@ -36,6 +36,12 @@ PF_DLL extern bool pf_is_touch_canceled;
 PF_DLL extern bool pf_is_swiped;
 
 /*
+ * Mouse Wheel
+ */
+PF_DLL extern int pf_mouse_wheel;
+PF_DLL extern int pf_mouse_wheel_h;
+
+/*
  * Gamepad
  */
 PF_DLL extern bool pf_is_gamepad_left_pressed;

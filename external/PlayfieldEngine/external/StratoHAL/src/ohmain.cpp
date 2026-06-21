@@ -546,7 +546,8 @@ void onTouchStart(int x, int y, int points)
     touchStartY = y;
     touchLastY = y;
 
-    hal_callback.on_mouse_press(HAL_MOUSE_LEFT, x, y);
+    if (hal_callback.on_mouse_press != NULL)
+        hal_callback.on_mouse_press(HAL_MOUSE_LEFT, x, y);
 }
 
 //
@@ -560,14 +561,15 @@ void onTouchMove(int x, int y)
     touchLastY = y;
     if (isContinuousSwipeEnabled) {
         if (deltaY > 0 && deltaY < FLICK_Y_DISTANCE) {
-            hal_callback.on_key_press(HAL_KEY_DOWN);
-            hal_callback.on_key_release(HAL_KEY_DOWN);
+            if (hal_callback.on_mouse_wheel != NULL)
+                hal_callback.on_mouse_wheel(deltaY, 0);
             return;
         }
     }
 
     // Emulate a mouse move.
-    hal_callback.on_mouse_move(x, y);
+    if (hal_callback.on_mouse_move != NULL)
+        hal_callback.on_mouse_move(x, y);
 }
 
 //
@@ -580,12 +582,16 @@ void onTouchEnd(int x, int y, int points)
 
     int deltaY = y - touchStartY;
     if (deltaY > FLICK_Y_DISTANCE) {
-        hal_callback.on_touch_cancel();
-        hal_callback.on_swipe_down(0, 0);
+        if (hal_callback.on_touch_cancel != NULL)
+            hal_callback.on_touch_cancel();
+        if (hal_callback.on_swipe_down != NULL)
+            hal_callback.on_swipe_down(0, 0);
         return;
     } else if (deltaY < -FLICK_Y_DISTANCE) {
-        hal_callback.on_touch_cancel();
-        hal_callback.on_swipe_up(0, 0);
+        if (hal_callback.on_touch_cancel != NULL)
+            hal_callback.on_touch_cancel();
+        if (hal_callback.on_swipe_up != NULL)
+            hal_callback.on_swipe_up(0, 0);
         return;
     }
 
@@ -593,9 +599,12 @@ void onTouchEnd(int x, int y, int points)
     if (points == 1 &&
         abs(x - touchStartX) < FINGER_DISTANCE &&
         abs(y - touchStartY) < FINGER_DISTANCE) {
-        hal_callback.on_touch_cancel();
-        hal_callback.on_mouse_press(HAL_MOUSE_LEFT, x, y);
-        hal_callback.on_mouse_release(HAL_MOUSE_LEFT, x, y);
+        if (hal_callback.on_touch_cancel != NULL)
+            hal_callback.on_touch_cancel();
+        if (hal_callback.on_mouse_press != NULL)
+            hal_callback.on_mouse_press(HAL_MOUSE_LEFT, x, y);
+        if (hal_callback.on_mouse_release != NULL)
+            hal_callback.on_mouse_release(HAL_MOUSE_LEFT, x, y);
         return;
     }
 
@@ -603,14 +612,18 @@ void onTouchEnd(int x, int y, int points)
     if (points == 2 &&
         abs(x - touchStartX) < FINGER_DISTANCE &&
         abs(y - touchStartY) < FINGER_DISTANCE) {
-        hal_callback.on_touch_cancel();
-        hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, x, y);
-        hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, x, y);
+        if (hal_callback.on_touch_cancel != NULL)
+            hal_callback.on_touch_cancel();
+        if (hal_callback.on_mouse_press != NULL)
+            hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, x, y);
+        if (hal_callback.on_mouse_release != NULL)
+            hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, x, y);
         return;
     }
 
     // Cancel the touch move.
-    hal_callback.on_touch_cancel();
+    if (hal_callback.on_touch_cancel != NULL)
+        hal_callback.on_touch_cancel();
 }
 
 //
@@ -618,7 +631,8 @@ void onTouchEnd(int x, int y, int points)
 //
 void onTouchCancel(void)
 {
-    hal_callback.on_mouse_release(HAL_MOUSE_LEFT, touchStartX, touchStartY);
+    if (hal_callback.on_mouse_release != NULL)
+        hal_callback.on_mouse_release(HAL_MOUSE_LEFT, touchStartX, touchStartY);
 }
 
 //

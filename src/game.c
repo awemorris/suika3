@@ -79,6 +79,8 @@ static bool is_mouse_right_pressed;
 static bool is_mouse_left_clicked;
 static bool is_mouse_right_clicked;
 static bool is_mouse_dragging;
+static int mouse_wheel;
+static int mouse_wheel_h;
 static bool is_return_key_pressed;
 static bool is_space_key_pressed;
 static bool is_escape_key_pressed;
@@ -275,6 +277,8 @@ s3i_on_game_start(void)
 	is_mouse_left_clicked = false;
 	is_mouse_right_clicked = false;
 	is_mouse_dragging = false;
+	mouse_wheel = 0;
+	mouse_wheel_h = 0;
 	is_return_key_pressed = false;
 	is_space_key_pressed = false;
 	is_escape_key_pressed = false;
@@ -307,6 +311,8 @@ s3i_on_game_update(void)
 	is_mouse_left_clicked = pf_is_mouse_left_clicked || pf_is_gamepad_a_pressed;
 	is_mouse_right_clicked = pf_is_mouse_right_clicked || pf_is_gamepad_b_pressed;
 	is_mouse_dragging = pf_is_mouse_dragging;
+	mouse_wheel = pf_mouse_wheel;
+	mouse_wheel_h = pf_mouse_wheel_h;
 	is_return_key_pressed = pf_is_return_key_pressed;
 	is_space_key_pressed = pf_is_space_key_pressed;
 	is_escape_key_pressed = pf_is_escape_key_pressed || pf_is_gamepad_x_pressed;
@@ -398,6 +404,8 @@ s3i_on_game_update(void)
 	process_sound_fading();
 
 	/* Reset input states to avoid keyboard repeat. */
+	pf_mouse_wheel =  0;
+	pf_mouse_wheel_h = 0;
 	pf_is_return_key_pressed = false;
 	pf_is_escape_key_pressed = false;
 	pf_is_space_key_pressed = false;
@@ -497,6 +505,24 @@ bool
 s3_is_mouse_dragging(void)
 {
 	return is_mouse_dragging;
+}
+
+/*
+ * Get the mouse wheel delta. (vertical)
+ */
+int
+s3_get_mouse_wheel(void)
+{
+	return mouse_wheel;
+}
+
+/*
+ * Get the mouse wheel delta. (horizontal)
+ */
+int
+s3_get_mouse_wheel_horizontal(void)
+{
+	return mouse_wheel_h;
 }
 
 /*

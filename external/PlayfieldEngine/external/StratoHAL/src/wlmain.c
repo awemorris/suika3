@@ -170,6 +170,7 @@ static void pointer_frame(void *, struct wl_pointer *) { /* no-op */ }
 static void pointer_axis_source(void *, struct wl_pointer *, uint32_t) { /* no-op */ }
 static void pointer_axis_stop(void *, struct wl_pointer *, uint32_t, uint32_t) { /* no-op */ }
 static void pointer_axis_discrete(void *, struct wl_pointer *, uint32_t, int32_t) { /* no-op */ }
+static void pointer_axis_value120(void *data, struct wl_pointer *wl_pointer, uint32_t axis, int32_t value120);
 static void keyboard_keymap(void *data, struct wl_keyboard *keyboard, uint32_t format, int fd, uint32_t size);
 static void keyboard_enter(void *data, struct wl_keyboard *keyboard, uint32_t serial, struct wl_surface *surface, struct wl_array *keys);
 static void keyboard_leave(void *data, struct wl_keyboard *keyboard, uint32_t serial, struct wl_surface *surface);
@@ -193,6 +194,7 @@ static const struct wl_pointer_listener pointer_listener = {
 	.axis_source = pointer_axis_source,
 	.axis_stop = pointer_axis_stop,
 	.axis_discrete = pointer_axis_discrete,
+	.axis_value120 = pointer_axis_value120,
 };
 static const struct wl_keyboard_listener keyboard_listener = {
 	.keymap = keyboard_keymap,
@@ -1040,7 +1042,8 @@ pointer_motion(
 	last_mouse_x = (int)((wl_fixed_to_double(sx) - mouse_ofs_x) * mouse_scale);
 	last_mouse_y = (int)((wl_fixed_to_double(sy) - mouse_ofs_y) * mouse_scale);
 
-	hal_callback.on_mouse_move(last_mouse_x, last_mouse_y);
+	if (hal_callback.on_mouse_move != NULL)
+		hal_callback.on_mouse_move(last_mouse_x, last_mouse_y);
 }
 
 static void
@@ -1058,15 +1061,21 @@ pointer_button(
 	UNUSED_PARAMETER(time);
 
 	if (button == 272) {
-		if (state == WL_POINTER_BUTTON_STATE_PRESSED)
-			hal_callback.on_mouse_press(HAL_MOUSE_LEFT, last_mouse_x, last_mouse_y);
-		else
-			hal_callback.on_mouse_release(HAL_MOUSE_LEFT, last_mouse_x, last_mouse_y);
+		if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
+			if (hal_callback.on_mouse_press != NULL)
+				hal_callback.on_mouse_press(HAL_MOUSE_LEFT, last_mouse_x, last_mouse_y);
+		} else {
+			if (hal_callback.on_mouse_release != NULL)
+				hal_callback.on_mouse_release(HAL_MOUSE_LEFT, last_mouse_x, last_mouse_y);
+		}
 	} else if (button == 273) {
-		if (state == WL_POINTER_BUTTON_STATE_PRESSED)
-			hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, last_mouse_x, last_mouse_y);
-		else
-			hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, last_mouse_x, last_mouse_y);
+		if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
+			if (hal_callback.on_mouse_press != NULL)
+				hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, last_mouse_x, last_mouse_y);
+		} else {
+			if (hal_callback.on_mouse_release != NULL)
+				hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, last_mouse_x, last_mouse_y);
+		}
 	}
 }
 
@@ -1083,6 +1092,28 @@ pointer_axis(
 	UNUSED_PARAMETER(time);
 	UNUSED_PARAMETER(axis);
 	UNUSED_PARAMETER(value);
+}
+
+static void
+pointer_axis_value120(
+	void *data,
+	struct wl_pointer *wl_pointer,
+	uint32_t axis,
+	int32_t value120)
+{
+	float fine_scroll;
+
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(wl_pointer);
+	UNUSED_PARAMETER(axis);
+	UNUSED_PARAMETER(value120);
+
+	fine_scroll = (float)value120 / 120.0f;
+
+	if (axis == WL_POINTER_AXIS_VERTICAL_SCROLL) {
+		if (hal_callback.on_mouse_wheel != NULL)
+			hal_callback.on_mouse_wheel((int)fine_scroll, 0);
+	}
 }
 
 static void
@@ -1163,10 +1194,13 @@ keyboard_key(
 		return;
 	}
 
-	if (state == WL_KEYBOARD_KEY_STATE_PRESSED)
-		hal_callback.on_key_press(keycode);
-	else
-		hal_callback.on_key_release(keycode);
+	if (state == WL_KEYBOARD_KEY_STATE_PRESSED) {
+		if (hal_callback.on_key_press != NULL)
+			hal_callback.on_key_press(keycode);
+	} else {
+		if (hal_callback.on_key_release != NULL)
+			hal_callback.on_key_release(keycode);
+	}
 }
 
 static int get_keycode(

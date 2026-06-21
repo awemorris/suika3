@@ -72,6 +72,8 @@ static bool Suika_isMouseRightPressed(void *p);
 static bool Suika_isMouseLeftClicked(void *p);
 static bool Suika_isMouseRightClicked(void *p);
 static bool Suika_isMouseDragging(void *p);
+static bool Suika_getMouseWheel(void *p);
+static bool Suika_getMouseWheelHorizontal(void *p);
 static bool Suika_isReturnKeyPressed(void *p);
 static bool Suika_isSpaceKeyPressed(void *p);
 static bool Suika_isEscapeKeyPressed(void *p);
@@ -434,6 +436,8 @@ static struct api_func api_func[] = {
 	{"isMouseLeftClicked",		Suika_isMouseLeftClicked,	0, NULL},
 	{"isMouseRightClicked",		Suika_isMouseRightClicked,	0, NULL},
 	{"isMouseDragging",		Suika_isMouseDragging,		0, NULL},
+	{"getMouseWheel",		Suika_getMouseWheel,		0, NULL},
+	{"getMouseWheelHorizontal",	Suika_getMouseWheelHorizontal,	0, NULL},
 	{"isReturnKeyPressed",		Suika_isReturnKeyPressed,	0, NULL},
 	{"isSpaceKeyPressed",		Suika_isSpaceKeyPressed,	0, NULL},
 	{"isEscapeKeyPressed",		Suika_isEscapeKeyPressed,	0, NULL},
@@ -1711,6 +1715,40 @@ Suika_isMouseDragging(void *p)
 
 	/* Set the return value. */
 	if (!pf_set_return_int(val ? 1 : 0))
+		return false;
+	
+	return true;
+}
+
+static bool
+Suika_getMouseWheel(void *p)
+{
+	int val;
+
+	UNUSED_PARAMETER(p);
+
+	/* Get the value. */
+	val = s3_get_mouse_wheel();
+
+	/* Set the return value. */
+	if (!pf_set_return_int(val))
+		return false;
+	
+	return true;
+}
+
+static bool
+Suika_getMouseWheelHorizontal(void *p)
+{
+	int val;
+
+	UNUSED_PARAMETER(p);
+
+	/* Get the value. */
+	val = s3_get_mouse_wheel_horizontal();
+
+	/* Set the return value. */
+	if (!pf_set_return_int(val))
 		return false;
 	
 	return true;

@@ -904,66 +904,74 @@ WndProcRender(
 	case WM_LBUTTONDOWN:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_press(
-				HAL_MOUSE_LEFT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_press != NULL)
+			{
+				hal_callback.on_mouse_press(
+					HAL_MOUSE_LEFT,
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_LBUTTONUP:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_release(
-				HAL_MOUSE_LEFT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_release != NULL)
+			{
+				hal_callback.on_mouse_release(
+					HAL_MOUSE_LEFT,
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_RBUTTONDOWN:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_press(
-				HAL_MOUSE_RIGHT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_press != NULL)
+			{
+				hal_callback.on_mouse_press(
+					HAL_MOUSE_RIGHT,
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_RBUTTONUP:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_release(
-				HAL_MOUSE_RIGHT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_release != NULL)
+			{
+				hal_callback.on_mouse_release(
+					HAL_MOUSE_RIGHT,
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_MOUSEMOVE:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_move(
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_move != NULL)
+			{
+				hal_callback.on_mouse_move(
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_MOUSEWHEEL:
 		if (bRunning)
 		{
-			if((int)(short)HIWORD(wParam) > 0)
-			{
-				hal_callback.on_key_press(HAL_KEY_UP);
-				hal_callback.on_key_release(HAL_KEY_UP);
-			}
-			else if((int)(short)HIWORD(wParam) < 0)
-			{
-				hal_callback.on_key_press(HAL_KEY_DOWN);
-				hal_callback.on_key_release(HAL_KEY_DOWN);
-			}
+			if (hal_callback.on_mouse_wheel != NULL)
+				hal_callback.on_mouse_wheel((int)(short)HIWORD(wParam), 0);
 		}
 		return 0;
 	case WM_KILLFOCUS:
 		if (bRunning)
 		{
-			hal_callback.on_key_release(HAL_KEY_CONTROL);
+			if (hal_callback.on_key_release != NULL)
+				hal_callback.on_key_release(HAL_KEY_CONTROL);
 		}
 		return 0;
 	default:
@@ -996,66 +1004,74 @@ WndProcVideo(
 	case WM_LBUTTONDOWN:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_press(
-				HAL_MOUSE_LEFT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_press != NULL)
+			{
+				hal_callback.on_mouse_press(
+					HAL_MOUSE_LEFT,
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_LBUTTONUP:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_release(
-				HAL_MOUSE_LEFT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_release != NULL)
+			{
+				hal_callback.on_mouse_release(
+					HAL_MOUSE_LEFT,
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_RBUTTONDOWN:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_press(
-				HAL_MOUSE_RIGHT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_press != NULL)
+			{
+				hal_callback.on_mouse_press(
+					HAL_MOUSE_RIGHT,
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_RBUTTONUP:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_release(
-				HAL_MOUSE_RIGHT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_release != NULL)
+			{
+				hal_callback.on_mouse_release(
+					HAL_MOUSE_RIGHT,
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_MOUSEMOVE:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_move(
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_move != NULL)
+			{
+				hal_callback.on_mouse_move(
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_MOUSEWHEEL:
 		if (bRunning)
 		{
-			if((int)(short)HIWORD(wParam) > 0)
-			{
-				hal_callback.on_key_press(HAL_KEY_UP);
-				hal_callback.on_key_release(HAL_KEY_UP);
-			}
-			else if((int)(short)HIWORD(wParam) < 0)
-			{
-				hal_callback.on_key_press(HAL_KEY_DOWN);
-				hal_callback.on_key_release(HAL_KEY_DOWN);
-			}
+			if (hal_callback.on_mouse_wheel != NULL)
+				hal_callback.on_mouse_wheel((int)(short)HIWORD(wParam), 0);
 		}
 		return 0;
 	case WM_KILLFOCUS:
 		if (bRunning)
 		{
-			hal_callback.on_key_release(HAL_KEY_CONTROL);
+			if (hal_callback.on_key_release != NULL)
+				hal_callback.on_key_release(HAL_KEY_CONTROL);
 		}
 		return 0;
 	default:

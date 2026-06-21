@@ -303,7 +303,8 @@ Java_io_noctvm_strato_MainActivity_nativeOnTouchStart(
 		touch_start_x = x;
 		touch_start_y = y;
 		touch_last_y = y;
-		hal_callback.on_mouse_press(HAL_MOUSE_LEFT, x, y);
+		if (hal_callback.on_mouse_press != NULL)
+			hal_callback.on_mouse_press(HAL_MOUSE_LEFT, x, y);
 	}
 	jni_env = NULL;
 }
@@ -323,14 +324,15 @@ Java_io_noctvm_strato_MainActivity_nativeOnTouchMove(
 		touch_last_y = y;
 		if (is_continuous_swipe_enabled) {
 			if (delta_y > 0 && delta_y < FLICK_Y_DISTANCE) {
-				hal_callback.on_key_press(HAL_KEY_DOWN);
-				hal_callback.on_key_release(HAL_KEY_DOWN);
+				if (hal_callback.on_mouse_wheel != NULL)
+					hal_callback.on_mouse_wheel(delta_y, 0);
 				break;
 			}
 		}
 
 		/* Emulate a mouse move. */
-		hal_callback.on_mouse_move(x, y);
+		if (hal_callback.on_mouse_move != NULL)
+			hal_callback.on_mouse_move(x, y);
 	} while (0);
 	jni_env = NULL;
 }
@@ -350,12 +352,16 @@ Java_io_noctvm_strato_MainActivity_nativeOnTouchEnd(
 		const int FLICK_Y_DISTANCE = 50;
 		int delta_y = y - touch_start_y;
 		if (delta_y > FLICK_Y_DISTANCE) {
-			hal_callback.on_touch_cancel();
-			hal_callback.on_swipe_down(0, 0);
+			if (hal_callback.on_touch_cancel != NULL)
+				hal_callback.on_touch_cancel();
+			if (hal_callback.on_swipe_down != NULL)
+				hal_callback.on_swipe_down(0, 0);
 			break;
 		} else if (delta_y < -FLICK_Y_DISTANCE) {
-			hal_callback.on_touch_cancel();
-			hal_callback.on_swipe_up(0, 0);
+			if (hal_callback.on_touch_cancel != NULL)
+				hal_callback.on_touch_cancel();
+			if (hal_callback.on_swipe_up != NULL)
+				hal_callback.on_swipe_up(0, 0);
 			break;
 		}
 
@@ -364,9 +370,12 @@ Java_io_noctvm_strato_MainActivity_nativeOnTouchEnd(
 		if (points == 1 &&
 		    abs(x - touch_start_x) < FINGER_DISTANCE &&
 		    abs(y - touch_start_y) < FINGER_DISTANCE) {
-			hal_callback.on_touch_cancel();
-			hal_callback.on_mouse_press(HAL_MOUSE_LEFT, x, y);
-			hal_callback.on_mouse_release(HAL_MOUSE_LEFT, x, y);
+			if (hal_callback.on_touch_cancel != NULL)
+				hal_callback.on_touch_cancel();
+			if (hal_callback.on_mouse_press != NULL)
+				hal_callback.on_mouse_press(HAL_MOUSE_LEFT, x, y);
+			if (hal_callback.on_mouse_release != NULL)
+				hal_callback.on_mouse_release(HAL_MOUSE_LEFT, x, y);
 			break;
 		}
 
@@ -374,14 +383,18 @@ Java_io_noctvm_strato_MainActivity_nativeOnTouchEnd(
 		if (points == 2 &&
 		    abs(x - touch_start_x) < FINGER_DISTANCE &&
 		    abs(y - touch_start_y) < FINGER_DISTANCE) {
-			hal_callback.on_touch_cancel();
-			hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, x, y);
-			hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, x, y);
+			if (hal_callback.on_touch_cancel != NULL)
+				hal_callback.on_touch_cancel();
+			if (hal_callback.on_mouse_press != NULL)
+				hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, x, y);
+			if (hal_callback.on_mouse_release != NULL)
+				hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, x, y);
 			break;
 		}
 
 		/* Cancel the touch move. */
-		hal_callback.on_touch_cancel();
+		if (hal_callback.on_touch_cancel != NULL)
+			hal_callback.on_touch_cancel();
 	} while (0);
 
 	jni_env = NULL;
@@ -398,12 +411,14 @@ Java_io_noctvm_strato_MainActivity_nativeOnGamepadAnalog(
 	jfloat l,
 	jfloat r)
 {
-	hal_callback.on_analog_input(HAL_ANALOG_X1, (int)(x1 * 32767.0f));
-	hal_callback.on_analog_input(HAL_ANALOG_Y1, (int)(y1 * 32767.0f));
-	hal_callback.on_analog_input(HAL_ANALOG_X2, (int)(x2 * 32767.0f));
-	hal_callback.on_analog_input(HAL_ANALOG_Y2, (int)(y2 * 32767.0f));
-	hal_callback.on_analog_input(HAL_ANALOG_L, (int)(l * 32767.0f));
-	hal_callback.on_analog_input(HAL_ANALOG_R, (int)(r * 32767.0f));
+	if (hal_callback.on_analog_input != NULL) {
+		hal_callback.on_analog_input(HAL_ANALOG_X1, (int)(x1 * 32767.0f));
+		hal_callback.on_analog_input(HAL_ANALOG_Y1, (int)(y1 * 32767.0f));
+		hal_callback.on_analog_input(HAL_ANALOG_X2, (int)(x2 * 32767.0f));
+		hal_callback.on_analog_input(HAL_ANALOG_Y2, (int)(y2 * 32767.0f));
+		hal_callback.on_analog_input(HAL_ANALOG_L, (int)(l * 32767.0f));
+		hal_callback.on_analog_input(HAL_ANALOG_R, (int)(r * 32767.0f));
+	}
 }
 
 JNIEXPORT void JNICALL
@@ -412,7 +427,8 @@ Java_io_noctvm_strato_MainActivity_nativeOnKeyDown(
 	jobject instance,
 	int key)
 {
-	hal_callback.on_key_press(key);
+	if (hal_callback.on_key_press != NULL)
+		hal_callback.on_key_press(key);
 }
 
 JNIEXPORT void JNICALL
@@ -421,7 +437,8 @@ Java_io_noctvm_strato_MainActivity_nativeOnKeyUp(
 	jobject instance,
 	int key)
 {
-	hal_callback.on_key_release(key);
+	if (hal_callback.on_key_release != NULL)
+		hal_callback.on_key_release(key);
 }
 
 /*
