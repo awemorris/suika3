@@ -1005,6 +1005,18 @@
             }
         },
         {
+            "name":           "mac-68k",
+            "displayName":    "MacOS Classic 68k",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-pcat",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/retro68-m68k.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":    "Release",
+                "SUIKA_TARGET_MACOS9": "ON",
+                "SUIKA_ENABLE_JIT":    "ON"
+	    }
+        },
+        {
             "name":           "pc98",
             "displayName":    "NEC PC-9800 Series DOS/4G OpenWatcom V2",
             "generator":      "Ninja",

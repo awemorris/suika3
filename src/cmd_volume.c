@@ -40,6 +40,7 @@ static const char *prop_names[] = {
 	"volume",
 	"vol",
 	"time",
+	"span",
 	NULL,
 };
 
@@ -66,18 +67,26 @@ s3i_tag_volume(
 	track = s3_get_tag_arg_string("track", false, NULL);
 	if (track == NULL)
 		return false;
-	vol = s3_get_tag_arg_float("volume", false, -1.0f);
+	vol = s3_get_tag_arg_float("volume", true, -1.0f);
 	if (vol == -1.0f) {
-		vol = s3_get_tag_arg_float("vol", false, -1.0f);
+		vol = s3_get_tag_arg_float("vol", true, -1.0f);
 		if (vol == -1.0f)
 			return false;
 	}
-	span = s3_get_tag_arg_float("time", true, 0.0f);
+	span = s3_get_tag_arg_float("time", true, -1.0f);
+	if (span == -1.0f) {
+		span = s3_get_tag_arg_float("span", true, -1.0f);
+		if (span == -1.0f)
+			span = 0.0;
+	}
 
 	if (vol < 0)
 		vol = 0;
 	if (vol > 1.0f)
 		vol = 1.0f;
+
+	if (span < 0)
+		span = 0;
 
 	if (strcmp(track, "bgm") == 0) {
 		s3_set_mixer_volume(S3_TRACK_BGM, vol, span);

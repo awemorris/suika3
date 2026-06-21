@@ -307,13 +307,16 @@ s3i_on_game_update(void)
 	is_mouse_left_clicked = pf_is_mouse_left_clicked || pf_is_gamepad_a_pressed;
 	is_mouse_right_clicked = pf_is_mouse_right_clicked || pf_is_gamepad_b_pressed;
 	is_mouse_dragging = pf_is_mouse_dragging;
-	is_space_key_pressed = pf_is_space_key_pressed;
 	is_return_key_pressed = pf_is_return_key_pressed;
+	is_space_key_pressed = pf_is_space_key_pressed;
 	is_escape_key_pressed = pf_is_escape_key_pressed || pf_is_gamepad_x_pressed;
 	is_up_key_pressed = pf_is_up_key_pressed || pf_is_gamepad_up_pressed;
 	is_down_key_pressed = pf_is_down_key_pressed || pf_is_gamepad_down_pressed;
 	is_left_key_pressed = pf_is_left_key_pressed || pf_is_gamepad_left_pressed;
 	is_right_key_pressed = pf_is_right_key_pressed || pf_is_gamepad_right_pressed;
+	is_pageup_key_pressed = pf_is_pageup_key_pressed;
+	is_pagedown_key_pressed = pf_is_pagedown_key_pressed;
+	is_control_key_pressed = pf_is_control_key_pressed;
 	is_s_key_pressed = pf_is_s_key_pressed;
 	is_l_key_pressed = pf_is_l_key_pressed;
 	is_h_key_pressed = pf_is_h_key_pressed;
