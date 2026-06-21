@@ -218,7 +218,7 @@ bool
 noct_make_int(
 	NoctEnv *env,
 	NoctValue *val,
-	int32_t i)
+	int i)
 {
 	UNUSED_PARAMETER(env);
 
@@ -408,7 +408,7 @@ bool
 noct_get_int(
 	NoctEnv *env,
 	NoctValue *val,
-	int32_t *i)
+	int *i)
 {
 	assert(env != NULL);
 	assert(val != NULL);
@@ -1417,7 +1417,7 @@ noct_get_array_elem_check_int(
 	NoctValue *array,
 	uint32_t index,
 	NoctValue *val,
-	int32_t *i)
+	int *i)
 {
 	int type;
 
@@ -1666,7 +1666,7 @@ noct_set_array_elem_make_int(
 	NoctValue *array,
 	uint32_t index,
 	NoctValue *val,
-	int32_t i)
+	int i)
 {
 	assert(env != NULL);
 	assert(array != NULL);
@@ -1791,7 +1791,7 @@ noct_get_dict_elem_check_int(
 	NoctValue *dict,
 	const char *key,
 	NoctValue *val,
-	int32_t *i)
+	int *i)
 {
 	assert(env != NULL);
 	assert(dict != NULL);
@@ -2033,7 +2033,7 @@ noct_set_dict_elem_make_int(
 	NoctValue *dict,
 	const char *key,
 	NoctValue *val,
-	int32_t i)
+	int i)
 {
 	assert(env != NULL);
 	assert(dict != NULL);
@@ -2162,7 +2162,7 @@ noct_get_arg_check_int(
 	NoctEnv *env,
 	uint32_t index,
 	NoctValue *val,
-	int32_t *i)
+	int *i)
 {
 	assert(env != NULL);
 	assert(val != NULL);
@@ -2475,7 +2475,7 @@ bool
 noct_set_return_make_int(
 	NoctEnv *env,
 	NoctValue *val,
-	int32_t i)
+	int i)
 {
 	assert(env != NULL);
 	assert(val != NULL);

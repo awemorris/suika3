@@ -27,6 +27,9 @@ init_hook(
 	int width,
 	int height)
 {
+	UNUSED_PARAMETER(width);
+	UNUSED_PARAMETER(height);
+
 	return true;
 }
 

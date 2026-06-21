@@ -1,3 +1,5 @@
+#include <inttypes.h>
+
 #line 2 "/home/awe/src/suika3/build-linux-debug/external/PlayfieldEngine/external/NoctLang/lexer.yy.c"
 
 #line 4 "/home/awe/src/suika3/build-linux-debug/external/PlayfieldEngine/external/NoctLang/lexer.yy.c"

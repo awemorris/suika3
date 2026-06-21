@@ -1,7 +1,7 @@
-API
-===
+Standard API
+============
 
-The standard API is enabled only when a build option is specified. It
+The Standard API is enabled only when a build option is specified. It
 is implemented in a modular library called `libnoctapi`, separated
 with the core `libnoct` library. The separation allows you to include
 only the core components or the entire API in your binary through

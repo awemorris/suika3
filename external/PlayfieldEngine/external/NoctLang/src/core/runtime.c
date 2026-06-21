@@ -51,8 +51,6 @@ static bool rt_expand_global(struct rt_env *env);
  * Initialization
  */
 
-void hal_log_info(const char *,...);
-
 /*
  * Create a virtual machine.
  */

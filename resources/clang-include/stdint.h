@@ -60,4 +60,6 @@ typedef unsigned long long uintmax_t;
 #define INTMAX_MAX  INT64_MAX
 #define UINTMAX_MAX UINT64_MAX
 
+#define SIZE_MAX    UINT64_MAX
+
 #endif
