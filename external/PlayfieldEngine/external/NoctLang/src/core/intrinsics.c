@@ -278,7 +278,7 @@ rt_intrin_Long_from(
 	{
 		/* If it is an int, widen it. */
 		int val_i;
-		if (!noct_get_int(env, &val, &val_i))
+		if (!noct_get_int(env, &val, (int32_t *)&val_i))
 			return false;
 		if (!noct_set_return_make_long(env, &ret, val_i))
 			return false;
@@ -315,7 +315,7 @@ rt_intrin_Long_from(
 		const char *val_s;
 		if (!noct_get_string(env, &val, &val_s))
 			return false;
-		if (!noct_set_return_make_long(env, &ret, atol(val_s)))
+		if (!noct_set_return_make_long(env, &ret, atoll(val_s)))
 			return false;
 		break;
 	}
@@ -357,7 +357,7 @@ rt_intrin_Float_from(
 	{
 		/* If it is an int, convert to float. */
 		int val_i;
-		if (!noct_get_int(env, &val, &val_i))
+		if (!noct_get_int(env, &val, (int32_t *)&val_i))
 			return false;
 		if (!noct_set_return_make_float(env, &ret, (float)val_i))
 			return false;
@@ -436,7 +436,7 @@ rt_intrin_Double_from(
 	{
 		/* If it is an int, convert to double. */
 		int val_i;
-		if (!noct_get_int(env, &val, &val_i))
+		if (!noct_get_int(env, &val, (int32_t *)&val_i))
 			return false;
 		if (!noct_set_return_make_double(env, &ret, (double)val_i))
 			return false;
@@ -516,7 +516,7 @@ rt_intrin_String_from(
 	{
 		/* If it is an int, convert to double. */
 		int val_i;
-		if (!noct_get_int(env, &val, &val_i))
+		if (!noct_get_int(env, &val, (int32_t *)&val_i))
 			return false;
 		snprintf(buf, sizeof(buf), "%d", val_i);
 		if (!noct_set_return_make_string(env, &ret, buf))
@@ -529,7 +529,8 @@ rt_intrin_String_from(
 		int64_t val_l;
 		if (!noct_get_long(env, &val, &val_l))
 			return false;
-		if (!noct_set_return_make_double(env, &ret, (double)val_l))
+		snprintf(buf, sizeof(buf), "%" PRId64, val_l);
+		if (!noct_set_return_make_string(env, &ret, buf))
 			return false;
 		break;
 	}
@@ -539,22 +540,25 @@ rt_intrin_String_from(
 		float val_f;
 		if (!noct_get_float(env, &val, &val_f))
 			return false;
-		if (!noct_set_return_make_double(env, &ret, (double)val_f))
+		snprintf(buf, sizeof(buf), "%.7g", val_f);
+		if (!noct_set_return_make_string(env, &ret, buf))
 			return false;
 		break;
 	}
 	case NOCT_VALUE_DOUBLE:
+	{
 		/* If it is a double, just set it as a return value. */
-		if (!noct_set_return(env, &val))
+		double val_lf;
+		if (!noct_get_double(env, &val, &val_lf))
+			return false;
+		snprintf(buf, sizeof(buf), "%.15g", val_lf);
+		if (!noct_set_return_make_string(env, &ret, buf))
 			return false;
 		break;
+	}
 	case NOCT_VALUE_STRING:
 	{
-		/* If it is a string, call atoi(). */
-		const char *val_s;
-		if (!noct_get_string(env, &val, &val_s))
-			return false;
-		if (!noct_set_return_make_double(env, &ret, atof(val_s)))
+		if (!noct_set_return(env, &val))
 			return false;
 		break;
 	}
@@ -638,7 +642,7 @@ rt_intrin_String_charAt(
 		uint32_t codepoint;
 
 		mblen = utf8_to_utf32(s, &codepoint);
-		if (mblen <= 0) {
+		if (mblen <= 0 || mblen > 4) {
 			/* UTF-8 error. */
 			return false;
 		}
@@ -686,6 +690,8 @@ rt_intrin_String_substring(
 	/* Get the argument "start". */
 	if (!noct_get_arg_check_int_long(env, 1, &start, &start_i))
 		return false;
+	if ((int64_t)start_i < 0)
+		start_i = 0;
 
 	/* Get the argument "len". */
 	if (!noct_get_arg_check_int_long(env, 2, &len, &len_i))
@@ -728,7 +734,8 @@ rt_intrin_String_substring(
 	}
 
 	/* Make a string. */
-	strncpy(tmp, str_s + copy_start, (size_t)copy_mblen);
+	if (copy_start != (size_t)-1)
+		strncpy(tmp, str_s + copy_start, (size_t)copy_mblen);
 	tmp[copy_mblen] = '\0';
 
 	/* Make a return string value. */
@@ -770,7 +777,7 @@ rt_intrin_String_indexOf(
 	len_str = strlen(str_s);
 	len_substr = strlen(substr_s);
 	result = -1;
-	if (len_str > len_substr) {
+	if (len_str >= len_substr) {
 		range_max = len_str - len_substr;
 		for (i = 0; i < range_max; i++) {
 			if (strncmp(str_s + i, substr_s, len_substr) == 0) {
@@ -898,12 +905,12 @@ rt_intrin_Array_make(
 	NoctEnv *env)
 {
 	struct rt_value arr, size;
-	int size_i;
+	size_t size_i;
 
 	noct_pin_local(env, 2, &arr, &size);
 
 	/* Retrieve the "size" argument from the first parameter (index 0). */
-	if (!noct_get_arg_check_int(env, 0, &size, &size_i))
+	if (!noct_get_arg_check_int_long(env, 0, &size, &size_i))
 		return false;
 
 	/* Initialize a new empty array object. */
@@ -911,7 +918,7 @@ rt_intrin_Array_make(
 		return false;
 
 	/* Allocate the requested capacity for the array. */
-	if (!noct_resize_array(env, &arr, (uint32_t)size_i))
+	if (!noct_resize_array(env, &arr, size_i))
 		return false;
 
 	/* Set the allocated array as the function's return value. */
@@ -1111,7 +1118,7 @@ rt_intrin_Dict_make(
 	if (!noct_set_return(env, &ret))
 		return false;
 
-	noct_pin_local(env, 1, &ret);
+	noct_unpin_local(env, 1, &ret);
 
 	return true;
 }
@@ -1280,7 +1287,7 @@ rt_intrin_Packed_int8(
 
 	noct_pin_local(env, 2, &v_size, &v_ret);
 
-	if (!noct_get_arg_check_int(env, 0, &v_size, (int *)&i_size))
+	if (!noct_get_arg_check_int(env, 0, &v_size, (int32_t *)&i_size))
 		return false;
 
 	if (i_size == 0) {
@@ -1346,7 +1353,11 @@ rt_intrin_Packed_int16(
 	if (!noct_get_size_t(env, &v_size, &i_size))
 		return false;
 	if (i_size == 0) {
-		noct_error(env, "Packed size is 0.");
+		noct_error(env, N_TR("Packed size is 0."));
+		return false;
+	}
+	if (i_size > SIZE_MAX / 2) {
+		noct_error(env, N_TR("Packed size is too large."));
 		return false;
 	}
 
@@ -1377,7 +1388,11 @@ rt_intrin_Packed_uint16(
 	if (!noct_get_size_t(env, &v_size, &i_size))
 		return false;
 	if (i_size == 0) {
-		noct_error(env, "Packed size is 0.");
+		noct_error(env, N_TR("Packed size is 0."));
+		return false;
+	}
+	if (i_size > SIZE_MAX / 2) {
+		noct_error(env, N_TR("Packed size is too large."));
 		return false;
 	}
 
@@ -1408,7 +1423,11 @@ rt_intrin_Packed_int32(
 	if (!noct_get_size_t(env, &v_size, &i_size))
 		return false;
 	if (i_size == 0) {
-		noct_error(env, "Packed size is 0.");
+		noct_error(env, N_TR("Packed size is 0."));
+		return false;
+	}
+	if (i_size > SIZE_MAX / 4) {
+		noct_error(env, N_TR("Packed size is too large."));
 		return false;
 	}
 
@@ -1439,7 +1458,11 @@ rt_intrin_Packed_uint32(
 	if (!noct_get_size_t(env, &v_size, &i_size))
 		return false;
 	if (i_size == 0) {
-		noct_error(env, "Packed size is 0.");
+		noct_error(env, N_TR("Packed size is 0."));
+		return false;
+	}
+	if (i_size > SIZE_MAX / 4) {
+		noct_error(env, N_TR("Packed size is too large."));
 		return false;
 	}
 
@@ -1501,7 +1524,11 @@ rt_intrin_Packed_uint64(
 	if (!noct_get_size_t(env, &v_size, &i_size))
 		return false;
 	if (i_size == 0) {
-		noct_error(env, "Packed size is 0.");
+		noct_error(env, N_TR("Packed size is 0."));
+		return false;
+	}
+	if (i_size > SIZE_MAX / 8) {
+		noct_error(env, N_TR("Packed size is too large."));
 		return false;
 	}
 
@@ -1532,7 +1559,11 @@ rt_intrin_Packed_float32(
 	if (!noct_get_size_t(env, &v_size, &i_size))
 		return false;
 	if (i_size == 0) {
-		noct_error(env, "Packed size is 0.");
+		noct_error(env, N_TR("Packed size is 0."));
+		return false;
+	}
+	if (i_size > SIZE_MAX / 4) {
+		noct_error(env, N_TR("Packed size is too large."));
 		return false;
 	}
 
@@ -1563,11 +1594,15 @@ rt_intrin_Packed_float64(
 	if (!noct_get_size_t(env, &v_size, &i_size))
 		return false;
 	if (i_size == 0) {
-		noct_error(env, "Packed size is 0.");
+		noct_error(env, N_TR("Packed size is 0."));
+		return false;
+	}
+	if (i_size > SIZE_MAX / 8) {
+		noct_error(env, N_TR("Packed size is too large."));
 		return false;
 	}
 
-	if (!noct_make_packed(env, &v_ret, NOCT_PACKED_FLOAT32, i_size * 8, i_size, NULL))
+	if (!noct_make_packed(env, &v_ret, NOCT_PACKED_FLOAT64, i_size * 8, i_size, NULL))
 		return false;
 	if (!noct_set_return(env, &v_ret))
 		return false;
@@ -1693,11 +1728,16 @@ rt_intrin_Math_abs(
 
 	switch (type) {
 	case NOCT_VALUE_INT:
-		if (!noct_get_int(env, &x, &ival))
+		if (!noct_get_int(env, &x, (int32_t *)&ival))
 			return false;
-		if (ival < 0)
+		if (ival == INT_MIN) {
+			if (!noct_set_return_make_long(env, &ret, (int64_t)INT_MAX + 1))
+				return false;
+			return true;
+		} else if (ival < 0) {
 			ival = -ival;
-		if (!noct_set_return_make_int(env, &ret, ival))
+		}
+		if (!noct_set_return_make_int(env, &ret, ival)) 
 			return false;
 		break;
 	case NOCT_VALUE_FLOAT:
@@ -1737,7 +1777,7 @@ rt_intrin_Math_sqrt(
 
 	switch (type) {
 	case NOCT_VALUE_INT:
-		if (!noct_get_int(env, &x, &ival))
+		if (!noct_get_int(env, &x, (int32_t *)&ival))
 			return false;
 		if (!noct_set_return_make_float(env, &ret, sqrtf((float)ival)))
 			return false;

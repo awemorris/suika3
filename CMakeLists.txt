@@ -14,6 +14,7 @@ option(SUIKA_TARGET_WINDOWS95        "Build for Windows 95/98/Me"               
 option(SUIKA_TARGET_MACOS            "Build for macOS (App)"                          OFF)
 option(SUIKA_TARGET_MACOS_CLI        "Build for macOS (CLI)"                          OFF)
 option(SUIKA_TARGET_MACOS_LIB        "Build for macOS (Library)"                      OFF)
+option(SUIKA_TARGET_MACOS7           "Build for MacOS classic"                        OFF)
 option(SUIKA_TARGET_LINUX            "Build for Linux (Wayland/X11 Dual)"             OFF)
 option(SUIKA_TARGET_LINUX_X11        "Build for Linux (X11, OpenGL)"                  OFF)
 option(SUIKA_TARGET_LINUX_WAYLAND    "Build for Linux (Wayland, OpenGL ES)"           OFF)
@@ -205,6 +206,7 @@ if(   SUIKA_TARGET_WINDOWS
    OR SUIKA_TARGET_MACOS
    OR SUIKA_TARGET_MACOS_CLI
    OR SUIKA_TARGET_MACOS_LIB
+   OR SUIKA_TARGET_MACOS7
    OR SUIKA_TARGET_LINUX
    OR SUIKA_TARGET_LINUX_X11
    OR SUIKA_TARGET_LINUX_WAYLAND
@@ -392,6 +394,8 @@ if(   NOT SUIKA_ENABLE_DIST
     set(PLAYFIELD_TARGET_MACOS_CLI ON)
   elseif(SUIKA_TARGET_MACOS_LIB)
     set(PLAYFIELD_TARGET_MACOS ON)
+  elseif(SUIKA_TARGET_MACOS7)
+    set(PLAYFIELD_TARGET_MACOS7 ON)
   elseif(SUIKA_TARGET_LINUX)
     set(PLAYFIELD_TARGET_LINUX ON)
   elseif(SUIKA_TARGET_LINUX_X11)
@@ -704,6 +708,11 @@ if(   SUIKA_TARGET_WINDOWS
   endif()
 endif()
 
+# Resources for MacOS 7
+if(SUIKA_TARGET_MACOS7)
+  set(SUIKA_RESOURCES "${CMAKE_CURRENT_SOURCE_DIR}/resources/macos7/res.r")
+endif()
+
 # Add the target
 if(   SUIKA_ENABLE_STATIC
    OR SUIKA_ENABLE_SHARED
@@ -830,6 +839,11 @@ if(SUIKA_TARGET_UNITY)
     HAL_TARGET_UNITY
     NOCT_TARGET_UNITY
   )
+endif()
+
+# MacOS 7
+if(SUIKA_TARGET_MACOS7)
+  target_compile_definitions(suika3 PRIVATE S3_TARGET_MACOS7)
 endif()
 
 # PC98
@@ -1167,6 +1181,24 @@ if(SUIKA_TARGET_MACOS)
     MACOSX_PACKAGE_LOCATION "Resources"
   )
   target_sources(suika3 PRIVATE ${APP_GAME_DATA})
+endif()
+
+# ---
+
+#
+# macOS Bundle Handling
+#
+
+if(SUIKA_TARGET_MACOS7)
+  # Make a MacBinaryII.
+  add_custom_command(TARGET suika3 POST_BUILD COMMAND python3 "${CMAKE_CURRENT_SOURCE_DIR}/resources/scripts/macbinary2.py")
+
+  # Make a disk image.
+  add_custom_command(TARGET suika3 POST_BUILD COMMAND dd if=/dev/zero of=suika3-macos7.dsk bs=1024 count=2880)
+  add_custom_command(TARGET suika3 POST_BUILD COMMAND hformat -l "Suika3" suika3-macos7.dsk)
+  add_custom_command(TARGET suika3 POST_BUILD COMMAND hmount suika3-macos7.dsk)
+  add_custom_command(TARGET suika3 POST_BUILD COMMAND hcopy suika3.bin :suika3)
+  add_custom_command(TARGET suika3 POST_BUILD COMMAND humount)
 endif()
 
 # ---

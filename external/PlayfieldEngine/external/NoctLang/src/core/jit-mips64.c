@@ -1764,7 +1764,7 @@ jit_visit_safepoint_op(
 {
         uint64_t f;
 
-        f = (uint64_t)ex_loaddot_helper;
+        f = (uint64_t)ex_safepoint_helper;
 
         /* if (!ex_safepoint_helper(env)) return false; */
         ASM {

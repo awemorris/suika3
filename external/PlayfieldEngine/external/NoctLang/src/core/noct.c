@@ -218,7 +218,7 @@ bool
 noct_make_int(
 	NoctEnv *env,
 	NoctValue *val,
-	int i)
+	int32_t i)
 {
 	UNUSED_PARAMETER(env);
 
@@ -733,11 +733,12 @@ noct_get_dict_size(
 
 NOCT_DLL
 bool
-noct_get_dict_key_by_index(
+noct_get_dict_by_index(
 	NoctEnv *env,
 	NoctValue *dict,
 	size_t index,
-	NoctValue *key)
+	NoctValue *key,
+	NoctValue *val)
 {
 	assert(env != NULL);
 	assert(dict != NULL);
@@ -750,32 +751,7 @@ noct_get_dict_key_by_index(
 	}
 
 	/* Load the key. */
-	if (!rt_get_dict_key_by_index(env, dict, index, key))
-		return false;
-
-	return true;
-}
-
-NOCT_DLL
-bool
-noct_get_dict_value_by_index(
-	NoctEnv *env,
-	NoctValue *dict,
-	size_t index,
-	NoctValue *val)
-{
-	assert(env != NULL);
-	assert(dict != NULL);
-	assert(val != NULL);
-	
-	/* Check the type. */
-	if (dict->type != NOCT_VALUE_DICT) {
-		rt_error(env, N_TR("Not a dictionary."));
-		return false;
-	}
-
-	/* Load the value. */
-	if (!rt_get_dict_value_by_index(env, dict, index, val))
+	if (!rt_get_dict_by_index(env, dict, index, key, val))
 		return false;
 
 	return true;

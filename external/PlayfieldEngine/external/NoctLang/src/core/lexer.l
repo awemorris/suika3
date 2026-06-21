@@ -39,45 +39,38 @@ extern YYLTYPE yylloc;
 			ast_yylloc.last_column = 0;
 		}
 [0-9]*\.[0-9]+lf {
-                        double v;
-			sscanf(yytext, "%lf", &v);
-                        ast_yylval.lfval = v;
+                        ast_yylval.lfval = atof(yytext);
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
 			ast_yylloc.last_column += yyleng;
 			return TOKEN_DOUBLE;
 		}
 [0-9]*\.[0-9]+f {
-                        double v;
-			sscanf(yytext, "%lf", &v);
-                        ast_yylval.fval = (float)v;
+                        ast_yylval.fval = (float)atof(yytext);
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
 			ast_yylloc.last_column += yyleng;
 			return TOKEN_FLOAT;
 		}
 [0-9]*\.[0-9]+	{
-                        double v;
-			sscanf(yytext, "%lf", &v);
-                        ast_yylval.fval = (float)v;
+                        ast_yylval.fval = (float)atof(yytext);
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
 			ast_yylloc.last_column += yyleng;
 			return TOKEN_FLOAT;
 		}
 [0-9]+[lL]      {
-			sscanf(yytext, "%" SCNd64, &ast_yylval.lval);
+			ast_yylval.lval = atoll(yytext);
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
 			ast_yylloc.last_column += yyleng;
 			return TOKEN_LONG;
 		}
 [0-9]*		{
-                        int64_t v;
-			sscanf(yytext, "%" SCNd64, &v);
+                        int64_t v = atoll(yytext);
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
-			ast_yylloc.last_column += yyleng;
+                        ast_yylloc.last_column += yyleng;
                         if (v > INT_MAX) {
                                 ast_yylval.lval = v;
                                 return TOKEN_LONG;
@@ -86,7 +79,7 @@ extern YYLTYPE yylloc;
  			return TOKEN_INT;
 		}
 0x[0-9a-fA-F]{1,16}l {
-			sscanf(yytext, "%" SCNx64, &ast_yylval.lval);
+                        ast_yylval.lval = atoll(yytext);
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
 			ast_yylloc.last_column += yyleng;

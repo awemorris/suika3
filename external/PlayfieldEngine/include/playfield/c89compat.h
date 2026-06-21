@@ -287,6 +287,7 @@ extern "C" {
 /* Error: No target detected. */
 #if !defined(PF_TARGET_WINDOWS) &&              \
     !defined(PF_TARGET_MACOS) &&                \
+    !defined(PF_TARGET_MACOS7) &&                \
     !defined(PF_TARGET_LINUX) &&                \
     !defined(PF_TARGET_FREEBSD) &&              \
     !defined(PF_TARGET_NETBSD) &&               \

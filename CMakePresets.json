@@ -1005,14 +1005,26 @@
             }
         },
         {
-            "name":           "mac-68k",
-            "displayName":    "MacOS Classic 68k",
+            "name":           "macos7-68k",
+            "displayName":    "MacOS 7 68k",
             "generator":      "Ninja",
-            "binaryDir":      "${sourceDir}/build-pcat",
+            "binaryDir":      "${sourceDir}/build-macos7-68k",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/retro68-m68k.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":    "Release",
-                "SUIKA_TARGET_MACOS9": "ON",
+                "SUIKA_TARGET_MACOS7": "ON",
+                "SUIKA_ENABLE_JIT":    "ON"
+	    }
+        },
+        {
+            "name":           "macos7-ppc",
+            "displayName":    "MacOS 7 PowerPC",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-macos7-ppc",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/retro68-ppc.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":    "Release",
+                "SUIKA_TARGET_MACOS7": "ON",
                 "SUIKA_ENABLE_JIT":    "ON"
 	    }
         },
@@ -1270,6 +1282,14 @@
         {
             "name": "haiku",
             "configurePreset": "haiku"
+        },
+        {
+            "name": "macos7-68k",
+            "configurePreset": "macos7-68k"
+        },
+        {
+            "name": "macos7-ppc",
+            "configurePreset": "macos7-ppc"
         },
         {
             "name": "pc98",

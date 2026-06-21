@@ -6,7 +6,7 @@
     "configurePresets": [
         {
             "name":           "static",
-            "displayName":    "Default Config",
+            "displayName":    "static build",
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-static",
             "cacheVariables": {
@@ -26,7 +26,7 @@
         },
         {
             "name":           "shared",
-            "displayName":    "Default Config",
+            "displayName":    "shared build",
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-shared",
             "cacheVariables": {
@@ -47,7 +47,7 @@
         },
         {
             "name":           "debug",
-            "displayName":    "Default Config",
+            "displayName":    "debug build",
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-debug",
             "cacheVariables": {
@@ -63,6 +63,27 @@
                 "NOCT_ENABLE_ELBACKEND":    "ON",
                 "NOCT_ENABLE_SCMBACKEND":   "ON",
                 "NOCT_ENABLE_REPL":         "ON"
+            }
+        },
+        {
+            "name":           "mt-debug",
+            "displayName":    "multithread debug build",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-mt-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":         "Debug",
+                "NOCT_ENABLE_STATIC":       "ON",
+                "NOCT_ENABLE_CLI":          "ON",
+                "NOCT_ENABLE_JIT":          "ON",
+                "NOCT_ENABLE_I18N":         "ON",
+                "NOCT_ENABLE_API":          "ON",
+                "NOCT_ENABLE_INSTALL":      "ON",
+                "NOCT_ENABLE_BCBACKEND":    "ON",
+                "NOCT_ENABLE_CBACKEND":     "ON",
+                "NOCT_ENABLE_ELBACKEND":    "ON",
+                "NOCT_ENABLE_SCMBACKEND":   "ON",
+                "NOCT_ENABLE_REPL":         "ON",
+                "NOCT_ENABLE_MULTITHREAD":  "ON"
             }
         },
         {
@@ -655,6 +676,10 @@
         {
             "name":            "debug",
             "configurePreset": "debug"
+        },
+        {
+            "name":            "mt-debug",
+            "configurePreset": "mt-debug"
         },
         {
             "name": "windows-vs2026-x86",

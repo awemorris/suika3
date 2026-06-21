@@ -960,7 +960,7 @@ static bool
 elback_visit_array_expr(
 	struct hir_expr *expr)
 {
-	uint32_t elem_count, i;
+	size_t elem_count, i;
 
 	assert(expr != NULL);
 	assert(expr->type == HIR_EXPR_ARRAY);
@@ -989,7 +989,7 @@ static bool
 elback_visit_dict_expr(
 	struct hir_expr *expr)
 {
-	uint32_t kv_count, i;
+	size_t kv_count, i;
 
 	assert(expr != NULL);
 	assert(expr->type == HIR_EXPR_DICT);
@@ -1027,7 +1027,7 @@ elback_visit_new_expr(
 
 	/* Put the elements. */
 	if (expr->val.new_.init != NULL) {
-		uint32_t i, kv_count = expr->val.new_.init->val.dict.kv_count;
+		size_t i, kv_count = expr->val.new_.init->val.dict.kv_count;
 		for (i = 0; i < kv_count; i++) {
 			PUT1("(%s . ", expr->val.new_.init->val.dict.key[i]);
 

@@ -291,10 +291,14 @@ cfunc_File_writeForEachLine(
 	}
 
 	for (i = 0; i < line_count; i++) {
-		if (!noct_get_array_elem(env, &lines, i, &line))
+		if (!noct_get_array_elem(env, &lines, i, &line)) {
+			fclose(fp);
 			return false;
-		if (!noct_get_string(env, &line, &data))
+		}
+		if (!noct_get_string(env, &line, &data)) {
+			fclose(fp);
 			return false;
+		}
 		fprintf(fp, "%s\n", data);
 	}
 	

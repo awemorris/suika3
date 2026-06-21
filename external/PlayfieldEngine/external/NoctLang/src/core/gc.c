@@ -171,6 +171,12 @@ rt_gc_alloc_string(
 	char *s;
 	int retry;
 
+	/* Check for overflow. */
+	if (len > SIZE_MAX - sizeof(struct rt_string)) {
+		rt_out_of_memory(env);
+		return NULL;
+	}
+
 	/*
 	 * [Large Object Promotion]
 	 *  - If the string is large, allocate in the tenure region.
@@ -229,6 +235,12 @@ rt_gc_alloc_string_graduate(
 	struct rt_string *rts;
 	char *s;
 
+	/* Check for overflow. */
+	if (len > SIZE_MAX - sizeof(struct rt_string)) {
+		rt_out_of_memory(env);
+		return NULL;
+	}
+
 	/*
 	 * This function is only called from the young GC,
 	 * and thus, we don't use young GC for a retry here.
@@ -281,6 +293,12 @@ rt_gc_alloc_string_tenure(
 	char *s;
 	int retry;
 
+	/* Check for overflow. */
+	if (len > SIZE_MAX - sizeof(struct rt_string)) {
+		rt_out_of_memory(env);
+		return NULL;
+	}
+
 	if (sizeof(struct rt_string) + len >= env->vm->config.gc_tenure_size) {
 		rt_out_of_memory(env);
 		return NULL;
@@ -295,7 +313,7 @@ rt_gc_alloc_string_tenure(
 			if (retry == 0) {
 				rt_gc_old_gc(env);
 				continue;
-			} if (retry == 1) {
+			} else if (retry == 1) {
 				rt_gc_compact_gc(env);
 				continue;
 			} else {
@@ -345,6 +363,16 @@ rt_gc_alloc_array(
 	assert(env != NULL);
 	assert(size > 0);
 
+	/* Check for overflow. */
+	if (size >= SIZE_MAX / sizeof(struct rt_value)) {
+		rt_out_of_memory(env);
+		return NULL;
+	}
+	if (size > (SIZE_MAX - sizeof(struct rt_array)) / sizeof(struct rt_value)) {
+		rt_out_of_memory(env);
+		return NULL;
+	}
+
 	/*
 	 * [Large Object Promotion]
 	 *  - If the array is large, allocate in the tenure region.
@@ -384,6 +412,7 @@ rt_gc_alloc_array(
 #if defined(NOCT_USE_MULTITHREAD)
 		arr->shared = 0;
 		arr->write_lock = 0;
+		arr->creator = env;
 #endif
 
 		/* Succeeded. */
@@ -406,6 +435,16 @@ rt_gc_alloc_array_graduate(
 
 	assert(env != NULL);
 	assert(size > 0);
+
+	/* Check for overflow. */
+	if (size >= SIZE_MAX / sizeof(struct rt_value)) {
+		rt_out_of_memory(env);
+		return NULL;
+	}
+	if (size > (SIZE_MAX - sizeof(struct rt_array)) / sizeof(struct rt_value)) {
+		rt_out_of_memory(env);
+		return NULL;
+	}
 
 	/*
 	 * This function is only called from the young GC,
@@ -435,6 +474,7 @@ rt_gc_alloc_array_graduate(
 #if defined(NOCT_USE_MULTITHREAD)
 		arr->shared = 0;
 		arr->write_lock = 0;
+		arr->creator = env;
 #endif
 
 		/* Succeeded. (graduate) */
@@ -466,6 +506,16 @@ rt_gc_alloc_array_tenure(
 	assert(env != NULL);
 	assert(size > 0);
 
+	/* Check for overflow. */
+	if (size >= SIZE_MAX / sizeof(struct rt_value)) {
+		rt_out_of_memory(env);
+		return NULL;
+	}
+	if (size > (SIZE_MAX - sizeof(struct rt_array)) / sizeof(struct rt_value)) {
+		rt_out_of_memory(env);
+		return NULL;
+	}
+
 	/* Allocate in the tenure region. */
 	for (retry = 0; retry <= 2; retry++) {
 		/* Allocate a rt_array buffer. */
@@ -475,7 +525,7 @@ rt_gc_alloc_array_tenure(
 			if (retry == 0) {
 				rt_gc_old_gc(env);
 				continue;
-			} if (retry == 1) {
+			} else if (retry == 1) {
 				rt_gc_compact_gc(env);
 				continue;
 			} else {
@@ -500,6 +550,7 @@ rt_gc_alloc_array_tenure(
 #if defined(NOCT_USE_MULTITHREAD)
 		arr->shared = 0;
 		arr->write_lock = 0;
+		arr->creator = env;
 #endif
 
 		/* Succeeded. */
@@ -527,20 +578,27 @@ rt_gc_alloc_dict(
 	assert(env != NULL);
 	assert(size > 0);
 
+	/* Check for overflow. */
+	if (size >= SIZE_MAX / 2 / sizeof(struct rt_value)) {
+		rt_out_of_memory(env);
+		return NULL;
+	}
+	if (size > (SIZE_MAX - sizeof(struct rt_dict)) / 2 / sizeof(struct rt_value)) {
+		rt_out_of_memory(env);
+		return NULL;
+	}
+
 	/*
 	 * [Large Object Promotion]
 	 *  - If the array is large, allocate in the tenure region.
 	 */
-	if (size * sizeof(char *) + size * sizeof(struct rt_value *) >= env->vm->config.gc_lop_threshold)
+	if (2 * size * sizeof(struct rt_value) >= env->vm->config.gc_lop_threshold)
 		return rt_gc_alloc_dict_tenure(env, size);
 
 	/* Allocate in the nursery region. */
 	for (retry = 0; retry <= 1; retry++) {
 		/* Allocate a rt_dict buffer. */
-		dict = nursery_alloc(env,
-				     sizeof(struct rt_dict) +
-				     size * sizeof(struct rt_value) +
-				     size * sizeof(struct rt_value));
+		dict = nursery_alloc(env, sizeof(struct rt_dict) + 2 * size * sizeof(struct rt_value));
 		if (dict == NULL) {
 			/* Retry. */
 			if (retry == 0) {
@@ -574,6 +632,7 @@ rt_gc_alloc_dict(
 #if defined(NOCT_USE_MULTITHREAD)
 		dict->shared = 0;
 		dict->write_lock = 0;
+		dict->creator = env;
 #endif
 
 		/* Succeeded. */
@@ -598,6 +657,16 @@ rt_gc_alloc_dict_graduate(
 	assert(env != NULL);
 	assert(size > 0);
 
+	/* Check for overflow. */
+	if (size >= SIZE_MAX / 2 / sizeof(struct rt_value)) {
+		rt_out_of_memory(env);
+		return NULL;
+	}
+	if (size > (SIZE_MAX - sizeof(struct rt_dict)) / 2 / sizeof(struct rt_value)) {
+		rt_out_of_memory(env);
+		return NULL;
+	}
+
 	/*
 	 * This function is only called from the young GC,
 	 * and thus, we don't use young GC for a retry here.
@@ -606,10 +675,7 @@ rt_gc_alloc_dict_graduate(
 	/* Try allocating in the graduate region. */
 	do {
 		/* Allocate a rt_dict buffer. */
-		dict = graduate_alloc(env,
-				      sizeof(struct rt_dict) +
-				      size * sizeof(struct rt_value) +
-				      size * sizeof(struct rt_value));
+		dict = graduate_alloc(env, sizeof(struct rt_dict) + 2 * size * sizeof(struct rt_value));
 		if (dict == NULL)
 			break;
 
@@ -635,6 +701,7 @@ rt_gc_alloc_dict_graduate(
 #if defined(NOCT_USE_MULTITHREAD)
 		dict->shared = 0;
 		dict->write_lock = 0;
+		dict->creator = env;
 #endif
 
 		/* Succeeded. (graduate) */
@@ -667,19 +734,26 @@ rt_gc_alloc_dict_tenure(
 	assert(env != NULL);
 	assert(size > 0);
 
+	/* Check for overflow. */
+	if (size >= SIZE_MAX / 2 / sizeof(struct rt_value)) {
+		rt_out_of_memory(env);
+		return NULL;
+	}
+	if (size > (SIZE_MAX - sizeof(struct rt_dict)) / 2 / sizeof(struct rt_value)) {
+		rt_out_of_memory(env);
+		return NULL;
+	}
+
 	/* Allocate in the tenure region. */
 	for (retry = 0; retry <= 2; retry++) {
 		/* Allocate the rt_dict buffer. */
-		dict = rt_gc_tenure_alloc(env,
-					  sizeof(struct rt_dict) +
-					  size * sizeof(struct rt_value) +
-					  size * sizeof(struct rt_value));
+		dict = rt_gc_tenure_alloc(env, sizeof(struct rt_dict) + 2 * size * sizeof(struct rt_value));
 		if (dict == NULL) {
 			/* Retry. */
 			if (retry == 0) {
 				rt_gc_old_gc(env);
 				continue;
-			} if (retry == 1) {
+			} else if (retry == 1) {
 				rt_gc_compact_gc(env);
 				continue;
 			} else {
@@ -710,6 +784,7 @@ rt_gc_alloc_dict_tenure(
 #if defined(NOCT_USE_MULTITHREAD)
 		dict->shared = 0;
 		dict->write_lock = 0;
+		dict->creator = env;
 #endif
 
 		/* Succeeded. */
@@ -886,7 +961,7 @@ rt_gc_alloc_packed_tenure(
 			if (retry == 0) {
 				rt_gc_old_gc(env);
 				continue;
-			} if (retry == 1) {
+			} else if (retry == 1) {
 				rt_gc_compact_gc(env);
 				continue;
 			} else {

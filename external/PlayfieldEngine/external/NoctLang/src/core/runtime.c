@@ -20,6 +20,10 @@
 #include "gc.h"
 #include "objectmodel.h"
 
+#if defined(NOCT_USE_MULTITHREAD)
+#include "atomic.h"
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -46,6 +50,8 @@ static bool rt_expand_global(struct rt_env *env);
 /*
  * Initialization
  */
+
+void hal_log_info(const char *,...);
 
 /*
  * Create a virtual machine.
@@ -216,9 +222,6 @@ rt_create_thread_env(
 	env->frame = &env->frame_alloc[0];
 	env->frame->tmpvar = &env->frame->tmpvar_alloc[0];
 	env->frame->tmpvar_size = RT_TMPVAR_MAX;
-
-	/* Initialize for GC. */
-	rt_gc_init_env(env);
 
 	/* Succeeded. */
 	*new_env = env;
@@ -561,7 +564,7 @@ rt_read_bytecode_line(
 	static char line[1024];
 	uint32_t i;
 
-	for (i = 0; i < sizeof(line); i++) {
+	for (i = 0; i < sizeof(line) - 1; i++) {
 		if (*pos >= size)
 			return NULL;
 
@@ -572,6 +575,7 @@ rt_read_bytecode_line(
 			return line;
 		}
 	}
+	line[i] = '\0'; // for secuity reason
 	return NULL;
 }
 
@@ -1110,35 +1114,15 @@ rt_check_dict_key_cstr(
  * Get a dictionary key by index.
  */
 bool
-rt_get_dict_key_by_index(
+rt_get_dict_by_index(
 	struct rt_env *env,
 	struct rt_value *dict,
 	size_t index,
-	struct rt_value *key)
-{
-	struct rt_value val;
-
-	/* Delegate to the object model implementation. */
-	if (!om_read_dict_index(env, dict, index, key, &val))
-		return false;
-
-	return true;
-}
-
-/*
- * Get a dictionary value by index.
- */
-bool
-rt_get_dict_value_by_index(
-	struct rt_env *env,
-	struct rt_value *dict,
-	size_t index,
+	struct rt_value *key,
 	struct rt_value *val)
 {
-	struct rt_value key;
-
 	/* Delegate to the object model implementation. */
-	if (!om_read_dict_index(env, dict, index, &key, val))
+	if (!om_read_dict_index(env, dict, index, key, val))
 		return false;
 
 	return true;
@@ -1513,7 +1497,7 @@ rt_get_packed_elem(
 	assert(val != NULL);
 
 	if (index >= packed->val.packed->elem_size) {
-		rt_error(env, N_TR("Array index %d is out-of-range."), index);
+		rt_error(env, N_TR("Array index %ld is out-of-range."), index);
 		return false;
 	}
 
@@ -1582,7 +1566,7 @@ rt_set_packed_elem(
 	assert(val != NULL);
 
 	if (index >= packed->val.packed->elem_size) {
-		rt_error(env, N_TR("Array index %d is out-of-range."), index);
+		rt_error(env, N_TR("Array index %ld is out-of-range."), index);
 		return false;
 	}
 
@@ -1861,14 +1845,14 @@ rt_make_packed_copy(
 
 #define ACQUIRE_GLOBAL()									\
 	while (1) {										\
-		int old = atomic_fetch_add_acquire(&env->vm->global_var_counter, 1);		\
+		int old = atomic_fetch_add_acquire_int(&env->vm->global_var_counter, 1);	\
 		if (old == 0)									\
 			break;									\
-		atomic_fetch_sub_release(&env->vm->global_var_counter, 1);			\
+		atomic_fetch_sub_release_int(&env->vm->global_var_counter, 1);			\
 	}
 
 #define RELEASE_GLOBAL()									\
-	atomic_fetch_sub_release(&env->vm->global_var_counter, 1);
+	atomic_fetch_sub_release_int(&env->vm->global_var_counter, 1);
 
 #endif
 

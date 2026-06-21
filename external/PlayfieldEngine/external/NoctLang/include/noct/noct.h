@@ -574,23 +574,11 @@ noct_get_dict_size(
  */
 NOCT_DLL
 bool
-noct_get_dict_key_by_index(
+noct_get_dict_by_index(
 	NoctEnv *env,
 	NoctValue *dict,
 	size_t index,
-	NoctValue *key);
-
-/*
- * Retrieves a dictionary value by index.
- *
- * This function can be used to traverse dictionary entries in order.
- */
-NOCT_DLL
-bool
-noct_get_dict_value_by_index(
-	NoctEnv *env,
-	NoctValue *dict,
-	size_t index,
+	NoctValue *key,
 	NoctValue *val);
 
 /*

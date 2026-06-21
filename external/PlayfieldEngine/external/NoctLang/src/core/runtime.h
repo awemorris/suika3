@@ -558,18 +558,11 @@ rt_check_dict_key_cstr(
 
 /* Get a dictionary key by index. */
 bool
-rt_get_dict_key_by_index(
+rt_get_dict_by_index(
 	struct rt_env *env,
 	struct rt_value *dict,
 	size_t index,
-	struct rt_value *key);
-
-/* Get a dictionary value by index. */
-bool
-rt_get_dict_value_by_index(
-	struct rt_env *env,
-	struct rt_value *dict,
-	size_t index,
+	struct rt_value *key,
 	struct rt_value *val);
 
 /* Retrieves the value by a key in a dictionary. */

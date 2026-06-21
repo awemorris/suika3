@@ -1014,10 +1014,10 @@ static void process_input(void)
 	need_update_history_buttons = false;
 
 	/* Process scrolling by mouse wheel, up/down keys, or swipe. */
-	if (s3_is_down_key_pressed()) {
+	if (s3_is_down_key_pressed() || s3_get_mouse_wheel() < 0) {
 		process_history_scroll_down();
 		update_runtime_props(false);
-	} else if (s3_is_up_key_pressed()) {
+	} else if (s3_is_up_key_pressed() || s3_get_mouse_wheel() > 0) {
 		process_history_scroll_up();
 		update_runtime_props(false);
 	}

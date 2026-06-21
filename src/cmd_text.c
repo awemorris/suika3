@@ -645,6 +645,9 @@ init_flags_and_vars(void)
 			 */
 			gui_sys_flag = false;
 		}
+
+		/* Ignore inputs at the first frame after a GUI. */
+		s3_clear_input_state();
 	} else {
 		gui_sys_flag = false;
 	}
@@ -1397,7 +1400,7 @@ frame_auto_mode(void)
 {
 	uint64_t lap;
 
-	/* If not in auto mode, do nothing */
+	/* If not in auto mode, do nothing. */
 	if (!s3_is_auto_mode())
 		return false;
 
@@ -1596,9 +1599,30 @@ frame_sysbtn(void)
 	if (s3_is_skip_mode())
 		return false;
 
+	/* History. */
+	if (s3_is_h_key_pressed() || s3_get_mouse_wheel() > 0) {
+		need_history_mode = true;
+		s3_clear_input_state();
+		return true;
+	}
+
+	/* Save. */
+	if (s3_is_s_key_pressed()) {
+		need_save_mode = true;
+		s3_clear_input_state();
+		return true;
+	}
+
+	/* Load. */
+	if (s3_is_s_key_pressed()) {
+		need_save_mode = true;
+		s3_clear_input_state();
+		return true;
+	}
+
 	/* Determine whether to enter the system menu */
 	enter_sysmenu = false;
-	if (s3_is_mouse_right_clicked() || s3_is_escape_key_pressed()) {
+	if (s3_is_escape_key_pressed()) {
 		/* If right-clicked or escape key is pressed */
 		enter_sysmenu = true;
 		s3_clear_input_state();

@@ -149,14 +149,12 @@ static bool serialize_printer(
 		strncat(buf, "{", size);
 		for (i = 0; i < items; i++) {
 			NoctValue k, v;
-			if (!noct_get_dict_key_by_index(env, value, i, &k))
+			if (!noct_get_dict_by_index(env, value, i, &k, &v))
 				return false;
 			if (!noct_get_string(env, &k, &sval))
 				return false;
 			strncat(buf, sval, size);
 			strncat(buf, ": ", size);
-			if (!noct_get_dict_value_by_index(env, value, i, &v))
-				return false;
 			serialize_printer(env, buf, size, &v, true);
 			if (i != items - 1)
 				strncat(buf, ", ", size);

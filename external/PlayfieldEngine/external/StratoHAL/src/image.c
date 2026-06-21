@@ -149,7 +149,10 @@ hal_create_image(
 		free(*img);
 		return false;
 	}
-#elif !defined(HAL_TARGET_UNITY) && !defined(HAL_TARGET_PC98) && !defined(HAL_TARGET_PCAT)
+#elif !defined(HAL_TARGET_UNITY) && \
+      !defined(HAL_TARGET_PC98) &&  \
+      !defined(HAL_TARGET_PCAT) &&  \
+      !defined(HAL_TARGET_MACOS7)
 	if (posix_memalign((void **)&pixels, 64, (size_t)w * (size_t)h * sizeof(hal_pixel_t)) != 0) {
 		hal_log_out_of_memory();
 		free(*img);
@@ -185,7 +188,6 @@ hal_create_image_with_pixels(
 	struct hal_image **img)
 {
 	assert(w > 0 && h > 0);
-	assert(pixels != NULL);
 	assert(img != NULL);
 
 	/* Alloc a struct buffer. */

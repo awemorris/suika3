@@ -289,6 +289,7 @@ extern "C" {
 /* Error: No target detected. */
 #if !defined(HAL_TARGET_WINDOWS) &&              \
     !defined(HAL_TARGET_MACOS) &&                \
+    !defined(HAL_TARGET_MACOS7) &&                \
     !defined(HAL_TARGET_LINUX) &&                \
     !defined(HAL_TARGET_FREEBSD) &&              \
     !defined(HAL_TARGET_NETBSD) &&               \

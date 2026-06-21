@@ -10,6 +10,7 @@ option(PLAYFIELD_TARGET_WINDOWS          "Build for Windows XP or later"        
 option(PLAYFIELD_TARGET_WINDOWS95        "Build for Windows 95/98/Me/2000"            OFF)
 option(PLAYFIELD_TARGET_MACOS            "Build for macOS (app)"                      OFF)
 option(PLAYFIELD_TARGET_MACOS_CLI        "Build for macOS (CLI)"                      OFF)
+option(PLAYFIELD_TARGET_MACOS7           "Build for MacOS 7"                          OFF)
 option(PLAYFIELD_TARGET_LINUX            "Build for Linux (Wayland/X11 Dual)"         OFF)
 option(PLAYFIELD_TARGET_LINUX_X11        "Build for Linux (X11, OpenGL)"              OFF)
 option(PLAYFIELD_TARGET_LINUX_WAYLAND    "Build for Linux (Wayland, OpenGL)"          OFF)
@@ -71,6 +72,7 @@ if(   PLAYFIELD_TARGET_WINDOWS
    OR PLAYFIELD_TARGET_WINDOWS95
    OR PLAYFIELD_TARGET_MACOS
    OR PLAYFIELD_TARGET_MACOS_CLI
+   OR PLAYFIELD_TARGET_MACOS7
    OR PLAYFIELD_TARGET_LINUX
    OR PLAYFIELD_TARGET_LINUX_WAYLAND
    OR PLAYFIELD_TARGET_LINUX_DRI
@@ -235,6 +237,11 @@ if(NOT PLAYFIELD_ENABLE_DIST)
     set(NOCT_TARGET_UNITY ON)
   endif()
 
+  # MacOS 7
+  if(PLAYFIELD_TARGET_MACOS7)
+    set(NOCT_TARGET_MACOS7 ON)
+  endif()
+
   # DOS
   if(PLAYFIELD_TARGET_PC98 OR PLAYFIELD_TARGET_PCAT)
     set(NOCT_TARGET_DOS4G ON)
@@ -261,6 +268,8 @@ if(NOT PLAYFIELD_ENABLE_DIST)
     set(STRATO_TARGET_MACOS ON)
   elseif(PLAYFIELD_TARGET_MACOS_CLI)
     set(STRATO_TARGET_MACOS ON)
+  elseif(PLAYFIELD_TARGET_MACOS7)
+    set(STRATO_TARGET_MACOS7 ON)
   elseif(PLAYFIELD_TARGET_LINUX)
     set(STRATO_TARGET_LINUX ON)
   elseif(PLAYFIELD_TARGET_LINUX_X11)
@@ -603,6 +612,11 @@ endif()
 # Unity
 if(PLAYFIELD_TARGET_UNITY)
   target_compile_definitions(playfield PUBLIC PF_TARGET_UNITY)
+endif()
+
+# MacOS 7
+if(PLAYFIELD_TARGET_MACOS7)
+  target_compile_definitions(playfield PUBLIC PF_TARGET_MACOS7)
 endif()
 
 # PC98

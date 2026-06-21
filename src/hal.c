@@ -270,7 +270,7 @@ s3_get_vm_int(
 
 	if (!noct_get_global(env, "Suika", &dict))
 			return false;
-	if (!noct_get_dict_elem_check_int(env, &dict, name, &value,val))
+	if (!noct_get_dict_elem_check_int(env, &dict, name, &value, (int32_t *)val))
 		return false;
 
 	return true;

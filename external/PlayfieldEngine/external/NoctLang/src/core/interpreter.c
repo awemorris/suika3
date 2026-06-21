@@ -1157,7 +1157,7 @@ rt_visit_op(
                 break;
         case OP_SAFEPOINT:
 #if defined(NOCT_USE_MULTITHREAD)
-                if (!rt_visit_safepoint(env, func, pc))
+                if (!rt_visit_safepoint_op(env, func, pc))
                         return false;
 #endif
                 break;

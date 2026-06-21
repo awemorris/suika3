@@ -39,11 +39,11 @@
 /*
  * Region Size Defaults
  */
-#if defined(NOCT_TARGET_DOS4G)
+#if defined(NOCT_MEMORY_SMALL)
 #define RT_GC_DEFAULT_NURSERY_SIZE		(256 * 1024)
 #define RT_GC_DEFAULT_GRADUATE_SIZE		(64 * 1024)
 #define RT_GC_DEFAULT_TENURE_SIZE		(1 * 1024 * 1024)
-#elif defined(NOCT_TARGET_WASM)
+#elif defined(NOCT_TARGTE_WASM)
 #define RT_GC_DEFAULT_NURSERY_SIZE		(2 * 1024 * 1024)
 #define RT_GC_DEFAULT_GRADUATE_SIZE		(256 * 1024)
 #define RT_GC_DEFAULT_TENURE_SIZE		(64 * 1024 * 1024)

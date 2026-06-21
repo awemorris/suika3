@@ -206,7 +206,7 @@ lir_build(
 
 	/* Make an lir_func. */
 	*lir_func = noct_malloc(sizeof(struct lir_func));
-	if (lir_func == NULL) {
+	if (*lir_func == NULL) {
 		lir_out_of_memory();
 		return false;
 	}
@@ -235,11 +235,11 @@ lir_build(
 			lir_out_of_memory();
 			return false;
 		}
+		memcpy((*lir_func)->bytecode, bytecode, (size_t)bytecode_top);
 	} else {
 		(*lir_func)->bytecode = NULL;
 	}
 	(*lir_func)->bytecode_size = bytecode_top;
-	memcpy((*lir_func)->bytecode, bytecode, (size_t)bytecode_top);
 	free(bytecode);
 	bytecode = NULL;
 
@@ -1461,7 +1461,7 @@ lir_visit_array_expr(
 	struct hir_expr *expr,
 	struct hir_block *block)
 {
-	uint32_t elem_count, i;
+	size_t elem_count, i;
 	int elem_tmpvar;
 	int index_tmpvar;
 
@@ -1516,7 +1516,7 @@ lir_visit_dict_expr(
 	struct hir_expr *expr,
 	struct hir_block *block)
 {
-	uint32_t kv_count, i;
+	size_t kv_count, i;
 	int key_tmpvar;
 	int value_tmpvar;
 	int index_tmpvar;

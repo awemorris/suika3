@@ -223,11 +223,14 @@
 
 [callmacro name="nvl-mode"]
 
+[ch center="images/ch/aki/aki-normal.png"]
+
 [text action="clear"]
 [text text=
   """
-  Hello, this is NVL mode test.
-  NVL mode has a fullscreen-styled message box.
+  Hello, I'm Aki.
+  I'll explain the novel mode, so called NVL.
+  NVL has a fullscreen-styled message box.
   By default, each text tag will do a line feed.
   """]
 [text action="inline" text=" To continue a line, use inline action."]
@@ -242,7 +245,6 @@
   “without pictures or conversations?”
   """]
 
-
 [text action="clear"]
 [text text=
   """
@@ -253,14 +255,7 @@
 [callmacro name="adv-mode"]
 [text text="You can go back to ADV mode."]
 
-#
-# Wait for a click
-#
-
-[click
-  hidemsgbox="true"
-  hidenamebox="true"
-]
+[text name="Aki" text="See you!"]
 
 # Finish. The app will be closed.
 

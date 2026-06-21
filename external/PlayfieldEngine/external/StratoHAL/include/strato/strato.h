@@ -1675,6 +1675,25 @@ hal_bootstrap(
 	}
 #endif
 
+#if defined(HAL_TARGET_MACOS7)
+#define HAL_DEFINE_MAIN()				\
+	int main(void)					\
+	{						\
+		int hal_main(int argc, char *argv[]);	\
+		hal_bootstrap_ptr = hal_bootstrap;	\
+		return hal_main(argc, argv);		\
+	}
+#define HAL_DEFINE_MAIN_CHAIN(chain_ptr1, chain1, chain_ptr2, chain2)	\
+	int main(void)							\
+	{								\
+		int hal_main(int argc, char *argv[]);			\
+		hal_bootstrap_ptr = hal_bootstrap;			\
+		chain_ptr1 = chain1;					\
+		chain_ptr2 = chain2;					\
+		return hal_main(1, NULL);				\
+	}
+#endif
+
 #if defined(HAL_TARGET_WINDOWS) && defined(_UNICODE)
 #include <windows.h>
 #define HAL_DEFINE_MAIN()					\

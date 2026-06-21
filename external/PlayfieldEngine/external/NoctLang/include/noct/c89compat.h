@@ -290,6 +290,7 @@ extern "C" {
 /* Error: No target detected. */
 #if !defined(NOCT_TARGET_WINDOWS) &&              \
     !defined(NOCT_TARGET_MACOS) &&                \
+    !defined(NOCT_TARGET_MACOS7) &&               \
     !defined(NOCT_TARGET_LINUX) &&                \
     !defined(NOCT_TARGET_FREEBSD) &&              \
     !defined(NOCT_TARGET_NETBSD) &&               \

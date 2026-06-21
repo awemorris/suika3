@@ -101,7 +101,7 @@ om_read_array(
 	/* Check for the array size. */
 	if (index >= arr->size) {
 		/* Index is out-of-range. */
-		rt_error(env, N_TR("Array index %d is out-of-range."), index);
+		rt_error(env, N_TR("Array index %ld is out-of-range."), index);
 		return false;
 	}
 
@@ -134,8 +134,13 @@ om_write_array(
 	if (index >= arr->alloc_size) {
 		/* Array expansion is required. Determine the new size. */
 		new_size = arr->alloc_size * 2;
-		while (new_size < index)
+		while (new_size < index) {
+			if (new_size > SIZE_MAX / 2) {
+				rt_out_of_memory(env);
+				return false;
+			}
 			new_size *= 2;
+		}
 
 		/* Try expanding. */
 		if (!expand_array(env, arr_val, arr, new_size)) {
@@ -280,7 +285,7 @@ om_copy_array(
 		s = s->newer;
 
 	/* Copy the dictionary with write-barrier. */
-	for (i = 0; i < size; i++) {
+	for (i = 0; i < s->size; i++) {
 		/* Copy an item. */
 		d->table[i] = s->table[i];
 		d->size++;
@@ -397,6 +402,7 @@ om_check_dict_key(
 
 	/* Search for the key. */
 	index = key->val.str->hash & (uint32_t)(dict->alloc_size - 1);
+	*ret = false;
 	for (i = index;
 	     i != ((index - 1 + size) & (size - 1));
 	     i = (i + 1) & ((uint32_t)size - 1)) {
@@ -407,7 +413,6 @@ om_check_dict_key(
 		/* Stop if an empty slot. */
 		if (dict->key[i].type == NOCT_VALUE_INT) {
 			/* Failed: Key not found. */
-			*ret = false;
 			break;
 		}
 
@@ -421,11 +426,6 @@ om_check_dict_key(
 		}
 	}
 
-	/* Not found. */
-	if (!ret)
-		return false;
-
-	/* Found. */
 	return true;
 }
 
@@ -778,6 +778,7 @@ om_erase_dict_entry(
 
 	/* Search an index for in-place write. */
 	index = key->val.str->hash & (uint32_t)(dict->alloc_size - 1);
+	is_not_found = true;
 	for (i = index;
 	     i != ((index - 1 + dict->alloc_size) & (dict->alloc_size - 1));
 	     i = (i + 1) & ((uint32_t)dict->alloc_size - 1)) {
@@ -898,8 +899,13 @@ om_merge_dict(
 
 	/* Determine the destination size. */
 	dst_size = 1;
-	while (dst_size < src1_size || dst_size < src2_size)
+	while (dst_size < src1_size || dst_size < src2_size) {
+		if (dst_size > SIZE_MAX / 2) {
+			rt_out_of_memory(env);
+			return false;
+		}
 		dst_size *= 2;
+	}
 
 	/* Make a dictionary. */
 	d = rt_gc_alloc_dict(env, dst_size);

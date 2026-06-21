@@ -113,6 +113,7 @@ pfi_create_vm(
 			return false;
 	}
 
+
 	/* Call "setup()" and get a title and window size. */
 	if (!call_setup(title, width, height, fullscreen)) {
 		const char *file;
@@ -124,6 +125,7 @@ pfi_create_vm(
 		hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
 		return false;
 	}
+
 
 #if defined(PF_USE_UNSAFE)
 	/* Install System.* API. */
@@ -214,7 +216,7 @@ call_setup(
 		if (width != NULL) {
 			if (!noct_get_dict_elem_cstr(env, &ret, "width", &width_val))
 				break;
-			if (!noct_get_int(env, &width_val, width))
+			if (!noct_get_int(env, &width_val, (int32_t *)width))
 				break;
 		}
 
@@ -222,7 +224,7 @@ call_setup(
 		if (height != NULL) {
 			if (!noct_get_dict_elem_cstr(env, &ret, "height", &height_val))
 				break;
-			if (!noct_get_int(env, &height_val, height))
+			if (!noct_get_int(env, &height_val, (int32_t *)height))
 				break;
 		}
 
@@ -318,7 +320,7 @@ pfi_get_vm_int(
 
 	if (!noct_get_global(env, "Engine", &dict))
 		return false;
-	if (!noct_get_dict_elem_check_int(env, &dict, prop_name, &dict_val, val))
+	if (!noct_get_dict_elem_check_int(env, &dict, prop_name, &dict_val, (int32_t *)val))
 		return false;
 
 	return true;
@@ -399,7 +401,7 @@ static bool serialize_printer(NoctEnv *env, char *buf, size_t size, NoctValue *v
 
 	switch (type) {
 	case NOCT_VALUE_INT:
-		if (!noct_get_int(env, value, &ival))
+		if (!noct_get_int(env, value, (int32_t *)&ival))
 			return false;
 		snprintf(digits, sizeof(digits), "%d", ival);
 		strncat(buf, digits, size);
@@ -440,14 +442,12 @@ static bool serialize_printer(NoctEnv *env, char *buf, size_t size, NoctValue *v
 		strncat(buf, "{", size);
 		for (i = 0; i < items; i++) {
 			NoctValue k, v;
-			if (!noct_get_dict_key_by_index(env, value, i, &k))
+			if (!noct_get_dict_by_index(env, value, i, &k, &v))
 				return false;
 			if (!noct_get_string(env, &k, &sval))
 				return false;
 			strncat(buf, sval, size);
 			strncat(buf, ": ", size);
-			if (!noct_get_dict_value_by_index(env, value, i, &v))
-				return false;
 			serialize_printer(env, buf, size, &v, true);
 			if (i != items - 1)
 				strncat(buf, ", ", size);
@@ -1014,7 +1014,7 @@ static bool get_int_param(NoctEnv *env, const char *name, int *ret)
 
 	switch (elem.type) {
 	case NOCT_VALUE_INT:
-		noct_get_int(env, &elem, ret);
+		noct_get_int(env, &elem, (int32_t *)ret);
 		break;
 	case NOCT_VALUE_FLOAT:
 		noct_get_float(env, &elem, &f);
@@ -1055,7 +1055,7 @@ static bool get_string_param(NoctEnv *env, const char *name, const char **ret)
 	case NOCT_VALUE_INT:
 	{
 		int i;
-		noct_get_int(env, &elem, &i);
+		noct_get_int(env, &elem, (int32_t *)&i);
 		snprintf(buf, sizeof(buf), "%d", i);
 		*ret = buf;
 		break;
@@ -1290,7 +1290,7 @@ serialize_save_data_recursively(
 
 	switch (type) {
 	case NOCT_VALUE_INT:
-		if (!noct_get_int(env, value, &ival))
+		if (!noct_get_int(env, value, (int32_t *)&ival))
 			return false;
 		if (!ser_put_u8(ctx, SER_TYPE_INT))
 			return false;
@@ -1338,13 +1338,11 @@ serialize_save_data_recursively(
 			return false;
 		for (i = 0; i < size; i++) {
 			NoctValue k, v;
-			if (!noct_get_dict_key_by_index(env, value, i, &k))
+			if (!noct_get_dict_by_index(env, value, i, &k, &v))
 				return false;
 			if (!noct_get_string(env, &k, &sval))
 				return false;
 			if (!ser_put_string(ctx, sval))
-				return false;
-			if (!noct_get_dict_value_by_index(env, value, i, &v))
 				return false;
 			if (!serialize_save_data_recursively(env, &v, ctx))
 				return false;

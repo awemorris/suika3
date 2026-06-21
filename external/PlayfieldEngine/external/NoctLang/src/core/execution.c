@@ -137,7 +137,7 @@ noct_ex_add_helper(
 			dst_val->val.lf = (double)src1_val->val.l + src2_val->val.lf;
 			break;
 		case NOCT_VALUE_STRING:
-			if (!noct_make_string_format(env, dst_val, "%d%s", src1_val->val.i, src2_val->val.str->data))
+			if (!noct_make_string_format(env, dst_val, "%" PRId64 "%s", src1_val->val.l, src2_val->val.str->data))
 				return false;
 			break;
 		default:
@@ -191,7 +191,7 @@ noct_ex_add_helper(
 			dst_val->val.lf = src1_val->val.lf + src2_val->val.lf;
 			break;
 		case NOCT_VALUE_STRING:
-			if (!noct_make_string_format(env, dst_val, "%f%s", src1_val->val.f, src2_val->val.str->data))
+			if (!noct_make_string_format(env, dst_val, "%f%s", src1_val->val.lf, src2_val->val.str->data))
 				return false;
 			break;
 		default:
@@ -685,10 +685,18 @@ noct_ex_mod_helper(
 	case NOCT_VALUE_INT:
 		switch (src2_val->type) {
 		case NOCT_VALUE_INT:
+			if (src2_val->val.i == 0) {
+				rt_error(env, N_TR("Division by zero."));
+				return false;
+			}
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = src1_val->val.i % src2_val->val.i;
 			break;
 		case NOCT_VALUE_LONG:
+			if (src2_val->val.l == 0) {
+				rt_error(env, N_TR("Division by zero."));
+				return false;
+			}
 			dst_val->type = NOCT_VALUE_LONG;
 			dst_val->val.l = (int64_t)src1_val->val.i % src2_val->val.l;
 			break;
@@ -700,10 +708,18 @@ noct_ex_mod_helper(
 	case NOCT_VALUE_LONG:
 		switch (src2_val->type) {
 		case NOCT_VALUE_INT:
+			if (src2_val->val.i == 0) {
+				rt_error(env, N_TR("Division by zero."));
+				return false;
+			}
 			dst_val->type = NOCT_VALUE_LONG;
 			dst_val->val.l = src1_val->val.l % (int64_t)src2_val->val.i;
 			break;
 		case NOCT_VALUE_LONG:
+			if (src2_val->val.l == 0) {
+				rt_error(env, N_TR("Division by zero."));
+				return false;
+			}
 			dst_val->type = NOCT_VALUE_LONG;
 			dst_val->val.l = src1_val->val.l % src2_val->val.l;
 			break;
@@ -823,7 +839,7 @@ noct_ex_or_helper(
 			break;
 		case NOCT_VALUE_LONG:
 			dst_val->type = NOCT_VALUE_LONG;
-			dst_val->val.l = (int64_t)((uint64_t)(uint32_t)src1_val->val.l | (uint64_t)src2_val->val.l);
+			dst_val->val.l = (int64_t)((uint64_t)src1_val->val.l | (uint64_t)src2_val->val.l);
 			break;
 		default:
 			rt_error(env, N_TR("Value is not an integer."));
@@ -921,8 +937,43 @@ noct_ex_shl_helper(
 	case NOCT_VALUE_INT:
 		switch (src2_val->type) {
 		case NOCT_VALUE_INT:
+			if (src2_val->val.i < 0 || src2_val->val.i >= 32) {
+				rt_error(env, N_TR("Invalid shift amount."));
+				return false;
+			}
 			dst_val->type = NOCT_VALUE_INT;
-			dst_val->val.i = src1_val->val.i << src2_val->val.i;
+			dst_val->val.i = (int32_t)((uint32_t)src1_val->val.i << src2_val->val.i);
+			break;
+		case NOCT_VALUE_LONG:
+			if (src2_val->val.l < 0 || src2_val->val.l >= 32) {
+				rt_error(env, N_TR("Invalid shift amount."));
+				return false;
+			}
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (int32_t)((uint32_t)src1_val->val.i << src2_val->val.l);
+			break;
+		default:
+			rt_error(env, N_TR("Value is not an integer."));
+			return false;
+		}
+		break;
+	case NOCT_VALUE_LONG:
+		switch (src2_val->type) {
+		case NOCT_VALUE_INT:
+			if (src2_val->val.i < 0 || src2_val->val.i >= 32) {
+				rt_error(env, N_TR("Invalid shift amount."));
+				return false;
+			}
+			dst_val->type = NOCT_VALUE_LONG;
+			dst_val->val.l = (int64_t)((uint64_t)src1_val->val.l << src2_val->val.i);
+			break;
+		case NOCT_VALUE_LONG:
+			if (src2_val->val.l < 0 || src2_val->val.l >= 32) {
+				rt_error(env, N_TR("Invalid shift amount."));
+				return false;
+			}
+			dst_val->type = NOCT_VALUE_LONG;
+			dst_val->val.l = (int64_t)((uint64_t)src1_val->val.l << src2_val->val.l);
 			break;
 		default:
 			rt_error(env, N_TR("Value is not an integer."));
@@ -961,8 +1012,43 @@ noct_ex_shr_helper(
 	case NOCT_VALUE_INT:
 		switch (src2_val->type) {
 		case NOCT_VALUE_INT:
+			if (src2_val->val.i < 0 || src2_val->val.i >= 32) {
+				rt_error(env, N_TR("Invalid shift amount."));
+				return false;
+			}
 			dst_val->type = NOCT_VALUE_INT;
-			dst_val->val.i = src1_val->val.i >> src2_val->val.i;
+			dst_val->val.i = (int32_t)((uint32_t)src1_val->val.i >> src2_val->val.i);
+			break;
+		case NOCT_VALUE_LONG:
+			if (src2_val->val.l < 0 || src2_val->val.l >= 32) {
+				rt_error(env, N_TR("Invalid shift amount."));
+				return false;
+			}
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (int32_t)((uint32_t)src1_val->val.i >> src2_val->val.l);
+			break;
+		default:
+			rt_error(env, N_TR("Value is not an integer."));
+			return false;
+		}
+		break;
+	case NOCT_VALUE_LONG:
+		switch (src2_val->type) {
+		case NOCT_VALUE_INT:
+			if (src2_val->val.i < 0 || src2_val->val.i >= 32) {
+				rt_error(env, N_TR("Invalid shift amount."));
+				return false;
+			}
+			dst_val->type = NOCT_VALUE_LONG;
+			dst_val->val.l = (int64_t)((uint64_t)src1_val->val.l >> src2_val->val.i);
+			break;
+		case NOCT_VALUE_LONG:
+			if (src2_val->val.l < 0 || src2_val->val.l >= 32) {
+				rt_error(env, N_TR("Invalid shift amount."));
+				return false;
+			}
+			dst_val->type = NOCT_VALUE_LONG;
+			dst_val->val.l = (int64_t)((uint64_t)src1_val->val.l >> src2_val->val.l);
 			break;
 		default:
 			rt_error(env, N_TR("Value is not an integer."));
@@ -999,9 +1085,17 @@ noct_ex_neg_helper(
 		dst_val->type = NOCT_VALUE_INT;
 		dst_val->val.i = -src_val->val.i;
 		break;
+	case NOCT_VALUE_LONG:
+		dst_val->type = NOCT_VALUE_LONG;
+		dst_val->val.l = -src_val->val.l;
+		break;
 	case NOCT_VALUE_FLOAT:
 		dst_val->type = NOCT_VALUE_FLOAT;
 		dst_val->val.f = -src_val->val.f;
+		break;
+	case NOCT_VALUE_DOUBLE:
+		dst_val->type = NOCT_VALUE_DOUBLE;
+		dst_val->val.lf = -src_val->val.lf;
 		break;
 	default:
 		rt_error(env, N_TR("Value is not a number."));
@@ -1032,6 +1126,10 @@ noct_ex_not_helper(
 	case NOCT_VALUE_INT:
 		dst_val->type = NOCT_VALUE_INT;
 		dst_val->val.i = src_val->val.i == 0 ? 1 : 0;
+		break;
+	case NOCT_VALUE_LONG:
+		dst_val->type = NOCT_VALUE_INT;
+		dst_val->val.l = src_val->val.l == 0 ? 1 : 0;
 		break;
 	default:
 		rt_error(env, N_TR("Value is not an integer."));
@@ -1068,9 +1166,40 @@ noct_ex_lt_helper(
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = (src1_val->val.i < src2_val->val.i) ? 1 : 0;
 			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((int64_t)src1_val->val.i < src2_val->val.l) ? 1 : 0;
+			break;
 		case NOCT_VALUE_FLOAT:
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = ((float)src1_val->val.i < src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((double)src1_val->val.i < src2_val->val.lf) ? 1 : 0;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_VALUE_LONG:
+		switch (src2_val->type) {
+		case NOCT_VALUE_INT:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.l < (int64_t)src2_val->val.i) ? 1 : 0;
+			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.l < src2_val->val.l) ? 1 : 0;
+			break;
+		case NOCT_VALUE_FLOAT:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((float)src1_val->val.l < src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((double)src1_val->val.l < src2_val->val.lf) ? 1 : 0;
 			break;
 		default:
 			rt_error(env, N_TR("Value is not a number."));
@@ -1083,9 +1212,40 @@ noct_ex_lt_helper(
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = (src1_val->val.f < (float)src2_val->val.i) ? 1 : 0;
 			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.f < (float)src2_val->val.l) ? 1 : 0;
+			break;
 		case NOCT_VALUE_FLOAT:
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = (src1_val->val.f < src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((double)src1_val->val.f < src2_val->val.lf) ? 1 : 0;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_VALUE_DOUBLE:
+		switch (src2_val->type) {
+		case NOCT_VALUE_INT:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.lf < (double)src2_val->val.i) ? 1 : 0;
+			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.lf < (double)src2_val->val.l) ? 1 : 0;
+			break;
+		case NOCT_VALUE_FLOAT:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.lf < (double)src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.lf < src2_val->val.lf) ? 1 : 0;
 			break;
 		default:
 			rt_error(env, N_TR("Value is not a number."));
@@ -1138,9 +1298,40 @@ noct_ex_lte_helper(
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = (src1_val->val.i <= src2_val->val.i) ? 1 : 0;
 			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((int64_t)src1_val->val.i <= src2_val->val.l) ? 1 : 0;
+			break;
 		case NOCT_VALUE_FLOAT:
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = ((float)src1_val->val.i <= src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((double)src1_val->val.i <= src2_val->val.lf) ? 1 : 0;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_VALUE_LONG:
+		switch (src2_val->type) {
+		case NOCT_VALUE_INT:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.l <= (int64_t)src2_val->val.i) ? 1 : 0;
+			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.l <= src2_val->val.l) ? 1 : 0;
+			break;
+		case NOCT_VALUE_FLOAT:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((float)src1_val->val.l <= src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((double)src1_val->val.l <= src2_val->val.lf) ? 1 : 0;
 			break;
 		default:
 			rt_error(env, N_TR("Value is not a number."));
@@ -1153,9 +1344,40 @@ noct_ex_lte_helper(
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = (src1_val->val.f <= (float)src2_val->val.i) ? 1 : 0;
 			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.f <= (float)src2_val->val.l) ? 1 : 0;
+			break;
 		case NOCT_VALUE_FLOAT:
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = (src1_val->val.f <= src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((double)src1_val->val.f <= src2_val->val.lf) ? 1 : 0;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_VALUE_DOUBLE:
+		switch (src2_val->type) {
+		case NOCT_VALUE_INT:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.lf <= (double)src2_val->val.i) ? 1 : 0;
+			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.lf <= (double)src2_val->val.l) ? 1 : 0;
+			break;
+		case NOCT_VALUE_FLOAT:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.lf <= (double)src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.lf <= src2_val->val.lf) ? 1 : 0;
 			break;
 		default:
 			rt_error(env, N_TR("Value is not a number."));
@@ -1208,9 +1430,40 @@ noct_ex_gt_helper(
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = (src1_val->val.i > src2_val->val.i) ? 1 : 0;
 			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((int64_t)src1_val->val.i > src2_val->val.l) ? 1 : 0;
+			break;
 		case NOCT_VALUE_FLOAT:
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = ((float)src1_val->val.i > src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((double)src1_val->val.i > src2_val->val.lf) ? 1 : 0;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_VALUE_LONG:
+		switch (src2_val->type) {
+		case NOCT_VALUE_INT:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.i > src2_val->val.i) ? 1 : 0;
+			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((int64_t)src1_val->val.i > src2_val->val.l) ? 1 : 0;
+			break;
+		case NOCT_VALUE_FLOAT:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((float)src1_val->val.i > src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((double)src1_val->val.i > src2_val->val.lf) ? 1 : 0;
 			break;
 		default:
 			rt_error(env, N_TR("Value is not a number."));
@@ -1223,9 +1476,17 @@ noct_ex_gt_helper(
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = (src1_val->val.f > (float)src2_val->val.i) ? 1 : 0;
 			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.f > (float)src2_val->val.l) ? 1 : 0;
+			break;
 		case NOCT_VALUE_FLOAT:
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = (src1_val->val.f > src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((double)src1_val->val.f > src2_val->val.lf) ? 1 : 0;
 			break;
 		default:
 			rt_error(env, N_TR("Value is not a number."));
@@ -1278,9 +1539,40 @@ noct_ex_gte_helper(
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = (src1_val->val.i >= src2_val->val.i) ? 1 : 0;
 			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((int64_t)src1_val->val.i >= src2_val->val.l) ? 1 : 0;
+			break;
 		case NOCT_VALUE_FLOAT:
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = ((float)src1_val->val.i >= src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((double)src1_val->val.i >= (double)src2_val->val.lf) ? 1 : 0;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_VALUE_LONG:
+		switch (src2_val->type) {
+		case NOCT_VALUE_INT:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.l >= (int64_t)src2_val->val.i) ? 1 : 0;
+			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.l >= src2_val->val.l) ? 1 : 0;
+			break;
+		case NOCT_VALUE_FLOAT:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((float)src1_val->val.l >= src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((double)src1_val->val.l >= (double)src2_val->val.lf) ? 1 : 0;
 			break;
 		default:
 			rt_error(env, N_TR("Value is not a number."));
@@ -1293,9 +1585,40 @@ noct_ex_gte_helper(
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = (src1_val->val.f >= (float)src2_val->val.i) ? 1 : 0;
 			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.f >= (float)src2_val->val.l) ? 1 : 0;
+			break;
 		case NOCT_VALUE_FLOAT:
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = (src1_val->val.f >= src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((double)src1_val->val.f >= src2_val->val.lf) ? 1 : 0;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_VALUE_DOUBLE:
+		switch (src2_val->type) {
+		case NOCT_VALUE_INT:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.lf >= (double)src2_val->val.i) ? 1 : 0;
+			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.lf >= (double)src2_val->val.l) ? 1 : 0;
+			break;
+		case NOCT_VALUE_FLOAT:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.lf >= (double)src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.lf >= src2_val->val.lf) ? 1 : 0;
 			break;
 		default:
 			rt_error(env, N_TR("Value is not a number."));
@@ -1491,9 +1814,17 @@ noct_ex_neq_helper(
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = (src1_val->val.i != src2_val->val.i) ? 1 : 0;
 			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((int64_t)src1_val->val.i != src2_val->val.l) ? 1 : 0;
+			break;
 		case NOCT_VALUE_FLOAT:
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = ((float)src1_val->val.i != src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((double)src1_val->val.i != src2_val->val.lf) ? 1 : 0;
 			break;
 		default:
 			dst_val->type = NOCT_VALUE_INT;
@@ -1507,9 +1838,41 @@ noct_ex_neq_helper(
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = (src1_val->val.f != (float)src2_val->val.i) ? 1 : 0;
 			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.f != (float)src2_val->val.l) ? 1 : 0;
+			break;
 		case NOCT_VALUE_FLOAT:
 			dst_val->type = NOCT_VALUE_INT;
 			dst_val->val.i = (src1_val->val.f != src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = ((double)src1_val->val.f != src2_val->val.lf) ? 1 : 0;
+			break;
+		default:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = 1;
+			break;
+		}
+		break;
+	case NOCT_VALUE_DOUBLE:
+		switch (src2_val->type) {
+		case NOCT_VALUE_INT:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.lf != (double)src2_val->val.i) ? 1 : 0;
+			break;
+		case NOCT_VALUE_LONG:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.lf != (double)src2_val->val.l) ? 1 : 0;
+			break;
+		case NOCT_VALUE_FLOAT:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.lf != (double)src2_val->val.f) ? 1 : 0;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			dst_val->type = NOCT_VALUE_INT;
+			dst_val->val.i = (src1_val->val.lf != src2_val->val.lf) ? 1 : 0;
 			break;
 		default:
 			dst_val->type = NOCT_VALUE_INT;
@@ -1566,8 +1929,16 @@ noct_ex_storearray_helper(
 
 	if (arr_val->type == NOCT_VALUE_ARRAY) {
 		if (subscr_val->type == NOCT_VALUE_INT) {
+			if (subscr_val->val.i < 0) {
+				rt_error(env, N_TR("Subscript is negative."));
+				return false;
+			}
 			index = (size_t)(uint32_t)subscr_val->val.i;
 		} else if (subscr_val->type == NOCT_VALUE_LONG) {
+			if (subscr_val->val.l < 0) {
+				rt_error(env, N_TR("Subscript is negative."));
+				return false;
+			}
 			index = (size_t)(uint64_t)subscr_val->val.l;
 		} else {
 			rt_error(env, N_TR("Subscript not an integer."));
@@ -1596,8 +1967,16 @@ noct_ex_storearray_helper(
 		return true;
 	} else if (arr_val->type == NOCT_VALUE_PACKED) {
 		if (subscr_val->type == NOCT_VALUE_INT) {
+			if (subscr_val->val.i < 0) {
+				rt_error(env, N_TR("Subscript is negative."));
+				return false;
+			}
 			index = (size_t)(uint32_t)subscr_val->val.i;
 		} else if (subscr_val->type == NOCT_VALUE_LONG) {
+			if (subscr_val->val.l < 0) {
+				rt_error(env, N_TR("Subscript is negative."));
+				return false;
+			}
 			index = (size_t)(uint64_t)subscr_val->val.l;
 		} else {
 			rt_error(env, N_TR("Subscript not an integer."));
@@ -1638,8 +2017,16 @@ noct_ex_loadarray_helper(
 	/* Check the array type. */
 	if (arr_val->type == NOCT_VALUE_ARRAY) {
 		if (subscr_val->type == NOCT_VALUE_INT) {
+			if (subscr_val->val.i < 0) {
+				rt_error(env, N_TR("Subscript is negative."));
+				return false;
+			}
 			index = (size_t)(uint32_t)subscr_val->val.i;
 		} else if (subscr_val->type == NOCT_VALUE_LONG) {
+			if (subscr_val->val.l < 0) {
+				rt_error(env, N_TR("Subscript is negative."));
+				return false;
+			}
 			index = (size_t)(uint64_t)subscr_val->val.l;
 		} else {
 			rt_error(env, N_TR("Subscript not an integer."));
@@ -1666,8 +2053,16 @@ noct_ex_loadarray_helper(
 		return true;
 	} else if (arr_val->type == NOCT_VALUE_PACKED) {
 		if (subscr_val->type == NOCT_VALUE_INT) {
+			if (subscr_val->val.i < 0) {
+				rt_error(env, N_TR("Subscript is negative."));
+				return false;
+			}
 			index = (size_t)(uint32_t)subscr_val->val.i;
 		} else if (subscr_val->type == NOCT_VALUE_LONG) {
+			if (subscr_val->val.l < 0) {
+				rt_error(env, N_TR("Subscript is negative."));
+				return false;
+			}
 			index = (size_t)(uint64_t)subscr_val->val.l;
 		} else {
 			rt_error(env, N_TR("Subscript not an integer."));
@@ -1746,6 +2141,7 @@ noct_ex_getdictkeybyindex_helper(
 	struct rt_value *dst_val;
 	struct rt_value *dict_val;
 	struct rt_value *subscr_val;
+	struct rt_value val;
 	size_t index;
 
 	dst_val = &env->frame->tmpvar[dst];
@@ -1766,7 +2162,7 @@ noct_ex_getdictkeybyindex_helper(
 	}
 
 	/* Load the element. */
-	if (!rt_get_dict_key_by_index(env, dict_val, index, dst_val))
+	if (!rt_get_dict_by_index(env, dict_val, index, dst_val, &val))
 		return false;
 
 	return true;
@@ -1787,6 +2183,7 @@ noct_ex_getdictvalbyindex_helper(
 	struct rt_value *dst_val;
 	struct rt_value *dict_val;
 	struct rt_value *subscr_val;
+	struct rt_value key;
 	size_t index;
 
 	dst_val = &env->frame->tmpvar[dst];
@@ -1807,7 +2204,7 @@ noct_ex_getdictvalbyindex_helper(
 	}
 
 	/* Load the element. */
-	if (!rt_get_dict_value_by_index(env, dict_val, index, dst_val))
+	if (!rt_get_dict_by_index(env, dict_val, index, &key, dst_val))
 		return false;
 
 	return true;

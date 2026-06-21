@@ -15,7 +15,7 @@ Its syntax is lightweight, but its runtime is built for high-end performance.
 Only about 200 KB — with a fast JIT compiler, a robust generational GC,
 and a clean C/JS-like syntax featuring a novel Dictionary-based OOP model.
 
-JIT execution is typically 2-10x faster than interpreter execution.
+JIT execution is typically 4-13x faster than interpreter execution.
 
 ### Portable
 
@@ -93,7 +93,7 @@ policies. Noct runs there with interpreter or AOT compilation.
 ### Speedup
 
 A synthetic benchmark shows that our JIT compiler speeds up execution
-time by 4.11-11.15 times.
+time by 4.1-13.5 times.
 
 ```
 func main() {
@@ -106,11 +106,12 @@ func main() {
 }
 ```
 
-| CPU                     | Arch      | Interpreter (s) | JIT (s)  | Speedup   |
-|-------------------------|-----------|-----------------|----------|-----------|
-| Apple M5                | Arm64     | 11.34           | 2.76     | x4.11     |
-| Intel Core Ultra 5 228V | x86_64    | 34.95           | 5.93     | x5.89     |
-| Ingenic JZ4770          | MIPS32    | 1447.36         | 129.75   | x11.15    |
+| CPU                     | Arch     | JIT (s) | Interpreter (s) | Scaling (JIT vs Interpreter) |
+|-------------------------|----------|---------|-----------------|------------------------------|
+| PowerPC 970FX           | ppc64    | 29.47   | 397.22          | 13.5x                        |
+| Ingenic JZ4770          | mips32   | 129.75  | 1447.36         | 11.2x                        |
+| Intel Core Ultra 5 228V | x86_64   | 5.93    | 34.95           | 5.9x                         |
+| Apple M5                | arm64    | 2.76    | 11.34           | 4.1x                         |
 
 ---
 
@@ -549,36 +550,42 @@ Our CI is running on GitHub Actions. Each push to the main branch
 triggers builds and binary releases, ensuring stability across
 supported platforms.
 
-### Testing Machines
+### Testing Machines and Environments
 
-| Target          | Board                   | Processor                           | OS                     |
-|-----------------|-------------------------|-------------------------------------|------------------------|
-| x86 / x86_64    | Fujitsu Primergy        | Intel Xeon Gold 6130                | Linux                  |
-| x86 / x86_64    | Fujitsu Primergy        | Intel Xeon Silver 4114              | Linux                  |
-| x86 / x86_64    | Lenovo ThinkPad         | Intel Core Ultra 5 228V             | Windows, Linux         |
-| x86 / x86_64    | Generic Desktop PC      | Intel Core i5-13400                 | Windows, Linux         |
-| x86 / x86_64    | Generic Desktop PC      | Intel Core i9-12900H                | Windows, Linux         |
-| x86_64          | MacBook Air             | Intel Core i5                       | macOS 10.13            |
-| x86_64          | ThinkPad X260           | Intel Core i5-6500U                 | Solaris 11, Haiku      |
-| x86_64          | Panasonic Let's Note    | Intel Core i5-7200U                 | Windows                |
-| x86_64          | Panasonic Let's Note    | Intel Core i5-8250U                 | Windows                |
-| x86_64          | Dell Latitude           | Intel Core i5-1135G7                | FreeBSD                |
-| x86_64          | Dell Latitude           | Intel Core i5-1240P                 | Linux                  |
-| Armv7           | Raspberry Pi Zero 2     | Broadcom RP3A0 Arm Cortex-A53       | Raspberry Pi OS 32-bit |
-| Armv7           | Raspberry Pi 4          | Broadcom BCM2711 Arm Cortex-A72     | Raspberry Pi OS 32-bit |
-| Arm64           | Raspberry Pi 4          | Broadcom BCM2711 Arm Cortex-A72     | Raspberry Pi OS 64-bit |
-| Arm64           | MacBook Air M1          | Apple M1                            | macOS 15               |
-| Arm64           | MacBook Pro M4 Pro      | Apple M4 Pro                        | macOS 15               |
-| Arm64           | MacBook Pro M5          | Apple M5                            | macOS 26               |
-| RISC-V 32       | qemu                    | qemu-user RV32GC                    | Linux                  |
-| RISC-V 64       | VisionFive 2            | StarFive JH7110 RV64GC              | Linux                  |
-| MIPS32          | Anbernic RG350          | Ingenic JZ4770 MIPS32r2             | Linux                  |
-| MIPS32          | Cobalt Qube 2700        | QED RM5230                          | Linux, NetBSD          |
-| MIPS64          | qemu                    | qemu-user mips64                    | Linux                  |
-| MIPS64          | EdgeRouter Lite 3       | Cavium Octeon CN5020 MIPS64         | Linux                  |
-| PowerPC 32/64   | PowerMac G5             | PowerPC G5                          | Mac OS X 10.4          |
-| PowerPC 64      | IBM Power8 S814         | IBM POWER8                          | Linux (ppc64le)        |
-| 68000           | Macintosh LC630         | Motorola 68040                      | NetBSD                 |
+| Vendor          | Machine                    | Processor               | Architecture        | ABI             | OS                     | JIT     |
+|-----------------|----------------------------|-------------------------|---------------------|-----------------|------------------------|---------|
+| Apple           | MacBook Pro M5             | Apple M5                | Armv9               | arm64           | macOS 26               | OK      |
+|                 | MacBook Air                | Intel Core i5           | Intel64             | x86_64          | macOS 10.13            | OK      |
+|                 | PowerMac G5                | PowerPC G5 970FX        | PowerPC 64          | ppc64 (ELFv1)   | Debian forky           | OK      |
+|                 |                            |                         |                     | ppc32           | Debian forky           | OK      |
+| IBM             | Power8 S814                | Power8                  | Power8              | ppc64le (ELFv2) | Debian trixie          | OK      |
+| Fujitsu         | Primergy TX2550 M5         | Intel Xeon Gold 6130 x2 | Intel64 Skylake-SP  | x86_64          | Debian trixie          | OK      |
+|                 |                            |                         |                     | x86             | Debian trixie          | OK      |
+| Lenovo          | ThinkPad X9                | Intel Core Ultra 5 228V | Intel64 Lunar-Lake  | x64 (MS ABI)    | Windows 11             | OK      |
+|                 |                            |                         |                     | x86_64          | Debian trixie          | OK      |
+|                 | ThinkPad X260              | Intel Core i5-6500U     | Intel64 Skylake     | x86_64          | Solaris 11             | OK      |
+| Panasonic       | Let's Note LX6             | Intel Core i5-7200U     | Intel64 Kaby Lake   | x86_64          | Haiku                  | OK      |
+|                 | Let's Note SV8             | Intel Core i5-8250U     | Intel64 Coffee Lake | x86_64          | Windows 11             | OK      |
+| Dell            | Latitude 5330              | Intel Core i5-1240P     | Intel64 Alder Lake  | x86_64          | Debian trixie          | OK      |
+|                 | Latitude 5230              | Intel Core i5-1135G7    | Intel64 Tiger Lake  | x86_64          | FreeBSD 15             | OK      |
+| RPi             | Raspberry Pi 4B            | Broadcom BCM2711        | Arm Cortex-A72      | aarch64         | Raspberry Pi OS 64-bit | OK      |
+|                 |                            |                         |                     | armv7-eabihf    | Raspberry Pi OS 32-bit | OK      |
+|                 | Raspberry Pi Zero 2        | Broadcom RP3A0          | Arm Cortex-A53      | aarch64         | Raspberry Pi OS 64-bit | OK      |
+|                 |                            |                         |                     | armv7-eabihf    | Raspberry Pi OS 32-bit | OK      |
+| Anbernic        | RG350                      | Ingenic JZ4770          | MIPS32r2            | mipsel          | Debian forky           | OK      |
+| Cobalt Networks | Cobalt Qube 2800           | QED RM5231              | MIPS-IV             | mipseb          | NetBSD                 | OK      |
+| StarFive        | VisionFive 2               | JH7110                  | RISC-V RV64GC       | riscv64         | Debian Trixie          | OK      |
+| qemu            | qemu                       | RISC-V 32               | RV32GC              | riscv32         | qemu-user              | OK      |
+|                 |                            | 68040                   | 680x0               | m68k            | qemu-user              | N/A     |
+
+Now preparing...
+
+| Vendor          | Machine                    | Processor               | Architecture        | ABI             | OS                     |
+|-----------------|----------------------------|-------------------------|---------------------|-----------------|------------------------|
+| Apple           | Macintosh LC630            | Motorola 68040          | 680x0               | m68k            | Debian forky           |
+| Fujitsu         | SPARC Enterprise M3000     | SPARC64 VII+            | SPARC V9            | sparc64         | Solaris 10             |
+| Imagination     | MIPS Creator CI 40         | MIPS interAptive        | MIPS32r3            | mips            | Debian forky           |
+| Generic         | Loongson PC                | Loongson 3A4000         | MIPS64              | mips64          | Debian forky           |
 
 ---
 

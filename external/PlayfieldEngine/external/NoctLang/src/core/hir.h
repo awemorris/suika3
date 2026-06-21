@@ -256,7 +256,7 @@ struct hir_expr {
 		/* Array Literal Expression */
 		struct {
 			/* Element count. */
-			uint32_t elem_count;
+			size_t elem_count;
 
 			/* Element expressions. */
 			struct hir_expr **elem;
@@ -265,7 +265,7 @@ struct hir_expr {
 		/* Dictionary Literal Expression */
 		struct {
 			/* Key-value pair count. */
-			uint32_t kv_count;
+			size_t kv_count;
 
 			/* Key strings. */
 			char **key;

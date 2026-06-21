@@ -145,8 +145,6 @@ hir_build(void)
 		return false;
 	}
 
-	hir_anon_func_count = 0;
-
 	/* Copy a file name. */
 	hir_file_name = hir_strdup(ast_get_file_name());
 	if (hir_file_name == NULL) {
@@ -1632,16 +1630,16 @@ hir_visit_call_expr(
 	if (aexpr->val.call.arg_list != NULL) {
 		arg = aexpr->val.call.arg_list->list;
 		while (arg != NULL) {
+			if (e->val.call.arg_count >= HIR_PARAM_SIZE) {
+				hir_fatal(hir_error_line, N_TR("Exceeded the maximum argument count."));
+				return false;
+			}
 			if (!hir_visit_expr(&e->val.call.arg[e->val.call.arg_count], arg)) {
 				hir_free_expr(e);
 				return false;
 			}
 			arg = arg->next;
 			e->val.call.arg_count++;
-			if (e->val.call.arg_count > HIR_PARAM_SIZE) {
-				hir_fatal(hir_error_line, N_TR("Exceeded the maximum argument count."));
-				return false;
-			}
 		}
 	}
 
@@ -1690,6 +1688,11 @@ hir_visit_thiscall_expr(
 	if (aexpr->val.thiscall.arg_list != NULL) {
 		arg = aexpr->val.thiscall.arg_list->list;
 		while (arg != NULL) {
+			if (e->val.thiscall.arg_count >= HIR_PARAM_SIZE) {
+				hir_fatal(hir_error_line, N_TR("Too many parameters."));
+				hir_free_expr(e);
+				return false;
+			}
 			if (!hir_visit_expr(&e->val.thiscall.arg[e->val.thiscall.arg_count], arg)) {
 				hir_free_expr(e);
 				return false;
@@ -1712,7 +1715,7 @@ hir_visit_array_expr(
 {
 	struct hir_expr *e;
 	struct ast_expr *elem;
-	uint32_t count, index;
+	size_t count, index;
 
 	assert(hexpr != NULL);
 	assert(*hexpr == NULL);
@@ -1735,6 +1738,12 @@ hir_visit_array_expr(
 		while (elem != NULL) {
 			elem = elem->next;
 			count++;
+		}
+
+		if (count > SIZE_MAX / sizeof(struct hir_exp *)) {
+			hir_out_of_memory();
+			hir_free_expr(e);
+			return false;
 		}
 
 		e->val.array.elem_count = count;
@@ -1773,7 +1782,7 @@ hir_visit_dict_expr(
 {
 	struct hir_expr *e;
 	struct ast_kv *kv;
-	uint32_t count, index;
+	size_t count, index;
 
 	assert(hexpr != NULL);
 	assert(*hexpr == NULL);
@@ -1798,8 +1807,13 @@ hir_visit_dict_expr(
 			count++;
 		}
 
-		e->val.dict.kv_count = count;
+		if (count > SIZE_MAX / sizeof(char *)) {
+			hir_out_of_memory();
+			hir_free_expr(e);
+			return false;
+		}
 
+		e->val.dict.kv_count = count;
 		e->val.dict.key = hir_malloc(count * sizeof(char *));
 		if (e->val.dict.key == NULL) {
 			hir_out_of_memory();
@@ -2017,6 +2031,11 @@ hir_visit_param_list(
 	param = afunc->param_list->list;
 	param_count = 0;
 	while (param != NULL) {
+		if (param_count >= HIR_PARAM_SIZE) {
+			hir_fatal(hir_error_line, N_TR("Too many parameters."));
+			return false;
+		}
+
 		/* Copy names and count parameters. */
 		hfunc->val.func.param_name[param_count] = hir_strdup(param->name);
 		if (param->name == NULL) {
@@ -2051,15 +2070,15 @@ hir_defer_anon_func(
 		return false;
 	}
 
-	hir_anon_func_name[hir_anon_func_count] = *symbol;
-	hir_anon_func_param_list[hir_anon_func_count] = aexpr->val.func.param_list;
-	hir_anon_func_stmt_list[hir_anon_func_count] = aexpr->val.func.stmt_list;
-
-	hir_anon_func_count++;
 	if (hir_anon_func_count >= ANON_FUNC_SIZE) {
 		hir_fatal(hir_error_line, N_TR("Too many anonymous functions."));
 		return false;
 	}
+
+	hir_anon_func_name[hir_anon_func_count] = *symbol;
+	hir_anon_func_param_list[hir_anon_func_count] = aexpr->val.func.param_list;
+	hir_anon_func_stmt_list[hir_anon_func_count] = aexpr->val.func.stmt_list;
+	hir_anon_func_count++;
 
 	return true;
 }

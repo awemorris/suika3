@@ -31,7 +31,8 @@ option(NOCT_ENABLE_MDOC         "Install mdoc(7) man page"         OFF)
 #
 option(NOCT_TARGET_UNITY        "Build for Unity"                  OFF)
 option(NOCT_TARGET_OPENHARMONY  "Build for OpenHarmony"            OFF)
-option(NOCT_TARGET_DOS4G        "Build for Unity"                  OFF)
+option(NOCT_TARGET_MACOS7       "Build for MacOS 7"                OFF)
+option(NOCT_TARGET_DOS4G        "Build for DOS4G"                  OFF)
 
 # ---
 
@@ -86,13 +87,13 @@ endif()
 # FLEX
 #
 
-#find_package(FLEX REQUIRED)
-#
-#FLEX_TARGET(Lexer
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/core/lexer.l
-#  ${CMAKE_CURRENT_BINARY_DIR}/lexer.yy.c
-#  COMPILE_FLAGS "--prefix=ast_yy"
-#)
+find_package(FLEX REQUIRED)
+
+FLEX_TARGET(Lexer
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/core/lexer.l
+  ${CMAKE_CURRENT_BINARY_DIR}/lexer.yy.c
+  COMPILE_FLAGS "--prefix=ast_yy"
+)
 
 # ---
 
@@ -100,14 +101,14 @@ endif()
 # BISON
 #
 
-#find_package(BISON REQUIRED)
-#
-#BISON_TARGET(Parser
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src/core/parser.y
-#  ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.c
-#  DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.h
-#  COMPILE_FLAGS "-p ast_yy -Wcounterexamples"
-#)
+find_package(BISON REQUIRED)
+
+BISON_TARGET(Parser
+  ${CMAKE_CURRENT_SOURCE_DIR}/src/core/parser.y
+  ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.c
+  DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.h
+  COMPILE_FLAGS "-p ast_yy -Wcounterexamples"
+)
 
 # ---
 
@@ -140,8 +141,8 @@ endif()
 # Determine the base files.
 set(
   NOCT_BASE_SOURCE
-  src/core/lexer.yy.c      # Lexer
-  src/core/parser.tab.c    # Parser
+#  src/core/lexer.yy.c      # Lexer
+#  src/core/parser.tab.c    # Parser
   src/core/ast.c           # AST construction (called from parser)
   src/core/hir.c           # HIR (AST->HIR construction)
   src/core/lir.c           # LIR (HIR->LIR construction)
@@ -332,9 +333,14 @@ if(NOCT_TARGET_UNITY)
   endif()
 endif()
 
+# MacOS 7 Target
+if(NOCT_TARGET_MACOS7)
+  list(APPEND NOCT_PUBLIC_CPPFLAGS NOCT_TARGET_MACOS7 NOCT_MEMORY_SMALL)
+endif()
+
 # DOS4G Target
 if(NOCT_TARGET_DOS4G)
-  list(APPEND NOCT_PUBLIC_CPPFLAGS NOCT_TARGET_DOS4G)
+  list(APPEND NOCT_PUBLIC_CPPFLAGS NOCT_TARGET_DOS4G NOCT_MEMORY_SMALL)
 endif()
 
 # _CRT_SECURE_NO_WARNINGS

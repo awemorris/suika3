@@ -183,22 +183,27 @@ cfunc_System_runCommand(
 		PROCESS_INFORMATION pi;
 		wchar_t wszCmdLine[1024];
 		wchar_t wszWorkDir[1024];
+		BOOL bSuccess;
 
 		MultiByteToWideChar(CP_UTF8, 0, command, -1, wszCmdLine, sizeof(wszCmdLine) / sizeof(wchar_t) - 1);
 		MultiByteToWideChar(CP_UTF8, 0, work_dir, -1, wszWorkDir, sizeof(wszWorkDir) / sizeof(wchar_t) - 1);
 
 		ZeroMemory(&si, sizeof(STARTUPINFOW));
 		si.cb = sizeof(STARTUPINFOW);
-		CreateProcessW(NULL,		/* lpApplication */
-			       wszCmdLine,	/* lpCommandLine */
-			       NULL,		/* lpProcessAttribute */
-			       NULL,		/* lpThreadAttributes */
-			       FALSE,		/* bInheritHandles */
-			       NORMAL_PRIORITY_CLASS | CREATE_NEW_PROCESS_GROUP | CREATE_NO_WINDOW,
-			       NULL,		/* lpEnvironment */
-			       wszWorkDir,
-			       &si,
-			       &pi);
+		bSuccess = CreateProcessW(
+				NULL,		/* lpApplication */
+				wszCmdLine,	/* lpCommandLine */
+				NULL,		/* lpProcessAttribute */
+				NULL,		/* lpThreadAttributes */
+				FALSE,		/* bInheritHandles */
+				NORMAL_PRIORITY_CLASS | CREATE_NEW_PROCESS_GROUP | CREATE_NO_WINDOW,
+				NULL,		/* lpEnvironment */
+				wszWorkDir,
+				&si,
+				&pi);
+		if (!bSuccess) {
+			noct_error(env, "CreateProcess() failed.");
+		}
 		if (pi.hProcess != NULL) {
 			ret = 0;
 			if (wait_for_finish) {

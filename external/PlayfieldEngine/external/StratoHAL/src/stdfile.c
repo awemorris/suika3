@@ -205,6 +205,7 @@ init_file(void)
 		fclose(fp);
 		return false;
 	}
+	entry_count = hal_le_to_host_64(entry_count);
 	if (entry_count > ENTRY_SIZE) {
 		hal_log_error("Corrupted package file.");
 		fclose(fp);
@@ -222,6 +223,8 @@ init_file(void)
 			break;
 		if (fread(&entry[i].offset, sizeof(uint64_t), 1, fp) < 1)
 			break;
+		entry[i].size = hal_le_to_host_64(entry[i].size);
+		entry[i].offset = hal_le_to_host_64(entry[i].offset);
 	}
 	if (i != entry_count) {
 		hal_log_error("Package file corrupted.");

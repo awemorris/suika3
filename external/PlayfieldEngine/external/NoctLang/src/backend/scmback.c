@@ -1481,10 +1481,12 @@ static bool
 scmback_visit_array_expr(
 	struct hir_expr *expr)
 {
-	uint32_t elem_count, i;
+	size_t elem_count, i;
+
 	assert(expr != NULL);
 	assert(expr->type == HIR_EXPR_ARRAY);
 	assert(expr->val.array.elem_count > 0);
+
 	elem_count = expr->val.array.elem_count;
 	PUT("(list");
 	for (i = 0; i < elem_count; i++) {
@@ -1500,9 +1502,11 @@ static bool
 scmback_visit_dict_expr(
 	struct hir_expr *expr)
 {
-	uint32_t kv_count, i;
+	size_t kv_count, i;
+
 	assert(expr != NULL);
 	assert(expr->type == HIR_EXPR_DICT);
+
 	kv_count = expr->val.dict.kv_count;
 	PUT("(noct-dict");
 	for (i = 0; i < kv_count; i++) {
@@ -1521,9 +1525,10 @@ scmback_visit_new_expr(
 {
 	assert(expr != NULL);
 	assert(expr->type == HIR_EXPR_NEW);
+
 	PUT1("(noct-new %s (noct-dict", expr->val.new_.cls);
 	if (expr->val.new_.init != NULL) {
-		uint32_t i, kv_count = expr->val.new_.init->val.dict.kv_count;
+		size_t i, kv_count = expr->val.new_.init->val.dict.kv_count;
 		for (i = 0; i < kv_count; i++) {
 			PUT1(" (cons \"%s\" ", expr->val.new_.init->val.dict.key[i]);
 			if (!scmback_visit_expr(expr->val.new_.init->val.dict.value[i])) return false;

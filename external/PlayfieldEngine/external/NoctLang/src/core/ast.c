@@ -119,13 +119,6 @@ ast_build(
 
 	/* Copy the file name. */
 	ast_file_name = ast_strdup(file_name);
-	if (ast_file_name == NULL) {
-		ast_out_of_memory();
-		return false;
-	}
-
-	/* Copy the file name. */
-	ast_file_name = ast_strdup(file_name);
 	if (ast_file_name == NULL)
 		return false;
 
@@ -524,7 +517,7 @@ ast_accept_plusplus_or_minusminus_stmt(
 		return NULL;
 
 	rhs0 = ast_copy_expr(expr);
-	if (lhs == NULL)
+	if (rhs0 == NULL)
 		return NULL;
 
 	term = ast_malloc(sizeof(struct ast_term));
@@ -2023,7 +2016,7 @@ ast_copy_expr(
 	assert(expr != NULL);
 
 	dst = ast_malloc(sizeof(struct ast_expr));
-	if (expr == NULL) {
+	if (dst == NULL) {
 		ast_out_of_memory();
 		return NULL;
 	}

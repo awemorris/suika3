@@ -253,7 +253,7 @@ zh:不是数组。
 tw:不是陣列。
 ja:配列ではありません。
 ---
-ID:Index %ld is out-of-range.
+ID:Array index %ld is out-of-range.
 ---
 ID:Dictionary index %ld is out-of-range.
 en:Dictionary index %ld is out-of-range.
@@ -378,6 +378,10 @@ tw:下標不是整數。
 ja:添字が整数ではありません。
 ---
 ID:Not an array, dictionary, or packed.
+---
+ID:Subscript is negative.
+---
+ID:Invalid shift amount.
 ---
 ID:Subscript not a string.
 en:Subscript not a string.
@@ -666,6 +670,12 @@ tw:參數 (%d: %s) 不是字典。
 ja:引数 (%d: %s) が辞書ではありません。
 ---
 ID:Argument (%d: %s) not a packed.
+---
+ID:Packed size is 0.
+---
+ID:Packed size is too large.
+---
+ID:Array index %ld is out-of-range.
 ---
 ID:Not a function.
 en:Not a function.

@@ -8,7 +8,8 @@ project(StratoHAL VERSION 1.0 LANGUAGES C)
 # Target
 option(STRATO_TARGET_WINDOWS          "Build for Windows 2000 or later"         OFF)
 option(STRATO_TARGET_WINDOWS95        "Build for Windows 95/98/Me"              OFF)
-option(STRATO_TARGET_MACOS            "Build for macOS"                         OFF)
+option(STRATO_TARGET_MACOS            "Build for macOS (Mac OS X or later)"     OFF)
+option(STRATO_TARGET_MACOS7           "Build for MacOS 7"                       OFF)
 option(STRATO_TARGET_LINUX            "Build for Linux (Wayland/X11 Dual)"      OFF)
 option(STRATO_TARGET_LINUX_X11        "Build for Linux (Wayland, OpenGL)"       OFF)
 option(STRATO_TARGET_LINUX_WAYLAND    "Build for Linux (Wayland, OpenGL)"       OFF)
@@ -61,7 +62,7 @@ option(STRATO_ENABLE_PORTAL           "Enable XDG Portal"                       
 if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_WINDOWS95
    OR STRATO_TARGET_MACOS
-   OR STRATO_TARGET_MACOS_LIB
+   OR STRATO_TARGET_MACOS7
    OR STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_LINUX_WAYLAND
@@ -643,6 +644,18 @@ if(STRATO_TARGET_UWP)
   )
 endif()
 
+# MacOS 7
+if(STRATO_TARGET_MACOS7)
+  set(STRATO_SOURCES
+    src/image.c
+    src/glyph.c
+    src/wave.c
+    src/stdfile.c
+    src/macmain.c
+    src/nosound.c
+  )
+endif()
+
 # PC-9800
 if(STRATO_TARGET_PC98)
   set(STRATO_SOURCES
@@ -898,6 +911,11 @@ if(STRATO_TARGET_UNITY)
   elseif(STRATO_TARGET_UNITY_XBOX)
     target_compile_definitions(strato PRIVATE HAL_UNITY_GAMECORE_XBOXSERIES)
   endif()
+endif()
+
+# MacOS 7
+if(STRATO_TARGET_MACOS7)
+  target_compile_definitions(strato PUBLIC HAL_TARGET_MACOS7)
 endif()
 
 # PC98

@@ -50,7 +50,7 @@ void cleanup_sound(void)
 /*
  * Start sound playback on a stream.
  */
-bool play_sound(int n, struct wave *w)
+bool play_sound(int n, struct hal_wave *w)
 {
 	UNUSED_PARAMETER(n);
 	UNUSED_PARAMETER(w);

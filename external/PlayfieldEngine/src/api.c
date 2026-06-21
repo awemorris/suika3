@@ -1578,7 +1578,7 @@ pf_get_call_arg_int(
 
 	if (exists || !omissible) {
 		/* Get the element by name. */
-		if (!noct_get_dict_elem_check_int(env, &param, name, &value, val))
+		if (!noct_get_dict_elem_check_int(env, &param, name, &value, (int32_t *)val))
 			return false;
 	} else if (!exists && !omissible) {
 		pf_log_error(PF_TR(""));
@@ -1733,7 +1733,7 @@ pf_get_call_arg_array_int(
 		return false;
 
 	/* Get the array element. */
-	if (!noct_get_array_elem_check_int(env, &array, (uint32_t)index, &value, val))
+	if (!noct_get_array_elem_check_int(env, &array, (uint32_t)index, &value, (int32_t *)val))
 		return false;
 
 	return true;
@@ -1839,7 +1839,7 @@ pf_get_call_arg_dict_int(
 
 	if (exists || !omissible) {
 		/* Get the dict element. */
-		if (!noct_get_dict_elem_check_int(env, &dict, key, &value, val))
+		if (!noct_get_dict_elem_check_int(env, &dict, key, &value, (int32_t *)val))
 			return false;
 	} else {
 		*val = def_val;

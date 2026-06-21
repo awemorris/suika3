@@ -2304,6 +2304,8 @@ retry:
 		 * Do a write now without SeqLock.
 		 */
 		arr->table[index] = *val;
+		if (index >= arr->size)
+			arr->size = index + 1;
 
 		/*
 		 * Write barrier for the remember set.
@@ -2342,6 +2344,12 @@ retry:
 	increment_array_seqlock(env, arr);	/* Make unstable. (LSB set) */
 	arr->table[index] = *val;		/* Store two machine words. */
 	increment_array_seqlock(env, arr);	/* Make stable. (LSB cleared) */
+
+	/*
+	 * Increment the size.
+	 */
+	if (index >= arr->size)
+		arr->size = index + 1;
 
 	/*
 	 * Write barrier for the remember set.
@@ -2536,7 +2544,7 @@ om_make_dict(
 }
 
 /*
- * Make an empty array.
+ * Get the dictionary allocation size.
  */
 bool
 om_get_dict_alloc_size(
@@ -2555,6 +2563,30 @@ om_get_dict_alloc_size(
 	 * Get the allocated size.
 	 */
 	*size = dict->alloc_size;
+
+	return true;
+}
+
+/*
+ * Get the dictionary element size.
+ */
+bool
+om_get_dict_size(
+	struct rt_env *env,
+	struct rt_value *val,
+	size_t *size)
+{
+	struct rt_dict *dict;
+
+	/*
+	 * Start a dictionary read.
+	 */
+	dict = start_dict_read(env, val);
+
+	/*
+	 * Get the allocated size.
+	 */
+	*size = dict->size;
 
 	return true;
 }
@@ -2796,6 +2828,7 @@ om_read_dict_index(
 {
 	struct rt_dict *dict;
 	int seq1, seq2;
+	size_t count, i;
 
 	/*
 	 * Start a dictionary read.
@@ -2820,39 +2853,53 @@ om_read_dict_index(
 		 * Thread-local, not shared.
 		 * Read without SeqLock.
 		 */
-		*val = dict->value[index];
-		*key = dict->key[index];
+		count = 0;
+		for (i = 0; i < dict->alloc_size; i++) {
+			if (dict->key[i].type != NOCT_VALUE_STRING)
+				continue;
+			if (count++ == index) {
+				*val = dict->value[i];
+				*key = dict->key[i];
+				break;
+			}
+		}
+		if (i == dict->alloc_size)
+			return false;
 	} else {
 		/*
 		 * Shared.
 		 */
+		count = 0;
+		for (i = 0; i < dict->alloc_size; i++) {
+			int type;
 
-		int type = atomic_load_acquire_int(&dict->key[index].type);
-
-		/*
-		 * Skip if a removed or emtpty slot.
-		 */
-		if (type != NOCT_VALUE_STRING) {
 			/*
-			 * No entry at the index.
+			 * Skip if a removed or emtpty slot.
 			 */
-			return false;
-		}
-
-		/*
-		 * Get the key string pointer at the second word.
-		 */
-		do {
-			seq1 = get_dict_seqlock(env, dict);
-			if (seq1 & 1)
+			type = atomic_load_acquire_int(&dict->key[index].type);
+			if (type != NOCT_VALUE_STRING)
 				continue;
 
-			*val = dict->value[index];
+			if (count++ == index) {
+				/*
+				 * Get the key string pointer at the second word.
+				 */
+				do {
+					seq1 = get_dict_seqlock(env, dict);
+					if (seq1 & 1)
+						continue;
 
-			seq2 = get_dict_seqlock(env, dict);
+					*val = dict->value[i];
 
-		} while ((seq1 != seq2)   ||    /* Race write has occurred, or */
-			 (seq2 & 1) != 0);      /* Read an unstable value. */
+					seq2 = get_dict_seqlock(env, dict);
+
+				} while ((seq1 != seq2)   ||    /* Race write has occurred, or */
+					 (seq2 & 1) != 0);      /* Read an unstable value. */
+				break;
+			}
+		}
+		if (i == dict->alloc_size)
+			return false;
 	}
 
 	/*
@@ -3007,7 +3054,7 @@ in_place_write_phase:
 		}
 	}
 	if (found_tombstone) {
-		index = first_tombstone_index;
+		i = first_tombstone_index;
 		is_insertion = true;
 	}
 
@@ -3020,8 +3067,10 @@ in_place_write_phase:
 		 * Thread-local, not shared. Write without SeqLock.
 		 */
 		dict->value[i] = *val;
-		if (is_insertion)
+		if (is_insertion) {
 			dict->key[i] = *key;
+			dict->size++;
+		}
 
 		/*
 		 * Write barrier for the remember set.
@@ -3050,6 +3099,8 @@ in_place_write_phase:
 		 * the key's type last.
 		 */
 		if (is_insertion) {
+			dict->size++;
+
 			/*
 			 * Key write barrier for the remember set.
 			 */
@@ -3477,19 +3528,19 @@ om_merge_dict(
 			index = sn->key[j].val.str->hash & (uint32_t)(d->alloc_size - 1);
 			for (k = index;
 			     k != ((index - 1 + d->alloc_size) & (d->alloc_size - 1));
-			     k = (j + 1) & ((uint32_t)d->alloc_size - 1)) {
+			     k = (k + 1) & ((uint32_t)d->alloc_size - 1)) {
 				/*
 				 * Skip an empty slot
 				 */
-				if (d->key[i].type != NOCT_VALUE_STRING)
+				if (d->key[k].type != NOCT_VALUE_STRING)
 					break;
 
 				/*
 				 * Found the same key.
 				 */
-				if (d->key[i].val.str->len == sn->key[j].val.str->len &&
-				    d->key[i].val.str->hash == sn->key[j].val.str->hash &&
-				    strcmp(d->key[i].val.str->data, sn->key[j].val.str->data) == 0)
+				if (d->key[k].val.str->len == sn->key[j].val.str->len &&
+				    d->key[k].val.str->hash == sn->key[j].val.str->hash &&
+				    strcmp(d->key[k].val.str->data, sn->key[j].val.str->data) == 0)
 					break;
 			}
 

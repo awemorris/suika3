@@ -1,8 +1,6 @@
-#include <noct/c89compat.h>
+#line 2 "/home/awe/src/suika3/build-linux-debug/external/PlayfieldEngine/external/NoctLang/lexer.yy.c"
 
-#line 2 "/home/awe/src/noct/build-debug/lexer.yy.c"
-
-#line 4 "/home/awe/src/noct/build-debug/lexer.yy.c"
+#line 4 "/home/awe/src/suika3/build-linux-debug/external/PlayfieldEngine/external/NoctLang/lexer.yy.c"
 
 #define  YY_INT_ALIGNED short int
 
@@ -805,13 +803,14 @@ static const flex_int16_t yy_chk[576] =
 #define yymore() yymore_used_but_not_detected
 #define YY_MORE_ADJ 0
 #define YY_RESTORE_YY_MORE_OFFSET
-#line 1 "/home/awe/src/noct/src/core/lexer.l"
-#line 2 "/home/awe/src/noct/src/core/lexer.l"
+#line 1 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
+#line 2 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 /*
  * Noct Programming Language
  * Copyright (c) 2025, 2026, Awe Morris
  */
 
+#include <noct/c89compat.h>
 #include "parser.tab.h"
 
 #ifdef _MSC_VER
@@ -833,8 +832,8 @@ char *ast_strdup(const char *s);
 void ast_free(void *p);
 
 extern YYLTYPE yylloc;
-#line 836 "/home/awe/src/noct/build-debug/lexer.yy.c"
-#line 837 "/home/awe/src/noct/build-debug/lexer.yy.c"
+#line 836 "/home/awe/src/suika3/build-linux-debug/external/PlayfieldEngine/external/NoctLang/lexer.yy.c"
+#line 837 "/home/awe/src/suika3/build-linux-debug/external/PlayfieldEngine/external/NoctLang/lexer.yy.c"
 
 #define INITIAL 0
 
@@ -1094,9 +1093,9 @@ YY_DECL
 		}
 
 	{
-#line 34 "/home/awe/src/noct/src/core/lexer.l"
+#line 34 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 
-#line 1099 "/home/awe/src/noct/build-debug/lexer.yy.c"
+#line 1099 "/home/awe/src/suika3/build-linux-debug/external/PlayfieldEngine/external/NoctLang/lexer.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1152,7 +1151,7 @@ do_action:	/* This label is used only to access EOF actions. */
 case 1:
 /* rule 1 can match eol */
 YY_RULE_SETUP
-#line 35 "/home/awe/src/noct/src/core/lexer.l"
+#line 35 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1162,11 +1161,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 41 "/home/awe/src/noct/src/core/lexer.l"
+#line 41 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
-                        double v;
-			sscanf(yytext, "%lf", &v);
-                        ast_yylval.lfval = v;
+                        ast_yylval.lfval = atof(yytext);
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
 			ast_yylloc.last_column += yyleng;
@@ -1175,11 +1172,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 50 "/home/awe/src/noct/src/core/lexer.l"
+#line 48 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
-                        double v;
-			sscanf(yytext, "%lf", &v);
-                        ast_yylval.fval = (float)v;
+                        ast_yylval.fval = (float)atof(yytext);
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
 			ast_yylloc.last_column += yyleng;
@@ -1188,11 +1183,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 59 "/home/awe/src/noct/src/core/lexer.l"
+#line 55 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
-                        double v;
-			sscanf(yytext, "%lf", &v);
-                        ast_yylval.fval = (float)v;
+                        ast_yylval.fval = (float)atof(yytext);
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
 			ast_yylloc.last_column += yyleng;
@@ -1201,9 +1194,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 68 "/home/awe/src/noct/src/core/lexer.l"
+#line 62 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
-			sscanf(yytext, "%" SCNd64, &ast_yylval.lval);
+			ast_yylval.lval = atoll(yytext);
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
 			ast_yylloc.last_column += yyleng;
@@ -1212,13 +1205,12 @@ YY_RULE_SETUP
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 75 "/home/awe/src/noct/src/core/lexer.l"
+#line 69 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
-                        int64_t v;
-			sscanf(yytext, "%" SCNd64, &v);
+                        int64_t v = atoll(yytext);
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
-			ast_yylloc.last_column += yyleng;
+                        ast_yylloc.last_column += yyleng;
                         if (v > INT_MAX) {
                                 ast_yylval.lval = v;
                                 return TOKEN_LONG;
@@ -1229,9 +1221,9 @@ YY_RULE_SETUP
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 88 "/home/awe/src/noct/src/core/lexer.l"
+#line 81 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
-			sscanf(yytext, "%" SCNx64, &ast_yylval.lval);
+                        ast_yylval.lval = atoll(yytext);
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
 			ast_yylloc.last_column += yyleng;
@@ -1240,7 +1232,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 95 "/home/awe/src/noct/src/core/lexer.l"
+#line 88 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			sscanf(yytext, "%x", &ast_yylval.ival);
 			ast_yylloc.first_line = ast_yylloc.last_line;
@@ -1252,7 +1244,7 @@ YY_RULE_SETUP
 case 9:
 /* rule 9 can match eol */
 YY_RULE_SETUP
-#line 102 "/home/awe/src/noct/src/core/lexer.l"
+#line 95 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylval.sval = ast_strdup(yytext + 1);
 			ast_yylval.sval[yyleng - 2] = '\0';
@@ -1264,7 +1256,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 110 "/home/awe/src/noct/src/core/lexer.l"
+#line 103 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1274,7 +1266,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 116 "/home/awe/src/noct/src/core/lexer.l"
+#line 109 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1284,7 +1276,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 122 "/home/awe/src/noct/src/core/lexer.l"
+#line 115 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1294,7 +1286,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 128 "/home/awe/src/noct/src/core/lexer.l"
+#line 121 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1304,7 +1296,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 134 "/home/awe/src/noct/src/core/lexer.l"
+#line 127 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1314,7 +1306,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 140 "/home/awe/src/noct/src/core/lexer.l"
+#line 133 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1324,7 +1316,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 146 "/home/awe/src/noct/src/core/lexer.l"
+#line 139 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1334,7 +1326,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 152 "/home/awe/src/noct/src/core/lexer.l"
+#line 145 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1344,7 +1336,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 158 "/home/awe/src/noct/src/core/lexer.l"
+#line 151 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1354,7 +1346,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 164 "/home/awe/src/noct/src/core/lexer.l"
+#line 157 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1364,7 +1356,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 170 "/home/awe/src/noct/src/core/lexer.l"
+#line 163 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1374,7 +1366,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 176 "/home/awe/src/noct/src/core/lexer.l"
+#line 169 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1384,7 +1376,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 182 "/home/awe/src/noct/src/core/lexer.l"
+#line 175 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1394,7 +1386,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 188 "/home/awe/src/noct/src/core/lexer.l"
+#line 181 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1404,7 +1396,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 194 "/home/awe/src/noct/src/core/lexer.l"
+#line 187 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1414,7 +1406,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 25:
 YY_RULE_SETUP
-#line 200 "/home/awe/src/noct/src/core/lexer.l"
+#line 193 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1424,7 +1416,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 26:
 YY_RULE_SETUP
-#line 206 "/home/awe/src/noct/src/core/lexer.l"
+#line 199 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1434,7 +1426,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 27:
 YY_RULE_SETUP
-#line 212 "/home/awe/src/noct/src/core/lexer.l"
+#line 205 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1444,7 +1436,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 28:
 YY_RULE_SETUP
-#line 218 "/home/awe/src/noct/src/core/lexer.l"
+#line 211 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1454,7 +1446,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 29:
 YY_RULE_SETUP
-#line 224 "/home/awe/src/noct/src/core/lexer.l"
+#line 217 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1464,7 +1456,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 30:
 YY_RULE_SETUP
-#line 230 "/home/awe/src/noct/src/core/lexer.l"
+#line 223 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1474,7 +1466,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 31:
 YY_RULE_SETUP
-#line 236 "/home/awe/src/noct/src/core/lexer.l"
+#line 229 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1484,7 +1476,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 32:
 YY_RULE_SETUP
-#line 242 "/home/awe/src/noct/src/core/lexer.l"
+#line 235 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1494,7 +1486,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 33:
 YY_RULE_SETUP
-#line 248 "/home/awe/src/noct/src/core/lexer.l"
+#line 241 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1504,7 +1496,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 34:
 YY_RULE_SETUP
-#line 254 "/home/awe/src/noct/src/core/lexer.l"
+#line 247 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1514,7 +1506,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 35:
 YY_RULE_SETUP
-#line 260 "/home/awe/src/noct/src/core/lexer.l"
+#line 253 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1524,7 +1516,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 36:
 YY_RULE_SETUP
-#line 266 "/home/awe/src/noct/src/core/lexer.l"
+#line 259 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1534,7 +1526,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 37:
 YY_RULE_SETUP
-#line 272 "/home/awe/src/noct/src/core/lexer.l"
+#line 265 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1544,7 +1536,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 38:
 YY_RULE_SETUP
-#line 278 "/home/awe/src/noct/src/core/lexer.l"
+#line 271 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1554,7 +1546,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 39:
 YY_RULE_SETUP
-#line 284 "/home/awe/src/noct/src/core/lexer.l"
+#line 277 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1564,7 +1556,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 40:
 YY_RULE_SETUP
-#line 290 "/home/awe/src/noct/src/core/lexer.l"
+#line 283 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1574,7 +1566,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 41:
 YY_RULE_SETUP
-#line 296 "/home/awe/src/noct/src/core/lexer.l"
+#line 289 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1584,7 +1576,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 302 "/home/awe/src/noct/src/core/lexer.l"
+#line 295 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1594,7 +1586,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 308 "/home/awe/src/noct/src/core/lexer.l"
+#line 301 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1604,7 +1596,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 44:
 YY_RULE_SETUP
-#line 314 "/home/awe/src/noct/src/core/lexer.l"
+#line 307 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1615,7 +1607,7 @@ YY_RULE_SETUP
 case 45:
 /* rule 45 can match eol */
 YY_RULE_SETUP
-#line 320 "/home/awe/src/noct/src/core/lexer.l"
+#line 313 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1625,7 +1617,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 46:
 YY_RULE_SETUP
-#line 326 "/home/awe/src/noct/src/core/lexer.l"
+#line 319 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1635,7 +1627,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 47:
 YY_RULE_SETUP
-#line 332 "/home/awe/src/noct/src/core/lexer.l"
+#line 325 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1645,7 +1637,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 48:
 YY_RULE_SETUP
-#line 338 "/home/awe/src/noct/src/core/lexer.l"
+#line 331 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			/* extend is equal to new. */
 			ast_yylloc.first_line = ast_yylloc.last_line;
@@ -1656,7 +1648,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 49:
 YY_RULE_SETUP
-#line 345 "/home/awe/src/noct/src/core/lexer.l"
+#line 338 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1666,7 +1658,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 50:
 YY_RULE_SETUP
-#line 351 "/home/awe/src/noct/src/core/lexer.l"
+#line 344 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1677,7 +1669,7 @@ YY_RULE_SETUP
 case 51:
 /* rule 51 can match eol */
 YY_RULE_SETUP
-#line 357 "/home/awe/src/noct/src/core/lexer.l"
+#line 350 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1687,7 +1679,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 52:
 YY_RULE_SETUP
-#line 363 "/home/awe/src/noct/src/core/lexer.l"
+#line 356 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1697,7 +1689,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 53:
 YY_RULE_SETUP
-#line 369 "/home/awe/src/noct/src/core/lexer.l"
+#line 362 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1707,7 +1699,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 54:
 YY_RULE_SETUP
-#line 375 "/home/awe/src/noct/src/core/lexer.l"
+#line 368 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1717,7 +1709,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 55:
 YY_RULE_SETUP
-#line 381 "/home/awe/src/noct/src/core/lexer.l"
+#line 374 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1727,7 +1719,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 56:
 YY_RULE_SETUP
-#line 387 "/home/awe/src/noct/src/core/lexer.l"
+#line 380 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1738,7 +1730,7 @@ YY_RULE_SETUP
 case 57:
 /* rule 57 can match eol */
 YY_RULE_SETUP
-#line 393 "/home/awe/src/noct/src/core/lexer.l"
+#line 386 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1749,7 +1741,7 @@ YY_RULE_SETUP
 case 58:
 /* rule 58 can match eol */
 YY_RULE_SETUP
-#line 399 "/home/awe/src/noct/src/core/lexer.l"
+#line 392 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1759,7 +1751,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 59:
 YY_RULE_SETUP
-#line 405 "/home/awe/src/noct/src/core/lexer.l"
+#line 398 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1769,7 +1761,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 60:
 YY_RULE_SETUP
-#line 411 "/home/awe/src/noct/src/core/lexer.l"
+#line 404 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1779,7 +1771,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 61:
 YY_RULE_SETUP
-#line 417 "/home/awe/src/noct/src/core/lexer.l"
+#line 410 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1789,7 +1781,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 62:
 YY_RULE_SETUP
-#line 423 "/home/awe/src/noct/src/core/lexer.l"
+#line 416 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1799,7 +1791,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 63:
 YY_RULE_SETUP
-#line 429 "/home/awe/src/noct/src/core/lexer.l"
+#line 422 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1809,7 +1801,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 64:
 YY_RULE_SETUP
-#line 435 "/home/awe/src/noct/src/core/lexer.l"
+#line 428 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1819,7 +1811,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 65:
 YY_RULE_SETUP
-#line 441 "/home/awe/src/noct/src/core/lexer.l"
+#line 434 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1829,7 +1821,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 66:
 YY_RULE_SETUP
-#line 447 "/home/awe/src/noct/src/core/lexer.l"
+#line 440 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1839,7 +1831,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 67:
 YY_RULE_SETUP
-#line 453 "/home/awe/src/noct/src/core/lexer.l"
+#line 446 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1849,7 +1841,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 68:
 YY_RULE_SETUP
-#line 459 "/home/awe/src/noct/src/core/lexer.l"
+#line 452 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1859,7 +1851,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 69:
 YY_RULE_SETUP
-#line 465 "/home/awe/src/noct/src/core/lexer.l"
+#line 458 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1869,7 +1861,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 70:
 YY_RULE_SETUP
-#line 471 "/home/awe/src/noct/src/core/lexer.l"
+#line 464 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1879,7 +1871,7 @@ YY_RULE_SETUP
 case 71:
 /* rule 71 can match eol */
 YY_RULE_SETUP
-#line 476 "/home/awe/src/noct/src/core/lexer.l"
+#line 469 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylloc.first_line = ast_yylloc.last_line;
 			ast_yylloc.first_column = ast_yylloc.last_column + 1;
@@ -1889,7 +1881,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 72:
 YY_RULE_SETUP
-#line 482 "/home/awe/src/noct/src/core/lexer.l"
+#line 475 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylval.ival = 0;
 			ast_yylloc.first_line = ast_yylloc.last_line;
@@ -1900,7 +1892,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 73:
 YY_RULE_SETUP
-#line 489 "/home/awe/src/noct/src/core/lexer.l"
+#line 482 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylval.ival = 1;
 			ast_yylloc.first_line = ast_yylloc.last_line;
@@ -1911,7 +1903,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 74:
 YY_RULE_SETUP
-#line 496 "/home/awe/src/noct/src/core/lexer.l"
+#line 489 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylval.ival = 0;
 			ast_yylloc.first_line = ast_yylloc.last_line;
@@ -1922,7 +1914,7 @@ YY_RULE_SETUP
 	YY_BREAK
 case 75:
 YY_RULE_SETUP
-#line 503 "/home/awe/src/noct/src/core/lexer.l"
+#line 496 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 {
 			ast_yylval.sval = ast_strdup(yytext);
 			ast_yylloc.first_line = ast_yylloc.last_line;
@@ -1933,10 +1925,10 @@ YY_RULE_SETUP
 	YY_BREAK
 case 76:
 YY_RULE_SETUP
-#line 510 "/home/awe/src/noct/src/core/lexer.l"
+#line 503 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 ECHO;
 	YY_BREAK
-#line 1939 "/home/awe/src/noct/build-debug/lexer.yy.c"
+#line 1932 "/home/awe/src/suika3/build-linux-debug/external/PlayfieldEngine/external/NoctLang/lexer.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -3106,7 +3098,7 @@ void yyfree (void * ptr , yyscan_t yyscanner)
 
 #define YYTABLES_NAME "yytables"
 
-#line 510 "/home/awe/src/noct/src/core/lexer.l"
+#line 503 "/home/awe/src/suika3/external/PlayfieldEngine/external/NoctLang/src/core/lexer.l"
 
 
 int ast_yywrap(yyscan_t scanner)
