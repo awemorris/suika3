@@ -304,6 +304,9 @@ static bool is_sys_gui;
 /* Is cancel by clicking on the margin? */
 static bool is_click_cancel;
 
+/* Is cancel by a right click? */
+static bool is_right_cancel;
+
 /* Is cancel by pressing the escape key? */
 static bool is_escape_cancel;
 
@@ -661,6 +664,7 @@ s3_load_gui_file(
 	is_drag_finished = false;
 	bomb_time = 0;
 	is_click_cancel = false;
+	is_right_cancel = false;
 	is_escape_cancel = false;
 	is_load_failed = false;
 
@@ -1132,6 +1136,18 @@ static void process_input(void)
 
 	/* If cancel is possible by pressing the escape key. */
 	if (is_escape_cancel && s3_is_escape_key_pressed()) {
+		/* Perform fade out or finish processing. */
+		if (fade_out_time > 0) {
+			is_fading_out = true;
+			s3_reset_lap_timer(&fade_sw);
+		} else {
+			is_finished = true;
+			s3_clear_input_state();
+		}
+	}
+
+	/* If cancel is possible by a right click. */
+	if (is_right_cancel && s3_is_mouse_right_pressed()) {
 		/* Perform fade out or finish processing. */
 		if (fade_out_time > 0) {
 			is_fading_out = true;
@@ -4388,6 +4404,11 @@ set_global_key_value(
 
 	if (strcmp(key, "clickcancel") == 0) {
 		is_click_cancel = strcmp(val, "yes") == 0 ? true : false;
+		return true;
+	}
+
+	if (strcmp(key, "rightcancel") == 0) {
+		is_right_cancel = strcmp(val, "yes") == 0 ? true : false;
 		return true;
 	}
 

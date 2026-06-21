@@ -16,6 +16,9 @@ global {
     # Cancel on ESC key.
     escapecancel: yes;
 
+    # Cancel on right click.
+    rightcancel: yes;
+
     # Sound effect on cancel.
     cancelse: sound/se/click.ogg;
 

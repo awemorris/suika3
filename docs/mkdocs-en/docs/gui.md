@@ -71,6 +71,21 @@ Other sections are interpreted as button definitions.
 Here, `button1` makes a button at position `(39, 99)`.
 If the button is clicked, a jump so called `goto` will happen.
 
+## Global Section
+
+| Description        | Meaning                                                        |
+|--------------------|----------------------------------------------------------------|
+| saveslots          | Save slot count for save/load screens.                         |
+| historyslots       | History slot count for history screens.                        |
+| cancelse           | Sound effect file to play on cancel.                           |
+| fadein             | Fade-in time in seconds.                                       |
+| fadeout            | Fade-out time in seconds.                                      |
+| timed              | Timer in seconds.                                              |
+| clickcancel        | Specify "yes" to allow cancel by a left click on empty region. |
+| rightcancel        | Specify "yes" to allow cancel by a right click.                |
+| escapecancel       | Specify "yes" to allow cancel by escape key.                   |
+| alt                | Text-to-speech text that is read when the GUI is shown.        |
+
 ---
 
 ## Button Types

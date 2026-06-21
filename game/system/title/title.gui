@@ -12,6 +12,12 @@ global {
 
     # Sound effect on cancel.
     cancelse: sound/se/click.ogg;
+
+    # Don't allow cancel by escape key.
+    escapecancel: no;
+
+    # Don't allow cancel by a right click.
+    rightcancel: no;
 }
 
 BASE {
