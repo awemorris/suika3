@@ -40,9 +40,11 @@ static const char *prop_names[] = {
 	"file",
 	"time",
 	"method",
+	"rule",
 	"x",
 	"y",
-	"rule",
+	"alpha",
+	"clear",
 	NULL,
 };
 
@@ -81,7 +83,8 @@ init(void)
 {
 	static struct s3_image *img, *rule_img;
 	const char *fname, *method;
-	int fade_method, ofs_x, ofs_y;
+	int fade_method, ofs_x, ofs_y, alpha;
+	bool clear;
 	struct s3_fade_desc desc[S3_FADE_DESC_COUNT];
 
 	/* Check properties. */
@@ -96,6 +99,8 @@ init(void)
 	method = s3_get_tag_arg_string("method", true, "normal");
 	ofs_x = s3_get_tag_arg_int("x", true, 0);
 	ofs_y = s3_get_tag_arg_int("y", true, 0);
+	alpha = s3_get_tag_arg_int("alpha", true, 255);
+	clear = s3_get_tag_arg_bool("clear", true, 0);
 
  	/* Recognize the rendering method. */
 	fade_method = s3_get_fade_method(method);
@@ -147,19 +152,29 @@ init(void)
 
 	/* Make a fade descriptor. */
 	memset(desc, 0, sizeof(desc));
-	desc[S3_FADE_DESC_CHB].stay = true;
-	desc[S3_FADE_DESC_CHL].stay = true;
-	desc[S3_FADE_DESC_CHLC].stay = true;
-	desc[S3_FADE_DESC_CHR].stay = true;
-	desc[S3_FADE_DESC_CHRC].stay = true;
-	desc[S3_FADE_DESC_CHC].stay = true;
-	desc[S3_FADE_DESC_CHF].stay = true;
+	if (!clear) {
+		desc[S3_FADE_DESC_CHB].stay = true;
+		desc[S3_FADE_DESC_CHL].stay = true;
+		desc[S3_FADE_DESC_CHLC].stay = true;
+		desc[S3_FADE_DESC_CHR].stay = true;
+		desc[S3_FADE_DESC_CHRC].stay = true;
+		desc[S3_FADE_DESC_CHC].stay = true;
+		desc[S3_FADE_DESC_CHF].stay = true;
+	} else {
+		desc[S3_FADE_DESC_CHB].stay = false;
+		desc[S3_FADE_DESC_CHL].stay = false;
+		desc[S3_FADE_DESC_CHLC].stay = false;
+		desc[S3_FADE_DESC_CHR].stay = false;
+		desc[S3_FADE_DESC_CHRC].stay = false;
+		desc[S3_FADE_DESC_CHC].stay = false;
+		desc[S3_FADE_DESC_CHF].stay = false;
+	}
 	desc[S3_FADE_DESC_BG].stay = false;
 	desc[S3_FADE_DESC_BG].fname = fname;
 	desc[S3_FADE_DESC_BG].image = img;
 	desc[S3_FADE_DESC_BG].x = ofs_x;
 	desc[S3_FADE_DESC_BG].y = ofs_y;
-	desc[S3_FADE_DESC_BG].alpha = 255;
+	desc[S3_FADE_DESC_BG].alpha = alpha;
 	desc[S3_FADE_DESC_BG].scale_x = 1.0f;
 	desc[S3_FADE_DESC_BG].scale_y = 1.0f;
 	desc[S3_FADE_DESC_BG].center_x = 0;
