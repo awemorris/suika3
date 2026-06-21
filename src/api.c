@@ -1171,7 +1171,7 @@ Suika_loadPlugin(
 	/* TODO: Add a path traversal check. */
 
 	/* Load a source file content. */
-	snprintf(path, sizeof(path), "plugins/%s/%s.ray", name, name);
+	snprintf(path, sizeof(path), "system/plugins/%s/%s.ray", name, name);
 	if (!s3_read_file_content(path, &data, &len))
 		return false;
 
