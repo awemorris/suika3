@@ -587,7 +587,7 @@ cb_touchend(
 
 	delta_y = touchEvent->touches[0].targetY - touch_start_y;
 	if (delta_y > FLICK_Y_DISTANCE) {
-		if (hal_callback.on_touch_cancel != NULl)
+		if (hal_callback.on_touch_cancel != NULL)
 			hal_callback.on_touch_cancel();
 		if (hal_callback.on_swipe_down != NULL)
 			hal_callback.on_swipe_down(0, 0);

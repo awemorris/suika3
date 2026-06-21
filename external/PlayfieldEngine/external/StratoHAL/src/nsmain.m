@@ -344,6 +344,7 @@ static void initGamepad(void)
                     hal_callback.on_key_release(HAL_KEY_GAMEPAD_DOWN);
             }
         };
+
         controller.extendedGamepad.dpad.left.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
             UNUSED_PARAMETER(button);
             UNUSED_PARAMETER(value);
@@ -467,7 +468,7 @@ static void initGamepad(void)
             if (hal_callback.on_analog_input != NULL)
                 hal_callback.on_analog_input(HAL_ANALOG_R, (int)(value * 32767));
         };
-    }];
+    }]];
     [GCController startWirelessControllerDiscoveryWithCompletionHandler:^{
         NSLog(@"Finished scanning for controllers.");
     }];
