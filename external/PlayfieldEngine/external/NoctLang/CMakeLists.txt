@@ -87,13 +87,13 @@ endif()
 # FLEX
 #
 
-find_package(FLEX REQUIRED)
-
-FLEX_TARGET(Lexer
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/core/lexer.l
-  ${CMAKE_CURRENT_BINARY_DIR}/lexer.yy.c
-  COMPILE_FLAGS "--prefix=ast_yy"
-)
+#find_package(FLEX REQUIRED)
+#
+#FLEX_TARGET(Lexer
+#  ${CMAKE_CURRENT_SOURCE_DIR}/src/core/lexer.l
+#  ${CMAKE_CURRENT_BINARY_DIR}/lexer.yy.c
+#  COMPILE_FLAGS "--prefix=ast_yy"
+#)
 
 # ---
 
@@ -101,14 +101,14 @@ FLEX_TARGET(Lexer
 # BISON
 #
 
-find_package(BISON REQUIRED)
-
-BISON_TARGET(Parser
-  ${CMAKE_CURRENT_SOURCE_DIR}/src/core/parser.y
-  ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.c
-  DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.h
-  COMPILE_FLAGS "-p ast_yy -Wcounterexamples"
-)
+#find_package(BISON REQUIRED)
+#
+#BISON_TARGET(Parser
+#  ${CMAKE_CURRENT_SOURCE_DIR}/src/core/parser.y
+#  ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.c
+#  DEFINES_FILE ${CMAKE_CURRENT_BINARY_DIR}/parser.tab.h
+#  COMPILE_FLAGS "-p ast_yy -Wcounterexamples"
+#)
 
 # ---
 
@@ -141,8 +141,8 @@ endif()
 # Determine the base files.
 set(
   NOCT_BASE_SOURCE
-#  src/core/lexer.yy.c      # Lexer
-#  src/core/parser.tab.c    # Parser
+  src/core/lexer.yy.c      # Lexer
+  src/core/parser.tab.c    # Parser
   src/core/ast.c           # AST construction (called from parser)
   src/core/hir.c           # HIR (AST->HIR construction)
   src/core/lir.c           # LIR (HIR->LIR construction)
