@@ -1,52 +1,37 @@
-<div align="center">
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-mid.png" alt="Suika3 Logo" width="480" hspace="20">
-  <h1 align="center" style="border-bottom: none">
-    <a href="https://suika3.vn">Suika3</a>:<br>
-    Modern, Ultra-Portable, Full-Stack<br>
-    Visual Novel Engine
-  </h1>
-  <p>
-    Suika3 is yet another Visual Novel Engine<br>
-    for 2030s and beyond.<br>
-    It consists of state-of-the-art low-level runtimes,<br>
-    including JIT and AOT compilers.<br>
-    The name stands for<br>
-    <i>Standard Universal Infrastructure for Kinetic Arts</i><br>
-  </p>
-  <p>
-    We've brought Suika3 to life<br>
-    with a deep love for mobile devices —<br>
-    the platforms that major 3D engines left behind.<br>
-    <br>
-    It's a powerful, production-ready game runtime<br>
-    for Visual Novels and all kinds of 2D games,<br>
-    designed to run beautifully on any platform you choose.
-  </p>
-  <a href="https://discord.gg/YZsq9u9Mgr"><img src="https://img.shields.io/badge/suika3.vn-Discord-orange"></a>
-  <img src="https://img.shields.io/badge/License-ZLib-orange.svg">
-  <img src="https://img.shields.io/github/stars/awemorris/suika3.svg?style=flat&logo=github&colorB=orange&label=stars">
-  <img src="https://img.shields.io/github/forks/awemorris/suika3.svg">
-  <p>
-    <a href="https://github.com/awemorris/suika3/blob/main/README.zh-CN.md">简体中文</a>&nbsp;|&nbsp;
-    <a href="https://github.com/awemorris/suika3/blob/main/README.ja.md">日本語</a>
-  </p>
-</div>
+Suika3: A modern, ultra-portable, full-stack visual novel engine
+================================================================
+
+<div align="center"><img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-mid.png" alt="Suika3 Logo" width="480" hspace="20"></div>
 
 ---
 
 ## TL;DR
 
-- **What's This:** An open-source equivalent to Unity's IL2CPP
-- **Target:** Mobile-first, yet cross-platform by design
-- **High-Performance:** Native, core written in 100%-pure ANSI C (C89)
-- **Hybrid Scripting:** JIT VM with AOT fallback for App Store compliance
-- **Broad Platforms:**
-    - **Desktop:** Windows, macOS, Linux, ChromeOS, Raspberry Pi
-    - **Mobile:** iOS, Android, HarmonyOS NEXT
-    - **Web:** WebAssembly
-    - **Console:** Xbox (GDK), PS5/Switch/Xbox via Unity Integration \[DevKit required\]
-    - **Exotic:** FreeBSD, NetBSD, OpenBSD, Solaris, Haiku, MS-DOS, PC98
-- **Users:** Professional creators, indie studios, enterprise teams.
+- **What is this for?:** Creating visual novels and selling them on App Store and Steam at the same time, eliminating porting headaches.
+- **Who is this for?:** Professional creators who make visual novels.
+- **What are the advantages?:**
+    - **High Performance:** Native, core written in 100%-pure ANSI C.
+    - **Hybrid Scripting:** JIT for PC, AOT for mobile, ensuring App Store compliance.
+    - **Broad Platforms:** Runs on virtually all modern OSes, including Windows, macOS, Linux, iOS, Android, HarmonyOS NEXT, ChromeOS, WebAssembly, *BSD, and game console!
+
+---
+
+<div align="center">
+  <a href="https://discord.gg/YZsq9u9Mgr"><img src="https://img.shields.io/badge/suika3.vn-Discord-orange"></a>
+  <img src="https://img.shields.io/badge/License-ZLib-orange.svg">
+  <img src="https://img.shields.io/github/stars/awemorris/suika3.svg?style=flat&logo=github&colorB=orange&label=stars">
+  <img src="https://img.shields.io/github/forks/awemorris/suika3.svg">
+  <p>
+    <a href="https://suika3.vn/en/">English</a>
+    <a href="https://suika3.vn/es/">Español</a>
+    <a href="https://suika3.vn/fr/">Français</a>
+    <a href="https://suika3.vn/de/">Deutsch</a>
+    <a href="https://suika3.vn/ru/">Русский</a>
+    <a href="https://suika3.vn/zh-hans/">簡体中文</a>&nbsp;|&nbsp;
+    <a href="https://suika3.vn/zh-hant/">繁体中文</a>&nbsp;|&nbsp;
+    <a href="https://suika3.vn/ja/">日本語</a>
+  </p>
+</div>
 
 ---
 
@@ -55,7 +40,6 @@
     Our custom JIT/AOT scripting infrastructure<br>
     allows you to publish the exact same game<br>
     across both Steam and the App Store,<br>
-    eliminating traditional porting headaches!
   </p>
   <img src="https://img.shields.io/badge/Desktop-Windows%20%2F%20macOS%20%2F%20Linux%20%2F%20Chromebook%20%2F%20Raspberry%20Pi-blue"><br>
   <img src="https://img.shields.io/badge/Mobile-iOS%20%2F%20Android%20%2F%20HarmonyOS%20NEXT-blue"><br>
@@ -71,7 +55,7 @@
 <!-- SCREENSHOT -->
 <div align="center">
   <a href="https://noctvm.io/test/">
-    Click to play on the browser!<br>
+    Click to start demo on the browser!<br>
     <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260406.webp" alt="Suika3 Sample Game Screenshot">
   </a>
   <br>
@@ -88,11 +72,10 @@
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-android.webp" alt="Suika3 on Android" width="480">
   <br>
   <br>
-  Suika3 on NEC PC-9801<br>
+  Suika3 running on NEC PC-9801 with JIT (binary included in release)<br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="480"><br>
   We've returned where VN was born...<br>
-  Requires: MS-DOS 6.2 and DOS4GW<br>
-  Crazy thing is, our JIT works on a real PC98 machine!<br>
+  Requires: MS-DOS 6.2, DOS4GW, 16MB RAM, and 80386+<br>
   <br>
 </div>
 
@@ -220,9 +203,15 @@ louder than any pitch deck ever could!
 
 ## Introduction
 
-Suika3 is a production-grade visual novel & 2D game runtime
-specifically engineered for commercial mobile app development,
-developed by the Suika3 Project, led by Awe Morris.
+
+Suika3 is yet another Visual Novel Engine for 2030s and beyond. It is
+a production-grade game runtime, specifically engineered for
+commercial mobile app development.
+
+The name stands for <i>Standard Universal Infrastructure for Kinetic Arts</i>.
+
+We've brought Suika3 to life with a deep love for mobile devices —
+the platforms that major 3D engines left behind.
 
 Games made with Suika3 are powered by `NovelML` and the `Ray`
 scripting platform. It runs swiftly, but it's not a lightweight
