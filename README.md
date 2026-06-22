@@ -29,8 +29,8 @@ Suika3: A modern, ultra-portable, full-stack visual novel engine
     <a href="https://suika3.vn/fr/">Français</a>
     <a href="https://suika3.vn/de/">Deutsch</a>
     <a href="https://suika3.vn/ru/">Русский</a>
-    <a href="https://suika3.vn/zh-hans/">簡体中文</a>&nbsp;|&nbsp;
-    <a href="https://suika3.vn/zh-hant/">繁体中文</a>&nbsp;|&nbsp;
+    <a href="https://suika3.vn/zh-Hans/">簡体中文</a>&nbsp;|&nbsp;
+    <a href="https://suika3.vn/zh-Hant/">繁体中文</a>&nbsp;|&nbsp;
     <a href="https://suika3.vn/ja/">日本語</a>
   </p>
   <br>
