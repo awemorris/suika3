@@ -724,8 +724,11 @@ process_frame(void)
 
 	/* Process inputs. */
 	if (s3_is_auto_mode() &&
-	    (s3_is_control_key_pressed() || s3_is_return_key_pressed() ||
-	     s3_is_mouse_left_clicked() || s3_is_down_key_pressed())) {
+	    (s3_is_control_key_pressed() ||
+	     s3_is_return_key_pressed() ||
+	     s3_is_mouse_left_clicked() ||
+	     s3_get_mouse_wheel() < 0 ||
+	     s3_is_down_key_pressed())) {
 		/* Stop the auto mode by input. */
 		s3_stop_auto_mode();
 		s3_show_automode_banner(false);
@@ -739,6 +742,7 @@ process_frame(void)
 		   (s3_is_control_key_pressed() ||
 		    s3_is_return_key_pressed() ||
 		    s3_is_mouse_left_clicked() ||
+		    s3_get_mouse_wheel() < 0 ||
 		    s3_is_down_key_pressed())) {
 		/* Stop the skip mode by input.  */
 		s3_stop_skip_mode();
@@ -757,6 +761,7 @@ process_frame(void)
 		    (s3_is_control_key_pressed() ||
 		     s3_is_return_key_pressed() ||
 		     s3_is_mouse_left_clicked() ||
+		     s3_get_mouse_wheel() < 0 ||
 		     s3_is_down_key_pressed()))) {
 		/*
 		 * In case of:
@@ -775,6 +780,7 @@ process_frame(void)
 		if (s3_is_control_key_pressed() ||
 		    s3_is_return_key_pressed() ||
 		    s3_is_mouse_left_clicked() ||
+		    s3_get_mouse_wheel() < 0 ||
 		    s3_is_down_key_pressed()) {
 			if (s3_is_skip_mode()) {
 				s3_stop_skip_mode();

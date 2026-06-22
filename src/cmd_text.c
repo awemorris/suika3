@@ -263,6 +263,9 @@ static bool no_show;
 /* Last language. (for config language selection) */
 static char *last_lang;
 
+/* s3Next flag. */
+static bool is_next_set;
+
 /*
  * Forward declarations
  */
@@ -339,6 +342,7 @@ s3i_tag_text(
 	void *p)
 {
 	bool cont;
+	int flag;
 
 	UNUSED_PARAMETER(p);
 
@@ -359,6 +363,11 @@ s3i_tag_text(
 		return true;
 	}
 
+	/* If Suika.s3Next is set.  */
+	if (s3_get_vm_int("s3Next", &flag) && flag != 0) {
+	}
+
+	/* Otherwise, process a frame. */
 	if (!preprocess())
 		return false;
 	if (!blit_process())
@@ -377,12 +386,27 @@ s3i_tag_text(
 static bool
 preprocess(void)
 {
+	int flag;
+
+	/* Get the s3Next flag. */
+	if (s3_get_vm_int("s3Next", &flag) && flag != 0)
+		is_next_set = true;
+	else
+		is_next_set = false;
+
 	/* Cancel inline wait */
 	if (is_inline_wait) {
-		if (s3_is_mouse_left_clicked() || s3_is_mouse_right_clicked() ||
-		    s3_is_control_key_pressed() || s3_is_space_key_pressed() ||
-		    s3_is_return_key_pressed() || s3_is_up_key_pressed() || s3_is_down_key_pressed() ||
-		    s3_is_pageup_key_pressed() || s3_is_pagedown_key_pressed() ||
+		if (is_next_set ||
+		    s3_is_mouse_left_clicked() ||
+		    s3_get_mouse_wheel() < 0 ||
+		    s3_is_mouse_right_clicked() ||
+		    s3_is_control_key_pressed() ||
+		    s3_is_space_key_pressed() ||
+		    s3_is_return_key_pressed() ||
+		    s3_is_up_key_pressed() ||
+		    s3_is_down_key_pressed() ||
+		    s3_is_pageup_key_pressed() ||
+		    s3_is_pagedown_key_pressed() ||
 		    s3_is_escape_key_pressed()) {
 			is_inline_wait = false;
 			s3_clear_input_state();
@@ -839,8 +863,10 @@ init_skip_mode(void)
 		}
 
 		/* If clicked */
-		if (s3_is_mouse_right_clicked() || s3_is_mouse_left_clicked() ||
-		    s3_is_up_key_pressed() || s3_is_down_key_pressed() ||
+		if (s3_is_mouse_right_clicked() ||
+		    s3_is_mouse_left_clicked() ||
+		    s3_is_up_key_pressed() ||
+		    s3_is_down_key_pressed() ||
 		    s3_is_escape_key_pressed()) {
 			/* Play SE */
 			play_se(conf_skipmode_leave_se);
@@ -1423,8 +1449,13 @@ frame_auto_mode(void)
 #endif
 
 	/* If clicked */
-	if (s3_is_mouse_left_clicked() || s3_is_mouse_right_clicked() || s3_is_escape_key_pressed() ||
-	    s3_is_return_key_pressed() || s3_is_down_key_pressed()) {
+	if (is_next_set ||
+	    s3_is_mouse_left_clicked() ||
+	    s3_is_mouse_right_clicked() ||
+	    s3_get_mouse_wheel() < 0 ||
+	    s3_is_escape_key_pressed() ||
+	    s3_is_return_key_pressed() ||
+	    s3_is_down_key_pressed()) {
 		/* Play SE */
 		play_se(conf_automode_leave_se);
 
@@ -1574,8 +1605,10 @@ frame_sysbtn(void)
 			return true;
 		}
 	} else {
-		if (s3_is_mouse_left_clicked() ||
+		if (is_next_set ||
+		    s3_is_mouse_left_clicked() ||
 		    s3_is_mouse_right_clicked() ||
+		    s3_get_mouse_wheel() < 0 ||
 		    s3_is_space_key_pressed()) {
 			action_toggle_hide();
 			s3_clear_input_state();
@@ -1981,7 +2014,9 @@ is_fast_forward_by_click(void)
 		return true;
 
 	/* If clicked, move to click wait */
-	if (s3_is_mouse_left_clicked()) {
+	if (is_next_set ||
+	    s3_is_mouse_left_clicked() ||
+	    s3_get_mouse_wheel() < 0) {
 		/* Move to click wait */
 		return true;
 	}
@@ -2110,7 +2145,9 @@ check_stop_click_animation(void)
 			return true;
 
 		/* Stop if clicked on an empty area */
-		if (s3_is_mouse_left_clicked() && !is_sysbtn_pointed())
+		if (is_next_set ||
+		    s3_get_mouse_wheel() < 0 ||
+		    (s3_is_mouse_left_clicked() && !is_sysbtn_pointed()))
 			return true;
 
 		/* Stop if a key is pressed */
@@ -2174,7 +2211,9 @@ check_stop_click_animation(void)
 		/* FYI: Voice is not playing */
 
 		/* Stop if clicked on an empty area */
-		if (s3_is_mouse_left_clicked() && !s3_is_sysbtn_pointed())
+		if (is_next_set ||
+		    s3_get_mouse_wheel() < 0 ||
+		    (s3_is_mouse_left_clicked() && !s3_is_sysbtn_pointed()))
 			return true;
 
 		/* Stop if a key is pressed */
@@ -2186,7 +2225,9 @@ check_stop_click_animation(void)
 	}
 
 	/* If clicked on an empty area or a key is pressed */
-	if ((s3_is_mouse_left_clicked() && !s3_is_sysbtn_pointed()) ||
+	if (is_next_set ||
+	    s3_get_mouse_wheel() < 0 ||
+	    (s3_is_mouse_left_clicked() && !s3_is_sysbtn_pointed()) ||
 	    (s3_is_return_key_pressed() || s3_is_down_key_pressed())) {
 		/*
 		 * If not non-interruptible, stop
@@ -2562,6 +2603,8 @@ stop(void)
 		need_dimming = true;
 	} else {
 		/* If not in auto/skip mode */
+		if (s3_is_message_active())
+			s3_clear_message_active();
 		if (s3_is_in_command_repetition())
 			s3_stop_command_repetition();
 	}
@@ -2572,6 +2615,10 @@ static bool
 cleanup(void)
 {
 	int chpos;
+
+	/* Reset the s3Next flag. */
+	if (!s3_set_vm_int("s3Next", 0))
+		return false;
 
 	/* Destroy the text drawing context. */
 	if (msgbox_context) {

@@ -88,8 +88,11 @@ s3i_tag_wait(
 	if ((float)s3_get_lap_timer_millisec(&sw) / 1000.0f >= span ||
 	    (s3_is_skip_mode() && !s3_is_non_interruptible()) ||
 	    (!s3_is_auto_mode() && !s3_is_non_interruptible() &&
-	     (s3_is_control_key_pressed() || s3_is_return_key_pressed() ||
-	      s3_is_down_key_pressed() || s3_is_mouse_left_clicked()))) {
+	     (s3_is_control_key_pressed() ||
+	      s3_is_return_key_pressed() ||
+	      s3_is_down_key_pressed() ||
+	      s3_get_mouse_wheel() < 0 ||
+	      s3_is_mouse_left_clicked()))) {
 		s3_stop_command_repetition();
 		return s3_move_to_next_tag();
 	}

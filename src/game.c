@@ -339,7 +339,7 @@ s3i_on_game_update(void)
 		if (s3_is_gui_running())
 			break;
 
-		/* Clear the continue flag. */
+		/* Clear the s3Continue flag. */
 		s3_set_vm_int("s3Continue", 0);
 
 		/* Save the last tag name. */

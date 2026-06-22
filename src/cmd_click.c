@@ -97,6 +97,7 @@ s3i_tag_click(
 	     (s3_is_control_key_pressed() ||
 	      s3_is_return_key_pressed() ||
 	      s3_is_down_key_pressed() ||
+	      s3_get_mouse_wheel() < 0 ||
 	      s3_is_mouse_left_clicked()))
 	    ||
 	    (s3_is_auto_mode() &&
