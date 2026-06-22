@@ -787,18 +787,6 @@ public class MainActivity extends Activity {
     // Start video playback.
     //
     private void bridgePlayVideo(String fileName, boolean isSkippable) {
-		synchronized(syncObj) {
-			while(true) {
-				if(!in_flight) {
-					in_flight = true;
-					break;
-				}
-				try {
-					syncObj.wait();
-				} catch (InterruptedException e) {
-				}
-			}
-		}
 		try {
 			if (video != null) {
 				video.stop();
@@ -832,18 +820,6 @@ public class MainActivity extends Activity {
     // Stop video playback.
     //
     private void bridgeStopVideo() {
-		synchronized(syncObj) {
-			while(true) {
-				if(!in_flight) {
-					in_flight = true;
-					break;
-				}
-				try {
-					syncObj.wait();
-				} catch (InterruptedException e) {
-				}
-			}
-		}
 		try {
 			if(video != null) {
 				video.stop();
@@ -869,18 +845,6 @@ public class MainActivity extends Activity {
     //  - If a video playback was finished, this method returns false.
     //
     private boolean bridgeIsVideoPlaying() {
-		synchronized(syncObj) {
-			while(true) {
-				if(!in_flight) {
-					in_flight = true;
-					break;
-				}
-				try {
-					syncObj.wait();
-				} catch (InterruptedException e) {
-				}
-			}
-		}
 		try {
             if (video != null) {
                 int pos = video.getCurrentPosition();
