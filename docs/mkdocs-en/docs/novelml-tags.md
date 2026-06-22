@@ -92,6 +92,8 @@ Change Background
 The `bg` tag changes the background image with a smooth fading effect.
 It's the primary way to set the scene in your visual novel.
 
+Note that Suika3 supports PNG, JPEG, and WebP files.
+
 ### Basic Usage
 
 ```
@@ -146,6 +148,8 @@ Play Background Music
 The `bgm` tag plays a background music track. 
 Music is an essential tool for setting the mood of your scene, and it will continue to loop automatically until stopped or changed.
 
+Note that Suika3 supports **Ogg Vorbis** files with **44,100Hz** sampling rate.
+
 ### Basic Usage
 
 ```
@@ -164,10 +168,6 @@ Music is an essential tool for setting the mood of your scene, and it will conti
 | `once`   | Yes (`false`) | Don't loop.                        |                                        |
 
 ### Tips
-
-**Required Format**:
-* For compatibility and performance, Suika3 requires BGM files to be in **Ogg Vorbis** format.
-* The sampling rate MUST be **44,100Hz**.
 
 **Looping**:
 * Background music is designed to loop by default, so you don't need to worry about the music ending abruptly during a long dialogue scene.
@@ -227,6 +227,8 @@ Character Display
 
 The `ch` tag shows, hides, or updates character images on various layers.
 It allows for detailed control over positioning, scaling, and rotations for multiple characters and background at once.
+
+Note that Suika3 supports PNG, JPEG, and WebP files.
 
 ### Basic Usage
 
@@ -898,6 +900,8 @@ If the current language is `ja`, a voice file will resolved in the following ord
 1. `voice-ja` parameter
 2. `voice/ja/` + `voice` parameter
 3. `voice` parameter
+
+Note that Suika3 supports **Ogg Vorbis** files with **44,100Hz** sampling rate.
 
 ### Tips
 
@@ -1644,8 +1648,10 @@ The `video` tag plays a movie file on the screen.
 It is ideal for opening cinematics, transitional cutscenes,
 or high-impact visual effects that are best rendered as full-motion video.
 
-Note that video files cannot be packed into `assets.arc`.
-Please distribute video files as raw files.
+Note that:
+
+- Suika3 supports `.mp4` (H.264 + AAC) format.
+- Video files cannot be packed into `assets.arc`, and please distribute video files as raw files.
 
 ### Basic Usage
 
@@ -1667,7 +1673,6 @@ Please distribute video files as raw files.
 ### Tips
 
 **File Support**:
-* Ensure your video file is `.mp4` (H.264 + AAC) format.
 * If you want to support 32-bit Windows, prepare `.wmv` file alongside `.mp4` file, then remove extension e.g., `[video file="opening"]`.
 
 **Transitioning**:
