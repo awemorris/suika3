@@ -6,10 +6,10 @@
     Visual Novel Engine
   </h1>
   <p>
-    Suika3 is a yet another Visual Novel Engine<br>
+    Suika3 is yet another Visual Novel Engine<br>
     for 2030s and beyond.<br>
     It consists of state-of-the-art low-level runtimes,<br>
-    including JIT VM and AOT compilers.<br>
+    including JIT and AOT compilers.<br>
     The name stands for<br>
     <i>Standard Universal Infrastructure for Kinetic Arts</i><br>
   </p>
@@ -76,10 +76,6 @@
   </a>
   <br>
   <br>
-  Suika3 now has a nice launcher written in and self-hosted by Suika3!<br>
-  <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260429.webp" alt="Suika3 Launcher Screenshot">
-  <br>
-  <br>
   Windows 11<br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-win11.webp" alt="Suika3 on Windows 11" width="480">
   <br>
@@ -95,8 +91,8 @@
   Suika3 on NEC PC-9801<br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="480"><br>
   We've returned where VN was born...<br>
-  Requires: 80386/16MB RAM/MS-DOS 6.2/OpenWatcom/DOS4GW<br>
-  Crazy thing is, our Sun-Ray JIT VM works on a real PC98 machine!<br>
+  Requires: MS-DOS 6.2 and DOS4GW<br>
+  Crazy thing is, our JIT works on a real PC98 machine!<br>
   <br>
 </div>
 
