@@ -915,7 +915,7 @@ jobs:
             windows/suika3-arm64.exe
             macos/Suika3.dmg
             macos/Suika3-macOS-Xcode.zip
-            linux/Suika3-x86_64.flatpak
+            flatpak-x86_64/Suika3-x86_64.flatpak
             macos/Suika3-iOS-Xcode.zip
             android/Suika3-Android-Studio.zip
             openharmony/Suika3-OpenHarmony-DevEco.zip
