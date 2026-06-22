@@ -1485,18 +1485,28 @@ stories to life.
 
 ### Professional & Enterprise Support
 
-While the **community** provides active support through GitHub and
-Discord, we understand that commercial productions often require
-dedicated support or guaranteed response times.
+For studios and developers requiring formal and guaranteed maintenance
+contracts, priority bug fixes, or private consultations, please
+contact us directly via email. We are committed to ensuring your
+project's success in high-stakes production environments.
 
-For studios and developers requiring **formal maintenance contracts,
-priority bug fixes, or private consultations**, please contact us
-directly via email. We are committed to helping ensure your project's
-success in a high-stakes production environment.
+In addition, console game development often comes with strict limits
+on using open-source software outside of the platform's provided
+binaries. To address this, we offer a proprietary version of Suika3.
+With a direct licensing agreement, you can treat Suika3 as part of
+your own proprietary codebase, allowing you to smoothly pass the
+platform's submission review.
+
+We offer flexible, highly affordable pricing tailored to your
+project's scale:
+
+- Indie Titles: Starting at 100 USD per title
+- Enterprise Titles: Capped at a maximum of 3,000 USD per title
+- Discounts available
 
 - **Contact**: Awe Morris <awe@suika3.vn>
 
-**Not looking for a formal contract? No problem.** If you are an indie
+Not looking for a formal contract? No problem. If you are an indie
 developer or hobbyist and prefer to keep things casual, just ping us
 on GitHub Issue or Discord with any questions. We're always happy to
 chat, and we'll do our best to respond or push a fix as soon as
