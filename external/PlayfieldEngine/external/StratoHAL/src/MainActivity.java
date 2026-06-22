@@ -805,7 +805,7 @@ public class MainActivity extends Activity {
 				video = null;
 			}
 			try {
-				AssetFileDescriptor afd = getAssets().openFd("mov/" + fileName);
+				AssetFileDescriptor afd = getAssets().openFd(fileName);
 				video = new MediaPlayer();
 				video.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
 				video.prepare();

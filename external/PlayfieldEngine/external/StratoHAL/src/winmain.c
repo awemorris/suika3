@@ -2152,7 +2152,7 @@ hal_play_video(
 		free(path);
 		return FALSE;
 	}
-		
+
 	free(path);
 	return TRUE;
 }
