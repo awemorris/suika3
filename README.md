@@ -7,8 +7,10 @@ Suika3: A modern, ultra-portable, full-stack visual novel engine
 
 ## TL;DR
 
-- **What is this for?:** Creating visual novels and selling them on App Store and Steam at the same time, eliminating porting headaches.
-- **Who is this for?:** Professional creators who make visual novels.
+- **What is this for?:**
+    - Creating visual novels and selling them on App Store and Steam at the same time, eliminating porting headaches.
+- **Who is this for?:**
+    - Professional creators who make visual novels.
 - **What are the advantages?:**
     - **High Performance:** Native, core written in 100%-pure ANSI C.
     - **Hybrid Scripting:** JIT for PC, AOT for mobile, ensuring App Store compliance.
@@ -31,16 +33,7 @@ Suika3: A modern, ultra-portable, full-stack visual novel engine
     <a href="https://suika3.vn/zh-hant/">繁体中文</a>&nbsp;|&nbsp;
     <a href="https://suika3.vn/ja/">日本語</a>
   </p>
-</div>
-
----
-
-<div align="center">
-  <p>
-    Our custom JIT/AOT scripting infrastructure<br>
-    allows you to publish the exact same game<br>
-    across both Steam and the App Store,<br>
-  </p>
+  <br>
   <img src="https://img.shields.io/badge/Desktop-Windows%20%2F%20macOS%20%2F%20Linux%20%2F%20Chromebook%20%2F%20Raspberry%20Pi-blue"><br>
   <img src="https://img.shields.io/badge/Mobile-iOS%20%2F%20Android%20%2F%20HarmonyOS%20NEXT-blue"><br>
   <img src="https://img.shields.io/badge/Console-Switch%20%2F%20PS5%20%2F%20Xbox-blue"><br>
@@ -51,6 +44,8 @@ Suika3: A modern, ultra-portable, full-stack visual novel engine
 </div>
 
 ---
+
+## Demo and Gallery
 
 <!-- SCREENSHOT -->
 <div align="center">
@@ -201,8 +196,41 @@ louder than any pitch deck ever could!
 
 ---
 
-## Introduction
+## Index
 
+- [Introduction](#introduction)
+- [Key Features](#key-features)
+- [Kanban](#kanban-status)
+- [Getting Started Guide](#getting-started-guide)
+- [Quick Look](#quick-look)
+- [Examples](#examples)
+- [Why Ray?](#why-ray)
+- [Technical Overview](#technical-overview)
+- [Garbage Collection](#garbage-collection)
+- [Compatibility List](#compatibility-list)
+- [Documentation](#documentation)
+- [Internationalization](#internationalization)
+- [Third-party Libraries](#third-party-libraries)
+- [CMake Presets](#cmake-presets)
+- [Codebase & Maturity](#codebase--maturity)
+- [Quality Assurance](#quality-assurance)
+- [Adoption Status](#adoption-status)
+- [Repository Structure](#repository-structure)
+- [Asset File Formats](#asset-file-formats)
+- [Game Packaging & Distribution](#game-packaging-distribution)
+- [Engine Feature List](#engine-feature-list)
+- [Versioning Policy](#versioning-policy)
+- [License](#license)
+- [Support & Contact](#support--contact)
+- [Community](#community)
+- [Contribution](#contribution)
+- [Lineage: The Grand Journey](#lineage-the-grand-journey)
+- [Why Suika3?: Our Philosophy](#why-suika3-our-philosophy)
+- [FAQ](#faq)
+
+---
+
+## Introduction
 
 Suika3 is yet another Visual Novel Engine for 2030s and beyond. It is
 a production-grade game runtime, specifically engineered for
@@ -281,38 +309,6 @@ Suika3 is engineered with modern techniques, and delivers:
   software is designed to support future platforms through the 2030s,
   2040s, and beyond. LTS versions include a minimum of 10 years of
   bug-fix support.
-
----
-
-## Index
-
-- [Kanban](#kanban-status)
-- [Getting Started Guide](#getting-started-guide)
-- [Quick Look](#quick-look)
-- [Examples](#examples)
-- [Why Ray?](#why-ray)
-- [Technical Overview](#technical-overview)
-- [Garbage Collection](#garbage-collection)
-- [Compatibility List](#compatibility-list)
-- [Documentation](#documentation)
-- [Internationalization](#internationalization)
-- [Third-party Libraries](#third-party-libraries)
-- [CMake Presets](#cmake-presets)
-- [Codebase & Maturity](#codebase--maturity)
-- [Quality Assurance](#quality-assurance)
-- [Adoption Status](#adoption-status)
-- [Repository Structure](#repository-structure)
-- [Asset File Formats](#asset-file-formats)
-- [Game Packaging & Distribution](#game-packaging-distribution)
-- [Engine Feature List](#engine-feature-list)
-- [Versioning Policy](#versioning-policy)
-- [License](#license)
-- [Support & Contact](#support--contact)
-- [Community](#community)
-- [Contribution](#contribution)
-- [Lineage: The Grand Journey](#lineage-the-grand-journey)
-- [Why Suika3?: Our Philosophy](#why-suika3-our-philosophy)
-- [FAQ](#faq)
 
 ---
 
