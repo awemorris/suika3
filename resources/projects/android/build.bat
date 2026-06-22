@@ -27,7 +27,7 @@ if %PATH_LEN% geq 56 (
 
 echo Copying assets...
 set TARGET_ASSETS_DIR=%~dp0app\src\main\assets
-robocopy ..\.. "%TARGET_ASSETS_DIR%" /MIR /XD .vscode /XD misc /XF suika3.exe /XF assets.arc /NJH /NJS /NS /NC
+robocopy ..\.. "%TARGET_ASSETS_DIR%" /MIR /XD .vscode /XD SDK /XF suika3.exe /XF assets.arc /NJH /NJS /NS /NC
 if %errorlevel% GEQ 8 (
     echo [ERROR] Copy failed with errorlevel %errorlevel%
 )
