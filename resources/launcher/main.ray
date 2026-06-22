@@ -35,7 +35,7 @@ func Tag_runCommand(params) {
     // Get the arguments.
     var command = Suika.getTagArgString({name: "command"});
     var workDir = Suika.getTagArgString({name: "workDir"});
-    var waitForFinish = int(Suika.getTagArgString({name: "waitForFinish"}));
+    var waitForFinish = Int.from(Suika.getTagArgString({name: "waitForFinish"}));
 
     // Run a command.
     System.runCommand(command, workDir, waitForFinish);
