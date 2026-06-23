@@ -1,5 +1,5 @@
-Suika3: A modern, ultra-portable, full-stack visual novel engine
-================================================================
+Suika3: Modern, Portable, Full-stack Visual Novel Engine
+========================================================
 
 <div align="center"><img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-mid.png" alt="Suika3 Logo" width="480" hspace="20"></div>
 
