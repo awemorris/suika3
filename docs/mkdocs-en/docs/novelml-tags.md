@@ -110,12 +110,17 @@ Note that Suika3 supports PNG, JPEG, and WebP files.
 |------------|----------------|-----------------------------------------------|------------------------------------------------------------------------------|
 | `file`     | No             | The filename of the new background image.     | Set to `none` to remove the background.                                      |
 | `time`     | Yes (`0`)      | The duration of the fading effect in seconds. | Default is `0.0` (instant change).                                           |
+| `clear`    | Yes (`false`)  | Whether to vanish the characters or not.      | If `true`, all characters will be vanished.                                  |
 | `method`   | Yes (`normal`) | The fading method/style.                      | Choose from `normal`, `rule`, or `melt`.                                     |
 | `rule`     | Yes            | The rule image file for specific transitions. | Required when `method` is set to `rule` or `melt`.                           |
-| `x`        | Yes (`0`)      | The X-axis offset for the background image.   | Supports absolute values (e.g., `100`) or relative values (e.g., `r100`).    |
-| `y`        | Yes (`0`)      | The Y-axis offset for the background image.   | Supports absolute values (e.g., `100`) or relative values (e.g., `r-100`).   |
+| `x`        | Yes (`0`)      | The X-axis offset.                            |                                                                              |
+| `y`        | Yes (`0`)      | The Y-axis offset.                            |                                                                              |
+| `scale-x`  | Yes (`1.0`)    | The X scale.                                  |                                                                              |
+| `scale-y`  | Yes (`1.0`)    | The Y scale.                                  |                                                                              |
+| `center-x` | Yes (`0`)      | The rotation origin X.                        |                                                                              |
+| `center-y` | Yes (`0`)      | The rotation origin Y.                        |                                                                              |
+| `rotate`   | Yes (`0`)      | The rotation.                                 |                                                                              |
 | `alpha`    | Yes (`255`)    | The alpha value of the background image.      | `0` to `255`.                                                                |
-| `clear`    | Yes (`false`)  | Whether to vanish the characters or not.      | If `true`, all characters will be vanished.                                  |
 
 ### Transition Methods (`method`)
 

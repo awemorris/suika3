@@ -43,6 +43,11 @@ static const char *prop_names[] = {
 	"rule",
 	"x",
 	"y",
+	"scale-x",
+	"scale-y",
+	"center-x",
+	"center-y",
+	"rotate",
 	"alpha",
 	"clear",
 	NULL,
@@ -84,6 +89,8 @@ init(void)
 	static struct s3_image *img, *rule_img;
 	const char *fname, *method;
 	int fade_method, ofs_x, ofs_y, alpha;
+	float scale_x, scale_y, rotate;
+	int center_x, center_y;
 	bool clear;
 	struct s3_fade_desc desc[S3_FADE_DESC_COUNT];
 
@@ -101,6 +108,11 @@ init(void)
 	ofs_y = s3_get_tag_arg_int("y", true, 0);
 	alpha = s3_get_tag_arg_int("alpha", true, 255);
 	clear = s3_get_tag_arg_bool("clear", true, 0);
+	scale_x = s3_get_tag_arg_float("scale-x", true, 1.0f);
+	scale_y = s3_get_tag_arg_float("scale-y", true, 1.0f);
+	center_x = s3_get_tag_arg_int("center-x", true, 0);
+	center_y = s3_get_tag_arg_int("center-y", true, 0);
+	rotate = s3_get_tag_arg_int("rotate", true, 0.0f);
 
  	/* Recognize the rendering method. */
 	fade_method = s3_get_fade_method(method);
@@ -175,11 +187,11 @@ init(void)
 	desc[S3_FADE_DESC_BG].x = ofs_x;
 	desc[S3_FADE_DESC_BG].y = ofs_y;
 	desc[S3_FADE_DESC_BG].alpha = alpha;
-	desc[S3_FADE_DESC_BG].scale_x = 1.0f;
-	desc[S3_FADE_DESC_BG].scale_y = 1.0f;
-	desc[S3_FADE_DESC_BG].center_x = 0;
-	desc[S3_FADE_DESC_BG].center_y = 0;
-	desc[S3_FADE_DESC_BG].rotate = 0.0f;
+	desc[S3_FADE_DESC_BG].scale_x = scale_x;
+	desc[S3_FADE_DESC_BG].scale_y = scale_y;
+	desc[S3_FADE_DESC_BG].center_x = center_x;
+	desc[S3_FADE_DESC_BG].center_y = center_y;
+	desc[S3_FADE_DESC_BG].rotate = rotate;
 
 	/* Start a fading. */
 	if (!s3_start_fade(desc, fade_method, span, rule_img))
