@@ -1482,7 +1482,7 @@ It is perfect for creating sliding effects, zooming in on characters, or rotatin
 [move time="1.0" bg-x="r50"]
 
 # Gradually fade out a layer while rotating it
-[move time="3.0" face-alpha="0" face-rotate="r360"]
+[move time="3.0" face-a="0" face-rotate="r360"]
 ```
 
 ### Arguments
