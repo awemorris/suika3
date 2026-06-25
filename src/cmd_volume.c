@@ -69,7 +69,7 @@ s3i_tag_volume(
 		return false;
 	vol = s3_get_tag_arg_float("volume", true, -1.0f);
 	if (vol == -1.0f) {
-		vol = s3_get_tag_arg_float("vol", true, -1.0f);
+		vol = s3_get_tag_arg_float("vol", false, -1.0f);
 		if (vol == -1.0f)
 			return false;
 	}
