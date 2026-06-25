@@ -36,9 +36,9 @@
 #include <assert.h>
 
 static const char *prop_names[] = {
-	"fade",
-	"rule",
 	"time",
+	"method",
+	"rule",
 	"bg",
 	"bg-x",
 	"bg-y",
