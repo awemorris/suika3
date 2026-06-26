@@ -106,23 +106,23 @@ Note that Suika3 supports PNG, JPEG, and WebP files.
 
 ### Arguments
 
-| Argument   | Omissible      | Description                                   | Notes                                                                        |
-|------------|----------------|-----------------------------------------------|------------------------------------------------------------------------------|
-| `file`     | No             | The filename of the new background image.     | Set to `none` to remove the background.                                      |
-| `time`     | Yes (`0`)      | The duration of the fading effect in seconds. | Default is `0.0` (instant change).                                           |
-| `clear`    | Yes (`false`)  | Whether to vanish the characters or not.      | If `true`, all characters will be vanished.                                  |
-| `method`   | Yes (`normal`) | The fading method/style.                      | Choose from `normal`, `rule`, or `melt`.                                     |
-| `rule`     | Yes            | The rule image file for specific transitions. | Required when `method` is set to `rule` or `melt`.                           |
-| `x`        | Yes (`0`)      | The X-axis offset.                            |                                                                              |
-| `y`        | Yes (`0`)      | The Y-axis offset.                            |                                                                              |
-| `scale-x`  | Yes (`1.0`)    | The X scale.                                  |                                                                              |
-| `scale-y`  | Yes (`1.0`)    | The Y scale.                                  |                                                                              |
-| `center-x` | Yes (`0`)      | The rotation origin X.                        |                                                                              |
-| `center-y` | Yes (`0`)      | The rotation origin Y.                        |                                                                              |
-| `rotate`   | Yes (`0`)      | The rotation.                                 |                                                                              |
-| `alpha`    | Yes (`255`)    | The alpha value of the background image.      | `0` to `255`.                                                                |
+| Argument   | Omissible      | Description                                   | Notes                                             |
+|------------|----------------|-----------------------------------------------|---------------------------------------------------|
+| `file`     | No             | The filename of the new background image.     | Set to `none` to remove the background.           |
+| `time`     | Yes (`0`)      | The duration of the fading effect in seconds. | Default is `0.0` (instant change).                |
+| `clear`    | Yes (`false`)  | Whether to vanish the characters or not.      | If `true`, all characters will be vanished.       |
+| `fade`     | Yes (`normal`) | The fading method/style.                      | Choose from `normal`, `rule`, or `melt`.          |
+| `rule`     | Yes            | The rule image file for specific transitions. | Required when `fade` is set to `rule` or `melt`.  |
+| `x`        | Yes (`0`)      | The X-axis offset.                            |                                                   |
+| `y`        | Yes (`0`)      | The Y-axis offset.                            |                                                   |
+| `scale-x`  | Yes (`1.0`)    | The X scale.                                  |                                                   |
+| `scale-y`  | Yes (`1.0`)    | The Y scale.                                  |                                                   |
+| `center-x` | Yes (`0`)      | The rotation origin X.                        |                                                   |
+| `center-y` | Yes (`0`)      | The rotation origin Y.                        |                                                   |
+| `rotate`   | Yes (`0`)      | The rotation.                                 |                                                   |
+| `alpha`    | Yes (`255`)    | The alpha value of the background image.      | `0` to `255`.                                     |
 
-### Transition Methods (`method`)
+### Transition Methods (`fade`)
 
 You can create different atmospheres by choosing the right transition style:
 
@@ -250,11 +250,11 @@ Note that Suika3 supports PNG, JPEG, and WebP files.
 
 ### Arguments
 
-| Argument  | Omissible      | Description                            | Notes                                                 |
-|-----------|----------------|----------------------------------------|-------------------------------------------------------|
-| `time`    | Yes (`0`)      | Duration of the transition in seconds. | Affects all layer changes within this tag.            |
-| `method`  | Yes (`normal`) | The fading method/style.               | `normal`, `rule`, or `melt`.                          |
-| `rule`    | Yes            | The rule image file for transitions.   | Required when `method` is `rule` or `melt`.           |
+| Argument  | Omissible      | Description                            | Notes                                       |
+|-----------|----------------|----------------------------------------|---------------------------------------------|
+| `time`    | Yes (`0`)      | Duration of the transition in seconds. | Affects all layer changes within this tag.  |
+| `fade`    | Yes (`normal`) | The fading method/style.               | `normal`, `rule`, or `melt`.                |
+| `rule`    | Yes            | The rule image file for transitions.   | Required when `fade` is `rule` or `melt`.   |
 
 #### Layer File Arguments
 

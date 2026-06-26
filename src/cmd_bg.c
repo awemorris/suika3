@@ -39,6 +39,7 @@ static float span;
 static const char *prop_names[] = {
 	"file",
 	"time",
+	"fade",
 	"method",
 	"rule",
 	"x",
@@ -103,7 +104,10 @@ init(void)
 	if (fname == NULL)
 		return false;
 	span = s3_get_tag_arg_float("time", true, 0);
-	method = s3_get_tag_arg_string("method", true, "normal");
+	if (s3_check_tag_arg("method"))
+		method = s3_get_tag_arg_string("method", false, NULL);
+	else
+		method = s3_get_tag_arg_string("fade", true, "normal");
 	ofs_x = s3_get_tag_arg_int("x", true, 0);
 	ofs_y = s3_get_tag_arg_int("y", true, 0);
 	alpha = s3_get_tag_arg_int("alpha", true, 255);
