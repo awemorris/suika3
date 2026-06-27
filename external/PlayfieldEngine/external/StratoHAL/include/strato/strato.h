@@ -428,7 +428,9 @@ struct hal_image {
 /*
  * Determine the pixel byte order.
  */
-#if !defined(HAL_USE_QT) && \
+#if defined(HAL_TARGET_SOLARIS11) && defined(HAL_ARCH_BE)
+#define ORDER_RGBA
+#elif !defined(HAL_USE_QT) && \
     ( \
         defined(HAL_TARGET_WINDOWS) || \
         defined(HAL_TARGET_MACOS) || \

@@ -1630,6 +1630,18 @@ hal_create_image_with_png(
 	png_destroy_read_struct(&png_ptr, &info_ptr, NULL);
 	free(rows);
 
+#ifdef HAL_ARCH_BE
+	{
+		int x;
+		for (y = 0 ; y < height; y++) {
+			for (x = 0; x < width; x++) {
+				(*img)->pixels[y * width + x] =
+					hal_le_to_host_32((*img)->pixels[y * width + x]);
+			}
+		}
+       }
+#endif
+
 	return true;
 }
 
@@ -1810,28 +1822,43 @@ hal_create_image_with_webp(
 		return false;
 	}
 
-	/* Copy pixels. */
-	p = (*img)->pixels;
+        /* Copy pixels. */
+        p = (*img)->pixels;
 #if defined(HAL_ORDER_OPENGL)
-	/* Use RGBA as is. */
-	for (y = 0; y < height; y++) {
-		for (x = 0; x < width; x++) {
-			*p++ = hal_make_pixel(pixels[y * width * 4 + x * 4 + 3],
-					      pixels[y * width * 4 + x * 4 + 0],
-					      pixels[y * width * 4 + x * 4 + 1],
-					      pixels[y * width * 4 + x * 4 + 2]);
-		}
-	}
+        /* Use RGBA as is. */
+        for (y = 0; y < height; y++) {
+                for (x = 0; x < width; x++) {
+#ifdef HAL_ARCH_LE
+                        *p++ = hal_make_pixel(pixels[y * width * 4 + x * 4 + 3],
+                                              pixels[y * width * 4 + x * 4 + 0],
+                                              pixels[y * width * 4 + x * 4 + 1],
+                                              pixels[y * width * 4 + x * 4 + 2]);
 #else
-	/* Reverse the pixel order for OpenGL. (RGB -> BGR) */
-	for (y = 0; y < height; y++) {
-		for (x = 0; x < width; x++) {
-			*p++ = hal_make_pixel(pixels[y * width * 4 + x * 4 + 3],
-					      pixels[y * width * 4 + x * 4 + 2],
-					      pixels[y * width * 4 + x * 4 + 1],
-					      pixels[y * width * 4 + x * 4 + 0]);
-		}
-	}
+                        *p++ = hal_le_to_host_32(
+                                hal_make_pixel(pixels[y * width * 4 + x * 4 + 3],
+                                               pixels[y * width * 4 + x * 4 + 0],
+                                               pixels[y * width * 4 + x * 4 + 1],
+                                               pixels[y * width * 4 + x * 4 + 2]));
+#endif
+                }
+        }
+#else
+        /* Reverse the pixel order for OpenGL. (RGB -> BGR) */
+        for (y = 0; y < height; y++) {
+                for (x = 0; x < width; x++) {
+#ifdef HAL_ARCH_LE
+                        *p++ = hal_make_pixel(pixels[y * width * 4 + x * 4 + 3],
+                                              pixels[y * width * 4 + x * 4 + 2],
+                                              pixels[y * width * 4 + x * 4 + 1],
+                                              pixels[y * width * 4 + x * 4 + 0]);
+#else
+                        *p++ = hal_make_pixel(pixels[y * width * 4 + x * 4 + 3],
+                                              pixels[y * width * 4 + x * 4 + 0],
+                                              pixels[y * width * 4 + x * 4 + 1],
+                                              pixels[y * width * 4 + x * 4 + 2]);
+#endif
+                }
+        }
 #endif
 
 	/* Cleanup. */
