@@ -77,10 +77,10 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-android.webp" alt="Suika3 on Android" width="480">
   <br>
   <br>
-  Suika3 running on NEC PC-9801 with JIT (binary included in release)<br>
+  Suika3 running on NEC PC-9801 with JIT enabled (binary included in the releases)<br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="480"><br>
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98-2.png" alt="Suika3 on NEC PC-9801" width="480"><br>
   We've returned where VN was born...<br>
-  Requires: MS-DOS 6.2, DOS4GW, 16MB RAM, and 80386+<br>
   <br>
 </div>
 
