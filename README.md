@@ -60,7 +60,8 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
   <br>
   <br>
   Windows 11<br>
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-win11.webp" alt="Suika3 on Windows 11" width="480">
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-win11.webp" alt="Suika3 on Windows 11" width="480"><br>
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-win11-2.webp" alt="Suika3 on Windows 11" width="480">
   <br>
   <br>
   Ubuntu 24.04<br>
