@@ -1824,7 +1824,7 @@ hal_create_image_with_webp(
 
         /* Copy pixels. */
         p = (*img)->pixels;
-#if defined(HAL_ORDER_OPENGL)
+#if !defined(HAL_ORDER_OPENGL)
         /* Use RGBA as is. */
         for (y = 0; y < height; y++) {
                 for (x = 0; x < width; x++) {
