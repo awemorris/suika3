@@ -154,6 +154,12 @@ extern "C" {
 #define HAL_ARCH_LE	/* Default, no MSVC support yet */
 #endif
 
+#elif defined(__sparc) && defined(__arch64__)
+
+/* SPARC 64bit */
+#define HAL_ARCH_SPARC64
+#define HAL_ARCH_BE
+
 #endif
 
 /*
