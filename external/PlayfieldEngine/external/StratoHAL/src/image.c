@@ -1828,35 +1828,20 @@ hal_create_image_with_webp(
         /* Use RGBA as is. */
         for (y = 0; y < height; y++) {
                 for (x = 0; x < width; x++) {
-#ifdef HAL_ARCH_LE
                         *p++ = hal_make_pixel(pixels[y * width * 4 + x * 4 + 3],
                                               pixels[y * width * 4 + x * 4 + 0],
                                               pixels[y * width * 4 + x * 4 + 1],
                                               pixels[y * width * 4 + x * 4 + 2]);
-#else
-                        *p++ = hal_le_to_host_32(
-                                hal_make_pixel(pixels[y * width * 4 + x * 4 + 3],
-                                               pixels[y * width * 4 + x * 4 + 0],
-                                               pixels[y * width * 4 + x * 4 + 1],
-                                               pixels[y * width * 4 + x * 4 + 2]));
-#endif
                 }
         }
 #else
         /* Reverse the pixel order for OpenGL. (RGB -> BGR) */
         for (y = 0; y < height; y++) {
                 for (x = 0; x < width; x++) {
-#ifdef HAL_ARCH_LE
                         *p++ = hal_make_pixel(pixels[y * width * 4 + x * 4 + 3],
                                               pixels[y * width * 4 + x * 4 + 2],
                                               pixels[y * width * 4 + x * 4 + 1],
                                               pixels[y * width * 4 + x * 4 + 0]);
-#else
-                        *p++ = hal_make_pixel(pixels[y * width * 4 + x * 4 + 3],
-                                              pixels[y * width * 4 + x * 4 + 0],
-                                              pixels[y * width * 4 + x * 4 + 1],
-                                              pixels[y * width * 4 + x * 4 + 2]);
-#endif
                 }
         }
 #endif
