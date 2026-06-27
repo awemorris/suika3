@@ -896,8 +896,12 @@ run_frame(void)
 			hal_pixel_t *src = (hal_pixel_t *)back_image->pixels;
 			for (y = 0; y < screen_height; y++) {
 				for (x = 0; x < screen_width; x++) {
-					*src = hal_host_to_le_32(*src);
-					src++;
+					uint32_t pix = *src;
+					uint32_t r = pix & 0xff;
+					uint32_t g = (pix >> 8) & 0xff;
+					uint32_t b = (pix >> 16) & 0xff;
+					uint32_t a = (pix >> 24) & 0xff;
+					*src++ = a | (r << 24) | (g << 16) | b;
 				}
 			}
 		} else
