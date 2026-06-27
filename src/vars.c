@@ -228,7 +228,7 @@ expand_table(void)
 		for (j = index;
 		     j != ((index - 1 + (uint32_t)new_size) & ((uint32_t)new_size - 1));
 		     j = (j + 1) & ((uint32_t)new_size - 1)) {
-			if (new_tbl[i].key == NULL) {
+			if (new_tbl[j].key == NULL) {
 				/* Copy the key and values. */
 				new_tbl[j].key = tbl[i].key;
 				new_tbl[j].value = tbl[i].value;
@@ -448,7 +448,7 @@ s3_check_variable_exists(
 			break;
 		if (tbl[i].len == len &&
 		    tbl[i].hash == hash &&
-		    strcmp(tbl[i].value, name) == 0) {
+		    strcmp(tbl[i].key, name) == 0) {
 			/* Found. */
 			return true;
 		}
