@@ -55,6 +55,11 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
   </a>
   <br>
   <br>
+  NEC PC-9801<br>
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="480"><br>
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98-2.png" alt="Suika3 on NEC PC-9801" width="480"><br>
+  <br>
+  <br>
   macOS 26<br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-macos26.webp" alt="Suika3 on Windows 11" width="480">
   <br>
@@ -75,12 +80,6 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
   <br>
   Android<br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-android.webp" alt="Suika3 on Android" width="480">
-  <br>
-  <br>
-  Suika3 running on NEC PC-9801 with JIT enabled (binary included in the releases)<br>
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="480"><br>
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98-2.png" alt="Suika3 on NEC PC-9801" width="480"><br>
-  We've returned where VN was born...<br>
   <br>
 </div>
 
