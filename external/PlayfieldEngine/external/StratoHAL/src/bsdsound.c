@@ -28,7 +28,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__SunOS)
+#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__SunOS) || defined(__sun)
 
 #include <strato/strato.h>
 
@@ -39,7 +39,7 @@
 #elif defined(__OpenBSD__)
 #include <sys/types.h>
 #include <sys/audioio.h>
-#elif defined(__SunOS_5_11)
+#elif defined(__sun) || defined(__SunOS_5_11)
 #include <sys/soundcard.h>   /* Solaris 11 (OSS) */
 #define USE_SUN_OSS
 #elif defined(__SunOS_5_10)

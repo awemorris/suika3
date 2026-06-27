@@ -907,8 +907,10 @@
             "binaryDir":      "${sourceDir}/build-solaris11",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_C_COMPILER":            "cc",
+                "CMAKE_C_COMPILER":            "c99",
                 "CMAKE_CXX_COMPILER":          "CC",
+                "CMAKE_C_CFLAGS_RELEASE":      "-D__EXTENSIONS__",
+                "CMAKE_C_CFLAGS_DEBUG":        "-D__EXTENSIONS__",
                 "SUIKA_TARGET_SOLARIS11":      "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",

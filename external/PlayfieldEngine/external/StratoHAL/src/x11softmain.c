@@ -890,6 +890,18 @@ run_frame(void)
 	/* Flip. */
 	if (flip) {
 		/* Quantize the back image if bpp != 32. */
+#if defined(HAL_ARCH_BE)
+		if (bpp == 32) {
+			int x, y;
+			hal_pixel_t *src = (hal_pixel_t *)back_image->pixels;
+			for (y = 0; y < screen_height; y++) {
+				for (x = 0; x < screen_width; x++) {
+					*src = hal_host_to_le_32(*src);
+					src++;
+				}
+			}
+		} else
+#endif
 		if (bpp == 16) {
 			int x, y;
 			hal_pixel_t *src = (hal_pixel_t *)back_image->pixels;

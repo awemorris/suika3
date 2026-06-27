@@ -78,7 +78,8 @@ target_include_directories(png PUBLIC  ${CMAKE_BINARY_DIR}/libpng)
 set(PNG_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/libpng)
 
 target_compile_definitions(png
-  PUBLIC _XOPEN_SOURCE=600
+  PUBLIC
+  __EXTENSIONS__
   PNG_NO_WRITE_SUPPORTED
   PNG_NO_SIMPLIFIED_WRITE_SUPPORTED
   PNG_NO_CONSOLE_IO
@@ -86,7 +87,6 @@ target_compile_definitions(png
 )
 
 target_link_libraries(png PRIVATE z)
-
 
 # Suppress compilation errors.
 if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")
