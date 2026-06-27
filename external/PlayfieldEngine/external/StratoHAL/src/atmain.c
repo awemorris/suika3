@@ -214,12 +214,16 @@ flip(void)
 		set_vga_plane(plane);
 
 		for (y = 0; y < SCREEN_HEIGHT; y++) {
+			if (y < ofs_y)
+				continue;
 			if (y >= game_height)
 				break;
 
 			for (x = 0; x < LINE_BYTES; x++) {
 				unsigned char out = 0;
 
+				if (x < (ofs_x >> 3))
+					continue;
 				if (x >= (game_width >> 3))
 					break;
 

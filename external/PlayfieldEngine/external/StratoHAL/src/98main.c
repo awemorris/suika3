@@ -213,7 +213,7 @@ static void flip(void)
 
 	for (y = 0; y < SCREEN_HEIGHT; y++) {
 		if (y < ofs_y)
-			break;
+			continue;
 		if (y >= game_height)
 			break;
 
@@ -224,7 +224,7 @@ static void flip(void)
 			unsigned char pi = 0;
 
 			if (x < ofs_x >> 3)
-				break;
+				continue;
 			if (x >= game_width >> 3)
 				break;
 
