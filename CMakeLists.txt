@@ -3,7 +3,7 @@ project(suika3 LANGUAGES C)
 
 if(   WIN32
    OR CMAKE_SYSTEM_NAME STREQUAL "Haiku"
-   OR PLAYFIELD_TARGET_OPENHARMONY)
+   OR SUIKA_TARGET_OPENHARMONY)
   enable_language(CXX)
 endif()
 
