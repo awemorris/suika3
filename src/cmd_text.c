@@ -342,7 +342,6 @@ s3i_tag_text(
 	void *p)
 {
 	bool cont;
-	int flag;
 
 	UNUSED_PARAMETER(p);
 
@@ -361,10 +360,6 @@ s3i_tag_text(
 		s3_set_vm_int("s3Continue", 1);
 		s3_move_to_next_tag();
 		return true;
-	}
-
-	/* If Suika.s3Next is set.  */
-	if (s3_get_vm_int("s3Next", &flag) && flag != 0) {
 	}
 
 	/* Otherwise, process a frame. */

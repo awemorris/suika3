@@ -265,11 +265,18 @@ s3_get_vm_int(
 	NoctEnv *env;
 	NoctValue dict;
 	NoctValue value;
+	bool ret;
 
 	env = pf_get_vm_env();
 
 	if (!noct_get_global(env, "Suika", &dict))
-			return false;
+		return false;
+	if (!noct_check_dict_key_cstr(env, &dict, name, &ret))
+		return false;
+	if (!ret) {
+		*val = 0;
+		return false;
+	}
 	if (!noct_get_dict_elem_check_int(env, &dict, name, &value, (int32_t *)val))
 		return false;
 
