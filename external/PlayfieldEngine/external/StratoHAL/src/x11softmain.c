@@ -901,7 +901,7 @@ run_frame(void)
 					uint32_t g = (pix >> 8) & 0xff;
 					uint32_t b = (pix >> 16) & 0xff;
 					uint32_t a = (pix >> 24) & 0xff;
-					*src++ = a | (r << 24) | (g << 16) | b;
+					*src++ = a | (b << 8) | (g << 16) | (r << 24);
 				}
 			}
 		} else
