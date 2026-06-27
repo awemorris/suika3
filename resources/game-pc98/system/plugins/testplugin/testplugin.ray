@@ -1,0 +1,9 @@
+func plugin_init_testplugin() {
+    // Called when loaded.
+    Suika.print("Plugin is loaded.");
+}
+
+func Tag_testplugintag(params) {
+    Suika.print("Plugin tag is called.");
+    Suika.moveToNextTag();
+}

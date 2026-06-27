@@ -1,0 +1,15 @@
+default {
+    layer:  $0;
+    start:  0.0;
+    end:    0.5;
+    from-x: r0;
+    from-y: r0;
+    from-scale-x: 1.0;
+    from-scale-y: 1.0;
+    from-a: 255;
+    to-x:   r0;
+    to-y:   r0;
+    to-scale-x: 1.0;
+    to-scale-y: 1.0;
+    to-a:   255;
+}

@@ -1,0 +1,141 @@
+#
+# Config GUI
+#
+
+# Basic settings for this GUI.
+global {
+    # Fading-in time in seconds.
+    fadein: 0.2;
+
+    # Fading-out time in seconds.
+    fadeout: 0.2;
+
+    # Cancel on click on margin.
+    clickcancel: yes;
+
+    # Cancel on ESC key.
+    escapecancel: yes;
+
+    # Cancel on right click.
+    rightcancel: yes;
+
+    # Sound effect on cancel.
+    cancelse: sound/se/click.ogg;
+}
+
+BASE {
+    id: 32;
+    type: noaction;
+    x: 0;
+    y: 0;
+    image-idle: system/config/config-base.png;
+}
+
+BGM {
+    id:          1;
+    type:        bgmvol;
+    x:           100;
+    y:           220;
+    image-idle:  system/config/config-bar-idle.png;
+    image-hover: system/config/config-bar-hover.png;
+    image-knob:  system/config/config-bar-knob.png;
+}
+
+SE {
+    id:          2;
+    type:        sevol;
+    x:           100;
+    y:           370;
+    image-idle:  system/config/config-bar-idle.png;
+    image-hover: system/config/config-bar-hover.png;
+    image-knob:  system/config/config-bar-knob.png;
+}
+
+VOICE {
+    id:          3;
+    type:        voicevol;
+    x:           100;
+    y:           520;
+    image-idle:  system/config/config-bar-idle.png;
+    image-hover: system/config/config-bar-hover.png;
+    image-knob:  system/config/config-bar-knob.png;
+}
+
+TEXTSPEED {
+    id:          4;
+    type:        textspeed;
+    x:           720;
+    y:           220;
+    image-idle:  system/config/config-bar-idle.png;
+    image-hover: system/config/config-bar-hover.png;
+    image-knob:  system/config/config-bar-knob.png;
+}
+
+AUTOSPEED {
+    id:          5;
+    type:        autospeed;
+    x:           720;
+    y:           370;
+    image-idle:  system/config/config-bar-idle.png;
+    image-hover: system/config/config-bar-hover.png;
+    image-knob:  system/config/config-bar-knob.png;
+}
+
+PREVIEW {
+    id:          6;
+    type:        preview;
+    x:           720;
+    y:           460;
+    image-idle:  system/config/config-preview.png;
+
+    msg-en:      "The quick brown fox jumps over the lazy dog.";
+    msg-fr:      "On ne voit bien qu'avec le cœur. L'essentiel est invisible pour les yeux.";
+    msg-es:      "Caminante, no hay camino, se hace camino al andar.";
+    msg-de:      "Verweile doch! Du bist so schön!";
+    msg-it:      "Nel mezzo del cammin di nostra vita mi ritrovai per una selva oscura.";
+    msg-ru:      "Я помню чудное мгновенье: Передо мной явилась ты...";
+    msg-el:      "Ὁ δὲ ἀνεξέταστος βίος οὐ βιωτὸς ἀνθρώπῳ.";
+    msg-zh-cn:   "国破山河在，城春草木深。感时花溅泪，恨别鸟惊心。";
+    msg-zh-tw:   "國破山河在，城春草木深。感時花濺淚，恨別鳥驚心。";
+    msg-ja:      "あのイーハトーヴォのすきとおった風、夏でも底に冷たさをもつ青いそら、うつくしい森で飾られたモリーオ市、郊外のぎらぎらひかる草の波。";
+    msg:         "The quick brown fox jumps over the lazy dog.";
+
+    margin-left:   10;
+    margin-top:    5;
+    margin-right:  10;
+    margin-bottom: 5;
+
+}
+
+EN {
+    id: 7;
+    type: language;
+    lang: en-us;
+    x: 1050;
+    y: 20;
+    image-idle:    system/config/config-lang-en-idle.png;
+    image-hover:   system/config/config-lang-en-hover.png;
+    image-active:  system/config/config-lang-en-active.png;
+}
+
+ZH {
+    id: 8;
+    type: language;
+    lang: zh-cn;
+    x: 1100;
+    y: 20;
+    image-idle:    system/config/config-lang-zh-idle.png;
+    image-hover:   system/config/config-lang-zh-hover.png;
+    image-active:  system/config/config-lang-zh-active.png;
+}
+
+JP {
+    id: 9;
+    type: language;
+    lang: ja;
+    x: 1150;
+    y: 20;
+    image-idle:    system/config/config-lang-jp-idle.png;
+    image-hover:   system/config/config-lang-jp-hover.png;
+    image-active:  system/config/config-lang-jp-active.png;
+}
