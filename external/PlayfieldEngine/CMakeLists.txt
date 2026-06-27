@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.13)
 project(playfield LANGUAGES C)
 
-if(WIN32 OR CMAKE_SYSTEM_NAME STREQUAL "Haiku")
+if(   WIN32
+   OR CMAKE_SYSTEM_NAME STREQUAL "Haiku"
+   OR PLAYFIELD_TARGET_OPENHARMONY)
   enable_language(CXX)
 endif()
 
