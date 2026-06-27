@@ -365,10 +365,6 @@ typedef unsigned long uintptr_t;
 #include <inttypes.h>
 #endif
 
-#if defined(__WATCOMC__)
-#define SIZE_MAX UINT_MAX
-#endif
-
 #include <limits.h>
 
 /*
