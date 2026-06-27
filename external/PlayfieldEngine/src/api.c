@@ -1522,6 +1522,7 @@ pf_install_package_api(
 	bool has_engine;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 2, &dict, &funcval);
 
 	/* Make a global variable "Engine". */
 	if (!noct_check_global(env, package, &has_engine))
@@ -1548,6 +1549,7 @@ pf_install_package_api(
 	if (!noct_set_dict_elem_cstr(env, &dict, name, &funcval))
 		return false;
 
+	noct_unpin_local(env, 2, &dict, &funcval);
 	return true;
 }
 
@@ -1567,6 +1569,7 @@ pf_get_call_arg_int(
 	bool exists;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 2, &param, &value);
 
 	/* Get the "param" argument. */
 	if (!get_dict_arg(env, &param))
@@ -1587,6 +1590,7 @@ pf_get_call_arg_int(
 		*val = def_val;
 	}
 
+	noct_unpin_local(env, 2, &param, &value);
 	return true;
 }
 
@@ -1606,6 +1610,7 @@ pf_get_call_arg_float(
 	bool exists;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 2, &param, &value);
 
 	/* Get the "param" argument. */
 	if (!get_dict_arg(env, &param))
@@ -1623,6 +1628,7 @@ pf_get_call_arg_float(
 		*val = def_val;
 	}
 
+	noct_unpin_local(env, 2, &param, &value);
 	return true;
 }
 
@@ -1643,6 +1649,7 @@ pf_get_call_arg_string(
 	bool exists;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 2, &param, &value);
 
 	/* Get the "param" argument. */
 	if (!get_dict_arg(env, &param))
@@ -1675,6 +1682,7 @@ pf_get_call_arg_string(
 		}
 	}
 
+	noct_unpin_local(env, 2, &param, &value);
 	return true;
 }
 
@@ -1692,6 +1700,7 @@ pf_get_call_arg_array_length(
 	size_t size;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 2, &param, &value);
 
 	/* Get the "param" argument. */
 	if (!get_dict_arg(env, &param))
@@ -1706,6 +1715,7 @@ pf_get_call_arg_array_length(
 		return false;
 	*val = (int)size;
 
+	noct_unpin_local(env, 2, &param, &value);
 	return true;
 }
 
@@ -1723,6 +1733,7 @@ pf_get_call_arg_array_int(
 	NoctValue param, array, value;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 3, &param, &array, &value);
 
 	/* Get the "param" argument. */
 	if (!get_dict_arg(env, &param))
@@ -1736,6 +1747,7 @@ pf_get_call_arg_array_int(
 	if (!noct_get_array_elem_check_int(env, &array, (uint32_t)index, &value, (int32_t *)val))
 		return false;
 
+	noct_unpin_local(env, 3, &param, &array, &value);
 	return true;
 }
 
@@ -1753,6 +1765,7 @@ pf_get_call_arg_array_float(
 	NoctValue param, array, value;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 2, &param, &value);
 
 	/* Get the "param" argument. */
 	if (!get_dict_arg(env, &param))
@@ -1766,6 +1779,7 @@ pf_get_call_arg_array_float(
 	if (!noct_get_array_elem_check_float(env, &array, (uint32_t)index, &value, val))
 		return false;
 
+	noct_unpin_local(env, 2, &param, &value);
 	return true;
 }
 
@@ -1784,6 +1798,7 @@ pf_get_call_arg_array_string(
 	const char *s;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 3, &param, &array, &value);
 
 	/* Get the "param" argument. */
 	if (!get_dict_arg(env, &param))
@@ -1804,6 +1819,7 @@ pf_get_call_arg_array_string(
 		return false;
 	}
 	
+	noct_unpin_local(env, 3, &param, &array, &value);
 	return true;
 }
 
@@ -1824,6 +1840,7 @@ pf_get_call_arg_dict_int(
 	bool exists;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 3, &param, &dict, &value);
 
 	/* Get the "param" argument. */
 	if (!get_dict_arg(env, &param))
@@ -1845,6 +1862,7 @@ pf_get_call_arg_dict_int(
 		*val = def_val;
 	}
 
+	noct_unpin_local(env, 3, &param, &dict, &value);
 	return true;
 }
 
@@ -1865,6 +1883,7 @@ pf_get_call_arg_dict_float(
 	bool exists;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 3, &param, &dict, &value);
 
 	/* Get the "param" argument. */
 	if (!get_dict_arg(env, &param))
@@ -1886,6 +1905,7 @@ pf_get_call_arg_dict_float(
 		*val = def_val;
 	}
 
+	noct_unpin_local(env, 3, &param, &dict, &value);
 	return true;
 }
 
@@ -1907,6 +1927,7 @@ pf_get_call_arg_dict_string(
 	bool exists;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 3, &param, &dict, &value);
 
 	/* Get the "param" argument. */
 	if (!get_dict_arg(env, &param))
@@ -1943,6 +1964,7 @@ pf_get_call_arg_dict_string(
 		}
 	}
 
+	noct_unpin_local(env, 3, &param, &dict, &value);
 	return true;
 }
 
@@ -1987,10 +2009,12 @@ pf_set_return_int(
 	NoctValue value;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 1, &value);
 
 	if (!noct_set_return_make_int(env, &value, val))
 		return false;
 
+	noct_unpin_local(env, 1, &value);
 	return true;
 }
 
@@ -2006,10 +2030,12 @@ pf_set_return_float(
 	NoctValue value;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 1, &value);
 
 	if (!noct_set_return_make_float(env, &value, val))
 		return false;
 
+	noct_unpin_local(env, 1, &value);
 	return true;
 }
 
@@ -2025,10 +2051,12 @@ pf_set_return_string(
 	NoctValue value;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 1, &value);
 
 	if (!noct_set_return_make_string(env, &value, val))
 		return false;
 
+	noct_unpin_local(env, 1, &value);
 	return true;
 }
 
@@ -2046,6 +2074,7 @@ pf_set_return_int_array(
 	int i;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 2, &array, &value);
 
 	if (!noct_make_empty_array(env, &array))
 		return false;
@@ -2058,6 +2087,7 @@ pf_set_return_int_array(
 	if (!noct_set_return(env, &array))
 		return false;
 
+	noct_unpin_local(env, 2, &array, &value);
 	return true;
 }
 
@@ -2075,6 +2105,7 @@ pf_set_return_float_array(
 	int i;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 2, &array, &value);
 
 	if (!noct_make_empty_array(env, &array))
 		return false;
@@ -2087,6 +2118,7 @@ pf_set_return_float_array(
 	if (!noct_set_return(env, &array))
 		return false;
 
+	noct_unpin_local(env, 2, &array, &value);
 	return true;
 }
 
@@ -2104,6 +2136,7 @@ pf_set_return_string_array(
 	int i;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 2, &array, &value);
 
 	if (!noct_make_empty_array(env, &array))
 		return false;
@@ -2116,6 +2149,7 @@ pf_set_return_string_array(
 	if (!noct_set_return(env, &array))
 		return false;
 
+	noct_unpin_local(env, 2, &array, &value);
 	return true;
 }
 
@@ -2138,6 +2172,7 @@ pf_set_return_dictionary(
 	int i;
 
 	env = pfi_get_vm_env();
+	noct_pin_local(env, 2, &dict, &value);
 
 	if (!noct_make_empty_dict(env, &dict))
 		return false;
@@ -2179,6 +2214,7 @@ pf_set_return_dictionary(
 	if (!noct_set_return(env, &dict))
 		return false;
 
+	noct_unpin_local(env, 2, &dict, &value);
 	return true;
 }
 

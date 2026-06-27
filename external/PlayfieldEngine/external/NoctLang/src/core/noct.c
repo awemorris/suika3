@@ -375,8 +375,7 @@ noct_make_packed(
 {
 	assert(env != NULL);
 	assert(val != NULL);
-	assert((size > 0 && preallocated == NULL) ||
-	       (size == 0 && preallocated != NULL));
+	assert(size > 0);
 	assert(elem_size > 0);
 
 	if (!rt_make_packed(env, val, type, size, elem_size, preallocated))

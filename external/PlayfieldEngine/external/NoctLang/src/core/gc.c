@@ -61,7 +61,10 @@
 /*
  * Check if a value is a reference type.
  */
-#define IS_REF_VAL(v)			((v)->type >= NOCT_VALUE_STRING && (v)->type <= NOCT_VALUE_DICT)
+#define IS_REF_VAL(v)			((v)->type == NOCT_VALUE_STRING || \
+					 (v)->type == NOCT_VALUE_ARRAY || \
+					 (v)->type == NOCT_VALUE_DICT || \
+					 (v)->type == NOCT_VALUE_PACKED)
 
 /*
  * Check if an object is in the nursery or graduate region.
@@ -880,7 +883,6 @@ rt_gc_alloc_packed_graduate(
 	void *p;
 
 	assert(env != NULL);
-	assert(size > 0);
 	assert(elem_size > 0);
 
 	/* If use a preallocated buffer. */
@@ -946,7 +948,6 @@ rt_gc_alloc_packed_tenure(
 	int retry;
 
 	assert(env != NULL);
-	assert(size > 0);
 
 	/* If use a preallocated buffer. */
 	if (preallocated != NULL)
@@ -1186,7 +1187,7 @@ rt_gc_young_gc_body(
 					arr->table[i].val.obj = arr->table[i].val.obj->forward;
 				}
 			}
-		} else {
+		} else  {
 			struct rt_dict *dict = (struct rt_dict *)obj;
 			for (i = 0; i < dict->alloc_size; i++) {
 				if (dict->key[i].type != NOCT_VALUE_STRING)

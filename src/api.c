@@ -140,6 +140,9 @@ static bool Suika_createImageFromFile(void *p);
 static bool Suika_createImage(void *p);
 static bool Suika_getImageWidth(void *p);
 static bool Suika_getImageHeight(void *p);
+static bool Suika_getImagePixels(void *p);
+static bool Suika_updateImagePixels(void *p);
+static bool Suika_makePixel(void *p);
 static bool Suika_loadGlyphImage(void *p);
 static bool Suika_destroyImage(void *p);
 static bool Suika_notifyImageUpdate(void *p);
@@ -504,6 +507,9 @@ static struct api_func api_func[] = {
 	{"createImage",			Suika_createImage,		1, dict_param},
 	{"getImageWidth",		Suika_getImageWidth,		1, dict_param},
 	{"getImageHeight",		Suika_getImageHeight,		1, dict_param},
+	{"getImagePixels",		Suika_getImagePixels,		1, dict_param},
+	{"updateImagePixels",		Suika_updateImagePixels,	1, dict_param},
+	{"makePixel",			Suika_makePixel,		1, dict_param},
 	{"loadGlyphImage",		Suika_loadGlyphImage,		1, dict_param},
 	{"destroyImage",		Suika_destroyImage,		1, dict_param},
 	{"notifyImageUpdate",		Suika_notifyImageUpdate,	1, dict_param},
@@ -3024,6 +3030,115 @@ Suika_getImageHeight(void *p)
 
 		/* Set the return value. */
 		if (!pf_set_return_int(val))
+			break;
+
+		ret = true;
+	} while (0);
+
+	return ret;
+}
+
+static bool
+Suika_getImagePixels(void *p)
+{
+	int image;
+	struct s3_image *img;
+	NoctEnv *env;
+	NoctValue val;
+	bool ret;
+
+	UNUSED_PARAMETER(p);
+
+	ret = false;
+	do {
+		env = pf_get_vm_env();
+		noct_pin_local(env, 1, &val);
+
+		/* Get the argument. */
+		if (!pf_get_call_arg_int("image", &image, false, -1))
+			break;
+
+		img = s3i_int_to_image(image);
+		if (img == NULL)
+			break;
+
+		if (!noct_make_packed(env,
+				      &val,
+				      NOCT_PACKED_UINT32,
+				      img->width * img->height * 4,
+				      img->width * img->height,
+				      s3_get_image_pixels(img)))
+			return false;
+
+		/* Set the return value. */
+		if (!noct_set_return(env, &val))
+			break;
+
+		noct_unpin_local(env, 1, &val);
+
+		ret = true;
+	} while (0);
+
+	return ret;
+}
+
+static bool
+Suika_updateImagePixels(void *p)
+{
+	int image;
+	struct s3_image *img;
+	int val;
+	bool ret;
+
+	UNUSED_PARAMETER(p);
+
+	ret = false;
+	do {
+		/* Get the argument. */
+		if (!pf_get_call_arg_int("image", &image, false, -1))
+			break;
+
+		img = s3i_int_to_image(image);
+		if (img == NULL)
+			break;
+
+		s3_notify_image_update(img);
+
+		/* Set the return value. */
+		if (!pf_set_return_int(1))
+			break;
+
+		ret = true;
+	} while (0);
+
+	return ret;
+}
+
+static bool
+Suika_makePixel(void *p)
+{
+	NoctEnv *env;
+	uint32_t r, g, b, a, pix;
+	bool ret;
+
+	UNUSED_PARAMETER(p);
+
+	ret = false;
+	do {
+		/* Get the arguments. */
+		if (!pf_get_call_arg_int("r", &r, false, -1))
+			break;
+		if (!pf_get_call_arg_int("g", &g, false, -1))
+			break;
+		if (!pf_get_call_arg_int("b", &b, false, -1))
+			break;
+		if (!pf_get_call_arg_int("a", &a, false, -1))
+			break;
+
+		pix = s3_make_pixel(r, g, b, a);
+
+		/* Set the return value. */
+		if (!pf_set_return_int(pix))
 			break;
 
 		ret = true;

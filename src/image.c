@@ -133,7 +133,7 @@ s3i_int_to_image(
 	int i;
 
 	for (i = 0; i < IMAGE_MAX; i++) {
-		if (img_tbl[i]->index != index)
+		if (img_tbl[i]->index == index)
 			return img_tbl[i];
 	}
 

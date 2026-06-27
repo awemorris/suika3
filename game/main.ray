@@ -32,6 +32,19 @@ func render() {
 func Tag_custom1(params) {
     print("Hello");
 
+    // Draw background.
+    var bgImage = Suika.getLayerImage({layer: Suika.LAYER_BG});
+    var pixels = Suika.getImagePixels({image: bgImage});
+    for (y in 0..720) {
+        for (x in 0..1280) {
+            pixels[y * 1280 + x] = Suika.makePixel({r: x & 0xff,
+                                                    g: 0,
+                                                    b: 0,
+                                                    a: 255});
+	}
+    }
+    Suika.updateImagePixels({image: bgImage});
+
     Suika.moveToNextTag();
     return true;
 }

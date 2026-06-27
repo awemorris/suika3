@@ -102,6 +102,9 @@ In this document, "parameter" means a key-value-pair in that dictionary.
     * [Suika.createImage()](#suikacreateimage)
     * [Suika.getImageWidth()](#suikagetimagewidth)
     * [Suika.getImageHeight()](#suikagetimageheight)
+    * [Suika.getImagePixels()](#suikagetimagepixels)
+    * [Suika.updateImagePixels()](#suikaupdateimagepixels)
+    * [Suika.makePixel()](#suikamakepixel)
     * [Suika.destroyImage()](#suikadestroyimage)
     * [Suika.drawImage()](#suikadrawimage)
     * [Suika.drawImage3D()](#suikadrawimage3d)
@@ -1639,6 +1642,59 @@ Integer that represents the height.
 
 ---
 
+## Suika.getImagePixels()
+
+Get the pixels of an image.
+
+### Parameters (Dictionary)
+
+| Parameter | Type   | Description                   |
+|-----------|--------|-------------------------------|
+| img       | Object | Image object.                 |
+
+### Return
+
+"Packed" object that represents the image pixels.
+
+---
+
+## Suika.updateImagePixels()
+
+Upload the pixels of an image.
+Call this API after changing the image pixels to apply to the GPU texture.
+
+### Parameters (Dictionary)
+
+| Parameter | Type   | Description                   |
+|-----------|--------|-------------------------------|
+| img       | Object | Image object.                 |
+
+### Return
+
+No return.
+
+---
+
+## Suika.makePixel()
+
+Upload the pixels of an image.
+Call this API after changing the image pixels to apply to the GPU texture.
+
+### Parameters (Dictionary)
+
+| Parameter | Type    | Description                   |
+|-----------|---------|-------------------------------|
+| r         | Integer | Red component. `0-255`        |
+| g         | Integer | Green component. `0-255`      |
+| b         | Integer | Blue component. `0-255`       |
+| a         | Integer | Alpha component. `0-255`      |
+
+### Return
+
+Integer value.
+
+---
+
 ## Suika.destroyImage()
 
 Destroy an image and free its memory.
@@ -2102,6 +2158,39 @@ Set a file to be displayed on a layer.
 ### Return
 
 Boolean that represents success or failure.
+
+---
+
+## Suika.getLayerImage()
+
+Get the layer image.
+
+### Parameters (Dictionary)
+
+| Parameter | Type    | Description                |
+|-----------|---------|----------------------------|
+| layer     | Integer | Index of the stage layer.  |
+
+### Return
+
+Layer iamge.
+
+---
+
+## Suika.setLayerImage()
+
+Set the layer image.
+
+### Parameters (Dictionary)
+
+| Parameter | Type    | Description                |
+|-----------|---------|----------------------------|
+| layer     | Integer | Index of the stage layer.  |
+| image     | Object  | Image object.              |
+
+### Return
+
+No return.
 
 ---
 

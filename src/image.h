@@ -36,7 +36,6 @@ struct s3_image {
 	int tex_id;
 	int width;
 	int height;
-
 	int index;
 };
 

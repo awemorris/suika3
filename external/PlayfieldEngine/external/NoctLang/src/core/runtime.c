@@ -1092,7 +1092,7 @@ rt_check_dict_key_cstr(
 
 	if (!rt_make_string(env, &key_val, key))
 		return false;
-	
+
 	/* Delegate to the object model implementation. */
 	if (!om_check_dict_key(env, dict, &key_val, ret))
 		return false;
@@ -1102,9 +1102,6 @@ rt_check_dict_key_cstr(
 	else
 		rt_unpin_global(env, &key_val);
 	
-	return true;
-
-
 	return true;
 }
 
@@ -1403,8 +1400,7 @@ rt_make_packed(
 
 	assert(env != NULL);
 	assert(val != NULL);
-	assert((size > 0 && preallocated == NULL) ||
-	       (size == 0 && preallocated != NULL));
+	assert(size > 0);
 	assert(elem_size > 0);
 
 	/* Allocate an array. */
