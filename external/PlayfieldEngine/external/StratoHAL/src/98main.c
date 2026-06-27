@@ -117,8 +117,8 @@ int hal_main(int argc, char *argv[])
 		printf("Screen size too large.\n");
 		return 1;
 	}
-	ofs_x = (640 - game_width) / 2;
-	ofs_y = (480 - game_height) / 2;
+	//ofs_x = (640 - game_width) / 2;
+	//ofs_y = (480 - game_height) / 2;
 
 	if (!hal_create_image(game_width, game_height, &back_image)) {
 		printf("Error on creating image.\n");
@@ -212,8 +212,6 @@ static void flip(void)
 	pixels = back_image->pixels;
 
 	for (y = 0; y < SCREEN_HEIGHT; y++) {
-		if (y < ofs_y)
-			break;
 		if (y >= game_height)
 			break;
 
@@ -223,8 +221,6 @@ static void flip(void)
 			unsigned char pg = 0;
 			unsigned char pi = 0;
 
-			if (x < ofs_x >> 3)
-				break;
 			if (x >= game_width >> 3)
 				break;
 
