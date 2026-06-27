@@ -65,6 +65,8 @@ static int game_height;
 /* Screen */
 static struct hal_image *back_image;
 static uint8_t *fb;
+static int ofs_x;
+static int ofs_y;
 
 /* Log */
 static FILE *log_fp;
@@ -106,6 +108,12 @@ int hal_main(int argc, char *argv[])
 		printf("Error on boot.\n");
 		return 1;
 	}
+	if (game_width > 640 || game_height > 480) {
+		printf("Screen size too large.\n");
+		return 1;
+	}
+	ofs_x = (640 - game_width) / 2;
+	ofs_y = (480 - game_height) / 2;
 
 	if (!hal_create_image(game_width, game_height, &back_image)) {
 		printf("Error on creating image.\n");
