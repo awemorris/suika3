@@ -53,7 +53,9 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
 
 <img src="https://img.shields.io/badge/CI%20Build%20Status-All%20OK%20Released-green"><br>
 
-The project is already complete, and you can download a working version of the product artifacts.
+The project is already complete, and you can download real working versions of the product artifacts.
+Instead of worrying about adoption statistics, download the SDK right now and give it a try by yourself.
+You will definitely like it!
 
 | OS          | File                                                                                                                          | Type                       | Description                    |
 |-------------|-------------------------------------------------------------------------------------------------------------------------------|----------------------------|--------------------------------|
