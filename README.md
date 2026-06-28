@@ -47,7 +47,7 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
     - Retro: NEC PC-9801, IBM PC/AT (really works)
 - **JIT:** JIT works with 10 architectures, including x86, x86_64, ARMv7, Arm64, MIPS32, MIPS64, PowerPC 32, PowerPC 64, RISC-V 32, and RISC-V 64.
 - **Interpreter/AOT:** Also works with Motorola 68000, Sun SPARC, DEC Alpha, HP PA-RISC, IBM s390x, Hitachi SH-4, Itanium, Xtensa, etc.
-- **2D Support:* It's also a fully-featured, unlimited 2D game engine.
+- **2D Support:** It's also a fully-featured, unlimited 2D game engine.
 
 ---
 
