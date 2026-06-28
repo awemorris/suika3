@@ -3135,7 +3135,20 @@ Suika_makePixel(void *p)
 		if (!pf_get_call_arg_int("a", &a, false, -1))
 			break;
 
-		pix = s3_make_pixel(r, g, b, a);
+		if (r < 0)
+			r = 0;
+		if (r > 255)
+			r = 255;
+		if (g < 0)
+			g = 0;
+		if (g > 255)
+			g = 255;
+		if (b < 0)
+			b = 0;
+		if (b > 255)
+			b = 255;
+
+		pix = s3_make_pixel(a, r, g, b);
 
 		/* Set the return value. */
 		if (!pf_set_return_int(pix))
