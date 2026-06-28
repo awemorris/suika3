@@ -30,7 +30,7 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
     - Professional creators who make visual novels.
 - **What is the primary advantage?:**
     - Develop once and keep shipping to future platforms Suika3 will support.
-- *For Engineers:**
+- **For Engineers:**
     - **Performance:** Native, JIT, core written in 100% pure ANSI C.
     - **Hybrid Scripting:** JIT for PC, AOT for mobile, ensuring App Store compliance. OSS equivalent to Unity IL2CPP.
     - **Broad Platform Support:**
