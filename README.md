@@ -26,6 +26,8 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
 
 ## TL;DR
 
+### For Creators
+
 - **What is this for?:**
     - Creating visual novels and selling them on App Store and Steam at the same time, eliminating porting headaches.
 - **Who is this for?:**
@@ -51,7 +53,7 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
 
 ---
 
-<img src="https://img.shields.io/badge/CI%20Build%20Status-All%20OK%20Released-green"><br>
+<img src="https://img.shields.io/badge/CI%20Build%20Status-All%20Green%20Released-green"><br>
 
 The project is already complete, and you can download real working versions of the product artifacts.
 Instead of worrying about adoption statistics, download the SDK right now and give it a try by yourself.
@@ -227,7 +229,7 @@ With Suika3, it's that simple.
     - No paid license required for testing on iPhone simulators
     - `Apple Developer Program` required for testing on real iPhone/iPad ($99/year)
 
-We truly believe Suika3 is one of the most streamlined tools in the
+I truly believe Suika3 is one of the most streamlined tools in the
 world for creating and publishing iPhone, iPad, and Android apps to
 the stores!
 
@@ -308,7 +310,7 @@ behind every great community.
 
 > [!TIP]
 > Suika3 is ambitious software born from over 25 years of independent
-> R&D, and we are still shaping its future together with early
+> R&D, and the project is still shaping its future together with early
 > adopters.
 
 ---
@@ -336,7 +338,7 @@ Suika3 is engineered with modern techniques, and delivers:
   game, `GUI` and `Anime` drive the UI/UX, and `Ray` encapsulates
   complex implementation details.
 
-- **Reliable**: We follow a structured `Quality Assurance` process
+- **Reliable**: The project follow a structured `Quality Assurance` process
   to deliver reliable software.
 
 - **Mobile UI/UX:** The default UX is mobile-first with a hamburger
@@ -574,13 +576,13 @@ See the `game/` folder for:
   is friendly for beginners, yet offers the deep flexibility
   experienced developers expect for complex systems.
 
-- **Long-term Stability:** Because we develop the language in-house,
-  you're shielded from breaking changes in upstream projects. We own
-  and control the full stack, so your scripts stay compatible forever.
+- **Long-term Stability:** Because the project develops the language
+  in-house, you're shielded from breaking changes in upstream projects.
+  We own and control the full stack, so your scripts stay compatible forever.
 
-In short, since we couldn't find a practical, free language that
-integrated JIT, AOT, and an interpreter into a single project, we
-created one ourselves.
+In short, since I couldn't find a practical, free language that
+integrated JIT, AOT, and an interpreter into a single project,
+I created one ourselves.
 
 ---
 
@@ -705,18 +707,19 @@ to cover most gaming consoles and smartphones, including:
 - ✅ RISC-V 32 (for future devices) [jit-riscv32.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-riscv32.c)
 - ✅ RISC-V 64 (for future devices) [jit-riscv64.c](https://github.com/awemorris/suika3/blob/main/external/PlayfieldEngine/external/NoctLang/src/core/jit-riscv64.c)
 
-These architectures are well-supported, we can say at least they all pass [the test suite](external/PlayfieldEngine/external/NoctLang/tests/run-syntax.sh).
+These architectures are well-supported,
+I can say at least they all pass [the test suite](external/PlayfieldEngine/external/NoctLang/tests/run-syntax.sh).
 
 However, the following are not supported yet (interpreter-only) because of the lack of development machines:
 
-- IBM Z (Runs interpreter)
-- Sun SPARC (Runs interpreter)
-- Motorola 68000 (Runs interpreter)
+- Sun SPARC (runs interpreter)
 - DEC Alpha (Runs interpreter)
-- SH-4 (Dreamcast) (Runs interpreter)
-- HP PA-RISC (Runs interpreter)
+- Motorola 68000 (Runs interpreter)
 - Loongson (Runs interpreter)
-- **Challenge:** If you have one, please provide a ssh access to the development environment for 3 days. We can port there ;-)
+- HP PA-RISC (Runs interpreter)
+- IBM Z (Runs interpreter)
+- SH-4 (Dreamcast) (Runs interpreter)
+- **Challenge:** If you have one, please provide a ssh access to the development environment for 3 days. I can port there ;-)
 
 ### AOT Compilation
 
@@ -1147,7 +1150,7 @@ config screen.
 
 ### Contributing Translations
 
-We welcome community contributions to improve our translations!
+The project welcomes community contributions to improve our translations!
 If you want to help us reach more developers, here is how you can contribute:
 
 0.  Do `grep -r _TR() .` and detect original messages.
@@ -1158,7 +1161,7 @@ If you want to help us reach more developers, here is how you can contribute:
     - `external/PlayfieldEngine/external/StratoHAL/i18n/message.txt` (StratoHAL part, `HAL_TR()`)
 2.  **Submit Your Changes**: 
     - Found a typo or a weird machine translation? Feel free to open a **Pull Request**.
-    - Want to add a new language? Please open an **Issue** first so we can coordinate!
+    - Want to add a new language? Please open an **Issue** first!
 
 > [!TIP]
 > Manual/Professional translations are prioritized over
@@ -1295,14 +1298,14 @@ toward our first LTS (Long-Term Support).
 
 ### Our Path to Stability
 
-We are committed to delivering a production-grade engine. Our QA
-roadmap is as follows:
+The project is committed to delivering a production-grade engine.
+Our QA roadmap is as follows:
 
-1. **Bug Tracking**: We maintain a comprehensive log of all
+1. **Bug Tracking**: The project maintains a comprehensive log of all
   identified issues. See [BUGS.md](BUGS.md)
 
-2. **Data-Driven Hardening**: We analyze root causes and resolution
-  rates to quantify and improve software stability.
+2. **Data-Driven Hardening**: The project analyzes root causes and
+  resolution rates to quantify and improve software stability.
 
 3. **Commercial-Grade Standards**: Our ultimate goal is to achieve
   a level of robustness that meets the rigorous requirements of
@@ -1312,11 +1315,11 @@ roadmap is as follows:
 
 ## Adoption Status
 
-We aim to create a new market for "Mobile Visual Novels" and have not
-yet established a track record.
+The project aims to create a new market for "Mobile Visual Novels" and
+have not yet established a track record.
 
 If you are interested in helping shape this new market as an **Early
-Adopter**, we warmly invite you to join our community.
+Adopter**, the project warmly invites you to join our community.
 
 If you prefer to adopt tools with an established track record, you may
 wish to revisit the project once Suika3 has matured further.
@@ -1508,17 +1511,17 @@ stories to life.
 
 For studios and developers requiring formal and guaranteed maintenance
 contracts, priority bug fixes, or private consultations, please
-contact us directly via email. We are committed to ensuring your
+contact us directly via email. I'm committed to ensuring your
 project's success in high-stakes production environments.
 
 In addition, console game development often comes with strict limits
 on using open-source software outside of the platform's provided
-binaries. To address this, we offer a proprietary version of Suika3.
+binaries. To address this, I offer a proprietary version of Suika3.
 With a direct licensing agreement, you can treat Suika3 as part of
 your own proprietary codebase, allowing you to smoothly pass the
 platform's submission review.
 
-We offer flexible, highly affordable pricing tailored to your
+I offer flexible, highly affordable pricing tailored to your
 project's scale:
 
 - Indie Titles: Starting at 100 USD per title
@@ -1529,8 +1532,8 @@ project's scale:
 
 Not looking for a formal contract? No problem. If you are an indie
 developer or hobbyist and prefer to keep things casual, just ping us
-on GitHub Issue or Discord with any questions. We're always happy to
-chat, and we'll do our best to respond or push a fix as soon as
+on GitHub Issue or Discord with any questions. I'm always happy to
+chat, and I'll do my best to respond or push a fix as soon as
 possible! ;-)
 
 ---
@@ -1545,25 +1548,9 @@ Our server does not tolerate any form of discrimination. It is an
 inclusive space that embraces all human differences, including, but
 not limited to, race, gender, skill levels, and neurodiversity.
 
-### Active Maintainers
+### Commitment to Inclusivity
 
-* @awemorris ... Lead
-* @tenshi0xx ... Website
-* @lalalll-lalalll ... VSCode plugin, docs
-* @SandwichMan5 ... QA
-* @antonialoytorrens ... QA
-
-### Recruiting
-
-We are currently looking for contributors in the following areas:
-
-* Documentation editors
-* Software Engineer in Testing
-* HarmonyOS NEXT testers
-
-### Our Commitment to Inclusivity
-
-We are committed to providing a welcoming and safe environment for
+The project is committed to providing a welcoming and safe environment for
 everyone. Any form of discrimination is strictly prohibited.
 
 Our community warmly welcomes developers of all backgrounds, including
@@ -1580,7 +1567,7 @@ but not limited to:
   not limited), level of experience, education, and socio-economic
   status.
 
-- **Justice & Inclusion:** We explicitly welcome individuals with past
+- **Justice & Inclusion:** The project explicitly welcomes individuals with past
   criminal records, firmly believing in the power of second chances
   and the inherent value of every contributor who participates
   respectfully.
@@ -1601,7 +1588,7 @@ close collaboration with community users.
 
 ## Contribution
 
-We welcome contributions from everyone! Whether you are fixing a bug,
+The project welcomes contributions from everyone! Whether you are fixing a bug,
 improving documentation, or proposing new features, your help is what
 drives **Suika3** forward.
 
@@ -1633,8 +1620,8 @@ Suika3 represents the culmination of over two decades of relentless innovation a
 
 ## Why Suika3?: Our Philosophy
 
-We are not looking at the existing VN market. We aim to pioneer a
-mobile VN market that does not yet exist.
+The project is not looking at the existing VN market. We aim to
+pioneer a mobile VN market that does not yet exist.
 
 Creators with different goals may also find excellent resources in
 other runtimes like Ren'Py, Unity, or Godot.
@@ -1642,10 +1629,10 @@ other runtimes like Ren'Py, Unity, or Godot.
 ### Mission: Building a Sustainable Ecosystem
 
 Our dedication to the commercial success of visual novels is a
-strategic response to the long-term health of the medium. We believe
-that for visual novels to flourish in the 2030s, they must transcend
-hobbyist boundaries and re-establish themselves as a thriving creative
-industry.
+strategic response to the long-term health of the medium. The project
+believes that for visual novels to flourish in the 2030s, they must
+transcend hobbyist boundaries and re-establish themselves as a
+thriving creative industry.
 
 Since the 2010s, the visual novel market has faced significant growth
 challenges. One critical bottleneck has been the **lack of
@@ -1679,27 +1666,27 @@ In our view, it is a natural professional expectation for commercial
 success.
 
 Please note that this philosophy does not reject hobbyist or
-experimental projects. We simply focus on a different problem space:
+experimental projects. The project simply focuses on a different problem space:
 sustainability at scale.
 
 ### Our Vision: Catalyst for Growth
 
-We do not aim to provide just another tool. Our goal is to provide a
-**catalyst for growth**.
+The project does not aim to provide just another tool. Our goal is to
+provide a **catalyst for growth**.
 
 By offering a "port-anywhere" engine that delivers native performance
-without the overhead of heavy frameworks, we enable developers to
+without the overhead of heavy frameworks, the project enables developers to
 focus on what matters most: **telling stories that endure.**
 
-Because we love visual novels, we are committed to pushing the medium
+Because the project loves visual novels, we are committed to pushing the medium
 forward and ensuring it remains a vibrant and economically viable art
 form for decades to come.
 
 ### Our Values: Empowering Talents for Sustainable Careers
 
 Our value is to empower talent—particularly in Asia and the Global
-South—to build sustainable careers through their storytelling. We
-believe that with the right tools, creativity can overcome economic
+South—to build sustainable careers through their storytelling. The project
+believes that with the right tools, creativity can overcome economic
 barriers.
 
 Our commitment to the permissive license is for those people who
@@ -1750,7 +1737,7 @@ platform support through native implementations (primarily in C).
 
 ### Is this a competitor to existing engines such as Ren'Py, Unity, or Godot?
 
-Rather than being competitors, we target different problem
+Rather than being competitors, the project targets different problem
 areas. Suika3 clearly states its direction as "creating a
 mobile-centric VN market that can withstand commercial use," and
 respects existing engines as viable options.
@@ -1793,7 +1780,7 @@ organization.
 
 ### Who makes the decisions?
 
-The lead developers make the decisions. We do not maintain a formal
+The lead developers make the decisions. I do not maintain a formal
 governance structure for the community.
 
 ### Is Suika3 open source software? Can it be used commercially?
@@ -1808,14 +1795,14 @@ existing ecosystems, Suika3 is designed around core components
 developed almost entirely from scratch, with external dependencies
 kept to an absolute minimum.
 
-While we have deep respect for the philosophy of GNU/Linux and the
+While I have deep respect for the philosophy of GNU/Linux and the
 broader open-source community, our goal has always been to deliver
 "commercial-grade quality" that meets our own rigorous
 standards. Because of this strong independence, Suika3 may feel closer
 to "commercial software provided as OSS" than to a typical
 community-driven OSS project.
 
-Accordingly, we actively welcome closed-source forks and downstream
+Accordingly, the project actively welcomes closed-source forks and downstream
 commercial products built on top of this project.
 
 ### What about the license for third-party libraries?
@@ -1826,7 +1813,7 @@ notice for the third-party libraries used in Suika3.
 ### JIT is disabled on iOS/console, so what should I do?
 
 The official binaries use an interpreter in those environments. While
-we believe our interpreter is sufficiently fast, if you require speed
+I believe our interpreter is sufficiently fast, if you require speed
 or if even the interpreter poses a problem for a store review, please
 use [AOT](docs/mkdocs-en/aot.md). This is a perfect solution boasting
 2.5-4.5x the speed compared to the interpreter.
@@ -1840,7 +1827,7 @@ logic.
 
 ### Is it easy to pass the store review?
 
-We believe that using AOT compilation dramatically lowers the hurdle
+I believe that using AOT compilation dramatically lowers the hurdle
 for store reviews, as it essentially becomes a native app simply
 executing tags, not running a generic-purpose scripting. However, we
 cannot guarantee the outcome of store reviews, as they can be up to
@@ -1855,9 +1842,9 @@ product, please perform QA/QC at your own responsibility.
 
 ### What does "via Unity" mean for console support?
 
-Even if we port Suika3 to consoles, we cannot disclose its source code
+Even if I port Suika3 to consoles, I cannot disclose its source code
 due to the NDA. However, dedicated versions of Unity are available for
-consoles. Therefore, we ported Suika3 into a Unity plugin. Using this
+consoles. Therefore, I ported Suika3 into a Unity plugin. Using this
 plugin allows you to run Suika3 within Unity. In other words, if you
 have the console version of Unity and a "devkit" machine, you can run
 Suika3 on consoles as well.
@@ -1895,7 +1882,7 @@ func main() {
 | Apple M5                | arm64    | 2.76    | 11.34           | 4.1x                         |
 
 In a real game app, the performance difference may vary depending on
-the your logic and the amount of script execution. However, we have
+the your logic and the amount of script execution. However, I have
 observed that in typical visual novel scenarios, the performance
 improvement can be significant, often around 5x faster when using AOT
 compared to the interpreter.
@@ -1912,7 +1899,7 @@ something unusual occurs.
 Please see the
 [Getting Started Guide](docs/mkdocs-en/docs/getting-started.md)
 for a step-by-step guide to creating your first game with Suika3.
-We also provide sample games in the `game/` directory of this
+The project also provides sample games in the `game/` directory of this
 repository, which you can use as references or starting points for
 your own projects.
 
@@ -1990,7 +1977,7 @@ This indicates that the sample game has passed the verification
 process to ensure it runs on either the actual hardware or an
 emulator.
 
-It just means we have a working codebase for the platform, and you
+It just means the project has a working codebase for the platform, and you
 need a final QA for your game.
 
 ### Will there be breaking changes? What is the compatibility policy?
@@ -2053,7 +2040,7 @@ This is the core strategy of the Suika3 project.
 Apple products may not always be the most affordable or universally accessible.  
 Yet for over four decades, Apple has continually redefined the landscape of computing.
 
-We are proud to support their platforms, and our commitment remains unwavering —  
+The project is proud to support their platforms, and our commitment remains unwavering —  
 from the iPhone all the way to Vision Pro.
 
 ### Why Using Python on iOS is Challenging?
