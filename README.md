@@ -18,13 +18,6 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
     <a href="https://suika3.vn/zh-Hant/">繁体中文</a>&nbsp;|&nbsp;
     <a href="https://suika3.vn/ja/">日本語</a>
   </p>
-  <br>
-  <img src="https://img.shields.io/badge/Desktop-Windows%20%2F%20macOS%20%2F%20Linux%20%2F%20Chromebook%20%2F%20Raspberry%20Pi-blue"><br>
-  <img src="https://img.shields.io/badge/Mobile-iOS%20%2F%20Android%20%2F%20HarmonyOS%20NEXT-blue"><br>
-  <img src="https://img.shields.io/badge/Console-Switch%20%2F%20PS5%20%2F%20Xbox-blue"><br>
-  <img src="https://img.shields.io/badge/Web-Emscripten-blue"><br>
-  <img src="https://img.shields.io/badge/Exotic-FreeBSD%20%2F%20NetBSD%20%2F%20OpenBSD%20%2F%20Solaris%20%2F%20Haiku-blue"><br>
-  <img src="https://img.shields.io/badge/Store-App%20Store%20%2F%20Play%20Store%20%2F%20Microsoft%20Store%20%2F%20Steam%20%2F%20itch%2eio%20%2F%20App%20Gallery-green"><br>
 </div>
 
 ---
@@ -51,23 +44,6 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
     - **Interpreter/AOT:** Also works with Motorola 68000, Sun SPARC, DEC Alpha, HP PA-RISC, IBM s390x, Hitachi SH-4, Itanium, Xtensa, etc.
 
 ---
-
-<div align="center">
-  <a href="https://discord.gg/YZsq9u9Mgr"><img src="https://img.shields.io/badge/suika3.vn-Discord-orange"></a>
-  <img src="https://img.shields.io/badge/License-ZLib-orange.svg">
-  <img src="https://img.shields.io/github/stars/awemorris/suika3.svg?style=flat&logo=github&colorB=orange&label=stars">
-  <img src="https://img.shields.io/github/forks/awemorris/suika3.svg">
-  <p>
-    <a href="https://suika3.vn/en/">English</a>
-    <a href="https://suika3.vn/es/">Español</a>
-    <a href="https://suika3.vn/fr/">Français</a>
-    <a href="https://suika3.vn/de/">Deutsch</a>
-    <a href="https://suika3.vn/ru/">Русский</a>
-    <a href="https://suika3.vn/zh-Hans/">簡体中文</a>&nbsp;|&nbsp;
-    <a href="https://suika3.vn/zh-Hant/">繁体中文</a>&nbsp;|&nbsp;
-    <a href="https://suika3.vn/ja/">日本語</a>
-  </p>
-</div>
 
 <img src="https://img.shields.io/badge/Build-OK-cyan"><br>
 
