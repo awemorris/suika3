@@ -35,7 +35,7 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
 
 ### For Engineers
 
-- **Long Term:** 25+ years of development, 10+ years of long-term support for each LTS version.
+- **Long Term:** 25+ years of development since 2001, 10+ years of long-term support for each LTS version.
 - **Performance:** Native, JIT, core written in 100% pure ANSI C.
 - **Hybrid Scripting:** JIT for PC, AOT for mobile, ensuring App Store compliance. OSS equivalent to Unity IL2CPP.
 - **Broad Platform Support :** A real working list, not just a future roadmap.
