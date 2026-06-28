@@ -4,11 +4,11 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
 <div align="center">
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-mid.png" alt="Suika3 Logo" width="480" hspace="20">
   <br>
-  Standard Universal Infrastructure for Kinetic Arts, 3rd Edition
+  <i>Standard Universal Infrastructure for Kinetic Arts, 3rd Edition</i><br>
   <br>
-  <a href="https://discord.gg/YZsq9u9Mgr"><img src="https://img.shields.io/badge/suika3.vn-Discord-orange"></a>
-  <img src="https://img.shields.io/badge/License-ZLib-orange.svg">
-  <img src="https://img.shields.io/github/stars/awemorris/suika3.svg?style=flat&logo=github&colorB=orange&label=stars">
+  <a href="https://discord.gg/YZsq9u9Mgr"><img src="https://img.shields.io/badge/suika3.vn-Discord-green"></a>
+  <img src="https://img.shields.io/badge/License-ZLib-green.svg">
+  <img src="https://img.shields.io/github/stars/awemorris/suika3.svg?style=flat&logo=github&colorB=yellow&label=stars">
   <img src="https://img.shields.io/github/forks/awemorris/suika3.svg">
   <p>
     <a href="https://suika3.vn/en/">English</a>
