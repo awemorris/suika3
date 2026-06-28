@@ -53,7 +53,7 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
 | Windows     | [suika3-win64.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-win64.exe)                             | Windows Executable         | Windows 7+ 64-bit              |
 | Windows     | [suika3-win32.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-win32.exe)                             | Windows Executable         | Windows XP+ 32-bit             |
 | Windows     | [suika3-arm64.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-arm64.exe)                             | Windows Executable         | Windows 10+ Arm64              |
-| macOS       | [Suika3.dmg](https://github.com/awemorris/suika3/releases/latest/download/Suika3.dmg)                                         | Application                | macOS                          |
+| macOS       | [Suika3.dmg](https://github.com/awemorris/suika3/releases/latest/download/Suika3.dmg)                                         | Mac App                    | macOS                          |
 | macOS       | [Suika3-macOS-Xcode.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-macOS-Xcode.zip)                 | Xcode Project              | macOS Xcode Project            |
 | Linux       | [Suika3-x86_64.flatpak](https://github.com/awemorris/suika3/releases/latest/download/Suika3-x86_64.flatpak)                   | Flatpak                    | Linux Flatpak                  |
 | iOS         | [Suika3-iOS-Xcode.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-iOS-Xcode.zip)                     | Xcode Project              | macOS Xcode Project            |
