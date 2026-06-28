@@ -4,6 +4,8 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
 <div align="center">
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-mid.png" alt="Suika3 Logo" width="480" hspace="20">
   <br>
+  Standard Universal Infrastructure for Kinetic Arts, 3rd Edition
+  <br>
   <a href="https://discord.gg/YZsq9u9Mgr"><img src="https://img.shields.io/badge/suika3.vn-Discord-orange"></a>
   <img src="https://img.shields.io/badge/License-ZLib-orange.svg">
   <img src="https://img.shields.io/github/stars/awemorris/suika3.svg?style=flat&logo=github&colorB=orange&label=stars">
@@ -276,8 +278,6 @@ louder than any pitch deck ever could!
 Suika3 is yet another Visual Novel Engine for 2030s and beyond. It is
 a production-grade game runtime, specifically engineered for
 commercial mobile app development.
-
-The name stands for <i>Standard Universal Infrastructure for Kinetic Arts</i>.
 
 We've brought Suika3 to life with a deep love for mobile devices —
 the platforms that major 3D engines left behind.
