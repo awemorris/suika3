@@ -30,23 +30,27 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
     - Professional creators who make visual novels.
 - **What is the primary advantage?:**
     - Develop once and keep shipping to future platforms Suika3 will support.
-- **For Engineers:**
-    - **Long Term:** 25+ years of development, 10+ years of long-term support for each LTS version.
-    - **Performance:** Native, JIT, core written in 100% pure ANSI C.
-    - **Hybrid Scripting:** JIT for PC, AOT for mobile, ensuring App Store compliance. OSS equivalent to Unity IL2CPP.
-    - **Broad Platform Support:**
-        - Desktop: Windows, macOS, Linux, Raspberry Pi, FreeBSD
-        - Mobile: iOS, Android, HarmonyOS NEXT
-        - Web: WebAssembly, Chromebook
-        - Console: PlayStation 4/5, Xbox Series X|S, Switch
-        - Exotic: NetBSD, OpenBSD, Solaris 10/11, BeOS, Haiku
-        - Retro: NEC PC-9801, IBM PC/AT
-    - **JIT:** JIT works with 10 architectures, including x86, x86_64, ARMv7, Arm64, MIPS32, MIPS64, PowerPC 32, PowerPC 64, RISC-V 32, and RISC-V 64.
-    - **Interpreter/AOT:** Also works with Motorola 68000, Sun SPARC, DEC Alpha, HP PA-RISC, IBM s390x, Hitachi SH-4, Itanium, Xtensa, etc.
+
+### For Engineers
+
+- **Long Term:** 25+ years of development, 10+ years of long-term support for each LTS version.
+- **Performance:** Native, JIT, core written in 100% pure ANSI C.
+- **Hybrid Scripting:** JIT for PC, AOT for mobile, ensuring App Store compliance. OSS equivalent to Unity IL2CPP.
+- **Broad Platform Support :** A real working list, not just a future roadmap.
+    - Desktop: Windows, macOS, Linux, Raspberry Pi, FreeBSD
+    - Mobile: iOS, Android, HarmonyOS NEXT
+    - Web: WebAssembly, Chromebook
+    - Console: PlayStation 4/5, Xbox Series X|S, Switch (really works)
+    - Exotic: NetBSD, OpenBSD, Solaris 10/11, BeOS, Haiku
+    - Retro: NEC PC-9801, IBM PC/AT (really works)
+- **JIT:** JIT works with 10 architectures, including x86, x86_64, ARMv7, Arm64, MIPS32, MIPS64, PowerPC 32, PowerPC 64, RISC-V 32, and RISC-V 64.
+- **Interpreter/AOT:** Also works with Motorola 68000, Sun SPARC, DEC Alpha, HP PA-RISC, IBM s390x, Hitachi SH-4, Itanium, Xtensa, etc.
 
 ---
 
 <img src="https://img.shields.io/badge/CI%20Build%20Status-All%20OK%20Released-green"><br>
+
+The project is already complete, and you can download a working version of the product artifacts.
 
 | OS          | File                                                                                                                          | Type                       | Description                    |
 |-------------|-------------------------------------------------------------------------------------------------------------------------------|----------------------------|--------------------------------|
@@ -350,12 +354,9 @@ Suika3 is engineered with modern techniques, and delivers:
 
 ## Kanban (Status)
 
-**The current version is `26.06.x`:**
+**The current version is `26.07.x LTS`:**
 
-- Quality is improving daily, and `26.06.x` is now considered stable.
-- We are currently in the `Quality Stabilization Period` (April 1 - June 30, 2026)
-  in preparation for the upcoming `Suika3 26.07 LTS` release (scheduled for July 1-30, 2026).
-- While some minor bugs may remain, they will be fully resolved by the LTS release.
+- `26.07.x LTS` is now considered stable.
 - A detailed list of all issues can be found in [BUGS.md](BUGS.md).
 - See [Quality Assurance](#quality-assurance) for more details.
 
@@ -374,11 +375,11 @@ Suika3 is engineered with modern techniques, and delivers:
 - ✅ Milestone: `Suika3 26.04 (=LTS RC1)` (April 1, 2026)
 - ✅ Milestone: `Suika3 26.05 (=LTS RC2)` (May 1, 2026)
 - ✅ Milestone: `Suika3 26.06 (=LTS RC3)` (June 1, 2026)
-- Goal: `Suika3 26.07 LTS` Public Release (July 1, 2026)
+- ✅ Goal: `Suika3 26.07.0 LTS` Public Release (June 28, 2026)
 
-**Remaining Tasks:**
-- Document: `SRS: System Requirement Specification`
-- Document: `SDS: System Design Specification`
+**Optional Tasks:**
+- Document: `SRS: System Requirement Specification` for enterprise users
+- Document: `SDS: System Design Specification` for enterprise users
 
 ---
 
@@ -1767,7 +1768,7 @@ early or wait for further maturity, GitHub issues are typically
 resolved within a day. This ensures a high level of community support
 for all users.
 
-### Doesn't "over 25 years of maturity" contradict "zero operational use"?
+### Doesn't "over 25 years of maturity" contradict "few operational use"?
 
 Suika3 itself is a new integration, but it builds upon a long lineage
 including Suika2 and StratoHAL. In other words, it's a "new package
