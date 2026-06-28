@@ -31,6 +31,7 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
 - **What is the primary advantage?:**
     - Develop once and keep shipping to future platforms Suika3 will support.
 - **For Engineers:**
+    - **Long Term:** 25+ years of development, 10+ years of long-term support for each LTS version.
     - **Performance:** Native, JIT, core written in 100% pure ANSI C.
     - **Hybrid Scripting:** JIT for PC, AOT for mobile, ensuring App Store compliance. OSS equivalent to Unity IL2CPP.
     - **Broad Platform Support:**
@@ -353,7 +354,7 @@ Suika3 is engineered with modern techniques, and delivers:
 
 - Quality is improving daily, and `26.06.x` is now considered stable.
 - We are currently in the `Quality Stabilization Period` (April 1 - June 30, 2026)
-  in preparation for the upcoming `Suika3 26.07 LTS` release (scheduled for July 1, 2026).
+  in preparation for the upcoming `Suika3 26.07 LTS` release (scheduled for July 1-30, 2026).
 - While some minor bugs may remain, they will be fully resolved by the LTS release.
 - A detailed list of all issues can be found in [BUGS.md](BUGS.md).
 - See [Quality Assurance](#quality-assurance) for more details.
