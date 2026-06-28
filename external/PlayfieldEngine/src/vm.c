@@ -88,6 +88,7 @@ pfi_create_vm(
 	int *height,
 	bool *fullscreen)
 {
+	NoctConfig config;
 	bool has_setup;
 
 	/* Initialize the NoctLang's i18n system. */
@@ -96,7 +97,9 @@ pfi_create_vm(
 #endif
 
 	/* Create a language runtime. */
-	if (!noct_create_vm(&vm, &env, NULL))
+	noct_set_default_config(&config);
+	config.jit_threshold = 0;
+	if (!noct_create_vm(&vm, &env, &config))
 		return false;
 
 	/* Call AOT code registration. */
