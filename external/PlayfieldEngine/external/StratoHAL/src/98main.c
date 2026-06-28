@@ -212,8 +212,6 @@ static void flip(void)
 	pixels = back_image->pixels;
 
 	for (y = 0; y < SCREEN_HEIGHT; y++) {
-		if (y < ofs_y)
-			continue;
 		if (y >= game_height)
 			break;
 
@@ -223,8 +221,6 @@ static void flip(void)
 			unsigned char pg = 0;
 			unsigned char pi = 0;
 
-			if (x < ofs_x >> 3)
-				continue;
 			if (x >= game_width >> 3)
 				break;
 
@@ -251,7 +247,7 @@ static void flip(void)
 					pi |= mask;
 			}
 
-			dst_index = (y + ofs_y) * LINE_BYTES + (x + (ofs_x >> 3));
+			dst_index = (y + ofs_y) * LINE_BYTES + x + (ofs_x >> 3);
 
 			vram_b[dst_index] = pb;
 			vram_r[dst_index] = pr;
