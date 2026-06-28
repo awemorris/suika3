@@ -45,7 +45,7 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
 
 ---
 
-<img src="https://img.shields.io/badge/Build-OK-cyan"><br>
+<img src="https://img.shields.io/badge/CI%20Build%20Status-All%20OK%20Released-green"><br>
 
 | OS          | File                                                                                                                          | Type                       | Description                    |
 |-------------|-------------------------------------------------------------------------------------------------------------------------------|----------------------------|--------------------------------|
