@@ -11,10 +11,20 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
     - Creating visual novels and selling them on App Store and Steam at the same time, eliminating porting headaches.
 - **Who is this for?:**
     - Professional creators who make visual novels.
-- **What are the advantages?:**
-    - **High Performance:** Native, core written in 100%-pure ANSI C.
-    - **Hybrid Scripting:** JIT for PC, AOT for mobile, ensuring App Store compliance.
-    - **Broad Platforms:** Runs on virtually all modern OSes, including Windows, macOS, Linux, iOS, Android, HarmonyOS NEXT, ChromeOS, WebAssembly, *BSD, and game console!
+- **What is the primary advantage?:**
+    - Develop once and keep shipping to future platforms Suika3 will support.
+- *For Engineers:**
+    - **Performance:** Native, JIT, core written in 100% pure ANSI C.
+    - **Hybrid Scripting:** JIT for PC, AOT for mobile, ensuring App Store compliance. OSS equivalent to Unity IL2CPP.
+    - **Broad Platform Support:**
+        - Desktop: Windows, macOS, Linux, Raspberry Pi, FreeBSD
+        - Mobile: iOS, Android, HarmonyOS NEXT
+        - Web: WebAssembly, Chromebook
+        - Console: PlayStation 4/5, Xbox Series X|S, Switch
+        - Exotic: NetBSD, OpenBSD, Solaris 10/11, BeOS, Haiku
+        - Retro: NEC PC-9801, IBM PC/AT
+    - **JIT:** JIT works with 10 architectures, including x86, x86_64, ARMv7, Arm64, MIPS32, MIPS64, PowerPC 32, PowerPC 64, RISC-V 32, and RISC-V 64.
+    - **Interpreter/AOT:** Also works with Motorola 68000, Sun SPARC, DEC Alpha, HP PA-RISC, IBM s390x, Hitachi SH-4, Itanium, Xtensa, etc.
 
 ---
 
@@ -42,6 +52,25 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
   <img src="https://img.shields.io/badge/Store-App%20Store%20%2F%20Play%20Store%20%2F%20Microsoft%20Store%20%2F%20Steam%20%2F%20itch%2eio%20%2F%20App%20Gallery-green"><br>
   <br>
 </div>
+
+| OS          | File                                                                                                                          | Type                       | Description                    |
+|-------------|-------------------------------------------------------------------------------------------------------------------------------|----------------------------|--------------------------------|
+| Full        | [Suika3-Full-SDK.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-SDK-Full.zip)                       | ZIP                        | Full Distribution              |
+| Windows     | [suika3-win64.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-win64.exe)                             | Windows Executable         | Windows 7+ 64-bit              |
+| Windows     | [suika3-win32.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-win32.exe)                             | Windows Executable         | Windows XP+ 32-bit             |
+| Windows     | [suika3-arm64.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-arm64.exe)                             | Windows Executable         | Windows 10+ Arm64              |
+| macOS       | [Suika3.dmg](https://github.com/awemorris/suika3/releases/latest/download/Suika3.dmg)                                         | Application                | macOS                          |
+| macOS       | [Suika3-macOS-Xcode.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-macOS-Xcode.zip)                 | Xcode Project              | macOS Xcode Project            |
+| Linux       | [Suika3-x86_64.flatpak](https://github.com/awemorris/suika3/releases/latest/download/Suika3-x86_64.flatpak)                   | Flatpak                    | Linux Flatpak                  |
+| iOS         | [Suika3-iOS-Xcode.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-iOS-Xcode.zip)                     | Xcode Project              | macOS Xcode Project            |
+| Android     | [Suika3-Android-Studio.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-Android-Studio.zip)           | Android Studio Project     | Android NDK                    |
+| OpenHarmony | [Suika3-OpenHarmony-DevEco.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-OpenHarmony-DevEco.zip)   | OpenHarmony DevEco Project | OpenHarmony (HarmonyOS NEXT)   |
+| Wasm        | [suika3-wasm.html](https://github.com/awemorris/suika3/releases/latest/download/suika3-wasm.html)                             | Wasm                       | Emscripten                     |
+| Wasm        | [suika3-wasm.tar.gz](https://github.com/awemorris/suika3/releases/latest/download/suika3-wasm.tar.gz)                         | Tarball                    | Emscripten                     |
+| Unity       | [Suika3-Unity.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-Unity.zip)                             | Unity Plugin + Project     | Unity (Win64/Switch/PS5/Xbox)  |
+| NEC PC-9801 | [suika-98.exe](https://github.com/awemorris/suika3/releases/latest/download/suika-98.exe)                                     | MS-DOS Executable          | NEC PC-9801 DOS4G (386)        |
+| IBM PC/AT   | [suika-at.exe](https://github.com/awemorris/suika3/releases/latest/download/suika-at.exe)                                     | MS-DOS Executable          | IBM PC/AT DOS4G (386)          |
+| Documents   | [suika3-documents.zip](https://github.com/awemorris/suika3/releases/latest/download/suika3-documents.zip)                     | ZIP                        | Documents                      |
 
 ---
 
