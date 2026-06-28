@@ -251,7 +251,7 @@ static void flip(void)
 					pi |= mask;
 			}
 
-			dst_index = y * LINE_BYTES + x;
+			dst_index = (y + ofs_y) * LINE_BYTES + (x + (ofs_x >> 3));
 
 			vram_b[dst_index] = pb;
 			vram_r[dst_index] = pr;

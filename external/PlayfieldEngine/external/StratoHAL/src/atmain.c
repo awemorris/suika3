@@ -251,7 +251,7 @@ flip(void)
 						out |= mask;
 				}
 
-				vram[y * LINE_BYTES + x] = out;
+				vram[(y + ofs_y) * LINE_BYTES + (x + (ofs_x >> 3))] = out;
 			}
 		}
 	}
