@@ -77,9 +77,12 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-android.webp" alt="Suika3 on Android" width="480">
   <br>
   <br>
-  NEC PC-9801<br>
+  NEC PC-9801 (80386/JIT)<br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="480"><br>
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98-2.png" alt="Suika3 on NEC PC-9801" width="480"><br>
+  <br>
+  <br>
+  IBM PC/AT (80386/JIT)<br>
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pcat.png" alt="Suika3 on NEC PC-9801" width="480"><br>
   <br>
 </div>
 
