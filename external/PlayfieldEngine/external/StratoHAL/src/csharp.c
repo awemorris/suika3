@@ -79,7 +79,7 @@ bool (*cs_is_full_screen_supported)(void);
 bool (*cs_is_full_screen_mode)(void);
 void (*cs_enter_full_screen_mode)(void);
 void (*cs_leave_full_screen_mode)(void);
-void (*cs_get_system_language)(UNSAFEPTR(char *) dst, int len);
+void *(*cs_get_system_language)(void);
 void (*cs_set_continuous_swipe_enabled)(bool is_enabled);
 bool (*cs_check_file_exist)(UNSAFEPTR(const char *) file_name);
 UNSAFEPTR(void *) (*cs_get_file_contents)(UNSAFEPTR(const char *) file_name, UNSAFEPTR(int *) len);
@@ -123,7 +123,7 @@ void init_hal_func_table(
 	bool (*p_is_full_screen_mode)(void),
 	void (*p_enter_full_screen_mode)(void),
 	void (*p_leave_full_screen_mode)(void),
-	void (*p_get_system_language)(UNSAFEPTR(char *) dst, int len),
+	void *(*p_get_system_language)(void),
 	void (*p_set_continuous_swipe_enabled)(bool is_enabled),
 	bool (*p_check_file_exist)(UNSAFEPTR(const char *) file_name),
 	UNSAFEPTR(void *) (*p_get_file_contents)(UNSAFEPTR(const char *) file_name, UNSAFEPTR(int *) len),
@@ -165,12 +165,12 @@ void init_hal_func_table(
 	cs_leave_full_screen_mode = p_leave_full_screen_mode;
 	cs_get_system_language = p_get_system_language;
 	cs_set_continuous_swipe_enabled = p_set_continuous_swipe_enabled;
-	cs_free_shared = p_free_shared;
 	cs_check_file_exist = p_check_file_exist;
 	cs_get_file_contents = p_get_file_contents;
 	cs_open_save_file = p_open_save_file;
 	cs_write_save_file = p_write_save_file;
 	cs_close_save_file = p_close_save_file;
+	cs_free_shared = p_free_shared;
 }
 
 /*
@@ -178,24 +178,20 @@ void init_hal_func_table(
  */
 
 static struct hal_callback hal_callback;
-#if !defined(HAL_USE_DLL)
-HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback) = hal_bootstrap;
-#else
-HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
-#endif
 
 static int screen_width;
 static int screen_height;
 static char *window_title;
 
-int
-on_event_boot(int *w, int *h)
-{
-	if (!hal_bootstrap_ptr(&window_title, &screen_width, &screen_height, &hal_callback))
-		return 0;
+void so_init(void);
 
-	*w = screen_width;
-	*h = screen_height;
+int
+on_event_setup(void)
+{
+	so_init();
+
+	if (!hal_bootstrap(&window_title, &screen_width, &screen_height, &hal_callback))
+		return 0;
 
 	return true;
 }
@@ -211,16 +207,20 @@ on_event_start(void)
 }
 
 int
-on_event_frame(void)
+on_event_update(void)
 {
 	if (hal_callback.on_update != NULL)
 		if (!hal_callback.on_update())
 			return 0;
-	
-	if (hal_callback.on_render != NULL)
-		hal_callback.on_render();
 
 	return 1;
+}
+
+void
+on_event_render(void)
+{
+	if (hal_callback.on_render != NULL)
+		hal_callback.on_render();
 }
 
 void
@@ -264,8 +264,19 @@ on_event_mouse_move(
 	int x,
 	int y)
 {
-	if (hal_callback.on_mouse_move != NULL)
+        if (hal_callback.on_mouse_move != NULL) {
 		hal_callback.on_mouse_move(x, y);
+	}
+}
+
+void
+on_event_mouse_wheel(
+	int v,
+	int h)
+{
+        if (hal_callback.on_mouse_wheel != NULL) {
+		hal_callback.on_mouse_wheel(v, h);
+	}
 }
 
 void
@@ -291,6 +302,12 @@ on_event_swipe_up(
 {
 	if (hal_callback.on_swipe_up != NULL)
 		hal_callback.on_swipe_up(speed, amount);
+}
+
+void on_event_analog_input(int input, int val)
+{
+	if (hal_callback.on_analog_input != NULL)
+		hal_callback.on_analog_input(input, val);
 }
 
 /*
@@ -813,9 +830,13 @@ const char *
 hal_get_system_language(void)
 {
 	static char buf[64];
+	const char *p;
 
 	memset(buf, 0, sizeof(buf));
-	cs_get_system_language((UNSAFEPTR(char *))buf, sizeof(buf));
+
+	p = cs_get_system_language();
+	if (p != NULL)
+		strncpy(buf, p, 8);
 
 	return buf;
 }
@@ -842,7 +863,7 @@ hal_open_rfile(
 	const char *file,
 	struct hal_rfile **rf)
 {
-	UNSAFEPTR(char *) p;
+	void *p;
 	int len;
 
 	*rf = malloc(sizeof(struct hal_rfile));
@@ -851,7 +872,8 @@ hal_open_rfile(
 		return false;
 	}
 
-	if (!cs_get_file_contents((UNSAFEPTR(char *))file, (UNSAFEPTR(int *))&len)) {
+	p = (void *)cs_get_file_contents((UNSAFEPTR(char *))file, (UNSAFEPTR(int *))&len);
+	if (p == NULL) {
 		free(*rf);
 		return false;
 	}

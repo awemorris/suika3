@@ -116,7 +116,6 @@ pfi_create_vm(
 			return false;
 	}
 
-
 	/* Call "setup()" and get a title and window size. */
 	if (!call_setup(title, width, height, fullscreen)) {
 		const char *file;
