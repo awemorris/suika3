@@ -6,8 +6,8 @@ const char *pf_gettext(const char *msg)
 {
     const char *lang_code = hal_get_system_language();
 
-    if (strcmpt(lang_code, "zh-cn") == 0) lang_code = "zh";
-    if (strcmpt(lang_code, "zh-tw") == 0) lang_code = "tw";
+    if (strcmp(lang_code, "zh-cn") == 0) lang_code = "zh";
+    if (strcmp(lang_code, "zh-tw") == 0) lang_code = "tw";
 
     if (strcmp(msg, "Adding file \"%s\".") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Adding file \"%s\".";
