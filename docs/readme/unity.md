@@ -7,6 +7,6 @@ Unity C++ Plugin
 * In the `Player Settings` box, check the `Allow unsafe code` option.
 * In the `Player Settings` box, set the audio sampling rate to `44100`.
 * Double click and load the `MainScene` scene.
-* Tie the `PlayfieldScript` game object to the script `PlayfieldScript.cs`.
+* Tie the `StratoScript` game object to the script `StratoScript.cs`.
 * Run preview -- Your game will run!
 * Export to consoles.

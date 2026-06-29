@@ -540,10 +540,10 @@ jobs:
           mkdir unity/Assets/Plugins/PS5
           mkdir unity/Assets/Plugins/GameCoreXboxSeries
           mkdir unity/Assets/Plugins/Common
-          cp build-unity-win64/libsuika3.dll unity/Assets/Plugins/x86_64/
-          cp build-unity-switch/libsuika3.a  unity/Assets/Plugins/Switch/
-          cp build-unity-ps5/libsuika3.a     unity/Assets/Plugins/PS5/
-          cp build-unity-xbox/suika3.lib     unity/Assets/Plugins/GameCoreXboxSeries/
+          cp build-unity-win64/libsuika3.dll unity/Assets/Plugins/x86_64/libstrato.dll
+          cp build-unity-switch/libsuika3.a  unity/Assets/Plugins/Switch/libsuika3.a
+          cp build-unity-ps5/libsuika3.a     unity/Assets/Plugins/PS5/libsuika3.a
+          cp build-unity-xbox/suika3.lib     unity/Assets/Plugins/GameCoreXboxSeries/suika3.lib
 
           cp docs/readme/unity.md unity/
 
