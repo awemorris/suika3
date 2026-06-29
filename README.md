@@ -383,7 +383,7 @@ Suika3 is engineered with modern techniques, and delivers:
 - ✅ Milestone: `Suika3 26.04 (=LTS RC1)` (April 1, 2026)
 - ✅ Milestone: `Suika3 26.05 (=LTS RC2)` (May 1, 2026)
 - ✅ Milestone: `Suika3 26.06 (=LTS RC3)` (June 1, 2026)
-- ✅ Goal: `Suika3 26.07.0 LTS` Public Release (June 28, 2026)
+- ✅ Goal: `Suika3 26.07.0 LTS` Public Release (June 29, 2026)
 
 **Optional Tasks:**
 - Document: `SRS: System Requirement Specification` for enterprise users
