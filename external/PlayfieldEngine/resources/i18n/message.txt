@@ -82,17 +82,17 @@ zh:无法读取文件 "%s"。
 tw:無法讀取檔案 "%s"。
 ja:ファイル "%s" を読み込めません。
 ---
-ID:Error: %s: %d: %s
-en:Error: %s: %d: %s
-es:Error: %s: %d: %s
+ID:Error: %s:%d: %s
+en:Error: %s:%d: %s
+es:Error: %s:%d: %s
 fr:Erreur : %s : %d : %s
-it:Errore: %s: %d: %s
-de:Fehler: %s: %d: %s
-el:Σφάλμα: %s: %d: %s
-ru:Ошибка: %s: %d: %s
-zh:错误: %s: %d: %s
-tw:錯誤: %s: %d: %s
-ja:エラー: %s: %d: %s
+it:Errore: %s:%d: %s
+de:Fehler: %s:%d: %s
+el:Σφάλμα: %s:%d: %s
+ru:Ошибка: %s:%d: %s
+zh:错误: %s:%d: %s
+tw:錯誤: %s:%d: %s
+ja:エラー: %s:%d: %s
 ---
 ID:Too many textures.
 en:Too many textures.

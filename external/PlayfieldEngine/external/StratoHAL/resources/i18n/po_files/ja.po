@@ -3,24 +3,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Out of memory."
-msgstr "メモリが不足しています。"
-
-msgid "Cannot open file \"%s\"."
-msgstr "ファイル \"%s\" を開けません。"
-
-msgid "Cannot read file \"%s\"."
-msgstr "ファイル \"%s\" を読み込めません。"
-
 msgid "No startup file."
 msgstr "スタートアップファイルがありません。"
-
-msgid "The app is crashed."
-msgstr "アプリケーションがクラッシュしました。"
 
 msgid "Failed to initialize the sound."
 msgstr "サウンドの初期化に失敗しました。"
 
 msgid "Failed to initialize the graphics."
 msgstr "グラフィックスの初期化に失敗しました。"
+
+msgid "Out of memory."
+msgstr "メモリが不足しています。"
+
+msgid "The app is crashed."
+msgstr "アプリケーションがクラッシュしました。"
 

@@ -3,24 +3,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Out of memory."
-msgstr "Εκτός μνήμης."
-
-msgid "Cannot open file \"%s\"."
-msgstr "Δεν είναι δυνατό το άνοιγμα του αρχείου \"%s\"."
-
-msgid "Cannot read file \"%s\"."
-msgstr "Δεν είναι δυνατή η ανάγνωση του αρχείου \"%s\"."
-
 msgid "No startup file."
 msgstr "Δεν υπάρχει αρχείο εκκίνησης."
-
-msgid "The app is crashed."
-msgstr "Η εφαρμογή κατέρρευσε."
 
 msgid "Failed to initialize the sound."
 msgstr "Αποτυχία αρχικοποίησης του ήχου."
 
 msgid "Failed to initialize the graphics."
 msgstr "Αποτυχία αρχικοποίησης των γραφικών."
+
+msgid "Out of memory."
+msgstr "Εκτός μνήμης."
+
+msgid "The app is crashed."
+msgstr "Η εφαρμογή κατέρρευσε."
 

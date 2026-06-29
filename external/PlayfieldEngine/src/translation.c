@@ -5,6 +5,10 @@ const char *hal_get_system_language(void);
 const char *pf_gettext(const char *msg)
 {
     const char *lang_code = hal_get_system_language();
+
+    if (strcmpt(lang_code, "zh-cn") == 0) lang_code = "zh";
+    if (strcmpt(lang_code, "zh-tw") == 0) lang_code = "tw";
+
     if (strcmp(msg, "Adding file \"%s\".") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Adding file \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "Añadiendo archivo \"%s\".";
@@ -96,18 +100,18 @@ const char *pf_gettext(const char *msg)
         if (strncmp(lang_code, "ja", 2) == 0) return "ファイル \"%s\" を読み込めません。";
         return "Cannot read file \"%s\".";
     }
-    if (strcmp(msg, "Error: %s: %d: %s") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s: %d: %s";
-        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s: %d: %s";
+    if (strcmp(msg, "Error: %s:%d: %s") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: %s";
+        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: %s";
         if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s : %d : %s";
-        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s: %d: %s";
-        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s: %d: %s";
-        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s: %d: %s";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s: %d: %s";
-        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s: %d: %s";
-        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s: %d: %s";
-        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s: %d: %s";
-        return "Error: %s: %d: %s";
+        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: %s";
+        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s:%d: %s";
+        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s:%d: %s";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s:%d: %s";
+        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s:%d: %s";
+        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s:%d: %s";
+        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s:%d: %s";
+        return "Error: %s:%d: %s";
     }
     if (strcmp(msg, "Too many textures.") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Too many textures.";

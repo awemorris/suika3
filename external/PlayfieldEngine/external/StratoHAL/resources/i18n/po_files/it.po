@@ -3,24 +3,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Out of memory."
-msgstr "Memoria esaurita."
-
-msgid "Cannot open file \"%s\"."
-msgstr "Impossibile aprire il file \"%s\"."
-
-msgid "Cannot read file \"%s\"."
-msgstr "Impossibile leggere il file \"%s\"."
-
 msgid "No startup file."
 msgstr "Nessun file di avvio."
-
-msgid "The app is crashed."
-msgstr "L'applicazione è andata in crash."
 
 msgid "Failed to initialize the sound."
 msgstr "Impossibile inizializzare l'audio."
 
 msgid "Failed to initialize the graphics."
 msgstr "Impossibile inizializzare la grafica."
+
+msgid "Out of memory."
+msgstr "Memoria esaurita."
+
+msgid "The app is crashed."
+msgstr "L'applicazione è andata in crash."
 

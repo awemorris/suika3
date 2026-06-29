@@ -117,8 +117,8 @@ msgstr "Empty array."
 msgid "Entering REPL mode.\n"
 msgstr "Entering REPL mode.\n"
 
-msgid "Error: %s: %d: %s\n"
-msgstr "Error: %s: %d: %s\n"
+msgid "Error: %s:%d: %s\n"
+msgstr "Error: %s:%d: %s\n"
 
 msgid "Exceeded the maximum argument count."
 msgstr "Exceeded the maximum argument count."
@@ -171,8 +171,8 @@ msgstr "Packed size is 0."
 msgid "Packed size is too large."
 msgstr "Packed size is too large."
 
-msgid "%s: %d: Error: %s\n"
-msgstr "%s: %d: Error: %s\n"
+msgid "%s:%d: Error: %s\n"
+msgstr "%s:%d: Error: %s\n"
 
 msgid "Searching directory %s.\n"
 msgstr "Searching directory %s.\n"

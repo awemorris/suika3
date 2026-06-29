@@ -117,8 +117,8 @@ msgstr "Пустой массив."
 msgid "Entering REPL mode.\n"
 msgstr "Переход в режим REPL.\n"
 
-msgid "Error: %s: %d: %s\n"
-msgstr "Ошибка: %s: %d: %s\n"
+msgid "Error: %s:%d: %s\n"
+msgstr "Ошибка: %s:%d: %s\n"
 
 msgid "Exceeded the maximum argument count."
 msgstr "Превышено максимальное количество аргументов."
@@ -171,8 +171,8 @@ msgstr "Размер packed равен 0."
 msgid "Packed size is too large."
 msgstr "Размер packed слишком велик."
 
-msgid "%s: %d: Error: %s\n"
-msgstr "%s: %d: Ошибка: %s\n"
+msgid "%s:%d: Error: %s\n"
+msgstr "%s:%d: Ошибка: %s\n"
 
 msgid "Searching directory %s.\n"
 msgstr "Поиск в каталоге %s.\n"

@@ -117,8 +117,8 @@ msgstr "Tableau vide."
 msgid "Entering REPL mode.\n"
 msgstr "Entrée en mode REPL.\n"
 
-msgid "Error: %s: %d: %s\n"
-msgstr "Erreur: %s: %d: %s\n"
+msgid "Error: %s:%d: %s\n"
+msgstr "Erreur: %s:%d: %s\n"
 
 msgid "Exceeded the maximum argument count."
 msgstr "Nombre maximal d'arguments dépassé."
@@ -171,8 +171,8 @@ msgstr "La taille du packed est 0."
 msgid "Packed size is too large."
 msgstr "La taille du packed est trop grande."
 
-msgid "%s: %d: Error: %s\n"
-msgstr "%s: %d: Erreur: %s\n"
+msgid "%s:%d: Error: %s\n"
+msgstr "%s:%d: Erreur: %s\n"
 
 msgid "Searching directory %s.\n"
 msgstr "Recherche dans le répertoire %s.\n"

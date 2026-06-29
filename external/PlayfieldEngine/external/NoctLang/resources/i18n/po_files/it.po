@@ -117,8 +117,8 @@ msgstr "Array vuoto."
 msgid "Entering REPL mode.\n"
 msgstr "Accesso alla modalità REPL.\n"
 
-msgid "Error: %s: %d: %s\n"
-msgstr "Errore: %s: %d: %s\n"
+msgid "Error: %s:%d: %s\n"
+msgstr "Errore: %s:%d: %s\n"
 
 msgid "Exceeded the maximum argument count."
 msgstr "È stato superato il numero massimo di argomenti."
@@ -171,8 +171,8 @@ msgstr "La dimensione del packed è 0."
 msgid "Packed size is too large."
 msgstr "La dimensione del packed è troppo grande."
 
-msgid "%s: %d: Error: %s\n"
-msgstr "%s: %d: Errore: %s\n"
+msgid "%s:%d: Error: %s\n"
+msgstr "%s:%d: Errore: %s\n"
 
 msgid "Searching directory %s.\n"
 msgstr "Ricerca nella directory %s.\n"

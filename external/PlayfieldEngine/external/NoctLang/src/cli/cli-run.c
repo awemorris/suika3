@@ -153,7 +153,7 @@ int command_run(int argc, char *argv[])
 			noct_get_error_file(env, &file);
 			noct_get_error_line(env, &line);
 			noct_get_error_message(env, &msg);
-			wide_printf(N_TR("%s: %d: Error: %s\n"), file, line, msg);
+			wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
 			free(data);
 			return 1;
 		}
@@ -172,7 +172,7 @@ int command_run(int argc, char *argv[])
 					noct_get_error_file(env, &file);
 					noct_get_error_line(env, &line);
 					noct_get_error_message(env, &msg);
-					wide_printf(N_TR("%s: %d: Error: %s\n"), file, line, msg);
+					wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
 					free(data);
 					return 1;
 				}
@@ -184,7 +184,7 @@ int command_run(int argc, char *argv[])
 					noct_get_error_file(env, &file);
 					noct_get_error_line(env, &line);
 					noct_get_error_message(env, &msg);
-					wide_printf(N_TR("%s: %d: Error: %s\n"), file, line, msg);
+					wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
 					free(data);
 					return 1;
 				}
@@ -216,7 +216,7 @@ int command_run(int argc, char *argv[])
 		noct_get_error_file(env, &file);
 		noct_get_error_line(env, &line);
 		noct_get_error_message(env, &msg);
-		wide_printf(N_TR("%s: %d: Error: %s\n"), file, line, msg);
+		wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
 		return 1;
 	}
 

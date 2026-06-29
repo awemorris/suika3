@@ -117,8 +117,8 @@ msgstr "Arreglo vacío."
 msgid "Entering REPL mode.\n"
 msgstr "Entrando en modo REPL.\n"
 
-msgid "Error: %s: %d: %s\n"
-msgstr "Error: %s: %d: %s\n"
+msgid "Error: %s:%d: %s\n"
+msgstr "Error: %s:%d: %s\n"
 
 msgid "Exceeded the maximum argument count."
 msgstr "Se ha superado el número máximo de argumentos."

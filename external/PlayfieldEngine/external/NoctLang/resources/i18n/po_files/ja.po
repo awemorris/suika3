@@ -117,8 +117,8 @@ msgstr "配列が空です。"
 msgid "Entering REPL mode.\n"
 msgstr "REPLモードに入ります。\n"
 
-msgid "Error: %s: %d: %s\n"
-msgstr "エラー: %s: %d: %s\n"
+msgid "Error: %s:%d: %s\n"
+msgstr "エラー: %s:%d: %s\n"
 
 msgid "Exceeded the maximum argument count."
 msgstr "引数が多すぎます。"
@@ -171,8 +171,8 @@ msgstr "packed のサイズが 0 です。"
 msgid "Packed size is too large."
 msgstr "packed のサイズが大きすぎます。"
 
-msgid "%s: %d: Error: %s\n"
-msgstr "%s: %d: エラー: %s\n"
+msgid "%s:%d: Error: %s\n"
+msgstr "%s:%d: エラー: %s\n"
 
 msgid "Searching directory %s.\n"
 msgstr "ディレクトリ%sを検索中です。\n"

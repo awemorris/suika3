@@ -117,8 +117,8 @@ msgstr "Κενός πίνακας."
 msgid "Entering REPL mode.\n"
 msgstr "Είσοδος σε λειτουργία REPL.\n"
 
-msgid "Error: %s: %d: %s\n"
-msgstr "Σφάλμα: %s: %d: %s\n"
+msgid "Error: %s:%d: %s\n"
+msgstr "Σφάλμα: %s:%d: %s\n"
 
 msgid "Exceeded the maximum argument count."
 msgstr "Υπέρβαση του μέγιστου αριθμού ορισμάτων."
@@ -171,8 +171,8 @@ msgstr "Το μέγεθος του packed είναι 0."
 msgid "Packed size is too large."
 msgstr "Το μέγεθος του packed είναι πολύ μεγάλο."
 
-msgid "%s: %d: Error: %s\n"
-msgstr "%s: %d: Σφάλμα: %s\n"
+msgid "%s:%d: Error: %s\n"
+msgstr "%s:%d: Σφάλμα: %s\n"
 
 msgid "Searching directory %s.\n"
 msgstr "Αναζήτηση στον κατάλογο %s.\n"

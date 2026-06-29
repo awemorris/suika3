@@ -24,8 +24,8 @@ msgstr "Δεν είναι δυνατό το άνοιγμα του αρχείου
 msgid "Cannot read file \"%s\"."
 msgstr "Δεν είναι δυνατή η ανάγνωση του αρχείου \"%s\"."
 
-msgid "Error: %s: %d: %s"
-msgstr "Σφάλμα: %s: %d: %s"
+msgid "Error: %s:%d: %s"
+msgstr "Σφάλμα: %s:%d: %s"
 
 msgid "Too many textures."
 msgstr "Πάρα πολλές υφές."

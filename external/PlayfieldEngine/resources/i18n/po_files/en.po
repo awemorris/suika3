@@ -24,8 +24,8 @@ msgstr "Cannot open file \"%s\"."
 msgid "Cannot read file \"%s\"."
 msgstr "Cannot read file \"%s\"."
 
-msgid "Error: %s: %d: %s"
-msgstr "Error: %s: %d: %s"
+msgid "Error: %s:%d: %s"
+msgstr "Error: %s:%d: %s"
 
 msgid "Too many textures."
 msgstr "Too many textures."

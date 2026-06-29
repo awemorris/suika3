@@ -457,17 +457,17 @@ zh:进入 REPL 模式。\n
 tw:進入 REPL 模式。\n
 ja:REPLモードに入ります。\n
 ---
-ID:Error: %s: %d: %s\n
-en:Error: %s: %d: %s\n
-es:Error: %s: %d: %s\n
-fr:Erreur: %s: %d: %s\n
-de:Fehler: %s: %d: %s\n
-it:Errore: %s: %d: %s\n
-el:Σφάλμα: %s: %d: %s\n
-ru:Ошибка: %s: %d: %s\n
-zh:错误: %s: %d: %s\n
-tw:錯誤: %s: %d: %s\n
-ja:エラー: %s: %d: %s\n
+ID:Error: %s:%d: %s\n
+en:Error: %s:%d: %s\n
+es:Error: %s:%d: %s\n
+fr:Erreur: %s:%d: %s\n
+de:Fehler: %s:%d: %s\n
+it:Errore: %s:%d: %s\n
+el:Σφάλμα: %s:%d: %s\n
+ru:Ошибка: %s:%d: %s\n
+zh:错误: %s:%d: %s\n
+tw:錯誤: %s:%d: %s\n
+ja:エラー: %s:%d: %s\n
 ---
 ID:Exceeded the maximum argument count.
 en:Exceeded the maximum argument count.
@@ -674,16 +674,16 @@ zh:packed 的大小过大。
 tw:packed 的大小過大。
 ja:packed のサイズが大きすぎます。
 ---
-ID:%s: %d: Error: %s\n
-en:%s: %d: Error: %s\n
-fr:%s: %d: Erreur: %s\n
-de:%s: %d: Fehler: %s\n
-it:%s: %d: Errore: %s\n
-el:%s: %d: Σφάλμα: %s\n
-ru:%s: %d: Ошибка: %s\n
-zh:%s: %d: 错误: %s\n
-tw:%s: %d: 錯誤: %s\n
-ja:%s: %d: エラー: %s\n
+ID:%s:%d: Error: %s\n
+en:%s:%d: Error: %s\n
+fr:%s:%d: Erreur: %s\n
+de:%s:%d: Fehler: %s\n
+it:%s:%d: Errore: %s\n
+el:%s:%d: Σφάλμα: %s\n
+ru:%s:%d: Ошибка: %s\n
+zh:%s:%d: 错误: %s\n
+tw:%s:%d: 錯誤: %s\n
+ja:%s:%d: エラー: %s\n
 ---
 ID:Searching directory %s.\n
 en:Searching directory %s.\n

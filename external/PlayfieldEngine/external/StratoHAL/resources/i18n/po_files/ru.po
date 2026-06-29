@@ -3,24 +3,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Out of memory."
-msgstr "Недостаточно памяти."
-
-msgid "Cannot open file \"%s\"."
-msgstr "Невозможно открыть файл \"%s\"."
-
-msgid "Cannot read file \"%s\"."
-msgstr "Невозможно прочитать файл \"%s\"."
-
 msgid "No startup file."
 msgstr "Файл запуска отсутствует."
-
-msgid "The app is crashed."
-msgstr "Приложение завершилось с ошибкой."
 
 msgid "Failed to initialize the sound."
 msgstr "Не удалось инициализировать звук."
 
 msgid "Failed to initialize the graphics."
 msgstr "Не удалось инициализировать графику."
+
+msgid "Out of memory."
+msgstr "Недостаточно памяти."
+
+msgid "The app is crashed."
+msgstr "Приложение завершилось с ошибкой."
 

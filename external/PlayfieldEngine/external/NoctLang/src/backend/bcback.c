@@ -53,7 +53,7 @@ noct_bcback_translate(
 
 	/* Do parse, build AST. */
 	if (!ast_build(source_file_name, source_data)) {
-		printf(N_TR("Error: %s: %d: %s\n"),
+		printf(N_TR("Error: %s:%d: %s\n"),
 		       ast_get_file_name(),
 		       ast_get_error_line(),
 		       ast_get_error_message());
@@ -70,7 +70,7 @@ noct_bcback_translate(
 
 	/* Transform AST to HIR. */
 	if (!hir_build()) {
-		printf(N_TR("Error: %s: %d: %s\n"),
+		printf(N_TR("Error: %s:%d: %s\n"),
 		       hir_get_file_name(),
 		       hir_get_error_line(),
 		       hir_get_error_message());
@@ -85,7 +85,7 @@ noct_bcback_translate(
 		/* Transform HIR to LIR (bytecode). */
 		hfunc = hir_get_function(i);
 		if (!lir_build(hfunc, &lfunc)) {
-			printf(N_TR("Error: %s: %d: %s\n"),
+			printf(N_TR("Error: %s:%d: %s\n"),
 			       lir_get_file_name(),
 			       lir_get_error_line(),
 			       lir_get_error_message());

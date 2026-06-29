@@ -117,8 +117,8 @@ msgstr "空数组。"
 msgid "Entering REPL mode.\n"
 msgstr "进入 REPL 模式。\n"
 
-msgid "Error: %s: %d: %s\n"
-msgstr "错误: %s: %d: %s\n"
+msgid "Error: %s:%d: %s\n"
+msgstr "错误: %s:%d: %s\n"
 
 msgid "Exceeded the maximum argument count."
 msgstr "超过了最大参数数量。"
@@ -171,8 +171,8 @@ msgstr "packed 的大小为 0。"
 msgid "Packed size is too large."
 msgstr "packed 的大小过大。"
 
-msgid "%s: %d: Error: %s\n"
-msgstr "%s: %d: 错误: %s\n"
+msgid "%s:%d: Error: %s\n"
+msgstr "%s:%d: 错误: %s\n"
 
 msgid "Searching directory %s.\n"
 msgstr "正在搜索目录 %s。\n"

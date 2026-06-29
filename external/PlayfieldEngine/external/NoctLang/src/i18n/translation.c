@@ -6,6 +6,10 @@ const char *noct_get_system_language(void);
 NOCT_DLL const char *noct_gettext(const char *msg)
 {
     const char *lang_code = noct_get_system_language();
+
+    if (strcmpt(lang_code, "zh-cn") == 0) lang_code = "zh";
+    if (strcmpt(lang_code, "zh-tw") == 0) lang_code = "tw";
+
     if (strcmp(msg, "Adding file %s\n") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Adding file %s\n";
         if (strncmp(lang_code, "es", 2) == 0) return "Añadiendo el archivo %s\n";
@@ -503,18 +507,18 @@ NOCT_DLL const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "ja", 2) == 0) return "REPLモードに入ります。\n";
         return "Entering REPL mode.\n";
     }
-    if (strcmp(msg, "Error: %s: %d: %s\n") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s: %d: %s\n";
-        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s: %d: %s\n";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur: %s: %d: %s\n";
-        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s: %d: %s\n";
-        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s: %d: %s\n";
-        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s: %d: %s\n";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s: %d: %s\n";
-        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s: %d: %s\n";
-        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s: %d: %s\n";
-        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s: %d: %s\n";
-        return "Error: %s: %d: %s\n";
+    if (strcmp(msg, "Error: %s:%d: %s\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: %s\n";
+        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: %s\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur: %s:%d: %s\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s:%d: %s\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: %s\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s:%d: %s\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s:%d: %s\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s:%d: %s\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s:%d: %s\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s:%d: %s\n";
+        return "Error: %s:%d: %s\n";
     }
     if (strcmp(msg, "Exceeded the maximum argument count.") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Exceeded the maximum argument count.";
@@ -738,17 +742,17 @@ NOCT_DLL const char *noct_gettext(const char *msg)
         if (strncmp(lang_code, "ja", 2) == 0) return "packed のサイズが大きすぎます。";
         return "Packed size is too large.";
     }
-    if (strcmp(msg, "%s: %d: Error: %s\n") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "%s: %d: Error: %s\n";
-        if (strncmp(lang_code, "fr", 2) == 0) return "%s: %d: Erreur: %s\n";
-        if (strncmp(lang_code, "de", 2) == 0) return "%s: %d: Fehler: %s\n";
-        if (strncmp(lang_code, "it", 2) == 0) return "%s: %d: Errore: %s\n";
-        if (strncmp(lang_code, "el", 2) == 0) return "%s: %d: Σφάλμα: %s\n";
-        if (strncmp(lang_code, "ru", 2) == 0) return "%s: %d: Ошибка: %s\n";
-        if (strncmp(lang_code, "zh", 2) == 0) return "%s: %d: 错误: %s\n";
-        if (strncmp(lang_code, "tw", 2) == 0) return "%s: %d: 錯誤: %s\n";
-        if (strncmp(lang_code, "ja", 2) == 0) return "%s: %d: エラー: %s\n";
-        return "%s: %d: Error: %s\n";
+    if (strcmp(msg, "%s:%d: Error: %s\n") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "%s:%d: Error: %s\n";
+        if (strncmp(lang_code, "fr", 2) == 0) return "%s:%d: Erreur: %s\n";
+        if (strncmp(lang_code, "de", 2) == 0) return "%s:%d: Fehler: %s\n";
+        if (strncmp(lang_code, "it", 2) == 0) return "%s:%d: Errore: %s\n";
+        if (strncmp(lang_code, "el", 2) == 0) return "%s:%d: Σφάλμα: %s\n";
+        if (strncmp(lang_code, "ru", 2) == 0) return "%s:%d: Ошибка: %s\n";
+        if (strncmp(lang_code, "zh", 2) == 0) return "%s:%d: 错误: %s\n";
+        if (strncmp(lang_code, "tw", 2) == 0) return "%s:%d: 錯誤: %s\n";
+        if (strncmp(lang_code, "ja", 2) == 0) return "%s:%d: エラー: %s\n";
+        return "%s:%d: Error: %s\n";
     }
     if (strcmp(msg, "Searching directory %s.\n") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Searching directory %s.\n";
