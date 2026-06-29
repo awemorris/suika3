@@ -6,7 +6,7 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
   <br>
   <i>Standard Universal Infrastructure for Kinetic Arts, 3rd Edition</i><br>
   <br>
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-macos26.webp" alt="screenshot macos 26" width="480" hspace="20">
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/lts2607-1.webp" alt="screenshot macos 26" width="480" hspace="20">
   <br>
   <br>
   <a href="https://discord.gg/YZsq9u9Mgr"><img src="https://img.shields.io/badge/suika3.vn-Discord-green"></a>
