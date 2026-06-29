@@ -3,35 +3,29 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Error: %s: %d: %s"
-msgstr "Erreur : %s : %d : %s"
-
-msgid "Cannot open file \"%s\"."
-msgstr "Impossible d'ouvrir le fichier \"%s\"."
-
-msgid "Cannot get the size of file \"%s\"."
-msgstr "Impossible d'obtenir la taille du fichier \"%s\"."
-
-msgid "Cannot read file \"%s\"."
-msgstr "Impossible de lire le fichier \"%s\"."
-
-msgid "In tag %s:%d: runtime error."
-msgstr "Dans la balise %s : %d : erreur d'exécution."
-
-msgid "%s:%d: Tag \"%s\" not found."
-msgstr "%s : %d : Balise \"%s\" introuvable."
-
-msgid "%s:%d: \"tag_%s\" is not a function."
-msgstr "%s : %d : \"tag_%s\" n'est pas une fonction."
-
-msgid "In tag %s:%d: Tag \"%s\" execution error."
-msgstr "Dans la balise %s : %d : Erreur d'exécution de la balise \"%s\"."
+msgid "Adding file \"%s\"."
+msgstr "Ajout du fichier \"%s\"."
 
 msgid "Cannot determine the file type for \"%s\"."
 msgstr "Impossible de déterminer le type du fichier  \"%s\"."
 
+msgid "Cannot get the size of file \"%s\"."
+msgstr "Impossible d'obtenir la taille du fichier \"%s\"."
+
 msgid "Cannot load an image \"%s\"."
 msgstr "Impossible de charger l'image \"%s\"."
+
+msgid "Cannot open a save file."
+msgstr "Impossible d'ouvrir un fichier de sauvegarde."
+
+msgid "Cannot open file \"%s\"."
+msgstr "Impossible d'ouvrir le fichier \"%s\"."
+
+msgid "Cannot read file \"%s\"."
+msgstr "Impossible de lire le fichier \"%s\"."
+
+msgid "Error: %s: %d: %s"
+msgstr "Erreur : %s : %d : %s"
 
 msgid "Too many textures."
 msgstr "Trop de textures."
@@ -47,9 +41,6 @@ msgstr "Impossible de créer le répertoire de sauvegarde."
 
 msgid "Save data key too long."
 msgstr "La clé des données de sauvegarde est trop longue."
-
-msgid "Cannot open a save file."
-msgstr "Impossible d'ouvrir un fichier de sauvegarde."
 
 msgid "Cannot write to a save file."
 msgstr "Impossible d'écrire dans un fichier de sauvegarde."
@@ -75,9 +66,6 @@ msgstr "Recherche dans le répertoire \"%s\"."
 msgid "Skipping empty directory \"%s\"."
 msgstr "Ignorer le répertoire vide \"%s\"."
 
-msgid "Adding file \"%s\"."
-msgstr "Ajout du fichier \"%s\"."
-
 msgid "Parameter is not set."
 msgstr "Le paramètre n'est pas défini."
 
@@ -92,4 +80,13 @@ msgstr "Valeur de paramètre inattendue pour \"%s.%s\"."
 
 msgid "Cannot deserialize function."
 msgstr "Impossible de désérialiser la fonction."
+
+msgid "Out of memory."
+msgstr "Mémoire insuffisante."
+
+msgid "Parameter \"%s\" is not set."
+msgstr "Le paramètre \"%s\" n'est pas défini."
+
+msgid "Parameter is required to be a dictionary."
+msgstr "Le paramètre doit être un dictionnaire."
 

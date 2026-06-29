@@ -3,29 +3,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "%s:%d: %s"
-msgstr "%s:%d: %s"
-
-msgid "Error: %s:%d: %s"
-msgstr "Ошибка: %s:%d: %s"
-
-msgid "Error: %s:%d: Tag %s:"
-msgstr "Ошибка: %s:%d: Tag %s:"
-
-msgid "Error: %s:%d: Runtime error"
-msgstr "Ошибка: %s:%d: Ошибка времени выполнения"
-
-msgid "Error: %s:%d: Tag \"%s\" not found."
-msgstr "Ошибка: %s:%d: Тег \"%s\" не найден."
-
-msgid "Error: %s:%d: \"Tag_%s\" is not a function."
-msgstr "Ошибка: %s:%d: «Tag_%s» не является функцией."
-
 msgid "Argument \"%s\" not specified."
 msgstr "Аргумент «%s» не указан."
 
 msgid "Cannot play sound file \"%s\"."
 msgstr "Невозможно воспроизвести звуковой файл «%s»."
+
+msgid "Cannot play video file %s."
+msgstr "Невозможно воспроизвести видеофайл %s."
 
 msgid "Conifg \"%s\" not found."
 msgstr "Конфигурация «%s» не найдена."
@@ -35,6 +20,24 @@ msgstr "Дублирующийся ключ конфигурации %s."
 
 msgid "Error loading GUI file %s."
 msgstr "Ошибка загрузки GUI-файла %s."
+
+msgid "Error: %s:%d: %s"
+msgstr "Ошибка: %s:%d: %s"
+
+msgid "Error: %s:%d: Runtime error"
+msgstr "Ошибка: %s:%d: Ошибка времени выполнения"
+
+msgid "Error: %s:%d: Tag %s: "
+msgstr "Ошибка: %s:%d: Tag %s: "
+
+msgid "Error: %s:%d: \"Tag_%s\" is not a function."
+msgstr "Ошибка: %s:%d: «Tag_%s» не является функцией."
+
+msgid "Error: %s:%d: Tag \"%s\" not found."
+msgstr "Ошибка: %s:%d: Тег \"%s\" не найден."
+
+msgid "Failed to create an image for layer: %s"
+msgstr "Не удалось создать изображение для слоя: %s"
 
 msgid "Failed to write save data."
 msgstr "Ошибка записи данных сохранения."
@@ -59,6 +62,9 @@ msgstr "Недопустимый символ «%c» при анализе фа�
 
 msgid "Invalid character."
 msgstr "Недопустимый символ."
+
+msgid "Invalid config line at file \"%s\" line %d."
+msgstr "Недопустимая строка конфигурации в файле «%s» в строке %d."
 
 msgid "Invalid fade method \"%s\"."
 msgstr "Недопустимый метод затухания «%s»."
@@ -111,8 +117,14 @@ msgstr "Соответствующий endif не найден."
 msgid "No matching endmacro found."
 msgstr "Соответствующий endmacro не найден."
 
+msgid "No matching localized text."
+msgstr "Соответствующий локализованный текст не найден."
+
 msgid "No operator specified."
 msgstr "Оператор не указан."
+
+msgid "Property %s is not allowed for tag %s."
+msgstr "Свойство %s не разрешено для тега %s."
 
 msgid "Property name too long."
 msgstr "Имя свойства слишком длинное."
@@ -168,6 +180,9 @@ msgstr "Неопределенный ключ конфигурации «%s»."
 msgid "Unexpected EOF."
 msgstr "Непредвиденный конец файла (EOF)."
 
+msgid "Unknown action \"%s\" is specified on the page mode."
+msgstr "Неизвестное действие «%s» указано в режиме страницы."
+
 msgid "Unknown button property \"%s\" found in GUI file \"%s\" line %d."
 msgstr "Неизвестное свойство кнопки «%s» в GUI-файле «%s» в строке %d."
 
@@ -180,12 +195,9 @@ msgstr "Неизвестный ключ конфигурации «%s»."
 msgid "Unknown global key \"%s\" found in GUI file \"%s\" line %d."
 msgstr "Неизвестный глобальный ключ «%s» в GUI-файле «%s» в строке %d."
 
-msgid "Unkwon key \"%s\" while parsing anime file \"%s\" line %d."
+msgid "Unknown key \"%s\" while parsing anime file \"%s\" line %d.\""
 msgstr "Неизвестный ключ «%s» при анализе файла анимации «%s» в строке %d."
 
-msgid "Invalid config line at file \"%s\" line %d."
-msgstr "Недопустимая строка конфигурации в файле «%s» в строке %d."
-
-msgid "No matching localized text."
-msgstr "Соответствующий локализованный текст не найден."
+msgid "endmacro outside a macro call."
+msgstr "endmacro вне вызова макроса."
 

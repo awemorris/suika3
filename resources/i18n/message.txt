@@ -1,75 +1,3 @@
-ID:%s:%d: %s
-en:%s:%d: %s
-es:%s:%d: %s
-fr:%s:%d : %s
-it:%s:%d: %s
-de:%s:%d: %s
-el:%s:%d: %s
-ru:%s:%d: %s
-zh:%s:%d: %s
-tw:%s:%d: %s
-ja:%s:%d: %s
----
-ID:Error: %s:%d: %s
-en:Error: %s:%d: %s
-es:Error: %s:%d: %s
-fr:Erreur : %s:%d : %s
-it:Errore: %s:%d: %s
-de:Fehler: %s:%d: %s
-el:Σφάλμα: %s:%d: %s
-ru:Ошибка: %s:%d: %s
-zh:错误: %s:%d: %s
-tw:錯誤: %s:%d: %s
-ja:エラー: %s:%d: %s
----
-ID:Error: %s:%d: Tag %s: 
-en:Error: %s:%d: Tag %s: 
-es:Error: %s:%d: Tag %s: 
-fr:Erreur : %s:%d : Tag %s: 
-it:Errore: %s:%d: Tag %s: 
-de:Fehler: %s:%d: Tag %s: 
-el:Σφάλμα: %s:%d: Tag %s: 
-ru:Ошибка: %s:%d: Tag %s: 
-zh:错误: %s:%d: Tag %s: 
-tw:錯誤: %s:%d: Tag %s: 
-ja:エラー: %s:%d: Tag %s: 
----
-ID:Error: %s:%d: Runtime error
-en:Error: %s:%d: Runtime error
-es:Error: %s:%d: Error de ejecución
-fr:Erreur : %s:%d: Erreur d'exécution
-it:Errore: %s:%d: Erreur d'esecuzione
-de:Fehler: %s:%d: Laufzeitfehler
-el:Σφάλμα: %s:%d: Σφάλμα κατά την εκτέλεση
-ru:Ошибка: %s:%d: Ошибка времени выполнения
-zh:错误: %s:%d: 运行时错误
-tw:錯誤: %s:%d: 執行階段錯誤
-ja:エラー: %s:%d: 実行時エラー
----
-ID:Error: %s:%d: Tag "%s" not found.
-en:Error: %s:%d: Tag "%s" not found.
-es:Error: %s:%d: No se encontró la etiqueta "%s".
-fr:Erreur : %s:%d : Balise "%s" introuvable.
-it:Errore: %s:%d: Tag "%s" non trovato.
-de:Fehler: %s:%d: Tag "%s" wurde nicht gefunden.
-el:Σφάλμα: %s:%d: Η ετικέτα "%s" δεν βρέθηκε.
-ru:Ошибка: %s:%d: Тег "%s" не найден.
-zh:错误: %s:%d: 未找到标签 "%s"。
-tw:錯誤: %s:%d: 找不到標籤 "%s"。
-ja:エラー: %s:%d: タグ "%s" がみつかりません。
----
-ID:Error: %s:%d: "Tag_%s" is not a function.
-en:Error: %s:%d: "Tag_%s" is not a function.
-es:Error: %s:%d: "Tag_%s" no es una función.
-fr:Erreur : %s:%d : "Tag_%s" n'est pas une fonction.
-it:Errore: %s:%d: "Tag_%s" non è una funzione.
-de:Fehler: %s:%d: "Tag_%s" ist keine Funktion.
-el:Σφάλμα: %s:%d: Το "Tag_%s" δεν είναι συνάρτηση.
-ru:Ошибка: %s:%d: «Tag_%s» не является функцией.
-zh:错误: %s:%d: "Tag_%s" 不是函数。
-tw:錯誤: %s:%d: "Tag_%s" 不是函式。
-ja:エラー: %s:%d: "Tag_%s" は関数ではありません。
----
 ID:Argument "%s" not specified.
 en:Argument "%s" not specified.
 es:No se ha especificado el argumento "%s".
@@ -93,6 +21,18 @@ ru:Невозможно воспроизвести звуковой файл «%
 zh:无法播放音频文件 "%s"。
 tw:無法播放音訊檔案 "%s"。
 ja:サウンドファイル "%s" を再生できません。
+---
+ID:Cannot play video file %s.
+en:Cannot play video file %s.
+es:No se puede reproducir el archivo de vídeo %s.
+fr:Impossible de lire le fichier vidéo %s.
+it:Impossibile riprodurre il file video %s.
+de:Videodatei %s kann nicht abgespielt werden.
+el:Δεν είναι δυνατή η αναπαραγωγή του αρχείου βίντεο %s.
+ru:Невозможно воспроизвести видеофайл %s.
+zh:无法播放视频文件 %s。
+tw:無法播放影片檔案 %s。
+ja:動画ファイル %s を再生できません。
 ---
 ID:Conifg "%s" not found.
 en:Conifg "%s" not found.
@@ -129,6 +69,78 @@ ru:Ошибка загрузки GUI-файла %s.
 zh:加载 GUI 文件 %s 時出错。
 tw:載入 GUI 檔案 %s 時發生錯誤。
 ja:GUIファイル %s の読み込み中にエラーが発生しました。
+---
+ID:Error: %s:%d: %s
+en:Error: %s:%d: %s
+es:Error: %s:%d: %s
+fr:Erreur : %s:%d : %s
+it:Errore: %s:%d: %s
+de:Fehler: %s:%d: %s
+el:Σφάλμα: %s:%d: %s
+ru:Ошибка: %s:%d: %s
+zh:错误: %s:%d: %s
+tw:錯誤: %s:%d: %s
+ja:エラー: %s:%d: %s
+---
+ID:Error: %s:%d: Runtime error
+en:Error: %s:%d: Runtime error
+es:Error: %s:%d: Error de ejecución
+fr:Erreur : %s:%d: Erreur d'exécution
+it:Errore: %s:%d: Erreur d'esecuzione
+de:Fehler: %s:%d: Laufzeitfehler
+el:Σφάλμα: %s:%d: Σφάλμα κατά την εκτέλεση
+ru:Ошибка: %s:%d: Ошибка времени выполнения
+zh:错误: %s:%d: 运行时错误
+tw:錯誤: %s:%d: 執行階段錯誤
+ja:エラー: %s:%d: 実行時エラー
+---
+ID:Error: %s:%d: Tag %s: 
+en:Error: %s:%d: Tag %s: 
+es:Error: %s:%d: Tag %s: 
+fr:Erreur : %s:%d : Tag %s: 
+it:Errore: %s:%d: Tag %s: 
+de:Fehler: %s:%d: Tag %s: 
+el:Σφάλμα: %s:%d: Tag %s: 
+ru:Ошибка: %s:%d: Tag %s: 
+zh:错误: %s:%d: Tag %s: 
+tw:錯誤: %s:%d: Tag %s: 
+ja:エラー: %s:%d: Tag %s:
+---
+ID:Error: %s:%d: "Tag_%s" is not a function.
+en:Error: %s:%d: "Tag_%s" is not a function.
+es:Error: %s:%d: "Tag_%s" no es una función.
+fr:Erreur : %s:%d : "Tag_%s" n'est pas une fonction.
+it:Errore: %s:%d: "Tag_%s" non è una funzione.
+de:Fehler: %s:%d: "Tag_%s" ist keine Funktion.
+el:Σφάλμα: %s:%d: Το "Tag_%s" δεν είναι συνάρτηση.
+ru:Ошибка: %s:%d: «Tag_%s» не является функцией.
+zh:错误: %s:%d: "Tag_%s" 不是函数。
+tw:錯誤: %s:%d: "Tag_%s" 不是函式。
+ja:エラー: %s:%d: "Tag_%s" は関数ではありません。
+---
+ID:Error: %s:%d: Tag "%s" not found.
+en:Error: %s:%d: Tag "%s" not found.
+es:Error: %s:%d: No se encontró la etiqueta "%s".
+fr:Erreur : %s:%d : Balise "%s" introuvable.
+it:Errore: %s:%d: Tag "%s" non trovato.
+de:Fehler: %s:%d: Tag "%s" wurde nicht gefunden.
+el:Σφάλμα: %s:%d: Η ετικέτα "%s" δεν βρέθηκε.
+ru:Ошибка: %s:%d: Тег "%s" не найден.
+zh:错误: %s:%d: 未找到标签 "%s"。
+tw:錯誤: %s:%d: 找不到標籤 "%s"。
+ja:エラー: %s:%d: タグ "%s" がみつかりません。
+---
+ID:Failed to create an image for layer: %s
+en:Failed to create an image for layer: %s
+es:Error al crear una imagen para la capa: %s
+fr:Échec de la création d'une image pour le calque : %s
+it:Impossibile creare un'immagine per il livello: %s
+de:Fehler beim Erstellen eines Bildes für die Ebene: %s
+el:Αποτυχία δημιουργίας εικόνας για το επίπεδο: %s
+ru:Не удалось создать изображение для слоя: %s
+zh:为图层 %s 创建图像失败。
+tw:為圖層 %s 建立圖像失敗。
+ja:レイヤー %s の画像を作成できませんでした。
 ---
 ID:Failed to write save data.
 en:Failed to write save data.
@@ -225,6 +237,18 @@ ru:Недопустимый символ.
 zh:无效字符。
 tw:無效字元。
 ja:文字が不正です。
+---
+ID:Invalid config line at file "%s" line %d.
+en:Invalid config line at file "%s" line %d.
+es:Línea de configuración no válida en el archivo "%s" en la línea %d.
+fr:Ligne de configuration non valide dans le fichier "%s" ligne %d.
+it:Linea di configurazione non valida nel file "%s" riga %d.
+de:Ungültige Konfigurationszeile in Datei "%s" Zeile %d.
+el:Μη έγκυρη γραμμή ρύθμισης στο αρχείο "%s" γραμμή %d.
+ru:Недопустимая строка конфигурации в файле «%s» в строке %d.
+zh:文件 "%s" 第 %d 行配置无效。
+tw:檔案 "%s" 第 %d 行設定無効。
+ja:ファイル "%s" の %d 行目の設定が不正です。
 ---
 ID:Invalid fade method "%s".
 en:Invalid fade method "%s".
@@ -430,6 +454,18 @@ zh:未找到匹配的 endmacro。
 tw:找不到對應的 endmacro。
 ja:endmacro が見つかりません。
 ---
+ID:No matching localized text.
+en:No matching localized text.
+es:No se encontro un texto localizado coincidente.
+fr:Aucun texte localisé correspondant n'a été trouvé.
+it:Nessun testo localizzato corrispondente trovato.
+de:Kein passender lokalisierter Text gefunden.
+el:Δεν βρέθηκε αντίστοιχο τοπικό κείμενο.
+ru:Соответствующий локализованный текст не найден.
+zh:未找到匹配的本地化文本。
+tw:未找到相符的本地化文字。
+ja:テキストのローカライズ版がマッチしませんでした。
+---
 ID:No operator specified.
 en:No operator specified.
 es:No se especificó ningún operador.
@@ -441,6 +477,18 @@ ru:Оператор не указан.
 zh:未指定操作符。
 tw:未指定運算子。
 ja:演算子が指定されていません。
+---
+ID:Property %s is not allowed for tag %s.
+en:Property %s is not allowed for tag %s.
+es:La propiedad %s no está permitida para la etiqueta %s.
+fr:La propriété %s n'est pas autorisée pour la balise %s.
+it:La proprietà %s non è consentita per il tag %s.
+de:Eigenschaft %s ist für Tag %s nicht erlaubt.
+el:Η ιδιότητα %s δεν επιτρέπεται για την ετικέτα %s.
+ru:Свойство %s не разрешено для тега %s.
+zh:属性 %s 不允许用于标签 %s。
+tw:屬性 %s 不允許用於標籤 %s。
+ja:プロパティ %s はタグ %s に使用できません。
 ---
 ID:Property name too long.
 en:Property name too long.
@@ -658,6 +706,18 @@ zh:意外的 EOF。
 tw:未預期的 EOF。
 ja:予期しないファイル終端です。
 ---
+ID:Unknown action "%s" is specified on the page mode.
+en:Unknown action "%s" is specified on the page mode.
+es:Se especificó una acción desconocida "%s" en el modo de página.
+fr:L'action "%s" inconnue est spécifiée en mode page.
+it:Azione "%s" sconosciuta specificata nella modalità pagina.
+de:Unbekannte Aktion "%s" wurde im Seitenmodus angegeben.
+el:Άγνωστη ενέργεια "%s" καθορίστηκε στη λειτουργία σελίδας.
+ru:Неизвестное действие «%s» указано в режиме страницы.
+zh:在页面模式下指定了未知操作 "%s"。
+tw:在頁面模式中指定了未知動作 "%s"。
+ja:ページモードで未知のアクション "%s" が指定されています。
+---
 ID:Unknown button property "%s" found in GUI file "%s" line %d.
 en:Unknown button property "%s" found in GUI file "%s" line %d.
 es:Se encontró una propiedad de botón "%s" desconocida en el archivo GUI "%s" en la línea %d.
@@ -706,8 +766,8 @@ zh:在 GUI 文件 "%s" 第 %d 行发现未知的全局键 "%s"。
 tw:在 GUI 檔案 "%s" 第 %d 行發現未知的全域鍵 "%s"。
 ja:GUIファイル "%s" の %d 行目に未知のグローバルキー "%s" があります。
 ---
-ID:Unkwon key "%s" while parsing anime file "%s" line %d.
-en:Unkwon key "%s" while parsing anime file "%s" line %d.
+ID:Unknown key "%s" while parsing anime file "%s" line %d."
+en:Unknown key "%s" while parsing anime file "%s" line %d."
 es:Clave "%s" desconocida al analizar el archivo de animación "%s" en la línea %d.
 fr:Clé "%s" inconnue lors de l'analyse du fichier d'animation "%s" ligne %d.
 it:Chiave "%s" sconosciuta durante l'analisi del file di animazione "%s" riga %d.
@@ -718,30 +778,15 @@ zh:解析动画文件 "%s" 第 %d 行時发现未知键 "%s"。
 tw:解析動畫檔案 "%s" 第 %d 行時發現未知鍵 "%s"。
 ja:アニメーションファイル "%s" の %d 行目を解析中に未知のキー "%s" が見つかりました。
 ---
-ID:Invalid config line at file "%s" line %d.
-en:Invalid config line at file "%s" line %d.
-es:Línea de configuración no válida en el archivo "%s" en la línea %d.
-fr:Ligne de configuration non valide dans le fichier "%s" ligne %d.
-it:Linea di configurazione non valida nel file "%s" riga %d.
-de:Ungültige Konfigurationszeile in Datei "%s" Zeile %d.
-el:Μη έγκυρη γραμμή ρύθμισης στο αρχείο "%s" γραμμή %d.
-ru:Недопустимая строка конфигурации в файле «%s» в строке %d.
-zh:文件 "%s" 第 %d 行配置无效。
-tw:檔案 "%s" 第 %d 行設定無効。
-ja:ファイル "%s" の %d 行目の設定が不正です。
----
-ID:No matching localized text.
-en:No matching localized text.
-es:No se encontro un texto localizado coincidente.
-fr:Aucun texte localisé correspondant n'a été trouvé.
-it:Nessun testo localizzato corrispondente trovato.
-de:Kein passender lokalisierter Text gefunden.
-el:Δεν βρέθηκε αντίστοιχο τοπικό κείμενο.
-ru:Соответствующий локализованный текст не найден.
-zh:未找到匹配的本地化文本。
-ja:テキストのローカライズ版がマッチしませんでした。
----
-ID:Property %s is not allowed for tag %s.
----
-ID:Cannot play video file %s.
+ID:endmacro outside a macro call.
+en:endmacro outside a macro call.
+es:endmacro fuera de una llamada a macro.
+fr:endmacro en dehors d'un appel de macro.
+it:endmacro al di fuori di una chiamata macro.
+de:endmacro außerhalb eines Makroaufrufs.
+el:endmacro εκτός κλήσης μακροεντολής.
+ru:endmacro вне вызова макроса.
+zh:endmacro 出现在宏调用之外。
+tw:endmacro 出現在巨集呼叫之外。
+ja:endmacro がマクロ呼び出しの外で使われています。
 ---

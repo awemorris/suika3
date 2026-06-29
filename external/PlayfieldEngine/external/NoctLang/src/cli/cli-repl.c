@@ -106,7 +106,7 @@ static bool run_repl(void)
 				noct_get_error_file(env, &file);
 				noct_get_error_line(env, &line);
 				noct_get_error_message(env, &msg);
-				wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
+				wide_printf(N_TR("%s: %d: Error: %s\n"), file, line, msg);
 				continue;
 			}
 
@@ -117,7 +117,7 @@ static bool run_repl(void)
 				noct_get_error_file(env, &file);
 				noct_get_error_line(env, &line);
 				noct_get_error_message(env, &msg);
-				wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
+				wide_printf(N_TR("%s: %d: Error: %s\n"), file, line, msg);
 				continue;
 			}
 		} else {
@@ -150,7 +150,7 @@ static bool run_repl(void)
 				noct_get_error_file(env, &file);
 				noct_get_error_line(env, &line);
 				noct_get_error_message(env, &msg);
-				wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
+				wide_printf(N_TR("%s: %d: Error: %s\n"), file, line, msg);
 				continue;
 			}
 
@@ -163,7 +163,7 @@ static bool run_repl(void)
 					noct_get_error_file(env, &file);
 					noct_get_error_line(env, &line);
 					noct_get_error_message(env, &msg);
-					wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
+					wide_printf(N_TR("%s: %d: Error: %s\n"), file, line, msg);
 					continue;
 				}
 			}

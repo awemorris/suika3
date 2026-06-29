@@ -8,6 +8,9 @@ with open("message.txt") as f:
     print("const char *s3_gettext(const char *msg)")
     print("{")
     print("    const char *lang_code = pf_get_system_language();")
+    print("");
+    print("    if (strcmpt(lang_code, \"zh-cn\") == 0) lang_code = \"zh\";");
+    print("    if (strcmpt(lang_code, \"zh-tw\") == 0) lang_code = \"tw\";");
 
     last = ""
     for line in lines:
@@ -20,7 +23,7 @@ with open("message.txt") as f:
             print("        return \"" + last + "\";")
             print("    }")
         else:
-            print("        if (strncmp(lang_code, \"" + line[0:2] + "\", " + str(len(line[0:2])) + ") == 0) return \"" + line[3:] + "\";")
+            print("        if (strncmp(lang_code, \"" + line[0:2] + "\", 2) == 0) return \"" + line[3:] + "\";")
 
     print("    return msg;")
     print("}")

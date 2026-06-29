@@ -1,98 +1,14 @@
-ID:Error: %s: %d: %s
-en:Error: %s: %d: %s
-es:Error: %s: %d: %s
-fr:Erreur : %s : %d : %s
-it:Errore: %s: %d: %s
-de:Fehler: %s: %d: %s
-el:Σφάλμα: %s: %d: %s
-ru:Ошибка: %s: %d: %s
-zh:错误: %s: %d: %s
-tw:錯誤: %s: %d: %s
-ja:エラー: %s: %d: %s
----
-ID:Cannot open file "%s".
-en:Cannot open file "%s".
-es:No se puede abrir el archivo "%s".
-fr:Impossible d'ouvrir le fichier "%s".
-it:Impossibile aprire il file "%s".
-de:Datei "%s" kann nicht geöffnet werden.
-el:Δεν είναι δυνατό το άνοιγμα του αρχείου "%s".
-ru:Невозможно открыть файл "%s".
-zh:无法打开文件 "%s"。
-tw:無法打開檔案 "%s"。
-ja:ファイル "%s" を開けません。
----
-ID:Cannot get the size of file "%s".
-en:Cannot get the size of file "%s".
-es:No se puede obtener el tamaño del archivo "%s".
-fr:Impossible d'obtenir la taille du fichier "%s".
-it:Impossibile ottenere la dimensione del file "%s".
-de:Die Größe der Datei "%s" kann nicht ermittelt werden.
-el:Δεν είναι δυνατή η λήψη του μεγέθους του αρχείου "%s".
-ru:Невозможно получить размер файла "%s".
-zh:无法获取文件 "%s" 的大小。
-tw:無法取得檔案 "%s" 的大小。
-ja:ファイル "%s" のサイズを取得できません。
----
-ID:Cannot read file "%s".
-en:Cannot read file "%s".
-es:No se puede leer el archivo "%s".
-fr:Impossible de lire le fichier "%s".
-it:Impossibile leggere il file "%s".
-de:Datei "%s" kann nicht gelesen werden.
-el:Δεν είναι δυνατή η ανάγνωση του αρχείου "%s".
-ru:Невозможно прочитать файл "%s".
-zh:无法读取文件 "%s"。
-tw:無法讀取檔案 "%s"。
-ja:ファイル "%s" を読み込めません。
----
-ID:In tag %s:%d: runtime error.
-en:In tag %s:%d: runtime error.
-es:En la etiqueta %s:%d: error en tiempo de ejecución.
-fr:Dans la balise %s : %d : erreur d'exécution.
-it:Nel tag %s:%d: errore di runtime.
-de:In Tag %s:%d: Laufzeitfehler.
-el:Στην ετικέτα %s:%d: σφάλμα χρόνου εκτέλεσης.
-ru:В теге %s:%d: ошибка выполнения.
-zh:在标签 %s:%d: 运行时错误。
-tw:在標籤 %s:%d: 執行時錯誤。
-ja:タグ %s:%d: 実行エラー
----
-ID:%s:%d: Tag "%s" not found.
-en:%s:%d: Tag "%s" not found.
-es:%s:%d: No se encontró la etiqueta "%s".
-fr:%s : %d : Balise "%s" introuvable.
-it:%s:%d: Tag "%s" non trovato.
-de:%s:%d: Tag "%s" wurde nicht gefunden.
-el:%s:%d: Η ετικέτα "%s" δεν βρέθηκε.
-ru:%s:%d: Тег "%s" не найден.
-zh:%s:%d: 未找到标签 "%s"。
-tw:%s:%d: 找不到標籤 "%s"。
-ja:%s:%d: タグ "%s" がみつかりません。
----
-ID:%s:%d: "tag_%s" is not a function.
-en:%s:%d: "tag_%s" is not a function.
-es:%s:%d: "tag_%s" no es una función.
-fr:%s : %d : "tag_%s" n'est pas une fonction.
-it:%s:%d: "tag_%s" non è una funzione.
-de:%s:%d: "tag_%s" ist keine Funktion.
-el:%s:%d: Το "tag_%s" δεν είναι συνάρτηση.
-ru:%s:%d: "tag_%s" не является функцией.
-zh:%s:%d: "tag_%s" 不是函数。
-tw:%s:%d: "tag_%s" 不是函式。
-ja:%s:%d: "tag_%s" が関数ではありません。
----
-ID:In tag %s:%d: Tag "%s" execution error.
-en:In tag %s:%d: Tag "%s" execution error.
-es:En la etiqueta %s:%d: Error de ejecución en la etiqueta "%s".
-fr:Dans la balise %s : %d : Erreur d'exécution de la balise "%s".
-it:Nel tag %s:%d: Errore di esecuzione del tag "%s".
-de:In Tag %s:%d: Ausführungsfehler im Tag "%s".
-el:Στην ετικέτα %s:%d: Σφάλμα εκτέλεσης στην ετικέτα "%s".
-ru:В теге %s:%d: Ошибка выполнения тега "%s".
-zh:在标签 %s:%d: 执行标签 "%s" 时出错。
-tw:在標籤 %s:%d: 執行標籤 "%s" 時發生錯誤。
-ja:タグ %s:%d: タグ "%s" の実行エラーです。
+ID:Adding file "%s".
+en:Adding file "%s".
+es:Añadiendo archivo "%s".
+fr:Ajout du fichier "%s".
+it:Aggiunta del file "%s".
+de:Datei "%s" wird hinzugefügt.
+el:Προσθήκη αρχείου "%s".
+ru:Добавление файла «%s».
+zh:正在添加文件 "%s"。
+tw:正在新增檔案 "%s"。
+ja:ファイル "%s" を追加しています。
 ---
 ID:Cannot determine the file type for "%s".
 en:Cannot determine the file type for "%s".
@@ -106,6 +22,18 @@ zh:无法确定文件 "%s" 的类型。
 tw:無法判斷檔案 "%s" 的類型。
 ja:"%s" のファイルタイプを決定できません。
 ---
+ID:Cannot get the size of file "%s".
+en:Cannot get the size of file "%s".
+es:No se puede obtener el tamaño del archivo "%s".
+fr:Impossible d'obtenir la taille du fichier "%s".
+it:Impossibile ottenere la dimensione del file "%s".
+de:Die Größe der Datei "%s" kann nicht ermittelt werden.
+el:Δεν είναι δυνατή η λήψη του μεγέθους του αρχείου "%s".
+ru:Невозможно получить размер файла "%s".
+zh:无法获取文件 "%s" 的大小。
+tw:無法取得檔案 "%s" 的大小。
+ja:ファイル "%s" のサイズを取得できません。
+---
 ID:Cannot load an image "%s".
 en:Cannot load an image "%s".
 es:No se puede cargar la imagen "%s".
@@ -117,6 +45,54 @@ ru:Не удаётся загрузить изображение "%s".
 zh:无法加载图像 "%s"。
 tw:無法載入圖片 "%s"。
 ja:画像 "%s" をロードできません。
+---
+ID:Cannot open a save file.
+en:Cannot open a save file.
+es:No se puede abrir un archivo de guardado.
+fr:Impossible d'ouvrir un fichier de sauvegarde.
+it:Impossibile aprire un file di salvataggio.
+de:Eine Speicherdatei kann nicht geöffnet werden.
+el:Δεν είναι δυνατό το άνοιγμα ενός αρχείου αποθήκευσης.
+ru:Не удалось открыть файл сохранения.
+zh:无法打开存档文件。
+tw:無法開啟存檔檔案。
+ja:セーブファイルを開けません。
+---
+ID:Cannot open file "%s".
+en:Cannot open file "%s".
+es:No se puede abrir el archivo "%s".
+fr:Impossible d'ouvrir le fichier "%s".
+it:Impossibile aprire il file "%s".
+de:Datei "%s" kann nicht geöffnet werden.
+el:Δεν είναι δυνατό το άνοιγμα του αρχείου "%s".
+ru:Невозможно открыть файл "%s".
+zh:无法打开文件 "%s"。
+tw:無法打開檔案 "%s"。
+ja:ファイル "%s" を開けません。
+---
+ID:Cannot read file "%s".
+en:Cannot read file "%s".
+es:No se puede leer el archivo "%s".
+fr:Impossible de lire le fichier "%s".
+it:Impossibile leggere il file "%s".
+de:Datei "%s" kann nicht gelesen werden.
+el:Δεν είναι δυνατή η ανάγνωση του αρχείου "%s".
+ru:Невозможно прочитать файл "%s".
+zh:无法读取文件 "%s"。
+tw:無法讀取檔案 "%s"。
+ja:ファイル "%s" を読み込めません。
+---
+ID:Error: %s: %d: %s
+en:Error: %s: %d: %s
+es:Error: %s: %d: %s
+fr:Erreur : %s : %d : %s
+it:Errore: %s: %d: %s
+de:Fehler: %s: %d: %s
+el:Σφάλμα: %s: %d: %s
+ru:Ошибка: %s: %d: %s
+zh:错误: %s: %d: %s
+tw:錯誤: %s: %d: %s
+ja:エラー: %s: %d: %s
 ---
 ID:Too many textures.
 en:Too many textures.
@@ -177,18 +153,6 @@ ru:Ключ сохранённых данных слишком длинный.
 zh:存档数据键太长。
 tw:存檔資料鍵太長。
 ja:セーブデータキーが長すぎます。
----
-ID:Cannot open a save file.
-en:Cannot open a save file.
-es:No se puede abrir un archivo de guardado.
-fr:Impossible d'ouvrir un fichier de sauvegarde.
-it:Impossibile aprire un file di salvataggio.
-de:Eine Speicherdatei kann nicht geöffnet werden.
-el:Δεν είναι δυνατό το άνοιγμα ενός αρχείου αποθήκευσης.
-ru:Не удалось открыть файл сохранения.
-zh:无法打开存档文件。
-tw:無法開啟存檔檔案。
-ja:セーブファイルを開けません。
 ---
 ID:Cannot write to a save file.
 en:Cannot write to a save file.
@@ -286,18 +250,6 @@ zh:跳过空目录 "%s"。
 tw:跳過空目錄 "%s"。
 ja:空のディレクトリ "%s" をスキップします。
 ---
-ID:Adding file "%s".
-en:Adding file "%s".
-es:Añadiendo archivo "%s".
-fr:Ajout du fichier "%s".
-it:Aggiunta del file "%s".
-de:Datei "%s" wird hinzugefügt.
-el:Προσθήκη αρχείου "%s".
-ru:Добавление файла «%s».
-zh:正在添加文件 "%s"。
-tw:正在新增檔案 "%s"。
-ja:ファイル "%s" を追加しています。
----
 ID:Parameter is not set.
 en:Parameter is not set.
 es:El parámetro no está configurado.
@@ -357,4 +309,40 @@ ru:Не удалось десериализовать функцию.
 zh:无法反序列化函数。
 tw:無法反序列化函式。
 ja:関数をデシリアライズできません。
+---
+ID:Out of memory.
+en:Out of memory.
+es:Memoria insuficiente.
+fr:Mémoire insuffisante.
+it:Memoria insufficiente.
+de:Nicht genügend Speicher.
+el:Δεν υπάρχει αρκετή μνήμη.
+ru:Недостаточно памяти.
+zh:内存不足。
+tw:記憶體不足。
+ja:メモリが足りません。
+---
+ID:Parameter "%s" is not set.
+en:Parameter "%s" is not set.
+es:El parámetro "%s" no está configurado.
+fr:Le paramètre "%s" n'est pas défini.
+it:Il parametro "%s" non è impostato.
+de:Parameter "%s" ist nicht gesetzt.
+el:Η παράμετρος "%s" δεν έχει οριστεί.
+ru:Параметр «%s» не задан.
+zh:未设置参数 "%s"。
+tw:未設定參數 "%s"。
+ja:パラメータ "%s" が設定されていません。
+---
+ID:Parameter is required to be a dictionary.
+en:Parameter is required to be a dictionary.
+es:El parámetro debe ser un diccionario.
+fr:Le paramètre doit être un dictionnaire.
+it:Il parametro deve essere un dizionario.
+de:Der Parameter muss ein Dictionary sein.
+el:Η παράμετρος πρέπει να είναι λεξικό.
+ru:Параметр должен быть словарём.
+zh:参数必须是字典。
+tw:參數必須是字典。
+ja:パラメータは辞書である必要があります。
 ---

@@ -3,182 +3,221 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "syntax error"
-msgstr "语法错误。"
-
-msgid "%s: Out of memory while parsing."
-msgstr "%s：解析时内存不足。"
-
-msgid "Too many functions."
-msgstr "函数过多。"
-
-msgid "continue appeared outside loop."
-msgstr "continue 语句出现在循环外部。"
-
-msgid "LHS is not a term or an array element."
-msgstr "左侧不是项或数组元素。"
-
-msgid "var is specified without a single symbol."
-msgstr "var 未指定单个符号。"
-
-msgid "else-if block appeared without if block."
-msgstr "出现了没有 if 块的 else-if 块。"
-
-msgid "else-if appeared after else."
-msgstr "else 之后出现了 else-if。"
-
-msgid "else appeared after else."
-msgstr "else 出现在 else 之后。"
-
-msgid "Exceeded the maximum argument count."
-msgstr "超过了最大参数数量。"
-
-msgid "Too many anonymous functions."
-msgstr "匿名函数过多。"
-
-msgid "Too many local variables."
-msgstr "局部变量过多。"
-
-msgid "Too many jumps."
-msgstr "跳转过多。"
-
-msgid "LIR: Out of memory error."
-msgstr "LIR: 内存不足。"
-
-msgid "Failed to load bytecode data."
-msgstr "加载字节码数据失败。"
-
-msgid "Memory mapping failed."
-msgstr "内存映射失败。"
-
-msgid "Code too big."
-msgstr "代码过大。"
-
-msgid "Branch target not found."
-msgstr "未找到分支目标。"
-
-msgid "Failed to load bytecode."
-msgstr "字节码加载失败。"
-
-msgid "Cannot find function %s."
-msgstr "无法找到函数 %s。"
-
-msgid "Not an array."
-msgstr "不是数组。"
-
-msgid "Array index %d is out-of-range."
-msgstr "数组索引 %d 超出范围。"
-
-msgid "Dictionary index %d is out-of-range."
-msgstr "字典索引 %d 超出范围。"
-
-msgid "Dictionary key \"%s\" not found."
-msgstr "未找到字典键 \"%s\"。"
-
-msgid "Local variable \"%s\" not found."
-msgstr "未找到局部变量 \"%s\"。"
-
-msgid "Global variable \"%s\" not found."
-msgstr "未找到全局变量 \"%s\"。"
-
-msgid "Value is not a number."
-msgstr "值不是数字。"
-
-msgid "Value is not an integer."
-msgstr "值不是整数。"
-
-msgid "Value is not a string."
-msgstr "值不是字符串。"
-
-msgid "Value is not a number or a string."
-msgstr "值不是数字或字符串。"
-
-msgid "Division by zero."
-msgstr "被零除。"
-
-msgid "Subscript not an integer."
-msgstr "下标不是整数"
-
-msgid "Not an array or a dictionary."
-msgstr "不是数组或字典。"
-
-msgid "Subscript not a string."
-msgstr "下标不是字符串。"
-
-msgid "Value is not a string, an array, or a dictionary."
-msgstr "值不是字符串、数组或字典。"
-
-msgid "Not a dictionary."
-msgstr "不是字典。"
-
-msgid "Dictionary index out-of-range."
-msgstr "字典索引超出范围。"
-
-msgid "Symbol \"%s\" not found."
-msgstr "未找到符号 \"%s\"。"
-
-msgid "%s(): Function arguments not match."
-msgstr "%s(): 函数参数不匹配。"
-
-msgid "Element %d is not an integer."
-msgstr "第 %d 个元素不是整数。"
-
-msgid "Element %d is not a float."
-msgstr "第 %d 个元素不是浮点数。"
-
-msgid "Element %d is not a string."
-msgstr "第 %d 个元素不是字符串。"
-
-msgid "Element %d is not an array."
-msgstr "第 %d 个元素不是数组。"
-
-msgid "Element %d is not a dictionary."
-msgstr "第 %d 个元素不是字典。"
-
-msgid "Element %d is not a function."
-msgstr "第 %d 个元素不是函数。"
-
-msgid "Value for key %s is not an integer."
-msgstr "键 %s 对应的值不是整数。"
-
-msgid "Value for key %s is not a float."
-msgstr "键 %s 对应的值不是浮点数。"
-
-msgid "Value for key %s is not a string."
-msgstr "键 %s 对应的值不是字符串。"
-
-msgid "Value for key %s is not an array."
-msgstr "键 %s 对应的值不是数组。"
-
-msgid "Value for key %s is not a dictionary."
-msgstr "键 %s 对应的值不是字典。"
-
-msgid "Value for key %s is not a function."
-msgstr "键 %s 对应的值不是函数。"
-
-msgid "Argument (%d: %s) not an integer."
-msgstr "参数 (%d: %s) 不是整数。"
-
-msgid "Argument (%d: %s) not a float."
-msgstr "参数 (%d: %s) 不是浮点数。"
-
-msgid "Argument (%d: %s) not a string."
-msgstr "参数 (%d: %s) 不是字符串。"
-
-msgid "Argument (%d: %s) is not an array."
-msgstr "参数 (%d: %s) 不是数组。"
+msgid "Adding file %s\n"
+msgstr "正在添加文件 %s\n"
 
 msgid "Argument (%d: %s) is not a dictionary."
 msgstr "参数 (%d: %s) 不是字典。"
 
-msgid "Not a function."
-msgstr "不是函数。"
+msgid "Argument (%d: %s) is not a double."
+msgstr "参数 (%d: %s) 不是 double。"
+
+msgid "Argument (%d: %s) is not a float."
+msgstr "参数 (%d: %s) 不是浮点数。"
+
+msgid "Argument (%d: %s) is not a function."
+msgstr "参数 (%d: %s) 不是函数。"
+
+msgid "Argument (%d: %s) is not a long."
+msgstr "参数 (%d: %s) 不是 long。"
+
+msgid "Argument (%d: %s) is not an int."
+msgstr "参数 (%d: %s) 不是 int。"
+
+msgid "Argument (%d: %s) is not an integer."
+msgstr "参数 (%d: %s) 不是整数。"
+
+msgid "Argument (%d: %s) not a packed."
+msgstr "参数 (%d: %s) 不是 packed。"
+
+msgid "Argument (%d: %s) not a packed of type %s."
+msgstr "参数 (%d: %s) 不是 %s 类型的 packed。"
+
+msgid "Argument (%d: %s) not a string."
+msgstr "参数 (%d: %s) 不是字符串。"
+
+msgid "Array index %ld is out-of-range."
+msgstr "数组索引 %ld 超出范围。"
+
+msgid "Broken bytecode."
+msgstr "字节码损坏。"
+
+msgid "Cannot find function %s."
+msgstr "无法找到函数 %s。"
+
+msgid "Cannot find %s.\n"
+msgstr "无法找到 %s。\n"
+
+msgid "Cannot open file %s.\n"
+msgstr "无法打开文件 %s。\n"
+
+msgid "Cannot open file %s."
+msgstr "无法打开文件 %s。"
+
+msgid "Cannot write file %s.\n"
+msgstr "无法写入文件 %s。\n"
+
+msgid "Cannot read file %s.\n"
+msgstr "无法读取文件 %s。\n"
+
+msgid "Code too big."
+msgstr "代码过大。"
+
+msgid "continue appeared outside loop."
+msgstr "continue 语句出现在循环外部。"
+
+msgid "Dictionary key \"%s\" not found."
+msgstr "未找到字典键 \"%s\"。"
+
+msgid "Symbol \"%s\" not found."
+msgstr "未找到符号 \"%s\"。"
+
+msgid "Dictionary index %ld is out-of-range."
+msgstr "字典索引 %d 超出范围。"
+
+msgid "Division by zero."
+msgstr "被零除。"
+
+msgid "Element %d is not a dictionary."
+msgstr "第 %d 个元素不是字典。"
+
+msgid "Element %d is not a double."
+msgstr "第 %d 个元素不是 double。"
+
+msgid "Element %d is not a float."
+msgstr "第 %d 个元素不是浮点数。"
+
+msgid "Element %d is not a function."
+msgstr "第 %d 个元素不是函数。"
+
+msgid "Element %d is not a long."
+msgstr "第 %d 个元素不是 long。"
+
+msgid "Element %d is not an array."
+msgstr "第 %d 个元素不是数组。"
+
+msgid "Element %d is not an int."
+msgstr "第 %d 个元素不是 int。"
+
+msgid "Element %d is not a string."
+msgstr "第 %d 个元素不是字符串。"
+
+msgid "else appeared after else."
+msgstr "else 出现在 else 之后。"
+
+msgid "else-if appeared after else."
+msgstr "else 之后出现了 else-if。"
+
+msgid "else-if block appeared without if block."
+msgstr "出现了没有 if 块的 else-if 块。"
 
 msgid "Empty array."
 msgstr "空数组。"
 
+msgid "Entering REPL mode.\n"
+msgstr "进入 REPL 模式。\n"
+
+msgid "Error: %s: %d: %s\n"
+msgstr "错误: %s: %d: %s\n"
+
+msgid "Exceeded the maximum argument count."
+msgstr "超过了最大参数数量。"
+
+msgid "Failed to load bytecode."
+msgstr "字节码加载失败。"
+
+msgid "Failed to load bytecode data."
+msgstr "加载字节码数据失败。"
+
+msgid "Invalid shift amount."
+msgstr "无效的移位量。"
+
+msgid "JIT compilation is enabled. Starting the fast VM...\n"
+msgstr "触发编译已启用。正在启动快速虚拟机...\n"
+
+msgid "LHS is not a symbol or an array element."
+msgstr "左侧不是符号或数组元素。"
+
+msgid "LHS is not a term or an array element."
+msgstr "左侧不是项或数组元素。"
+
+msgid "LIR: Out of memory error."
+msgstr "LIR: 内存不足。"
+
+msgid "Memory mapping failed."
+msgstr "内存映射失败。"
+
+msgid "Not a dictionary."
+msgstr "不是字典。"
+
+msgid "Argument (%d: %s) is not an array."
+msgstr "参数 (%d: %s) 不是数组。"
+
+msgid "Not an array or a dictionary."
+msgstr "不是数组或字典。"
+
+msgid "Not a packed."
+msgstr "不是 packed。"
+
 msgid "Out of memory."
 msgstr "内存不足。"
+
+msgid "Out of memory.\n"
+msgstr "内存不足。\n"
+
+msgid "Packed size is 0."
+msgstr "packed 的大小为 0。"
+
+msgid "Packed size is too large."
+msgstr "packed 的大小过大。"
+
+msgid "%s: %d: Error: %s\n"
+msgstr "%s: %d: 错误: %s\n"
+
+msgid "Searching directory %s.\n"
+msgstr "正在搜索目录 %s。\n"
+
+msgid "%s(): Function arguments not match."
+msgstr "%s(): 函数参数不匹配。"
+
+msgid "Skipping empty directory %s.\n"
+msgstr "跳过空目录 %s。\n"
+
+msgid "%s: Out of memory while parsing."
+msgstr "%s：解析时内存不足。"
+
+msgid "Specify a command.\n"
+msgstr "请指定一个命令。\n"
+
+msgid "Stack overflow."
+msgstr "栈溢出。"
+
+msgid "Stack underflow."
+msgstr "栈下溢。"
+
+msgid "Subscript is negative."
+msgstr "下标为负数。"
+
+msgid "Subscript not an integer."
+msgstr "下标不是整数"
+
+msgid "Subscript not a string."
+msgstr "下标不是字符串。"
+
+msgid "Too many anonymous functions."
+msgstr "匿名函数过多。"
+
+msgid "Too many functions."
+msgstr "函数过多。"
+
+msgid "Too many jumps."
+msgstr "跳转过多。"
+
+msgid "Too many local variables."
+msgstr "局部变量过多。"
+
+msgid "Too many parameters."
+msgstr "参数过多。"
 
 msgid "Too many pinned global variables."
 msgstr "固定全局变量过多。"
@@ -186,50 +225,104 @@ msgstr "固定全局变量过多。"
 msgid "Too many pinned local variables."
 msgstr "固定局部变量过多。"
 
-msgid "Cannot open file %s.\n"
-msgstr "无法打开文件 %s。\n"
-
-msgid "Cannot read file %s.\n"
-msgstr "无法读取文件 %s。\n"
-
-msgid "Error: %s: %d: %s\n"
-msgstr "错误: %s: %d: %s\n"
-
-msgid "Adding file %s\n"
-msgstr "正在添加文件 %s\n"
-
-msgid "Cannot find %s.\n"
-msgstr "无法找到 %s。\n"
-
-msgid "Searching directory %s.\n"
-msgstr "正在搜索目录 %s。\n"
-
-msgid "Skipping empty directory %s.\n"
-msgstr "跳过空目录 %s。\n"
-
 msgid "Unknown option %s.\n"
 msgstr "未知选项 %s。\n"
 
+msgid "Value for key %s is not a dictionary."
+msgstr "键 %s 对应的值不是字典。"
+
+msgid "Value for key %s is not a double."
+msgstr "键 %s 对应的值不是 double。"
+
+msgid "Value for key %s is not a float."
+msgstr "键 %s 对应的值不是浮点数。"
+
+msgid "Value for key %s is not a function."
+msgstr "键 %s 对应的值不是函数。"
+
+msgid "Value for key %s is not a long."
+msgstr "键 %s 对应的值不是 long。"
+
+msgid "Value for key %s is not an array."
+msgstr "键 %s 对应的值不是数组。"
+
+msgid "Value for key %s is not an int."
+msgstr "键 %s 对应的值不是 int。"
+
+msgid "Value for key %s is not a string."
+msgstr "键 %s 对应的值不是字符串。"
+
+msgid "Value is not a float."
+msgstr "值不是浮点数。"
+
+msgid "Value is not a function."
+msgstr "值不是函数。"
+
+msgid "Value is not a long."
+msgstr "值不是 long。"
+
+msgid "Value is not an array."
+msgstr "值不是数组。"
+
+msgid "Value is not an int."
+msgstr "值不是 int。"
+
+msgid "Value is not an integer."
+msgstr "值不是整数。"
+
+msgid "Value is not a number."
+msgstr "值不是数字。"
+
+msgid "Value is not a number or a string."
+msgstr "值不是数字或字符串。"
+
+msgid "Value is not a string."
+msgstr "值不是字符串。"
+
+msgid "Value is not a string, an array, or a dictionary."
+msgstr "值不是字符串、数组或字典。"
+
+msgid "var is specified without a single symbol."
+msgstr "var 未指定单个符号。"
+
+msgid "syntax error"
+msgstr "语法错误。"
+
+msgid "Branch target not found."
+msgstr "未找到分支目标。"
+
+msgid "Not an array."
+msgstr "不是数组。"
+
+msgid "Local variable \"%s\" not found."
+msgstr "未找到局部变量 \"%s\"。"
+
+msgid "Global variable \"%s\" not found."
+msgstr "未找到全局变量 \"%s\"。"
+
+msgid "Not an array, dictionary, or packed."
+msgstr "不是数组、字典或 packed。"
+
+msgid "Dictionary index out-of-range."
+msgstr "字典索引超出范围。"
+
+msgid "Element %d is not an integer."
+msgstr "第 %d 个元素不是整数。"
+
+msgid "Value for key %s is not an integer."
+msgstr "键 %s 对应的值不是整数。"
+
+msgid "Not a function."
+msgstr "不是函数。"
+
 msgid "Specify a file.\n"
 msgstr "请指定一个文件。\n"
-
-msgid "%s:%d: Error: %s\n"
-msgstr "%s:%d: 错误: %s\n"
-
-msgid "Out of memory.\n"
-msgstr "内存不足。\n"
 
 msgid "Noct Programming Language\n"
 msgstr "Noct 编程语言\n"
 
 msgid "Version %s\n"
 msgstr "版本 %s\n"
-
-msgid "Entering REPL mode.\n"
-msgstr "进入 REPL 模式。\n"
-
-msgid "JIT compilation is enabled. Starting the fast VM...\n"
-msgstr "触发编译已启用。正在启动快速虚拟机...\n"
 
 msgid "Usage\n"
 msgstr "用法\n"

@@ -317,7 +317,7 @@ bool add_file(const char *fname, bool (*add_file_hook)(const char *))
 	}
 	else
 	{
-		wide_printf(N_TR("Adding file %s\n"), fname);
+		wide_printf(N_TR("Adding file %s.\n"), fname);
 		if (!add_file_hook(fname))
 			return false;
 	}

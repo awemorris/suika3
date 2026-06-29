@@ -3,182 +3,221 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "syntax error"
-msgstr "Σφάλμα σύνταξης."
-
-msgid "%s: Out of memory while parsing."
-msgstr "%s: Δεν υπάρχει αρκετή μνήμη κατά την ανάλυση."
-
-msgid "Too many functions."
-msgstr "Πάρα πολλές συναρτήσεις."
-
-msgid "continue appeared outside loop."
-msgstr "Η εντολή continue εμφανίστηκε εκτός βρόχου."
-
-msgid "LHS is not a term or an array element."
-msgstr "Η αριστερή πλευρά δεν είναι ούτε όρος ούτε στοιχείο πίνακα."
-
-msgid "var is specified without a single symbol."
-msgstr "Το var καθορίστηκε χωρίς ένα μοναδικό σύμβολο."
-
-msgid "else-if block appeared without if block."
-msgstr "Το μπλοκ else-if εμφανίστηκε χωρίς μπλοκ if."
-
-msgid "else-if appeared after else."
-msgstr "Το else-if εμφανίστηκε μετά το else."
-
-msgid "else appeared after else."
-msgstr "το else χρησιμοποιήθηκε μετά από το else."
-
-msgid "Exceeded the maximum argument count."
-msgstr "Υπέρβαση του μέγιστου αριθμού ορισμάτων."
-
-msgid "Too many anonymous functions."
-msgstr "Πάρα πολλές ανώνυμες συναρτήσεις."
-
-msgid "Too many local variables."
-msgstr "Πάρα πολλές τοπικές μεταβλητές."
-
-msgid "Too many jumps."
-msgstr "Πάρα πολλά άλματα."
-
-msgid "LIR: Out of memory error."
-msgstr "LIR: Δεν υπάρχει αρκετή μνήμη."
-
-msgid "Failed to load bytecode data."
-msgstr "Απέτυχε η φόρτωση των δεδομένων bytecode."
-
-msgid "Memory mapping failed."
-msgstr "Αποτυχία αντιστοίχισης μνήμης."
-
-msgid "Code too big."
-msgstr "Ο κώδικας είναι πολύ μεγάλος."
-
-msgid "Branch target not found."
-msgstr "Δεν βρέθηκε ο στόχος διακλάδωσης."
-
-msgid "Failed to load bytecode."
-msgstr "Αποτυχία φόρτωσης του bytecode."
-
-msgid "Cannot find function %s."
-msgstr "Δεν βρέθηκε η συνάρτηση %s."
-
-msgid "Not an array."
-msgstr "Δεν είναι πίνακας."
-
-msgid "Array index %d is out-of-range."
-msgstr "Ο δείκτης πίνακα %d είναι εκτός ορίων."
-
-msgid "Dictionary index %d is out-of-range."
-msgstr "Ο δείκτης λεξικού %d είναι εκτός ορίων."
-
-msgid "Dictionary key \"%s\" not found."
-msgstr "Το κλειδί \"%s\" δεν βρέθηκε στο λεξικό."
-
-msgid "Local variable \"%s\" not found."
-msgstr "Η τοπική μεταβλητή \"%s\" δεν βρέθηκε."
-
-msgid "Global variable \"%s\" not found."
-msgstr "Η καθολική μεταβλητή \"%s\" δεν βρέθηκε."
-
-msgid "Value is not a number."
-msgstr "Η τιμή δεν είναι αριθμός."
-
-msgid "Value is not an integer."
-msgstr "Η τιμή δεν είναι ακέραιος αριθμός."
-
-msgid "Value is not a string."
-msgstr "Η τιμή δεν είναι συμβολοσειρά."
-
-msgid "Value is not a number or a string."
-msgstr "Η τιμή δεν είναι ούτε αριθμός ούτε συμβολοσειρά."
-
-msgid "Division by zero."
-msgstr "Διαίρεση με το μηδέν."
-
-msgid "Subscript not an integer."
-msgstr "Ο δείκτης δεν είναι ακέραιος αριθμός."
-
-msgid "Not an array or a dictionary."
-msgstr "Δεν είναι ούτε πίνακας ούτε λεξικό."
-
-msgid "Subscript not a string."
-msgstr "Ο δείκτης δεν είναι συμβολοσειρά."
-
-msgid "Value is not a string, an array, or a dictionary."
-msgstr "Η τιμή δεν είναι ούτε συμβολοσειρά, ούτε πίνακας, ούτε λεξικό."
-
-msgid "Not a dictionary."
-msgstr "Δεν είναι λεξικό."
-
-msgid "Dictionary index out-of-range."
-msgstr "Ο δείκτης του λεξικού είναι εκτός ορίων."
-
-msgid "Symbol \"%s\" not found."
-msgstr "Το σύμβολο \"%s\" δεν βρέθηκε."
-
-msgid "%s(): Function arguments not match."
-msgstr "%s(): Τα ορίσματα της συνάρτησης δεν ταιριάζουν."
-
-msgid "Element %d is not an integer."
-msgstr "Το στοιχείο %d δεν είναι ακέραιος αριθμός."
-
-msgid "Element %d is not a float."
-msgstr "Το στοιχείο %d δεν είναι δεκαδικός αριθμός."
-
-msgid "Element %d is not a string."
-msgstr "Το στοιχείο %d δεν είναι συμβολοσειρά."
-
-msgid "Element %d is not an array."
-msgstr "Το στοιχείο %d δεν είναι πίνακας."
-
-msgid "Element %d is not a dictionary."
-msgstr "Το στοιχείο %d δεν είναι λεξικό."
-
-msgid "Element %d is not a function."
-msgstr "L'elemento %d non è una funzione."
-
-msgid "Value for key %s is not an integer."
-msgstr "Η τιμή για το κλειδί %s δεν είναι ακέραιος αριθμός."
-
-msgid "Value for key %s is not a float."
-msgstr "Η τιμή για το κλειδί %s δεν είναι δεκαδικός αριθμός."
-
-msgid "Value for key %s is not a string."
-msgstr "Η τιμή για το κλειδί %s δεν είναι συμβολοσειρά."
-
-msgid "Value for key %s is not an array."
-msgstr "Η τιμή για το κλειδί %s δεν είναι πίνακας."
-
-msgid "Value for key %s is not a dictionary."
-msgstr "Η τιμή για το κλειδί %s δεν είναι λεξικό."
-
-msgid "Value for key %s is not a function."
-msgstr "Η τιμή για το κλειδί %s δεν είναι συνάρτηση."
-
-msgid "Argument (%d: %s) not an integer."
-msgstr "Το όρισμα (%d: %s) δεν είναι ακέραιος αριθμός."
-
-msgid "Argument (%d: %s) not a float."
-msgstr "Το όρισμα (%d: %s) δεν είναι δεκαδικός αριθμός."
-
-msgid "Argument (%d: %s) not a string."
-msgstr "Το όρισμα (%d: %s) δεν είναι συμβολοσειρά."
-
-msgid "Argument (%d: %s) is not an array."
-msgstr "Το όρισμα (%d: %s) δεν είναι πίνακας."
+msgid "Adding file %s\n"
+msgstr "Προσθήκη του αρχείου %s\n"
 
 msgid "Argument (%d: %s) is not a dictionary."
 msgstr "Το όρισμα (%d: %s) δεν είναι λεξικό."
 
-msgid "Not a function."
-msgstr "Δεν είναι συνάρτηση."
+msgid "Argument (%d: %s) is not a double."
+msgstr "Το όρισμα (%d: %s) δεν είναι double."
+
+msgid "Argument (%d: %s) is not a float."
+msgstr "Το όρισμα (%d: %s) δεν είναι δεκαδικός αριθμός."
+
+msgid "Argument (%d: %s) is not a function."
+msgstr "Το όρισμα (%d: %s) δεν είναι συνάρτηση."
+
+msgid "Argument (%d: %s) is not a long."
+msgstr "Το όρισμα (%d: %s) δεν είναι long."
+
+msgid "Argument (%d: %s) is not an int."
+msgstr "Το όρισμα (%d: %s) δεν είναι ακέραιος αριθμός."
+
+msgid "Argument (%d: %s) is not an integer."
+msgstr "Το όρισμα (%d: %s) δεν είναι ακέραιος αριθμός."
+
+msgid "Argument (%d: %s) not a packed."
+msgstr "Το όρισμα (%d: %s) δεν είναι packed."
+
+msgid "Argument (%d: %s) not a packed of type %s."
+msgstr "Το όρισμα (%d: %s) δεν είναι packed τύπου %s."
+
+msgid "Argument (%d: %s) not a string."
+msgstr "Το όρισμα (%d: %s) δεν είναι συμβολοσειρά."
+
+msgid "Array index %ld is out-of-range."
+msgstr "Ο δείκτης πίνακα %ld είναι εκτός ορίων."
+
+msgid "Broken bytecode."
+msgstr "Κατεστραμμένο bytecode."
+
+msgid "Cannot find function %s."
+msgstr "Δεν βρέθηκε η συνάρτηση %s."
+
+msgid "Cannot find %s.\n"
+msgstr "Δεν ήταν δυνατή η εύρεση του %s.\n"
+
+msgid "Cannot open file %s.\n"
+msgstr "Δεν είναι δυνατό το άνοιγμα του αρχείου %s.\n"
+
+msgid "Cannot open file %s."
+msgstr "Δεν είναι δυνατό το άνοιγμα του αρχείου %s."
+
+msgid "Cannot write file %s.\n"
+msgstr "Δεν είναι δυνατή η εγγραφή του αρχείου %s.\n"
+
+msgid "Cannot read file %s.\n"
+msgstr "Δεν είναι δυνατή η ανάγνωση του αρχείου %s.\n"
+
+msgid "Code too big."
+msgstr "Ο κώδικας είναι πολύ μεγάλος."
+
+msgid "continue appeared outside loop."
+msgstr "Η εντολή continue εμφανίστηκε εκτός βρόχου."
+
+msgid "Dictionary key \"%s\" not found."
+msgstr "Το κλειδί \"%s\" δεν βρέθηκε στο λεξικό."
+
+msgid "Symbol \"%s\" not found."
+msgstr "Το σύμβολο \"%s\" δεν βρέθηκε."
+
+msgid "Dictionary index %ld is out-of-range."
+msgstr "Ο δείκτης λεξικού %d είναι εκτός ορίων."
+
+msgid "Division by zero."
+msgstr "Διαίρεση με το μηδέν."
+
+msgid "Element %d is not a dictionary."
+msgstr "Το στοιχείο %d δεν είναι λεξικό."
+
+msgid "Element %d is not a double."
+msgstr "Το στοιχείο %d δεν είναι double."
+
+msgid "Element %d is not a float."
+msgstr "Το στοιχείο %d δεν είναι δεκαδικός αριθμός."
+
+msgid "Element %d is not a function."
+msgstr "L'elemento %d non è una funzione."
+
+msgid "Element %d is not a long."
+msgstr "Το στοιχείο %d δεν είναι long."
+
+msgid "Element %d is not an array."
+msgstr "Το στοιχείο %d δεν είναι πίνακας."
+
+msgid "Element %d is not an int."
+msgstr "Το στοιχείο %d δεν είναι int."
+
+msgid "Element %d is not a string."
+msgstr "Το στοιχείο %d δεν είναι συμβολοσειρά."
+
+msgid "else appeared after else."
+msgstr "το else χρησιμοποιήθηκε μετά από το else."
+
+msgid "else-if appeared after else."
+msgstr "Το else-if εμφανίστηκε μετά το else."
+
+msgid "else-if block appeared without if block."
+msgstr "Το μπλοκ else-if εμφανίστηκε χωρίς μπλοκ if."
 
 msgid "Empty array."
 msgstr "Κενός πίνακας."
 
+msgid "Entering REPL mode.\n"
+msgstr "Είσοδος σε λειτουργία REPL.\n"
+
+msgid "Error: %s: %d: %s\n"
+msgstr "Σφάλμα: %s: %d: %s\n"
+
+msgid "Exceeded the maximum argument count."
+msgstr "Υπέρβαση του μέγιστου αριθμού ορισμάτων."
+
+msgid "Failed to load bytecode."
+msgstr "Αποτυχία φόρτωσης του bytecode."
+
+msgid "Failed to load bytecode data."
+msgstr "Απέτυχε η φόρτωση των δεδομένων bytecode."
+
+msgid "Invalid shift amount."
+msgstr "Μη έγκυρη ποσότητα ολίσθησης."
+
+msgid "JIT compilation is enabled. Starting the fast VM...\n"
+msgstr "Η μεταγλώττιση JIT είναι ενεργοποιημένη. Εκκίνηση της γρήγορης εικονικής μηχανής...\n"
+
+msgid "LHS is not a symbol or an array element."
+msgstr "Η αριστερή πλευρά δεν είναι ούτε σύμβολο ούτε στοιχείο πίνακα."
+
+msgid "LHS is not a term or an array element."
+msgstr "Η αριστερή πλευρά δεν είναι ούτε όρος ούτε στοιχείο πίνακα."
+
+msgid "LIR: Out of memory error."
+msgstr "LIR: Δεν υπάρχει αρκετή μνήμη."
+
+msgid "Memory mapping failed."
+msgstr "Αποτυχία αντιστοίχισης μνήμης."
+
+msgid "Not a dictionary."
+msgstr "Δεν είναι λεξικό."
+
+msgid "Argument (%d: %s) is not an array."
+msgstr "Το όρισμα (%d: %s) δεν είναι πίνακας."
+
+msgid "Not an array or a dictionary."
+msgstr "Δεν είναι ούτε πίνακας ούτε λεξικό."
+
+msgid "Not a packed."
+msgstr "Δεν είναι packed."
+
 msgid "Out of memory."
 msgstr "Δεν υπάρχει αρκετή μνήμη."
+
+msgid "Out of memory.\n"
+msgstr "Δεν υπάρχει αρκετή μνήμη.\n"
+
+msgid "Packed size is 0."
+msgstr "Το μέγεθος του packed είναι 0."
+
+msgid "Packed size is too large."
+msgstr "Το μέγεθος του packed είναι πολύ μεγάλο."
+
+msgid "%s: %d: Error: %s\n"
+msgstr "%s: %d: Σφάλμα: %s\n"
+
+msgid "Searching directory %s.\n"
+msgstr "Αναζήτηση στον κατάλογο %s.\n"
+
+msgid "%s(): Function arguments not match."
+msgstr "%s(): Τα ορίσματα της συνάρτησης δεν ταιριάζουν."
+
+msgid "Skipping empty directory %s.\n"
+msgstr "Παράλειψη του κενoύ καταλόγου %s.\n"
+
+msgid "%s: Out of memory while parsing."
+msgstr "%s: Δεν υπάρχει αρκετή μνήμη κατά την ανάλυση."
+
+msgid "Specify a command.\n"
+msgstr "Καθορίστε μια εντολή.\n"
+
+msgid "Stack overflow."
+msgstr "Υπερχείλιση στοίβας."
+
+msgid "Stack underflow."
+msgstr "Υποχείλιση στοίβας."
+
+msgid "Subscript is negative."
+msgstr "Ο δείκτης είναι αρνητικός."
+
+msgid "Subscript not an integer."
+msgstr "Ο δείκτης δεν είναι ακέραιος αριθμός."
+
+msgid "Subscript not a string."
+msgstr "Ο δείκτης δεν είναι συμβολοσειρά."
+
+msgid "Too many anonymous functions."
+msgstr "Πάρα πολλές ανώνυμες συναρτήσεις."
+
+msgid "Too many functions."
+msgstr "Πάρα πολλές συναρτήσεις."
+
+msgid "Too many jumps."
+msgstr "Πάρα πολλά άλματα."
+
+msgid "Too many local variables."
+msgstr "Πάρα πολλές τοπικές μεταβλητές."
+
+msgid "Too many parameters."
+msgstr "Πάρα πολλές παράμετροι."
 
 msgid "Too many pinned global variables."
 msgstr "Πάρα πολλές καρφιτσωμένες καθολικές μεταβλητές."
@@ -186,50 +225,104 @@ msgstr "Πάρα πολλές καρφιτσωμένες καθολικές με
 msgid "Too many pinned local variables."
 msgstr "Πάρα πολλές καρφιτσωμένες τοπικές μεταβλητές."
 
-msgid "Cannot open file %s.\n"
-msgstr "Δεν είναι δυνατό το άνοιγμα του αρχείου %s.\n"
-
-msgid "Cannot read file %s.\n"
-msgstr "Δεν είναι δυνατή η ανάγνωση του αρχείου %s.\n"
-
-msgid "Error: %s: %d: %s\n"
-msgstr "Σφάλμα: %s: %d: %s\n"
-
-msgid "Adding file %s\n"
-msgstr "Προσθήκη του αρχείου %s\n"
-
-msgid "Cannot find %s.\n"
-msgstr "Δεν ήταν δυνατή η εύρεση του %s.\n"
-
-msgid "Searching directory %s.\n"
-msgstr "Αναζήτηση στον κατάλογο %s.\n"
-
-msgid "Skipping empty directory %s.\n"
-msgstr "Παράλειψη του κενoύ καταλόγου %s.\n"
-
 msgid "Unknown option %s.\n"
 msgstr "Άγνωστη επιλογή %s.\n"
 
+msgid "Value for key %s is not a dictionary."
+msgstr "Η τιμή για το κλειδί %s δεν είναι λεξικό."
+
+msgid "Value for key %s is not a double."
+msgstr "Η τιμή για το κλειδί %s δεν είναι double."
+
+msgid "Value for key %s is not a float."
+msgstr "Η τιμή για το κλειδί %s δεν είναι δεκαδικός αριθμός."
+
+msgid "Value for key %s is not a function."
+msgstr "Η τιμή για το κλειδί %s δεν είναι συνάρτηση."
+
+msgid "Value for key %s is not a long."
+msgstr "Η τιμή για το κλειδί %s δεν είναι long."
+
+msgid "Value for key %s is not an array."
+msgstr "Η τιμή για το κλειδί %s δεν είναι πίνακας."
+
+msgid "Value for key %s is not an int."
+msgstr "Η τιμή για το κλειδί %s δεν είναι int."
+
+msgid "Value for key %s is not a string."
+msgstr "Η τιμή για το κλειδί %s δεν είναι συμβολοσειρά."
+
+msgid "Value is not a float."
+msgstr "Η τιμή δεν είναι δεκαδικός αριθμός."
+
+msgid "Value is not a function."
+msgstr "Η τιμή δεν είναι συνάρτηση."
+
+msgid "Value is not a long."
+msgstr "Η τιμή δεν είναι long."
+
+msgid "Value is not an array."
+msgstr "Η τιμή δεν είναι πίνακας."
+
+msgid "Value is not an int."
+msgstr "Η τιμή δεν είναι int."
+
+msgid "Value is not an integer."
+msgstr "Η τιμή δεν είναι ακέραιος αριθμός."
+
+msgid "Value is not a number."
+msgstr "Η τιμή δεν είναι αριθμός."
+
+msgid "Value is not a number or a string."
+msgstr "Η τιμή δεν είναι ούτε αριθμός ούτε συμβολοσειρά."
+
+msgid "Value is not a string."
+msgstr "Η τιμή δεν είναι συμβολοσειρά."
+
+msgid "Value is not a string, an array, or a dictionary."
+msgstr "Η τιμή δεν είναι ούτε συμβολοσειρά, ούτε πίνακας, ούτε λεξικό."
+
+msgid "var is specified without a single symbol."
+msgstr "Το var καθορίστηκε χωρίς ένα μοναδικό σύμβολο."
+
+msgid "syntax error"
+msgstr "Σφάλμα σύνταξης."
+
+msgid "Branch target not found."
+msgstr "Δεν βρέθηκε ο στόχος διακλάδωσης."
+
+msgid "Not an array."
+msgstr "Δεν είναι πίνακας."
+
+msgid "Local variable \"%s\" not found."
+msgstr "Η τοπική μεταβλητή \"%s\" δεν βρέθηκε."
+
+msgid "Global variable \"%s\" not found."
+msgstr "Η καθολική μεταβλητή \"%s\" δεν βρέθηκε."
+
+msgid "Not an array, dictionary, or packed."
+msgstr "Δεν είναι ούτε πίνακας, ούτε λεξικό, ούτε packed."
+
+msgid "Dictionary index out-of-range."
+msgstr "Ο δείκτης του λεξικού είναι εκτός ορίων."
+
+msgid "Element %d is not an integer."
+msgstr "Το στοιχείο %d δεν είναι ακέραιος αριθμός."
+
+msgid "Value for key %s is not an integer."
+msgstr "Η τιμή για το κλειδί %s δεν είναι ακέραιος αριθμός."
+
+msgid "Not a function."
+msgstr "Δεν είναι συνάρτηση."
+
 msgid "Specify a file.\n"
 msgstr "Καθορίστε ένα αρχείο.\n"
-
-msgid "%s:%d: Error: %s\n"
-msgstr "%s:%d: Σφάλμα: %s\n"
-
-msgid "Out of memory.\n"
-msgstr "Δεν υπάρχει αρκετή μνήμη.\n"
 
 msgid "Noct Programming Language\n"
 msgstr "Γλώσσα προγραμματισμού Noct\n"
 
 msgid "Version %s\n"
 msgstr "Έκδοση %s\n"
-
-msgid "Entering REPL mode.\n"
-msgstr "Είσοδος σε λειτουργία REPL.\n"
-
-msgid "JIT compilation is enabled. Starting the fast VM...\n"
-msgstr "Η μεταγλώττιση JIT είναι ενεργοποιημένη. Εκκίνηση της γρήγορης εικονικής μηχανής...\n"
 
 msgid "Usage\n"
 msgstr "Χρήση\n"

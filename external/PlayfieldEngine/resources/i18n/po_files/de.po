@@ -3,35 +3,29 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Error: %s: %d: %s"
-msgstr "Fehler: %s: %d: %s"
-
-msgid "Cannot open file \"%s\"."
-msgstr "Datei \"%s\" kann nicht geöffnet werden."
-
-msgid "Cannot get the size of file \"%s\"."
-msgstr "Die Größe der Datei \"%s\" kann nicht ermittelt werden."
-
-msgid "Cannot read file \"%s\"."
-msgstr "Datei \"%s\" kann nicht gelesen werden."
-
-msgid "In tag %s:%d: runtime error."
-msgstr "In Tag %s:%d: Laufzeitfehler."
-
-msgid "%s:%d: Tag \"%s\" not found."
-msgstr "%s:%d: Tag \"%s\" wurde nicht gefunden."
-
-msgid "%s:%d: \"tag_%s\" is not a function."
-msgstr "%s:%d: \"tag_%s\" ist keine Funktion."
-
-msgid "In tag %s:%d: Tag \"%s\" execution error."
-msgstr "In Tag %s:%d: Ausführungsfehler im Tag \"%s\"."
+msgid "Adding file \"%s\"."
+msgstr "Datei \"%s\" wird hinzugefügt."
 
 msgid "Cannot determine the file type for \"%s\"."
 msgstr "Der Dateityp von \"%s\" kann nicht bestimmt werden."
 
+msgid "Cannot get the size of file \"%s\"."
+msgstr "Die Größe der Datei \"%s\" kann nicht ermittelt werden."
+
 msgid "Cannot load an image \"%s\"."
 msgstr "Das Bild \"%s\" kann nicht geladen werden."
+
+msgid "Cannot open a save file."
+msgstr "Eine Speicherdatei kann nicht geöffnet werden."
+
+msgid "Cannot open file \"%s\"."
+msgstr "Datei \"%s\" kann nicht geöffnet werden."
+
+msgid "Cannot read file \"%s\"."
+msgstr "Datei \"%s\" kann nicht gelesen werden."
+
+msgid "Error: %s: %d: %s"
+msgstr "Fehler: %s: %d: %s"
 
 msgid "Too many textures."
 msgstr "Zu viele Texturen."
@@ -47,9 +41,6 @@ msgstr "Das Speicherverzeichnis kann nicht erstellt werden."
 
 msgid "Save data key too long."
 msgstr "Der Schlüssel der Spieldaten ist zu lang."
-
-msgid "Cannot open a save file."
-msgstr "Eine Speicherdatei kann nicht geöffnet werden."
 
 msgid "Cannot write to a save file."
 msgstr "In eine Speicherdatei kann nicht geschrieben werden."
@@ -75,9 +66,6 @@ msgstr "Suche im Verzeichnis \"%s\"."
 msgid "Skipping empty directory \"%s\"."
 msgstr "Leeres Verzeichnis \"%s\" wird übersprungen."
 
-msgid "Adding file \"%s\"."
-msgstr "Datei \"%s\" wird hinzugefügt."
-
 msgid "Parameter is not set."
 msgstr "Parameter ist nicht gesetzt."
 
@@ -92,4 +80,13 @@ msgstr "Unerwarteter Parameterwert für \"%s.%s\"."
 
 msgid "Cannot deserialize function."
 msgstr "Funktion kann nicht deserialisiert werden."
+
+msgid "Out of memory."
+msgstr "Nicht genügend Speicher."
+
+msgid "Parameter \"%s\" is not set."
+msgstr "Parameter \"%s\" ist nicht gesetzt."
+
+msgid "Parameter is required to be a dictionary."
+msgstr "Der Parameter muss ein Dictionary sein."
 

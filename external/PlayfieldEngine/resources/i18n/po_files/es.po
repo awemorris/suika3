@@ -3,35 +3,29 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Error: %s: %d: %s"
-msgstr "Error: %s: %d: %s"
-
-msgid "Cannot open file \"%s\"."
-msgstr "No se puede abrir el archivo \"%s\"."
-
-msgid "Cannot get the size of file \"%s\"."
-msgstr "No se puede obtener el tamaño del archivo \"%s\"."
-
-msgid "Cannot read file \"%s\"."
-msgstr "No se puede leer el archivo \"%s\"."
-
-msgid "In tag %s:%d: runtime error."
-msgstr "En la etiqueta %s:%d: error en tiempo de ejecución."
-
-msgid "%s:%d: Tag \"%s\" not found."
-msgstr "%s:%d: No se encontró la etiqueta \"%s\"."
-
-msgid "%s:%d: \"tag_%s\" is not a function."
-msgstr "%s:%d: \"tag_%s\" no es una función."
-
-msgid "In tag %s:%d: Tag \"%s\" execution error."
-msgstr "En la etiqueta %s:%d: Error de ejecución en la etiqueta \"%s\"."
+msgid "Adding file \"%s\"."
+msgstr "Añadiendo archivo \"%s\"."
 
 msgid "Cannot determine the file type for \"%s\"."
 msgstr "No se puede determinar el tipo de archivo de \"%s\"."
 
+msgid "Cannot get the size of file \"%s\"."
+msgstr "No se puede obtener el tamaño del archivo \"%s\"."
+
 msgid "Cannot load an image \"%s\"."
 msgstr "No se puede cargar la imagen \"%s\"."
+
+msgid "Cannot open a save file."
+msgstr "No se puede abrir un archivo de guardado."
+
+msgid "Cannot open file \"%s\"."
+msgstr "No se puede abrir el archivo \"%s\"."
+
+msgid "Cannot read file \"%s\"."
+msgstr "No se puede leer el archivo \"%s\"."
+
+msgid "Error: %s: %d: %s"
+msgstr "Error: %s: %d: %s"
 
 msgid "Too many textures."
 msgstr "Demasiadas texturas."
@@ -47,9 +41,6 @@ msgstr "No se puede crear el directorio de guardado."
 
 msgid "Save data key too long."
 msgstr "La clave de los datos guardados es demasiado larga."
-
-msgid "Cannot open a save file."
-msgstr "No se puede abrir un archivo de guardado."
 
 msgid "Cannot write to a save file."
 msgstr "No se puede escribir en un archivo de guardado."
@@ -75,9 +66,6 @@ msgstr "Buscando en el directorio \"%s\"."
 msgid "Skipping empty directory \"%s\"."
 msgstr "Omitiendo el directorio vacío \"%s\"."
 
-msgid "Adding file \"%s\"."
-msgstr "Añadiendo archivo \"%s\"."
-
 msgid "Parameter is not set."
 msgstr "El parámetro no está configurado."
 
@@ -92,4 +80,13 @@ msgstr "Valor de parámetro  inesperado para \"%s.%s\"."
 
 msgid "Cannot deserialize function."
 msgstr "No se puede deserializar la función."
+
+msgid "Out of memory."
+msgstr "Memoria insuficiente."
+
+msgid "Parameter \"%s\" is not set."
+msgstr "El parámetro \"%s\" no está configurado."
+
+msgid "Parameter is required to be a dictionary."
+msgstr "El parámetro debe ser un diccionario."
 

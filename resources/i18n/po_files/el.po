@@ -3,29 +3,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "%s:%d: %s"
-msgstr "%s:%d: %s"
-
-msgid "Error: %s:%d: %s"
-msgstr "Σφάλμα: %s:%d: %s"
-
-msgid "Error: %s:%d: Tag %s:"
-msgstr "Σφάλμα: %s:%d: Tag %s:"
-
-msgid "Error: %s:%d: Runtime error"
-msgstr "Σφάλμα: %s:%d: Σφάλμα κατά την εκτέλεση"
-
-msgid "Error: %s:%d: Tag \"%s\" not found."
-msgstr "Σφάλμα: %s:%d: Η ετικέτα \"%s\" δεν βρέθηκε."
-
-msgid "Error: %s:%d: \"Tag_%s\" is not a function."
-msgstr "Σφάλμα: %s:%d: Το \"Tag_%s\" δεν είναι συνάρτηση."
-
 msgid "Argument \"%s\" not specified."
 msgstr "Το όρισμα \"%s\" δεν έχει οριστεί."
 
 msgid "Cannot play sound file \"%s\"."
 msgstr "Δεν είναι δυνατή η αναπαραγωγή του αρχείου ήχου \"%s\"."
+
+msgid "Cannot play video file %s."
+msgstr "Δεν είναι δυνατή η αναπαραγωγή του αρχείου βίντεο %s."
 
 msgid "Conifg \"%s\" not found."
 msgstr "Η ρύθμιση \"%s\" δεν βρέθηκε."
@@ -35,6 +20,24 @@ msgstr "Διπλότυπο κλειδί ρύθμισης %s."
 
 msgid "Error loading GUI file %s."
 msgstr "Σφάλμα κατά τη φόρτωση του αρχείου GUI %s."
+
+msgid "Error: %s:%d: %s"
+msgstr "Σφάλμα: %s:%d: %s"
+
+msgid "Error: %s:%d: Runtime error"
+msgstr "Σφάλμα: %s:%d: Σφάλμα κατά την εκτέλεση"
+
+msgid "Error: %s:%d: Tag %s: "
+msgstr "Σφάλμα: %s:%d: Tag %s: "
+
+msgid "Error: %s:%d: \"Tag_%s\" is not a function."
+msgstr "Σφάλμα: %s:%d: Το \"Tag_%s\" δεν είναι συνάρτηση."
+
+msgid "Error: %s:%d: Tag \"%s\" not found."
+msgstr "Σφάλμα: %s:%d: Η ετικέτα \"%s\" δεν βρέθηκε."
+
+msgid "Failed to create an image for layer: %s"
+msgstr "Αποτυχία δημιουργίας εικόνας για το επίπεδο: %s"
 
 msgid "Failed to write save data."
 msgstr "Αποτυχία εγγραφής δεδομένων αποθήκευσης."
@@ -59,6 +62,9 @@ msgstr "Μη έγκυρος χαρακτήρας \"%c\" κατά την ανάλ
 
 msgid "Invalid character."
 msgstr "Μη έγκυρος χαρακτήρας."
+
+msgid "Invalid config line at file \"%s\" line %d."
+msgstr "Μη έγκυρη γραμμή ρύθμισης στο αρχείο \"%s\" γραμμή %d."
 
 msgid "Invalid fade method \"%s\"."
 msgstr "Μη έγκυρη μέθοδος εξασθένισης \"%s\"."
@@ -111,8 +117,14 @@ msgstr "Δεν βρέθηκε αντίστοιχο endif."
 msgid "No matching endmacro found."
 msgstr "Δεν βρέθηκε αντίστοιχο endmacro."
 
+msgid "No matching localized text."
+msgstr "Δεν βρέθηκε αντίστοιχο τοπικό κείμενο."
+
 msgid "No operator specified."
 msgstr "Δεν ορίστηκε τελεστής."
+
+msgid "Property %s is not allowed for tag %s."
+msgstr "Η ιδιότητα %s δεν επιτρέπεται για την ετικέτα %s."
 
 msgid "Property name too long."
 msgstr "Το όνομα της ιδιότητας είναι πολύ μεγάλο."
@@ -168,6 +180,9 @@ msgstr "Μη ορισμένο κλειδί ρύθμισης \"%s\"."
 msgid "Unexpected EOF."
 msgstr "Μη αναμενόμενο τέλος αρχείου (EOF)."
 
+msgid "Unknown action \"%s\" is specified on the page mode."
+msgstr "Άγνωστη ενέργεια \"%s\" καθορίστηκε στη λειτουργία σελίδας."
+
 msgid "Unknown button property \"%s\" found in GUI file \"%s\" line %d."
 msgstr "Βρέθηκε άγνωστη ιδιότητα κουμπιού \"%s\" στο αρχείο GUI \"%s\" γραμμή %d."
 
@@ -180,12 +195,9 @@ msgstr "Άγνωστο κλειδί ρύθμισης \"%s\"."
 msgid "Unknown global key \"%s\" found in GUI file \"%s\" line %d."
 msgstr "Βρέθηκε άγνωστο παγκόσμιο κλειδί \"%s\" στο αρχείο GUI \"%s\" γραμμή %d."
 
-msgid "Unkwon key \"%s\" while parsing anime file \"%s\" line %d."
+msgid "Unknown key \"%s\" while parsing anime file \"%s\" line %d.\""
 msgstr "Άγνωστο κλειδί \"%s\" κατά την ανάλυση του αρχείου κινουμένων σχεδίων \"%s\" γραμμή %d."
 
-msgid "Invalid config line at file \"%s\" line %d."
-msgstr "Μη έγκυρη γραμμή ρύθμισης στο αρχείο \"%s\" γραμμή %d."
-
-msgid "No matching localized text."
-msgstr "Δεν βρέθηκε αντίστοιχο τοπικό κείμενο."
+msgid "endmacro outside a macro call."
+msgstr "endmacro εκτός κλήσης μακροεντολής."
 

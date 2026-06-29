@@ -1,32 +1,3 @@
-/* -*- coding: utf-8; tab-width: 8; indent-tabs-mode: t; -*- */
-
-/*
- * Suika3
- * Translation
- */
-
-/*-
- * SPDX-License-Identifier: Zlib
- *
- * Copyright (c) 1996-2026 Awe Morris / SCHOLA SUIKAE
- *
- * This software is provided 'as-is', without any express or implied
- * warranty. In no event will the authors be held liable for any damages
- * arising from the use of this software.
- *
- * Permission is granted to anyone to use this software for any purpose,
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
-
 #include <string.h>
 
 const char *pf_get_system_language(void);
@@ -34,84 +5,9 @@ const char *pf_get_system_language(void);
 const char *s3_gettext(const char *msg)
 {
     const char *lang_code = pf_get_system_language();
-    if (strcmp(msg, "%s:%d: %s") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "%s:%d: %s";
-        if (strncmp(lang_code, "es", 2) == 0) return "%s:%d: %s";
-        if (strncmp(lang_code, "fr", 2) == 0) return "%s:%d : %s";
-        if (strncmp(lang_code, "it", 2) == 0) return "%s:%d: %s";
-        if (strncmp(lang_code, "de", 2) == 0) return "%s:%d: %s";
-        if (strncmp(lang_code, "el", 2) == 0) return "%s:%d: %s";
-        if (strncmp(lang_code, "ru", 2) == 0) return "%s:%d: %s";
-        if (strncmp(lang_code, "zh", 2) == 0) return "%s:%d: %s";
-        if (strncmp(lang_code, "tw", 2) == 0) return "%s:%d: %s";
-        if (strncmp(lang_code, "ja", 2) == 0) return "%s:%d: %s";
-        return "%s:%d: %s";
-    }
-    if (strcmp(msg, "Error: %s:%d: %s") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: %s";
-        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: %s";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d : %s";
-        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: %s";
-        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s:%d: %s";
-        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s:%d: %s";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s:%d: %s";
-        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s:%d: %s";
-        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s:%d: %s";
-        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s:%d: %s";
-        return "Error: %s:%d: %s";
-    }
-    if (strcmp(msg, "Error: %s:%d: Tag %s: ") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: Tag %s: ";
-        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: Tag %s: ";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d : Tag %s: ";
-        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: Tag %s: ";
-        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s:%d: Tag %s: ";
-        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s:%d: Tag %s: ";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s:%d: Tag %s: ";
-        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s:%d: Tag %s: ";
-        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s:%d: Tag %s: ";
-        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s:%d: Tag %s: ";
-        return "Error: %s:%d: Tag %s: ";
-    }
-    if (strcmp(msg, "Error: %s:%d: Runtime error") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: Runtime error";
-        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: Error de ejecución";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d: Erreur d'exécution";
-        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: Erreur d'esecuzione";
-        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s:%d: Laufzeitfehler";
-        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s:%d: Σφάλμα κατά την εκτέλεση";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s:%d: Ошибка времени выполнения";
-        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s:%d: 运行时错误";
-        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s:%d: 執行階段錯誤";
-        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s:%d: 実行時エラー";
-        return "Error: %s:%d: Runtime error";
-    }
-    if (strcmp(msg, "Error: %s:%d: Tag \"%s\" not found.") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: Tag \"%s\" not found.";
-        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: No se encontró la etiqueta \"%s\".";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d : Balise \"%s\" introuvable.";
-        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: Tag \"%s\" non trovato.";
-        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s:%d: Tag \"%s\" wurde nicht gefunden.";
-        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s:%d: Η ετικέτα \"%s\" δεν βρέθηκε.";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s:%d: Тег \"%s\" не найден.";
-        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s:%d: 未找到标签 \"%s\"。";
-        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s:%d: 找不到標籤 \"%s\"。";
-        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s:%d: タグ \"%s\" がみつかりません。";
-        return "Error: %s:%d: Tag \"%s\" not found.";
-    }
-    if (strcmp(msg, "Error: %s:%d: \"Tag_%s\" is not a function.") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: \"Tag_%s\" is not a function.";
-        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: \"Tag_%s\" no es una función.";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d : \"Tag_%s\" n'est pas une fonction.";
-        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: \"Tag_%s\" non è una funzione.";
-        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s:%d: \"Tag_%s\" ist keine Funktion.";
-        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s:%d: Το \"Tag_%s\" δεν είναι συνάρτηση.";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s:%d: «Tag_%s» не является функцией.";
-        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s:%d: \"Tag_%s\" 不是函数。";
-        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s:%d: \"Tag_%s\" 不是函式。";
-        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s:%d: \"Tag_%s\" は関数ではありません。";
-        return "Error: %s:%d: \"Tag_%s\" is not a function.";
-    }
+
+    if (strcmpt(lang_code, "zh-cn") == 0) lang_code = "zh";
+    if (strcmpt(lang_code, "zh-tw") == 0) lang_code = "tw";
     if (strcmp(msg, "Argument \"%s\" not specified.") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Argument \"%s\" not specified.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se ha especificado el argumento \"%s\".";
@@ -137,6 +33,19 @@ const char *s3_gettext(const char *msg)
         if (strncmp(lang_code, "tw", 2) == 0) return "無法播放音訊檔案 \"%s\"。";
         if (strncmp(lang_code, "ja", 2) == 0) return "サウンドファイル \"%s\" を再生できません。";
         return "Cannot play sound file \"%s\".";
+    }
+    if (strcmp(msg, "Cannot play video file %s.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot play video file %s.";
+        if (strncmp(lang_code, "es", 2) == 0) return "No se puede reproducir el archivo de vídeo %s.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Impossible de lire le fichier vidéo %s.";
+        if (strncmp(lang_code, "it", 2) == 0) return "Impossibile riprodurre il file video %s.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Videodatei %s kann nicht abgespielt werden.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Δεν είναι δυνατή η αναπαραγωγή του αρχείου βίντεο %s.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Невозможно воспроизвести видеофайл %s.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "无法播放视频文件 %s。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "無法播放影片檔案 %s。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "動画ファイル %s を再生できません。";
+        return "Cannot play video file %s.";
     }
     if (strcmp(msg, "Conifg \"%s\" not found.") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Conifg \"%s\" not found.";
@@ -176,6 +85,84 @@ const char *s3_gettext(const char *msg)
         if (strncmp(lang_code, "tw", 2) == 0) return "載入 GUI 檔案 %s 時發生錯誤。";
         if (strncmp(lang_code, "ja", 2) == 0) return "GUIファイル %s の読み込み中にエラーが発生しました。";
         return "Error loading GUI file %s.";
+    }
+    if (strcmp(msg, "Error: %s:%d: %s") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: %s";
+        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: %s";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d : %s";
+        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: %s";
+        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s:%d: %s";
+        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s:%d: %s";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s:%d: %s";
+        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s:%d: %s";
+        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s:%d: %s";
+        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s:%d: %s";
+        return "Error: %s:%d: %s";
+    }
+    if (strcmp(msg, "Error: %s:%d: Runtime error") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: Runtime error";
+        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: Error de ejecución";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d: Erreur d'exécution";
+        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: Erreur d'esecuzione";
+        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s:%d: Laufzeitfehler";
+        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s:%d: Σφάλμα κατά την εκτέλεση";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s:%d: Ошибка времени выполнения";
+        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s:%d: 运行时错误";
+        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s:%d: 執行階段錯誤";
+        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s:%d: 実行時エラー";
+        return "Error: %s:%d: Runtime error";
+    }
+    if (strcmp(msg, "Error: %s:%d: Tag %s: ") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: Tag %s: ";
+        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: Tag %s: ";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d : Tag %s: ";
+        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: Tag %s: ";
+        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s:%d: Tag %s: ";
+        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s:%d: Tag %s: ";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s:%d: Tag %s: ";
+        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s:%d: Tag %s: ";
+        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s:%d: Tag %s: ";
+        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s:%d: Tag %s:";
+        return "Error: %s:%d: Tag %s: ";
+    }
+    if (strcmp(msg, "Error: %s:%d: \"Tag_%s\" is not a function.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: \"Tag_%s\" is not a function.";
+        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: \"Tag_%s\" no es una función.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d : \"Tag_%s\" n'est pas une fonction.";
+        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: \"Tag_%s\" non è una funzione.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s:%d: \"Tag_%s\" ist keine Funktion.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s:%d: Το \"Tag_%s\" δεν είναι συνάρτηση.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s:%d: «Tag_%s» не является функцией.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s:%d: \"Tag_%s\" 不是函数。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s:%d: \"Tag_%s\" 不是函式。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s:%d: \"Tag_%s\" は関数ではありません。";
+        return "Error: %s:%d: \"Tag_%s\" is not a function.";
+    }
+    if (strcmp(msg, "Error: %s:%d: Tag \"%s\" not found.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s:%d: Tag \"%s\" not found.";
+        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s:%d: No se encontró la etiqueta \"%s\".";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s:%d : Balise \"%s\" introuvable.";
+        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s:%d: Tag \"%s\" non trovato.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s:%d: Tag \"%s\" wurde nicht gefunden.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s:%d: Η ετικέτα \"%s\" δεν βρέθηκε.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s:%d: Тег \"%s\" не найден.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s:%d: 未找到标签 \"%s\"。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s:%d: 找不到標籤 \"%s\"。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s:%d: タグ \"%s\" がみつかりません。";
+        return "Error: %s:%d: Tag \"%s\" not found.";
+    }
+    if (strcmp(msg, "Failed to create an image for layer: %s") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Failed to create an image for layer: %s";
+        if (strncmp(lang_code, "es", 2) == 0) return "Error al crear una imagen para la capa: %s";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Échec de la création d'une image pour le calque : %s";
+        if (strncmp(lang_code, "it", 2) == 0) return "Impossibile creare un'immagine per il livello: %s";
+        if (strncmp(lang_code, "de", 2) == 0) return "Fehler beim Erstellen eines Bildes für die Ebene: %s";
+        if (strncmp(lang_code, "el", 2) == 0) return "Αποτυχία δημιουργίας εικόνας για το επίπεδο: %s";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Не удалось создать изображение для слоя: %s";
+        if (strncmp(lang_code, "zh", 2) == 0) return "为图层 %s 创建图像失败。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "為圖層 %s 建立圖像失敗。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "レイヤー %s の画像を作成できませんでした。";
+        return "Failed to create an image for layer: %s";
     }
     if (strcmp(msg, "Failed to write save data.") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Failed to write save data.";
@@ -280,6 +267,19 @@ const char *s3_gettext(const char *msg)
         if (strncmp(lang_code, "tw", 2) == 0) return "無效字元。";
         if (strncmp(lang_code, "ja", 2) == 0) return "文字が不正です。";
         return "Invalid character.";
+    }
+    if (strcmp(msg, "Invalid config line at file \"%s\" line %d.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Invalid config line at file \"%s\" line %d.";
+        if (strncmp(lang_code, "es", 2) == 0) return "Línea de configuración no válida en el archivo \"%s\" en la línea %d.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Ligne de configuration non valide dans le fichier \"%s\" ligne %d.";
+        if (strncmp(lang_code, "it", 2) == 0) return "Linea di configurazione non valida nel file \"%s\" riga %d.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Ungültige Konfigurationszeile in Datei \"%s\" Zeile %d.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Μη έγκυρη γραμμή ρύθμισης στο αρχείο \"%s\" γραμμή %d.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Недопустимая строка конфигурации в файле «%s» в строке %d.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "文件 \"%s\" 第 %d 行配置无效。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "檔案 \"%s\" 第 %d 行設定無効。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "ファイル \"%s\" の %d 行目の設定が不正です。";
+        return "Invalid config line at file \"%s\" line %d.";
     }
     if (strcmp(msg, "Invalid fade method \"%s\".") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Invalid fade method \"%s\".";
@@ -502,6 +502,19 @@ const char *s3_gettext(const char *msg)
         if (strncmp(lang_code, "ja", 2) == 0) return "endmacro が見つかりません。";
         return "No matching endmacro found.";
     }
+    if (strcmp(msg, "No matching localized text.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "No matching localized text.";
+        if (strncmp(lang_code, "es", 2) == 0) return "No se encontro un texto localizado coincidente.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Aucun texte localisé correspondant n'a été trouvé.";
+        if (strncmp(lang_code, "it", 2) == 0) return "Nessun testo localizzato corrispondente trovato.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Kein passender lokalisierter Text gefunden.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Δεν βρέθηκε αντίστοιχο τοπικό κείμενο.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Соответствующий локализованный текст не найден.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "未找到匹配的本地化文本。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "未找到相符的本地化文字。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "テキストのローカライズ版がマッチしませんでした。";
+        return "No matching localized text.";
+    }
     if (strcmp(msg, "No operator specified.") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "No operator specified.";
         if (strncmp(lang_code, "es", 2) == 0) return "No se especificó ningún operador.";
@@ -514,6 +527,19 @@ const char *s3_gettext(const char *msg)
         if (strncmp(lang_code, "tw", 2) == 0) return "未指定運算子。";
         if (strncmp(lang_code, "ja", 2) == 0) return "演算子が指定されていません。";
         return "No operator specified.";
+    }
+    if (strcmp(msg, "Property %s is not allowed for tag %s.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Property %s is not allowed for tag %s.";
+        if (strncmp(lang_code, "es", 2) == 0) return "La propiedad %s no está permitida para la etiqueta %s.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "La propriété %s n'est pas autorisée pour la balise %s.";
+        if (strncmp(lang_code, "it", 2) == 0) return "La proprietà %s non è consentita per il tag %s.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Eigenschaft %s ist für Tag %s nicht erlaubt.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Η ιδιότητα %s δεν επιτρέπεται για την ετικέτα %s.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Свойство %s не разрешено для тега %s.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "属性 %s 不允许用于标签 %s。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "屬性 %s 不允許用於標籤 %s。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "プロパティ %s はタグ %s に使用できません。";
+        return "Property %s is not allowed for tag %s.";
     }
     if (strcmp(msg, "Property name too long.") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Property name too long.";
@@ -749,6 +775,19 @@ const char *s3_gettext(const char *msg)
         if (strncmp(lang_code, "ja", 2) == 0) return "予期しないファイル終端です。";
         return "Unexpected EOF.";
     }
+    if (strcmp(msg, "Unknown action \"%s\" is specified on the page mode.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Unknown action \"%s\" is specified on the page mode.";
+        if (strncmp(lang_code, "es", 2) == 0) return "Se especificó una acción desconocida \"%s\" en el modo de página.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "L'action \"%s\" inconnue est spécifiée en mode page.";
+        if (strncmp(lang_code, "it", 2) == 0) return "Azione \"%s\" sconosciuta specificata nella modalità pagina.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Unbekannte Aktion \"%s\" wurde im Seitenmodus angegeben.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Άγνωστη ενέργεια \"%s\" καθορίστηκε στη λειτουργία σελίδας.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Неизвестное действие «%s» указано в режиме страницы.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "在页面模式下指定了未知操作 \"%s\"。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "在頁面模式中指定了未知動作 \"%s\"。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "ページモードで未知のアクション \"%s\" が指定されています。";
+        return "Unknown action \"%s\" is specified on the page mode.";
+    }
     if (strcmp(msg, "Unknown button property \"%s\" found in GUI file \"%s\" line %d.") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Unknown button property \"%s\" found in GUI file \"%s\" line %d.";
         if (strncmp(lang_code, "es", 2) == 0) return "Se encontró una propiedad de botón \"%s\" desconocida en el archivo GUI \"%s\" en la línea %d.";
@@ -801,8 +840,8 @@ const char *s3_gettext(const char *msg)
         if (strncmp(lang_code, "ja", 2) == 0) return "GUIファイル \"%s\" の %d 行目に未知のグローバルキー \"%s\" があります。";
         return "Unknown global key \"%s\" found in GUI file \"%s\" line %d.";
     }
-    if (strcmp(msg, "Unkwon key \"%s\" while parsing anime file \"%s\" line %d.") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "Unkwon key \"%s\" while parsing anime file \"%s\" line %d.";
+    if (strcmp(msg, "Unknown key \"%s\" while parsing anime file \"%s\" line %d.\"") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Unknown key \"%s\" while parsing anime file \"%s\" line %d.\"";
         if (strncmp(lang_code, "es", 2) == 0) return "Clave \"%s\" desconocida al analizar el archivo de animación \"%s\" en la línea %d.";
         if (strncmp(lang_code, "fr", 2) == 0) return "Clé \"%s\" inconnue lors de l'analyse du fichier d'animation \"%s\" ligne %d.";
         if (strncmp(lang_code, "it", 2) == 0) return "Chiave \"%s\" sconosciuta durante l'analisi del file di animazione \"%s\" riga %d.";
@@ -812,32 +851,20 @@ const char *s3_gettext(const char *msg)
         if (strncmp(lang_code, "zh", 2) == 0) return "解析动画文件 \"%s\" 第 %d 行時发现未知键 \"%s\"。";
         if (strncmp(lang_code, "tw", 2) == 0) return "解析動畫檔案 \"%s\" 第 %d 行時發現未知鍵 \"%s\"。";
         if (strncmp(lang_code, "ja", 2) == 0) return "アニメーションファイル \"%s\" の %d 行目を解析中に未知のキー \"%s\" が見つかりました。";
-        return "Unkwon key \"%s\" while parsing anime file \"%s\" line %d.";
+        return "Unknown key \"%s\" while parsing anime file \"%s\" line %d.\"";
     }
-    if (strcmp(msg, "Invalid config line at file \"%s\" line %d.") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "Invalid config line at file \"%s\" line %d.";
-        if (strncmp(lang_code, "es", 2) == 0) return "Línea de configuración no válida en el archivo \"%s\" en la línea %d.";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Ligne de configuration non valide dans le fichier \"%s\" ligne %d.";
-        if (strncmp(lang_code, "it", 2) == 0) return "Linea di configurazione non valida nel file \"%s\" riga %d.";
-        if (strncmp(lang_code, "de", 2) == 0) return "Ungültige Konfigurationszeile in Datei \"%s\" Zeile %d.";
-        if (strncmp(lang_code, "el", 2) == 0) return "Μη έγκυρη γραμμή ρύθμισης στο αρχείο \"%s\" γραμμή %d.";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Недопустимая строка конфигурации в файле «%s» в строке %d.";
-        if (strncmp(lang_code, "zh", 2) == 0) return "文件 \"%s\" 第 %d 行配置无效。";
-        if (strncmp(lang_code, "tw", 2) == 0) return "檔案 \"%s\" 第 %d 行設定無効。";
-        if (strncmp(lang_code, "ja", 2) == 0) return "ファイル \"%s\" の %d 行目の設定が不正です。";
-        return "Invalid config line at file \"%s\" line %d.";
-    }
-    if (strcmp(msg, "No matching localized text.") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "No matching localized text.";
-        if (strncmp(lang_code, "es", 2) == 0) return "No se encontro un texto localizado coincidente.";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Aucun texte localisé correspondant n'a été trouvé.";
-        if (strncmp(lang_code, "it", 2) == 0) return "Nessun testo localizzato corrispondente trovato.";
-        if (strncmp(lang_code, "de", 2) == 0) return "Kein passender lokalisierter Text gefunden.";
-        if (strncmp(lang_code, "el", 2) == 0) return "Δεν βρέθηκε αντίστοιχο τοπικό κείμενο.";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Соответствующий локализованный текст не найден.";
-        if (strncmp(lang_code, "zh", 2) == 0) return "未找到匹配的本地化文本。";
-        if (strncmp(lang_code, "ja", 2) == 0) return "テキストのローカライズ版がマッチしませんでした。";
-        return "No matching localized text.";
+    if (strcmp(msg, "endmacro outside a macro call.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "endmacro outside a macro call.";
+        if (strncmp(lang_code, "es", 2) == 0) return "endmacro fuera de una llamada a macro.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "endmacro en dehors d'un appel de macro.";
+        if (strncmp(lang_code, "it", 2) == 0) return "endmacro al di fuori di una chiamata macro.";
+        if (strncmp(lang_code, "de", 2) == 0) return "endmacro außerhalb eines Makroaufrufs.";
+        if (strncmp(lang_code, "el", 2) == 0) return "endmacro εκτός κλήσης μακροεντολής.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "endmacro вне вызова макроса.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "endmacro 出现在宏调用之外。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "endmacro 出現在巨集呼叫之外。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "endmacro がマクロ呼び出しの外で使われています。";
+        return "endmacro outside a macro call.";
     }
     return msg;
 }

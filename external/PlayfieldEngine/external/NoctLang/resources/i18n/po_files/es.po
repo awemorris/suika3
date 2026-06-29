@@ -3,182 +3,218 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "syntax error"
-msgstr "Error de sintaxis."
-
-msgid "%s: Out of memory while parsing."
-msgstr "%s: No hay suficiente memoria."
-
-msgid "Too many functions."
-msgstr "Hay demasiadas funciones."
-
-msgid "continue appeared outside loop."
-msgstr "continue es utilizado fuera de un bucle."
-
-msgid "LHS is not a term or an array element."
-msgstr "LHS no es un término ni un elemento de un array."
-
-msgid "var is specified without a single symbol."
-msgstr "var es especificado sin un solo símbolo."
-
-msgid "else-if block appeared without if block."
-msgstr "bloque else-if utilizado sin un bloque if."
-
-msgid "else-if appeared after else."
-msgstr "else-if utilizado después de else."
-
-msgid "else appeared after else."
-msgstr "else utilizado después de else."
-
-msgid "Exceeded the maximum argument count."
-msgstr "Se ha superado el número máximo de argumentos."
-
-msgid "Too many anonymous functions."
-msgstr "Hay demasiadas funciones anónimas."
-
-msgid "Too many local variables."
-msgstr "Hay demasiadas variables locales."
-
-msgid "Too many jumps."
-msgstr "Hay demasiados saltos."
-
-msgid "LIR: Out of memory error."
-msgstr "LIR: No hay suficiente memoria."
-
-msgid "Failed to load bytecode data."
-msgstr "No se pudo cargar los datos de bytecode."
-
-msgid "Memory mapping failed."
-msgstr "El mapeo de la memoria ha fallado."
-
-msgid "Code too big."
-msgstr "El código es demasiado grande."
-
-msgid "Branch target not found."
-msgstr "El destino de la rama no se ha encontrado."
-
-msgid "Failed to load bytecode."
-msgstr "No se ha podido cargar el bytecode."
-
-msgid "Cannot find function %s."
-msgstr "No se ha encontrado la función %s."
-
-msgid "Not an array."
-msgstr "No es un array."
-
-msgid "Array index %d is out-of-range."
-msgstr "El índice %d del array se encuentra fuera de rango."
-
-msgid "Dictionary index %d is out-of-range."
-msgstr "El índice del diccionario %d está fuera de rango."
-
-msgid "Dictionary key \"%s\" not found."
-msgstr "La llave \"%s\" no se encontró en el diccionario."
-
-msgid "Local variable \"%s\" not found."
-msgstr "La variable local \"%s\" no se ha encontrado."
-
-msgid "Global variable \"%s\" not found."
-msgstr "La variable global \"%s\" no se ha encontrado."
-
-msgid "Value is not a number."
-msgstr "El valor no es un número."
-
-msgid "Value is not an integer."
-msgstr "El valor no es un entero."
-
-msgid "Value is not a string."
-msgstr "El valor no es un string."
-
-msgid "Value is not a number or a string."
-msgstr "El valor no es un número ni un string."
-
-msgid "Division by zero."
-msgstr "División por cero."
-
-msgid "Subscript not an integer."
-msgstr "El subíndice no es un entero."
-
-msgid "Not an array or a dictionary."
-msgstr "No es un array ni un diccionario."
-
-msgid "Subscript not a string."
-msgstr "El subíndice no es un string."
-
-msgid "Value is not a string, an array, or a dictionary."
-msgstr "El valor no es un string, un array ni un diccionario."
-
-msgid "Not a dictionary."
-msgstr "No es un diccionario."
-
-msgid "Dictionary index out-of-range."
-msgstr "El índice del diccionario está fuera de rango."
-
-msgid "Symbol \"%s\" not found."
-msgstr "El símbolo \"%s\" no se ha encontrado."
-
-msgid "%s(): Function arguments not match."
-msgstr "%s(): Los argumentos de la función no coinciden."
-
-msgid "Element %d is not an integer."
-msgstr "El elemento %d no es un número entero."
-
-msgid "Element %d is not a float."
-msgstr "El elemento %d no es un número decimal."
-
-msgid "Element %d is not a string."
-msgstr "El elemento %d no es una cadena."
-
-msgid "Element %d is not an array."
-msgstr "El elemento %d no es una matriz."
-
-msgid "Element %d is not a dictionary."
-msgstr "El elemento %d no es un diccionario."
-
-msgid "Element %d is not a function."
-msgstr "El elemento %d no es una función."
-
-msgid "Value for key %s is not an integer."
-msgstr "El valor de la clave %s no es un número entero."
-
-msgid "Value for key %s is not a float."
-msgstr "El valor de la clave %s no es un número decimal."
-
-msgid "Value for key %s is not a string."
-msgstr "El valor de la clave %s no es una cadena."
-
-msgid "Value for key %s is not an array."
-msgstr "El valor de la clave %s no es una matriz."
-
-msgid "Value for key %s is not a dictionary."
-msgstr "El valor de la clave %s no es un diccionario."
-
-msgid "Value for key %s is not a function."
-msgstr "El valor de la clave %s no es una función."
-
-msgid "Argument (%d: %s) not an integer."
-msgstr "Argumento (%d: %s) no es un número entero."
-
-msgid "Argument (%d: %s) not a float."
-msgstr "Argumento (%d: %s) no es un número decimal."
-
-msgid "Argument (%d: %s) not a string."
-msgstr "Argumento (%d: %s) no es una cadena."
-
-msgid "Argument (%d: %s) is not an array."
-msgstr "Argumento (%d: %s) no es una matriz."
+msgid "Adding file %s\n"
+msgstr "Añadiendo el archivo %s\n"
 
 msgid "Argument (%d: %s) is not a dictionary."
 msgstr "Argumento (%d: %s) no es un diccionario."
 
-msgid "Not a function."
-msgstr "No es una función."
+msgid "Argument (%d: %s) is not a double."
+msgstr "Argumento (%d: %s) no es un número double."
+
+msgid "Argument (%d: %s) is not a float."
+msgstr "Argumento (%d: %s) no es un número decimal."
+
+msgid "Argument (%d: %s) is not a function."
+msgstr "Argumento (%d: %s) no es una función."
+
+msgid "Argument (%d: %s) is not a long."
+msgstr "Argumento (%d: %s) no es un long."
+
+msgid "Argument (%d: %s) is not an int."
+msgstr "Argumento (%d: %s) no es un número int."
+
+msgid "Argument (%d: %s) is not an integer."
+msgstr "Argumento (%d: %s) no es un número entero."
+
+msgid "Argument (%d: %s) not a packed."
+msgstr "Argumento (%d: %s) no es un packed."
+
+msgid "Argument (%d: %s) not a packed of type %s."
+msgstr "Argumento (%d: %s) no es un packed de tipo %s."
+
+msgid "Argument (%d: %s) not a string."
+msgstr "Argumento (%d: %s) no es una cadena."
+
+msgid "Array index %ld is out-of-range."
+msgstr "El índice del array %ld está fuera de rango."
+
+msgid "Broken bytecode."
+msgstr "Bytecode corrupto."
+
+msgid "Cannot find function %s."
+msgstr "No se ha encontrado la función %s."
+
+msgid "Cannot find %s.\n"
+msgstr "No se puede encontrar %s.\n"
+
+msgid "Cannot open file %s.\n"
+msgstr "No se puede abrir el archivo %s.\n"
+
+msgid "Cannot open file %s."
+msgstr "No se puede abrir el archivo %s."
+
+msgid "Cannot write file %s.\n"
+msgstr "No se puede escribir el archivo %s.\n"
+
+msgid "Cannot read file %s.\n"
+msgstr "No se puede leer el archivo %s.\n"
+
+msgid "Code too big."
+msgstr "El código es demasiado grande."
+
+msgid "continue appeared outside loop."
+msgstr "continue es utilizado fuera de un bucle."
+
+msgid "Dictionary key \"%s\" not found."
+msgstr "La llave \"%s\" no se encontró en el diccionario."
+
+msgid "Symbol \"%s\" not found."
+msgstr "El símbolo \"%s\" no se ha encontrado."
+
+msgid "Dictionary index %ld is out-of-range."
+msgstr "El índice del diccionario %d está fuera de rango."
+
+msgid "Division by zero."
+msgstr "División por cero."
+
+msgid "Element %d is not a dictionary."
+msgstr "El elemento %d no es un diccionario."
+
+msgid "Element %d is not a double."
+msgstr "El elemento %d no es un double."
+
+msgid "Element %d is not a float."
+msgstr "El elemento %d no es un número decimal."
+
+msgid "Element %d is not a function."
+msgstr "El elemento %d no es una función."
+
+msgid "Element %d is not a long."
+msgstr "El elemento %d no es un long."
+
+msgid "Element %d is not an array."
+msgstr "El elemento %d no es una matriz."
+
+msgid "Element %d is not an int."
+msgstr "El elemento %d no es un int."
+
+msgid "Element %d is not a string."
+msgstr "El elemento %d no es una cadena."
+
+msgid "else appeared after else."
+msgstr "else utilizado después de else."
+
+msgid "else-if appeared after else."
+msgstr "else-if utilizado después de else."
+
+msgid "else-if block appeared without if block."
+msgstr "bloque else-if utilizado sin un bloque if."
 
 msgid "Empty array."
 msgstr "Arreglo vacío."
 
+msgid "Entering REPL mode.\n"
+msgstr "Entrando en modo REPL.\n"
+
+msgid "Error: %s: %d: %s\n"
+msgstr "Error: %s: %d: %s\n"
+
+msgid "Exceeded the maximum argument count."
+msgstr "Se ha superado el número máximo de argumentos."
+
+msgid "Failed to load bytecode."
+msgstr "No se ha podido cargar el bytecode."
+
+msgid "Failed to load bytecode data."
+msgstr "No se pudo cargar los datos de bytecode."
+
+msgid "Invalid shift amount."
+msgstr "Cantidad de desplazamiento no válida."
+
+msgid "JIT compilation is enabled. Starting the fast VM...\n"
+msgstr "La compilación JIT está activada. Iniciando la máquina virtual rápida...\n"
+
+msgid "LHS is not a symbol or an array element."
+msgstr "LHS no es un símbolo ni un elemento de un array."
+
+msgid "LHS is not a term or an array element."
+msgstr "LHS no es un término ni un elemento de un array."
+
+msgid "LIR: Out of memory error."
+msgstr "LIR: No hay suficiente memoria."
+
+msgid "Memory mapping failed."
+msgstr "El mapeo de la memoria ha fallado."
+
+msgid "Not a dictionary."
+msgstr "No es un diccionario."
+
+msgid "Argument (%d: %s) is not an array."
+msgstr "Argumento (%d: %s) no es una matriz."
+
+msgid "Not an array or a dictionary."
+msgstr "No es un array ni un diccionario."
+
+msgid "Not a packed."
+msgstr "No es un packed."
+
 msgid "Out of memory."
 msgstr "Memoria insuficiente."
+
+msgid "Out of memory.\n"
+msgstr "Memoria insuficiente.\n"
+
+msgid "Packed size is 0."
+msgstr "El tamaño del packed es 0."
+
+msgid "Packed size is too large."
+msgstr "El tamaño del packed es demasiado grande."
+
+msgid "Searching directory %s.\n"
+msgstr "Buscando en el directorio %s.\n"
+
+msgid "%s(): Function arguments not match."
+msgstr "%s(): Los argumentos de la función no coinciden."
+
+msgid "Skipping empty directory %s.\n"
+msgstr "Omitiendo el directorio vacío %s.\n"
+
+msgid "%s: Out of memory while parsing."
+msgstr "%s: No hay suficiente memoria."
+
+msgid "Specify a command.\n"
+msgstr "Especifique un comando.\n"
+
+msgid "Stack overflow."
+msgstr "Desbordamiento de pila."
+
+msgid "Stack underflow."
+msgstr "Desbordamiento inferior de pila."
+
+msgid "Subscript is negative."
+msgstr "El subíndice es negativo."
+
+msgid "Subscript not an integer."
+msgstr "El subíndice no es un entero."
+
+msgid "Subscript not a string."
+msgstr "El subíndice no es un string."
+
+msgid "Too many anonymous functions."
+msgstr "Hay demasiadas funciones anónimas."
+
+msgid "Too many functions."
+msgstr "Hay demasiadas funciones."
+
+msgid "Too many jumps."
+msgstr "Hay demasiados saltos."
+
+msgid "Too many local variables."
+msgstr "Hay demasiadas variables locales."
+
+msgid "Too many parameters."
+msgstr "Hay demasiados parámetros."
 
 msgid "Too many pinned global variables."
 msgstr "Demasiadas variables globales fijadas."
@@ -186,47 +222,104 @@ msgstr "Demasiadas variables globales fijadas."
 msgid "Too many pinned local variables."
 msgstr "Demasiadas variables locales fijadas."
 
-msgid "Cannot open file %s.\n"
-msgstr "No se puede abrir el archivo %s.\n"
-
-msgid "Cannot read file %s.\n"
-msgstr "No se puede leer el archivo %s.\n"
-
-msgid "Error: %s: %d: %s\n"
-msgstr "Error: %s: %d: %s\n"
-
-msgid "Adding file %s\n"
-msgstr "Añadiendo el archivo %s\n"
-
-msgid "Cannot find %s.\n"
-msgstr "No se puede encontrar %s.\n"
-
-msgid "Searching directory %s.\n"
-msgstr "Buscando en el directorio %s.\n"
-
-msgid "Skipping empty directory %s.\n"
-msgstr "Omitiendo el directorio vacío %s.\n"
-
 msgid "Unknown option %s.\n"
 msgstr "Opción desconocida %s.\n"
 
+msgid "Value for key %s is not a dictionary."
+msgstr "El valor de la clave %s no es un diccionario."
+
+msgid "Value for key %s is not a double."
+msgstr "El valor de la clave %s no es un double."
+
+msgid "Value for key %s is not a float."
+msgstr "El valor de la clave %s no es un número decimal."
+
+msgid "Value for key %s is not a function."
+msgstr "El valor de la clave %s no es una función."
+
+msgid "Value for key %s is not a long."
+msgstr "El valor de la clave %s no es un long."
+
+msgid "Value for key %s is not an array."
+msgstr "El valor de la clave %s no es una matriz."
+
+msgid "Value for key %s is not an int."
+msgstr "El valor de la clave %s no es un int."
+
+msgid "Value for key %s is not a string."
+msgstr "El valor de la clave %s no es una cadena."
+
+msgid "Value is not a float."
+msgstr "El valor no es un número decimal."
+
+msgid "Value is not a function."
+msgstr "El valor no es una función."
+
+msgid "Value is not a long."
+msgstr "El valor no es un long."
+
+msgid "Value is not an array."
+msgstr "El valor no es un array."
+
+msgid "Value is not an int."
+msgstr "El valor no es un int."
+
+msgid "Value is not an integer."
+msgstr "El valor no es un entero."
+
+msgid "Value is not a number."
+msgstr "El valor no es un número."
+
+msgid "Value is not a number or a string."
+msgstr "El valor no es un número ni un string."
+
+msgid "Value is not a string."
+msgstr "El valor no es un string."
+
+msgid "Value is not a string, an array, or a dictionary."
+msgstr "El valor no es un string, un array ni un diccionario."
+
+msgid "var is specified without a single symbol."
+msgstr "var es especificado sin un solo símbolo."
+
+msgid "syntax error"
+msgstr "Error de sintaxis."
+
+msgid "Branch target not found."
+msgstr "El destino de la rama no se ha encontrado."
+
+msgid "Not an array."
+msgstr "No es un array."
+
+msgid "Local variable \"%s\" not found."
+msgstr "La variable local \"%s\" no se ha encontrado."
+
+msgid "Global variable \"%s\" not found."
+msgstr "La variable global \"%s\" no se ha encontrado."
+
+msgid "Not an array, dictionary, or packed."
+msgstr "No es un array, un diccionario ni un packed."
+
+msgid "Dictionary index out-of-range."
+msgstr "El índice del diccionario está fuera de rango."
+
+msgid "Element %d is not an integer."
+msgstr "El elemento %d no es un número entero."
+
+msgid "Value for key %s is not an integer."
+msgstr "El valor de la clave %s no es un número entero."
+
+msgid "Not a function."
+msgstr "No es una función."
+
 msgid "Specify a file.\n"
 msgstr "Especifique un archivo.\n"
-
-msgid "Out of memory.\n"
-msgstr "Memoria insuficiente.\n"
 
 msgid "Noct Programming Language\n"
 msgstr "Lenguaje de programación Noct\n"
 
 msgid "Version %s\n"
 msgstr "Versión %s\n"
-
-msgid "Entering REPL mode.\n"
-msgstr "Entrando en modo REPL.\n"
-
-msgid "JIT compilation is enabled. Starting the fast VM...\n"
-msgstr "La compilación JIT está activada. Iniciando la máquina virtual rápida...\n"
 
 msgid "Usage\n"
 msgstr "Uso\n"

@@ -3,29 +3,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "%s:%d: %s"
-msgstr "%s:%d : %s"
-
-msgid "Error: %s:%d: %s"
-msgstr "Erreur : %s:%d : %s"
-
-msgid "Error: %s:%d: Tag %s:"
-msgstr "Erreur : %s:%d : Tag %s:"
-
-msgid "Error: %s:%d: Runtime error"
-msgstr "Erreur : %s:%d: Erreur d'exécution"
-
-msgid "Error: %s:%d: Tag \"%s\" not found."
-msgstr "Erreur : %s:%d : Balise \"%s\" introuvable."
-
-msgid "Error: %s:%d: \"Tag_%s\" is not a function."
-msgstr "Erreur : %s:%d : \"Tag_%s\" n'est pas une fonction."
-
 msgid "Argument \"%s\" not specified."
 msgstr "Argument \"%s\" non spécifié."
 
 msgid "Cannot play sound file \"%s\"."
 msgstr "Impossible de lire le fichier sonore \"%s\"."
+
+msgid "Cannot play video file %s."
+msgstr "Impossible de lire le fichier vidéo %s."
 
 msgid "Conifg \"%s\" not found."
 msgstr "Configuration \"%s\" introuvable."
@@ -35,6 +20,24 @@ msgstr "Clé de configuration en double %s."
 
 msgid "Error loading GUI file %s."
 msgstr "Erreur lors du chargement du fichier GUI %s."
+
+msgid "Error: %s:%d: %s"
+msgstr "Erreur : %s:%d : %s"
+
+msgid "Error: %s:%d: Runtime error"
+msgstr "Erreur : %s:%d: Erreur d'exécution"
+
+msgid "Error: %s:%d: Tag %s: "
+msgstr "Erreur : %s:%d : Tag %s: "
+
+msgid "Error: %s:%d: \"Tag_%s\" is not a function."
+msgstr "Erreur : %s:%d : \"Tag_%s\" n'est pas une fonction."
+
+msgid "Error: %s:%d: Tag \"%s\" not found."
+msgstr "Erreur : %s:%d : Balise \"%s\" introuvable."
+
+msgid "Failed to create an image for layer: %s"
+msgstr "Échec de la création d'une image pour le calque : %s"
 
 msgid "Failed to write save data."
 msgstr "Échec de l'écriture des données de sauvegarde."
@@ -59,6 +62,9 @@ msgstr "Caractère \"%c\" non valide lors de l'analyse du fichier d'animation \"
 
 msgid "Invalid character."
 msgstr "Caractère non valide."
+
+msgid "Invalid config line at file \"%s\" line %d."
+msgstr "Ligne de configuration non valide dans le fichier \"%s\" ligne %d."
 
 msgid "Invalid fade method \"%s\"."
 msgstr "Méthode de fondu \"%s\" non valide."
@@ -111,8 +117,14 @@ msgstr "Aucun endif correspondant trouvé."
 msgid "No matching endmacro found."
 msgstr "Aucun endmacro correspondant trouvé."
 
+msgid "No matching localized text."
+msgstr "Aucun texte localisé correspondant n'a été trouvé."
+
 msgid "No operator specified."
 msgstr "Aucun opérateur spécifié."
+
+msgid "Property %s is not allowed for tag %s."
+msgstr "La propriété %s n'est pas autorisée pour la balise %s."
 
 msgid "Property name too long."
 msgstr "Nom de propriété trop long."
@@ -168,6 +180,9 @@ msgstr "Clé de configuration \"%s\" non définie."
 msgid "Unexpected EOF."
 msgstr "Fin de fichier (EOF) inattendue."
 
+msgid "Unknown action \"%s\" is specified on the page mode."
+msgstr "L'action \"%s\" inconnue est spécifiée en mode page."
+
 msgid "Unknown button property \"%s\" found in GUI file \"%s\" line %d."
 msgstr "Propriété de bouton \"%s\" inconnue dans le fichier GUI \"%s\" ligne %d."
 
@@ -180,12 +195,9 @@ msgstr "Clé de configuration \"%s\" inconnue."
 msgid "Unknown global key \"%s\" found in GUI file \"%s\" line %d."
 msgstr "Clé globale \"%s\" inconnue dans le fichier GUI \"%s\" ligne %d."
 
-msgid "Unkwon key \"%s\" while parsing anime file \"%s\" line %d."
+msgid "Unknown key \"%s\" while parsing anime file \"%s\" line %d.\""
 msgstr "Clé \"%s\" inconnue lors de l'analyse du fichier d'animation \"%s\" ligne %d."
 
-msgid "Invalid config line at file \"%s\" line %d."
-msgstr "Ligne de configuration non valide dans le fichier \"%s\" ligne %d."
-
-msgid "No matching localized text."
-msgstr "Aucun texte localisé correspondant n'a été trouvé."
+msgid "endmacro outside a macro call."
+msgstr "endmacro en dehors d'un appel de macro."
 

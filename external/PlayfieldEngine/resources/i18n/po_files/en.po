@@ -3,35 +3,29 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Error: %s: %d: %s"
-msgstr "Error: %s: %d: %s"
-
-msgid "Cannot open file \"%s\"."
-msgstr "Cannot open file \"%s\"."
-
-msgid "Cannot get the size of file \"%s\"."
-msgstr "Cannot get the size of file \"%s\"."
-
-msgid "Cannot read file \"%s\"."
-msgstr "Cannot read file \"%s\"."
-
-msgid "In tag %s:%d: runtime error."
-msgstr "In tag %s:%d: runtime error."
-
-msgid "%s:%d: Tag \"%s\" not found."
-msgstr "%s:%d: Tag \"%s\" not found."
-
-msgid "%s:%d: \"tag_%s\" is not a function."
-msgstr "%s:%d: \"tag_%s\" is not a function."
-
-msgid "In tag %s:%d: Tag \"%s\" execution error."
-msgstr "In tag %s:%d: Tag \"%s\" execution error."
+msgid "Adding file \"%s\"."
+msgstr "Adding file \"%s\"."
 
 msgid "Cannot determine the file type for \"%s\"."
 msgstr "Cannot determine the file type for \"%s\"."
 
+msgid "Cannot get the size of file \"%s\"."
+msgstr "Cannot get the size of file \"%s\"."
+
 msgid "Cannot load an image \"%s\"."
 msgstr "Cannot load an image \"%s\"."
+
+msgid "Cannot open a save file."
+msgstr "Cannot open a save file."
+
+msgid "Cannot open file \"%s\"."
+msgstr "Cannot open file \"%s\"."
+
+msgid "Cannot read file \"%s\"."
+msgstr "Cannot read file \"%s\"."
+
+msgid "Error: %s: %d: %s"
+msgstr "Error: %s: %d: %s"
 
 msgid "Too many textures."
 msgstr "Too many textures."
@@ -47,9 +41,6 @@ msgstr "Cannot make the save directory."
 
 msgid "Save data key too long."
 msgstr "Save data key too long."
-
-msgid "Cannot open a save file."
-msgstr "Cannot open a save file."
 
 msgid "Cannot write to a save file."
 msgstr "Cannot write to a save file."
@@ -75,9 +66,6 @@ msgstr "Searching directory \"%s\"."
 msgid "Skipping empty directory \"%s\"."
 msgstr "Skipping empty directory \"%s\"."
 
-msgid "Adding file \"%s\"."
-msgstr "Adding file \"%s\"."
-
 msgid "Parameter is not set."
 msgstr "Parameter is not set."
 
@@ -92,4 +80,13 @@ msgstr "Unexpected parameter value for \"%s.%s\"."
 
 msgid "Cannot deserialize function."
 msgstr "Cannot deserialize function."
+
+msgid "Out of memory."
+msgstr "Out of memory."
+
+msgid "Parameter \"%s\" is not set."
+msgstr "Parameter \"%s\" is not set."
+
+msgid "Parameter is required to be a dictionary."
+msgstr "Parameter is required to be a dictionary."
 

@@ -3,35 +3,29 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Error: %s: %d: %s"
-msgstr "Σφάλμα: %s: %d: %s"
-
-msgid "Cannot open file \"%s\"."
-msgstr "Δεν είναι δυνατό το άνοιγμα του αρχείου \"%s\"."
-
-msgid "Cannot get the size of file \"%s\"."
-msgstr "Δεν είναι δυνατή η λήψη του μεγέθους του αρχείου \"%s\"."
-
-msgid "Cannot read file \"%s\"."
-msgstr "Δεν είναι δυνατή η ανάγνωση του αρχείου \"%s\"."
-
-msgid "In tag %s:%d: runtime error."
-msgstr "Στην ετικέτα %s:%d: σφάλμα χρόνου εκτέλεσης."
-
-msgid "%s:%d: Tag \"%s\" not found."
-msgstr "%s:%d: Η ετικέτα \"%s\" δεν βρέθηκε."
-
-msgid "%s:%d: \"tag_%s\" is not a function."
-msgstr "%s:%d: Το \"tag_%s\" δεν είναι συνάρτηση."
-
-msgid "In tag %s:%d: Tag \"%s\" execution error."
-msgstr "Στην ετικέτα %s:%d: Σφάλμα εκτέλεσης στην ετικέτα \"%s\"."
+msgid "Adding file \"%s\"."
+msgstr "Προσθήκη αρχείου \"%s\"."
 
 msgid "Cannot determine the file type for \"%s\"."
 msgstr "Δεν είναι δυνατός ο προσδιορισμός του τύπου αρχείου για το \"%s\"."
 
+msgid "Cannot get the size of file \"%s\"."
+msgstr "Δεν είναι δυνατή η λήψη του μεγέθους του αρχείου \"%s\"."
+
 msgid "Cannot load an image \"%s\"."
 msgstr "Δεν είναι δυνατή η φόρτωση της εικόνας \"%s\"."
+
+msgid "Cannot open a save file."
+msgstr "Δεν είναι δυνατό το άνοιγμα ενός αρχείου αποθήκευσης."
+
+msgid "Cannot open file \"%s\"."
+msgstr "Δεν είναι δυνατό το άνοιγμα του αρχείου \"%s\"."
+
+msgid "Cannot read file \"%s\"."
+msgstr "Δεν είναι δυνατή η ανάγνωση του αρχείου \"%s\"."
+
+msgid "Error: %s: %d: %s"
+msgstr "Σφάλμα: %s: %d: %s"
 
 msgid "Too many textures."
 msgstr "Πάρα πολλές υφές."
@@ -47,9 +41,6 @@ msgstr "Δεν είναι δυνατή η δημιουργία του καταλ
 
 msgid "Save data key too long."
 msgstr "Το κλειδί των δεδομένων αποθήκευσης είναι πολύ μεγάλο."
-
-msgid "Cannot open a save file."
-msgstr "Δεν είναι δυνατό το άνοιγμα ενός αρχείου αποθήκευσης."
 
 msgid "Cannot write to a save file."
 msgstr "Δεν είναι δυνατή η εγγραφή σε ένα αρχείο αποθήκευσης."
@@ -75,9 +66,6 @@ msgstr "Αναζήτηση στον κατάλογο \"%s\"."
 msgid "Skipping empty directory \"%s\"."
 msgstr "Παράλειψη κενού καταλόγου \"%s\"."
 
-msgid "Adding file \"%s\"."
-msgstr "Προσθήκη αρχείου \"%s\"."
-
 msgid "Parameter is not set."
 msgstr "Η παράμετρος δεν έχει οριστεί."
 
@@ -92,4 +80,13 @@ msgstr "Μη αναμενόμενη τιμή παραμέτρου για \"%s.%s
 
 msgid "Cannot deserialize function."
 msgstr "Αδυναμία αποσειριοποίησης της συνάρτησης."
+
+msgid "Out of memory."
+msgstr "Δεν υπάρχει αρκετή μνήμη."
+
+msgid "Parameter \"%s\" is not set."
+msgstr "Η παράμετρος \"%s\" δεν έχει οριστεί."
+
+msgid "Parameter is required to be a dictionary."
+msgstr "Η παράμετρος πρέπει να είναι λεξικό."
 

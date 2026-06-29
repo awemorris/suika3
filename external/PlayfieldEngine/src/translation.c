@@ -1,36 +1,3 @@
-/* -*- coding: utf-8; tab-width: 8; indent-tabs-mode: t; -*- */
-
-/*
- * Playfield Engine
- * Translation
- */
-
-/*-
- * SPDX-License-Identifier: Zlib
- *
- * Playfield Engine
- * Copyright (c) 2025-2026 Awe Morris
- *
- * This software is derived from the codebase of Suika2.
- * Copyright (c) 1996-2024 Keiichi Tabata
- *
- * This software is provided 'as-is', without any express or implied
- * warranty. In no event will the authors be held liable for any damages
- * arising from the use of this software.
- *
- * Permission is granted to anyone to use this software for any purpose,
- * including commercial applications, and to alter it and redistribute it
- * freely, subject to the following restrictions:
- *
- * 1. The origin of this software must not be misrepresented; you must not
- *    claim that you wrote the original software. If you use this software
- *    in a product, an acknowledgment in the product documentation would be
- *    appreciated but is not required.
- * 2. Altered source versions must be plainly marked as such, and must not be
- *    misrepresented as being the original software.
- * 3. This notice may not be removed or altered from any source distribution.
- */
-
 #include <string.h>
 
 const char *hal_get_system_language(void);
@@ -38,109 +5,18 @@ const char *hal_get_system_language(void);
 const char *pf_gettext(const char *msg)
 {
     const char *lang_code = hal_get_system_language();
-    if (strcmp(msg, "Error: %s: %d: %s") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s: %d: %s";
-        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s: %d: %s";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s : %d : %s";
-        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s: %d: %s";
-        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s: %d: %s";
-        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s: %d: %s";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s: %d: %s";
-        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s: %d: %s";
-        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s: %d: %s";
-        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s: %d: %s";
-        return "Error: %s: %d: %s";
-    }
-    if (strcmp(msg, "Cannot open file \"%s\".") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "Cannot open file \"%s\".";
-        if (strncmp(lang_code, "es", 2) == 0) return "No se puede abrir el archivo \"%s\".";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Impossible d'ouvrir le fichier \"%s\".";
-        if (strncmp(lang_code, "it", 2) == 0) return "Impossibile aprire il file \"%s\".";
-        if (strncmp(lang_code, "de", 2) == 0) return "Datei \"%s\" kann nicht geöffnet werden.";
-        if (strncmp(lang_code, "el", 2) == 0) return "Δεν είναι δυνατό το άνοιγμα του αρχείου \"%s\".";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Невозможно открыть файл \"%s\".";
-        if (strncmp(lang_code, "zh", 2) == 0) return "无法打开文件 \"%s\"。";
-        if (strncmp(lang_code, "tw", 2) == 0) return "無法打開檔案 \"%s\"。";
-        if (strncmp(lang_code, "ja", 2) == 0) return "ファイル \"%s\" を開けません。";
-        return "Cannot open file \"%s\".";
-    }
-    if (strcmp(msg, "Cannot get the size of file \"%s\".") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "Cannot get the size of file \"%s\".";
-        if (strncmp(lang_code, "es", 2) == 0) return "No se puede obtener el tamaño del archivo \"%s\".";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Impossible d'obtenir la taille du fichier \"%s\".";
-        if (strncmp(lang_code, "it", 2) == 0) return "Impossibile ottenere la dimensione del file \"%s\".";
-        if (strncmp(lang_code, "de", 2) == 0) return "Die Größe der Datei \"%s\" kann nicht ermittelt werden.";
-        if (strncmp(lang_code, "el", 2) == 0) return "Δεν είναι δυνατή η λήψη του μεγέθους του αρχείου \"%s\".";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Невозможно получить размер файла \"%s\".";
-        if (strncmp(lang_code, "zh", 2) == 0) return "无法获取文件 \"%s\" 的大小。";
-        if (strncmp(lang_code, "tw", 2) == 0) return "無法取得檔案 \"%s\" 的大小。";
-        if (strncmp(lang_code, "ja", 2) == 0) return "ファイル \"%s\" のサイズを取得できません。";
-        return "Cannot get the size of file \"%s\".";
-    }
-    if (strcmp(msg, "Cannot read file \"%s\".") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "Cannot read file \"%s\".";
-        if (strncmp(lang_code, "es", 2) == 0) return "No se puede leer el archivo \"%s\".";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Impossible de lire le fichier \"%s\".";
-        if (strncmp(lang_code, "it", 2) == 0) return "Impossibile leggere il file \"%s\".";
-        if (strncmp(lang_code, "de", 2) == 0) return "Datei \"%s\" kann nicht gelesen werden.";
-        if (strncmp(lang_code, "el", 2) == 0) return "Δεν είναι δυνατή η ανάγνωση του αρχείου \"%s\".";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Невозможно прочитать файл \"%s\".";
-        if (strncmp(lang_code, "zh", 2) == 0) return "无法读取文件 \"%s\"。";
-        if (strncmp(lang_code, "tw", 2) == 0) return "無法讀取檔案 \"%s\"。";
-        if (strncmp(lang_code, "ja", 2) == 0) return "ファイル \"%s\" を読み込めません。";
-        return "Cannot read file \"%s\".";
-    }
-    if (strcmp(msg, "In tag %s:%d: runtime error.") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "In tag %s:%d: runtime error.";
-        if (strncmp(lang_code, "es", 2) == 0) return "En la etiqueta %s:%d: error en tiempo de ejecución.";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Dans la balise %s : %d : erreur d'exécution.";
-        if (strncmp(lang_code, "it", 2) == 0) return "Nel tag %s:%d: errore di runtime.";
-        if (strncmp(lang_code, "de", 2) == 0) return "In Tag %s:%d: Laufzeitfehler.";
-        if (strncmp(lang_code, "el", 2) == 0) return "Στην ετικέτα %s:%d: σφάλμα χρόνου εκτέλεσης.";
-        if (strncmp(lang_code, "ru", 2) == 0) return "В теге %s:%d: ошибка выполнения.";
-        if (strncmp(lang_code, "zh", 2) == 0) return "在标签 %s:%d: 运行时错误。";
-        if (strncmp(lang_code, "tw", 2) == 0) return "在標籤 %s:%d: 執行時錯誤。";
-        if (strncmp(lang_code, "ja", 2) == 0) return "タグ %s:%d: 実行エラー";
-        return "In tag %s:%d: runtime error.";
-    }
-    if (strcmp(msg, "%s:%d: Tag \"%s\" not found.") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "%s:%d: Tag \"%s\" not found.";
-        if (strncmp(lang_code, "es", 2) == 0) return "%s:%d: No se encontró la etiqueta \"%s\".";
-        if (strncmp(lang_code, "fr", 2) == 0) return "%s : %d : Balise \"%s\" introuvable.";
-        if (strncmp(lang_code, "it", 2) == 0) return "%s:%d: Tag \"%s\" non trovato.";
-        if (strncmp(lang_code, "de", 2) == 0) return "%s:%d: Tag \"%s\" wurde nicht gefunden.";
-        if (strncmp(lang_code, "el", 2) == 0) return "%s:%d: Η ετικέτα \"%s\" δεν βρέθηκε.";
-        if (strncmp(lang_code, "ru", 2) == 0) return "%s:%d: Тег \"%s\" не найден.";
-        if (strncmp(lang_code, "zh", 2) == 0) return "%s:%d: 未找到标签 \"%s\"。";
-        if (strncmp(lang_code, "tw", 2) == 0) return "%s:%d: 找不到標籤 \"%s\"。";
-        if (strncmp(lang_code, "ja", 2) == 0) return "%s:%d: タグ \"%s\" がみつかりません。";
-        return "%s:%d: Tag \"%s\" not found.";
-    }
-    if (strcmp(msg, "%s:%d: \"tag_%s\" is not a function.") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "%s:%d: \"tag_%s\" is not a function.";
-        if (strncmp(lang_code, "es", 2) == 0) return "%s:%d: \"tag_%s\" no es una función.";
-        if (strncmp(lang_code, "fr", 2) == 0) return "%s : %d : \"tag_%s\" n'est pas une fonction.";
-        if (strncmp(lang_code, "it", 2) == 0) return "%s:%d: \"tag_%s\" non è una funzione.";
-        if (strncmp(lang_code, "de", 2) == 0) return "%s:%d: \"tag_%s\" ist keine Funktion.";
-        if (strncmp(lang_code, "el", 2) == 0) return "%s:%d: Το \"tag_%s\" δεν είναι συνάρτηση.";
-        if (strncmp(lang_code, "ru", 2) == 0) return "%s:%d: \"tag_%s\" не является функцией.";
-        if (strncmp(lang_code, "zh", 2) == 0) return "%s:%d: \"tag_%s\" 不是函数。";
-        if (strncmp(lang_code, "tw", 2) == 0) return "%s:%d: \"tag_%s\" 不是函式。";
-        if (strncmp(lang_code, "ja", 2) == 0) return "%s:%d: \"tag_%s\" が関数ではありません。";
-        return "%s:%d: \"tag_%s\" is not a function.";
-    }
-    if (strcmp(msg, "In tag %s:%d: Tag \"%s\" execution error.") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "In tag %s:%d: Tag \"%s\" execution error.";
-        if (strncmp(lang_code, "es", 2) == 0) return "En la etiqueta %s:%d: Error de ejecución en la etiqueta \"%s\".";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Dans la balise %s : %d : Erreur d'exécution de la balise \"%s\".";
-        if (strncmp(lang_code, "it", 2) == 0) return "Nel tag %s:%d: Errore di esecuzione del tag \"%s\".";
-        if (strncmp(lang_code, "de", 2) == 0) return "In Tag %s:%d: Ausführungsfehler im Tag \"%s\".";
-        if (strncmp(lang_code, "el", 2) == 0) return "Στην ετικέτα %s:%d: Σφάλμα εκτέλεσης στην ετικέτα \"%s\".";
-        if (strncmp(lang_code, "ru", 2) == 0) return "В теге %s:%d: Ошибка выполнения тега \"%s\".";
-        if (strncmp(lang_code, "zh", 2) == 0) return "在标签 %s:%d: 执行标签 \"%s\" 时出错。";
-        if (strncmp(lang_code, "tw", 2) == 0) return "在標籤 %s:%d: 執行標籤 \"%s\" 時發生錯誤。";
-        if (strncmp(lang_code, "ja", 2) == 0) return "タグ %s:%d: タグ \"%s\" の実行エラーです。";
-        return "In tag %s:%d: Tag \"%s\" execution error.";
+    if (strcmp(msg, "Adding file \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Adding file \"%s\".";
+        if (strncmp(lang_code, "es", 2) == 0) return "Añadiendo archivo \"%s\".";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Ajout du fichier \"%s\".";
+        if (strncmp(lang_code, "it", 2) == 0) return "Aggiunta del file \"%s\".";
+        if (strncmp(lang_code, "de", 2) == 0) return "Datei \"%s\" wird hinzugefügt.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Προσθήκη αρχείου \"%s\".";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Добавление файла «%s».";
+        if (strncmp(lang_code, "zh", 2) == 0) return "正在添加文件 \"%s\"。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "正在新增檔案 \"%s\"。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "ファイル \"%s\" を追加しています。";
+        return "Adding file \"%s\".";
     }
     if (strcmp(msg, "Cannot determine the file type for \"%s\".") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Cannot determine the file type for \"%s\".";
@@ -155,6 +31,19 @@ const char *pf_gettext(const char *msg)
         if (strncmp(lang_code, "ja", 2) == 0) return "\"%s\" のファイルタイプを決定できません。";
         return "Cannot determine the file type for \"%s\".";
     }
+    if (strcmp(msg, "Cannot get the size of file \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot get the size of file \"%s\".";
+        if (strncmp(lang_code, "es", 2) == 0) return "No se puede obtener el tamaño del archivo \"%s\".";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Impossible d'obtenir la taille du fichier \"%s\".";
+        if (strncmp(lang_code, "it", 2) == 0) return "Impossibile ottenere la dimensione del file \"%s\".";
+        if (strncmp(lang_code, "de", 2) == 0) return "Die Größe der Datei \"%s\" kann nicht ermittelt werden.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Δεν είναι δυνατή η λήψη του μεγέθους του αρχείου \"%s\".";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Невозможно получить размер файла \"%s\".";
+        if (strncmp(lang_code, "zh", 2) == 0) return "无法获取文件 \"%s\" 的大小。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "無法取得檔案 \"%s\" 的大小。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "ファイル \"%s\" のサイズを取得できません。";
+        return "Cannot get the size of file \"%s\".";
+    }
     if (strcmp(msg, "Cannot load an image \"%s\".") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Cannot load an image \"%s\".";
         if (strncmp(lang_code, "es", 2) == 0) return "No se puede cargar la imagen \"%s\".";
@@ -167,6 +56,58 @@ const char *pf_gettext(const char *msg)
         if (strncmp(lang_code, "tw", 2) == 0) return "無法載入圖片 \"%s\"。";
         if (strncmp(lang_code, "ja", 2) == 0) return "画像 \"%s\" をロードできません。";
         return "Cannot load an image \"%s\".";
+    }
+    if (strcmp(msg, "Cannot open a save file.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot open a save file.";
+        if (strncmp(lang_code, "es", 2) == 0) return "No se puede abrir un archivo de guardado.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Impossible d'ouvrir un fichier de sauvegarde.";
+        if (strncmp(lang_code, "it", 2) == 0) return "Impossibile aprire un file di salvataggio.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Eine Speicherdatei kann nicht geöffnet werden.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Δεν είναι δυνατό το άνοιγμα ενός αρχείου αποθήκευσης.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Не удалось открыть файл сохранения.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "无法打开存档文件。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "無法開啟存檔檔案。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "セーブファイルを開けません。";
+        return "Cannot open a save file.";
+    }
+    if (strcmp(msg, "Cannot open file \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot open file \"%s\".";
+        if (strncmp(lang_code, "es", 2) == 0) return "No se puede abrir el archivo \"%s\".";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Impossible d'ouvrir le fichier \"%s\".";
+        if (strncmp(lang_code, "it", 2) == 0) return "Impossibile aprire il file \"%s\".";
+        if (strncmp(lang_code, "de", 2) == 0) return "Datei \"%s\" kann nicht geöffnet werden.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Δεν είναι δυνατό το άνοιγμα του αρχείου \"%s\".";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Невозможно открыть файл \"%s\".";
+        if (strncmp(lang_code, "zh", 2) == 0) return "无法打开文件 \"%s\"。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "無法打開檔案 \"%s\"。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "ファイル \"%s\" を開けません。";
+        return "Cannot open file \"%s\".";
+    }
+    if (strcmp(msg, "Cannot read file \"%s\".") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Cannot read file \"%s\".";
+        if (strncmp(lang_code, "es", 2) == 0) return "No se puede leer el archivo \"%s\".";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Impossible de lire le fichier \"%s\".";
+        if (strncmp(lang_code, "it", 2) == 0) return "Impossibile leggere il file \"%s\".";
+        if (strncmp(lang_code, "de", 2) == 0) return "Datei \"%s\" kann nicht gelesen werden.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Δεν είναι δυνατή η ανάγνωση του αρχείου \"%s\".";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Невозможно прочитать файл \"%s\".";
+        if (strncmp(lang_code, "zh", 2) == 0) return "无法读取文件 \"%s\"。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "無法讀取檔案 \"%s\"。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "ファイル \"%s\" を読み込めません。";
+        return "Cannot read file \"%s\".";
+    }
+    if (strcmp(msg, "Error: %s: %d: %s") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Error: %s: %d: %s";
+        if (strncmp(lang_code, "es", 2) == 0) return "Error: %s: %d: %s";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Erreur : %s : %d : %s";
+        if (strncmp(lang_code, "it", 2) == 0) return "Errore: %s: %d: %s";
+        if (strncmp(lang_code, "de", 2) == 0) return "Fehler: %s: %d: %s";
+        if (strncmp(lang_code, "el", 2) == 0) return "Σφάλμα: %s: %d: %s";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Ошибка: %s: %d: %s";
+        if (strncmp(lang_code, "zh", 2) == 0) return "错误: %s: %d: %s";
+        if (strncmp(lang_code, "tw", 2) == 0) return "錯誤: %s: %d: %s";
+        if (strncmp(lang_code, "ja", 2) == 0) return "エラー: %s: %d: %s";
+        return "Error: %s: %d: %s";
     }
     if (strcmp(msg, "Too many textures.") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Too many textures.";
@@ -232,19 +173,6 @@ const char *pf_gettext(const char *msg)
         if (strncmp(lang_code, "tw", 2) == 0) return "存檔資料鍵太長。";
         if (strncmp(lang_code, "ja", 2) == 0) return "セーブデータキーが長すぎます。";
         return "Save data key too long.";
-    }
-    if (strcmp(msg, "Cannot open a save file.") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "Cannot open a save file.";
-        if (strncmp(lang_code, "es", 2) == 0) return "No se puede abrir un archivo de guardado.";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Impossible d'ouvrir un fichier de sauvegarde.";
-        if (strncmp(lang_code, "it", 2) == 0) return "Impossibile aprire un file di salvataggio.";
-        if (strncmp(lang_code, "de", 2) == 0) return "Eine Speicherdatei kann nicht geöffnet werden.";
-        if (strncmp(lang_code, "el", 2) == 0) return "Δεν είναι δυνατό το άνοιγμα ενός αρχείου αποθήκευσης.";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Не удалось открыть файл сохранения.";
-        if (strncmp(lang_code, "zh", 2) == 0) return "无法打开存档文件。";
-        if (strncmp(lang_code, "tw", 2) == 0) return "無法開啟存檔檔案。";
-        if (strncmp(lang_code, "ja", 2) == 0) return "セーブファイルを開けません。";
-        return "Cannot open a save file.";
     }
     if (strcmp(msg, "Cannot write to a save file.") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Cannot write to a save file.";
@@ -350,19 +278,6 @@ const char *pf_gettext(const char *msg)
         if (strncmp(lang_code, "ja", 2) == 0) return "空のディレクトリ \"%s\" をスキップします。";
         return "Skipping empty directory \"%s\".";
     }
-    if (strcmp(msg, "Adding file \"%s\".") == 0) {
-        if (strncmp(lang_code, "en", 2) == 0) return "Adding file \"%s\".";
-        if (strncmp(lang_code, "es", 2) == 0) return "Añadiendo archivo \"%s\".";
-        if (strncmp(lang_code, "fr", 2) == 0) return "Ajout du fichier \"%s\".";
-        if (strncmp(lang_code, "it", 2) == 0) return "Aggiunta del file \"%s\".";
-        if (strncmp(lang_code, "de", 2) == 0) return "Datei \"%s\" wird hinzugefügt.";
-        if (strncmp(lang_code, "el", 2) == 0) return "Προσθήκη αρχείου \"%s\".";
-        if (strncmp(lang_code, "ru", 2) == 0) return "Добавление файла «%s».";
-        if (strncmp(lang_code, "zh", 2) == 0) return "正在添加文件 \"%s\"。";
-        if (strncmp(lang_code, "tw", 2) == 0) return "正在新增檔案 \"%s\"。";
-        if (strncmp(lang_code, "ja", 2) == 0) return "ファイル \"%s\" を追加しています。";
-        return "Adding file \"%s\".";
-    }
     if (strcmp(msg, "Parameter is not set.") == 0) {
         if (strncmp(lang_code, "en", 2) == 0) return "Parameter is not set.";
         if (strncmp(lang_code, "es", 2) == 0) return "El parámetro no está configurado.";
@@ -427,6 +342,45 @@ const char *pf_gettext(const char *msg)
         if (strncmp(lang_code, "tw", 2) == 0) return "無法反序列化函式。";
         if (strncmp(lang_code, "ja", 2) == 0) return "関数をデシリアライズできません。";
         return "Cannot deserialize function.";
+    }
+    if (strcmp(msg, "Out of memory.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Out of memory.";
+        if (strncmp(lang_code, "es", 2) == 0) return "Memoria insuficiente.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Mémoire insuffisante.";
+        if (strncmp(lang_code, "it", 2) == 0) return "Memoria insufficiente.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Nicht genügend Speicher.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Δεν υπάρχει αρκετή μνήμη.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Недостаточно памяти.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "内存不足。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "記憶體不足。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "メモリが足りません。";
+        return "Out of memory.";
+    }
+    if (strcmp(msg, "Parameter \"%s\" is not set.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Parameter \"%s\" is not set.";
+        if (strncmp(lang_code, "es", 2) == 0) return "El parámetro \"%s\" no está configurado.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Le paramètre \"%s\" n'est pas défini.";
+        if (strncmp(lang_code, "it", 2) == 0) return "Il parametro \"%s\" non è impostato.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Parameter \"%s\" ist nicht gesetzt.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Η παράμετρος \"%s\" δεν έχει οριστεί.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Параметр «%s» не задан.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "未设置参数 \"%s\"。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "未設定參數 \"%s\"。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "パラメータ \"%s\" が設定されていません。";
+        return "Parameter \"%s\" is not set.";
+    }
+    if (strcmp(msg, "Parameter is required to be a dictionary.") == 0) {
+        if (strncmp(lang_code, "en", 2) == 0) return "Parameter is required to be a dictionary.";
+        if (strncmp(lang_code, "es", 2) == 0) return "El parámetro debe ser un diccionario.";
+        if (strncmp(lang_code, "fr", 2) == 0) return "Le paramètre doit être un dictionnaire.";
+        if (strncmp(lang_code, "it", 2) == 0) return "Il parametro deve essere un dizionario.";
+        if (strncmp(lang_code, "de", 2) == 0) return "Der Parameter muss ein Dictionary sein.";
+        if (strncmp(lang_code, "el", 2) == 0) return "Η παράμετρος πρέπει να είναι λεξικό.";
+        if (strncmp(lang_code, "ru", 2) == 0) return "Параметр должен быть словарём.";
+        if (strncmp(lang_code, "zh", 2) == 0) return "参数必须是字典。";
+        if (strncmp(lang_code, "tw", 2) == 0) return "參數必須是字典。";
+        if (strncmp(lang_code, "ja", 2) == 0) return "パラメータは辞書である必要があります。";
+        return "Parameter is required to be a dictionary.";
     }
     return msg;
 }

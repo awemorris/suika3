@@ -415,7 +415,7 @@ noct_get_int(
 
 	/* Check the type. */
 	if (val->type != NOCT_VALUE_INT) {
-		rt_error(env, N_TR("Value is not an integer."));
+		rt_error(env, N_TR("Value is not an int."));
 		return false;
 	}
 
@@ -1432,7 +1432,7 @@ noct_get_array_elem_check_int(
 	if (!noct_get_value_type(env, val, &type))
 		return false;
 	if (type != NOCT_VALUE_INT) {
-		rt_error(env, N_TR("Element %d is not an integer."), index);
+		rt_error(env, N_TR("Element %d is not an int."), index);
 		return false;
 	}
 
@@ -1465,7 +1465,7 @@ noct_get_array_elem_check_long(
 	if (!noct_get_value_type(env, val, &type))
 		return false;
 	if (type != NOCT_VALUE_LONG) {
-		rt_error(env, N_TR("Element %d is not an integer."), index);
+		rt_error(env, N_TR("Element %d is not a long."), index);
 		return false;
 	}
 
@@ -1531,7 +1531,7 @@ noct_get_array_elem_check_double(
 	if (!noct_get_value_type(env, val, &type))
 		return false;
 	if (type != NOCT_VALUE_DOUBLE) {
-		rt_error(env, N_TR("Element %d is not a float."), index);
+		rt_error(env, N_TR("Element %d is not a double."), index);
 		return false;
 	}
 
@@ -1804,7 +1804,7 @@ noct_get_dict_elem_check_int(
 
 	/* Check the element value type. */
 	if (val->type != NOCT_VALUE_INT) {
-		rt_error(env, N_TR("Value for key %s is not an integer."), key);
+		rt_error(env, N_TR("Value for key %s is not an int."), key);
 		return false;
 	}
 
@@ -2173,7 +2173,7 @@ noct_get_arg_check_int(
 
 	/* Check the value type. */
 	if (val->type != NOCT_VALUE_INT) {
-		rt_error(env, N_TR("Argument (%d: %s) not an integer."),
+		rt_error(env, N_TR("Argument (%d: %s) is not an int."),
 			 index,
 			 env->frame->func->param_name[index]);
 		return false;
@@ -2203,7 +2203,7 @@ noct_get_arg_check_long(
 
 	/* Check the value type. */
 	if (val->type != NOCT_VALUE_LONG) {
-		rt_error(env, N_TR("Argument (%d: %s) not an integer."),
+		rt_error(env, N_TR("Argument (%d: %s) is not a long."),
 			 index,
 			 env->frame->func->param_name[index]);
 		return false;
@@ -2237,7 +2237,7 @@ noct_get_arg_check_int_long(
 	} else if (val->type == NOCT_VALUE_LONG) {
 		*i = (size_t)(uint64_t)val->val.l;
 	} else {
-		rt_error(env, N_TR("Argument (%d: %s) not an integer."),
+		rt_error(env, N_TR("Argument (%d: %s) is not an integer."),
 			 index,
 			 env->frame->func->param_name[index]);
 		return false;
@@ -2264,7 +2264,7 @@ noct_get_arg_check_float(
 
 	/* Check the value type. */
 	if (val->type != NOCT_VALUE_FLOAT) {
-		rt_error(env, N_TR("Argument (%d: %s) not a float."),
+		rt_error(env, N_TR("Argument (%d: %s) is not a float."),
 			 index,
 			 env->frame->func->param_name[index]);
 		return false;
@@ -2294,7 +2294,7 @@ noct_get_arg_check_double(
 
 	/* Check the value type. */
 	if (val->type != NOCT_VALUE_DOUBLE) {
-		rt_error(env, N_TR("Argument (%d: %s) not a float."),
+		rt_error(env, N_TR("Argument (%d: %s) is not a double."),
 			 index,
 			 env->frame->func->param_name[index]);
 		return false;
@@ -2324,7 +2324,7 @@ noct_get_arg_check_string(
 
 	/* Check the value type. */
 	if (val->type != NOCT_VALUE_STRING) {
-		rt_error(env, N_TR("Argument (%d: %s) not a string."),
+		rt_error(env, N_TR("Argument (%d: %s) is not a string."),
 			 index,
 			 env->frame->func->param_name[index]);
 		return false;
@@ -2352,7 +2352,7 @@ noct_get_arg_check_array(
 
 	/* Check the value type. */
 	if (val->type != NOCT_VALUE_ARRAY) {
-		rt_error(env, N_TR("Argument (%d: %s) not an array."),
+		rt_error(env, N_TR("Argument (%d: %s) is not an array."),
 			 index,
 			 env->frame->func->param_name[index]);
 		return false;
@@ -2378,7 +2378,7 @@ noct_get_arg_check_dict(
 
 	/* Check the value type. */
 	if (val->type != NOCT_VALUE_DICT) {
-		rt_error(env, N_TR("Argument (%d: %s) not a dictionary."),
+		rt_error(env, N_TR("Argument (%d: %s) is not a dictionary."),
 			 index,
 			 env->frame->func->param_name[index]);
 		return false;
@@ -2405,7 +2405,7 @@ noct_get_arg_check_packed(
 	/* Check the value type. */
 	if (val->type != NOCT_VALUE_PACKED) {
 		rt_error(env,
-			 N_TR("Argument (%d: %s) not a packed."),
+			 N_TR("Argument (%d: %s) is not a packed."),
 			 index,
 			 env->frame->func->param_name[index]);
 		return false;
@@ -2425,7 +2425,7 @@ noct_get_arg_check_packed(
 			default: assert(0); type_s = "(error)"; break;
 			}
 			rt_error(env,
-				 N_TR("Argument (%d: %s) not a packed of type %s."),
+				 N_TR("Argument (%d: %s) is not a packed of type %s."),
 				 index,
 				 env->frame->func->param_name[index],
 				 type_s);
@@ -2453,7 +2453,7 @@ noct_get_arg_check_func(
 
 	/* Check the value type. */
 	if (val->type != NOCT_VALUE_FUNC) {
-		rt_error(env, N_TR("Argument (%d: %s) not a function."),
+		rt_error(env, N_TR("Argument (%d: %s) is not a function."),
 			 index,
 			 env->frame->func->param_name[index]);
 		return false;

@@ -3,35 +3,29 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Error: %s: %d: %s"
-msgstr "エラー: %s: %d: %s"
-
-msgid "Cannot open file \"%s\"."
-msgstr "ファイル \"%s\" を開けません。"
-
-msgid "Cannot get the size of file \"%s\"."
-msgstr "ファイル \"%s\" のサイズを取得できません。"
-
-msgid "Cannot read file \"%s\"."
-msgstr "ファイル \"%s\" を読み込めません。"
-
-msgid "In tag %s:%d: runtime error."
-msgstr "タグ %s:%d: 実行エラー"
-
-msgid "%s:%d: Tag \"%s\" not found."
-msgstr "%s:%d: タグ \"%s\" がみつかりません。"
-
-msgid "%s:%d: \"tag_%s\" is not a function."
-msgstr "%s:%d: \"tag_%s\" が関数ではありません。"
-
-msgid "In tag %s:%d: Tag \"%s\" execution error."
-msgstr "タグ %s:%d: タグ \"%s\" の実行エラーです。"
+msgid "Adding file \"%s\"."
+msgstr "ファイル \"%s\" を追加しています。"
 
 msgid "Cannot determine the file type for \"%s\"."
 msgstr "\"%s\" のファイルタイプを決定できません。"
 
+msgid "Cannot get the size of file \"%s\"."
+msgstr "ファイル \"%s\" のサイズを取得できません。"
+
 msgid "Cannot load an image \"%s\"."
 msgstr "画像 \"%s\" をロードできません。"
+
+msgid "Cannot open a save file."
+msgstr "セーブファイルを開けません。"
+
+msgid "Cannot open file \"%s\"."
+msgstr "ファイル \"%s\" を開けません。"
+
+msgid "Cannot read file \"%s\"."
+msgstr "ファイル \"%s\" を読み込めません。"
+
+msgid "Error: %s: %d: %s"
+msgstr "エラー: %s: %d: %s"
 
 msgid "Too many textures."
 msgstr "テキスチャが多すぎます。"
@@ -47,9 +41,6 @@ msgstr "セーブディレクトリを作成できません。"
 
 msgid "Save data key too long."
 msgstr "セーブデータキーが長すぎます。"
-
-msgid "Cannot open a save file."
-msgstr "セーブファイルを開けません。"
 
 msgid "Cannot write to a save file."
 msgstr "セーブファイルに書き込めません。"
@@ -75,9 +66,6 @@ msgstr "ディレクトリ \"%s\" を検索中。"
 msgid "Skipping empty directory \"%s\"."
 msgstr "空のディレクトリ \"%s\" をスキップします。"
 
-msgid "Adding file \"%s\"."
-msgstr "ファイル \"%s\" を追加しています。"
-
 msgid "Parameter is not set."
 msgstr "パラメータが設定されていません。"
 
@@ -92,4 +80,13 @@ msgstr "パラメータ \"%s.%s\" の値が不正です。"
 
 msgid "Cannot deserialize function."
 msgstr "関数をデシリアライズできません。"
+
+msgid "Out of memory."
+msgstr "メモリが足りません。"
+
+msgid "Parameter \"%s\" is not set."
+msgstr "パラメータ \"%s\" が設定されていません。"
+
+msgid "Parameter is required to be a dictionary."
+msgstr "パラメータは辞書である必要があります。"
 

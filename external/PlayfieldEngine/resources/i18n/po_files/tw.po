@@ -3,35 +3,29 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Error: %s: %d: %s"
-msgstr "錯誤: %s: %d: %s"
-
-msgid "Cannot open file \"%s\"."
-msgstr "無法打開檔案 \"%s\"。"
-
-msgid "Cannot get the size of file \"%s\"."
-msgstr "無法取得檔案 \"%s\" 的大小。"
-
-msgid "Cannot read file \"%s\"."
-msgstr "無法讀取檔案 \"%s\"。"
-
-msgid "In tag %s:%d: runtime error."
-msgstr "在標籤 %s:%d: 執行時錯誤。"
-
-msgid "%s:%d: Tag \"%s\" not found."
-msgstr "%s:%d: 找不到標籤 \"%s\"。"
-
-msgid "%s:%d: \"tag_%s\" is not a function."
-msgstr "%s:%d: \"tag_%s\" 不是函式。"
-
-msgid "In tag %s:%d: Tag \"%s\" execution error."
-msgstr "在標籤 %s:%d: 執行標籤 \"%s\" 時發生錯誤。"
+msgid "Adding file \"%s\"."
+msgstr "正在新增檔案 \"%s\"。"
 
 msgid "Cannot determine the file type for \"%s\"."
 msgstr "無法判斷檔案 \"%s\" 的類型。"
 
+msgid "Cannot get the size of file \"%s\"."
+msgstr "無法取得檔案 \"%s\" 的大小。"
+
 msgid "Cannot load an image \"%s\"."
 msgstr "無法載入圖片 \"%s\"。"
+
+msgid "Cannot open a save file."
+msgstr "無法開啟存檔檔案。"
+
+msgid "Cannot open file \"%s\"."
+msgstr "無法打開檔案 \"%s\"。"
+
+msgid "Cannot read file \"%s\"."
+msgstr "無法讀取檔案 \"%s\"。"
+
+msgid "Error: %s: %d: %s"
+msgstr "錯誤: %s: %d: %s"
 
 msgid "Too many textures."
 msgstr "材質過多。"
@@ -47,9 +41,6 @@ msgstr "無法建立存檔目錄。"
 
 msgid "Save data key too long."
 msgstr "存檔資料鍵太長。"
-
-msgid "Cannot open a save file."
-msgstr "無法開啟存檔檔案。"
 
 msgid "Cannot write to a save file."
 msgstr "無法寫入存檔檔案。"
@@ -75,9 +66,6 @@ msgstr "正在搜尋目錄 \"%s\"。"
 msgid "Skipping empty directory \"%s\"."
 msgstr "跳過空目錄 \"%s\"。"
 
-msgid "Adding file \"%s\"."
-msgstr "正在新增檔案 \"%s\"。"
-
 msgid "Parameter is not set."
 msgstr "未設定參數。"
 
@@ -92,4 +80,13 @@ msgstr "參數 \"%s.%s\" 的值異常。"
 
 msgid "Cannot deserialize function."
 msgstr "無法反序列化函式。"
+
+msgid "Out of memory."
+msgstr "記憶體不足。"
+
+msgid "Parameter \"%s\" is not set."
+msgstr "未設定參數 \"%s\"。"
+
+msgid "Parameter is required to be a dictionary."
+msgstr "參數必須是字典。"
 

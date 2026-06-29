@@ -3,29 +3,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "%s:%d: %s"
-msgstr "%s:%d: %s"
-
-msgid "Error: %s:%d: %s"
-msgstr "エラー: %s:%d: %s"
-
-msgid "Error: %s:%d: Tag %s:"
-msgstr "エラー: %s:%d: Tag %s:"
-
-msgid "Error: %s:%d: Runtime error"
-msgstr "エラー: %s:%d: 実行時エラー"
-
-msgid "Error: %s:%d: Tag \"%s\" not found."
-msgstr "エラー: %s:%d: タグ \"%s\" がみつかりません。"
-
-msgid "Error: %s:%d: \"Tag_%s\" is not a function."
-msgstr "エラー: %s:%d: \"Tag_%s\" は関数ではありません。"
-
 msgid "Argument \"%s\" not specified."
 msgstr "引数 \"%s\" が指定されていません。"
 
 msgid "Cannot play sound file \"%s\"."
 msgstr "サウンドファイル \"%s\" を再生できません。"
+
+msgid "Cannot play video file %s."
+msgstr "動画ファイル %s を再生できません。"
 
 msgid "Conifg \"%s\" not found."
 msgstr "設定 \"%s\" が見つかりません。"
@@ -35,6 +20,24 @@ msgstr "設定キー %s が重複しています。"
 
 msgid "Error loading GUI file %s."
 msgstr "GUIファイル %s の読み込み中にエラーが発生しました。"
+
+msgid "Error: %s:%d: %s"
+msgstr "エラー: %s:%d: %s"
+
+msgid "Error: %s:%d: Runtime error"
+msgstr "エラー: %s:%d: 実行時エラー"
+
+msgid "Error: %s:%d: Tag %s: "
+msgstr "エラー: %s:%d: Tag %s:"
+
+msgid "Error: %s:%d: \"Tag_%s\" is not a function."
+msgstr "エラー: %s:%d: \"Tag_%s\" は関数ではありません。"
+
+msgid "Error: %s:%d: Tag \"%s\" not found."
+msgstr "エラー: %s:%d: タグ \"%s\" がみつかりません。"
+
+msgid "Failed to create an image for layer: %s"
+msgstr "レイヤー %s の画像を作成できませんでした。"
 
 msgid "Failed to write save data."
 msgstr "セーブデータの書き込みに失敗しました。"
@@ -59,6 +62,9 @@ msgstr "アニメーションファイル \"%s\" の %d 行目を解析中に無
 
 msgid "Invalid character."
 msgstr "文字が不正です。"
+
+msgid "Invalid config line at file \"%s\" line %d."
+msgstr "ファイル \"%s\" の %d 行目の設定が不正です。"
 
 msgid "Invalid fade method \"%s\"."
 msgstr "フェードメソッド \"%s\" は無効です。"
@@ -111,8 +117,14 @@ msgstr "endif が見つかりません。"
 msgid "No matching endmacro found."
 msgstr "endmacro が見つかりません。"
 
+msgid "No matching localized text."
+msgstr "テキストのローカライズ版がマッチしませんでした。"
+
 msgid "No operator specified."
 msgstr "演算子が指定されていません。"
+
+msgid "Property %s is not allowed for tag %s."
+msgstr "プロパティ %s はタグ %s に使用できません。"
 
 msgid "Property name too long."
 msgstr "プロパティ名が長すぎます。"
@@ -168,6 +180,9 @@ msgstr "設定キー \"%s\" は定義されていません。"
 msgid "Unexpected EOF."
 msgstr "予期しないファイル終端です。"
 
+msgid "Unknown action \"%s\" is specified on the page mode."
+msgstr "ページモードで未知のアクション \"%s\" が指定されています。"
+
 msgid "Unknown button property \"%s\" found in GUI file \"%s\" line %d."
 msgstr "GUIファイル \"%s\" の %d 行目に未知のボタンプロパティ \"%s\" があります。"
 
@@ -180,12 +195,9 @@ msgstr "未知の設定キー \"%s\" です。"
 msgid "Unknown global key \"%s\" found in GUI file \"%s\" line %d."
 msgstr "GUIファイル \"%s\" の %d 行目に未知のグローバルキー \"%s\" があります。"
 
-msgid "Unkwon key \"%s\" while parsing anime file \"%s\" line %d."
+msgid "Unknown key \"%s\" while parsing anime file \"%s\" line %d.\""
 msgstr "アニメーションファイル \"%s\" の %d 行目を解析中に未知のキー \"%s\" が見つかりました。"
 
-msgid "Invalid config line at file \"%s\" line %d."
-msgstr "ファイル \"%s\" の %d 行目の設定が不正です。"
-
-msgid "No matching localized text."
-msgstr "テキストのローカライズ版がマッチしませんでした。"
+msgid "endmacro outside a macro call."
+msgstr "endmacro がマクロ呼び出しの外で使われています。"
 

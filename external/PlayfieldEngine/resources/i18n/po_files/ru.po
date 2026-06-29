@@ -3,35 +3,29 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Error: %s: %d: %s"
-msgstr "Ошибка: %s: %d: %s"
-
-msgid "Cannot open file \"%s\"."
-msgstr "Невозможно открыть файл \"%s\"."
-
-msgid "Cannot get the size of file \"%s\"."
-msgstr "Невозможно получить размер файла \"%s\"."
-
-msgid "Cannot read file \"%s\"."
-msgstr "Невозможно прочитать файл \"%s\"."
-
-msgid "In tag %s:%d: runtime error."
-msgstr "В теге %s:%d: ошибка выполнения."
-
-msgid "%s:%d: Tag \"%s\" not found."
-msgstr "%s:%d: Тег \"%s\" не найден."
-
-msgid "%s:%d: \"tag_%s\" is not a function."
-msgstr "%s:%d: \"tag_%s\" не является функцией."
-
-msgid "In tag %s:%d: Tag \"%s\" execution error."
-msgstr "В теге %s:%d: Ошибка выполнения тега \"%s\"."
+msgid "Adding file \"%s\"."
+msgstr "Добавление файла «%s»."
 
 msgid "Cannot determine the file type for \"%s\"."
 msgstr "Невозможно определить тип файла \"%s\"."
 
+msgid "Cannot get the size of file \"%s\"."
+msgstr "Невозможно получить размер файла \"%s\"."
+
 msgid "Cannot load an image \"%s\"."
 msgstr "Не удаётся загрузить изображение \"%s\"."
+
+msgid "Cannot open a save file."
+msgstr "Не удалось открыть файл сохранения."
+
+msgid "Cannot open file \"%s\"."
+msgstr "Невозможно открыть файл \"%s\"."
+
+msgid "Cannot read file \"%s\"."
+msgstr "Невозможно прочитать файл \"%s\"."
+
+msgid "Error: %s: %d: %s"
+msgstr "Ошибка: %s: %d: %s"
 
 msgid "Too many textures."
 msgstr "Слишком много текстур."
@@ -47,9 +41,6 @@ msgstr "Не удалось создать каталог сохранения."
 
 msgid "Save data key too long."
 msgstr "Ключ сохранённых данных слишком длинный."
-
-msgid "Cannot open a save file."
-msgstr "Не удалось открыть файл сохранения."
 
 msgid "Cannot write to a save file."
 msgstr "Не удалось записать в файл сохранения."
@@ -75,9 +66,6 @@ msgstr "Поиск в каталоге «%s»."
 msgid "Skipping empty directory \"%s\"."
 msgstr "Пропуск пустого каталога «%s»."
 
-msgid "Adding file \"%s\"."
-msgstr "Добавление файла «%s»."
-
 msgid "Parameter is not set."
 msgstr "Параметр не задан."
 
@@ -92,4 +80,13 @@ msgstr "Непредвиденное значение параметра для 
 
 msgid "Cannot deserialize function."
 msgstr "Не удалось десериализовать функцию."
+
+msgid "Out of memory."
+msgstr "Недостаточно памяти."
+
+msgid "Parameter \"%s\" is not set."
+msgstr "Параметр «%s» не задан."
+
+msgid "Parameter is required to be a dictionary."
+msgstr "Параметр должен быть словарём."
 

@@ -148,7 +148,7 @@ s3i_tag_pencil(
 	
 	layer_index = get_layer_index(layer);
 	if (layer_index == -1) {
-		s3_log_tag_error(S3_TR("Invalid layer name: %s"), layer);
+		s3_log_tag_error(S3_TR("Invalid layer name \"%s\"."), layer);
 		return false;
 	}
 

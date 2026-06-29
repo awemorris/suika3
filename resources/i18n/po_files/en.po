@@ -3,29 +3,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "%s:%d: %s"
-msgstr "%s:%d: %s"
-
-msgid "Error: %s:%d: %s"
-msgstr "Error: %s:%d: %s"
-
-msgid "Error: %s:%d: Tag %s:"
-msgstr "Error: %s:%d: Tag %s:"
-
-msgid "Error: %s:%d: Runtime error"
-msgstr "Error: %s:%d: Runtime error"
-
-msgid "Error: %s:%d: Tag \"%s\" not found."
-msgstr "Error: %s:%d: Tag \"%s\" not found."
-
-msgid "Error: %s:%d: \"Tag_%s\" is not a function."
-msgstr "Error: %s:%d: \"Tag_%s\" is not a function."
-
 msgid "Argument \"%s\" not specified."
 msgstr "Argument \"%s\" not specified."
 
 msgid "Cannot play sound file \"%s\"."
 msgstr "Cannot play sound file \"%s\"."
+
+msgid "Cannot play video file %s."
+msgstr "Cannot play video file %s."
 
 msgid "Conifg \"%s\" not found."
 msgstr "Conifg \"%s\" not found."
@@ -35,6 +20,24 @@ msgstr "Duplicated config key %s."
 
 msgid "Error loading GUI file %s."
 msgstr "Error loading GUI file %s."
+
+msgid "Error: %s:%d: %s"
+msgstr "Error: %s:%d: %s"
+
+msgid "Error: %s:%d: Runtime error"
+msgstr "Error: %s:%d: Runtime error"
+
+msgid "Error: %s:%d: Tag %s: "
+msgstr "Error: %s:%d: Tag %s: "
+
+msgid "Error: %s:%d: \"Tag_%s\" is not a function."
+msgstr "Error: %s:%d: \"Tag_%s\" is not a function."
+
+msgid "Error: %s:%d: Tag \"%s\" not found."
+msgstr "Error: %s:%d: Tag \"%s\" not found."
+
+msgid "Failed to create an image for layer: %s"
+msgstr "Failed to create an image for layer: %s"
 
 msgid "Failed to write save data."
 msgstr "Failed to write save data."
@@ -59,6 +62,9 @@ msgstr "Invalid character \"%c\" while parsing anime file \"%s\" line %d."
 
 msgid "Invalid character."
 msgstr "Invalid character."
+
+msgid "Invalid config line at file \"%s\" line %d."
+msgstr "Invalid config line at file \"%s\" line %d."
 
 msgid "Invalid fade method \"%s\"."
 msgstr "Invalid fade method \"%s\"."
@@ -111,8 +117,14 @@ msgstr "No matching endif found."
 msgid "No matching endmacro found."
 msgstr "No matching endmacro found."
 
+msgid "No matching localized text."
+msgstr "No matching localized text."
+
 msgid "No operator specified."
 msgstr "No operator specified."
+
+msgid "Property %s is not allowed for tag %s."
+msgstr "Property %s is not allowed for tag %s."
 
 msgid "Property name too long."
 msgstr "Property name too long."
@@ -168,6 +180,9 @@ msgstr "Undefined config key \"%s\"."
 msgid "Unexpected EOF."
 msgstr "Unexpected EOF."
 
+msgid "Unknown action \"%s\" is specified on the page mode."
+msgstr "Unknown action \"%s\" is specified on the page mode."
+
 msgid "Unknown button property \"%s\" found in GUI file \"%s\" line %d."
 msgstr "Unknown button property \"%s\" found in GUI file \"%s\" line %d."
 
@@ -180,12 +195,9 @@ msgstr "Unknown config key \"%s\"."
 msgid "Unknown global key \"%s\" found in GUI file \"%s\" line %d."
 msgstr "Unknown global key \"%s\" found in GUI file \"%s\" line %d."
 
-msgid "Unkwon key \"%s\" while parsing anime file \"%s\" line %d."
-msgstr "Unkwon key \"%s\" while parsing anime file \"%s\" line %d."
+msgid "Unknown key \"%s\" while parsing anime file \"%s\" line %d.\""
+msgstr "Unknown key \"%s\" while parsing anime file \"%s\" line %d.\""
 
-msgid "Invalid config line at file \"%s\" line %d."
-msgstr "Invalid config line at file \"%s\" line %d."
-
-msgid "No matching localized text."
-msgstr "No matching localized text."
+msgid "endmacro outside a macro call."
+msgstr "endmacro outside a macro call."
 
