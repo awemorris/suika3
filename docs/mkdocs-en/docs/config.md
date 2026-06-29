@@ -1,1042 +1,486 @@
-WIP
+Config Reference
+================
+
+`config.ini` is the main configuration file for your Suika3 game.
+It controls everything from window titles and fonts to UI layout, sound volumes, and character behavior.
+
+Lines starting with `#` are comments. To disable an optional setting, prefix it with `#`.
+
+---
 
 ## Game Settings
 
 | Name                       | Type       | Description                                                   |
 |----------------------------|------------|---------------------------------------------------------------|
-| game.title.en              | String     | Game title in English.                                        |
-| game.novel                 | Boolean    | Enable novel mode.                                            |
+| game.novel                 | Boolean    | Enable NVL (full-screen novel) mode. (`true`/`false`)         |
 | game.locale                | String     | Force the language over the system locale setting.            |
+| game.title                 | String     | Game title (default, used as fallback).                       |
+| game.title.en              | String     | Localized game title in English.                              |
+| game.title.fr              | String     | Localized game title in French.                               |
+| game.title.es              | String     | Localized game title in Spanish.                              |
+| game.title.de              | String     | Localized game title in German.                               |
+| game.title.it              | String     | Localized game title in Italian.                              |
+| game.title.el              | String     | Localized game title in Greek.                                |
+| game.title.ru              | String     | Localized game title in Russian.                              |
+| game.title.zh_cn           | String     | Localized game title in Simplified Chinese.                   |
+| game.title.zh_tw           | String     | Localized game title in Traditional Chinese.                  |
+| game.title.ja              | String     | Localized game title in Japanese.                             |
 
-### game.title.en
+### game.locale
 
-### game.novel
+| Value     | Description                        |
+|-----------|------------------------------------|
+| (empty)   | Use the system locale setting.     |
+| `en`      | Fix to English.                    |
+| `en-us`   | Fix to English (US).               |
+| `en-gb`   | Fix to English (UK).               |
+| `en-au`   | Fix to English (Australia).        |
+| `en-nz`   | Fix to English (New Zealand).      |
+| `fr`      | Fix to French.                     |
+| `fr-fr`   | Fix to French (France).            |
+| `fr-ca`   | Fix to French (Canada).            |
+| `es`      | Fix to Spanish.                    |
+| `es-es`   | Fix to Spanish (Spain).            |
+| `es-la`   | Fix to Spanish (Latin America).    |
+| `de`      | Fix to German.                     |
+| `it`      | Fix to Italian.                    |
+| `el`      | Fix to Greek.                      |
+| `ru`      | Fix to Russian.                    |
+| `zh-cn`   | Fix to Simplified Chinese.         |
+| `zh-tw`   | Fix to Traditional Chinese.        |
+| `ja`      | Fix to Japanese.                   |
 
-### game.local
-
-Language setting.
-
-- "":   Use the system setting
-- "ja": Fix to Japanese
-- "en": Fix to English
-
---
+---
 
 ## Font File Settings
 
-# Font 1
-#  - Default font
-#  - You can choose this font by adding \f{1} to a message
+Up to four TrueType fonts can be loaded. Font 1 is the default.
+In messages, you can switch fonts inline with `\f{N}` (e.g., `\f{2}`).
+
+| Name       | Type   | Description                        |
+|------------|--------|------------------------------------|
+| font.ttf1  | String | Path to font 1 (default font).     |
+| font.ttf2  | String | Path to font 2 (optional).         |
+| font.ttf3  | String | Path to font 3 (optional).         |
+| font.ttf4  | String | Path to font 4 (optional).         |
+
+Example:
+```
 font.ttf1=system/font/rounded-l-mplus-1c-bold.ttf
-
-# Font 2
-#  - You can choose this font by adding \f{2} to a message
 #font.ttf2=
+```
 
-# Font 3
-#  - You can choose this font by adding \f{3} to a message
-#font.ttf3=
+---
 
-# Font 4
-#  - You can choose this font by adding \f{4} to a message
-#font.ttf4=
-
-
-############################################################
 ## Message Box Settings
 
-#
-# Image of the message box
-#
+The message box displays dialogue text during the game.
 
-msgbox.image=system/message/msgbox.png
+### Layout
 
-#
-# Animation
-#
+| Name                  | Type    | Description                                              |
+|-----------------------|---------|----------------------------------------------------------|
+| msgbox.image          | String  | Path to the message box image.                           |
+| msgbox.anime.hide     | String  | Animation file played when the message box hides.        |
+| msgbox.anime.show     | String  | Animation file played when the message box appears.      |
+| msgbox.x              | Integer | X position of the message box in pixels.                 |
+| msgbox.y              | Integer | Y position of the message box in pixels.                 |
+| msgbox.margin.left    | Integer | Left margin for text inside the message box.             |
+| msgbox.margin.top     | Integer | Top margin for text inside the message box.              |
+| msgbox.margin.right   | Integer | Right margin for text inside the message box.            |
+| msgbox.margin.bottom  | Integer | Bottom margin for text inside the message box.           |
+| msgbox.margin.line    | Integer | Line height in pixels (includes character height).       |
+| msgbox.margin.char    | Integer | Additional horizontal spacing between characters.        |
 
-msgbox.anime.hide=system/message/msgbox-hide.anime
-msgbox.anime.show=system/message/msgbox-show.anime
+### Font
 
-#
-# Position of the message box
-#
+| Name                       | Type    | Description                                           |
+|----------------------------|---------|-------------------------------------------------------|
+| msgbox.font.select         | Integer | Font to use (1–4).                                   |
+| msgbox.font.size           | Integer | Font size in pixels.                                  |
+| msgbox.font.r/g/b          | Integer | Font color (0–255 each).                              |
+| msgbox.font.outline.width  | Integer | Outline width in pixels (0 to disable).               |
+| msgbox.font.outline.r/g/b  | Integer | Outline color (0–255 each).                           |
+| msgbox.font.ruby           | Integer | Ruby (furigana) font size in pixels.                  |
+| msgbox.font.tategaki       | Boolean | Enable vertical (tategaki) writing.                   |
 
-msgbox.x=0
-msgbox.y=520
+### Character Background Fill
 
-#
-# Margins for message box text in pixels
-#
+Draws a colored fill behind each character glyph.
 
-msgbox.margin.left=200
-msgbox.margin.top=20
-msgbox.margin.right=200
-msgbox.margin.bottom=30
+| Name              | Type    | Description                                 |
+|-------------------|---------|---------------------------------------------|
+| msgbox.fill.enable | Boolean | Enable character background fill.           |
+| msgbox.fill.r/g/b  | Integer | Fill color (0–255 each).                    |
 
-#
-# Line margin for message box text in pixels
-# (including character height)
-#
+### Dimming (NVL Mode)
 
-msgbox.margin.line=40
+In NVL mode, previously displayed paragraphs can be dimmed to emphasize the current line.
 
-#
-# Character margin for message box text in pixels
-#
+| Name                        | Type    | Description                                        |
+|-----------------------------|---------|----------------------------------------------------|
+| msgbox.dim.enable           | Boolean | Enable dimming of previous paragraphs.             |
+| msgbox.dim.r/g/b            | Integer | Dim font color (0–255 each).                       |
+| msgbox.dim.outline.width    | Integer | Dim outline width in pixels.                       |
+| msgbox.dim.outline.r/g/b   | Integer | Dim outline color (0–255 each).                    |
 
-msgbox.margin.char=0
+### Read Messages
 
-#
-# Font selection for the message box text (1,2,3,4)
-#
+Already-seen messages can be displayed in a different color.
 
-msgbox.font.select=1
+| Name                         | Type    | Description                                       |
+|------------------------------|---------|---------------------------------------------------|
+| msgbox.seen.enable           | Boolean | Enable different color for seen messages.         |
+| msgbox.seen.r/g/b            | Integer | Seen message font color (0–255 each).             |
+| msgbox.seen.outline.width    | Integer | Seen message outline width in pixels.             |
+| msgbox.seen.outline.r/g/b   | Integer | Seen message outline color (0–255 each).          |
 
-#
-# Font size of the message box text
-#
+### Other
 
-msgbox.font.size=36
+| Name                  | Type    | Description                                              |
+|-----------------------|---------|----------------------------------------------------------|
+| msgbox.skip_unseen    | Boolean | Allow skip mode to advance through unseen messages.      |
 
-#
-# Font color of the message box text
-#
+---
 
-msgbox.font.r=255
-msgbox.font.g=255
-msgbox.font.b=255
-
-#
-# Font outline width and color of the text of the message box
-#
-
-msgbox.font.outline.width=0
-msgbox.font.outline.r=0
-msgbox.font.outline.g=0
-msgbox.font.outline.b=0
-
-#
-# Ruby size of the text of the message box
-#
-
-msgbox.font.ruby=10
-
-#
-# Enable vertical writing of the text of the message box
-#
-
-msgbox.font.tategaki=false
-
-#
-# Enable character backgroun fill
-#
-
-msgbox.fill.enable=false
-msgbox.fill.r=255
-msgbox.fill.g=255
-msgbox.fill.b=255
-
-#
-# Enable dimming for the previous paragpaphs of the text of the message box
-#
-
-msgbox.dim.enable=false
-
-#
-# Dimming color of the text of the message box
-#
-
-msgbox.dim.r=0
-msgbox.dim.g=0
-msgbox.dim.b=0
-
-#
-# Dimming outline width and color of the text of the message box
-#
-msgbox.dim.outline.width=0
-msgbox.dim.outline.r=0
-msgbox.dim.outline.g=0
-msgbox.dim.outline.b=0
-
-#
-# Enable font color change of the seen messages of the message box
-#
-
-msgbox.seen.enable=false
-
-#
-# Font color of the seen messages of the message box
-#
-
-msgbox.seen.r=0
-msgbox.seen.g=0
-msgbox.seen.b=0
-
-#
-# Font outline width and color of the seen messages of the message box
-#
-
-msgbox.seen.outline.width=0
-msgbox.seen.outline.r=0
-msgbox.seen.outline.g=0
-msgbox.seen.outline.b=0
-
-#
-# Enable skip for unseen messages
-#
-
-msgbox.skip_unseen=false
-
-############################################################
 ## Name Box Settings
 
-#
-# Enable the name box
-#  - Disable the name box if you need the full screen novel style
-#
+The name box displays the speaker's name above the message box.
+Disable it (`namebox.enable=false`) for full-screen NVL-style games.
 
-namebox.enable=true
+### Layout
 
-#
-# Image of the name box
-#
+| Name                   | Type    | Description                                             |
+|------------------------|---------|---------------------------------------------------------|
+| namebox.enable         | Boolean | Enable the name box.                                    |
+| namebox.image          | String  | Path to the name box image.                             |
+| namebox.anime.hide     | String  | Animation file played when the name box hides.          |
+| namebox.anime.show     | String  | Animation file played when the name box appears.        |
+| namebox.x              | Integer | X position of the name box in pixels.                   |
+| namebox.y              | Integer | Y position of the name box in pixels.                   |
+| namebox.margin.top     | Integer | Top margin for text inside the name box.                |
+| namebox.margin.left    | Integer | Left margin for text inside the name box.               |
+| namebox.centering      | Boolean | Center the name text horizontally inside the name box.  |
 
-namebox.image=system/message/namebox.png
+### Font
 
-#
-# Animation
-#
+| Name                        | Type    | Description                                          |
+|-----------------------------|---------|------------------------------------------------------|
+| namebox.font.select         | Integer | Font to use (1–4).                                   |
+| namebox.font.size           | Integer | Font size in pixels.                                 |
+| namebox.font.r/g/b          | Integer | Font color (0–255 each).                             |
+| namebox.font.outline.width  | Integer | Outline width in pixels (0 to disable).              |
+| namebox.font.outline.r/g/b  | Integer | Outline color (0–255 each).                          |
+| namebox.font.ruby           | Integer | Ruby font size in pixels.                            |
+| namebox.font.tategaki       | Boolean | Enable vertical (tategaki) writing.                  |
 
-namebox.anime.hide=system/message/namebox-hide.anime
-namebox.anime.show=system/message/namebox-show.anime
+---
 
-#
-# Position of the name box
-#
-
-namebox.x=80
-namebox.y=450
-
-#
-# Margins of the text of the name box in pixel
-#
-
-namebox.margin.top=5
-namebox.margin.left=0
-
-#
-# Enable centering of the text of the name box
-#
-
-namebox.centering=true
-
-#
-# Font selection of the text of the name box (1,2,3,4)
-#
-
-namebox.font.select=1
-
-#
-# Font size of the text of the name box
-#
-
-namebox.font.size=36
-
-#
-# Font color of the text of the name box
-#
-
-namebox.font.r=255
-namebox.font.g=255
-namebox.font.b=255
-
-#
-# Font outline width and color of the text of the name box
-#
-
-namebox.font.outline.width=0
-namebox.font.outline.r=255
-namebox.font.outline.g=255
-namebox.font.outline.b=255
-
-#
-# Ruby size of the text of the name box
-#
-
-namebox.font.ruby=10
-
-#
-# Enable vertical writing of the text of the name box
-#
-
-namebox.font.tategaki=false
-
-
-############################################################
 ## Click Animation Settings
 
-#
-# Position of the click animation
-#
+A small animation shown at the bottom of the screen to prompt the player to click.
 
-click.x=1060
-click.y=660
+| Name              | Type    | Description                                                   |
+|-------------------|---------|---------------------------------------------------------------|
+| click.x           | Integer | X position of the click animation.                           |
+| click.y           | Integer | Y position of the click animation.                           |
+| click.interval    | Float   | Duration of each animation frame cycle in seconds.           |
+| click.image1–16   | String  | Image paths for each frame (at least 1 required).            |
+| click.move        | Boolean | If `true`, the animation moves with the text cursor position. |
 
-#
-# Interval of the click animation
-#
+---
 
-click.interval=1.0
-
-#
-# Images of the click animation
-#
-
-click.image1=system/message/click1.png
-click.image2=system/message/click2.png
-#click.image3=
-#click.image4=
-#click.image5=
-#click.image6=
-#click.image7=
-#click.image8=
-#click.image9=
-#click.image10=
-#click.image11=
-#click.image12=
-#click.image13=
-#click.image14=
-#click.image15=
-#click.image16=
-
-#
-# Enable auto move of the click animation
-#
-
-click.move=false
-
-
-############################################################
 ## Choose Box Settings
 
-#
-# Font selection of the text of the choose boxes
-#
+Up to 8 choice boxes can be displayed by `[choose]`. Each box has its own position and images.
 
-choose.font.select=1
+### Font
 
-#
-# Font size of the the text of the choose boxes
-#
+| Name                           | Type    | Description                                         |
+|--------------------------------|---------|-----------------------------------------------------|
+| choose.font.select             | Integer | Font to use (1–4).                                  |
+| choose.font.size               | Integer | Font size in pixels.                                |
+| choose.font.idle.r/g/b         | Integer | Font color when not hovered (0–255 each).           |
+| choose.font.idle.outline.width | Integer | Outline width when not hovered.                     |
+| choose.font.idle.outline.r/g/b | Integer | Outline color when not hovered.                     |
+| choose.font.hover.r/g/b        | Integer | Font color when hovered (0–255 each).               |
+| choose.font.hover.outline.width| Integer | Outline width when hovered.                         |
+| choose.font.hover.outline.r/g/b| Integer | Outline color when hovered.                         |
+| choose.font.ruby               | Integer | Ruby font size in pixels.                           |
+| choose.font.tategaki           | Boolean | Enable vertical (tategaki) writing.                 |
 
-choose.font.size=36
+### Sound Effects
 
-#
-# Font color of the text of the non-pointed choose box
-#
+| Name              | Type   | Description                                        |
+|-------------------|--------|----------------------------------------------------|
+| choose.change_se  | String | Sound effect played when moving between choices.   |
+| choose.click_se   | String | Sound effect played when a choice is selected.     |
 
-choose.font.idle.r=255
-choose.font.idle.g=255
-choose.font.idle.b=255
+### Box Layout (1–8)
 
-#
-# Font outline width and color of the text of the non-pointed choose box
-#
+Each box (1–8) shares the same set of keys. Replace `N` with the box number.
 
-choose.font.idle.outline.width=0
-choose.font.idle.outline.r=255
-choose.font.idle.outline.g=255
-choose.font.idle.outline.b=255
+| Name                    | Type    | Description                                          |
+|-------------------------|---------|------------------------------------------------------|
+| choose.boxN.idle        | String  | Image path for the idle (non-hovered) state.         |
+| choose.boxN.hover       | String  | Image path for the hovered state.                    |
+| choose.boxN.x           | Integer | X position in pixels.                               |
+| choose.boxN.y           | Integer | Y position in pixels.                               |
+| choose.boxN.margin.top  | Integer | Top margin for the label text inside the box.        |
+| choose.boxN.idle_anime  | String  | Animation file for the idle state.                   |
+| choose.boxN.hover_anime | String  | Animation file for the hovered state.                |
 
-#
-# Font color of the text of the pointed choose box
-#
+---
 
-choose.font.hover.r=255
-choose.font.hover.g=0
-choose.font.hover.b=0
-
-#
-# Font outline width and color of the text of the pointed choose box
-#
-
-choose.font.hover.outline.width=0
-choose.font.hover.outline.r=255
-choose.font.hover.outline.g=255
-choose.font.hover.outline.b=255
-
-#
-# Ruby size of the text of the choose boxes
-#
-
-choose.font.ruby=10
-
-#
-# Enable vertical writing of the text of the choose boxes
-#
-
-choose.font.tategaki=false
-
-#
-# Sound effect for when the pointed choose box is changed
-#
-
-choose.change_se=system/choose/button.ogg
-
-#
-# Sound effect for when a choose box is selected
-#
-
-choose.click_se=system/choose/button.ogg
-
-#
-# Settings for the choose box 1
-#
-
-choose.box1.idle=system/choose/idle.png
-choose.box1.hover=system/choose/hover.png
-choose.box1.x=200
-choose.box1.y=130
-choose.box1.margin.top=15
-choose.box1.idle_anime=system/choose/idle.anime
-choose.box1.hover_anime=system/choose/hover.anime
-
-#
-# Settings for the choose box 2
-#
-
-choose.box2.idle=system/choose/idle.png
-choose.box2.hover=system/choose/hover.png
-choose.box2.x=200
-choose.box2.y=220
-choose.box2.margin.top=15
-choose.box2.idle_anime=system/choose/idle.anime
-choose.box2.hover_anime=system/choose/hover.anime
-
-#
-# Settings for the choose box 3
-#
-
-choose.box3.idle=system/choose/idle.png
-choose.box3.hover=system/choose/hover.png
-choose.box3.x=200
-choose.box3.y=310
-choose.box3.margin.top=15
-choose.box3.idle_anime=system/choose/idle.anime
-choose.box3.hover_anime=system/choose/hover.anime
-
-#
-# Settings for the choose box 4
-#
-
-choose.box4.idle=system/choose/idle.png
-choose.box4.hover=system/choose/hover.png
-choose.box4.x=200
-choose.box4.y=400
-choose.box4.margin.top=15
-choose.box4.idle_anime=system/choose/idle.anime
-choose.box4.hover_anime=system/choose/hover.anime
-
-#
-# Settings for the choose box 5
-#
-
-choose.box5.idle=system/choose/idle.png
-choose.box5.hover=system/choose/hover.png
-choose.box5.x=200
-choose.box5.y=490
-choose.box5.margin.top=15
-choose.box5.idle_anime=system/choose/idle.anime
-choose.box5.hover_anime=system/choose/hover.anime
-
-#
-# Settings for the choose box 6
-#
-
-choose.box6.idle=system/choose/idle.png
-choose.box6.hover=system/choose/hover.png
-choose.box6.x=200
-choose.box6.y=580
-choose.box6.margin.top=15
-choose.box6.idle_anime=system/choose/idle.anime
-choose.box6.hover_anime=system/choose/hover.anime
-
-#
-# Settings for the choose box 7
-#
-
-choose.box7.idle=system/choose/idle.png
-choose.box7.hover=system/choose/hover.png
-choose.box7.x=200
-choose.box7.y=670
-choose.box7.margin.top=15
-choose.box7.idle_anime=system/choose/idle.anime
-choose.box7.hover_anime=system/choose/hover.anime
-
-#
-# Settings for the choose box 8
-#
-
-choose.box8.idle=system/choose/idle.png
-choose.box8.hover=system/choose/hover.png
-choose.box8.x=200
-choose.box8.y=760
-choose.box8.margin.top=15
-choose.box8.idle_anime=system/choose/idle.anime
-choose.box8.hover_anime=system/choose/hover.anime
-
-
-############################################################
 ## Save Data Settings
-############################################################
 
-#
-# Size of the save thumbnail
-#
+| Name               | Type    | Description                                             |
+|--------------------|---------|---------------------------------------------------------|
+| save.thumb.width   | Integer | Width of save slot thumbnail in pixels.                 |
+| save.thumb.height  | Integer | Height of save slot thumbnail in pixels.                |
+| save.new_image     | String  | Path to a "New" badge image shown on unused save slots. |
 
-save.thumb.width=213
-save.thumb.height=120
+---
 
-#
-# "New" mark image
-#
-
-#save.new_image=system/save/new.png
-
-
-############################################################
 ## System Button Settings
 
-#
-# Enable the system button
-#
+The system button (SysBtn) is a hamburger-style menu button, typically in the top-left corner.
+It appears on mouse movement and auto-hides after inactivity. See also: [sysmenu.md](sysmenu.md).
 
-sysbtn.enable=true
+| Name                  | Type    | Description                                                 |
+|-----------------------|---------|-------------------------------------------------------------|
+| sysbtn.enable         | Boolean | Enable the system button. Set to `false` for kiosk/demo.   |
+| sysbtn.idle           | String  | Image path for the idle state.                              |
+| sysbtn.hover          | String  | Image path for the hovered state.                           |
+| sysbtn.anime.out      | String  | Animation while button is hidden.                           |
+| sysbtn.anime.fadein   | String  | Animation while button is appearing.                        |
+| sysbtn.anime.appear   | String  | Animation while button is visible but not hovered.          |
+| sysbtn.anime.hover    | String  | Animation while button is hovered.                          |
+| sysbtn.anime.fadeout  | String  | Animation while button is disappearing.                     |
+| sysbtn.x              | Integer | X position in pixels.                                       |
+| sysbtn.y              | Integer | Y position in pixels.                                       |
+| sysbtn.width          | Integer | Width of the hit area in pixels.                            |
+| sysbtn.height         | Integer | Height of the hit area in pixels.                           |
+| sysbtn.enter_se       | String  | Sound effect when the cursor enters the button.             |
+| sysbtn.leave_se       | String  | Sound effect when the cursor leaves the button.             |
+| sysbtn.click_se       | String  | Sound effect when the button is clicked.                    |
 
-#
-# Images of the system button
-#
+---
 
-sysbtn.idle=system/sysbtn/sysbtn-idle.png
-sysbtn.hover=system/sysbtn/sysbtn-hover.png
-
-#
-# Anime
-#
-
-# Hidden.
-sysbtn.anime.out=system/sysbtn/anime-out.anime
-
-# Appearing.
-sysbtn.anime.fadein=system/sysbtn/anime-fadein.anime
-
-# Appeared but not pointed.
-sysbtn.anime.appear=system/sysbtn/anime-appear.anime
-
-# Hovered.
-sysbtn.anime.hover=system/sysbtn/anime-hover.anime
-
-# Disappearing.
-sysbtn.anime.fadeout=system/sysbtn/anime-fadeout.anime
-
-#
-# Position of the system button
-#
-
-sysbtn.x=1183
-sysbtn.y=48
-sysbtn.width=100
-sysbtn.height=100
-
-#
-# Sound effects of the system button
-#
-
-#sysbtn.enter_se=se/click.ogg
-#sysbtn.leave_se=se/click.ogg
-#sysbtn.click_se=se/click.ogg
-
-
-############################################################
 ## Auto Mode Settings
 
-#
-# Image of the auto mode banner
-#
+Auto mode advances text automatically without player input.
 
-automode.image=system/message/auto.png
+| Name                  | Type    | Description                                                 |
+|-----------------------|---------|-------------------------------------------------------------|
+| automode.image        | String  | Path to the auto mode banner image.                         |
+| automode.anime.hide   | String  | Animation played when the banner hides.                     |
+| automode.anime.show   | String  | Animation played when the banner appears.                   |
+| automode.x            | Integer | X position of the banner in pixels.                         |
+| automode.y            | Integer | Y position of the banner in pixels.                         |
+| automode.enter_se     | String  | Sound effect when entering auto mode.                       |
+| automode.leave_se     | String  | Sound effect when leaving auto mode.                        |
 
-#
-# Animation
-#
+---
 
-automode.anime.hide=system/message/auto-hide.anime
-automode.anime.show=system/message/auto-show.anime
-
-#
-# Position of the auto mode banner
-#
-
-automode.x=0
-automode.y=126
-
-#
-# Sound effect for when entering the auto mode
-#
-
-#automode.enter_se=
-
-#
-# Sound effect for when leaving the auto mode
-#
-
-#automode.leave_se=
-
-
-############################################################
 ## Skip Mode Settings
 
-#
-# Image of the skip mode banner
-#
+Skip mode rapidly advances through already-seen text.
 
-skipmode.image=system/message/skip.png
+| Name                  | Type    | Description                                                 |
+|-----------------------|---------|-------------------------------------------------------------|
+| skipmode.image        | String  | Path to the skip mode banner image.                         |
+| skipmode.anime.hide   | String  | Animation played when the banner hides.                     |
+| skipmode.anime.show   | String  | Animation played when the banner appears.                   |
+| skipmode.x            | Integer | X position of the banner in pixels.                         |
+| skipmode.y            | Integer | Y position of the banner in pixels.                         |
+| skipmode.enter_se     | String  | Sound effect when entering skip mode.                       |
+| skipmode.leave_se     | String  | Sound effect when leaving skip mode.                        |
 
-#
-# Animation
-#
+---
 
-skipmode.anime.hide=system/message/skip-hide.anime
-skipmode.anime.show=system/message/skip-show.anime
-
-#
-# Position of the auto mode banner
-#
-
-skipmode.x=0
-skipmode.y=126
-
-#
-# Sound effect for when entering the skip mode
-#
-
-#skipmode.enter_se=
-
-#
-# Sound effect for when leaving the auto mode
-#
-
-#skipmode.leave_se=
-
-
-############################################################
 ## GUI Settings
 
-#
-# Font selection for the slot index text of the save/load GUI items
-#
-gui.save.index.font.select=1
-gui.save.index.font.size=30
-gui.save.index.font.r=255
-gui.save.index.font.g=200
-gui.save.index.font.b=200
-gui.save.index.font.outline.width=0
-gui.save.index.font.outline.r=0
-gui.save.index.font.outline.g=0
-gui.save.index.font.outline.b=0
-gui.save.index.font.ruby=10
-gui.save.index.font.tategaki=false
-gui.save.index.margin.char=3
+These settings control the appearance of built-in GUI screens (save/load and history).
 
-#
-# Font selection for the date text of the save/load GUI items
-#
-gui.save.date.font.select=1
-gui.save.date.font.size=30
-gui.save.date.font.r=255
-gui.save.date.font.g=255
-gui.save.date.font.b=255
-gui.save.date.font.outline.width=0
-gui.save.date.font.outline.r=0
-gui.save.date.font.outline.g=0
-gui.save.date.font.outline.b=0
-gui.save.date.font.ruby=10
-gui.save.date.font.tategaki=false
-gui.save.date.margin.char=5
+### Save/Load Screen
 
-#
-# Font selection for the chapter text of the save/load GUI items
-#
-gui.save.chapter.font.select=1
-gui.save.chapter.font.size=32
-gui.save.chapter.font.r=255
-gui.save.chapter.font.g=255
-gui.save.chapter.font.b=255
-gui.save.chapter.font.outline.width=2
-gui.save.chapter.font.outline.r=32
-gui.save.chapter.font.outline.g=32
-gui.save.chapter.font.outline.b=32
-gui.save.chapter.font.ruby=10
-gui.save.chapter.font.tategaki=false
-gui.save.chapter.margin.char=5
+Font settings for the text elements within each save slot item.
 
-#
-# Font selection for the message text of the save/load GUI items
-#
-gui.save.msg.font.select=1
-gui.save.msg.font.size=22
-gui.save.msg.font.r=255
-gui.save.msg.font.g=255
-gui.save.msg.font.b=255
-gui.save.msg.font.outline.width=1
-gui.save.msg.font.outline.r=32
-gui.save.msg.font.outline.g=32
-gui.save.msg.font.outline.b=32
-gui.save.msg.font.ruby=10
-gui.save.msg.font.tategaki=false
-gui.save.msg.margin.line=30
-gui.save.msg.margin.char=0
-gui.save.msg.multiline=true
+| Prefix                    | Description                                |
+|---------------------------|--------------------------------------------|
+| `gui.save.index.font.*`   | Slot index number (e.g., "1", "2", …).    |
+| `gui.save.date.font.*`    | Save date and time.                        |
+| `gui.save.chapter.font.*` | Chapter name at the time of saving.        |
+| `gui.save.msg.font.*`     | Preview of the message text.               |
 
-#
-# Font selection of the name and the text of the history GUI items
-#
+Each prefix supports the following suffixes:
 
-gui.history.name.font.select=1
-gui.history.name.font.size=34
-gui.history.name.font.r=255
-gui.history.name.font.g=245
-gui.history.name.font.b=245
-gui.history.name.font.outline.width=1
-gui.history.name.font.outline.r=32
-gui.history.name.font.outline.g=32
-gui.history.name.font.outline.b=32
-gui.history.name.font.ruby=10
-gui.history.name.font.tategaki=false
-gui.history.name.margin.line=40
-gui.history.name.margin.char=0
+| Suffix              | Type    | Description                                 |
+|---------------------|---------|---------------------------------------------|
+| `.select`           | Integer | Font to use (1–4).                          |
+| `.size`             | Integer | Font size in pixels.                        |
+| `.r` / `.g` / `.b`  | Integer | Font color (0–255 each).                    |
+| `.outline.width`    | Integer | Outline width in pixels.                    |
+| `.outline.r/g/b`    | Integer | Outline color (0–255 each).                 |
+| `.ruby`             | Integer | Ruby font size in pixels.                   |
+| `.tategaki`         | Boolean | Enable vertical writing.                    |
+| `.margin.char`      | Integer | Horizontal character spacing in pixels.     |
+| `.margin.line`      | Integer | Line height in pixels (msg only).           |
+| `.multiline`        | Boolean | Allow multi-line display (msg only).        |
 
-gui.history.text.font.select=1
-gui.history.text.font.size=32
-gui.history.text.font.r=255
-gui.history.text.font.g=255
-gui.history.text.font.b=255
-gui.history.text.font.outline.width=1
-gui.history.text.font.outline.r=32
-gui.history.text.font.outline.g=32
-gui.history.text.font.outline.b=32
-gui.history.text.font.ruby=10
-gui.history.text.font.tategaki=false
-gui.history.text.margin.line=40
-gui.history.text.margin.char=0
+### History Screen
 
-#
-# Line quotation of the text of the history GUI items
-#
+| Prefix                      | Description                               |
+|-----------------------------|-------------------------------------------|
+| `gui.history.name.font.*`   | Speaker name column.                      |
+| `gui.history.text.font.*`   | Dialogue text column.                     |
 
-gui.history.quote.name_separator=\n
-gui.history.quote.start="
-gui.history.quote.end="
+Each prefix supports the same font suffixes as above, plus:
 
-#
-# Hide the last history item
-#
+| Name                          | Type    | Description                                               |
+|-------------------------------|---------|-----------------------------------------------------------|
+| gui.history.quote.name_separator | String | Separator between name and text (default: `\n`).       |
+| gui.history.quote.start       | String  | Opening quotation mark for dialogue text.                 |
+| gui.history.quote.end         | String  | Closing quotation mark for dialogue text.                 |
+| gui.history.hide_last         | Boolean | Hide the most recent (current) history entry.             |
 
-gui.history.hide_last=false
+### Text Preview
 
-#
-# Font selection of the text of the text preview GUI item (1,2,3,4)
-#
+The text preview item shows the current message in a GUI overlay.
 
-gui.preview.font.select=1
+| Name                          | Type    | Description                        |
+|-------------------------------|---------|------------------------------------|
+| `gui.preview.font.*`          | —       | Same font suffixes as above.       |
 
-#
-# Font size of the text of the text preview GUI item
-#
+---
 
-gui.preview.font.size=36
-
-#
-# Font color of the text of the text preview GUI item
-#
-
-gui.preview.font.r=255
-gui.preview.font.g=255
-gui.preview.font.b=255
-
-#
-# Font outline width and color of the text of the text preview GUI item
-#
-
-gui.preview.font.outline.width=0
-gui.preview.font.outline.r=255
-gui.preview.font.outline.g=255
-gui.preview.font.outline.b=255
-
-#
-# Ruby size of the text of the text preview GUI item
-#
-
-gui.preview.font.ruby=10
-
-#
-# Enable vertical writing of the text of the text preview GUI item
-#
-
-gui.preview.font.tategaki=false
-
-
-############################################################
 ## Sound Settings
 
-#
-# Initial value of the BGM track volume
-#
+Initial volume levels. Players can adjust these in-game via the system menu.
 
-sound.vol.bgm=1.0
+| Name                    | Type  | Description                                                          |
+|-------------------------|-------|----------------------------------------------------------------------|
+| sound.vol.bgm           | Float | BGM volume (0.0–1.0).                                               |
+| sound.vol.voice         | Float | Voice volume (0.0–1.0).                                             |
+| sound.vol.se            | Float | Sound effect volume (0.0–1.0).                                      |
+| sound.vol.per_character | Float | Per-character volume multiplier for voice (0.0–1.0).                |
 
-#
-# Initial value of the voice track volume
-#
+---
 
-sound.vol.voice=1.0
-
-#
-# Initial value of the SE track volume
-#
-
-sound.vol.se=1.0
-
-#
-# Initial value of the per-character volumes
-#
-
-sound.vol.per_character=1.0
-
-
-############################################################
 ## Character Settings
 
-#
-# Character names
-#  - for name translation, lip sync, auto focus, etc.
-#
+### Names
 
-character.name1=Midori
-character.name1.en=Midori
-character.name1.zh-cn=美登利
-character.name1.zh-tw=美登利
-character.name1.ja=みどり
+Up to 32 characters can be registered. Their names are used for lip sync, auto focus, and localization.
+Replace `N` with a number from 1 to 32.
 
-character.name2=Xiaoling
-character.name2.en=Xiaoling
-character.name2.zh-cn=小玲
-character.name2.zh-tw=小玲
-character.name2.ja=シャオリン
+| Name                    | Type   | Description                                      |
+|-------------------------|--------|--------------------------------------------------|
+| character.nameN         | String | Default name (used as fallback).                 |
+| character.nameN.en      | String | English name.                                    |
+| character.nameN.zh-cn   | String | Simplified Chinese name.                         |
+| character.nameN.zh-tw   | String | Traditional Chinese name.                        |
+| character.nameN.ja      | String | Japanese name.                                   |
 
-#character.name3=
-#character.name4=
-#character.name5=
-#character.name6=
-#character.name7=
-#character.name8=
-#character.name9=
-#character.name10=
-#character.name11=
-#character.name12=
-#character.name13=
-#character.name14=
-#character.name15=
-#character.name16=
-#character.name17=
-#character.name18=
-#character.name19=
-#character.name20=
-#character.name21=
-#character.name22=
-#character.name23=
-#character.name24=
-#character.name25=
-#character.name26=
-#character.name27=
-#character.name28=
-#character.name29=
-#character.name30=
-#character.name31=
-#character.name32=
+### Image Folders
 
-#
-# Character image sub-folders (for lip sync and automatic focus)
-#
+Specifies which image folder belongs to which character, enabling lip sync and auto focus.
 
-character.folder1=ch/midori/
-character.folder2=ch/xiaoling/
-#character.folder3=
-#character.folder4=
-#character.folder5=
-#character.folder6=
-#character.folder7=
-#character.folder8=
-#character.folder9=
-#character.folder10=
-#character.folder11=
-#character.folder12=
-#character.folder13=
-#character.folder14=
-#character.folder15=
-#character.folder16=
-#character.folder17=
-#character.folder18=
-#character.folder19=
-#character.folder20=
-#character.folder21=
-#character.folder22=
-#character.folder23=
-#character.folder24=
-#character.folder25=
-#character.folder26=
-#character.folder27=
-#character.folder28=
-#character.folder29=
-#character.folder30=
-#character.folder31=
-#character.folder32=
+| Name                  | Type   | Description                                              |
+|-----------------------|--------|----------------------------------------------------------|
+| character.folderN     | String | Path to the character's image folder (e.g., `ch/midori/`). |
 
-#
-# Eye blinking interval in seconds
-#
+### Eye Blinking
 
-character.eyeblink.interval=4.0
+See also: [eye-blink.md](eye-blink.md).
 
-#
-# Eye blinking frame length in seconds
-#
+| Name                         | Type  | Description                                           |
+|------------------------------|-------|-------------------------------------------------------|
+| character.eyeblink.interval  | Float | Average interval between blinks in seconds.           |
+| character.eyeblink.frame     | Float | Duration of each blink frame in seconds.              |
 
-character.eyeblink.frame=0.05
+### Lip Sync
 
-#
-# Lip synchronization frame length in seconds
-#
+See also: [lip-sync.md](lip-sync.md).
 
-character.lipsync.frame=0.04
+| Name                       | Type    | Description                                           |
+|----------------------------|---------|-------------------------------------------------------|
+| character.lipsync.frame    | Float   | Duration of each lip sync frame in seconds.           |
+| character.lipsync.chars    | Integer | Number of characters spoken per lip sync cycle.       |
 
-#
-# Lip synchronization frame per characters
-#
+---
 
-character.lipsync.chars=14
+## Auto Focus Settings
 
-############################################################
-## Auto focus settings
-##
-## Note: Not working yet on RC1
+> **Note:** Auto focus is not yet functional as of RC1.
 
-#
-# Auto focus on speaker / unfocus non-speakers on [text] with name
-#
-#autofocus.on_text_name=true
+Automatically adjusts character brightness to highlight the current speaker.
 
-#
-# Auto unfocus all characters on [text] without name
-#
-#autofocus.on_text_no_name=true
+| Name                        | Type    | Description                                                     |
+|-----------------------------|---------|-----------------------------------------------------------------|
+| autofocus.on_text_name      | Boolean | Focus the speaker and dim others when `[text]` has a name.      |
+| autofocus.on_text_no_name   | Boolean | Dim all characters when `[text]` has no name.                   |
+| autofocus.on_ch             | Boolean | Dim non-speakers when `[ch]` is used.                           |
+| autofocus.on_choose         | Boolean | Dim all characters when `[choose]` is shown.                    |
 
-#
-# Auto unfocus non-speakers on [ch]
-#
-#autofocus.on_ch=true
+---
 
-#
-# Auto unfocus all characters on [choose]
-#
-#autofocus.on_choose=true
-
-
-############################################################
 ## Stage Settings
 
-#
-# Character margins in pixels
-#
+Controls the default margins applied when placing character sprites on the stage.
 
-stage.ch_margin.bottom=0
-stage.ch_margin.left=0
-stage.ch_margin.right=0
+| Name                    | Type    | Description                                           |
+|-------------------------|---------|-------------------------------------------------------|
+| stage.ch_margin.bottom  | Integer | Bottom margin for character sprites in pixels.        |
+| stage.ch_margin.left    | Integer | Left margin for character sprites in pixels.          |
+| stage.ch_margin.right   | Integer | Right margin for character sprites in pixels.         |
 
+---
 
-############################################################
 ## Kira Kira Effect Settings
 
-#
-# Enable Kira Kira Effect (click effect animation)
-#
+A click-effect animation that plays at the cursor position when the player clicks.
 
-kirakira.enable=false
+| Name               | Type    | Description                                              |
+|--------------------|---------|----------------------------------------------------------|
+| kirakira.enable    | Boolean | Enable the Kira Kira effect.                             |
+| kirakira.add_blend | Boolean | Use additive blending (brighter glow effect).            |
+| kirakira.frame     | Float   | Duration of each animation frame in seconds.             |
+| kirakira.image1–16 | String  | Image paths for each frame of the effect.                |
 
-#
-# Enable add-blend for Kira Kira Effect
-#
+---
 
-kirakira.add_blend=false
+## Emoji Settings
 
-#
-# Frame length for Kira Kira Effect in seconds
-#
+Up to 32 emoji images can be registered and used inline in messages with `\e{name}`.
 
-kirakira.frame=0.333
+| Name            | Type   | Description                          |
+|-----------------|--------|--------------------------------------|
+| emoji.nameN     | String | Identifier used in `\e{name}` tags.  |
+| emoji.imageN    | String | Path to the emoji image file.        |
 
-#
-# Images for Kira Kira Effect
-#
-
-#kirakira.image1=kira1.png
-#kirakira.image2=kira2.png
-#kirakira.image3=kira3.png
-#kirakira.image4=kira4.png
-#kirakira.image5=
-#kirakira.image6=
-#kirakira.image7=
-#kirakira.image8=
-#kirakira.image9=
-#kirakira.image10=
-#kirakira.image11=
-#kirakira.image12=
-#kirakira.image13=
-#kirakira.image14=
-#kirakira.image15=
-#kirakira.image16=
-
-
-############################################################
-## Emoji
-
-#
-# Emojis (1 to 32)
-#
-
+Example:
+```
 emoji.name1=heart
 emoji.image1=system/emoji/heart.png
+```
 
-emoji.name2=sweat
-emoji.image2=system/emoji/sweat.png
+---
 
+## Text-To-Speech Settings
 
-############################################################
-## Text-To-Speech
+| Name        | Type    | Description              |
+|-------------|---------|--------------------------|
+| tts.enable  | Boolean | Enable text-to-speech.   |
 
-#
-# Enable TTS
-#
+---
 
-tts.enable=false
+## Release Mode Settings
 
+In release mode, save data is written to the OS's user data directory (e.g., AppData on Windows)
+instead of the game folder. Enable this for distributed builds.
 
-############################################################
-## Release Mode (Install App Mode)
-
-#
-# Enable Release Mode (writes save data to AppData)
-#
-
-release_mode.enable=false
+| Name                  | Type    | Description                            |
+|-----------------------|---------|----------------------------------------|
+| release_mode.enable   | Boolean | Enable release (install app) mode.     |
