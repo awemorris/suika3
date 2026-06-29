@@ -18,6 +18,17 @@ feature requests, testing, and discussions for this release:
 
 ## Notes
 
-| Version                         | Date               | Description                                  |
-|---------------------------------|--------------------|----------------------------------------------|
-| Suika3 26.07.0 LTS              | June 29, 2026      | First LTS.                                   |
+### Suika3 26.07.1 LTS: June 29, 2026
+
+Changes:
+- Add a tutorial document.
+- Update translations.
+
+Dependencies:
+- Playfield Engine: v1.0.16
+- NoctLang: v1.1.2
+- StratoHAL: v1.0.20
+
+### Suika3 26.07.0 LTS: June 29, 2026
+
+First release.
