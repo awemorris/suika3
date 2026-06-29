@@ -50,7 +50,16 @@
  */
 
 /* Game title */
+char *conf_game_title;
 char *conf_game_title_en;
+char *conf_game_title_fr;
+char *conf_game_title_es;
+char *conf_game_title_de;
+char *conf_game_title_it;
+char *conf_game_title_ru;
+char *conf_game_title_el;
+char *conf_game_title_zh_cn;
+char *conf_game_title_zh_tw;
 char *conf_game_title_ja;
 
 /* Novel mode */
@@ -553,10 +562,19 @@ static struct rule {
 	bool global;
 } rule_tbl[] = {
 	/* Game Info */
-	{'s',	"game.title.en",		&conf_game_title_en,			MUST,		NOSAVE,	GLOBAL},
-	{'s',	"game.title.ja",		&conf_game_title_ja,			MUST,		NOSAVE,	GLOBAL},
-	{'b',	"game.novel",			&conf_game_novel,			MUST,		SAVE,	LOCAL},
+	{'s',	"game.title",			&conf_game_title,			OPTIONAL,	NOSAVE,	GLOBAL},
+	{'s',	"game.title.en",		&conf_game_title_en,			OPTIONAL,	NOSAVE,	GLOBAL},
+	{'s',	"game.title.fr",		&conf_game_title_fr,			OPTIONAL,	NOSAVE,	GLOBAL},
+	{'s',	"game.title.es",		&conf_game_title_es,			OPTIONAL,	NOSAVE,	GLOBAL},
+	{'s',	"game.title.de",		&conf_game_title_de,			OPTIONAL,	NOSAVE,	GLOBAL},
+	{'s',	"game.title.it",		&conf_game_title_it,			OPTIONAL,	NOSAVE,	GLOBAL},
+	{'s',	"game.title.ru",		&conf_game_title_ru,			OPTIONAL,	NOSAVE,	GLOBAL},
+	{'s',	"game.title.el",		&conf_game_title_el,			OPTIONAL,	NOSAVE,	GLOBAL},
+	{'s',	"game.title.zh_cn",		&conf_game_title_zh_cn,			OPTIONAL,	NOSAVE,	GLOBAL},
+	{'s',	"game.title.zh_tw",		&conf_game_title_zh_tw,			OPTIONAL,	NOSAVE,	GLOBAL},
+	{'s',	"game.title.ja",		&conf_game_title_ja,			OPTIONAL,	NOSAVE,	GLOBAL},
 	{'s',	"game.locale",			&conf_game_locale,			OPTIONAL,	SAVE,	GLOBAL},
+	{'b',	"game.novel",			&conf_game_novel,			OPTIONAL,	SAVE,	LOCAL},
 
 	/* Font */
 	{'s',	"font.ttf1",			&conf_font_ttf[0],			MUST,		SAVE,	GLOBAL},

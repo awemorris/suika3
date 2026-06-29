@@ -37,7 +37,16 @@
  */
 
 /* Game title */
+extern char *conf_game_title;
 extern char *conf_game_title_en;
+extern char *conf_game_title_fr;
+extern char *conf_game_title_es;
+extern char *conf_game_title_de;
+extern char *conf_game_title_it;
+extern char *conf_game_title_ru;
+extern char *conf_game_title_el;
+extern char *conf_game_title_zh_cn;
+extern char *conf_game_title_zh_tw;
 extern char *conf_game_title_ja;
 
 /* Novel mode */
