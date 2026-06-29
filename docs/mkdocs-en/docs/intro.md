@@ -5,6 +5,7 @@ Welcome to the `Suika3` documentation.
 
 For New Developers:
 - [Getting Started](getting-started.md)
+- [Tutorial](tutorial.md)
 
 For those who want to understand the overall architecture:
 - [Design](design.md)
@@ -23,6 +24,7 @@ For Advanced Developers:
 - [Ray Syntax](ray-syntax.md)
 - [Ray 2D API](ray-2d-api.md)
 - [Ray VN API](ray-vn-api.md)
+- [Ray Samples](ray-samples.md)
 - [Plugin Development](plugin.md)
 - [AOT Deployment](aot.md)
 - [Build Instructions](build.md)
