@@ -13,7 +13,7 @@ Let's get the engine running so you can see the magic happen!
 - **Download & Extract**
     - Download [Suika3-SDK-Full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-SDK-Full.zip) and extract it to your preferred folder.
 - **Launch**
-    - Open the folder and run `suika3.exe` to start to the sample game!
+    - Open the folder and run `suika3-win64.exe` to start to the sample game!
 
 ### macOS
 
@@ -22,7 +22,7 @@ Let's get the engine running so you can see the magic happen!
 - **Mount the Disk Image**
     - Navigate to `SDK/macos/` and open `Suika3.dmg`.
 - **Setup the App Bundle**
-    - Copy the `Suika3` app from the DMG into the same folder where `suika3.exe` (and the data folder) is located.
+    - Copy the `Suika3` app from the DMG into the same folder where `suika3-win64.exe` (and the data folder) is located.
     - Note: The app bundle must reside alongside your game data to function correctly.
 - **Launch**
     - Double-click the `Suika3` app to start the sample game!

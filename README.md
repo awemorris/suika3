@@ -14,6 +14,10 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
   <img src="https://img.shields.io/github/stars/awemorris/suika3.svg?style=flat&logo=github&colorB=yellow&label=stars">
   <img src="https://img.shields.io/github/forks/awemorris/suika3.svg">
   <p>
+    <a href="https://github.com/awemorris/suika3/releases/latest">Downloads</a>
+    <a href="https://github.com/awemorris/suika3/blob/main/docs/mkdocs-en/docs/tutorial.md">Tutorial</a>
+  </p>
+  <p>
     <a href="https://suika3.vn/en/">English</a>
     <a href="https://suika3.vn/es/">Español</a>
     <a href="https://suika3.vn/fr/">Français</a>
@@ -56,11 +60,18 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
 
 ---
 
+## Download
+
 <img src="https://img.shields.io/badge/CI%20Build%20Status-All%20Green%20Released-green"><br>
 
 The project is already complete, and you can download real working versions of the product artifacts.
 Instead of worrying about adoption statistics, download the SDK right now and give it a try by yourself.
 You will definitely like it!
+
+[Downloads](https://github.com/awemorris/suika3/releases/latest)
+[Tutorial](docs/mkdocs-en/docs/tutorial.md)
+
+**Direct Links for Suika3 26.07.1 LTS:**
 
 | OS          | File                                                                                                                          | Type                       | Description                    |
 |-------------|-------------------------------------------------------------------------------------------------------------------------------|----------------------------|--------------------------------|
@@ -132,7 +143,7 @@ You will definitely like it!
 
 [Download Suika3-SDK-Full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-SDK-Full.zip)
 
-Please refer to [Getting Started](docs/mkdocs-en/docs/getting-started.md).
+Please refer to the [Tutorial](docs/mkdocs-en/docs/tutorial.md) page.
 
 ### Package Managers
 

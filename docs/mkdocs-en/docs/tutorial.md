@@ -34,19 +34,41 @@ unless noted otherwise.
 
 ## Chapter 1: Installation and First Launch
 
-### Downloading the SDK
+### Windows
 
-Download the latest SDK from the Suika3 releases page:
+- **Download & Extract**
+    - Download [Suika3-SDK-Full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-SDK-Full.zip).
+    - Extract the archive to a folder of your choice, such as `C:\dev\suika3\`.
+- **Launch**
+    - Open the folder and run `suika3-win64.exe` to start to the sample game!
 
-- **Windows**: `Suika3-SDK-Full.zip`
-- **macOS**: `Suika3-full.zip`
-- **Linux**: follow the build instructions in [build.md](build.md)
+### macOS
 
-Extract the archive to a folder of your choice, such as `C:\dev\suika3\`.
+- **Download & Extract**
+    - Download [Suika3-SDK-Full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-SDK-Full.zip).
+    - Extract the archive to a folder of your choice, such as desktop.
+- **Mount the Disk Image**
+    - Navigate to `SDK/macos/` and open `Suika3.dmg`.
+- **Setup the App Bundle**
+    - Copy the `Suika3` app from the DMG into the same folder where `suika3-win64.exe` (and the data folder) is located.
+    - Note: The app bundle must reside alongside your game data to function correctly.
+- **Launch**
+    - Double-click the `Suika3` app to start the sample game!
+
+### Linux
+
+- **Download & Extract**
+    - Download [Suika3-SDK-Full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-SDK-Full.zip).
+    - Extract the archive to a folder of your choice, such as desktop.
+- **Install the Flatpak Package**
+    - Navigate to `SDK/linux/` and open `Suika3.flatpak` (or run `flatpak install --user Suika3.flatpak`).
+    - This associates `.novel` and `.ray` files with the Suika3 engine.
+- **Launch**
+    - Open the extracted folder, then double-click `start.novel` to launch the sample game!
 
 ### Running the Sample Game
 
-Inside the extracted folder, run `suika3.exe` (Windows) or `Suika3.app` (macOS).
+Inside the extracted folder, run `suika3-win64.exe` (Windows) or `Suika3.app` (macOS).
 The sample game launches immediately. Play through it to get a feel for what Suika3 can do.
 
 ### Folder Structure
@@ -54,7 +76,7 @@ The sample game launches immediately. Play through it to get a feel for what Sui
 After extraction, the folder looks like this:
 
 ```
-suika3.exe          ← the engine executable
+suika3-win64.exe    ← the engine executable
 start.novel         ← the entry point script (NovelML)
 main.ray            ← the entry point script (Ray)
 assets/             ← your game's images, audio, and other files
