@@ -31,9 +31,12 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
 
 ---
 
-Suika3 is a practical game middleware solution designed to let visual
-novels and 2D games be built once and continue selling steadily across
-legacy, current, and future platforms for more than 30 years.
+Suika3 is practical game middleware designed to let visual novels and
+2D games be built once and continue selling steadily across current
+and future platforms for more than 30 years. It has been tested on
+most 32-bit computers produced after 1985. Developers can use the
+binaries as-is, or they can use Suika3 as a foundation for building
+in-house game engines.
 
 ---
 
@@ -63,26 +66,6 @@ legacy, current, and future platforms for more than 30 years.
 - **JIT:** JIT works with 10 architectures, including x86, x86_64, ARMv7, Arm64, MIPS32, MIPS64, PowerPC 32, PowerPC 64, RISC-V 32, and RISC-V 64.
 - **Interpreter/AOT:** Also works with Motorola 68000, Sun SPARC, DEC Alpha, HP PA-RISC, IBM s390x, Hitachi SH-4, Itanium, Xtensa, etc.
 - **2D Support:** It's also a fully-featured, unlimited 2D game engine.
-
-### Comparison
-
-| Item                 | Suika3            | Unity                | Godot                | Ren'Py          | Kirikiri Z    | Tyrano Script                |
-|----------------------|-------------------|----------------------|----------------------|-----------------|---------------|------------------------------|
-| Language / Core      | ANSI C (C89)      | C++                  | C++                  | Python          | C++           | JavaScript                   |
-| Scripting            | NovelML + Ray     | C#                   | GDScript / C# / C++  | .rpy + Python   | KAG + TJS     | KAG + JavaScript             |
-| Execution            | JIT VM / AOT      | Mono / IL2CPP        | GDScript VM / Native | Interpreter     | Interpreter   | Browser / Electron           |
-| Performance          | Very High         | High                 | High                 | Low             | Low           | Mid                          |
-| Binary Size          | Very Small        | Large                | Mid                  | Mid             | Small         | Large                        |
-| Portability          | Top-Tier          | Mainstream Platforms | Mainstream Platforms | Desktop-Centric | Windows Only  | Web + Desktop                |
-| App Store Compliance | High              | High                 | High                 | Low             | Not Supported | Low (WebView)                |
-| VN Support           | Native            | Plugin               | Plugin               | Native          | Native        | Native                       |
-| Generic 2D Game      | Strong            | Strong               | Strong               | Weak            | Weak          | Weak                         |
-| GPU Support          | Yes               | Yes                  | Yes                  | Yes             | Limited       | Yes                          |
-| HarmonyOS Support    | Yes               | No                   | No                   | No              | No            | No                           |
-| PC98 Support         | Yes               | No                   | No                   | No              | No            | No                           |
-| Maintainability      | Very High (C+HAL) | High                 | High                 | Mid             | Low           | Low                          |
-| Learning Curve       | Very Easy         | Mid-High             | Mid-High             | Very Easy       | Mid           | Mid                          |
-| License              | OSS (Zlib)        | Proprietary          | OSS (MIT)            | OSS (MIT)       | OSS (Custom)  | Proprietary (Redist Restrict)|
 
 ---
 
@@ -1511,6 +1494,29 @@ Studio Code.
 | 28.05    | Feature Rollup / LTS RC2           | May 2028            | -                  |
 | 28.06    | Feature Rollup / LTS RC3           | June 2028           | -                  |
 | 28.07    | Long Term Support                  | July 2028           | 10 years (minimum) |
+
+---
+
+## Comparison
+
+| Item                 | Suika3            | Unity                | Godot                | Ren'Py          | Kirikiri Z    | Tyrano Script           |
+|----------------------|-------------------|----------------------|----------------------|-----------------|---------------|-------------------------|
+| Core                 | ANSI C (C89)      | C++                  | C++                  | Python          | C++           | JavaScript              |
+| VN Scripting         | NovelML           | (Plugin)             | (Plugin)             | Ren'Py Script   | KAG           | KAG Custom              |
+| Genric Scripting     | Ray / C / C++     | C#                   | GDScript / C# / C++  | Python          | TJS           | JavaScript              |
+| Execution            | JIT VM / AOT      | Mono / IL2CPP        | GDScript VM / Native | Interpreter     | Interpreter   | Browser / Electron      |
+| Performance          | Very High         | High                 | High                 | Low             | Low           | Mid                     |
+| Binary Size          | Very Small        | Large                | Mid                  | Mid             | Small         | Large                   |
+| Portability          | Top-Tier          | Mainstream Platforms | Mainstream Platforms | Desktop-Centric | Windows Only  | Web + Desktop           |
+| App Store Compliance | High              | High                 | High                 | Low             | Not Supported | Low (WebView)           |
+| VN Support           | Native            | Plugin               | Plugin               | Native          | Native        | Native                  |
+| Generic 2D Game      | Strong            | Strong               | Strong               | Weak            | Weak          | Weak                    |
+| GPU Support          | Yes               | Yes                  | Yes                  | Yes             | Limited       | Yes                     |
+| HarmonyOS Support    | Yes               | No                   | No                   | No              | No            | No                      |
+| PC98 Support         | Yes               | No                   | No                   | No              | No            | No                      |
+| Core Maintainability | High (C+HAL)      | Low (Proprietary)    | High (C++)           | Low (CPython)   | Mid           | Low (V8)                |
+| Learning Curve       | Very Easy         | Mid-High             | Mid-High             | Very Easy       | Mid           | Mid                     |
+| License              | OSS (Zlib)        | Proprietary          | OSS (MIT)            | OSS (MIT)       | OSS (Custom)  | Proprietary (No Redist) |
 
 ---
 
