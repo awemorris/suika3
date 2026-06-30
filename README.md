@@ -406,7 +406,7 @@ Suika3 is engineered with modern techniques, and delivers:
 - ✅ Goal: `Suika3 26.07.0 LTS` Public Release (June 29, 2026)
 
 **Optional Tasks:**
-- Document: `SRS: System Requirement Specification` for enterprise users
+- ✅ Document: `SRS: System Requirement Specification` for enterprise users
 - Document: `SDS: System Design Specification` for enterprise users
 
 ---
