@@ -18,6 +18,19 @@ feature requests, testing, and discussions for this release:
 
 ## Notes
 
+### Suika3 26.07.2 LTS: June 30, 2026
+
+Changes:
+- Fix a bug of the scripting core.
+  - PlayfieldEngine 1.0.16 --> 1.0.17
+  - NoctLang 1.1.2 --> 1.1.3
+  - Issue (https://github.com/awemorris/NoctLang/issues/3)
+
+Dependencies:
+- Playfield Engine: v1.0.17
+- NoctLang: v1.1.3
+- StratoHAL: v1.0.20
+
 ### Suika3 26.07.1 LTS: June 29, 2026
 
 Changes:

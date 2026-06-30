@@ -80,7 +80,7 @@ You will definitely like it!
 [Downloads](https://github.com/awemorris/suika3/releases/latest)
 [Tutorial](docs/mkdocs-en/docs/tutorial.md)
 
-**Direct Links for Suika3 26.07.1 LTS:**
+**Direct Links for Suika3 26.07.2 LTS:**
 
 | OS          | File                                                                                                                          | Type                       | Description                    |
 |-------------|-------------------------------------------------------------------------------------------------------------------------------|----------------------------|--------------------------------|
