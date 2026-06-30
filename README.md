@@ -78,10 +78,11 @@ legacy, current, and future platforms for more than 30 years.
 | VN Support           | Native            | Plugin               | Plugin               | Native          | Native        | Native                       |
 | Generic 2D Game      | Strong            | Strong               | Strong               | Weak            | Weak          | Weak                         |
 | GPU Support          | Yes               | Yes                  | Yes                  | Yes             | Limited       | Yes                          |
+| HarmonyOS Support    | Yes               | No                   | No                   | No              | No            | No                           |
 | PC98 Support         | Yes               | No                   | No                   | No              | No            | No                           |
 | Maintainability      | Very High (C+HAL) | High                 | High                 | Mid             | Low           | Low                          |
 | Learning Curve       | Very Easy         | Mid-High             | Mid-High             | Very Easy       | Mid           | Mid                          |
-| License              | OSS (Zlib)        | Proprietary          | OSS (MIT)            | OSS (MIT)       | OSS (Custom)  | Proprietary (No Redist Term) |
+| License              | OSS (Zlib)        | Proprietary          | OSS (MIT)            | OSS (MIT)       | OSS (Custom)  | Proprietary (Redist Restrict)|
 
 ---
 
