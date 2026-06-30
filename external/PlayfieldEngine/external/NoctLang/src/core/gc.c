@@ -366,6 +366,10 @@ rt_gc_alloc_array(
 	assert(env != NULL);
 	assert(size > 0);
 
+	/* Minimum size. */
+	if (size == 1)
+		size = 2;
+
 	/* Check for overflow. */
 	if (size >= SIZE_MAX / sizeof(struct rt_value)) {
 		rt_out_of_memory(env);
@@ -439,6 +443,10 @@ rt_gc_alloc_array_graduate(
 	assert(env != NULL);
 	assert(size > 0);
 
+	/* Minimum size. */
+	if (size == 1)
+		size = 2;
+
 	/* Check for overflow. */
 	if (size >= SIZE_MAX / sizeof(struct rt_value)) {
 		rt_out_of_memory(env);
@@ -508,6 +516,10 @@ rt_gc_alloc_array_tenure(
 
 	assert(env != NULL);
 	assert(size > 0);
+
+	/* Minimum size. */
+	if (size == 1)
+		size = 2;
 
 	/* Check for overflow. */
 	if (size >= SIZE_MAX / sizeof(struct rt_value)) {
@@ -580,6 +592,10 @@ rt_gc_alloc_dict(
 
 	assert(env != NULL);
 	assert(size > 0);
+
+	/* Minimum size. */
+	if (size == 1)
+		size = 2;
 
 	/* Check for overflow. */
 	if (size >= SIZE_MAX / 2 / sizeof(struct rt_value)) {
@@ -660,6 +676,10 @@ rt_gc_alloc_dict_graduate(
 	assert(env != NULL);
 	assert(size > 0);
 
+	/* Minimum size. */
+	if (size == 1)
+		size = 2;
+
 	/* Check for overflow. */
 	if (size >= SIZE_MAX / 2 / sizeof(struct rt_value)) {
 		rt_out_of_memory(env);
@@ -736,6 +756,10 @@ rt_gc_alloc_dict_tenure(
 
 	assert(env != NULL);
 	assert(size > 0);
+
+	/* Minimum size. */
+	if (size == 1)
+		size = 2;
 
 	/* Check for overflow. */
 	if (size >= SIZE_MAX / 2 / sizeof(struct rt_value)) {
