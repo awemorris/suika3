@@ -1856,7 +1856,7 @@ The official binaries use an interpreter in those environments. While
 I believe our interpreter is sufficiently fast, if you require speed
 or if even the interpreter poses a problem for a store review, please
 use [AOT](docs/mkdocs-en/aot.md). This is a perfect solution boasting
-2.5-4.5x the speed compared to the interpreter.
+4.1-13.5x the speed compared to the interpreter.
 
 ### Are scripts safe? Can they access files or the network?
 
