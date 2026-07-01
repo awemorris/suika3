@@ -18,6 +18,18 @@ feature requests, testing, and discussions for this release:
 
 ## Notes
 
+### Suika3 26.07.3 LTS: July 1, 2026
+
+Changes:
+- Fix a bug that suika3-debug.exe is not a console app.
+  - PlayfieldEngine 1.0.16 --> 1.0.18
+  - StratoHAL v1.0.20 --> v1.0.21
+
+Dependencies:
+- Playfield Engine: v1.0.17
+- NoctLang: v1.1.3
+- StratoHAL: v1.0.20
+
 ### Suika3 26.07.2 LTS: June 30, 2026
 
 Changes:
