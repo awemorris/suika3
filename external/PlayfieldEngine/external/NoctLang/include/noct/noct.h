@@ -737,6 +737,16 @@ noct_get_packed_size(
 	size_t *size);
 
 /*
+ * Get the number of the function parameters.
+ */
+NOCT_DLL
+bool
+noct_get_func_param_count(
+	NoctEnv *env,
+	NoctFunc *f,
+	size_t *size);
+
+/*
  * Retrieves a tmpvar size from the current stack frame.
  */
 NOCT_DLL

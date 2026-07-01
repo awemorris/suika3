@@ -1112,6 +1112,22 @@ noct_get_packed_size(
 
 NOCT_DLL
 bool
+noct_get_func_param_count(
+	NoctEnv *env,
+	NoctFunc *f,
+	size_t *size)
+{
+	assert(env != NULL);
+	assert(f != NULL);
+	assert(size != NULL);
+
+	*size = f->param_count;
+
+	return true;
+}
+
+NOCT_DLL
+bool
 noct_get_tmpvar_size(
 	NoctEnv *env,
 	uint32_t *size)
