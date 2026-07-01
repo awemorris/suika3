@@ -31,9 +31,9 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
 Suika3 is practical game middleware designed to let visual novels and
 2D games be built once and continue selling steadily across current
 and future platforms for more than 30 years. It has been tested on
-most 32-bit computers produced after 1985. Developers can use the
-binaries as-is, or they can use Suika3 as a foundation for building
-in-house game engines.
+most 32-bit and 64-bit computers produced after 1985. Developers can
+use the binaries as-is, or they can use Suika3 as a foundation for
+building in-house game engines.
 
 ---
 
