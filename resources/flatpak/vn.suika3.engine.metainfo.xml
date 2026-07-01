@@ -44,6 +44,11 @@
   </branding>
 
   <releases>
+    <release version="26.07.2" date="2026-06-30">
+      <description>
+        <p>First LTS.</p>
+      </description>
+    </release>
     <release version="26.06.20" date="2026-06-22">
       <description>
         <p>Fixed some bugs.</p>
