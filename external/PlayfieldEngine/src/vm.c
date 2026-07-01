@@ -213,20 +213,22 @@ load_startup_file(void)
 
 #if defined(PF_USE_UNSAFE)
 
-#if defined(_WIN32)
+#if defined(PF_TARGET_WINDOWS)
 #define USE_WIN32
 #include <stdlib.h>
 #include <windows.h>
-#elif defined(__APPLE__)
+#elif defined(PF_TARGET_MACOS)
 #define USE_DARWIN
 #include <crt_externs.h>
-#elif defined(__linux__)
+#elif defined(PF_TARGET_LINUX)
 #include <features.h>
 #if defined(__GLIBC__)
-#define USE_GLIBC
+#define USE_LINUX
 extern int __argc;
 extern char** __argv;
 #endif
+#elif defined(PF_TARGET_PC98) || defined(PF_TARGET_PCAT)
+#include <stdlib.h>
 #endif
 
 /* Call "main()" function. */
@@ -273,13 +275,9 @@ call_main(void)
 		char **local_argv;
 		int i;
 
-#if defined(USE_DARWIN)
 		local_argc = *_NSGetArgc();
 		local_argv = *_NSGetArgv();
-#elif defined(USE_GLIBC)
-		local_argc = __argc;
-		local_argv = __argv;
-#endif
+
 		for (i = 1; i < local_argc; i++) {
 			const char *v_utf8 = local_argv[i];
 			if (!noct_set_array_elem_make_string(env, &arg, (size_t)(i - 1), &val, v_utf8))
@@ -296,7 +294,7 @@ call_main(void)
 
 			if (bytes_read > 0) {
 				size_t p = 0;
-				int idx = 0;
+				size_t idx = 0;
 				bool is_argv0 = true;
 
 				buf[bytes_read] = '\0';
@@ -316,10 +314,18 @@ call_main(void)
 			}
 		}
 	}
+#elif defined(PF_TARGET_PC98) || defined(PF_TARGET_PCAT)
+	{
+		int i;
+		for (i = 1; i < __argc; i++) {
+			if (!noct_set_array_elem_make_string(env, &arg, i - 1, &val, __argv[i]))
+				return false;
+		}
+	}
 #endif
 
 	/* Run main(arg). */
-        if (!noct_enter_vm(env, "main", 1, &val, &ret)) {
+        if (!noct_enter_vm(env, "main", 1, &arg, &ret)) {
                 const char *file;
                 int line;
                 const char *msg;
