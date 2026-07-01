@@ -219,7 +219,7 @@ load_startup_file(void)
 #include <windows.h>
 #elif defined(__APPLE__)
 #define USE_DARWIN
-#include <mach-o/dyld.h>
+#include <crt_externs.h>
 #elif defined(__linux__)
 #include <features.h>
 #if defined(__GLIBC__)
