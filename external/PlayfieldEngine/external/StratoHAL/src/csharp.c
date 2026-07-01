@@ -1011,6 +1011,16 @@ hal_write_wfile(
 	return true;
 }
 
+bool
+hal_write_wfile_plain(
+	struct hal_wfile *wf,
+	const void *buf,
+	size_t size,
+	size_t *ret)
+{
+	return hal_write_wfile(wf, buf, size, ret);
+}
+
 void
 hal_close_wfile(
 	struct hal_wfile *wf)
