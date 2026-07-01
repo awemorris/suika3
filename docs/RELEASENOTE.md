@@ -22,11 +22,10 @@ feature requests, testing, and discussions for this release:
 
 Changes:
 - Fix a bug that suika3-debug.exe is not a console app.
-  - PlayfieldEngine 1.0.16 --> 1.0.18
-  - StratoHAL v1.0.20 --> v1.0.21
+  - PlayfieldEngine 1.0.17 --> 1.0.18
 
 Dependencies:
-- Playfield Engine: v1.0.17
+- Playfield Engine: v1.0.18
 - NoctLang: v1.1.3
 - StratoHAL: v1.0.20
 
