@@ -234,37 +234,37 @@ jobs:
           if-no-files-found: error
           retention-days: 7
 
-#  build-flatpak-aarch64:
-#    if: |
-#      github.event_name != 'push' ||
-#      !contains(github.event.head_commit.message, '[docs]')
-#    runs-on: ubuntu-24.04-arm64
-#
-#    steps:
-#      - uses: actions/checkout@v4
-#
-#      - name: Install deps
-#        run: |
-#          sudo apt-get update
-#          sudo apt-get install -y flatpak-builder
-#
-#      - name: Build flatpak
-#        run: |
-#          yes | flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-#          flatpak install --user -y flathub org.freedesktop.Sdk//25.08
-#          flatpak install --user -y flathub org.freedesktop.Platform//25.08
-#          flatpak install --user -y flathub org.freedesktop.Platform.GStreamer.openmpt//25.08
-#          flatpak-builder --user -y --repo=myrepo --force-clean build-dir-aarch64 ./resources/flatpak/vn.suika3.engine.yml
-#          flatpak build-bundle myrepo Suika3-aarch64.flatpak vn.suika3.engine --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
-#
-#      - name: Upload artifact
-#        uses: actions/upload-artifact@v4
-#        with:
-#          name: flatpak-aarch64
-#          path: |
-#            Suika3-aarch64.flatpak
-#          if-no-files-found: error
-#          retention-days: 7
+  build-flatpak-aarch64:
+    if: |
+      github.event_name != 'push' ||
+      !contains(github.event.head_commit.message, '[docs]')
+    runs-on: ubuntu-24.04-arm64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install deps
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y flatpak-builder
+
+      - name: Build flatpak
+        run: |
+          yes | flatpak remote-add --user --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+          flatpak install --user -y flathub org.freedesktop.Sdk//25.08
+          flatpak install --user -y flathub org.freedesktop.Platform//25.08
+          flatpak install --user -y flathub org.freedesktop.Platform.GStreamer.openmpt//25.08
+          flatpak-builder --user -y --repo=myrepo --force-clean build-dir-aarch64 ./resources/flatpak/vn.suika3.engine.yml
+          flatpak build-bundle myrepo Suika3-aarch64.flatpak vn.suika3.engine --runtime-repo=https://flathub.org/repo/flathub.flatpakrepo
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: flatpak-aarch64
+          path: |
+            Suika3-aarch64.flatpak
+          if-no-files-found: error
+          retention-days: 7
 
   build-wasm:
     if: |
@@ -694,6 +694,7 @@ jobs:
       - build-windows-mingw-w64
       - build-macos
       - build-flatpak-x86_64
+      - build-flatpak-aarch64
       - build-wasm
       - build-android
       - build-openharmony
@@ -783,9 +784,16 @@ jobs:
           name: flatpak-x86_64
           path: flatpak-x86_64
 
+      - name: Download Flatpak aarch64 artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: flatpak-aarch64
+          path: flatpak-aarch64
+
       - name: Copy for Linux
         run: |
           cp flatpak-x86_64/Suika3-x86_64.flatpak dist/SDK/linux/
+          cp flatpak-aarch64/Suika3-aarch64.flatpak dist/SDK/linux/
           cp resources/linux/suika3-wrapper.sh dist/SDK/linux/
 
       - name: Download wasm artifacts
@@ -890,28 +898,27 @@ jobs:
             <div align="center">
               <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/logo-mid.png" width="320"><br>
               <br>
-              <a href="https://github.com/awemorris/suika3/blob/main/docs/mkdocs-en/docs/tutorial.md">Tutorial</a><br>
-              <br>
             </div>
             
-            | OS          | File                            | Type                       | Description                    |
-            |-------------|---------------------------------|----------------------------|--------------------------------|
-            | Full        | Suika3-Full-SDK.zip             | ZIP                        | Full Distribution              |
-            | Windows     | suika3-win64.exe                | Executable                 | Windows 7+ 64-bit              |
-            | Windows     | suika3-win32.exe                | Executable                 | Windows XP+ 32-bit             |
-            | Windows     | suika3-arm64.exe                | Executable                 | Windows 10+ Arm64              |
-            | macOS       | Suika3.dmg                      | Application                | macOS                          |
-            | macOS       | Suika3-macOS-Xcode.zip          | Xcode Project              | macOS Xcode Project            |
-            | Linux       | Suika3-x86_64.flatpak           | Flatpak                    | Linux Flatpak                  |
-            | iOS         | Suika3-iOS-Xcode.zip            | Xcode Project              | macOS Xcode Project            |
-            | Android     | Suika3-Android-Studio.zip       | Android Studio Project     | Android NDK                    |
-            | OpenHarmony | Suika3-OpenHarmony-DevEco.zip   | OpenHarmony DevEco Project | OpenHarmony (HarmonyOS NEXT)   |
-            | Wasm        | suika3-wasm.html                | Wasm                       | Emscripten                     |
-            | Wasm        | suika3-wasm.tar.gz              | Tarball                    | Emscripten                     |
-            | Unity       | Suika3-Unity.zip                | Unity Plugin + Project     | Unity (Win64/Switch/PS5/Xbox)  |
-            | NEC PC-9801 | suika-98.exe                    | Executable                 | NEC PC-9801 DOS4G (386+, 16MB) |
-            | IBM PC/AT   | suika-at.exe                    | Executable                 | IBM PC/AT DOS4G (386+, 16MB)   |
-            | Documents   | suika3-documents.zip            | ZIP                        | Documents                      |
+            | OS                          | File                            | Type                       | Description                      |
+            |-----------------------------|---------------------------------|----------------------------|----------------------------------|
+            | Full                        | Suika3-Full-SDK.zip             | ZIP                        | Full Distribution                |
+            | Documents                   | suika3-documents.zip            | ZIP                        | Documents                        |
+            | Windows 64-bit Intel        | suika3-win64.exe                | Windows Executable         | Windows 7+ 64-bit                |
+            | Windows 64-bit Arm          | suika3-arm64.exe                | Windows Executable         | Windows 10+ Arm64                |
+            | Windows 32-bit Intel        | suika3-win32.exe                | Windows Executable         | Windows XP+ 32-bit               |
+            | macOS 10.11+                | Suika3.dmg                      | macOS App                  | macOS 10.11+ App                 |
+            | macOS (Xcode)               | Suika3-macOS-Xcode.zip          | Xcode Project              | macOS Xcode Project              |
+            | Linux x86_64                | Suika3-x86_64.flatpak           | Flatpak Package            | Linux Flatpak x86_64             |
+            | Raspberry Pi 3+             | Suika3-aarch64.flatpak          | Flatpak Package            | Linux Flatpak aarch64            |
+            | iOS (Xcode)                 | Suika3-iOS-Xcode.zip            | Xcode Project              | macOS Xcode Project              |
+            | Android (Android Studio)    | Suika3-Android-Studio.zip       | Android Studio Project     | Android NDK                      |
+            | OpenHarmony (DevEco Studio) | Suika3-OpenHarmony-DevEco.zip   | OpenHarmony DevEco Project | OpenHarmony (HarmonyOS NEXT)     |
+            | Wasm (HTML)                 | suika3-wasm.html                | Wasm                       | Emscripten Binary                |
+            | Wasm (Emscripten Lib)       | suika3-wasm.tar.gz              | Tarball                    | Emscripten Headers and Libraries |
+            | Unity (Console)             | Suika3-Unity.zip                | Unity Plugin + Project     | Unity (Win64/Switch/PS5/Xbox)    |
+            | NEC PC-9801                 | suika-98.exe                    | MS-DOS Executable          | NEC PC-9801 DOS4G (80386)        |
+            | IBM PC/AT                   | suika-at.exe                    | MS-DOS Executable          | IBM PC/AT DOS4G (80386)          |
 
           files: |
             Suika3-SDK-Full.zip
@@ -921,6 +928,7 @@ jobs:
             macos/Suika3.dmg
             macos/Suika3-macOS-Xcode.zip
             flatpak-x86_64/Suika3-x86_64.flatpak
+            flatpak-aarch64/Suika3-aarch64.flatpak
             macos/Suika3-iOS-Xcode.zip
             android/Suika3-Android-Studio.zip
             openharmony/Suika3-OpenHarmony-DevEco.zip

@@ -6,9 +6,6 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
   <br>
   <i>Standard Universal Infrastructure for Kinetic Arts, 3rd Edition</i><br>
   <br>
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/lts2607-1.webp" alt="screenshot macos 26" width="480" hspace="20">
-  <br>
-  <br>
   <a href="https://discord.gg/YZsq9u9Mgr"><img src="https://img.shields.io/badge/suika3.vn-Discord-green"></a>
   <img src="https://img.shields.io/badge/License-ZLib-green.svg">
   <img src="https://img.shields.io/github/stars/awemorris/suika3.svg?style=flat&logo=github&colorB=yellow&label=stars">
@@ -53,7 +50,7 @@ in-house game engines.
 
 ### For Engineers
 
-- **Long Term:** 25+ years of development since 2001, 10+ years of long-term support for each LTS version.
+- **Long-Term:** 25+ years of development since 2001, 10+ years of long-term support for each LTS version.
 - **Performance:** Native, JIT, core written in 100% pure ANSI C.
 - **Hybrid Scripting:** JIT for PC, AOT for mobile, ensuring App Store compliance. OSS equivalent to Unity IL2CPP.
 - **Broad Platform Support :** A real working list, not just a future roadmap.
@@ -69,7 +66,7 @@ in-house game engines.
 
 ---
 
-## Download
+## Downloads
 
 <img src="https://img.shields.io/badge/CI%20Build%20Status-All%20Green%20Released-green"><br>
 
@@ -80,26 +77,26 @@ You will definitely like it!
 [Downloads](https://github.com/awemorris/suika3/releases/latest)
 [Tutorial](docs/mkdocs-en/docs/tutorial.md)
 
-**Direct Links for Suika3 26.07.2 LTS:**
+**Direct Links to Latest LTS Release:**
 
-| OS          | File                                                                                                                          | Type                       | Description                    |
-|-------------|-------------------------------------------------------------------------------------------------------------------------------|----------------------------|--------------------------------|
-| Full        | [Suika3-Full-SDK.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-SDK-Full.zip)                       | ZIP                        | Full Distribution              |
-| Windows     | [suika3-win64.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-win64.exe)                             | Windows Executable         | Windows 7+ 64-bit              |
-| Windows     | [suika3-win32.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-win32.exe)                             | Windows Executable         | Windows XP+ 32-bit             |
-| Windows     | [suika3-arm64.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-arm64.exe)                             | Windows Executable         | Windows 10+ Arm64              |
-| macOS       | [Suika3.dmg](https://github.com/awemorris/suika3/releases/latest/download/Suika3.dmg)                                         | Mac App                    | macOS                          |
-| macOS       | [Suika3-macOS-Xcode.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-macOS-Xcode.zip)                 | Xcode Project              | macOS Xcode Project            |
-| Linux       | [Suika3-x86_64.flatpak](https://github.com/awemorris/suika3/releases/latest/download/Suika3-x86_64.flatpak)                   | Flatpak                    | Linux Flatpak                  |
-| iOS         | [Suika3-iOS-Xcode.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-iOS-Xcode.zip)                     | Xcode Project              | macOS Xcode Project            |
-| Android     | [Suika3-Android-Studio.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-Android-Studio.zip)           | Android Studio Project     | Android NDK                    |
-| OpenHarmony | [Suika3-OpenHarmony-DevEco.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-OpenHarmony-DevEco.zip)   | OpenHarmony DevEco Project | OpenHarmony (HarmonyOS NEXT)   |
-| Wasm        | [suika3-wasm.html](https://github.com/awemorris/suika3/releases/latest/download/suika3-wasm.html)                             | Wasm                       | Emscripten                     |
-| Wasm        | [suika3-wasm.tar.gz](https://github.com/awemorris/suika3/releases/latest/download/suika3-wasm.tar.gz)                         | Tarball                    | Emscripten                     |
-| Unity       | [Suika3-Unity.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-Unity.zip)                             | Unity Plugin + Project     | Unity (Win64/Switch/PS5/Xbox)  |
-| NEC PC-9801 | [suika-98.exe](https://github.com/awemorris/suika3/releases/latest/download/suika-98.exe)                                     | MS-DOS Executable          | NEC PC-9801 DOS4G (386)        |
-| IBM PC/AT   | [suika-at.exe](https://github.com/awemorris/suika3/releases/latest/download/suika-at.exe)                                     | MS-DOS Executable          | IBM PC/AT DOS4G (386)          |
-| Documents   | [suika3-documents.zip](https://github.com/awemorris/suika3/releases/latest/download/suika3-documents.zip)                     | ZIP                        | Documents                      |
+| OS                                    | File                                                                                                                          |
+|---------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
+| Full SDK (Recommended)                | [Suika3-Full-SDK.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-SDK-Full.zip)                       |
+| Documents                             | [suika3-documents.zip](https://github.com/awemorris/suika3/releases/latest/download/suika3-documents.zip)                     |
+| Windows 64-bit Intel/AMD (Win 7+)     | [suika3-win64.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-win64.exe)                             |
+| Windows 32-bit Intel/AMD (Win XP+)    | [suika3-win32.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-win32.exe)                             |
+| Windows Arm64 Win10+                  | [suika3-arm64.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-arm64.exe)                             |
+| macOS 10.11+ DMG                      | [Suika3.dmg](https://github.com/awemorris/suika3/releases/latest/download/Suika3.dmg)                                         |
+| macOS (Xcode)                         | [Suika3-macOS-Xcode.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-macOS-Xcode.zip)                 |
+| Linux Flatpak x86_64 Intel/AMD        | [Suika3-x86_64.flatpak](https://github.com/awemorris/suika3/releases/latest/download/Suika3-x86_64.flatpak)                   |
+| Linux Flatpak Arm64 (Raspberry Pi 3+) | [Suika3-aarch64.flatpak](https://github.com/awemorris/suika3/releases/latest/download/Suika3-aarch64.flatpak)                 |
+| iOS (Xcode)                           | [Suika3-iOS-Xcode.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-iOS-Xcode.zip)                     |
+| Android (Android Studio)              | [Suika3-Android-Studio.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-Android-Studio.zip)           |
+| OpenHarmony (DevEco Studio)           | [Suika3-OpenHarmony-DevEco.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-OpenHarmony-DevEco.zip)   |
+| Wasm (HTML)                           | [suika3-wasm.html](https://github.com/awemorris/suika3/releases/latest/download/suika3-wasm.html)                             |
+| Unity (PS5/Switch/Xbox)               | [Suika3-Unity.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-Unity.zip)                             |
+| NEC PC-9801 MS-DOS                    | [suika-98.exe](https://github.com/awemorris/suika3/releases/latest/download/suika-98.exe)                                     |
+| IBM PC/AT MS-DOS                      | [suika-at.exe](https://github.com/awemorris/suika3/releases/latest/download/suika-at.exe)                                     |
 
 ---
 

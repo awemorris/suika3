@@ -15,7 +15,7 @@ if [ "$1" = "suika3" ]; then
         echo -n "Do you want to install Suika3 via Flathub? <y/N>";
         read s;
         if [ "$s" = "y" ]; then
-            flatpak install --user -y SDK/linux/Suika3-x86_64.flatpak;
+            flatpak install --user -y SDK/linux/Suika3-$(uname -m).flatpak;
         else
             exit 1;
         fi;
@@ -34,7 +34,7 @@ if [ "$1" = "suika3-pack" ]; then
         echo -n "Do you want to install Suika3 via Flathub? <y/N>";
         read s;
         if [ "$s" = "y" ]; then
-            flatpak install --user -y SDK/linux/Suika3-x86_64.flatpak;
+            flatpak install --user -y SDK/linux/Suika3-$(uname -m).flatpak;
             flatpak override --user --filesystem=host vn.suika3.engine;
         else
             exit 1;
