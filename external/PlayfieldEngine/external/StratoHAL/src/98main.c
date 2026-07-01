@@ -109,10 +109,9 @@ int hal_main(int argc, char *argv[])
 		    &game_title,
 		    &game_width,
 		    &game_height,
-		    &hal_callback)) {
-		printf("Error on boot.\n");
+		    &hal_callback))
 		return 1;
-	}
+
 	if (game_width > SCREEN_WIDTH || game_height > SCREEN_HEIGHT) {
 		printf("Screen size too large.\n");
 		return 1;
