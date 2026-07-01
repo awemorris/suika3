@@ -827,6 +827,8 @@ hal_open_wfile(
 #else
 	(*wf)->fp = fopen(path, "wb");
 #endif
+#elif defined(HAL_TARGET_PC98) || defined(HAL_TARGET_PCAT)
+	(*wf)->fp = fopen(path, "wb");
 #else
 	(*wf)->fp = fopen(path, "w");
 #endif
