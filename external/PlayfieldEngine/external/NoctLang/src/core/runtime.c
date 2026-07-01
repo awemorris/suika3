@@ -359,10 +359,10 @@ rt_register_lir(
 			if (!jit_build(env, func)) {
 				/* -1 means JIT failed. */
 				func->call_count = -1;
+			} else {
+				/* Need to commit before call. */
+				env->vm->is_jit_dirty = true;
 			}
-
-			/* Need to commit before call. */
-			env->vm->is_jit_dirty = true;
 		}
 	}
 

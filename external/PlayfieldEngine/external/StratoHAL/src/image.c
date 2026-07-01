@@ -1492,8 +1492,10 @@ struct png_reader {
 	size_t pos;
 };
 
-static void png_read_callback(png_structp png_ptr, png_bytep buf, png_size_t len);
-static void png_warning_silent(png_structp png_ptr, png_const_charp warning_msg);
+static void png_user_read_callback(png_structp png_ptr, png_bytep buf, png_size_t len);
+static void png_user_warning_silent(png_structp png_ptr, png_const_charp warning_msg);
+static void png_user_write_data(png_structp png_ptr, png_bytep data, png_size_t length);
+static void png_user_flush_data(png_structp png_ptr);
 
 /*
  * Create an image with a PNG file.
@@ -1549,8 +1551,8 @@ hal_create_image_with_png(
 	reader.data = data + 8;
 	reader.size = size;
 	reader.pos = 0;
-	png_set_read_fn(png_ptr, &reader, png_read_callback);
-	png_set_error_fn(png_ptr, NULL, NULL, png_warning_silent);
+	png_set_read_fn(png_ptr, &reader, png_user_read_callback);
+	png_set_error_fn(png_ptr, NULL, NULL, png_user_warning_silent);
 	png_set_sig_bytes(png_ptr, 8);
 	png_read_info(png_ptr, info_ptr);
 
@@ -1646,7 +1648,7 @@ hal_create_image_with_png(
 }
 
 static void
-png_read_callback(
+png_user_read_callback(
 	png_structp png_ptr,
 	png_bytep buf,
 	png_size_t len)
@@ -1664,7 +1666,7 @@ png_read_callback(
 }
 
 static void
-png_warning_silent(
+png_user_warning_silent(
 	png_structp png_ptr,
 	png_const_charp warning_msg)
 {
@@ -1672,6 +1674,92 @@ png_warning_silent(
 	UNUSED_PARAMETER(warning_msg);
 }
 
+#if defined(__GNUC__) && !defined(__llvm__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wclobbered"
+#endif
+bool
+hal_write_image(
+	struct hal_image *image,
+	struct hal_wfile *wf)
+{
+	png_structp png;
+	png_infop info;
+	png_bytep *row_pointers;
+	int y;
+
+	row_pointers = malloc(sizeof(png_bytep) * (size_t)image->height);
+	if (row_pointers == NULL) {
+		hal_log_out_of_memory();
+		return false;
+	}
+	for (y = 0; y < image->height; y++)
+		row_pointers[y] = (png_bytep)&image->pixels[image->width * y];
+
+	png = png_create_write_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
+	if (png == NULL) {
+		free(row_pointers);
+		return false;
+	}
+
+	info = png_create_info_struct(png);
+	if (info == NULL) {
+		free(row_pointers);
+		png_destroy_write_struct(&png, NULL);
+		return false;
+	}
+
+	if (setjmp(png_jmpbuf(png))) {
+		free(row_pointers);
+		png_destroy_write_struct(&png, &info);
+		return false;
+	}
+
+	png_set_write_fn(png, wf, png_user_write_data, png_user_flush_data);
+        png_set_IHDR(png, info,
+                     (png_uint_32)image->width,
+                     (png_uint_32)image->height,
+                     8,
+                     PNG_COLOR_TYPE_RGBA,
+                     PNG_INTERLACE_NONE,
+                     PNG_COMPRESSION_TYPE_DEFAULT,
+                     PNG_FILTER_TYPE_DEFAULT);
+#if !defined(HAL_ORDER_OPENGL)
+        png_set_bgr(png);
+#endif
+        png_write_info(png, info);
+        png_write_image(png, row_pointers);
+        png_write_end(png, NULL);
+        png_destroy_write_struct(&png, &info);
+
+	free(row_pointers);
+
+	return true;
+}
+#if defined(__GNUC__) && !defined(__llvm__)
+#pragma GCC diagnostic pop
+#endif
+
+static void
+png_user_write_data(
+	png_structp png_ptr,
+	png_bytep data,
+	png_size_t length)
+{
+	struct hal_wfile *wf;
+	size_t ret;
+
+	wf = png_get_io_ptr(png_ptr);
+	hal_write_wfile_plain(wf, data, length, &ret);
+}
+
+static void
+png_user_flush_data(
+	png_structp png_ptr)
+{
+	UNUSED_PARAMETER(png_ptr);
+}
+	
 /*
  * JPEG
  */

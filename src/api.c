@@ -150,6 +150,7 @@ static bool Suika_drawImage(void *p);
 static bool Suika_drawImage3D(void *p);
 static bool Suika_makeColor(void *p);
 static bool Suika_fillImageRect(void *p);
+static bool Suika_writeImage(void *p);
 
 /* Stage */
 static bool Suika_reloadStageImages(void *p);
@@ -517,6 +518,7 @@ static struct api_func api_func[] = {
 	{"drawImage3D",			Suika_drawImage3D,		1, dict_param},
 	{"makeColor",			Suika_makeColor,		1, dict_param},
 	{"fillImageRect",		Suika_fillImageRect,		1, dict_param},
+	{"writeImage",			Suika_writeImage,		1, dict_param},
 
 	/* Stage */
 	{"reloadStageImages",		Suika_reloadStageImages,	0, NULL},
@@ -3524,6 +3526,46 @@ Suika_fillImageRect(void *p)
 
 		ret = true;
 	} while (0);
+
+	return ret;
+}
+
+static bool
+Suika_writeImage(void *p)
+{
+	int image;
+	char *file;
+
+	struct s3_image *img;
+	bool ret;
+
+	UNUSED_PARAMETER(p);
+
+	ret = false;
+	file = NULL;
+	do {
+		/* Get the argument. */
+		if (!pf_get_call_arg_int("image", &image, false, -1))
+			break;
+		if (!pf_get_call_arg_string("file", &file, false, NULL))
+			break;
+
+		img = s3i_int_to_image(image);
+		if (img == NULL)
+			break;
+
+		if (!s3_write_image(img, file))
+			break;
+
+		/* Set the return value. */
+		if (!pf_set_return_int(1))
+			break;
+
+		ret = true;
+	} while (0);
+
+	if (file != NULL)
+		free(file);
 
 	return ret;
 }

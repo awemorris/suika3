@@ -184,7 +184,7 @@ jit_build(
 	UNUSED_PARAMETER(func);
 
 	/* stub */
-	return true;
+	return false;
 }
 
 /*

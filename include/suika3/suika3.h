@@ -1139,6 +1139,14 @@ s3_get_image_pixels(
 	struct s3_image *image);
 
 /*
+ * Write an image to a file.
+ */
+bool
+s3_write_image(
+	struct s3_image *image,
+	const char *file);
+
+/*
  * Stage Subsystem (stage.c)
  */
 

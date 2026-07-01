@@ -36,7 +36,7 @@ jobs:
 
           cmake --preset windows-vs2026-x64-console
           cmake --build --preset windows-vs2026-x64-console --config Release
-          cp out/build/windows-vs2026-x64-console/Release/suika3.exe suika3-debug.exe
+          cp out/build/windows-vs2026-x64-console/Release/suika3.exe suika3-console.exe
 
           cmake --preset windows-vs2026-arm64
           cmake --build --preset windows-vs2026-arm64 --config Release
@@ -50,7 +50,7 @@ jobs:
             suika3-win32.exe
             suika3-win64.exe
             suika3-arm64.exe
-            suika3-debug.exe
+            suika3-console.exe
             suika3-aotc.exe
             suika3-bcc.exe
             suika3-pack.exe
@@ -751,7 +751,7 @@ jobs:
           cp windows/suika3-pack.exe    dist/SDK/windows/
           cp windows/suika3-web.exe     dist/SDK/wasm/
           cp windows/suika3-arm64.exe   dist/SDK/windows/suika3-arm64.exe
-          cp windows/suika3-debug.exe   dist/SDK/windows/suika3-debug.exe
+          cp windows/suika3-console.exe   dist/SDK/windows/suika3-console.exe
 
       - name: Download macOS artifacts
         uses: actions/download-artifact@v4

@@ -359,11 +359,22 @@ hal_open_wfile(
 	struct hal_wfile **wf);
 
 /*
- * Write to a file stream.
+ * Write to a file stream. (encoded)
  */
 HAL_DLL
 bool
 hal_write_wfile(
+	struct hal_wfile *wf,
+	const void *buf,
+	size_t size,
+	size_t *ret);
+
+/*
+ * Write to a file stream. (non-encoded)
+ */
+HAL_DLL
+bool
+hal_write_wfile_plain(
 	struct hal_wfile *wf,
 	const void *buf,
 	size_t size,
@@ -981,6 +992,14 @@ HAL_DLL
 void
 hal_notify_image_free(
 	struct hal_image *img);
+
+/*
+ * Write an image to a file.
+ */
+bool
+hal_write_image(
+	struct hal_image *image,
+	struct hal_wfile *wf);
 
 /* --- */
 

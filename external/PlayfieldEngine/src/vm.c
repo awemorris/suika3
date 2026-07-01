@@ -61,6 +61,7 @@ static NoctEnv *env;
 
 /* Forward Declaration */
 static bool load_startup_file(void);
+static bool call_main(void);
 static bool call_setup(char **title, int *width, int *height, bool *fullscreen);
 static bool serialize_printer(NoctEnv *env, char *buf, size_t size, NoctValue *value, bool is_inside_obj);
 static bool get_int_param(NoctEnv *env, const char *name, int *ret);
@@ -90,6 +91,7 @@ pfi_create_vm(
 {
 	NoctConfig config;
 	bool has_setup;
+	bool has_main;
 
 	/* Initialize the NoctLang's i18n system. */
 #ifdef PF_USE_TRANSLATION
@@ -116,32 +118,58 @@ pfi_create_vm(
 			return false;
 	}
 
-	/* Call "setup()" and get a title and window size. */
-	if (!call_setup(title, width, height, fullscreen)) {
-		const char *file;
-		int line;
-		const char *msg;
-		noct_get_error_file(env, &file);
-		noct_get_error_line(env, &line);
-		noct_get_error_message(env, &msg);
-		hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
+	/*
+	 * **Unless "main()" exists,**
+	 * call "setup()" and get a title and window size.
+	 * At this time, no API is installed.
+	 */
+	if (!noct_check_global(env, "main", &has_main))
 		return false;
+	if (!has_main) {
+		if (!call_setup(title, width, height, fullscreen)) {
+			const char *file;
+			int line;
+			const char *msg;
+			noct_get_error_file(env, &file);
+			noct_get_error_line(env, &line);
+			noct_get_error_message(env, &msg);
+			hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
+			return false;
+		}
 	}
 
-
-#if defined(PF_USE_UNSAFE)
-	/* Install System.* API. */
-	if (!noct_register_api_system(env))
-		return false;
-
-	/* Install File.* API. */
-	if (!noct_register_api_file(env))
-		return false;
-#endif
-
-	/* Install the custom APIs to the runtime. */
+	/* Install the Playfield API to the runtime. */
 	if (!install_api(env))
 		return false;
+
+	/* Initialize the downstream app by the init hook. */
+	if (pf_init_hook_ptr != NULL)
+		pf_init_hook_ptr(*width, *height);
+
+	/* If we are running the "unsafe" binary: */
+#if defined(PF_USE_UNSAFE)
+	{
+		bool has_main;
+
+		/* Install System.* API. */
+		if (!noct_register_api_system(env))
+			return false;
+
+		/* Install File.* API. */
+		if (!noct_register_api_file(env))
+			return false;
+
+		/* Check if "main()" exists, run. */
+		if (!noct_check_global(env, "main", &has_main))
+			return false;
+		if (has_main) {
+			call_main();
+
+			/* Don't continue. */
+			return false;
+		}
+	}
+#endif
 
 	return true;
 }
@@ -182,6 +210,130 @@ load_startup_file(void)
 
 	return true;
 }
+
+#if defined(PF_USE_UNSAFE)
+
+#if defined(_WIN32)
+#define USE_WIN32
+#include <stdlib.h>
+#include <windows.h>
+#elif defined(__APPLE__)
+#define USE_DARWIN
+#include <mach-o/dyld.h>
+#elif defined(__linux__)
+#include <features.h>
+#if defined(__GLIBC__)
+#define USE_GLIBC
+extern int __argc;
+extern char** __argv;
+#endif
+#endif
+
+/* Call "main()" function. */
+static bool
+call_main(void)
+{
+        NoctValue ret;
+        NoctValue arg;
+        NoctValue val;
+
+        /* Make "arg" array. */
+        if (!noct_make_empty_array(env, &arg))
+                return false;
+
+	/* Copy argv. */
+#if defined(USE_WIN32)
+	{
+		int i;
+		for (i = 1; i < __argc; i++) {
+			const wchar_t *wstr = __wargv[i];
+			char *utf8_buf = NULL;
+			int size_needed = 0;
+
+			size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, NULL, 0, NULL, NULL);
+			if (size_needed <= 0)
+				return false;
+
+			utf8_buf = malloc(size_needed);
+			if (!utf8_buf)
+				return false;
+
+			WideCharToMultiByte(CP_UTF8, 0, wstr, -1, utf8_buf, size_needed, NULL, NULL);
+
+			if (!noct_set_array_elem_make_string(env, &arg, i - 1, &val, utf8_buf)) {
+				free(utf8_buf);
+				return false;
+			}
+			free(utf8_buf);
+		}
+	}
+#elif defined(USE_DARWIN)
+	{
+		int local_argc;
+		char **local_argv;
+		int i;
+
+#if defined(USE_DARWIN)
+		local_argc = *_NSGetArgc();
+		local_argv = *_NSGetArgv();
+#elif defined(USE_GLIBC)
+		local_argc = __argc;
+		local_argv = __argv;
+#endif
+		for (i = 1; i < local_argc; i++) {
+			const char *v_utf8 = local_argv[i];
+			if (!noct_set_array_elem_make_string(env, &arg, (size_t)(i - 1), &val, v_utf8))
+				return false;
+		}
+	}
+#elif defined(USE_LINUX)
+	{
+		FILE *fp = fopen("/proc/self/cmdline", "rb");
+		if (fp) {
+			char buf[2048];
+			size_t bytes_read = fread(buf, 1, sizeof(buf) - 1, fp);
+			fclose(fp);
+
+			if (bytes_read > 0) {
+				size_t p = 0;
+				int idx = 0;
+				bool is_argv0 = true;
+
+				buf[bytes_read] = '\0';
+				while (p < bytes_read && buf[p] != '\0') {
+					const char *current_arg = &buf[p];
+					size_t arg_len = strlen(current_arg);
+
+					if (is_argv0) {
+						is_argv0 = false;
+					} else {
+						if (!noct_set_array_elem_make_string(env, &arg, idx, &val, current_arg))
+							return false;
+						idx++;
+					}
+					p += arg_len + 1;
+				}
+			}
+		}
+	}
+#endif
+
+	/* Run main(arg). */
+        if (!noct_enter_vm(env, "main", 1, &val, &ret)) {
+                const char *file;
+                int line;
+                const char *msg;
+                noct_get_error_file(env, &file);
+                noct_get_error_line(env, &line);
+                noct_get_error_message(env, &msg);
+                hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
+                return false;
+        }
+
+        return true;
+}
+
+#endif
 
 /* Call "setup()" function to determin a title, width, and height. */
 static bool

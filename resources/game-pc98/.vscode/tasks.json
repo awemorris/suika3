@@ -19,7 +19,7 @@
       },
       "command": "suika3",
       "windows": {
-        "command": "SDK/windows/suika3-debug.exe"
+        "command": "SDK/windows/suika3-console.exe"
       },
       "osx": {
         "command": "sh SDK/macos/suika3-wrapper.sh suika3"

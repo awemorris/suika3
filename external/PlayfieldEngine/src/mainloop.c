@@ -33,6 +33,7 @@
 
 #include <playfield/playfield.h>
 #include <strato/strato.h>
+#include <noct/noct.h>
 #include "mainloop.h"
 #include "api.h"
 #include "vm.h"
@@ -207,7 +208,7 @@ hal_bootstrap(
 	if (!pfi_init_api())
 		return false;
 
-	/* Create a VM, then call setup(). */
+	/* Create a VM, then call setup(). (if main() does;t exist) */
 	if (!pfi_create_vm(&title_ret, &width_ret, &height_ret, &fullscreen_ret))
 		return false;
 
@@ -429,14 +430,6 @@ on_start(void)
 
 	/* Initialize the lap timer. */
 	hal_reset_lap_timer(&lap_origin);
-
-	/* Initialize the AOT code. */
-	if (pf_init_aot_code_ptr != NULL)
-		pf_init_aot_code_ptr(pfi_get_vm_env());
-
-	/* Initialize the upper layer. */
-	if (pf_init_hook_ptr != NULL)
-		pf_init_hook_ptr(screen_width, screen_height);
 
 	/* Call start(). */
 	if (!pfi_call_vm_function("start"))

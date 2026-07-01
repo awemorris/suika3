@@ -163,7 +163,7 @@ bool
 init_file(void)
 {
 #if defined(HAL_TARGET_WINDOWS) && defined(HAL_USE_CONSOLE)
-	/* suika3-debug.exe does not use the package file. */
+	/* suika3-console.exe does not use the package file. */
 	return true;
 #else
 	FILE *fp;
@@ -886,6 +886,32 @@ hal_write_wfile(
 	}
 
 	*ret = total;
+	return true;
+}
+
+/*
+ * Write bytes to a write file stream.
+ */
+bool
+hal_write_wfile_plain(
+	struct hal_wfile *wf,
+	const void *buf,
+	size_t size,
+	size_t *ret)
+{
+	size_t out;
+
+	assert(wf != NULL);
+	assert(wf->fp != NULL);
+
+	/* Write the block to the stream. */
+	out = fwrite(buf, 1, size, wf->fp);
+	if (out != size) {
+		*ret = out;
+		return true;
+	}
+
+	*ret = out;
 	return true;
 }
 

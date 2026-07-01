@@ -539,6 +539,33 @@ pf_get_texture_pixels(
 }
 
 /*
+ * Write a texture to a file.
+ */
+bool
+pf_write_texture(
+	int tex_id,
+	const char *file)
+{
+	struct hal_wfile *wf;
+
+	if (!hal_open_wfile(file, &wf)) {
+		pf_log_error(PF_TR("Cannot open file \"%s\"."), file);
+		return false;
+	}
+	
+	if (!hal_write_image(tex_tbl[tex_id].img, wf)) {
+		pf_log_error(PF_TR("Cannot open file \"%s\"."), file);
+		hal_close_wfile(wf);
+		return false;
+	}
+
+	hal_close_wfile(wf);
+
+	return true;
+}
+
+
+/*
  * Rendering
  */
 

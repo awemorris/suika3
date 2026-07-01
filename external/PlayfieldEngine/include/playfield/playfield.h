@@ -367,6 +367,14 @@ pf_draw(
 	int y);
 
 /*
+ * Write a texture to a file.
+ */
+bool
+pf_write_texture(
+	int tex_id,
+	const char *file);
+
+/*
  * Font
  */
 
