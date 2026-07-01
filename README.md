@@ -128,7 +128,7 @@ You will definitely like it!
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-ios.webp" alt="Suika3 on iOS" width="480">
   <br>
   <br>
-  Android<br>
+  Android (<a href="https://github.com/awemorris/suika3/releases/download/26.07.2/suika3-demo.apk">Demo APK Here!</a>)<br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-android.webp" alt="Suika3 on Android" width="480">
   <br>
   <br>
