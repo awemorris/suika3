@@ -61,7 +61,6 @@ static NoctEnv *env;
 
 /* Forward Declaration */
 static bool load_startup_file(void);
-static bool call_main(void);
 static bool call_setup(char **title, int *width, int *height, bool *fullscreen);
 static bool serialize_printer(NoctEnv *env, char *buf, size_t size, NoctValue *value, bool is_inside_obj);
 static bool get_int_param(NoctEnv *env, const char *name, int *ret);
@@ -74,6 +73,9 @@ static bool get_dict_elem_int_param(NoctEnv *env, const char *name, const char *
 static bool serialize_save_data(NoctEnv *env, NoctValue *value, void *data, size_t buf_size, size_t *ret);
 static bool deserialize_save_data(NoctEnv *env, NoctValue *value, void *data, size_t buf_size);
 static bool install_api(NoctEnv *env);
+#if defined(PF_USE_UNSAFE)
+static bool call_main(void);
+#endif
 
 /* External. */
 PF_DLL extern bool (*pf_init_aot_code_ptr)(struct rt_env *);
@@ -91,7 +93,6 @@ pfi_create_vm(
 {
 	NoctConfig config;
 	bool has_setup;
-	bool has_main;
 
 	/* Initialize the NoctLang's i18n system. */
 #ifdef PF_USE_TRANSLATION
@@ -118,38 +119,23 @@ pfi_create_vm(
 			return false;
 	}
 
-	/*
-	 * **Unless "main()" exists,**
-	 * call "setup()" and get a title and window size.
-	 * At this time, no API is installed.
-	 */
-	if (!noct_check_global(env, "main", &has_main))
-		return false;
-	if (!has_main) {
-		if (!call_setup(title, width, height, fullscreen)) {
-			const char *file;
-			int line;
-			const char *msg;
-			noct_get_error_file(env, &file);
-			noct_get_error_line(env, &line);
-			noct_get_error_message(env, &msg);
-			hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
-			return false;
-		}
-	}
-
-	/* Install the Playfield API to the runtime. */
-	if (!install_api(env))
-		return false;
-
-	/* Initialize the downstream app by the init hook. */
-	if (pf_init_hook_ptr != NULL)
-		pf_init_hook_ptr(*width, *height);
-
-	/* If we are running the "unsafe" binary: */
 #if defined(PF_USE_UNSAFE)
+	/* Call "setup()" and get a title and window size. */
 	{
 		bool has_main;
+
+		if (!noct_check_global(env, "main", &has_main))
+			return false;
+
+		/* Call "setup()" if "main()" doesn't exist. */
+		if (!has_main) {
+			if (!call_setup(title, width, height, fullscreen))
+				return false;
+		}
+
+		/* Install the Playfield API to the runtime. */
+		if (!install_api(env))
+			return false;
 
 		/* Install System.* API. */
 		if (!noct_register_api_system(env))
@@ -159,9 +145,11 @@ pfi_create_vm(
 		if (!noct_register_api_file(env))
 			return false;
 
-		/* Check if "main()" exists, run. */
-		if (!noct_check_global(env, "main", &has_main))
-			return false;
+		/* Initialize the downstream app by the init hook. */
+		if (pf_init_hook_ptr != NULL)
+			pf_init_hook_ptr(*width, *height);
+
+		/* Call "main()" if exists. */
 		if (has_main) {
 			call_main();
 
@@ -169,6 +157,18 @@ pfi_create_vm(
 			return false;
 		}
 	}
+#else
+	/* Call "setup()". */
+	if (!call_setup(title, width, height, fullscreen))
+		return false;
+
+	/* Install the Playfield API to the runtime. */
+	if (!install_api(env))
+		return false;
+
+	/* Initialize the downstream app by the init hook. */
+	if (pf_init_hook_ptr != NULL)
+		pf_init_hook_ptr(*width, *height);
 #endif
 
 	return true;
@@ -323,9 +323,17 @@ call_main(void)
                 const char *file;
                 int line;
                 const char *msg;
+
                 noct_get_error_file(env, &file);
+		if (strcmp(file, "") == 0)
+			file = "main.ray";
+
                 noct_get_error_line(env, &line);
+
                 noct_get_error_message(env, &msg);
+		if (strcmp(msg, "") == 0)
+			msg = "Execution failed.";
+
                 hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
                 return false;
         }
@@ -405,9 +413,17 @@ call_setup(
 		const char *file;
 		int line;
 		const char *msg;
+
 		noct_get_error_file(env, &file);
+		if (strcmp(file, "") == 0)
+			file = "main.ray";
+
 		noct_get_error_line(env, &line);
+
 		noct_get_error_message(env, &msg);
+		if (strcmp(msg, "") == 0)
+			msg = "Execution failed.";
+
 		hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
 		return false;
 	}

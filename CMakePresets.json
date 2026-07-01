@@ -12,13 +12,13 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "SUIKA_TARGET_WINDOWS":         "ON",
-                "SUIKA_ENABLE_JIT":             "ON",
-                "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":             "ON",
-                "SUIKA_ENABLE_AOTC":            "ON",
-                "SUIKA_ENABLE_WEBSERVER":       "ON"
+                "SUIKA_TARGET_WINDOWS":   "ON",
+                "SUIKA_ENABLE_JIT":       "ON",
+                "SUIKA_ENABLE_I18N":      "ON",
+                "SUIKA_ENABLE_PACK":      "ON",
+                "SUIKA_ENABLE_BCC":       "ON",
+                "SUIKA_ENABLE_AOTC":      "ON",
+                "SUIKA_ENABLE_WEBSERVER": "ON"
             },
             "condition": {
                 "type": "equals",
@@ -34,13 +34,13 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "SUIKA_TARGET_WINDOWS":         "ON",
-                "SUIKA_ENABLE_JIT":             "ON",
-                "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":             "ON",
-                "SUIKA_ENABLE_AOTC":            "ON",
-                "SUIKA_ENABLE_WEBSERVER":       "ON"
+                "SUIKA_TARGET_WINDOWS":   "ON",
+                "SUIKA_ENABLE_JIT":       "ON",
+                "SUIKA_ENABLE_I18N":      "ON",
+                "SUIKA_ENABLE_PACK":      "ON",
+                "SUIKA_ENABLE_BCC":       "ON",
+                "SUIKA_ENABLE_AOTC":      "ON",
+                "SUIKA_ENABLE_WEBSERVER": "ON"
             },
             "condition": {
                 "type": "equals",
@@ -56,13 +56,13 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "SUIKA_TARGET_WINDOWS":         "ON",
-                "SUIKA_ENABLE_JIT":             "ON",
-                "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":             "ON",
-                "SUIKA_ENABLE_AOTC":            "ON",
-                "SUIKA_ENABLE_WEBSERVER":       "ON"
+                "SUIKA_TARGET_WINDOWS":   "ON",
+                "SUIKA_ENABLE_JIT":       "ON",
+                "SUIKA_ENABLE_I18N":      "ON",
+                "SUIKA_ENABLE_PACK":      "ON",
+                "SUIKA_ENABLE_BCC":       "ON",
+                "SUIKA_ENABLE_AOTC":      "ON",
+                "SUIKA_ENABLE_WEBSERVER": "ON"
             },
             "condition": {
                 "type": "equals",
@@ -105,14 +105,14 @@
             "toolset":        "v141_xp",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "CMAKE_EXE_LINKER_FLAGS":       "/SUBSYSTEM:WINDOWS,5.01",
-                "SUIKA_TARGET_WINDOWS":         "ON",
-                "SUIKA_ENABLE_JIT":             "ON",
-                "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_PACK":            "ON",
-                "SUIKA_ENABLE_BCC":             "ON",
-                "SUIKA_ENABLE_AOTC":            "ON",
-                "SUIKA_ENABLE_WEBSERVER":       "ON"
+                "CMAKE_EXE_LINKER_FLAGS": "/SUBSYSTEM:WINDOWS,5.01",
+                "SUIKA_TARGET_WINDOWS":   "ON",
+                "SUIKA_ENABLE_JIT":       "ON",
+                "SUIKA_ENABLE_I18N":      "ON",
+                "SUIKA_ENABLE_PACK":      "ON",
+                "SUIKA_ENABLE_BCC":       "ON",
+                "SUIKA_ENABLE_AOTC":      "ON",
+                "SUIKA_ENABLE_WEBSERVER": "ON"
             },
             "condition": {
                 "type": "equals",
@@ -128,11 +128,11 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "SUIKA_TARGET_WINDOWS":         "ON",
-                "SUIKA_ENABLE_JIT":             "ON",
-                "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_CONSOLE":         "ON",
-                "SUIKA_ENABLE_UNSAFE":          "ON"
+                "SUIKA_TARGET_WINDOWS": "ON",
+                "SUIKA_ENABLE_JIT":     "ON",
+                "SUIKA_ENABLE_I18N":    "ON",
+                "SUIKA_ENABLE_CONSOLE": "ON",
+                "SUIKA_ENABLE_UNSAFE":  "ON"
             },
             "condition": {
                 "type": "equals",
@@ -148,10 +148,10 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "SUIKA_TARGET_WINDOWS":         "ON",
-                "SUIKA_ENABLE_JIT":             "ON",
-                "SUIKA_ENABLE_I18N":            "ON",
-                "SUIKA_ENABLE_UNSAFE":          "ON"
+                "SUIKA_TARGET_WINDOWS": "ON",
+                "SUIKA_ENABLE_JIT":     "ON",
+                "SUIKA_ENABLE_I18N":    "ON",
+                "SUIKA_ENABLE_UNSAFE":  "ON"
             },
             "condition": {
                 "type": "equals",
@@ -167,13 +167,13 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "SUIKA_TARGET_GDK_WINDOWS":  "ON",
-                "SUIKA_ENABLE_JIT":          "ON",
-                "SUIKA_ENABLE_I18N":         "OFF",
-                "SUIKA_ENABLE_PACK":         "OFF",
-                "SUIKA_ENABLE_BCC":          "OFF",
-                "SUIKA_ENABLE_AOTC":         "OFF",
-                "SUIKA_ENABLE_WEBSERVER":    "OFF"
+                "SUIKA_TARGET_GDK_WINDOWS": "ON",
+                "SUIKA_ENABLE_JIT":         "ON",
+                "SUIKA_ENABLE_I18N":        "OFF",
+                "SUIKA_ENABLE_PACK":        "OFF",
+                "SUIKA_ENABLE_BCC":         "OFF",
+                "SUIKA_ENABLE_AOTC":        "OFF",
+                "SUIKA_ENABLE_WEBSERVER":   "OFF"
             },
             "condition": {
                 "type": "equals",
@@ -189,13 +189,13 @@
             "toolset":        "v145",
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
-                "SUIKA_TARGET_GDK_XBOX_XS":  "ON",
-                "SUIKA_ENABLE_JIT":          "ON",
-                "SUIKA_ENABLE_I18N":         "OFF",
-                "SUIKA_ENABLE_PACK":         "OFF",
-                "SUIKA_ENABLE_BCC":          "OFF",
-                "SUIKA_ENABLE_AOTC":         "OFF",
-                "SUIKA_ENABLE_WEBSERVER":    "OFF"
+                "SUIKA_TARGET_GDK_XBOX_XS": "ON",
+                "SUIKA_ENABLE_JIT":         "ON",
+                "SUIKA_ENABLE_I18N":        "OFF",
+                "SUIKA_ENABLE_PACK":        "OFF",
+                "SUIKA_ENABLE_BCC":         "OFF",
+                "SUIKA_ENABLE_AOTC":        "OFF",
+                "SUIKA_ENABLE_WEBSERVER":   "OFF"
             },
             "condition": {
                 "type": "equals",
@@ -210,15 +210,15 @@
             "binaryDir":      "${sourceDir}/build-mingw-x86",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-x86.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":        "Release",
-                "SUIKA_TARGET_WINDOWS":    "ON",
-                "SUIKA_ENABLE_INSTALL":    "ON",
-                "SUIKA_ENABLE_JIT":        "ON",
-                "SUIKA_ENABLE_I18N":       "ON",
-                "SUIKA_ENABLE_PACK":       "ON",
-                "SUIKA_ENABLE_BCC":        "ON",
-                "SUIKA_ENABLE_AOTC":       "ON",
-                "SUIKA_ENABLE_WEBSERVER":  "ON"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "SUIKA_TARGET_WINDOWS":   "ON",
+                "SUIKA_ENABLE_INSTALL":   "ON",
+                "SUIKA_ENABLE_JIT":       "ON",
+                "SUIKA_ENABLE_I18N":      "ON",
+                "SUIKA_ENABLE_PACK":      "ON",
+                "SUIKA_ENABLE_BCC":       "ON",
+                "SUIKA_ENABLE_AOTC":      "ON",
+                "SUIKA_ENABLE_WEBSERVER": "ON"
             }
         },
         {
@@ -228,15 +228,15 @@
             "binaryDir":      "${sourceDir}/build-mingw-x86_64",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-x86_64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":        "Release",
-                "SUIKA_TARGET_WINDOWS":    "ON",
-                "SUIKA_ENABLE_INSTALL":    "ON",
-                "SUIKA_ENABLE_JIT":        "ON",
-                "SUIKA_ENABLE_I18N":       "ON",
-                "SUIKA_ENABLE_PACK":       "ON",
-                "SUIKA_ENABLE_BCC":        "ON",
-                "SUIKA_ENABLE_AOTC":       "ON",
-                "SUIKA_ENABLE_WEBSERVER":  "ON"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "SUIKA_TARGET_WINDOWS":   "ON",
+                "SUIKA_ENABLE_INSTALL":   "ON",
+                "SUIKA_ENABLE_JIT":       "ON",
+                "SUIKA_ENABLE_I18N":      "ON",
+                "SUIKA_ENABLE_PACK":      "ON",
+                "SUIKA_ENABLE_BCC":       "ON",
+                "SUIKA_ENABLE_AOTC":      "ON",
+                "SUIKA_ENABLE_WEBSERVER": "ON"
             }
         },
         {
@@ -246,16 +246,16 @@
             "binaryDir":      "${sourceDir}/build-mingw-x86_64-console",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-x86_64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":        "Release",
-                "SUIKA_TARGET_WINDOWS":    "ON",
-                "SUIKA_ENABLE_INSTALL":    "ON",
-                "SUIKA_ENABLE_JIT":        "ON",
-                "SUIKA_ENABLE_I18N":       "ON",
-                "SUIKA_ENABLE_PACK":       "ON",
-                "SUIKA_ENABLE_BCC":        "ON",
-                "SUIKA_ENABLE_AOTC":       "ON",
-                "SUIKA_ENABLE_WEBSERVER":  "ON",
-                "SUIKA_ENABLE_CONSOLE":    "ON"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "SUIKA_TARGET_WINDOWS":   "ON",
+                "SUIKA_ENABLE_INSTALL":   "ON",
+                "SUIKA_ENABLE_JIT":       "ON",
+                "SUIKA_ENABLE_I18N":      "ON",
+                "SUIKA_ENABLE_PACK":      "ON",
+                "SUIKA_ENABLE_BCC":       "ON",
+                "SUIKA_ENABLE_AOTC":      "ON",
+                "SUIKA_ENABLE_WEBSERVER": "ON",
+                "SUIKA_ENABLE_CONSOLE":   "ON"
             }
         },
         {
@@ -265,16 +265,16 @@
             "binaryDir":      "${sourceDir}/build-mingw-x86_64-launcher",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-x86_64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":        "Release",
-                "SUIKA_TARGET_WINDOWS":    "ON",
-                "SUIKA_ENABLE_INSTALL":    "ON",
-                "SUIKA_ENABLE_JIT":        "ON",
-                "SUIKA_ENABLE_I18N":       "ON",
-                "SUIKA_ENABLE_PACK":       "ON",
-                "SUIKA_ENABLE_BCC":        "ON",
-                "SUIKA_ENABLE_AOTC":       "ON",
-                "SUIKA_ENABLE_WEBSERVER":  "ON",
-                "SUIKA_ENABLE_UNSAFE":     "ON"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "SUIKA_TARGET_WINDOWS":   "ON",
+                "SUIKA_ENABLE_INSTALL":   "ON",
+                "SUIKA_ENABLE_JIT":       "ON",
+                "SUIKA_ENABLE_I18N":      "ON",
+                "SUIKA_ENABLE_PACK":      "ON",
+                "SUIKA_ENABLE_BCC":       "ON",
+                "SUIKA_ENABLE_AOTC":      "ON",
+                "SUIKA_ENABLE_WEBSERVER": "ON",
+                "SUIKA_ENABLE_UNSAFE":    "ON"
             }
         },
         {
@@ -284,14 +284,14 @@
             "binaryDir":      "${sourceDir}/build-mingw-win95",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-win95.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":        "Release",
-                "SUIKA_TARGET_WINDOWS95":  "ON",
-                "SUIKA_ENABLE_JIT":        "OFF",
-                "SUIKA_ENABLE_I18N":       "OFF",
-                "SUIKA_ENABLE_PACK":       "ON",
-                "SUIKA_ENABLE_BCC":        "ON",
-                "SUIKA_ENABLE_AOTC":       "ON",
-                "SUIKA_ENABLE_WEBSERVER":  "ON"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "SUIKA_TARGET_WINDOWS95": "ON",
+                "SUIKA_ENABLE_JIT":       "OFF",
+                "SUIKA_ENABLE_I18N":      "OFF",
+                "SUIKA_ENABLE_PACK":      "ON",
+                "SUIKA_ENABLE_BCC":       "ON",
+                "SUIKA_ENABLE_AOTC":      "ON",
+                "SUIKA_ENABLE_WEBSERVER": "ON"
             }
         },
         {
@@ -301,15 +301,15 @@
             "binaryDir":      "${sourceDir}/build-mingw-arm64",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/mingw-arm64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":        "Release",
-                "SUIKA_TARGET_WINDOWS":    "ON",
-                "SUIKA_ENABLE_INSTALL":    "ON",
-                "SUIKA_ENABLE_JIT":        "ON",
-                "SUIKA_ENABLE_I18N":       "ON",
-                "SUIKA_ENABLE_PACK":       "ON",
-                "SUIKA_ENABLE_BCC":        "ON",
-                "SUIKA_ENABLE_AOTC":       "ON",
-                "SUIKA_ENABLE_WEBSERVER":  "ON"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "SUIKA_TARGET_WINDOWS":   "ON",
+                "SUIKA_ENABLE_INSTALL":   "ON",
+                "SUIKA_ENABLE_JIT":       "ON",
+                "SUIKA_ENABLE_I18N":      "ON",
+                "SUIKA_ENABLE_PACK":      "ON",
+                "SUIKA_ENABLE_BCC":       "ON",
+                "SUIKA_ENABLE_AOTC":      "ON",
+                "SUIKA_ENABLE_WEBSERVER": "ON"
             }
         },
         {
@@ -367,18 +367,18 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_LINUX":          "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_I18N":           "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON",
-                "SUIKA_ENABLE_GST":            "ON",
-                "SUIKA_ENABLE_PORTAL":         "ON",
-                "SUIKA_ENABLE_UNSAFE":         "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "SUIKA_TARGET_LINUX":       "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_FREEDESKTOP": "ON",
+                "SUIKA_ENABLE_JIT":         "ON",
+                "SUIKA_ENABLE_I18N":        "ON",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_GST":         "ON",
+                "SUIKA_ENABLE_PORTAL":      "ON",
+                "SUIKA_ENABLE_UNSAFE":      "ON"
             }
         },
         {
@@ -387,18 +387,18 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-debug",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Debug",
-                "SUIKA_TARGET_LINUX":          "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "OFF",
-                "SUIKA_ENABLE_I18N":           "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON",
-                "SUIKA_ENABLE_GST":            "ON",
-                "SUIKA_ENABLE_PORTAL":         "ON",
-                "SUIKA_ENABLE_UNSAFE":         "ON"
+                "CMAKE_BUILD_TYPE":         "Debug",
+                "SUIKA_TARGET_LINUX":       "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_FREEDESKTOP": "ON",
+                "SUIKA_ENABLE_JIT":         "ON",
+                "SUIKA_ENABLE_I18N":        "ON",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_GST":         "ON",
+                "SUIKA_ENABLE_PORTAL":      "ON",
+                "SUIKA_ENABLE_UNSAFE":      "ON"
             }
         },
         {
@@ -407,20 +407,20 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-linux-debian",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_LINUX":          "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_DIST":           "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_I18N":           "ON",
-                "SUIKA_ENABLE_I18N_LIBINTL":   "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON",
-                "SUIKA_ENABLE_GST":            "ON",
-                "SUIKA_ENABLE_PORTAL":         "ON",
-                "SUIKA_ENABLE_UNSAFE":         "ON"
+                "CMAKE_BUILD_TYPE":          "Release",
+                "SUIKA_TARGET_LINUX":        "ON",
+                "SUIKA_ENABLE_INSTALL":      "ON",
+                "SUIKA_ENABLE_DIST":         "ON",
+                "SUIKA_ENABLE_FREEDESKTOP":  "ON",
+                "SUIKA_ENABLE_JIT":          "ON",
+                "SUIKA_ENABLE_I18N":         "ON",
+                "SUIKA_ENABLE_I18N_LIBINTL": "ON",
+                "SUIKA_ENABLE_PACK":         "ON",
+                "SUIKA_ENABLE_BCC":          "ON",
+                "SUIKA_ENABLE_AOTC":         "ON",
+                "SUIKA_ENABLE_GST":          "ON",
+                "SUIKA_ENABLE_PORTAL":       "ON",
+                "SUIKA_ENABLE_UNSAFE":       "ON"
             }
         },
         {
@@ -429,17 +429,17 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-x11",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_LINUX_X11":      "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_I18N":           "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON",
-                "SUIKA_ENABLE_GST":            "ON",
-                "SUIKA_ENABLE_UNSAFE":         "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "SUIKA_TARGET_LINUX_X11":   "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_FREEDESKTOP": "ON",
+                "SUIKA_ENABLE_JIT":         "ON",
+                "SUIKA_ENABLE_I18N":        "ON",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_GST":         "ON",
+                "SUIKA_ENABLE_UNSAFE":      "ON"
             }
         },
         {
@@ -448,17 +448,17 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-wayland",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_LINUX_WAYLAND":  "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_I18N":           "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON",
-                "SUIKA_ENABLE_GST":            "ON",
-                "SUIKA_ENABLE_UNSAFE":         "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "SUIKA_TARGET_LINUX_WAYLAND": "ON",
+                "SUIKA_ENABLE_INSTALL":       "ON",
+                "SUIKA_ENABLE_FREEDESKTOP":   "ON",
+                "SUIKA_ENABLE_JIT":           "ON",
+                "SUIKA_ENABLE_I18N":          "ON",
+                "SUIKA_ENABLE_PACK":          "ON",
+                "SUIKA_ENABLE_BCC":           "ON",
+                "SUIKA_ENABLE_AOTC":          "ON",
+                "SUIKA_ENABLE_GST":           "ON",
+                "SUIKA_ENABLE_UNSAFE":        "ON"
             }
         },
         {
@@ -467,16 +467,16 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-dri",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_LINUX_DRI":      "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_I18N":           "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON",
-                "SUIKA_ENABLE_GST":            "ON",
-                "SUIKA_ENABLE_UNSAFE":         "ON"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "SUIKA_TARGET_LINUX_DRI": "ON",
+                "SUIKA_ENABLE_INSTALL":   "ON",
+                "SUIKA_ENABLE_JIT":       "ON",
+                "SUIKA_ENABLE_I18N":      "ON",
+                "SUIKA_ENABLE_PACK":      "ON",
+                "SUIKA_ENABLE_BCC":       "ON",
+                "SUIKA_ENABLE_AOTC":      "ON",
+                "SUIKA_ENABLE_GST":       "ON",
+                "SUIKA_ENABLE_UNSAFE":    "ON"
             }
         },
         {
@@ -485,17 +485,17 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-dri-rot90",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_LINUX_DRI":      "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_ROT90":          "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_I18N":           "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON",
-                "SUIKA_ENABLE_GST":            "ON",
-                "SUIKA_ENABLE_UNSAFE":         "ON"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "SUIKA_TARGET_LINUX_DRI": "ON",
+                "SUIKA_ENABLE_INSTALL":   "ON",
+                "SUIKA_ENABLE_ROT90":     "ON",
+                "SUIKA_ENABLE_JIT":       "ON",
+                "SUIKA_ENABLE_I18N":      "ON",
+                "SUIKA_ENABLE_PACK":      "ON",
+                "SUIKA_ENABLE_BCC":       "ON",
+                "SUIKA_ENABLE_AOTC":      "ON",
+                "SUIKA_ENABLE_GST":       "ON",
+                "SUIKA_ENABLE_UNSAFE":    "ON"
             }
         },
         {
@@ -504,16 +504,16 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-fbdev",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_LINUX_FBDEV":    "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_I18N":           "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON",
-                "SUIKA_ENABLE_GST":            "ON",
-                "SUIKA_ENABLE_UNSAFE":         "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "SUIKA_TARGET_LINUX_FBDEV": "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_JIT":         "ON",
+                "SUIKA_ENABLE_I18N":        "ON",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_GST":         "ON",
+                "SUIKA_ENABLE_UNSAFE":      "ON"
             }
         },
         {
@@ -541,9 +541,9 @@
             "binaryDir":      "${sourceDir}/build-ios-device",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/ios-device.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_IOS":            "ON",
-                "SUIKA_ENABLE_STATIC":         "ON"
+                "CMAKE_BUILD_TYPE":    "Release",
+                "SUIKA_TARGET_IOS":    "ON",
+                "SUIKA_ENABLE_STATIC": "ON"
             }
         },
         {
@@ -553,9 +553,9 @@
             "binaryDir":      "${sourceDir}/build-ios-simulator",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/ios-simulator.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_IOS":            "ON",
-                "SUIKA_ENABLE_STATIC":         "ON"
+                "CMAKE_BUILD_TYPE":    "Release",
+                "SUIKA_TARGET_IOS":    "ON",
+                "SUIKA_ENABLE_STATIC": "ON"
             }
         },
         {
@@ -565,12 +565,12 @@
             "binaryDir":      "${sourceDir}/build-android-x86",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both -Wl,-z,max-page-size=16384 -s",
-                "ANDROID_PLATFORM":            "30",
-                "ANDROID_ABI":                 "x86",
-                "SUIKA_TARGET_ANDROID":        "ON",
-                "SUIKA_ENABLE_STATIC":         "ON"
+                "CMAKE_BUILD_TYPE":          "Release",
+                "CMAKE_SHARED_LINKER_FLAGS": "-Wl,--hash-style=both -Wl,-z,max-page-size=16384 -s",
+                "ANDROID_PLATFORM":          "30",
+                "ANDROID_ABI":               "x86",
+                "SUIKA_TARGET_ANDROID":      "ON",
+                "SUIKA_ENABLE_STATIC":       "ON"
             }
         },
         {
@@ -580,12 +580,12 @@
             "binaryDir":      "${sourceDir}/build-android-x86_64",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both -Wl,-z,max-page-size=16384 -s",
-                "ANDROID_PLATFORM":            "30",
-                "ANDROID_ABI":                 "x86_64",
-                "SUIKA_TARGET_ANDROID":        "ON",
-                "SUIKA_ENABLE_STATIC":         "ON"
+                "CMAKE_BUILD_TYPE":          "Release",
+                "CMAKE_SHARED_LINKER_FLAGS": "-Wl,--hash-style=both -Wl,-z,max-page-size=16384 -s",
+                "ANDROID_PLATFORM":          "30",
+                "ANDROID_ABI":               "x86_64",
+                "SUIKA_TARGET_ANDROID":      "ON",
+                "SUIKA_ENABLE_STATIC":       "ON"
             }
         },
         {
@@ -595,12 +595,12 @@
             "binaryDir":      "${sourceDir}/build-android-armv7",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both -Wl,-z,max-page-size=16384 -s",
-                "ANDROID_PLATFORM":            "30",
-                "ANDROID_ABI":                 "armeabi-v7a",
-                "SUIKA_TARGET_ANDROID":        "ON",
-                "SUIKA_ENABLE_STATIC":         "ON"
+                "CMAKE_BUILD_TYPE":          "Release",
+                "CMAKE_SHARED_LINKER_FLAGS": "-Wl,--hash-style=both -Wl,-z,max-page-size=16384 -s",
+                "ANDROID_PLATFORM":          "30",
+                "ANDROID_ABI":               "armeabi-v7a",
+                "SUIKA_TARGET_ANDROID":      "ON",
+                "SUIKA_ENABLE_STATIC":       "ON"
             }
         },
         {
@@ -610,12 +610,12 @@
             "binaryDir":      "${sourceDir}/build-android-arm64",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both -Wl,-z,max-page-size=16384 -s",
-                "ANDROID_PLATFORM":            "30",
-                "ANDROID_ABI":                 "arm64-v8a",
-                "SUIKA_TARGET_ANDROID":        "ON",
-                "SUIKA_ENABLE_STATIC":         "ON"
+                "CMAKE_BUILD_TYPE":          "Release",
+                "CMAKE_SHARED_LINKER_FLAGS": "-Wl,--hash-style=both -Wl,-z,max-page-size=16384 -s",
+                "ANDROID_PLATFORM":          "30",
+                "ANDROID_ABI":               "arm64-v8a",
+                "SUIKA_TARGET_ANDROID":      "ON",
+                "SUIKA_ENABLE_STATIC":       "ON"
             }
         },
         {
@@ -625,12 +625,12 @@
             "binaryDir":      "${sourceDir}/build-android-riscv64",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_SHARED_LINKER_FLAGS":   "-Wl,--hash-style=both -Wl,-z,max-page-size=16384 -s",
-                "ANDROID_PLATFORM":            "30",
-                "ANDROID_ABI":                 "riscv64",
-                "SUIKA_TARGET_ANDROID":        "ON",
-                "SUIKA_ENABLE_STATIC":         "ON"
+                "CMAKE_BUILD_TYPE":          "Release",
+                "CMAKE_SHARED_LINKER_FLAGS": "-Wl,--hash-style=both -Wl,-z,max-page-size=16384 -s",
+                "ANDROID_PLATFORM":          "30",
+                "ANDROID_ABI":               "riscv64",
+                "SUIKA_TARGET_ANDROID":      "ON",
+                "SUIKA_ENABLE_STATIC":       "ON"
             }
         },
         {
@@ -640,11 +640,11 @@
             "binaryDir":      "${sourceDir}/build-openharmony-x86_64",
             "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":             "Release",
-                "OHOS_PLATFORM_LEVEL":          "12",
-                "OHOS_ARCH":                    "x86_64",
-                "SUIKA_TARGET_OPENHARMONY":     "ON",
-                "SUIKA_ENABLE_STATIC":          "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "OHOS_PLATFORM_LEVEL":      "12",
+                "OHOS_ARCH":                "x86_64",
+                "SUIKA_TARGET_OPENHARMONY": "ON",
+                "SUIKA_ENABLE_STATIC":      "ON"
             }
         },
         {
@@ -654,11 +654,11 @@
             "binaryDir":      "${sourceDir}/build-openharmony-arm64",
             "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":             "Release",
-                "OHOS_PLATFORM_LEVEL":          "12",
-                "OHOS_ARCH":                    "arm64-v8a",
-                "SUIKA_TARGET_OPENHARMONY":     "ON",
-                "SUIKA_ENABLE_STATIC":          "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "OHOS_PLATFORM_LEVEL":      "12",
+                "OHOS_ARCH":                "arm64-v8a",
+                "SUIKA_TARGET_OPENHARMONY": "ON",
+                "SUIKA_ENABLE_STATIC":      "ON"
             }
         },
         {
@@ -668,11 +668,11 @@
             "binaryDir":      "${sourceDir}/build-openharmony-armv7",
             "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":             "Release",
-                "OHOS_PLATFORM_LEVEL":          "12",
-                "OHOS_ARCH":                    "armeabi-v7a",
-                "SUIKA_TARGET_OPENHARMONY":     "ON",
-                "SUIKA_ENABLE_STATIC":          "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "OHOS_PLATFORM_LEVEL":      "12",
+                "OHOS_ARCH":                "armeabi-v7a",
+                "SUIKA_TARGET_OPENHARMONY": "ON",
+                "SUIKA_ENABLE_STATIC":      "ON"
             }
         },
         {
@@ -682,8 +682,8 @@
             "binaryDir":      "${sourceDir}/build-wasm",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/wasm.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_WASM":           "ON"
+                "CMAKE_BUILD_TYPE":  "Release",
+                "SUIKA_TARGET_WASM": "ON"
             }
         },
         {
@@ -693,8 +693,8 @@
             "binaryDir":      "${sourceDir}/build-wasm-local",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/wasm.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_WASM_LOCAL":     "ON"
+                "CMAKE_BUILD_TYPE":        "Release",
+                "SUIKA_TARGET_WASM_LOCAL": "ON"
             }
         },
         {
@@ -704,10 +704,10 @@
             "binaryDir":      "${sourceDir}/build-unity-win64",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/unity-win64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_C_FLAGS":               "-I${sourceDir}/external/PlayfieldEngine/resources/msvc-include",
-                "SUIKA_TARGET_UNITY":          "ON",
-                "SUIKA_ENABLE_SHARED":         "ON"
+                "CMAKE_BUILD_TYPE":    "Release",
+                "CMAKE_C_FLAGS":       "-I${sourceDir}/external/PlayfieldEngine/resources/msvc-include",
+                "SUIKA_TARGET_UNITY":  "ON",
+                "SUIKA_ENABLE_SHARED": "ON"
             }
         },
         {
@@ -717,10 +717,10 @@
             "binaryDir":      "${sourceDir}/build-unity-winarm64",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/unity-winarm64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Debug",
-                "CMAKE_C_FLAGS":               "-I${sourceDir}/external/PlayfieldEngine/resources/msvc-include",
-                "SUIKA_TARGET_UNITY":          "ON",
-                "SUIKA_ENABLE_SHARED":         "ON"
+                "CMAKE_BUILD_TYPE":    "Debug",
+                "CMAKE_C_FLAGS":       "-I${sourceDir}/external/PlayfieldEngine/resources/msvc-include",
+                "SUIKA_TARGET_UNITY":  "ON",
+                "SUIKA_ENABLE_SHARED": "ON"
             }
         },
         {
@@ -730,11 +730,11 @@
             "binaryDir":      "${sourceDir}/build-unity-switch",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/unity-switch.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":                 "Release",
-                "CMAKE_C_FLAGS":                    "-I${sourceDir}/external/PlayfieldEngine/resources/clang-include",
-                "SUIKA_TARGET_UNITY":               "ON",
-                "SUIKA_TARGET_UNITY_SWITCH":        "ON",
-                "SUIKA_ENABLE_STATIC":              "ON"
+                "CMAKE_BUILD_TYPE":          "Release",
+                "CMAKE_C_FLAGS":             "-I${sourceDir}/external/PlayfieldEngine/resources/clang-include",
+                "SUIKA_TARGET_UNITY":        "ON",
+                "SUIKA_TARGET_UNITY_SWITCH": "ON",
+                "SUIKA_ENABLE_STATIC":       "ON"
             }
         },
         {
@@ -744,11 +744,11 @@
             "binaryDir":      "${sourceDir}/build-unity-ps5",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/unity-ps5.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_C_FLAGS":               "-I${sourceDir}/external/PlayfieldEngine/resources/clang-include",
-                "SUIKA_TARGET_UNITY":          "ON",
-                "SUIKA_TARGET_UNITY_PS5":      "ON",
-                "SUIKA_ENABLE_STATIC":         "ON"
+                "CMAKE_BUILD_TYPE":       "Release",
+                "CMAKE_C_FLAGS":          "-I${sourceDir}/external/PlayfieldEngine/resources/clang-include",
+                "SUIKA_TARGET_UNITY":     "ON",
+                "SUIKA_TARGET_UNITY_PS5": "ON",
+                "SUIKA_ENABLE_STATIC":    "ON"
             }
         },
         {
@@ -758,11 +758,11 @@
             "binaryDir":      "${sourceDir}/build-unity-xbox",
             "toolchainFile":  "${sourceDir}/external/PlayfieldEngine/cmake/toolchains/unity-xbox.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_C_FLAGS":               "/I ${sourceDir}/external/PlayfieldEngine/resources/msvc-include",
-                "SUIKA_TARGET_UNITY":          "ON",
-                "SUIKA_TARGET_UNITY_XBOX":     "ON",
-                "SUIKA_ENABLE_STATIC":         "ON"
+                "CMAKE_BUILD_TYPE":        "Release",
+                "CMAKE_C_FLAGS":           "/I ${sourceDir}/external/PlayfieldEngine/resources/msvc-include",
+                "SUIKA_TARGET_UNITY":      "ON",
+                "SUIKA_TARGET_UNITY_XBOX": "ON",
+                "SUIKA_ENABLE_STATIC":     "ON"
             }
         },
         {
@@ -771,16 +771,16 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-freebsd",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_FREEBSD":        "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON",
-                "SUIKA_ENABLE_UNSAFE":         "ON",
-                "SUIKA_ENABLE_GST":            "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "SUIKA_TARGET_FREEBSD":     "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_FREEDESKTOP": "ON",
+                "SUIKA_ENABLE_JIT":         "ON",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_UNSAFE":      "ON",
+                "SUIKA_ENABLE_GST":         "ON"
             }
         },
         {
@@ -789,16 +789,16 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-freebsd-x11",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_FREEBSD":        "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON",
-                "SUIKA_ENABLE_UNSAFE":         "ON",
-                "SUIKA_ENABLE_GST":            "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "SUIKA_TARGET_FREEBSD":     "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_FREEDESKTOP": "ON",
+                "SUIKA_ENABLE_JIT":         "ON",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_UNSAFE":      "ON",
+                "SUIKA_ENABLE_GST":         "ON"
             }
         },
         {
@@ -807,16 +807,16 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-freebsd-wayland",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_FREEBSD":        "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON",
-                "SUIKA_ENABLE_UNSAFE":         "ON",
-                "SUIKA_ENABLE_GST":            "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "SUIKA_TARGET_FREEBSD":     "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_FREEDESKTOP": "ON",
+                "SUIKA_ENABLE_JIT":         "ON",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_UNSAFE":      "ON",
+                "SUIKA_ENABLE_GST":         "ON"
             }
         },
         {
@@ -825,15 +825,15 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-freebsd-x11soft",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_FREEBSD":        "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON",
-                "SUIKA_ENABLE_UNSAFE":         "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "SUIKA_TARGET_FREEBSD":     "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_FREEDESKTOP": "ON",
+                "SUIKA_ENABLE_JIT":         "ON",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON",
+                "SUIKA_ENABLE_UNSAFE":      "ON"
             }
         },
         {
@@ -842,14 +842,14 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-netbsd",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_NETBSD":         "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "SUIKA_TARGET_NETBSD":      "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_FREEDESKTOP": "ON",
+                "SUIKA_ENABLE_JIT":         "ON",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON"
             }
         },
         {
@@ -858,14 +858,14 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-netbsd-x11soft",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_NETBSD":         "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "SUIKA_TARGET_NETBSD":      "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_FREEDESKTOP": "ON",
+                "SUIKA_ENABLE_JIT":         "ON",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON"
             }
         },
         {
@@ -874,14 +874,14 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-openbsd",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_OPENBSD":        "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "OFF",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "SUIKA_TARGET_OPENBSD":     "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_FREEDESKTOP": "ON",
+                "SUIKA_ENABLE_JIT":         "OFF",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON"
             }
         },
         {
@@ -890,14 +890,14 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-openbsd-x11soft",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "SUIKA_TARGET_OPENBSD":        "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "OFF",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "SUIKA_TARGET_OPENBSD":     "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_FREEDESKTOP": "ON",
+                "SUIKA_ENABLE_JIT":         "OFF",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON"
             }
         },
         {
@@ -906,17 +906,17 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-solaris11",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_C_COMPILER":            "cc",
-                "CMAKE_C_FLAGS_RELEASE":      "-D__EXTENSIONS__",
-                "CMAKE_C_FLAGS_DEBUG":        "-D__EXTENSIONS__",
-                "SUIKA_TARGET_SOLARIS11":      "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "OFF",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "CMAKE_C_COMPILER":         "cc",
+                "CMAKE_C_FLAGS_RELEASE":    "-D__EXTENSIONS__",
+                "CMAKE_C_FLAGS_DEBUG":      "-D__EXTENSIONS__",
+                "SUIKA_TARGET_SOLARIS11":   "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_FREEDESKTOP": "ON",
+                "SUIKA_ENABLE_JIT":         "OFF",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON"
             }
         },
         {
@@ -925,16 +925,16 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-solaris10",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_C_COMPILER":            "/opt/developerstudio12.6/bin/cc",
-                "CMAKE_AR":                    "/usr/ccs/bin/ar",
-                "SUIKA_TARGET_SOLARIS10":      "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
-                "SUIKA_ENABLE_JIT":            "OFF",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "CMAKE_C_COMPILER":         "/opt/developerstudio12.6/bin/cc",
+                "CMAKE_AR":                 "/usr/ccs/bin/ar",
+                "SUIKA_TARGET_SOLARIS10":   "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_FREEDESKTOP": "ON",
+                "SUIKA_ENABLE_JIT":         "OFF",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON"
             }
         },
         {
@@ -943,14 +943,14 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-aix",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_C_COMPILER":            "xlc",
-                "SUIKA_TARGET_GENERICUNIX":    "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "CMAKE_C_COMPILER":         "xlc",
+                "SUIKA_TARGET_GENERICUNIX": "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_JIT":         "ON",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON"
             }
         },
         {
@@ -959,14 +959,14 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-hpux",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_C_COMPILER":            "cc",
-                "SUIKA_TARGET_GENERICUNIX":    "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "CMAKE_C_COMPILER":         "cc",
+                "SUIKA_TARGET_GENERICUNIX": "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_JIT":         "ON",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON"
             }
         },
         {
@@ -975,14 +975,14 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-unix",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_C_COMPILER":            "cc",
-                "SUIKA_TARGET_GENERICUNIX":    "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_JIT":            "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON"
+                "CMAKE_BUILD_TYPE":         "Release",
+                "CMAKE_C_COMPILER":         "cc",
+                "SUIKA_TARGET_GENERICUNIX": "ON",
+                "SUIKA_ENABLE_INSTALL":     "ON",
+                "SUIKA_ENABLE_JIT":         "ON",
+                "SUIKA_ENABLE_PACK":        "ON",
+                "SUIKA_ENABLE_BCC":         "ON",
+                "SUIKA_ENABLE_AOTC":        "ON"
             }
         },
         {
@@ -991,14 +991,16 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-haiku",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
-                "CMAKE_C_COMPILER":            "gcc",
-                "CMAKE_CXX_COMPILER":          "g++",
-                "SUIKA_TARGET_HAIKU":          "ON",
-                "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_PACK":           "ON",
-                "SUIKA_ENABLE_BCC":            "ON",
-                "SUIKA_ENABLE_AOTC":           "ON"
+                "CMAKE_BUILD_TYPE":     "Release",
+                "CMAKE_C_COMPILER":     "gcc",
+                "CMAKE_CXX_COMPILER":   "g++",
+                "SUIKA_TARGET_HAIKU":   "ON",
+                "SUIKA_ENABLE_INSTALL": "ON",
+                "SUIKA_ENABLE_PACK":    "ON",
+                "SUIKA_ENABLE_BCC":     "ON",
+                "SUIKA_ENABLE_AOTC":    "ON",
+                "SUIKA_ENABLE_MAIN2":   "ON",
+                "SUIKA_ENABLE_UNSAFE":  "ON"
             }
         },
         {
@@ -1035,7 +1037,8 @@
                 "CMAKE_BUILD_TYPE":    "Release",
                 "SUIKA_TARGET_PC98":   "ON",
                 "SUIKA_ENABLE_JIT":    "ON",
-                "SUIKA_ENABLE_MAIN2":  "ON"
+                "SUIKA_ENABLE_MAIN2":  "ON",
+                "SUIKA_ENABLE_UNSAFE": "ON"
 	    }
         },
         {
@@ -1048,7 +1051,8 @@
                 "CMAKE_BUILD_TYPE":    "Release",
                 "SUIKA_TARGET_PCAT":   "ON",
                 "SUIKA_ENABLE_JIT":    "ON",
-                "SUIKA_ENABLE_MAIN2":  "ON"
+                "SUIKA_ENABLE_MAIN2":  "ON",
+                "SUIKA_ENABLE_UNSAFE": "ON"
 	    }
         }
     ],
