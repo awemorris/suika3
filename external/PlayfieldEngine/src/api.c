@@ -548,8 +548,10 @@ pf_write_texture(
 {
 	struct hal_wfile *wf;
 
-	if (!hal_open_wfile(file, &wf))
+	if (!hal_open_wfile(file, &wf)) {
+		pf_log_error(PF_TR("Cannot open file \"%s\"."), file);
 		return false;
+	}
 	
 	if (!hal_write_image(tex_tbl[tex_id].img, wf)) {
 		pf_log_error(PF_TR("Cannot write file \"%s\"."), file);

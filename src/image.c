@@ -29,7 +29,6 @@
 
 #include <suika3/suika3.h>
 #include <playfield/playfield.h>
-#include <strato/strato.h>
 #include "image.h"
 
 #include <stdlib.h>
@@ -492,20 +491,8 @@ s3_write_image(
 	struct s3_image *image,
 	const char *file)
 {
-	struct hal_wfile *wf;
-
-	if (!hal_open_wfile(file, &wf)) {
-		s3_log_error(S3_TR("Cannot open file \"%s\"."), file);
+	if (!pf_write_texture(image->tex_id, file))
 		return false;
-	}
-	
-	if (!pf_write_texture(image->tex_id, file)) {
-		s3_log_error(S3_TR("Cannot open file \"%s\"."), file);
-		hal_close_wfile(wf);
-		return false;
-	}
-
-	hal_close_wfile(wf);
 
 	return true;
 }
