@@ -71,6 +71,10 @@ staticBSoundPlayer *sound_player[HAL_SOUND_TRACKS];
 static struct hal_wave *wave[HAL_SOUND_TRACKS];
 static bool is_finished[HAL_SOUND_TRACKS];
 
+/* argc/argv */
+int hal_argc;
+char **hal_argv;
+
 /* HAL callback. */
 struct hal_callback hal_callback;
 HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
@@ -233,6 +237,9 @@ public:
 
 int hal_main(int argc, char *argv[])
 {
+	hal_argc = argc;
+	hal_argv = argv;
+
 	NoctApplication app;
 	app.Run();
 	return 0;

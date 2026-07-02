@@ -207,6 +207,12 @@ struct hal_callback hal_callback;
 HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
 
 /*
+ * Command Line Arguments
+ */
+int hal_argc;
+char **hal_argv;
+
+/*
  * Forward Declaration
  */
 
@@ -214,6 +220,7 @@ HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct 
 static void SIGSEGV_Handler(int n);
 static BOOL InitApp(HINSTANCE hInstance, int nCmdShow);
 static void CleanupApp(void);
+static BOOL CopyCommandArgs(void);
 static BOOL InitWindow(HINSTANCE hInstance, int nCmdShow);
 static void GameLoop(void);
 static BOOL RunFrame(void);
@@ -330,19 +337,9 @@ InitApp(
 	check_cpuid();
 #endif
 
-#if 0
-	/* Check files. */
-	bFileOK = FALSE;
-	if (FILE_EXISTS(STARTUP_FILE))
-		bFileOK = TRUE;
-	else if (FILE_EXISTS(PACKAGE_FILE))
-		bFileOK = TRUE;
-	if (!bFileOK)
-	{
-		log_error(HAL_TR("No startup file."));
+	/* Copy command line arguments. */
+	if (!CopyCommandArgs())
 		return FALSE;
-	}
-#endif
 
 	/* Initialize the file HAL. */
 	if (!init_file())
@@ -415,6 +412,42 @@ CleanupApp(void)
 	/* Close the log file if opened. */
 	if(pLogFile != NULL)
 		fclose(pLogFile);
+}
+
+/* Parse command line arguments. */
+static BOOL
+CopyCommandArgs(VOID)
+{
+	int i;
+
+	hal_argc = __argc;
+
+	/* Allocate the table. */
+	hal_argv = malloc(sizeof(const char *) * __argc);
+	if (hal_argv == NULL)
+		return FALSE;
+
+	for (i = 0; i < __argc; i++) {
+		const wchar_t *wstr;
+		char *u8str;
+		DWORD size;
+
+		wstr = __wargv[i];
+
+		size = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, NULL, 0, NULL, NULL);
+		if (size <= 0)
+			return FALSE;
+
+		u8str = malloc(size);
+		if (u8str == NULL)
+			return FALSE;
+
+		WideCharToMultiByte(CP_UTF8, 0, wstr, -1, u8str, size, NULL, NULL);
+
+		hal_argv[i] = u8str;
+	}
+
+	return TRUE;
 }
 
 /* Create a window. */

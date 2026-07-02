@@ -72,6 +72,10 @@ static bool releaseMode;
 struct hal_callback hal_callback;
 HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
 
+// argc/argv
+int hal_argc;
+char **hal_argv;
+
 // Forward declaration.
 static void checkBundleResource(int argc, const char *argv[]);
 static void initGamepad(void);
@@ -90,6 +94,9 @@ hal_main(
         int argc,
         const char *argv[])
 {
+    hal_argc = argc;
+    hal_argv = argv;
+
     // Use "." for numeric points.
     setlocale(LC_NUMERIC, "C");
 

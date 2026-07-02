@@ -139,6 +139,12 @@ struct hal_callback hal_callback;
 HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
 #endif
 
+#if defined(HAL_USE_WAYLAND_ONLY)
+/* argc/argv */
+int hal_argc;
+char **hal_argv;
+#endif
+
 /* forward declaration */
 static bool init_hal(int argc, char *argv[]);
 static void init_locale(void);
@@ -231,6 +237,9 @@ hal_main(
 	int argc,
 	char *argv[])
 {
+	hal_argc = argc;
+	hal_argv = argv;
+
 	/* Initialize HAL. */
 	if (!init_hal(argc, argv))
 		return 1;

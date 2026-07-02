@@ -58,6 +58,14 @@
 /* NoctLang */
 static NoctVM *vm;
 static NoctEnv *env;
+static NoctConfig config;
+
+/* Startup file path. */
+static const char *startup_file = STARTUP_FILE;
+
+#if defined(PF_USE_UNSAFE)
+static int arg_start;
+#endif
 
 /* Forward Declaration */
 static bool load_startup_file(void);
@@ -74,6 +82,7 @@ static bool serialize_save_data(NoctEnv *env, NoctValue *value, void *data, size
 static bool deserialize_save_data(NoctEnv *env, NoctValue *value, void *data, size_t buf_size);
 static bool install_api(NoctEnv *env);
 #if defined(PF_USE_UNSAFE)
+static bool parse_cli_options(void);
 static bool call_main(void);
 #endif
 
@@ -91,7 +100,6 @@ pfi_create_vm(
 	int *height,
 	bool *fullscreen)
 {
-	NoctConfig config;
 	bool has_setup;
 
 	/* Initialize the NoctLang's i18n system. */
@@ -99,9 +107,15 @@ pfi_create_vm(
 	noct_init_locale();
 #endif
 
+	config.jit_threshold = 0;
+
+#if defined(PF_USE_UNSAFE)
+	if (!parse_cli_options())
+		return false;
+#endif
+
 	/* Create a language runtime. */
 	noct_set_default_config(&config);
-	config.jit_threshold = 0;
 	if (!noct_create_vm(&vm, &env, &config))
 		return false;
 
@@ -191,7 +205,7 @@ load_startup_file(void)
 	char *buf;
 
 	/* Load a file content, i.e., a script text. */
-	if (!pfi_load_file(STARTUP_FILE, &buf, NULL))
+	if (!pfi_load_file(startup_file, &buf, NULL))
 		return false;
 
 	/* Register the script text to the language runtime. */
@@ -213,116 +227,96 @@ load_startup_file(void)
 
 #if defined(PF_USE_UNSAFE)
 
-#if defined(PF_TARGET_WINDOWS)
-#define USE_WIN32
-#include <stdlib.h>
-#include <windows.h>
-#elif defined(PF_TARGET_MACOS)
-#define USE_DARWIN
-#include <crt_externs.h>
-#elif defined(PF_TARGET_LINUX)
-#include <features.h>
-#if defined(__GLIBC__)
-#define USE_LINUX
-extern int __argc;
-extern char** __argv;
-#endif
-#elif defined(PF_TARGET_PC98) || defined(PF_TARGET_PCAT)
-#include <stdlib.h>
-#endif
+/* Parse the command line arguments. */
+static bool
+parse_cli_options(void)
+{
+	extern int hal_argc;
+	extern char **hal_argv;
+	int i;
 
-/* Call "main()" function. */
+	for (i = 1; i < hal_argc; i++) {
+		if (hal_argv[i][0] != '-')
+			break;
+
+		if (strcmp(hal_argv[i], "--open") == 0) {
+			/* Ignore: for Portal. */
+			continue;
+		}
+		if (strcmp(hal_argv[i], "--disable-jit") == 0) {
+			config.jit_enable = false;
+			continue;
+		}
+		if (strcmp(hal_argv[i], "--force-jit") == 0) {
+			config.jit_threshold = 0;
+			continue;
+		}
+		if (strncmp(hal_argv[i], "--jit-threshold=", 16) == 0) {
+			config.jit_threshold = atoi(hal_argv[i] + 16);
+			continue;
+		}
+		if (strncmp(hal_argv[i], "--optimize-level=", 17) == 0) {
+			config.optimize_level = atoi(hal_argv[i] + 17);
+			continue;
+		}
+		if (strncmp(hal_argv[i], "--gc-nursery-size=", 18) == 0) {
+			config.gc_nursery_size = (size_t)atoi(hal_argv[i] + 18);
+			continue;
+		}
+		if (strncmp(hal_argv[i], "--gc-graduate-size=", 21) == 0) {
+			config.gc_graduate_size = (size_t)atoi(hal_argv[i] + 21);
+			continue;
+		}
+		if (strncmp(hal_argv[i], "--gc-tenure-size=", 17) == 0) {
+			config.gc_tenure_size = (size_t)atoi(hal_argv[i] + 17);
+			continue;
+		}
+		if (strncmp(hal_argv[i], "--gc-lop-threshold=", 18) == 0) {
+			config.gc_lop_threshold = (size_t)atoi(hal_argv[i] + 18);
+			continue;
+		}
+		if (strncmp(hal_argv[i], "--gc-promotion-threshold=", 25) == 0) {
+			config.gc_promotion_threshold = (size_t)atoi(hal_argv[i] + 25);
+			continue;
+		}
+
+		pf_log_error(PF_TR("Unknown option %s.\n"), hal_argv[1]);
+		return false;
+	}
+
+	if (i < hal_argc) {
+		startup_file = hal_argv[i];
+		arg_start = i + 1;
+	} else {
+		arg_start = i;
+	}
+
+	return true;
+}
+
+/* Call the "main()" function. */
 static bool
 call_main(void)
 {
         NoctValue ret;
         NoctValue arg;
         NoctValue val;
+	size_t index;
+	int i;
+	extern int hal_argc;
+	extern char **hal_argv;
 
         /* Make "arg" array. */
         if (!noct_make_empty_array(env, &arg))
                 return false;
 
 	/* Copy argv. */
-#if defined(USE_WIN32)
-	{
-		int i;
-		for (i = 1; i < __argc; i++) {
-			const wchar_t *wstr = __wargv[i];
-			char *utf8_buf = NULL;
-			int size_needed = 0;
-
-			size_needed = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, NULL, 0, NULL, NULL);
-			if (size_needed <= 0)
-				return false;
-
-			utf8_buf = malloc(size_needed);
-			if (!utf8_buf)
-				return false;
-
-			WideCharToMultiByte(CP_UTF8, 0, wstr, -1, utf8_buf, size_needed, NULL, NULL);
-
-			if (!noct_set_array_elem_make_string(env, &arg, i - 1, &val, utf8_buf)) {
-				free(utf8_buf);
-				return false;
-			}
-			free(utf8_buf);
-		}
+	index = -0;
+	for (i = arg_start; i < hal_argc; i++) {
+		const char *v_utf8 = hal_argv[i];
+		if (!noct_set_array_elem_make_string(env, &arg, index++, &val, v_utf8))
+			return false;
 	}
-#elif defined(USE_DARWIN)
-	{
-		int local_argc;
-		char **local_argv;
-		int i;
-
-		local_argc = *_NSGetArgc();
-		local_argv = *_NSGetArgv();
-
-		for (i = 1; i < local_argc; i++) {
-			const char *v_utf8 = local_argv[i];
-			if (!noct_set_array_elem_make_string(env, &arg, (size_t)(i - 1), &val, v_utf8))
-				return false;
-		}
-	}
-#elif defined(USE_LINUX)
-	{
-		FILE *fp = fopen("/proc/self/cmdline", "rb");
-		if (fp) {
-			char buf[2048];
-			size_t bytes_read = fread(buf, 1, sizeof(buf) - 1, fp);
-			fclose(fp);
-
-			if (bytes_read > 0) {
-				size_t p = 0;
-				size_t idx = 0;
-				bool is_argv0 = true;
-
-				buf[bytes_read] = '\0';
-				while (p < bytes_read && buf[p] != '\0') {
-					const char *current_arg = &buf[p];
-					size_t arg_len = strlen(current_arg);
-
-					if (is_argv0) {
-						is_argv0 = false;
-					} else {
-						if (!noct_set_array_elem_make_string(env, &arg, idx, &val, current_arg))
-							return false;
-						idx++;
-					}
-					p += arg_len + 1;
-				}
-			}
-		}
-	}
-#elif defined(PF_TARGET_PC98) || defined(PF_TARGET_PCAT)
-	{
-		int i;
-		for (i = 1; i < __argc; i++) {
-			if (!noct_set_array_elem_make_string(env, &arg, i - 1, &val, __argv[i]))
-				return false;
-		}
-	}
-#endif
 
 	/* Run main(arg). */
         if (!noct_enter_vm(env, "main", 1, &arg, &ret)) {
@@ -349,7 +343,7 @@ call_main(void)
 
 #endif
 
-/* Call "setup()" function to determin a title, width, and height. */
+/* Call the "setup()" function to determin a title, width, and height. */
 static bool
 call_setup(
 	char **title,
