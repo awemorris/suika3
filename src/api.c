@@ -3128,13 +3128,13 @@ Suika_makePixel(void *p)
 	ret = false;
 	do {
 		/* Get the arguments. */
-		if (!pf_get_call_arg_int("r", &r, false, -1))
+		if (!pf_get_call_arg_int("r", (int *)&r, false, -1))
 			break;
-		if (!pf_get_call_arg_int("g", &g, false, -1))
+		if (!pf_get_call_arg_int("g", (int *)&g, false, -1))
 			break;
-		if (!pf_get_call_arg_int("b", &b, false, -1))
+		if (!pf_get_call_arg_int("b", (int *)&b, false, -1))
 			break;
-		if (!pf_get_call_arg_int("a", &a, false, -1))
+		if (!pf_get_call_arg_int("a", (int *)&a, false, -1))
 			break;
 
 		if (r < 0)

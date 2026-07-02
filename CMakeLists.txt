@@ -574,7 +574,7 @@ if(   SUIKA_TARGET_MACOS
   # Exclude Homebrew packaging.
   #  - Homebrew provides arch-specific libraries.
   #  - If we try to make a fat binary, link will fail.
-  if(NOT SUIKA_ENABLE_DIST)
+  if(NOT SUIKA_ENABLE_DIST AND NOT SUIKA_ENABLE_DIST_SINGLE)
     set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "" FORCE)
   endif()
 endif()
