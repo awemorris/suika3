@@ -31,7 +31,7 @@
  * Constant
  */
 
-#define CBACK_ARG_MAX		32
+#define ARG_MAX		32
 
 /*
  * Message
@@ -48,7 +48,7 @@ static const char BROKEN_BYTECODE[] = "Broken bytecode.";
 struct c_func {
 	char *name;
 	uint32_t param_count;
-	char *param_name[CBACK_ARG_MAX];
+	char *param_name[ARG_MAX];
 };
 
 static struct c_func func_table[FUNC_MAX];
@@ -849,7 +849,7 @@ cback_visit_call_op(
 	int func_tmpvar;
 	int arg_count;
 	int arg_tmpvar;
-	int arg[CBACK_ARG_MAX];
+	int arg[ARG_MAX];
 	int i;
 
 
@@ -885,7 +885,7 @@ cback_visit_thiscall_op(
 	uint32_t len, hash;
 	int arg_count;
 	int arg_tmpvar;
-	int arg[CBACK_ARG_MAX];
+	int arg[ARG_MAX];
 	int i;
 
 	GET_TMPVAR(&dst_tmpvar);

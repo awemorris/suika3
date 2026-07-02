@@ -15,7 +15,88 @@ The `noct` CLI command includes the standard APIs.
 
 `File.*` is a standard API and not included in the intrinsics.
 
-### File.readText(file)
+### File.open(path, mode)
+
+Opens a file.
+
+```
+var file = File.open("test.bin", "r");
+var data = File.read(file, 100);
+for (i in 0..100)
+    print(data[i]);
+File.close(file);
+```
+
+### File.close(file)
+
+Closes a file.
+
+```
+var file = File.open("test.bin", "r");
+var data = File.read(file, 100);
+File.close(file);
+```
+
+### File.tell(file)
+
+Gets the position in a file.
+
+```
+var file = File.open("test.bin", "r");
+var offset = File.tell(file);
+```
+
+### File.seek(file, offset)
+
+Moves to an offset in a file.
+
+```
+var file = File.open("test.bin", "r");
+File.seek(file, 100);
+```
+
+### File.read(file, len)
+
+Reads bytes and returns a UInt8 packed array.
+
+```
+var file = File.open("test.bin", "r");
+var data = File.read(file, 100);
+for (i in 0..100)
+    print(data[i]);
+File.close(file);
+```
+
+### File.write(file, data, offset, len)
+
+Write bytes.
+
+```
+var data = Packed.uint8(100);
+for (i in 0..100)
+    data[i] = i;
+
+var file = File.open("test.bin", "w");
+File.write(file, data, 0, Packed.size(data));
+File.close(file);
+```
+
+---
+
+## FileUtil
+
+`FileUtil.*` is a standard API and not included in the intrinsics.
+
+### FileUtil.checkFileExists()
+
+Checks whether a file exists.
+
+```
+if (File.checkFileExists("text.txt"))
+    print("File exists!")
+```
+
+### FileUtil.readText(file)
 
 Reads a text file as a string.
 
@@ -24,7 +105,7 @@ var text = File.readText("text.txt");
 print(text);
 ```
 
-### File.writeText(file, text)
+### FileUtil.writeText(file, text)
 
 Writes a string to a text file.
 
@@ -33,7 +114,7 @@ var text = "abc";
 File.writeText("text.txt", text);
 ```
 
-### File.readForEachLine(file, func)
+### FileUtil.readForEachLine(file, func)
 
 Reads lines from a text file.
 
@@ -43,7 +124,7 @@ File.readForEachLine("text.txt", (line) => {
 });
 ```
 
-### File.writeForEachLine(file, lines)
+### FileUtil.writeForEachLine(file, lines)
 
 Write lines to a text file.
 
@@ -53,15 +134,6 @@ File.writeForEachLine("text.txt", [
     "bbb",
     "ccc"
 ]);
-```
-
-### File.checkFileExists()
-
-Checks whether a file exists.
-
-```
-if (File.checkFileExists("text.txt"))
-    print("File exists!")
 ```
 
 ---
