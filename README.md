@@ -88,6 +88,7 @@ You will definitely like it!
 | Windows Arm64 Win10+                  | [suika3-arm64.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-arm64.exe)                             |
 | Windows CLI (Win 7+)                  | [suika3-cli.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-cli.exe)                                 |
 | macOS 10.11+ DMG                      | [Suika3.dmg](https://github.com/awemorris/suika3/releases/latest/download/Suika3.dmg)                                         |
+| macOS 10.11+ CLI                      | [suika3-macos-universal.tar.gz](https://github.com/awemorris/suika3/releases/latest/download/suika3-macos-universal.tar.gz)   |
 | macOS (Xcode)                         | [Suika3-macOS-Xcode.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-macOS-Xcode.zip)                 |
 | Linux Flatpak x86_64 Intel/AMD        | [Suika3-x86_64.flatpak](https://github.com/awemorris/suika3/releases/latest/download/Suika3-x86_64.flatpak)                   |
 | Linux Flatpak Arm64 (Raspberry Pi 3+) | [Suika3-aarch64.flatpak](https://github.com/awemorris/suika3/releases/latest/download/Suika3-aarch64.flatpak)                 |

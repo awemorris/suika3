@@ -18,6 +18,40 @@ feature requests, testing, and discussions for this release:
 
 ## Notes
 
+### Suika3 26.07.4 LTS: July 2, 2026
+
+Changes:
+- CLI
+  - New: Add a feature to specify a script file to load
+    - For example, type in the console:
+    ```
+    suika3-cli.exe script.ray
+    ```
+  - New: Add File.* API in NoctLang
+    - For example, type in the console:
+    ```
+    func main(arg) {
+        var file = File.open("testfile", "r");
+        var data = File.read(file, 100);
+        for (i in 0..100)
+            print(data[i]);
+    }
+    ```
+  - Change: Change the file name "suika3-console.exe" to "suika3-cli.exe"
+  - These features are only available for:
+    - Windows: suika3-cli.exe
+    - macOS: CLI version
+    - Linux
+    - PC98
+    - PC/AT
+
+Dependencies
+| Component        | Version    |
+|------------------|------------|
+| Playfield Engine | 1.0.20     |
+| NoctLang         | 1.1.5      |
+| StratoHAL        | 1.0.23     |
+
 ### Suika3 26.07.3 LTS: July 1, 2026
 
 Changes:
@@ -37,11 +71,6 @@ Changes:
   - PlayfieldEngine: 1.0.17 --> 1.0.18
   - NoctLang: 1.1.3 --> 1.1.4
   - StratoHAL: 1.0.20 --> 1.0.22
-
-Dependencies:
-- Playfield Engine: v1.0.18
-- NoctLang: v1.1.3
-- StratoHAL: v1.0.20
 
 ### Suika3 26.07.2 LTS: June 30, 2026
 

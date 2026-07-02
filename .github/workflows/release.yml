@@ -909,6 +909,7 @@ jobs:
             | Windows 32-bit Intel        | suika3-win32.exe                | Windows Executable         | Windows XP+ 32-bit               |
             | Windows CLI                 | suika3-cli.exe                  | Windows Executable         | Windows 7+ 64-bit                |
             | macOS 10.11+                | Suika3.dmg                      | macOS App                  | macOS 10.11+ App                 |
+            | macOS CLI                   | suika3-macos-universal.tar.gz   | macOS CLI                  | macOS binary set                 |
             | macOS (Xcode)               | Suika3-macOS-Xcode.zip          | Xcode Project              | macOS Xcode Project              |
             | Linux x86_64                | Suika3-x86_64.flatpak           | Flatpak Package            | Linux Flatpak x86_64             |
             | Raspberry Pi 3+             | Suika3-aarch64.flatpak          | Flatpak Package            | Linux Flatpak aarch64            |
@@ -929,6 +930,7 @@ jobs:
             windows/suika3-cli.exe
             macos/Suika3.dmg
             macos/Suika3-macOS-Xcode.zip
+            macos/suika3-macos-universal.tar.gz
             flatpak-x86_64/Suika3-x86_64.flatpak
             flatpak-aarch64/Suika3-aarch64.flatpak
             macos/Suika3-iOS-Xcode.zip
