@@ -12,6 +12,10 @@
 #include <noct/noct.h>
 #include "cli-main.h"
 
+#if defined(NOCT_TARGET_WINDOWS)
+#include <windows.h>
+#endif
+
 static NoctVM *vm;
 static NoctEnv *env;
 static NoctConfig config;

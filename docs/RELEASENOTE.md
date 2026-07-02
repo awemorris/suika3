@@ -21,8 +21,22 @@ feature requests, testing, and discussions for this release:
 ### Suika3 26.07.3 LTS: July 1, 2026
 
 Changes:
-- Fix a bug that suika3-debug.exe is not a console app.
-  - PlayfieldEngine 1.0.17 --> 1.0.18
+- Fix a bug where suika3-debug.exe is not a console app.
+- Change the file name: suika3-debug.exe --> suika3-console.exe
+- Add a feature to write PNG files (Suika.writeImage)
+- Add a feature to use Suika3 as a CLI scripting runtime
+  - This feature is only enabled in:
+    - Windows: suika3-console.exe
+    - macOS: CLI version
+    - Linux
+    - PC98
+    - PC/AT
+  - To use this, define "func main(arg)" in `main.ray`.
+  - If "main()" exists, it will be executed, and the game won't start.
+- Dependency Update
+  - PlayfieldEngine: 1.0.17 --> 1.0.18
+  - NoctLang: 1.1.3 --> 1.1.4
+  - StratoHAL: 1.0.20 --> 1.0.22
 
 Dependencies:
 - Playfield Engine: v1.0.18
