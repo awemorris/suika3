@@ -2038,7 +2038,7 @@ information on supported platforms and their requirements.
 - Minimum Configuration for Embedded Devices
     - Display: Any size, 24bpp required
     - CPU: 200MHz
-    - RAM: 32MB
+    - RAM: 64MB
     - GPU: Not required
     - Disk: 2MB + assets
 
