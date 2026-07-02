@@ -1110,6 +1110,31 @@ noct_get_packed_size(
 	return true;
 }
 
+/*
+ * Retrieves the type of packed elements.
+ */
+NOCT_DLL
+bool
+noct_get_packed_pointer(
+	NoctEnv *env,
+	NoctValue *packed,
+	void **data)
+{
+	assert(env != NULL);
+	assert(packed != NULL);
+	assert(data != NULL);
+
+	/* Check the type. */
+	if (packed->type != NOCT_VALUE_PACKED) {
+		rt_error(env, N_TR("Not a packed."));
+		return false;
+	}
+
+	*data = packed->val.packed->packed_buffer;
+
+	return true;
+}
+
 NOCT_DLL
 bool
 noct_get_func_param_count(

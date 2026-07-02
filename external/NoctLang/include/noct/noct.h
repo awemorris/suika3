@@ -737,6 +737,16 @@ noct_get_packed_size(
 	size_t *size);
 
 /*
+ * Retrieves the type of packed elements.
+ */
+NOCT_DLL
+bool
+noct_get_packed_pointer(
+	NoctEnv *env,
+	NoctValue *packed,
+	void **data);
+
+/*
  * Get the number of the function parameters.
  */
 NOCT_DLL
