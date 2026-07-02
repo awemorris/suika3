@@ -72,8 +72,12 @@ static bool releaseMode;
 struct hal_callback hal_callback;
 HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
 
+// argc/argv
+int hal_argc;
+char **hal_argv;
+
 // Forward declaration.
-static void checkBundleResource(int argc, const char *argv[]);
+static void checkBundleResource(int argc, char *argv[]);
 static void initGamepad(void);
 static void openLogWindow(void);
 static void putTextToLogWindow(const char *text);
@@ -88,8 +92,11 @@ HAL_DLL
 int
 hal_main(
         int argc,
-        const char *argv[])
+        char *argv[])
 {
+    hal_argc = argc;
+    hal_argv = argv;
+
     // Use "." for numeric points.
     setlocale(LC_NUMERIC, "C");
 
@@ -106,7 +113,7 @@ hal_main(
     return 0;
 }
 
-static void checkBundleResource(int argc, const char *argv[])
+static void checkBundleResource(int argc, char *argv[])
 {
     if (argc >= 2) {
         if (strcmp(argv[1], ".") == 0) {
@@ -260,7 +267,6 @@ static void checkBundleResource(int argc, const char *argv[])
 
     // Do a boot callback to acquire a window configuration.
     if (!hal_bootstrap_ptr(&window_title, &screen_width, &screen_height, &hal_callback)) {
-        NSLog(@"Startup file failed.");
         showLogAtExit();
         [NSApp terminate:nil];
         return;

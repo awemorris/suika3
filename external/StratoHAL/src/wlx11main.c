@@ -55,6 +55,10 @@ static int mode;
 struct hal_callback hal_callback;
 HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
 
+/* argc/argv */
+int hal_argc;
+char **hal_argv;
+
 static bool is_wslg(void);
 
 /* Wayland. */
@@ -134,8 +138,15 @@ hal_main(
 	int argc,
 	char *argv[])
 {
-	bool prefer_x11 = is_wslg();
+	bool prefer_x11;
 
+	hal_argc = argc;
+	hal_argv = argv;
+
+	/* Check for WSLg. */
+	prefer_x11 = is_wslg();
+
+	/* Use Portal if --open is specified. */
 #if defined(HAL_USE_PORTAL)
 	if (argc >= 2 && strcmp(argv[1], "--open") == 0) {
 		int open_portal_and_set_work_dir(int argc, char *argv[]);
@@ -144,6 +155,7 @@ hal_main(
 	}
 #endif
 
+	/* Select Wayland or X11. */
 	if (!prefer_x11 && getenv("WAYLAND_DISPLAY") != NULL) {
 		mode = MODE_WAYLAND;
 		if (!main_init_wl(argc, argv)) {
@@ -163,6 +175,7 @@ hal_main(
 		return 1;
 	}
 
+	/* Run main. */
 	if (mode == MODE_WAYLAND) {
 		if (!main_run_wl())
 			return 1;

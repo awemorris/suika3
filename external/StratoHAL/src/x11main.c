@@ -213,6 +213,12 @@ static struct API api[] =
 };
 #endif
 
+/* argc/argv */
+#if defined(HAL_USE_X11_ONLY)
+int hal_argc;
+char **hal_argv;
+#endif
+
 /* forward declaration */
 static void init_locale(void);
 static bool init_hal(int argc, char *argv[]);
@@ -257,6 +263,9 @@ hal_main(
      int argc,
      char *argv[])
 {
+	hal_argc = argc;
+	hal_argv = argv;
+
 	/* Initialize HAL. */
 	if (!init_hal(argc, argv))
 		return 1;

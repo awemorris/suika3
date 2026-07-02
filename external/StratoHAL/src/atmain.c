@@ -75,6 +75,10 @@ static FILE *log_fp;
 static struct hal_callback hal_callback;
 HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
 
+/* argc/argv */
+int hal_argc;
+char **hal_argv;
+
 /* Forward Declaration */
 static void init_vram(void);
 static void cleanup_vram(void);
@@ -84,6 +88,9 @@ static bool open_log_file(void);
 
 int hal_main(int argc, char *argv[])
 {
+	hal_argc = argc;
+	hal_argv = argv;
+
 	printf("\n"
 	       "Suika3 Game Engine for IBM PC/AT VGA\n"
 	       "Copyright (c) 2026 Awe Morris\n");
