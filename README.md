@@ -86,6 +86,7 @@ You will definitely like it!
 | Windows 64-bit Intel/AMD (Win 7+)     | [suika3-win64.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-win64.exe)                             |
 | Windows 32-bit Intel/AMD (Win XP+)    | [suika3-win32.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-win32.exe)                             |
 | Windows Arm64 Win10+                  | [suika3-arm64.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-arm64.exe)                             |
+| Windows CLI (Win 7+)                  | [suika3-cli.exe](https://github.com/awemorris/suika3/releases/latest/download/suika3-cli.exe)                                 |
 | macOS 10.11+ DMG                      | [Suika3.dmg](https://github.com/awemorris/suika3/releases/latest/download/Suika3.dmg)                                         |
 | macOS (Xcode)                         | [Suika3-macOS-Xcode.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-macOS-Xcode.zip)                 |
 | Linux Flatpak x86_64 Intel/AMD        | [Suika3-x86_64.flatpak](https://github.com/awemorris/suika3/releases/latest/download/Suika3-x86_64.flatpak)                   |
@@ -274,6 +275,7 @@ louder than any pitch deck ever could!
 - [Why Ray?](#why-ray)
 - [Technical Overview](#technical-overview)
 - [Garbage Collection](#garbage-collection)
+- [Ray Scripting Host](#ray-scripting-host)
 - [Compatibility List](#compatibility-list)
 - [Documentation](#documentation)
 - [Internationalization](#internationalization)
@@ -917,6 +919,32 @@ hides the GC processing time within the natural frame interval.
 Thanks to this generational strategy, the heavier Old-generation
 Mark-and-Sweep is rarely triggered, maintaining a constant 60 fps
 experience for the player.
+
+---
+
+## Ray Scripting Host
+
+`suika3-cli.exe` has a feature to run Ray scripts in the console.
+This program is not sandboxed and scripts are able to access "unsafe" APIs
+that are [described here](https://github.com/awemorris/NoctLang/blob/main/docs/library.md).
+
+The CLI can handle files and images, that is, developers can write
+cross-platform scripts to process game assets, without installing Python.
+
+To run a script:
+```
+> suika3-cli my-script.ray
+```
+
+Script should be like this:
+```
+func main(arg) {
+    print("Hello, World!");
+}
+```
+
+The CLI is also available on PC98 and PC/AT.
+A contemporary scripting language with JIT VM on MS-DOS looks like a magic!
 
 ---
 

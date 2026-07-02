@@ -36,7 +36,7 @@ jobs:
 
           cmake --preset windows-vs2026-x64-console
           cmake --build --preset windows-vs2026-x64-console --config Release
-          cp out/build/windows-vs2026-x64-console/Release/suika3.exe suika3-console.exe
+          cp out/build/windows-vs2026-x64-console/Release/suika3.exe suika3-cli.exe
 
           cmake --preset windows-vs2026-arm64
           cmake --build --preset windows-vs2026-arm64 --config Release
@@ -50,7 +50,7 @@ jobs:
             suika3-win32.exe
             suika3-win64.exe
             suika3-arm64.exe
-            suika3-console.exe
+            suika3-cli.exe
             suika3-aotc.exe
             suika3-bcc.exe
             suika3-pack.exe
@@ -751,7 +751,7 @@ jobs:
           cp windows/suika3-pack.exe    dist/SDK/windows/
           cp windows/suika3-web.exe     dist/SDK/wasm/
           cp windows/suika3-arm64.exe   dist/SDK/windows/suika3-arm64.exe
-          cp windows/suika3-console.exe   dist/SDK/windows/suika3-console.exe
+          cp windows/suika3-cli.exe   dist/SDK/windows/suika3-cli.exe
 
       - name: Download macOS artifacts
         uses: actions/download-artifact@v4
@@ -907,6 +907,7 @@ jobs:
             | Windows 64-bit Intel        | suika3-win64.exe                | Windows Executable         | Windows 7+ 64-bit                |
             | Windows 64-bit Arm          | suika3-arm64.exe                | Windows Executable         | Windows 10+ Arm64                |
             | Windows 32-bit Intel        | suika3-win32.exe                | Windows Executable         | Windows XP+ 32-bit               |
+            | Windows CLI                 | suika3-cli.exe                  | Windows Executable         | Windows 7+ 64-bit                |
             | macOS 10.11+                | Suika3.dmg                      | macOS App                  | macOS 10.11+ App                 |
             | macOS (Xcode)               | Suika3-macOS-Xcode.zip          | Xcode Project              | macOS Xcode Project              |
             | Linux x86_64                | Suika3-x86_64.flatpak           | Flatpak Package            | Linux Flatpak x86_64             |
@@ -925,6 +926,7 @@ jobs:
             windows/suika3-win64.exe
             mingw/suika3-win32.exe
             windows/suika3-arm64.exe
+            windows/suika3-cli.exe
             macos/Suika3.dmg
             macos/Suika3-macOS-Xcode.zip
             flatpak-x86_64/Suika3-x86_64.flatpak
