@@ -72,7 +72,9 @@ building in-house game engines.
 
 ---
 
-## Downloads
+## Installation
+
+### Binary Downloads
 
 <img src="https://img.shields.io/badge/CI%20Build%20Status-All%20Green%20Released-green"><br>
 
@@ -106,6 +108,30 @@ You will definitely like it!
 | NEC PC-9801 MS-DOS                    | [suika-98.exe](https://github.com/awemorris/suika3/releases/latest/download/suika-98.exe)                                     |
 | IBM PC/AT MS-DOS                      | [suika-at.exe](https://github.com/awemorris/suika3/releases/latest/download/suika-at.exe)                                     |
 
+### Package Managers & Automated Installation
+
+Windoww (Terminal):
+```
+curl -o "%TEMP%\suika3.exe" -L https://github.com/awemorris/suika3/releases/latest/download/suika3-cli.exe
+powershell -NoProfile -Command "Start-Process cmd -Verb RunAs -ArgumentList '/c copy /Y \"%TEMP%\suika3.exe\" \"C:\Windows\System32\suika3.exe\"'"
+```
+
+Linux (Flathub):
+```
+flatpak install --user flathub vn.suika3.engine
+flatpak run vn.suika3.engine
+```
+
+macOS (Homebrew):
+```
+brew tap awemorris/suika3
+brew install suika3
+```
+
+FreeBSD (Ports):
+```
+pkg install suika3
+```
 ---
 
 ## Demo and Gallery
@@ -153,7 +179,13 @@ You will definitely like it!
 
 Please refer to the [Tutorial](docs/mkdocs-en/docs/tutorial.md) page.
 
-### Package Managers
+### Package Managers & Quick Installation
+
+Windoww (Terminal):
+```
+curl -o %TEMP%\suika3.exe -L https://github.com/awemorris/suika3/releases/latest/download/suika3-cli.exe
+powershell -NoProfile -Command "Start-Process cmd -Verb RunAs -ArgumentList '/c copy /Y \"%TEMP%\suika3.exe\" \"C:\Windows\System32\suika3.exe\"'"
+```
 
 Linux (Flathub):
 ```
