@@ -11,17 +11,17 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
   <img src="https://img.shields.io/github/stars/awemorris/suika3.svg?style=flat&logo=github&colorB=yellow&label=stars">
   <img src="https://img.shields.io/github/forks/awemorris/suika3.svg">
   <p>
-    <a href="https://suika3.vn/en/">English</a>
-    <a href="https://suika3.vn/es/">Español</a>
-    <a href="https://suika3.vn/fr/">Français</a>
-    <a href="https://suika3.vn/de/">Deutsch</a>
-    <a href="https://suika3.vn/ru/">Русский</a>
+    <a href="https://suika3.vn/en/">English</a>&nbsp;|&nbsp;
+    <a href="https://suika3.vn/es/">Español</a>&nbsp;|&nbsp;
+    <a href="https://suika3.vn/fr/">Français</a>&nbsp;|&nbsp;
+    <a href="https://suika3.vn/de/">Deutsch</a>&nbsp;|&nbsp;
+    <a href="https://suika3.vn/ru/">Русский</a>&nbsp;|&nbsp;
     <a href="https://suika3.vn/zh-Hans/">簡体中文</a>&nbsp;|&nbsp;
     <a href="https://suika3.vn/zh-Hant/">繁体中文</a>&nbsp;|&nbsp;
     <a href="https://suika3.vn/ja/">日本語</a>
   </p>
   <p>
-    <a href="https://github.com/awemorris/suika3/releases/latest"> Downloads</a>
+    <a href="https://github.com/awemorris/suika3/releases/latest"> Downloads</a>&nbsp;|&nbsp;
     <a href="https://github.com/awemorris/suika3/blob/main/docs/mkdocs-en/docs/tutorial.md">Tutorial</a>
   </p>
 </div>
@@ -77,7 +77,7 @@ You will definitely like it!
 [Downloads](https://github.com/awemorris/suika3/releases/latest)
 [Tutorial](docs/mkdocs-en/docs/tutorial.md)
 
-**Direct Links to Latest LTS Release:**
+**Direct Links to Latest LTS Release** [(Release Note)](https://github.com/awemorris/suika3/blob/main/docs/RELEASENOTE.md)
 
 | OS                                    | File                                                                                                                          |
 |---------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
