@@ -44,6 +44,14 @@ add_library(webp OBJECT
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/yuv_neon.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/yuv_sse2.c
   ${CMAKE_BINARY_DIR}/libwebp/src/dsp/yuv_sse41.c
+  ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv.c
+  ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv_cpu.c
+  ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv_dsp.c
+  ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv_csp.c
+  ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv_gamma.c
+  ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv_sse2.c
+  ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv_neon.c
+
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/bit_reader_utils.c
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/color_cache_utils.c
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/filters_utils.c
@@ -53,14 +61,9 @@ add_library(webp OBJECT
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/rescaler_utils.c
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/thread_utils.c
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/utils.c
-  ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv.c
-  ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv_cpu.c
-  ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv_dsp.c
-  ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv_csp.c
-  ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv_gamma.c
-  ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv_sse2.c
-  ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv_neon.c
   # Encoder
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/analysis_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/alpha_enc.c
   ${CMAKE_BINARY_DIR}/libwebp/src/enc/analysis_enc.c
   ${CMAKE_BINARY_DIR}/libwebp/src/enc/backward_references_cost_enc.c
   ${CMAKE_BINARY_DIR}/libwebp/src/enc/backward_references_enc.c
@@ -71,8 +74,8 @@ add_library(webp OBJECT
   ${CMAKE_BINARY_DIR}/libwebp/src/enc/histogram_enc.c
   ${CMAKE_BINARY_DIR}/libwebp/src/enc/iterator_enc.c
   ${CMAKE_BINARY_DIR}/libwebp/src/enc/near_lossless_enc.c
-  ${CMAKE_BINARY_DIR}/libwebp/src/enc/picture_enc.c
   ${CMAKE_BINARY_DIR}/libwebp/src/enc/picture_csp_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/picture_enc.c
   ${CMAKE_BINARY_DIR}/libwebp/src/enc/picture_psnr_enc.c
   ${CMAKE_BINARY_DIR}/libwebp/src/enc/picture_rescale_enc.c
   ${CMAKE_BINARY_DIR}/libwebp/src/enc/picture_tools_enc.c
@@ -83,9 +86,22 @@ add_library(webp OBJECT
   ${CMAKE_BINARY_DIR}/libwebp/src/enc/tree_enc.c
   ${CMAKE_BINARY_DIR}/libwebp/src/enc/vp8l_enc.c
   ${CMAKE_BINARY_DIR}/libwebp/src/enc/webp_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/utils/bit_reader_utils.c
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/bit_writer_utils.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/utils/color_cache_utils.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/utils/filters_utils.c
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/huffman_encode_utils.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/utils/huffman_utils.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/utils/quant_levels_dec_utils.c
   ${CMAKE_BINARY_DIR}/libwebp/src/utils/quant_levels_utils.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/utils/random_utils.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/utils/rescaler_utils.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/utils/thread_utils.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/utils/utils.c
+  # Decoder-only utils
+  #${CMAKE_BINARY_DIR}/libwebp/src/utils/bit_writer_utils.c
+  #${CMAKE_BINARY_DIR}/libwebp/src/utils/huffman_encode_utils.c
+  #${CMAKE_BINARY_DIR}/libwebp/src/utils/quant_levels_utils.c
 )
 
 target_include_directories(webp PRIVATE ${CMAKE_BINARY_DIR}/libwebp)
