@@ -67,7 +67,7 @@ static char *window_title;
 static int window_width;
 static int window_height;
 static bool is_started;
-staticBSoundPlayer *sound_player[HAL_SOUND_TRACKS];
+static BSoundPlayer *sound_player[HAL_SOUND_TRACKS];
 static struct hal_wave *wave[HAL_SOUND_TRACKS];
 static bool is_finished[HAL_SOUND_TRACKS];
 
