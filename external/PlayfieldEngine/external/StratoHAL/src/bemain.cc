@@ -234,6 +234,8 @@ public:
 	}
 };
 
+extern "C" {
+
 int hal_main(int argc, char *argv[])
 {
 	hal_argc = argc;
@@ -243,8 +245,6 @@ int hal_main(int argc, char *argv[])
 	app.Run();
 	return 0;
 }
-
-extern "C" {
 
 void
 hal_notify_image_update(
