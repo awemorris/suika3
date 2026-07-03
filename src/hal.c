@@ -277,7 +277,7 @@ s3_get_vm_int(
 		*val = 0;
 		return false;
 	}
-	if (!noct_get_dict_elem_check_int(env, &dict, name, &value, (int32_t *)val))
+	if (!noct_get_dict_elem_check_int(env, &dict, name, &value, val))
 		return false;
 
 	return true;

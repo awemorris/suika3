@@ -396,6 +396,7 @@ endif()
 # macOS
 if(STRATO_TARGET_MACOS)
   enable_language(OBJC)
+  enable_language(CXX)
   set(STRATO_SOURCES
     src/image.c
     src/glyph.c
@@ -404,7 +405,7 @@ if(STRATO_TARGET_MACOS)
     src/nsmain.m
     src/aunit.c
     src/GameRenderer.m
-    src/GameShaders.c
+    src/GameShaders.cc
   )
 endif()
 

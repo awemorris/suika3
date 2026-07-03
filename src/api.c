@@ -1088,7 +1088,7 @@ serialize_printer(
 
 	switch (type) {
 	case NOCT_VALUE_INT:
-		if (!noct_get_int(env, value, (int32_t *)&ival))
+		if (!noct_get_int(env, value, &ival))
 			return false;
 		snprintf(digits, sizeof(digits), "%d", ival);
 		strncat(buf, digits, size - strlen(buf) - 1);

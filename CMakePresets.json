@@ -1010,9 +1010,10 @@
             "binaryDir":      "${sourceDir}/build-macos7-68k",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/retro68-m68k.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":    "Release",
-                "SUIKA_TARGET_MACOS7": "ON",
-                "SUIKA_ENABLE_JIT":    "ON"
+                "CMAKE_BUILD_TYPE":      "Release",
+                "CMAKE_C_FLAGS_RELEASE": "-mcpu=68030 -msoft-float",
+                "SUIKA_TARGET_MACOS7":   "ON",
+                "SUIKA_ENABLE_JIT":      "ON"
 	    }
         },
         {

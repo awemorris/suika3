@@ -7,7 +7,7 @@ Notes:
 * Requires CMake 3.22 or later
 * Linux: GCC 4.4 or later (Clang is also supported)
 * Windows: Visual Studio 2022/2026, or gcc/clang on WSL
-* macOS: Xcode 8.2.1 or later required
+* macOS: macOS 26+ and Xcode 26+
 
 ---
 
