@@ -227,7 +227,7 @@ public:
 		}
 #endif
 
-		if (!hal_callback_on_event_start())
+		if (!hal_callback.on_start())
 			exit(1);
 
 		is_started = true;
