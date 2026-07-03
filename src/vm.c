@@ -239,6 +239,10 @@ parse_cli_options(void)
 		if (hal_argv[i][0] != '-')
 			break;
 
+		if (strcmp(hal_argv[i], "--open") == 0) {
+			/* Ignore: for Portal. */
+			continue;
+		}
 		if (strcmp(hal_argv[i], "--disable-jit") == 0) {
 			config.jit_enable = false;
 			continue;
@@ -374,7 +378,7 @@ call_setup(
 		if (width != NULL) {
 			if (!noct_get_dict_elem_cstr(env, &ret, "width", &width_val))
 				break;
-			if (!noct_get_int(env, &width_val, (int32_t *)width))
+			if (!noct_get_int(env, &width_val, width))
 				break;
 		}
 
@@ -382,7 +386,7 @@ call_setup(
 		if (height != NULL) {
 			if (!noct_get_dict_elem_cstr(env, &ret, "height", &height_val))
 				break;
-			if (!noct_get_int(env, &height_val, (int32_t *)height))
+			if (!noct_get_int(env, &height_val, height))
 				break;
 		}
 
@@ -486,7 +490,7 @@ pfi_get_vm_int(
 
 	if (!noct_get_global(env, "Engine", &dict))
 		return false;
-	if (!noct_get_dict_elem_check_int(env, &dict, prop_name, &dict_val, (int32_t *)val))
+	if (!noct_get_dict_elem_check_int(env, &dict, prop_name, &dict_val, val))
 		return false;
 
 	return true;
@@ -567,7 +571,7 @@ static bool serialize_printer(NoctEnv *env, char *buf, size_t size, NoctValue *v
 
 	switch (type) {
 	case NOCT_VALUE_INT:
-		if (!noct_get_int(env, value, (int32_t *)&ival))
+		if (!noct_get_int(env, value, &ival))
 			return false;
 		snprintf(digits, sizeof(digits), "%d", ival);
 		strncat(buf, digits, size);
@@ -1180,7 +1184,7 @@ static bool get_int_param(NoctEnv *env, const char *name, int *ret)
 
 	switch (elem.type) {
 	case NOCT_VALUE_INT:
-		noct_get_int(env, &elem, (int32_t *)ret);
+		noct_get_int(env, &elem, ret);
 		break;
 	case NOCT_VALUE_FLOAT:
 		noct_get_float(env, &elem, &f);
@@ -1221,7 +1225,7 @@ static bool get_string_param(NoctEnv *env, const char *name, const char **ret)
 	case NOCT_VALUE_INT:
 	{
 		int i;
-		noct_get_int(env, &elem, (int32_t *)&i);
+		noct_get_int(env, &elem, &i);
 		snprintf(buf, sizeof(buf), "%d", i);
 		*ret = buf;
 		break;
@@ -1456,7 +1460,7 @@ serialize_save_data_recursively(
 
 	switch (type) {
 	case NOCT_VALUE_INT:
-		if (!noct_get_int(env, value, (int32_t *)&ival))
+		if (!noct_get_int(env, value, &ival))
 			return false;
 		if (!ser_put_u8(ctx, SER_TYPE_INT))
 			return false;

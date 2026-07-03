@@ -505,7 +505,7 @@ jobs:
       - name: Download OpenHarmony SDK
         run: |
           echo "Downloaing openharmony-native.tar.gz"
-          wget -q https://noctvm.io/ci/openharmony-native.tar.gz
+          wget -q https://github.com/awemorris/suika3/releases/download/CI-BASE/openharmony-native.tar.gz
           tar xzf openharmony-native.tar.gz
 
       - name: Build for OpenHarmony
@@ -695,7 +695,7 @@ jobs:
       - name: Configure OpenWatcom
         if: steps.cache-watcom.outputs.cache-hit != 'true'
         run: |
-          wget https://noctvm.io/ci/openwatcom-1.9.tar.gz
+          wget -q https://github.com/awemorris/suika3/releases/download/CI-BASE/openwatcom-1.9.tar.gz
           tar xzf openwatcom-1.9.tar.gz
 
       - name: Build
@@ -740,7 +740,7 @@ jobs:
       - name: Configure OpenWatcom
         if: steps.cache-watcom.outputs.cache-hit != 'true'
         run: |
-          wget https://noctvm.io/ci/openwatcom-1.9.tar.gz
+          wget -q https://github.com/awemorris/suika3/releases/download/CI-BASE/openwatcom-1.9.tar.gz
           tar xzf openwatcom-1.9.tar.gz
 
       - name: Build
