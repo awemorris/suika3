@@ -368,7 +368,7 @@ if(NOT PLAYFIELD_ENABLE_DIST)
 
   # Console output
   if(PLAYFIELD_ENABLE_CONSOLE)
-    set(STRATO_ENABLE_CONSOLE)
+    set(STRATO_ENABLE_CONSOLE ON)
   endif()
 
   # XDG-Portal
