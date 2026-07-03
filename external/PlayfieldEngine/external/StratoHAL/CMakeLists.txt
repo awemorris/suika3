@@ -405,7 +405,7 @@ if(STRATO_TARGET_MACOS)
     src/nsmain.m
     src/aunit.c
     src/GameRenderer.m
-    src/GameShaders.cc
+    src/GameShaders.c
   )
 endif()
 
