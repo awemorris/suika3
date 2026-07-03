@@ -28,7 +28,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#undef NO_SOUND
+#define NO_SOUND
 
 /* HAL */
 extern "C" {
@@ -112,7 +112,7 @@ public:
 		if (!is_started)
 			return;
 
-		hal_callback_on_event_mouse_move((int)where.x, (int)where.y);
+		hal_callback.on_mouse_move((int)where.x, (int)where.y);
 	}
 
 	void MouseDown(BPoint where) override
@@ -120,15 +120,15 @@ public:
 		if (!is_started)
 			return;
 
-		hal_callback_on_event_mouse_move((int)where.x, (int)where.y);
+		hal_callback.on_mouse_move((int)where.x, (int)where.y);
 
 		uint32 buttons = 0;
 		if (Window()->CurrentMessage() &&
 		    Window()->CurrentMessage()->FindInt32("buttons", (int32*)&buttons) == B_OK) {
 			if (buttons & B_PRIMARY_MOUSE_BUTTON)
-				hal_callback_on_event_mouse_press(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
+				hal_callback.on_mouse_press(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
 			if (buttons & B_SECONDARY_MOUSE_BUTTON)
-				hal_callback_on_event_mouse_press(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
+				hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
 			last_buttons = buttons;
 		}
 	}
@@ -138,10 +138,9 @@ public:
 		if (!is_started)
 			return;
 
-		hal_callback_on_event_mouse_move((int)where.x, (int)where.y);
-
-		hal_callback_on_event_mouse_release(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
-		hal_callback_on_event_mouse_release(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
+		hal_callback.on_mouse_move((int)where.x, (int)where.y);
+		hal_callback.on_mouse_release(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
+		hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
 	}
 
 	void KeyDown(const char* bytes, int32 numBytes) override
@@ -212,7 +211,7 @@ public:
 	{
 		if (!init_file())
 			exit(1);
-		if (!hal_bootstrap(&window_title, &window_width, &window_height, &hal_callback))
+		if (!hal_bootstrap_ptr(&window_title, &window_width, &window_height, &hal_callback))
 			exit(1);
 
 		NoctWindow *window = new NoctWindow(window_title, window_width, window_height);
