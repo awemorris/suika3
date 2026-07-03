@@ -1204,10 +1204,12 @@ if(SUIKA_TARGET_MACOS7)
   add_custom_command(TARGET suika3 POST_BUILD COMMAND python3 "${CMAKE_CURRENT_SOURCE_DIR}/resources/scripts/macbinary2.py")
 
   # Make a disk image.
-  add_custom_command(TARGET suika3 POST_BUILD COMMAND dd if=/dev/zero of=suika3-macos7.dsk bs=1024 count=2880)
+  #add_custom_command(TARGET suika3 POST_BUILD COMMAND dd if=/dev/zero of=suika3-macos7.dsk bs=1024 count=2880)
+  add_custom_command(TARGET suika3 POST_BUILD COMMAND dd if=/dev/zero of=suika3-macos7.dsk bs=1024 count=5760)
   add_custom_command(TARGET suika3 POST_BUILD COMMAND hformat -l "Suika3" suika3-macos7.dsk)
   add_custom_command(TARGET suika3 POST_BUILD COMMAND hmount suika3-macos7.dsk)
   add_custom_command(TARGET suika3 POST_BUILD COMMAND hcopy suika3.bin :suika3)
+  #add_custom_command(TARGET suika3 POST_BUILD COMMAND hcopy assets.arc :assets.arc)
   add_custom_command(TARGET suika3 POST_BUILD COMMAND humount)
 endif()
 

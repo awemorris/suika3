@@ -1,0 +1,11 @@
+default {
+    layer:  gui1;
+    start:  0.0;
+    end:    0.5;
+    from-x: 750;
+    from-y: 25;
+    to-x:   750;
+    to-y:   25;
+    from-a: 255;
+    to-a:   255;
+}

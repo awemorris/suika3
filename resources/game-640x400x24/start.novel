@@ -1,0 +1,8 @@
+#
+# Remove # to use NVL mode.
+#
+
+[bg file="images/bg/cat1.png"]
+[text text="Meow..."]
+[bg file="images/bg/cat2.png" time="1.0"]
+[text name="Cats" text="Meow! Meow! Meow!"]

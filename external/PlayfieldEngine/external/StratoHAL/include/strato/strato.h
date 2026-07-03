@@ -449,6 +449,7 @@ struct hal_image {
         defined(HAL_USE_X11_SOFTRENDER) || \
 	defined(HAL_USE_FBDEV) || \
         defined(HAL_TARGET_HAIKU) || \
+        defined(HAL_TARGET_PC98) || \
         defined(HAL_TARGET_PCAT) || \
 	defined(HAL_TARGET_UNITY) \
     )
