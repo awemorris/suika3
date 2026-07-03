@@ -1676,6 +1676,7 @@ hal_bootstrap(
     defined(HAL_TARGET_POSIX)		||	\
     defined(HAL_TARGET_MACOS)		||	\
     defined(HAL_TARGET_IOS)             ||      \
+    defined(HAL_TARGET_HAIKU)		||	\
     defined(HAL_TARGET_PC98)            ||      \
     defined(HAL_TARGET_PCAT)
 #define HAL_DEFINE_MAIN()				\

@@ -39,7 +39,7 @@
 #elif defined(__OpenBSD__)
 #include <sys/types.h>
 #include <sys/audioio.h>
-#elif defined(__sun) || defined(__SunOS_5_11)
+#elif defined(__SunOS_5_11)
 #include <sys/soundcard.h>   /* Solaris 11 (OSS) */
 #define USE_SUN_OSS
 #elif defined(__SunOS_5_10)
