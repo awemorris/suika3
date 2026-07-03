@@ -500,7 +500,7 @@ hal_render_image_cross(
 	float src2_top,
 	int alpha)
 {
-	hal_draw_image_cross(back_image,
+	hal_draw_image_cross(image,
 			     src1_img,
 			     src2_img,
 			     src1_left,
@@ -668,7 +668,7 @@ hal_render_image_3d_cross(
 	float src2_y4,
 	int alpha)
 {
-	hal_draw_image_3d_cross(back_image,
+	hal_draw_image_3d_cross(image,
 				src1_img,
 				src2_img,
 				src1_x1,
