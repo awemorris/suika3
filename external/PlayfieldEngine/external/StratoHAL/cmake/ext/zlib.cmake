@@ -1,13 +1,7 @@
-# Extract archive.
-file(ARCHIVE_EXTRACT
-  INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/zlib-1.3.1.tar.gz
-  DESTINATION ${CMAKE_BINARY_DIR}
+file(
+  COPY        ${CMAKE_CURRENT_SOURCE_DIR}/lib/external/zlib-1.3.1/
+  DESTINATION ${CMAKE_BINARY_DIR}/zlib
 )
-
-# Rename it to "zlib".
-file(GLOB ZLIB_EXTRACTED_DIR ${CMAKE_BINARY_DIR}/zlib-*)
-file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/zlib)
-file(RENAME ${ZLIB_EXTRACTED_DIR} ${CMAKE_BINARY_DIR}/zlib)
 
 # Source list.
 add_library(z OBJECT

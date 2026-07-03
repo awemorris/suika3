@@ -1,11 +1,7 @@
-file(ARCHIVE_EXTRACT
-  INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/libvorbis-1.3.7.tar.gz
-  DESTINATION ${CMAKE_BINARY_DIR}
+file(
+  COPY        ${CMAKE_CURRENT_SOURCE_DIR}/lib/external/libvorbis-1.3.7/
+  DESTINATION ${CMAKE_BINARY_DIR}/libvorbis
 )
-
-file(GLOB LIBPNG_EXTRACTED_DIR ${CMAKE_BINARY_DIR}/libvorbis-*)
-file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/libvorbis)
-file(RENAME ${LIBPNG_EXTRACTED_DIR} ${CMAKE_BINARY_DIR}/libvorbis)
 
 add_library(vorbisfile OBJECT
   ${CMAKE_BINARY_DIR}/libvorbis/lib/vorbisfile.c

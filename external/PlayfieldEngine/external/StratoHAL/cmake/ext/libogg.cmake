@@ -1,11 +1,7 @@
-file(ARCHIVE_EXTRACT
-  INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/libogg-1.3.3.tar.gz
-  DESTINATION ${CMAKE_BINARY_DIR}
+file(
+  COPY        ${CMAKE_CURRENT_SOURCE_DIR}/lib/external/libogg-1.3.3/
+  DESTINATION ${CMAKE_BINARY_DIR}/libogg
 )
-
-file(GLOB LIBPNG_EXTRACTED_DIR ${CMAKE_BINARY_DIR}/libogg-*)
-file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/libogg)
-file(RENAME ${LIBPNG_EXTRACTED_DIR} ${CMAKE_BINARY_DIR}/libogg)
 
 file(WRITE  ${CMAKE_BINARY_DIR}/libogg/include/ogg/config_types.h "#ifndef __CONFIG_TYPES_H__\n")
 file(APPEND ${CMAKE_BINARY_DIR}/libogg/include/ogg/config_types.h "#define __CONFIG_TYPES_H__\n")

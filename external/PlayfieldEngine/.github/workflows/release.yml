@@ -19,25 +19,25 @@ jobs:
 
       - name: Build for x86
         run: |
-          cmake --preset windows-vs2022-x86
-          cmake --build --preset windows-vs2022-x86 --config Release
-          cp out/build/windows-vs2022-x86/Release/playfield.exe playfield-win32.exe
-          cp out/build/windows-vs2022-x86/Release/playfield-aotc.exe ./
-          cp out/build/windows-vs2022-x86/Release/playfield-bcc.exe ./
-          cp out/build/windows-vs2022-x86/Release/playfield-pack.exe ./
-          cp out/build/windows-vs2022-x86/Release/playfield-web.exe ./
+          cmake --preset windows-vs2026-x86
+          cmake --build --preset windows-vs2026-x86 --config Release
+          cp out/build/windows-vs2026-x86/Release/playfield.exe playfield-win32.exe
+          cp out/build/windows-vs2026-x86/Release/playfield-aotc.exe ./
+          cp out/build/windows-vs2026-x86/Release/playfield-bcc.exe ./
+          cp out/build/windows-vs2026-x86/Release/playfield-pack.exe ./
+          cp out/build/windows-vs2026-x86/Release/playfield-web.exe ./
 
       - name: Build for x64
         run: |
-          cmake --preset windows-vs2022-x64
-          cmake --build --preset windows-vs2022-x64 --config Release
-          cp out/build/windows-vs2022-x64/Release/playfield.exe playfield-win64.exe
+          cmake --preset windows-vs2026-x64
+          cmake --build --preset windows-vs2026-x64 --config Release
+          cp out/build/windows-vs2026-x64/Release/playfield.exe playfield-win64.exe
 
       - name: Build for arm64
         run: |
-          cmake --preset windows-vs2022-arm64
-          cmake --build --preset windows-vs2022-arm64 --config Release
-          cp out/build/windows-vs2022-arm64/Release/playfield.exe playfield-arm64.exe
+          cmake --preset windows-vs2026-arm64
+          cmake --build --preset windows-vs2026-arm64 --config Release
+          cp out/build/windows-vs2026-arm64/Release/playfield.exe playfield-arm64.exe
 
       - name: Build nuget
         run: |
@@ -55,11 +55,13 @@ jobs:
           cp include/playfield/c89compat.h build/native/include/playfield/
           cp external/NoctLang/include/noct/noct.h build/native/include/noct/
           cp external/NoctLang/include/noct/c89compat.h build/native/include/noct/
+          cp external/NoctLang/include/noct/aot.h build/native/include/noct/
+          cp external/NoctLang/include/noct/backend.h build/native/include/noct/
           cp external/StratoHAL/include/strato/strato.h build/native/include/strato/
           cp external/StratoHAL/include/strato/c89compat.h build/native/include/strato/
-          cp out/build/windows-vs2022-x86/Release/playfield.lib  build/native/lib/x86/
-          cp out/build/windows-vs2022-x64/Release/playfield.lib  build/native/lib/x64/
-          cp out/build/windows-vs2022-arm64/Release/playfield.lib build/native/lib/arm64/
+          cp out/build/windows-vs2026-x86/Release/playfield.lib  build/native/lib/x86/
+          cp out/build/windows-vs2026-x64/Release/playfield.lib  build/native/lib/x64/
+          cp out/build/windows-vs2026-arm64/Release/playfield.lib build/native/lib/arm64/
           cp resources/windows/Playfield.nuspec ./
           nuget pack Playfield.nuspec
 
@@ -121,6 +123,8 @@ jobs:
           cp include/playfield/c89compat.h out/i686-w64-mingw32/include/playfield/
           cp external/NoctLang/include/noct/noct.h out/i686-w64-mingw32/include/noct/
           cp external/NoctLang/include/noct/c89compat.h out/i686-w64-mingw32/include/noct/
+          cp external/NoctLang/include/noct/aot.h out/i686-w64-mingw32/include/noct/
+          cp external/NoctLang/include/noct/backend.h out/i686-w64-mingw32/include/noct/
           cp external/StratoHAL/include/strato/strato.h out/i686-w64-mingw32/include/strato/
           cp external/StratoHAL/include/strato/c89compat.h out/i686-w64-mingw32/include/strato/
           cp build-mingw-x86/libplayfield.a out/i686-w64-mingw32/lib/
@@ -142,6 +146,8 @@ jobs:
           cp include/playfield/c89compat.h out/x86_64-w64-mingw32/include/playfield/
           cp external/NoctLang/include/noct/noct.h out/x86_64-w64-mingw32/include/noct/
           cp external/NoctLang/include/noct/c89compat.h out/x86_64-w64-mingw32/include/noct/
+          cp external/NoctLang/include/noct/aot.h out/x86_64-w64-mingw32/include/noct/
+          cp external/NoctLang/include/noct/backend.h out/x86_64-w64-mingw32/include/noct/
           cp external/StratoHAL/include/strato/strato.h out/x86_64-w64-mingw32/include/strato/
           cp external/StratoHAL/include/strato/c89compat.h out/x86_64-w64-mingw32/include/strato/
           cp build-mingw-x86_64/libplayfield.a out/x86_64-w64-mingw32/lib/
@@ -223,41 +229,20 @@ jobs:
 
       - name: Build macOS project
         run: |
-          mkdir macos
+          cp -R resources/projects/macos macos
           mkdir macos/Resources
           mkdir macos/Resources/video
           cp resources/assets.arc macos/Resources/
-
-          mkdir macos/Game.xcodeproj
-          cp resources/projects/macos/Game.xcodeproj/project.pbxproj macos/Game.xcodeproj/
-
-          mkdir macos/Game
           cp -R Playfield.xcframework macos/Game/
-          cp -R resources/projects/macos/Game/Assets.xcassets macos/Game/
-          cp resources/projects/macos/Game/main.m macos/Game/
-          cp resources/macos/macos.entitlements macos/Game/Game.entitlements
-
           zip -r Playfield-macOS-Xcode.zip macos
 
       - name: Build iOS project
         run: |
-          mkdir ios
-
+          cp -R resources/projects/ios ios
           mkdir ios/Resources/
           mkdir ios/Resources/video
           cp resources/assets.arc ios/Resources/
-
-          mkdir ios/ios.xcodeproj
-          cp resources/projects/ios/ios.xcodeproj/project.pbxproj ios/ios.xcodeproj/
-
-          mkdir ios/ios
-          cp -R Playfield.xcframework ios/ios/
-          cp -R resources/projects/ios/ios/Assets.xcassets ios/ios/
-          cp resources/projects/ios/ios/entry.c ios/ios/
-          cp resources/projects/ios/ios/Info.plist ios/ios/
-          cp resources/projects/ios/ios/ios.entitlements ios/ios/
-          cp resources/projects/ios/ios/LaunchScreen.storyboard ios/ios/
-
+          cp -R Playfield.xcframework ios/Game/
           zip -r Playfield-iOS-Xcode.zip ios
 
       - name: Build tar.gz
@@ -279,6 +264,8 @@ jobs:
           cp include/playfield/c89compat.h out/include/playfield/
           cp external/NoctLang/include/noct/noct.h out/include/noct/
           cp external/NoctLang/include/noct/c89compat.h out/include/noct/
+          cp external/NoctLang/include/noct/aot.h out/include/noct/
+          cp external/NoctLang/include/noct/backend.h out/include/noct/
           cp external/StratoHAL/include/strato/strato.h out/include/strato/
           cp external/StratoHAL/include/strato/c89compat.h out/include/strato/
           cp build-macos-cli/libplayfield.a out/lib/
@@ -377,6 +364,8 @@ jobs:
           cp include/playfield/c89compat.h out/include/playfield/
           cp external/NoctLang/include/noct/noct.h out/include/noct/
           cp external/NoctLang/include/noct/c89compat.h out/include/noct/
+          cp external/NoctLang/include/noct/aot.h out/include/noct/
+          cp external/NoctLang/include/noct/backend.h out/include/noct/
           cp external/StratoHAL/include/strato/strato.h out/include/strato/
           cp external/StratoHAL/include/strato/c89compat.h out/include/strato/
           cp build-linux/libplayfield.a out/lib/x86_64-linux-gnu/
@@ -425,30 +414,72 @@ jobs:
           cmake --preset android-riscv64
           cmake --build --preset android-riscv64
 
+      - name: Build class files
+        run: |
+          ANDROID_JAR="${ANDROID_SDK_ROOT}/platforms/android-35/android.jar"
+          mkdir classes
+          javac -d classes -cp $ANDROID_JAR external/StratoHAL/src/MainActivity.java
+          ls -l classes
+
+      - name: Build AAR
+        run: |
+          # Make directory tree.
+          mkdir -p aar_out/prefab/modules/playfield/include
+          mkdir -p aar_out/prefab/modules/playfield/libs/android.arm64-v8a
+          mkdir -p aar_out/prefab/modules/playfield/libs/android.armeabi-v7a
+          mkdir -p aar_out/prefab/modules/playfield/libs/android.x86_64
+          mkdir -p aar_out/prefab/modules/playfield/libs/android.x86
+          mkdir -p aar_out/prefab/modules/playfield/libs/android.riscv64
+
+          # Make the JAR file.
+          cd classes
+          jar cvf ../aar_out/classes.jar *
+          cd ..
+
+          # Copy the header files.
+          cp -R include/playfield aar_out/prefab/modules/playfield/include/
+          cp -R external/NoctLang/include/noct aar_out/prefab/modules/playfield/include/
+          cp -R external/StratoHAL/include/strato aar_out/prefab/modules/playfield/include/
+
+          # Copy libplayfield.a.
+          cp build-android-arm64/libplayfield.a   aar_out/prefab/modules/playfield/libs/android.arm64-v8a/playfield.lib
+          cp build-android-armv7/libplayfield.a   aar_out/prefab/modules/playfield/libs/android.armeabi-v7a/playfield.lib
+          cp build-android-x86_64/libplayfield.a  aar_out/prefab/modules/playfield/libs/android.x86_64/playfield.lib
+          cp build-android-x86/libplayfield.a     aar_out/prefab/modules/playfield/libs/android.x86/playfield.lib
+          cp build-android-riscv64/libplayfield.a aar_out/prefab/modules/playfield/libs/android.riscv64/playfield.lib
+
+          # Copy the default resource.
+          cp -R resources/android/res aar_out/
+
+          # Copy meta data.
+          cp resources/android/AndroidManifest.xml aar_out/AndroidManifest.xml
+          cp resources/android/prefab.json aar_out/prefab/
+          cp resources/android/module.json aar_out/prefab/modules/playfield/
+          echo '{"abi": "arm64-v8a",   "api": 19, "ndk": 27, "stl": "none", "static": true}' > aar_out/prefab/modules/playfield/libs/android.arm64-v8a/abi.json
+          echo '{"abi": "armeabi-v7a", "api": 19, "ndk": 27, "stl": "none", "static": true}' > aar_out/prefab/modules/playfield/libs/android.armeabi-v7a/abi.json
+          echo '{"abi": "x86_64",      "api": 19, "ndk": 27, "stl": "none", "static": true}' > aar_out/prefab/modules/playfield/libs/android.x86_64/abi.json
+          echo '{"abi": "x86",         "api": 19, "ndk": 27, "stl": "none", "static": true}' > aar_out/prefab/modules/playfield/libs/android.x86/abi.json
+          echo '{"abi": "riscv64",     "api": 35, "ndk": 27, "stl": "none", "static": true}' > aar_out/prefab/modules/playfield/libs/android.riscv64/abi.json
+
+          # Make an AAR file.
+          cd aar_out
+          zip -r ../Playfield.aar *
+          cd ..
+
       - name: Build project
         run: |
-          mkdir android
-          cp -R resources/projects/android/app android/
-          cp -R resources/projects/android/gradle.properties android/
-          cp -R resources/projects/android/build.gradle android/
-          cp -R resources/projects/android/gradlew android/
-          cp -R resources/projects/android/settings.gradle android/
-          cp -R resources/projects/android/gradlew.bat android/
-          cp -R resources/projects/android/gradle android/
+          # Copy the project template.
+          cp -R resources/projects/android android
+
+          # Copy the AAR.
+          mkdir -p android/app/libs
+          cp Playfield.aar android/app/libs
+
+          # Copy the sample game assets.
           mkdir -p android/app/src/main/assets
           cp samples/shoot/main.ray android/app/src/main/assets/
-          mkdir -p android/app/src/main/java/io/noctvm/strato
-          cp external/StratoHAL/src/MainActivity.java android/app/src/main/java/io/noctvm/strato/
-          mkdir -p android/app/src/main/jniLibs/arm64-v8a
-          cp build-android-arm64/libplayfield.so android/app/src/main/jniLibs/arm64-v8a/libstrato.so
-          mkdir -p android/app/src/main/jniLibs/armeabi-v7a
-          cp build-android-armv7/libplayfield.so android/app/src/main/jniLibs/armeabi-v7a/libstrato.so
-          mkdir -p android/app/src/main/jniLibs/x86_64
-          cp build-android-x86_64/libplayfield.so android/app/src/main/jniLibs/x86_64/libstrato.so
-          mkdir -p android/app/src/main/jniLibs/x86
-          cp build-android-x86/libplayfield.so android/app/src/main/jniLibs/x86/libstrato.so
-          mkdir -p android/app/src/main/jniLibs/riscv64
-          cp build-android-riscv64/libplayfield.so android/app/src/main/jniLibs/riscv64/libstrato.so
+
+          # Make a ZIP file.
           zip -r Playfield-Android-Studio.zip android
 
       - name: Upload artifact
@@ -474,7 +505,7 @@ jobs:
       - name: Download OpenHarmony SDK
         run: |
           echo "Downloaing openharmony-native.tar.gz"
-          wget -q https://noctvm.io/ci/openharmony-native.tar.gz
+          wget -q https://github.com/awemorris/suika3/releases/download/CI-BASE/openharmony-native.tar.gz
           tar xzf openharmony-native.tar.gz
 
       - name: Build for OpenHarmony
@@ -488,22 +519,20 @@ jobs:
         run: |
           cp -R resources/projects/openharmony ./
 
-          mkdir -p openharmony
-          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/include/playfield
-          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/include/noct
-          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/include/strato
+          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/include/
+          cp -R include/playfield openharmony/entry/src/main/cpp/third_party/playfield/include/
+          cp -R external/NoctLang/include/noct openharmony/entry/src/main/cpp/third_party/playfield/include/
+          cp -R external/StratoHAL/include/strato openharmony/entry/src/main/cpp/third_party/playfield/include/
+
           mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/lib/arm64-v8a
-          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/lib/x86_64
-          mkdir -p openharmony/entry/src/main/resources/rawfile/
-          cp include/playfield/playfield.h openharmony/entry/src/main/cpp/third_party/playfield/include/playfield/
-          cp include/playfield/c89compat.h openharmony/entry/src/main/cpp/third_party/playfield/include/playfield/
-          cp external/NoctLang/include/noct/noct.h openharmony/entry/src/main/cpp/third_party/playfield/include/noct/
-          cp external/NoctLang/include/noct/c89compat.h openharmony/entry/src/main/cpp/third_party/playfield/include/noct/
-          cp external/StratoHAL/include/strato/strato.h openharmony/entry/src/main/cpp/third_party/playfield/include/strato/
-          cp external/StratoHAL/include/strato/c89compat.h openharmony/entry/src/main/cpp/third_party/playfield/include/strato/
           cp build-openharmony-arm64/libplayfield.a openharmony/entry/src/main/cpp/third_party/playfield/lib/arm64-v8a/
+
+          mkdir -p openharmony/entry/src/main/cpp/third_party/playfield/lib/x86_64
           cp build-openharmony-x86_64/libplayfield.a openharmony/entry/src/main/cpp/third_party/playfield/lib/x86_64/
+
+          mkdir -p openharmony/entry/src/main/resources/rawfile/
           cp samples/shoot/main.ray openharmony/entry/src/main/resources/rawfile/
+
           zip -r Playfield-OpenHarmony-DevEco.zip openharmony
 
       - name: Upload OpenHarmony artifact
@@ -543,6 +572,8 @@ jobs:
           cp include/playfield/c89compat.h out/include/playfield/
           cp external/NoctLang/include/noct/noct.h out/include/noct/
           cp external/NoctLang/include/noct/c89compat.h out/include/noct/
+          cp external/NoctLang/include/noct/aot.h out/include/noct/
+          cp external/NoctLang/include/noct/backend.h out/include/noct/
           cp external/StratoHAL/include/strato/strato.h out/include/strato/
           cp external/StratoHAL/include/strato/c89compat.h out/include/strato/
           cp build-wasm/libplayfield.a out/lib/
@@ -664,7 +695,7 @@ jobs:
       - name: Configure OpenWatcom
         if: steps.cache-watcom.outputs.cache-hit != 'true'
         run: |
-          wget https://noctvm.io/ci/openwatcom-1.9.tar.gz
+          wget -q https://github.com/awemorris/suika3/releases/download/CI-BASE/openwatcom-1.9.tar.gz
           tar xzf openwatcom-1.9.tar.gz
 
       - name: Build
@@ -679,13 +710,58 @@ jobs:
           command -v wlink || true
           cmake --preset pc98
           cmake --build --preset pc98
-          mv build-pc98/playfield.exe pf98.exe
+          mv build-pc98/playfield.exe pf-98.exe
 
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
           name: pc98
-          path: pf98.exe
+          path: pf-98.exe
+
+  build-pcat:
+    name: Build for IBM PC/AT
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake
+
+      - name: Cache Watcom
+        id: cache-watcom
+        uses: actions/cache@v4
+        with:
+          path: openwatcom-1.9
+          key: openwatcom-1.9
+
+      - name: Configure OpenWatcom
+        if: steps.cache-watcom.outputs.cache-hit != 'true'
+        run: |
+          wget -q https://github.com/awemorris/suika3/releases/download/CI-BASE/openwatcom-1.9.tar.gz
+          tar xzf openwatcom-1.9.tar.gz
+
+      - name: Build
+        run: |
+          export WATCOM="$PWD/openwatcom-1.9"
+          export INCLUDE="$WATCOM/h"
+          export EDPATH="$WATCOM/eddat"
+          export PATH="$WATCOM/binl:$WATCOM/binw:$PATH"
+          echo "$WATCOM"
+          ls -lha "$WATCOM/binl"
+          command -v wcl386 || true
+          command -v wlink || true
+          cmake --preset pcat
+          cmake --build --preset pcat
+          mv build-pcat/playfield.exe pf-at.exe
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: pcat
+          path: pf-at.exe
 
   build-mkdocs:
     name: Build documents
@@ -726,6 +802,7 @@ jobs:
       - build-openharmony
       - build-unity
       - build-pc98
+      - build-pcat
       - build-mkdocs
     runs-on: ubuntu-latest
     steps:
@@ -860,7 +937,18 @@ jobs:
       - name: Copy for PC98
         run: |
           mkdir dist/SDK/msdos
-          cp pc98/pf98.exe dist/SDK/msdos/
+          cp pc98/pf-98.exe dist/SDK/msdos/
+
+      - name: Download PC/AT artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: pcat
+          path: pcat
+
+      - name: Copy for PC/AT
+        run: |
+          mkdir -p dist/SDK/msdos
+          cp pcat/pf-at.exe dist/SDK/msdos/
 
       - name: Download mkdocs artifacts
         uses: actions/download-artifact@v4
@@ -892,6 +980,7 @@ jobs:
         with:
           tag_name: nightly-${{ env.DATE }}-${{ env.SHORT_SHA }}
           name: Playfield-${{ env.DATE }}-${{ env.SHORT_SHA }}
+          prerelease: true
 
           body: |
             Playfield Engine
@@ -922,7 +1011,8 @@ jobs:
             | Wasm        | playfield-wasm.html                | Wasm                       | Emscripten                     |
             | Wasm        | playfield-wasm.tar.gz              | Tarball                    | Emscripten                     |
             | Unity       | Playfield-Unity.zip                | Unity Plugin + Project     | Unity (Win64/Switch/PS5/Xbox)  |
-            | NEC PC-9801 | pf98.exe                           | Executable                 | NEC PC-9801 DOS4G (386+, 16MB) |
+            | NEC PC-9801 | pf-98.exe                          | Executable                 | NEC PC-9801 DOS4G (386+, 16MB) |
+            | IBM PC/AT   | pf-at.exe                          | Executable                 | IBM PC/AT DOS4G (386+, 16MB)   |
             | Documents   | playfield-documents.zip            | ZIP                        | Documents                      |
 
           files: |
@@ -944,5 +1034,6 @@ jobs:
             playfield-wasm.html
             wasm/playfield-wasm.tar.gz
             unity/Playfield-Unity.zip
-            pc98/pf98.exe
+            pc98/pf-98.exe
+            pcat/pf-at.exe
             mkdocs/playfield-documents.zip

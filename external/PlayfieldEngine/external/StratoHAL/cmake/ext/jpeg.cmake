@@ -1,11 +1,7 @@
-file(ARCHIVE_EXTRACT
-  INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/jpegsrc.v9e.tar.gz
-  DESTINATION ${CMAKE_BINARY_DIR}
+file(
+  COPY        ${CMAKE_CURRENT_SOURCE_DIR}/lib/external/jpeg-9e/
+  DESTINATION ${CMAKE_BINARY_DIR}/jpeg
 )
-
-file(GLOB LIBPNG_EXTRACTED_DIR ${CMAKE_BINARY_DIR}/jpeg-*)
-file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/jpeg)
-file(RENAME ${LIBPNG_EXTRACTED_DIR} ${CMAKE_BINARY_DIR}/jpeg)
 
 file(RENAME
   ${CMAKE_BINARY_DIR}/jpeg/jconfig.txt

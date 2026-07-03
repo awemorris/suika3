@@ -1,11 +1,7 @@
-file(ARCHIVE_EXTRACT
-  INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/libwebp-1.3.2.tar.gz
-  DESTINATION ${CMAKE_BINARY_DIR}
+file(
+  COPY        ${CMAKE_CURRENT_SOURCE_DIR}/lib/external/libwebp-1.3.2/
+  DESTINATION ${CMAKE_BINARY_DIR}/libwebp
 )
-
-file(GLOB LIBPNG_EXTRACTED_DIR ${CMAKE_BINARY_DIR}/libwebp-*)
-file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/libwebp)
-file(RENAME ${LIBPNG_EXTRACTED_DIR} ${CMAKE_BINARY_DIR}/libwebp)
 
 add_library(webp OBJECT
   ${CMAKE_BINARY_DIR}/libwebp/src/dec/alpha_dec.c
