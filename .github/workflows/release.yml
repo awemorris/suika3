@@ -75,7 +75,7 @@ jobs:
       - name: Download mingw-w64-11.0
         run: |
           echo "Downloading mingw-w64-11.0 with a MSVCRT/XP configuration."
-          wget https://noctvm.io/ci/mingw-w64-11.0.tar.bz2
+          wget -q https://github.com/awemorris/suika3/releases/download/CI-BASE/mingw-w64-11.0.tar.bz2
           tar xJf mingw-w64-11.0.tar.bz2
           echo "$PWD/mingw-w64-11.0/bin" >> $GITHUB_PATH
 
@@ -431,7 +431,7 @@ jobs:
       - name: Download OpenHarmony SDK
         run: |
           echo "Downloading openharmony-native.tar.gz"
-          wget -q https://noctvm.io/ci/openharmony-native.tar.gz
+          wget -q https://github.com/awemorris/suika3/releases/download/CI-BASE/openharmony-native.tar.gz
           tar xzf openharmony-native.tar.gz
 
       - name: Build for OpenHarmony
@@ -583,7 +583,7 @@ jobs:
       - name: Configure OpenWatcom
         if: steps.cache-watcom.outputs.cache-hit != 'true'
         run: |
-          wget https://noctvm.io/ci/openwatcom-1.9.tar.gz
+          wget -q https://github.com/awemorris/suika3/releases/download/CI-BASE/openwatcom-1.9.tar.gz
           tar xzf openwatcom-1.9.tar.gz
 
       - name: Build
@@ -631,7 +631,7 @@ jobs:
       - name: Configure OpenWatcom
         if: steps.cache-watcom.outputs.cache-hit != 'true'
         run: |
-          wget https://noctvm.io/ci/openwatcom-1.9.tar.gz
+          wget -q https://github.com/awemorris/suika3/releases/download/CI-BASE/openwatcom-1.9.tar.gz
           tar xzf openwatcom-1.9.tar.gz
 
       - name: Build
