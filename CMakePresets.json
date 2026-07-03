@@ -1138,7 +1138,7 @@
         },
         {
             "name": "linux-debug",
-            "configurePreset": "linux"
+            "configurePreset": "linux-debug"
         },
         {
             "name": "linux-debian",
