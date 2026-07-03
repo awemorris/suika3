@@ -6,6 +6,13 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
   <br>
   <i>Standard Universal Infrastructure for Kinetic Arts, 3rd Edition</i><br>
   <br>
+  <br>
+  <a href="https://suika3.vn/wasm/">
+    Click to Start Browser Demo!<br>
+    <img src="https://github.com/awemorris/suika3/blob/main/docs/img/lts2607-1.webp" width="480" alt="Suika3 Web Demo Game">
+  </a>
+  <br>
+  <br>
   <a href="https://discord.gg/YZsq9u9Mgr"><img src="https://img.shields.io/badge/suika3.vn-Discord-green"></a>
   <img src="https://img.shields.io/badge/License-ZLib-green.svg">
   <img src="https://img.shields.io/github/stars/awemorris/suika3.svg?style=flat&logo=github&colorB=yellow&label=stars">
@@ -106,12 +113,6 @@ You will definitely like it!
 
 <!-- SCREENSHOT -->
 <div align="center">
-  <a href="https://noctvm.io/test/">
-    Click to start demo on the browser!<br>
-    <img src="https://github.com/awemorris/suika3/blob/main/docs/img/screenshot-20260406.webp" alt="Suika3 Sample Game Screenshot">
-  </a>
-  <br>
-  <br>
   macOS 26<br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-macos26.webp" alt="Suika3 on Windows 11" width="480">
   <br>
