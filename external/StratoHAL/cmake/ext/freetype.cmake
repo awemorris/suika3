@@ -1,13 +1,7 @@
-# Extract library archive.
-file(ARCHIVE_EXTRACT
-  INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/freetype-2.13.3.tar.gz
-  DESTINATION ${CMAKE_BINARY_DIR}
+file(
+  COPY        ${CMAKE_CURRENT_SOURCE_DIR}/lib/external/freetype-2.13.3/
+  DESTINATION ${CMAKE_BINARY_DIR}/freetype
 )
-
-# Rename it to "freetype".
-file(GLOB LIBPNG_EXTRACTED_DIR ${CMAKE_BINARY_DIR}/freetype-*)
-file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/freetype)
-file(RENAME ${LIBPNG_EXTRACTED_DIR} ${CMAKE_BINARY_DIR}/freetype)
 
 # Source list.
 add_library(freetype OBJECT

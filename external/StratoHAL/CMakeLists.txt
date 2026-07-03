@@ -396,6 +396,7 @@ endif()
 # macOS
 if(STRATO_TARGET_MACOS)
   enable_language(OBJC)
+  enable_language(CXX)
   set(STRATO_SOURCES
     src/image.c
     src/glyph.c
@@ -791,9 +792,9 @@ if(   STRATO_TARGET_WINDOWS
 
   # DX12 header
   if(STRATO_TARGET_WINDOWS OR STRATO_TARGET_WINDOWS95)
-    file(ARCHIVE_EXTRACT
-      INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/dx12headers.tar.gz
-      DESTINATION ${CMAKE_BINARY_DIR}
+    file(
+      COPY        ${CMAKE_CURRENT_SOURCE_DIR}/lib/external/dx12headers/
+      DESTINATION ${CMAKE_BINARY_DIR}/dx12headers
     )
   endif()
 endif()
@@ -970,9 +971,9 @@ endif()
 if(STRATO_TARGET_UWP)
   add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
   target_compile_definitions(strato PRIVATE HAL_TARGET_UWP)
-  file(ARCHIVE_EXTRACT
-    INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/dx12headers.tar.gz
-    DESTINATION ${CMAKE_BINARY_DIR}
+  file(
+    COPY        ${CMAKE_CURRENT_SOURCE_DIR}/lib/external/dx12headers
+    DESTINATION ${CMAKE_BINARY_DIR}/dx12headers
   )
 endif()
 

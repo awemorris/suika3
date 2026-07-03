@@ -1,11 +1,8 @@
-file(ARCHIVE_EXTRACT
-  INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/libpng-1.6.43.tar.gz
-  DESTINATION ${CMAKE_BINARY_DIR}
+file(
+  COPY        ${CMAKE_CURRENT_SOURCE_DIR}/lib/external/libpng-1.6.43/
+  DESTINATION ${CMAKE_BINARY_DIR}/libpng
 )
 
-file(GLOB LIBPNG_EXTRACTED_DIR ${CMAKE_BINARY_DIR}/libpng-*)
-file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/libpng)
-file(RENAME ${LIBPNG_EXTRACTED_DIR} ${CMAKE_BINARY_DIR}/libpng)
 file(
   COPY        ${CMAKE_BINARY_DIR}/libpng/scripts/pnglibconf.h.prebuilt
   DESTINATION ${CMAKE_BINARY_DIR}/libpng
