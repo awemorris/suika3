@@ -60,6 +60,32 @@ add_library(webp OBJECT
   ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv_gamma.c
   ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv_sse2.c
   ${CMAKE_BINARY_DIR}/libwebp/sharpyuv/sharpyuv_neon.c
+  # Encoder
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/analysis_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/backward_references_cost_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/backward_references_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/config_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/cost_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/filter_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/frame_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/histogram_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/iterator_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/near_lossless_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/picture_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/picture_csp_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/picture_psnr_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/picture_rescale_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/picture_tools_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/predictor_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/quant_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/syntax_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/token_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/tree_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/vp8l_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/enc/webp_enc.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/utils/bit_writer_utils.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/utils/huffman_encode_utils.c
+  ${CMAKE_BINARY_DIR}/libwebp/src/utils/quant_levels_utils.c
 )
 
 target_include_directories(webp PRIVATE ${CMAKE_BINARY_DIR}/libwebp)
