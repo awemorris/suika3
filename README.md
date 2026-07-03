@@ -6,7 +6,6 @@ Suika3: Modern, Portable, Full-stack Visual Novel Engine
   <br>
   <i>Standard Universal Infrastructure for Kinetic Arts, 3rd Edition</i><br>
   <br>
-  <br>
   <a href="https://suika3.vn/wasm/">
     Click to Start Browser Demo!<br>
     <img src="https://github.com/awemorris/suika3/blob/main/docs/img/lts2607-1.webp" width="480" alt="Suika3 Web Demo Game">
