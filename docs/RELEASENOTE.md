@@ -18,6 +18,18 @@ feature requests, testing, and discussions for this release:
 
 ## Notes
 
+### Suika3 26.07.6 LTS: July 3, 2026
+
+Changes:
+- [fix] Fix degrade of Playfield Engine
+
+Dependencies
+| Component        | Version    |
+|------------------|------------|
+| Playfield Engine | 1.0.22     |
+| NoctLang         | 1.1.5      |
+| StratoHAL        | 1.0.24     |
+
 ### Suika3 26.07.5 LTS: July 3, 2026
 
 Changes:

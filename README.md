@@ -114,6 +114,7 @@ Windoww (Terminal):
 ```
 curl -o "%TEMP%\suika3.exe" -L https://github.com/awemorris/suika3/releases/latest/download/suika3-cli.exe
 powershell -NoProfile -Command "Start-Process cmd -Verb RunAs -ArgumentList '/c copy /Y \"%TEMP%\suika3.exe\" \"C:\Windows\System32\suika3.exe\"'"
+suika3
 ```
 
 Linux (Flathub):
@@ -126,11 +127,13 @@ macOS (Homebrew):
 ```
 brew tap awemorris/suika3
 brew install suika3
+suika3
 ```
 
 FreeBSD (Ports):
 ```
 pkg install suika3
+suika3
 ```
 ---
 
@@ -160,6 +163,10 @@ pkg install suika3
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-android.webp" alt="Suika3 on Android" width="480">
   <br>
   <br>
+  Solaris 10<br>
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-solaris10.webp" alt="Suika3 on NEC PC-9801" width="480"><br>
+  <br>
+  <br>
   NEC PC-9801 (80386/JIT)<br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="480"><br>
   <br>
@@ -171,62 +178,9 @@ pkg install suika3
 
 ---
 
-## Installation
+## VS Code Integration
 
-### Downloading Full SDK
-
-[Download Suika3-SDK-Full.zip](https://github.com/awemorris/suika3/releases/latest/download/Suika3-SDK-Full.zip)
-
-Please refer to the [Tutorial](docs/mkdocs-en/docs/tutorial.md) page.
-
-### Package Managers & Quick Installation
-
-Windoww (Terminal):
-```
-curl -o %TEMP%\suika3.exe -L https://github.com/awemorris/suika3/releases/latest/download/suika3-cli.exe
-powershell -NoProfile -Command "Start-Process cmd -Verb RunAs -ArgumentList '/c copy /Y \"%TEMP%\suika3.exe\" \"C:\Windows\System32\suika3.exe\"'"
-```
-
-Linux (Flathub):
-```
-flatpak install --user flathub vn.suika3.engine
-flatpak run vn.suika3.engine
-```
-
-macOS (Homebrew):
-```
-brew tap awemorris/suika3
-brew install suika3
-```
-
-FreeBSD (Ports):
-```
-pkg install suika3
-```
-
-### Building from Source
-
-Please refer to [build.md](docs/mkdocs-en/docs/build.md) for platform-specific instructions.
-
-```
-# Clone the repo.
-git clone https://github.com/awemorris/suika3.git
-cd suika3
-
-# Make a build directory.
-mkdir build && cd build
-
-# Build and install.
-cmake .. && cmake --build . --parallel && sudo cmake --install .
-
-# Run the sample.
-cd ../game
-suika3
-```
-
----
-
-## Syntax Highlighting on Visual Studio Code
+### Syntax Highlighting
 
 There is an awesome VS Code extension by `@lalalll-lalalll` to support
 syntax highlighting for Suika3, including `NovelML`, `Ray`, `GUI`, and `Anime` files.
@@ -238,10 +192,6 @@ To install this extension, visit the repository and download the .vsix file from
 then install it on VS Code.
 
 <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/syntax-highlighter-3.png" alt="Install highlighter 1" width="320" hspace="20">
-
----
-
-## VS Code Integration
 
 ### Copilot Completion
 
@@ -303,6 +253,7 @@ louder than any pitch deck ever could!
 - [Key Features](#key-features)
 - [Kanban](#kanban-status)
 - [Getting Started Guide](#getting-started-guide)
+- [Building from Source](#building-from-source)
 - [Quick Look](#quick-look)
 - [Examples](#examples)
 - [Why Ray?](#why-ray)
@@ -554,6 +505,28 @@ func render() {
 > These functions are the core mechanism of the `Playfield Engine` that
 > powers Suika3. Suika.start(), Suika.update(), and Suika.render() must
 > remain in place for the game to function properly.
+
+---
+
+## Building from Source
+
+Please refer to [build.md](docs/mkdocs-en/docs/build.md) for platform-specific instructions.
+
+```
+# Clone the repo.
+git clone https://github.com/awemorris/suika3.git
+cd suika3
+
+# Make a build directory.
+mkdir build && cd build
+
+# Build and install.
+cmake .. && cmake --build . --parallel && sudo cmake --install .
+
+# Run the sample.
+cd ../game
+suika3
+```
 
 ---
 
