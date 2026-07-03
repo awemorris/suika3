@@ -205,7 +205,9 @@ init_file(void)
 		fclose(fp);
 		return false;
 	}
+#if !defined(HAL_TARGET_WASM)
 	entry_count = hal_le_to_host_64(entry_count);
+#endif
 	if (entry_count > ENTRY_SIZE) {
 		hal_log_error("Corrupted package file.");
 		fclose(fp);
@@ -223,8 +225,10 @@ init_file(void)
 			break;
 		if (fread(&entry[i].offset, sizeof(uint64_t), 1, fp) < 1)
 			break;
+#if !defined(HAL_TARGET_WASM)
 		entry[i].size = hal_le_to_host_64(entry[i].size);
 		entry[i].offset = hal_le_to_host_64(entry[i].offset);
+#endif
 	}
 	if (i != entry_count) {
 		hal_log_error("Package file corrupted.");
@@ -551,7 +555,12 @@ get_rfile_u64(
 	if (ret != 8)
 		return false;
 
+#if !defined(HAL_TARGET_WASM)
 	*data = hal_le_to_host_64(val);
+#else
+	*data = val;
+#endif
+
 	return true;
 }
 
@@ -571,7 +580,12 @@ hal_get_rfile_u32(
 	if (ret != 4)
 		return false;
 
+#if !defined(HAL_TARGET_WASM)
 	*data = hal_le_to_host_32(val);
+#else
+	*data = val;
+#endif
+
 	return true;
 }
 
@@ -591,7 +605,12 @@ hal_get_rfile_u16(
 	if (ret != 2)
 		return false;
 
+#if !defined(HAL_TARGET_WASM)
 	*data = hal_le_to_host_16(val);
+#else
+	*data = val;
+#endif
+
 	return true;
 }
 
@@ -612,6 +631,7 @@ hal_get_rfile_u8(
 		return false;
 
 	*data = val;
+
 	return true;
 }
 
