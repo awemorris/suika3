@@ -44,6 +44,11 @@
   </branding>
 
   <releases>
+    <release version="26.07.6" date="2026-07-04">
+      <description>
+        <p>Bug fixes.</p>
+      </description>
+    </release>
     <release version="26.07.4" date="2026-07-03">
       <description>
         <p>Bug fixes and some new small features.</p>
