@@ -378,7 +378,6 @@
 #define S3_NORMAL_SAVE_SLOTS	(100)
 #define S3_QUICK_SAVE_INDEX	(100)
 
-
 /*
  * Types
  */

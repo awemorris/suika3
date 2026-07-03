@@ -449,6 +449,7 @@ struct hal_image {
         defined(HAL_USE_X11_SOFTRENDER) || \
 	defined(HAL_USE_FBDEV) || \
         defined(HAL_TARGET_HAIKU) || \
+        defined(HAL_TARGET_PCAT) || \
 	defined(HAL_TARGET_UNITY) \
     )
 	/* Use BGRA on Direct3D, Metal, Unit, and Soft3D. */

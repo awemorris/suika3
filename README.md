@@ -142,7 +142,7 @@ suika3
 <!-- SCREENSHOT -->
 <div align="center">
   macOS 26<br>
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-macos26.webp" alt="Suika3 on Windows 11" width="480">
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-macos26.webp" alt="Suika3 on Windows 11" width="640">
   <br>
   <br>
   Windows 11<br>
@@ -164,7 +164,11 @@ suika3
   <br>
   <br>
   Solaris 10<br>
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-solaris10.webp" alt="Suika3 on NEC PC-9801" width="480"><br>
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-solaris10.webp" alt="Suika3 on Solaris 10" width="480"><br>
+  <br>
+  <br>
+  Haiku<br>
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-haiku.webp" alt="Suika3 on Haiku OS" width="480"><br>
   <br>
   <br>
   NEC PC-9801 (80386/JIT)<br>
@@ -172,7 +176,7 @@ suika3
   <br>
   <br>
   IBM PC/AT (80386/JIT)<br>
-  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pcat.png" alt="Suika3 on NEC PC-9801" width="480"><br>
+  <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pcat.png" alt="Suika3 on IBM PC/AT" width="480"><br>
   <br>
 </div>
 

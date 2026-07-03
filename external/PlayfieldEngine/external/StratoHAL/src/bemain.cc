@@ -141,8 +141,10 @@ public:
 			return;
 
 		hal_callback.on_mouse_move((int)where.x, (int)where.y);
-		hal_callback.on_mouse_release(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
-		hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
+		if (last_buttons & B_PRIMARY_MOUSE_BUTTON)
+			hal_callback.on_mouse_release(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
+		if (last_buttons & B_SECONDARY_MOUSE_BUTTON)
+			hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
 	}
 
 	void KeyDown(const char* bytes, int32 numBytes) override

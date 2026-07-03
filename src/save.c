@@ -1363,6 +1363,8 @@ open_read_stream(
 	va_end(ap);
 	
 	size = s3_get_save_data_size(fname);
+	if (size == 0)
+		return false;
 
 	stream_buf = malloc(size);
 	if (stream_buf == NULL) {
