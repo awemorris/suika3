@@ -29,6 +29,7 @@
 
 #include <suika3/suika3.h>
 #include "conf.h"
+#include "tag.h"
 
 #include <stdlib.h>
 #include <string.h>
