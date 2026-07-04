@@ -49,3 +49,8 @@ elseif(MSVC)
   target_compile_options(vorbis PRIVATE /W0 /wd4267 /wd4244)
   target_compile_options(vorbisfile PRIVATE /W0 /wd4267 /wd4244)
 endif()
+
+if(STRATO_TARGET_PC98 OR STRATO_TARGET_PCAT)
+  target_compile_definitions(vorbis     PUBLIC HAVE_ALLOCA_H)
+  target_compile_definitions(vorbisfile PUBLIC HAVE_ALLOCA_H)
+endif()

@@ -31,6 +31,7 @@
 /* HAL */
 #include <strato/strato.h>	/* Public Interface */
 #include "stdfile.h"		/* Standard C File Implementation */
+#include "98sound.h"		/* PC98 Sound Implementation */
 
 /* Standard C */
 #include <stdio.h>
@@ -154,14 +155,24 @@ char **hal_argv;
 
 /* Forward Declaration */
 static void init_vram(void);
-static bool init_vram_cirrus(void);
-static void init_vram_gdc(void);
 static void cleanup_vram(void);
+static void init_vram_gdc(void);
+static bool init_vram_cirrus(void);
+static bool detect_cirrus(void);
+static void wab_write(int reg, int val);
+static int wab_read(int reg);
+static void seq_write(int reg, int val);
+static void gfx_write(int reg, int val);
+static int crtc_read(int reg);
+static void crtc_write(int reg, int val);
+static void attr_write(int reg, int val);
+static void hidden_dac_write(int val);
+static void set_bank(int bank);
+static void *dpmi_map_physical(uint32_t phys, uint32_t size);
 static void process_input(void);
 static void flip_24bpp(void);
 static void flip_4bpp(void);
 static bool open_log_file(void);
-static void *dpmi_map_physical(uint32_t phys, uint32_t size);
 
 int hal_main(int argc, char *argv[])
 {
@@ -183,6 +194,11 @@ int hal_main(int argc, char *argv[])
 		printf("Failed to initialize the file system.\n");
 		return 1;
 	}
+
+	if (init_sound())
+		printf("SB16 sound card initialized.\n");
+	else
+		printf("No sound card.\n");
 
 	if (!hal_bootstrap_ptr(
 		    &game_title,
@@ -209,11 +225,16 @@ int hal_main(int argc, char *argv[])
 	init_vram();
 
 	while (1) {
+		sb16_sound_poll();
 		process_input();
+
 		hal_clear_image(back_image, 0);
+
 		if (!hal_callback.on_update())
 			break;
+
 		hal_callback.on_render();
+
 		if (fb_bpp == 24)
 			flip_24bpp();
 		else
@@ -221,132 +242,94 @@ int hal_main(int argc, char *argv[])
 	}
 
 	cleanup_vram();
+
 	return 0;
 }
 
-/*
- * DPMI 0x0800: Map a physical address into linear address space.
- * (DOS/4GW uses a zero-based flat address space, so the returned
- * linear address is directly usable as a pointer.)
- */
-static void *
-dpmi_map_physical(uint32_t phys, uint32_t size)
-{
-	union REGS r;
-
-	if (phys < 0x100000UL)
-		return (void *)phys;	/* first MB is identity-mapped */
-
-	memset(&r, 0, sizeof(r));
-	r.w.ax = 0x0800;
-	r.w.bx = (uint16_t)(phys >> 16);
-	r.w.cx = (uint16_t)(phys & 0xffff);
-	r.w.si = (uint16_t)(size >> 16);
-	r.w.di = (uint16_t)(size & 0xffff);
-	int386(0x31, &r, &r);
-	if (r.w.cflag)
-		return NULL;
-
-	return (void *)(((uint32_t)r.w.bx << 16) | r.w.cx);
-}
-
-/*
- * Cirrus register access helpers (relocated VGA ports)
- */
-
-static INLINE void
-wab_write(int reg, int val)
-{
-	outp(WAB_INDEX, reg);
-	outp(WAB_DATA, val);
-}
-
-static INLINE int
-wab_read(int reg)
-{
-	outp(WAB_INDEX, reg);
-	return inp(WAB_DATA);
-}
-
-static INLINE void
-seq_write(int reg, int val)
-{
-	outp(P_SEQ_I, reg);
-	outp(P_SEQ_D, val);
-}
-
-static INLINE void
-gfx_write(int reg, int val)
-{
-	outp(P_GFX_I, reg);
-	outp(P_GFX_D, val);
-}
-
-static INLINE int
-crtc_read(int reg)
-{
-	outp(P_CRTC_I, reg);
-	return inp(P_CRTC_D);
-}
-
-static INLINE void
-crtc_write(int reg, int val)
-{
-	outp(P_CRTC_I, reg);
-	outp(P_CRTC_D, val);
-}
-
-/* The Attribute Controller uses an index/data flip-flop. */
+/* Initialize G-VRAM. */
 static void
-attr_write(int reg, int val)
+init_vram(void)
 {
-	(void)inp(P_STAT1);	/* reset the flip-flop */
-	outp(P_ATTR, reg);
-	outp(P_ATTR, val);
-}
+	init_vram_gdc();
 
-/*
- * Write the Cirrus Hidden DAC Register: it is accessed by reading
- * the Pixel Mask register (3C6) four times, then writing.
- */
-static void
-hidden_dac_write(int val)
-{
-	(void)inp(P_DAC_MASK);
-	(void)inp(P_DAC_MASK);
-	(void)inp(P_DAC_MASK);
-	(void)inp(P_DAC_MASK);
-	outp(P_DAC_MASK, val);
-}
+	if (init_vram_cirrus()) {
+		fb_bpp = 24;
+		ofs_x = (CIRRUS_WIDTH - game_width) / 2;
+		ofs_y = (CIRRUS_HEIGHT - game_height) / 2;
 
-/* Select a 16KB VRAM bank via GR09 (Offset Register 0). */
-static INLINE void
-set_bank(int bank)
-{
-	if (bank != cur_bank) {
-		gfx_write(0x09, bank);
-		cur_bank = bank;
+		return;
 	}
 }
 
-/*
- * Detect the built-in CIRRUS accelerator.
- *
- * WAB register 00h returns the machine ID; CIRRUS models use
- * 50h-5Dh and 70h. (Other values are S3/Matrox/Trident models
- * or 00h/FFh when no two-stage I/O accelerator is present.)
- */
-static bool
-detect_cirrus(void)
+/* Cleanup G-VRAM. */
+static void
+cleanup_vram(void)
 {
-	cirrus_id = (uint8_t)wab_read(WAB_REG_ID);
+	union REGS r;
 
-	if (!((cirrus_id >= 0x50 && cirrus_id <= 0x5d) ||
-	      cirrus_id == 0x70))
-		return false;
+	if (fb_bpp == 24) {
+		/* Relay back to the 98 GDC output. */
+		wab_write(WAB_REG_RELAY, WAB_RELAY_GDC);
+		outp(WAB_RELAY2_PORT, 0x00);
 
-	return true;
+		/* Return the shared VRAM to the GDC. */
+		outp(VRAM_SW_PORT, VRAM_SW_GDC);
+	}
+
+	/*
+	 * Stop displaying G-VRAM.
+	 *  - INT 18h, AH=41h
+	 */
+	r.w.ax = 0x4100;
+	int386(0x18, &r, &r);
 }
+
+/*
+ * GDC (640x400x4)
+ */
+
+/* Initialize G-VRAM (PC-98 GDC, 640x400 4-bpp). */
+static void
+init_vram_gdc(void)
+{
+	volatile uint16_t *text, *attr;
+	union REGS r;
+	int i;
+
+	/*
+	 * Set CRT display mode and G-VRAM areas.
+	 *  - 640x400 4-bpp
+	 *  - INT 18h, AH=42h, CH=C0h
+	 */
+	r.w.ax = 0x4200; 
+	r.h.ch = 192; 
+	int386(0x18, &r, &r);
+
+	outp(0x6a, 1);
+
+	/* Hide Text VRAM. */
+	text = (volatile uint16_t *)TVRAM_TEXT;
+	attr = (volatile uint16_t *)TVRAM_ATTR;
+	for (i = 0; i < 80 * 25; i++) {
+		text[i] = 0x0000;
+		attr[i] = 0x0000;
+	}
+
+	/*
+	 * Start displaying G-VRAM.
+	 *  - INT 18h, AH=40h
+	 */
+	r.w.ax = 0x4000;
+	int386(0x18, &r, &r);
+
+	fb_bpp = 4;
+	ofs_x = (SCREEN_WIDTH - game_width) / 2;
+	ofs_y = (SCREEN_HEIGHT - game_height) / 2;
+}
+
+/*
+ * CIRRUS CL-GD54xx
+ */
 
 /*
  * Initialize the CIRRUS chip and set 640x480x24bpp.
@@ -535,86 +518,133 @@ init_vram_cirrus(void)
 	return true;
 }
 
-/* Initialize G-VRAM (PC-98 GDC, 640x400 4-bpp). */
-static void
-init_vram_gdc(void)
+/*
+ * Detect the built-in CIRRUS accelerator.
+ *
+ * WAB register 00h returns the machine ID; CIRRUS models use
+ * 50h-5Dh and 70h. (Other values are S3/Matrox/Trident models
+ * or 00h/FFh when no two-stage I/O accelerator is present.)
+ */
+static bool
+detect_cirrus(void)
 {
-	volatile uint16_t *text, *attr;
+	cirrus_id = (uint8_t)wab_read(WAB_REG_ID);
+
+	if (!((cirrus_id >= 0x50 && cirrus_id <= 0x5d) ||
+	      cirrus_id == 0x70))
+		return false;
+
+	return true;
+}
+
+static void
+wab_write(int reg, int val)
+{
+	outp(WAB_INDEX, reg);
+	outp(WAB_DATA, val);
+}
+
+static int
+wab_read(int reg)
+{
+	outp(WAB_INDEX, reg);
+	return inp(WAB_DATA);
+}
+
+static void
+seq_write(int reg, int val)
+{
+	outp(P_SEQ_I, reg);
+	outp(P_SEQ_D, val);
+}
+
+static void
+gfx_write(int reg, int val)
+{
+	outp(P_GFX_I, reg);
+	outp(P_GFX_D, val);
+}
+
+static int
+crtc_read(int reg)
+{
+	outp(P_CRTC_I, reg);
+	return inp(P_CRTC_D);
+}
+
+static void
+crtc_write(int reg, int val)
+{
+	outp(P_CRTC_I, reg);
+	outp(P_CRTC_D, val);
+}
+
+/* The Attribute Controller uses an index/data flip-flop. */
+static void
+attr_write(int reg, int val)
+{
+	(void)inp(P_STAT1);	/* reset the flip-flop */
+	outp(P_ATTR, reg);
+	outp(P_ATTR, val);
+}
+
+/*
+ * Write the Cirrus Hidden DAC Register: it is accessed by reading
+ * the Pixel Mask register (3C6) four times, then writing.
+ */
+static void
+hidden_dac_write(int val)
+{
+	(void)inp(P_DAC_MASK);
+	(void)inp(P_DAC_MASK);
+	(void)inp(P_DAC_MASK);
+	(void)inp(P_DAC_MASK);
+	outp(P_DAC_MASK, val);
+}
+
+/* Select a 16KB VRAM bank via GR09 (Offset Register 0). */
+static void
+set_bank(int bank)
+{
+	if (bank != cur_bank) {
+		gfx_write(0x09, bank);
+		cur_bank = bank;
+	}
+}
+
+/*
+ * DPMI
+ */
+
+/*
+ * DPMI 0x0800: Map a physical address into linear address space.
+ * (DOS/4GW uses a zero-based flat address space, so the returned
+ * linear address is directly usable as a pointer.)
+ */
+static void *
+dpmi_map_physical(uint32_t phys, uint32_t size)
+{
 	union REGS r;
-	int i;
 
-	/*
-	 * Set CRT display mode and G-VRAM areas.
-	 *  - 640x400 4-bpp
-	 *  - INT 18h, AH=42h, CH=C0h
-	 */
-	r.w.ax = 0x4200; 
-	r.h.ch = 192; 
-	int386(0x18, &r, &r);
+	if (phys < 0x100000UL)
+		return (void *)phys;	/* first MB is identity-mapped */
 
-	outp(0x6a, 1);
+	memset(&r, 0, sizeof(r));
+	r.w.ax = 0x0800;
+	r.w.bx = (uint16_t)(phys >> 16);
+	r.w.cx = (uint16_t)(phys & 0xffff);
+	r.w.si = (uint16_t)(size >> 16);
+	r.w.di = (uint16_t)(size & 0xffff);
+	int386(0x31, &r, &r);
+	if (r.w.cflag)
+		return NULL;
 
-	/* Hide Text VRAM. */
-	text = (volatile uint16_t *)TVRAM_TEXT;
-	attr = (volatile uint16_t *)TVRAM_ATTR;
-	for (i = 0; i < 80 * 25; i++) {
-		text[i] = 0x0000;
-		attr[i] = 0x0000;
-	}
-
-	/*
-	 * Start displaying G-VRAM.
-	 *  - INT 18h, AH=40h
-	 */
-	r.w.ax = 0x4000;
-	int386(0x18, &r, &r);
+	return (void *)(((uint32_t)r.w.bx << 16) | r.w.cx);
 }
 
-/* Initialize G-VRAM. */
-static void
-init_vram(void)
-{
-	if (init_vram_cirrus()) {
-		printf("CIRRUS accelerator found (ID=%02xh, CR27=%02xh).\n",
-		       cirrus_id, cirrus_crt27);
-		fb_bpp = 24;
-		ofs_x = (CIRRUS_WIDTH - game_width) / 2;
-		ofs_y = (CIRRUS_HEIGHT - game_height) / 2;
-
-		return;
-	}
-
-	printf("CIRRUS accelerator not found.\n");
-	printf("Fallback to PC-98 GDC.\n");
-
-	fb_bpp = 4;
-	ofs_x = (SCREEN_WIDTH - game_width) / 2;
-	ofs_y = (SCREEN_HEIGHT - game_height) / 2;
-	init_vram_gdc();
-}
-
-/* Cleanup G-VRAM. */
-static void
-cleanup_vram(void)
-{
-	union REGS r;
-
-	if (fb_bpp == 24) {
-		/* Relay back to the 98 GDC output. */
-		wab_write(WAB_REG_RELAY, WAB_RELAY_GDC);
-		outp(WAB_RELAY2_PORT, 0x00);
-
-		/* Return the shared VRAM to the GDC. */
-		outp(VRAM_SW_PORT, VRAM_SW_GDC);
-	}
-
-	/*
-	 * Stop displaying G-VRAM.
-	 *  - INT 18h, AH=41h
-	 */
-	r.w.ax = 0x4100;
-	int386(0x18, &r, &r);
-}
+/*
+ * Flip
+ */
 
 /*
  * Blit back image to VRAM. (CIRRUS 24-bpp)
@@ -725,6 +755,10 @@ static void flip_4bpp(void)
 		}
 	}
 }
+
+/*
+ * Input
+ */
 
 static void process_input(void)
 {
@@ -1391,38 +1425,11 @@ hal_set_continuous_swipe_enabled(
 	UNUSED_PARAMETER(is_enabled);
 }
 
-bool
-hal_play_sound(
-	int stream,		/* A sound stream index */
-	struct hal_wave *w)	/* [IN] A sound object, ownership will be delegated to the callee */
-{
-	UNUSED_PARAMETER(stream);
-	UNUSED_PARAMETER(w);
-	return true;
-}
+/*
+ * Missing C99
+ */
 
-bool
-hal_stop_sound(
-	int stream)
+double rint(double x)
 {
-	UNUSED_PARAMETER(stream);
-	return true;
-}
-
-bool
-hal_set_sound_volume(
-	int stream,
-	float vol)
-{
-	UNUSED_PARAMETER(stream);
-	UNUSED_PARAMETER(vol);
-	return true;
-}
-
-bool
-hal_is_sound_finished(
-	int stream)
-{
-	UNUSED_PARAMETER(stream);
-	return true;
+	return floor(x + 0.5);
 }

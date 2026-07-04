@@ -743,21 +743,19 @@ if(   SUIKA_ENABLE_STATIC
 
   # Link dependencies into the library if not packaing.
   if(NOT SUIKA_ENABLE_DIST)
-    if(NOT SUIKA_TARGET_PC98 AND NOT SUIKA_TARGET_PCAT)
+    if(SUIKA_TARGET_PC98 OR SUIKA_TARGET_PCAT)
       set(SUIKA_DEPS
           $<TARGET_OBJECTS:png>
-          $<TARGET_OBJECTS:jpeg>
-          $<TARGET_OBJECTS:webp>
-          $<TARGET_OBJECTS:vorbisfile>
-          $<TARGET_OBJECTS:vorbis>
-          $<TARGET_OBJECTS:ogg>
           $<TARGET_OBJECTS:freetype>
+          $<TARGET_OBJECTS:trmor>
+          $<TARGET_OBJECTS:ogg>
           $<TARGET_OBJECTS:z>
       )
     else()
       set(SUIKA_DEPS
           $<TARGET_OBJECTS:png>
           $<TARGET_OBJECTS:jpeg>
+          $<TARGET_OBJECTS:webp>
           $<TARGET_OBJECTS:vorbisfile>
           $<TARGET_OBJECTS:vorbis>
           $<TARGET_OBJECTS:ogg>

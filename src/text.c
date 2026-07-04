@@ -79,8 +79,7 @@ struct s3_drawmsg *ctx_tbl[CONTEXT_MAX];
 static struct s3_image *load_cached_glyph(int slot, uint32_t codepoint, int size, pf_pixel_t color, int outline_width, pf_pixel_t outline_color);
 static bool isgraph_extended(const char **mbs, uint32_t *wc);
 static int translate_font_type(int font_type);
-static bool draw_emoji(struct s3_drawmsg *context, const char *name,
-		       int *w, int *h);
+static bool draw_emoji(struct s3_drawmsg *context, const char *name, int *w, int *h);
 
 /*
  * Initialize the glyph subsystem.

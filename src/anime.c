@@ -46,7 +46,12 @@
 /*
  * Maximum number of the anime sequences per a layer.
  */
+
+#if defined(HAL_TARGET_PC98) || defined(HAL_TARGET_PCTA)
+#define SEQUENCE_COUNT		(32)
+#else
 #define SEQUENCE_COUNT		(1024)
+#endif
 
 /*
  * Anime sequence.

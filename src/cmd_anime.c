@@ -96,6 +96,10 @@ init(void)
 	const char *file;
 	const char *reg_name;
 
+	/* Check properties. */
+	if (!s3i_check_tag_properties(prop_names))
+		return false;
+
 	/* If stop. */
 	if (s3_get_tag_arg_bool("stop", true, false)) {
 		reg_name = s3_get_tag_arg_string("register", false, NULL);

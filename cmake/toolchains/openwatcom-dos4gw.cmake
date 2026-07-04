@@ -12,7 +12,7 @@ set(CMAKE_CXX_COMPILER_TARGET dos)
 set(CMAKE_C_FLAGS_INIT "-bt=dos -oneatx -oe=200 -oh -oi -zp4 -fpi87")
 
 set(CMAKE_EXE_LINKER_FLAGS
-    "system dos4g option stack=65536 library clib3r library math387r"
+    "system dos4g option stack=65536 option map library clib3r library math387r"
     CACHE STRING "" FORCE)
 
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)

@@ -220,15 +220,21 @@ if(STRATO_ENABLE_DIST)
   find_package(ZLIB REQUIRED)
 else()
   # Build the dependencies statically.
-  include(cmake/ext/zlib.cmake)
-  include(cmake/ext/libpng.cmake)
-  if(NOT STRATO_TARGET_PC98 AND NOT STRATO_TARGET_PCAT)
+  if(STRATO_TARGET_PC98 OR STRATO_TARGET_PCAT)
+    include(cmake/ext/zlib.cmake)
+    include(cmake/ext/libpng.cmake)
+    include(cmake/ext/libogg.cmake)
+    include(cmake/ext/tremor.cmake)
+    include(cmake/ext/freetype.cmake)
+  else()
+    include(cmake/ext/zlib.cmake)
+    include(cmake/ext/libpng.cmake)
     include(cmake/ext/jpeg.cmake)
     include(cmake/ext/libwebp.cmake)
     include(cmake/ext/libogg.cmake)
     include(cmake/ext/libvorbis.cmake)
+    include(cmake/ext/freetype.cmake)
   endif()
-  include(cmake/ext/freetype.cmake)
 endif()
 
 # libX11
@@ -661,10 +667,12 @@ endif()
 if(STRATO_TARGET_PC98)
   set(STRATO_SOURCES
       src/image.c
-      src/glyph.c
       src/wave.c
       src/stdfile.c
       src/98main.c
+      # src/glyph.c
+      src/98glyph.c   # PC98 font
+      src/98sound.c
     )
 endif()
 
@@ -688,7 +696,15 @@ endif()
 
 # Deps (merge third-party library objects into the target)
 if(NOT STRATO_ENABLE_DIST)
-  if(NOT STRATO_TARGET_PC98 AND NOT STRATO_TARGET_PCAT)
+  if(STRATO_TARGET_PC98 OR STRATO_TARGET_PCAT)
+    set(STRATO_DEPS
+        $<TARGET_OBJECTS:png>
+        $<TARGET_OBJECTS:freetype>
+        $<TARGET_OBJECTS:tremor>
+        $<TARGET_OBJECTS:ogg>
+        $<TARGET_OBJECTS:z>
+    )
+  else()
     set(STRATO_DEPS
         $<TARGET_OBJECTS:png>
         $<TARGET_OBJECTS:jpeg>
@@ -696,12 +712,6 @@ if(NOT STRATO_ENABLE_DIST)
         $<TARGET_OBJECTS:vorbisfile>
         $<TARGET_OBJECTS:vorbis>
         $<TARGET_OBJECTS:ogg>
-        $<TARGET_OBJECTS:freetype>
-        $<TARGET_OBJECTS:z>
-    )
-  else()
-    set(STRATO_DEPS
-        $<TARGET_OBJECTS:png>
         $<TARGET_OBJECTS:freetype>
         $<TARGET_OBJECTS:z>
     )
@@ -751,6 +761,7 @@ target_include_directories(strato PRIVATE ${JPEG_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${WEBP_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${OGG_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${VORBIS_INCLUDE_DIRS})
+target_include_directories(strato PRIVATE ${TREMOR_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${FREETYPE_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${ZLIB_INCLUDE_DIRS})
 
