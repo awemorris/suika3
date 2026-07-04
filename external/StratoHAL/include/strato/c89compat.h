@@ -494,6 +494,7 @@ typedef unsigned long long uint64_t;
  * Math
  */
 #if defined(__WATCOMC__)
+#include <math.h>
 #if !defined(lroundf)
 #define lroundf round
 static INLINE double round(double x)

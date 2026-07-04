@@ -1030,7 +1030,7 @@ hal_load_glyph_data(
 HAL_DLL
 void
 hal_destroy_glyph_data(
-	int index);
+	int slot);
 
 /*
  * Get a top character of a utf-8 string as utf-32.
@@ -1087,7 +1087,7 @@ hal_get_glyph_width_and_height(
 HAL_DLL
 int
 hal_get_string_width(
-	int font_type,
+	int slot,
 	int font_size,
 	const char *mbs);
 
@@ -1097,7 +1097,7 @@ hal_get_string_width(
 HAL_DLL
 int
 hal_get_string_height(
-	int font_type,
+	int slot,
 	int font_size,
 	const char *mbs);
 
@@ -1120,7 +1120,7 @@ HAL_DLL
 bool
 hal_draw_glyph(
 	struct hal_image *img,
-	int font_index,
+	int slot,
 	int font_size,
 	int base_font_size,
 	int outline_size,

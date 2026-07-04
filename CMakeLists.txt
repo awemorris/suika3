@@ -504,25 +504,25 @@ endif()
 
 # Determine the objects if we use static linking.
 if(NOT PLAYFIELD_ENABLE_DIST)
-  if(NOT PLAYFIELD_TARGET_PC98 AND NOT PLAYFIELD_TARGET_PCAT)
-    set(
-      PLAYFIELD_DEPS
-      $<TARGET_OBJECTS:png>
-      $<TARGET_OBJECTS:jpeg>
-      $<TARGET_OBJECTS:webp>
-      $<TARGET_OBJECTS:vorbisfile>
-      $<TARGET_OBJECTS:vorbis>
-      $<TARGET_OBJECTS:ogg>
-      $<TARGET_OBJECTS:freetype>
-      $<TARGET_OBJECTS:z>
-    )      
+  if(PLAYFIELD_TARGET_PC98 OR PLAYFIELD_TARGET_PCAT)
+    set(PLAYFIELD_DEPS
+        $<TARGET_OBJECTS:png>
+        $<TARGET_OBJECTS:tremor>
+        $<TARGET_OBJECTS:ogg>
+        $<TARGET_OBJECTS:freetype>
+        $<TARGET_OBJECTS:z>
+    )
   else()
-    set(
-      PLAYFIELD_DEPS
-      $<TARGET_OBJECTS:png>
-      $<TARGET_OBJECTS:freetype>
-      $<TARGET_OBJECTS:z>
-    )      
+    set(PLAYFIELD_DEPS
+        $<TARGET_OBJECTS:png>
+        $<TARGET_OBJECTS:jpeg>
+        $<TARGET_OBJECTS:webp>
+        $<TARGET_OBJECTS:vorbisfile>
+        $<TARGET_OBJECTS:vorbis>
+        $<TARGET_OBJECTS:ogg>
+        $<TARGET_OBJECTS:freetype>
+        $<TARGET_OBJECTS:z>
+    )
   endif()
 endif()
 

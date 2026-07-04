@@ -88,7 +88,11 @@ static const uint64_t NEXT_MASK2 = 0xfcbfaff8f2f4f3f0;
  */
 
 /* Maximum entries in a package. */
+#if defined(HAL_TARGET_PC98) || defined(HAL_TARGET_PCTA)
+#define ENTRY_SIZE		(1024)
+#else
 #define ENTRY_SIZE		(65536)
+#endif
 
 /* File name length for an entry. */
 #define FILE_NAME_SIZE		(256)
