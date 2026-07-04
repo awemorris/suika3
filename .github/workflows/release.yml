@@ -420,9 +420,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up dependencies
-        run: git submodule update --init
-
       - name: Install deps
         run: |
           sudo apt-get update
