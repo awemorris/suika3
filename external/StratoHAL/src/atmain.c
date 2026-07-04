@@ -2,7 +2,8 @@
 
 /*
  * Strato HAL
- * Main code for NEC PC-9800 series (DOS/4G)
+ * Main code for IBM PC/AT VESA VBE 2.0 (DOS/4GW)
+ *   - 640x480, 32bpp, linear framebuffer
  */
 
 /*-
@@ -46,13 +47,106 @@
 #include <conio.h>
 #include <i86.h>
 
-/* VRAM Address */
-#define VGA_VRAM	0x000A0000UL
-
 /* Screen Size */
 #define SCREEN_WIDTH	640
 #define SCREEN_HEIGHT	480
-#define LINE_BYTES	(640 / 8)
+#define SCREEN_BPP	32
+
+/* VBE mode attribute bits */
+#define VBE_ATTR_SUPPORTED	0x0001
+#define VBE_ATTR_GRAPHICS	0x0010
+#define VBE_ATTR_LFB		0x0080
+
+/* VBE set-mode flag: use linear framebuffer */
+#define VBE_MODE_LFB		0x4000
+
+/* VBE memory model: direct color */
+#define VBE_MM_DIRECT		0x06
+
+/* VRAM address */
+#define VGA_VRAM	0x000A0000UL
+
+/* VGA line bytes */
+#define VGA_LINE_BYTES	(640 / 8)
+
+/*
+ * VBE 2.0 structures (must be byte-packed)
+ */
+#pragma pack(push, 1)
+
+struct vbe_info {
+	char		VbeSignature[4];	/* "VESA" */
+	uint16_t	VbeVersion;		/* 0x0200 or higher */
+	uint32_t	OemStringPtr;		/* real mode far pointer */
+	uint32_t	Capabilities;
+	uint32_t	VideoModePtr;		/* real mode far pointer */
+	uint16_t	TotalMemory;		/* in 64KB blocks */
+	uint16_t	OemSoftwareRev;
+	uint32_t	OemVendorNamePtr;
+	uint32_t	OemProductNamePtr;
+	uint32_t	OemProductRevPtr;
+	uint8_t		Reserved[222];
+	uint8_t		OemData[256];
+};						/* 512 bytes */
+
+struct vbe_mode_info {
+	uint16_t	ModeAttributes;
+	uint8_t		WinAAttributes;
+	uint8_t		WinBAttributes;
+	uint16_t	WinGranularity;
+	uint16_t	WinSize;
+	uint16_t	WinASegment;
+	uint16_t	WinBSegment;
+	uint32_t	WinFuncPtr;
+	uint16_t	BytesPerScanLine;
+	uint16_t	XResolution;
+	uint16_t	YResolution;
+	uint8_t		XCharSize;
+	uint8_t		YCharSize;
+	uint8_t		NumberOfPlanes;
+	uint8_t		BitsPerPixel;
+	uint8_t		NumberOfBanks;
+	uint8_t		MemoryModel;
+	uint8_t		BankSize;
+	uint8_t		NumberOfImagePages;
+	uint8_t		Reserved1;
+	uint8_t		RedMaskSize;
+	uint8_t		RedFieldPosition;
+	uint8_t		GreenMaskSize;
+	uint8_t		GreenFieldPosition;
+	uint8_t		BlueMaskSize;
+	uint8_t		BlueFieldPosition;
+	uint8_t		RsvdMaskSize;
+	uint8_t		RsvdFieldPosition;
+	uint8_t		DirectColorModeInfo;
+	uint32_t	PhysBasePtr;		/* LFB physical address */
+	uint32_t	OffScreenMemOffset;
+	uint16_t	OffScreenMemSize;
+	uint8_t		Reserved2[206];
+};						/* 256 bytes */
+
+/* DPMI 0x0300: real mode interrupt call structure */
+struct rminfo {
+	uint32_t	edi;
+	uint32_t	esi;
+	uint32_t	ebp;
+	uint32_t	reserved;
+	uint32_t	ebx;
+	uint32_t	edx;
+	uint32_t	ecx;
+	uint32_t	eax;
+	uint16_t	flags;
+	uint16_t	es;
+	uint16_t	ds;
+	uint16_t	fs;
+	uint16_t	gs;
+	uint16_t	ip;
+	uint16_t	cs;
+	uint16_t	sp;
+	uint16_t	ss;
+};
+
+#pragma pack(pop)
 
 /* Log */
 #define LOG_FILE	"log.txt"
@@ -64,9 +158,26 @@ static int game_height;
 
 /* Screen */
 static struct hal_image *back_image;
-static uint8_t *fb;
+static uint8_t *fb;		/* mapped linear framebuffer */
+static int fb_stride;		/* bytes per scanline */
+static int fb_bpp;		/* 32 (or 24 as a fallback) */
+static uint16_t vesa_mode;	/* selected VBE mode number */
 static int ofs_x;
 static int ofs_y;
+
+/* Precomputed channel shifts (from VBE mode info) */
+static int shift_r;
+static int shift_g;
+static int shift_b;
+
+/* Precomputed right shifts to reduce 8-bit channels (8 - mask size) */
+static int rshift_r;
+static int rshift_g;
+static int rshift_b;
+
+/* DOS (conventional) memory block for real mode VBE calls */
+static uint16_t dos_seg;	/* real mode segment */
+static uint16_t dos_sel;	/* protected mode selector (for freeing) */
 
 /* Log */
 static FILE *log_fp;
@@ -81,9 +192,21 @@ char **hal_argv;
 
 /* Forward Declaration */
 static void init_vram(void);
+static void init_vram_vga_fallback(void);
 static void cleanup_vram(void);
+static void flip_32bpp(void);
+static void flip_24bpp(void);
+static void flip_16bpp(void);
+static void flip_4bpp(void);
 static void process_input(void);
-static void flip(void);
+static bool dpmi_dos_alloc(int paragraphs, uint16_t *seg, uint16_t *sel);
+static void dpmi_dos_free(uint16_t sel);
+static void dpmi_rm_int(int inum, struct rminfo *rmi);
+static void *dpmi_map_physical(uint32_t phys, uint32_t size);
+static bool vbe_get_info(struct vbe_info *info);
+static bool vbe_get_mode_info(uint16_t mode, struct vbe_mode_info *mi);
+static bool vbe_set_mode(uint16_t mode);
+static bool find_vbe_mode(const struct vbe_info *info, int bpp, uint16_t *mode_ret, struct vbe_mode_info *mi_ret);
 static bool open_log_file(void);
 
 int hal_main(int argc, char *argv[])
@@ -92,21 +215,23 @@ int hal_main(int argc, char *argv[])
 	hal_argv = argv;
 
 	printf("\n"
-	       "Suika3 Game Engine for IBM PC/AT VGA\n"
+	       "Suika3 Game Engine for IBM PC/AT VESA VBE 2.0\n"
 	       "Copyright (c) 2026 Awe Morris\n");
 
 	if (argc >= 2) {
 		if (strcmp(argv[1], "--version") == 0) {
-			printf("Version 2026.05\n");
+			printf("Version 2026.07\n");
 			return 0;
 		}
 	}
 
+	/* Initialize the asset package file. */
 	if (!init_file()) {
 		printf("Failed to initialize the file system.\n");
 		return 1;
 	}
 
+	/* Initialize the downstream app that uses this StratoHAL. */
 	if (!hal_bootstrap_ptr(
 		    &game_title,
 		    &game_width,
@@ -115,39 +240,186 @@ int hal_main(int argc, char *argv[])
 		printf("Error on boot.\n");
 		return 1;
 	}
+
+	/* Check for the game screen size. */
 	if (game_width > 640 || game_height > 480) {
 		printf("Screen size too large.\n");
 		return 1;
 	}
+
+	/* Calculate the viewport offset. */
 	ofs_x = (640 - game_width) / 2;
 	ofs_y = (480 - game_height) / 2;
 
+	/* Create the back image. */
 	if (!hal_create_image(game_width, game_height, &back_image)) {
 		printf("Error on creating image.\n");
 		return 1;
 	}
 
+	/* Do start callback. */
 	if (!hal_callback.on_start()) {
 		printf("Error on start.\n");
 		return 1;
 	}
 
+	/* Initialize a VBE/VGA graphics mode. */
 	init_vram();
 
+	/* Game loop. */
 	while (1) {
+		/* Process inputs. */
 		process_input();
+
+		/* Clear the back image. */
 		hal_clear_image(back_image, 0);
+
+		/* Frame update. */
 		if (!hal_callback.on_update())
 			break;
+
+		/* Frame rendering. */
 		hal_callback.on_render();
-		flip();
+
+		/* Flip the back image to VRAM. */
+		if (fb_bpp == 32)
+			flip_32bpp();
+		else if (fb_bpp == 24)
+			flip_24bpp();
+		else if (fb_bpp == 16 || fb_bpp == 15)
+			flip_16bpp();
+		else
+			flip_4bpp();
 	}
 
+	/* Finish using the graphics mode. */
 	cleanup_vram();
+
 	return 0;
 }
 
+/* Initialize G-VRAM. */
 static void
+init_vram(void)
+{
+	struct vbe_info info;
+	struct vbe_mode_info mi;
+	uint32_t fb_size;
+	int y;
+
+	/*
+	 * Allocate a 512-byte conventional memory buffer for the
+	 * real mode VBE calls. (512 bytes = 32 paragraphs)
+	 */
+	if (!dpmi_dos_alloc(512 / 16, &dos_seg, &dos_sel)) {
+		printf("Can't allocate DOS memory.\n");
+		printf("Fallback to VGA.\n");
+
+		/* VGA */
+		fb_bpp = 4;
+		init_vram_vga_fallback();
+		return;
+	}
+
+	if (!vbe_get_info(&info)) {
+		printf("VESA VBE 2.0 not available.\n");
+		printf("Fallback to VGA.\n");
+
+		/* VGA */
+		fb_bpp = 4;
+		init_vram_vga_fallback();
+		return;
+	}
+
+	/* Prefer 32bpp; fall back to 24bpp, then 16bpp/15bpp. */
+	if (find_vbe_mode(&info, 32, &vesa_mode, &mi)) {
+		printf("%dx%dx32 LFB mode found.\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+
+		/* VBE */
+		fb_bpp = 32;
+	} else if (find_vbe_mode(&info, 24, &vesa_mode, &mi)) {
+		printf("%dx%dx24 LFB mode found.\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+
+		/* VBE */
+		fb_bpp = 24;
+	} else if (find_vbe_mode(&info, 16, &vesa_mode, &mi)) {
+		printf("%dx%dx16 LFB mode found.\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+
+		/* VBE (usually 5:6:5) */
+		fb_bpp = 16;
+	} else if (find_vbe_mode(&info, 15, &vesa_mode, &mi)) {
+		printf("%dx%dx15 LFB mode found.\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+
+		/* VBE (5:5:5, still 2 bytes per pixel) */
+		fb_bpp = 15;
+	} else {
+		printf("No %dx%d direct color LFB mode found.\n", SCREEN_WIDTH, SCREEN_HEIGHT);
+		printf("Fallback to VGA.\n");
+
+		/* VGA */
+		fb_bpp = 4;
+		init_vram_vga_fallback();
+		return;
+	}
+
+	fb_stride = mi.BytesPerScanLine;
+	shift_r = mi.RedFieldPosition;
+	shift_g = mi.GreenFieldPosition;
+	shift_b = mi.BlueFieldPosition;
+	rshift_r = 8 - mi.RedMaskSize;
+	rshift_g = 8 - mi.GreenMaskSize;
+	rshift_b = 8 - mi.BlueMaskSize;
+
+	/*
+	 * Some BIOSes leave the direct color fields zero for 8:8:8
+	 * modes. Fall back to the canonical layout in that case.
+	 */
+	if (mi.RedMaskSize == 0 || mi.GreenMaskSize == 0 ||
+	    mi.BlueMaskSize == 0) {
+		if (fb_bpp == 32 || fb_bpp == 24) {
+			/* B(0) G(8) R(16) */
+			shift_r = 16; shift_g = 8; shift_b = 0;
+			rshift_r = 0; rshift_g = 0; rshift_b = 0;
+		} else if (fb_bpp == 16) {
+			/* 5:6:5 */
+			shift_r = 11; shift_g = 5; shift_b = 0;
+			rshift_r = 3; rshift_g = 2; rshift_b = 3;
+		} else {
+			/* 15bpp, 5:5:5 */
+			shift_r = 10; shift_g = 5; shift_b = 0;
+			rshift_r = 3; rshift_g = 3; rshift_b = 3;
+		}
+	}
+
+	/* Map the linear framebuffer into our address space. */
+	fb_size = (uint32_t)fb_stride * SCREEN_HEIGHT;
+	fb = (uint8_t *)dpmi_map_physical(mi.PhysBasePtr, fb_size);
+	if (fb == NULL) {
+		printf("Can't map the linear framebuffer.\n");
+		printf("Fallback to VGA.\n");
+
+		/* VGA */
+		fb_bpp = 4;
+		init_vram_vga_fallback();
+		return;
+	}
+
+	if (!vbe_set_mode(vesa_mode)) {
+		printf("Can't set VBE mode 0x%03x.\n", vesa_mode);
+		printf("Fallback to VGA.\n");
+
+		/* VGA */
+		fb_bpp = 4;
+		init_vram_vga_fallback();
+		return;
+	}
+
+	/* Clear the screen. */
+	for (y = 0; y < SCREEN_HEIGHT; y++)
+		memset(fb + y * fb_stride, 0, (size_t)fb_stride);
+}
+
+static INLINE void
 set_vga_plane(int plane)
 {
 	/* Sequencer Map Mask */
@@ -155,9 +427,9 @@ set_vga_plane(int plane)
 	outp(0x3c5, (unsigned char)(1 << plane));
 }
 
-/* Initialize G-VRAM. */
+/* Initialize G-VRAM (VGA 4-bpp fallback). */
 static void
-init_vram(void)
+init_vram_vga_fallback(void)
 {
 	union REGS r;
 	volatile unsigned char *vram;
@@ -176,7 +448,7 @@ init_vram(void)
 	/* Clear all VGA planes. */
 	for (plane = 0; plane < 4; plane++) {
 		set_vga_plane(plane);
-		for (i = 0; i < LINE_BYTES * SCREEN_HEIGHT; i++)
+		for (i = 0; i < VGA_LINE_BYTES * SCREEN_HEIGHT; i++)
 			vram[i] = 0;
 	}
 }
@@ -190,6 +462,133 @@ cleanup_vram(void)
 	memset(&r, 0, sizeof(r));
 	r.w.ax = 0x0003;        /* 80x25 text mode */
 	int386(0x10, &r, &r);
+
+	if (dos_sel != 0) {
+		dpmi_dos_free(dos_sel);
+		dos_sel = 0;
+	}
+}
+
+/*
+ * Convert a StratoHAL pixel to the display pixel format.
+ *
+ * StratoHAL pixel layout (BGRA): low byte = B, then G, then R,
+ * i.e. 0xAARRGGBB as a little endian uint32.
+ * Most VBE 32/24bpp direct color modes use the same B(0) G(8) R(16)
+ * layout, but we honor the field positions and mask sizes reported
+ * by the mode info, so this also handles 16bpp (5:6:5) and 15bpp
+ * (5:5:5).
+ */
+static INLINE uint32_t
+rgb_to_fb(
+	uint32_t pix)
+{
+	uint32_t r, g, b;
+
+	b = pix & 0xff;
+	g = (pix >> 8) & 0xff;
+	r = (pix >> 16) & 0xff;
+
+	return ((r >> rshift_r) << shift_r) |
+	       ((g >> rshift_g) << shift_g) |
+	       ((b >> rshift_b) << shift_b);
+}
+
+/*
+ * Blit back image to VRAM. (32-bpp)
+ */
+static void
+flip_32bpp(void)
+{
+	uint32_t *pixels;
+	uint8_t *dst_line;
+	int x, y;
+
+	pixels = back_image->pixels;
+	dst_line = fb + ofs_y * fb_stride + ofs_x * 4;
+
+	if (shift_r == 16 && shift_g == 8 && shift_b == 0 &&
+	    rshift_r == 0 && rshift_g == 0 && rshift_b == 0) {
+		/*
+		 * The framebuffer layout matches the StratoHAL BGRA
+		 * pixel layout, so rows can be copied directly.
+		 * Note: copy game_width pixels, not fb_stride bytes,
+		 * to avoid overrunning the back image rows.
+		 */
+		for (y = 0; y < game_height; y++) {
+			memcpy(dst_line,
+			       pixels + y * game_width,
+			       (size_t)game_width * 4);
+			dst_line += fb_stride;
+		}
+	} else {
+		/* Unusual channel layout: convert per pixel. */
+		for (y = 0; y < game_height; y++) {
+			uint32_t *src = pixels + y * game_width;
+			uint32_t *dst = (uint32_t *)dst_line;
+
+			for (x = 0; x < game_width; x++)
+				dst[x] = rgb_to_fb(src[x]);
+
+			dst_line += fb_stride;
+		}
+	}
+}
+
+/*
+ * Blit back image to VRAM. (24-bpp)
+ */
+static void
+flip_24bpp(void)
+{
+	uint32_t *pixels;
+	uint8_t *dst_line;
+	int x, y;
+
+	pixels = back_image->pixels;
+	dst_line = fb + ofs_y * fb_stride + ofs_x * 3;
+
+	/* 24bpp: 3 bytes per pixel */
+	for (y = 0; y < game_height; y++) {
+		uint32_t *src = pixels + y * game_width;
+		uint8_t *dst = dst_line;
+
+		for (x = 0; x < game_width; x++) {
+			uint32_t out = rgb_to_fb(src[x]);
+
+			dst[0] = (uint8_t)(out & 0xff);
+			dst[1] = (uint8_t)((out >> 8) & 0xff);
+			dst[2] = (uint8_t)((out >> 16) & 0xff);
+			dst += 3;
+		}
+
+		dst_line += fb_stride;
+	}
+}
+
+/*
+ * Blit back image to VRAM. (16-bpp / 15-bpp)
+ */
+static void
+flip_16bpp(void)
+{
+	uint32_t *pixels;
+	uint8_t *dst_line;
+	int x, y;
+
+	pixels = back_image->pixels;
+	dst_line = fb + ofs_y * fb_stride + ofs_x * 2;
+
+	/* 16bpp (5:6:5) or 15bpp (5:5:5): 2 bytes per pixel */
+	for (y = 0; y < game_height; y++) {
+		uint32_t *src = pixels + y * game_width;
+		uint16_t *dst = (uint16_t *)dst_line;
+
+		for (x = 0; x < game_width; x++)
+			dst[x] = (uint16_t)rgb_to_fb(src[x]);
+
+		dst_line += fb_stride;
+	}
 }
 
 static INLINE unsigned char
@@ -198,10 +597,10 @@ rgb_to_vga16(uint32_t pix)
 	unsigned char r, g, b;
 	unsigned char c = 0;
 
-	/* Suika/Strato pixel layout: low byte = R, then G, then B */
-	r = pix & 0xff;
+	/* StratoHAL pixel layout (BGRA): low byte = B, then G, then R */
+	b = pix & 0xff;
 	g = (pix >> 8) & 0xff;
-	b = (pix >> 16) & 0xff;
+	r = (pix >> 16) & 0xff;
 
 	if (b >= 200)
 		c |= 0x01;       /* VGA blue */
@@ -215,8 +614,11 @@ rgb_to_vga16(uint32_t pix)
 	return c;
 }
 
+/*
+ * Blit back image to VRAM. (4-bpp)
+ */
 static void
-flip(void)
+flip_4bpp(void)
 {
 	volatile unsigned char *vram;
 	uint32_t *pixels;
@@ -232,7 +634,7 @@ flip(void)
 			if (y >= game_height)
 				break;
 
-			for (x = 0; x < LINE_BYTES; x++) {
+			for (x = 0; x < VGA_LINE_BYTES; x++) {
 				unsigned char out = 0;
 
 				if (x >= (game_width >> 3))
@@ -254,13 +656,17 @@ flip(void)
 						out |= mask;
 				}
 
-				vram[(y + ofs_y) * LINE_BYTES + x + (ofs_x >> 8)] = out;
+				vram[(y + ofs_y) * VGA_LINE_BYTES + x + (ofs_x >> 3)] = out;
 			}
 		}
 	}
 }
 
-static void process_input(void)
+/*
+ * Process inputs.
+ */
+static void
+process_input(void)
 {
 	static bool is_return_key_pressed = false;
 	static bool is_space_key_pressed = false;
@@ -276,7 +682,7 @@ static void process_input(void)
 	bool next_is_right_key_pressed = false;
 
 	while (1) {
-		int ch, keycode;
+		int ch;
 
 		if (!kbhit())
 			break;
@@ -348,6 +754,237 @@ static void process_input(void)
 	if (is_right_key_pressed && !next_is_right_key_pressed)
 		hal_callback.on_key_release(HAL_KEY_RIGHT);
 	is_right_key_pressed = next_is_right_key_pressed;
+}
+
+/*
+ * DPMI helpers (DOS/4GW)
+ */
+
+/* DPMI 0x0100: Allocate DOS conventional memory. */
+static bool
+dpmi_dos_alloc(
+	int paragraphs,
+	uint16_t *seg,
+	uint16_t *sel)
+{
+	union REGS r;
+
+	memset(&r, 0, sizeof(r));
+	r.w.ax = 0x0100;
+	r.w.bx = (uint16_t)paragraphs;
+	int386(0x31, &r, &r);
+	if (r.w.cflag)
+		return false;
+
+	*seg = r.w.ax;
+	*sel = r.w.dx;
+	return true;
+}
+
+/* DPMI 0x0101: Free DOS conventional memory. */
+static void
+dpmi_dos_free(
+	uint16_t sel)
+{
+	union REGS r;
+
+	memset(&r, 0, sizeof(r));
+	r.w.ax = 0x0101;
+	r.w.dx = sel;
+	int386(0x31, &r, &r);
+}
+
+/* DPMI 0x0300: Simulate a real mode interrupt. */
+static void
+dpmi_rm_int(
+	int inum,
+	struct rminfo *rmi)
+{
+	union REGS r;
+	struct SREGS s;
+
+	memset(&r, 0, sizeof(r));
+	segread(&s);
+	s.es = s.ds;		/* flat model: ES:EDI -> rmi */
+
+	r.w.ax = 0x0300;
+	r.h.bl = (unsigned char)inum;
+	r.h.bh = 0;
+	r.w.cx = 0;		/* words to copy from PM stack */
+	r.x.edi = (uint32_t)rmi;
+
+	int386x(0x31, &r, &r, &s);
+}
+
+/* DPMI 0x0800: Map a physical address into linear address space. */
+static void *
+dpmi_map_physical(
+	uint32_t phys,
+	uint32_t size)
+{
+	union REGS r;
+
+	/* DOS/4GW identity-maps the first megabyte. */
+	if (phys < 0x100000UL)
+		return (void *)phys;
+
+	memset(&r, 0, sizeof(r));
+	r.w.ax = 0x0800;
+	r.w.bx = (uint16_t)(phys >> 16);
+	r.w.cx = (uint16_t)(phys & 0xffff);
+	r.w.si = (uint16_t)(size >> 16);
+	r.w.di = (uint16_t)(size & 0xffff);
+	int386(0x31, &r, &r);
+	if (r.w.cflag)
+		return NULL;
+
+	/*
+	 * DOS/4GW uses a zero-based flat address space, so the
+	 * returned linear address is directly usable as a pointer.
+	 */
+	return (void *)(((uint32_t)r.w.bx << 16) | r.w.cx);
+}
+
+/* Convert a real mode far pointer (seg:ofs) to a flat pointer. */
+static INLINE void *
+rm_ptr(
+	uint32_t rm_far)
+{
+	return (void *)(((rm_far >> 16) << 4) + (rm_far & 0xffff));
+}
+
+/*
+ * VBE 2.0 calls
+ *
+ * These functions run in real mode, so their buffers must live in
+ * conventional memory (dos_seg). Results are copied back out.
+ */
+
+/* VBE Function 00h: Return VBE Controller Information. */
+static bool
+vbe_get_info(
+	struct vbe_info *info)
+{
+	struct rminfo rmi;
+	uint8_t *buf;
+
+	buf = (uint8_t *)((uint32_t)dos_seg << 4);
+
+	/* Request VBE 2.0 extended information. */
+	memset(buf, 0, sizeof(struct vbe_info));
+	memcpy(buf, "VBE2", 4);
+
+	memset(&rmi, 0, sizeof(rmi));
+	rmi.eax = 0x4f00;
+	rmi.es = dos_seg;
+	rmi.edi = 0;
+	dpmi_rm_int(0x10, &rmi);
+	if ((rmi.eax & 0xffff) != 0x004f)
+		return false;
+
+	memcpy(info, buf, sizeof(struct vbe_info));
+
+	if (memcmp(info->VbeSignature, "VESA", 4) != 0)
+		return false;
+	if (info->VbeVersion < 0x0200)
+		return false;
+
+	return true;
+}
+
+/* VBE Function 01h: Return VBE Mode Information. */
+static bool
+vbe_get_mode_info(
+	uint16_t mode,
+	struct vbe_mode_info *mi)
+{
+	struct rminfo rmi;
+	uint8_t *buf;
+
+	buf = (uint8_t *)((uint32_t)dos_seg << 4);
+	memset(buf, 0, sizeof(struct vbe_mode_info));
+
+	memset(&rmi, 0, sizeof(rmi));
+	rmi.eax = 0x4f01;
+	rmi.ecx = mode;
+	rmi.es = dos_seg;
+	rmi.edi = 0;
+	dpmi_rm_int(0x10, &rmi);
+	if ((rmi.eax & 0xffff) != 0x004f)
+		return false;
+
+	memcpy(mi, buf, sizeof(struct vbe_mode_info));
+	return true;
+}
+
+/* VBE Function 02h: Set VBE Mode (with linear framebuffer). */
+static bool
+vbe_set_mode(
+	uint16_t mode)
+{
+	struct rminfo rmi;
+
+	memset(&rmi, 0, sizeof(rmi));
+	rmi.eax = 0x4f02;
+	rmi.ebx = (uint32_t)mode | VBE_MODE_LFB;
+	dpmi_rm_int(0x10, &rmi);
+
+	return (rmi.eax & 0xffff) == 0x004f;
+}
+
+/*
+ * Search the VBE mode list for SCREEN_WIDTH x SCREEN_HEIGHT with the
+ * given color depth and LFB support.
+ */
+static bool
+find_vbe_mode(
+	const struct vbe_info *info,
+	int bpp,
+	uint16_t *mode_ret,
+	struct vbe_mode_info *mi_ret)
+{
+	uint16_t modes[256];
+	uint16_t *list;
+	int count, i;
+
+	/*
+	 * VideoModePtr may point into the info block's own buffer,
+	 * which we will reuse for mode info calls, so copy the list
+	 * out first.
+	 */
+	list = (uint16_t *)rm_ptr(info->VideoModePtr);
+	count = 0;
+	while (count < 256 && list[count] != 0xffff)
+		count++;
+	memcpy(modes, list, (size_t)count * sizeof(uint16_t));
+
+	for (i = 0; i < count; i++) {
+		struct vbe_mode_info mi;
+		uint16_t attrs;
+
+		if (!vbe_get_mode_info(modes[i], &mi))
+			continue;
+
+		attrs = VBE_ATTR_SUPPORTED | VBE_ATTR_GRAPHICS |
+			VBE_ATTR_LFB;
+		if ((mi.ModeAttributes & attrs) != attrs)
+			continue;
+		if (mi.MemoryModel != VBE_MM_DIRECT)
+			continue;
+		if (mi.XResolution != SCREEN_WIDTH ||
+		    mi.YResolution != SCREEN_HEIGHT)
+			continue;
+		if (mi.BitsPerPixel != bpp)
+			continue;
+		if (mi.PhysBasePtr == 0)
+			continue;
+
+		*mode_ret = modes[i];
+		*mi_ret = mi;
+		return true;
+	}
+
+	return false;
 }
 
 /*

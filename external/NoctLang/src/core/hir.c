@@ -28,7 +28,7 @@
 #undef DEBUG_DUMP
 
 /* Arena allocator size. */
-#if !defined(NOCT_TARGET_DOS4G)
+#if !defined(NOCT_MEMORY_SMALL)
 #define ARENA_SIZE		(4 * 1024 * 1024)
 #else
 #define ARENA_SIZE		(512 * 1024)

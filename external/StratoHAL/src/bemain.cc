@@ -125,11 +125,13 @@ public:
 		uint32 buttons = 0;
 		if (Window()->CurrentMessage() &&
 		    Window()->CurrentMessage()->FindInt32("buttons", (int32*)&buttons) == B_OK) {
-			if (buttons & B_PRIMARY_MOUSE_BUTTON)
+			if (buttons & B_PRIMARY_MOUSE_BUTTON) {
 				hal_callback.on_mouse_press(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
-			if (buttons & B_SECONDARY_MOUSE_BUTTON)
+				last_buttons = B_PRIMARY_MOUSE_BUTTON;
+			} else if (buttons & B_SECONDARY_MOUSE_BUTTON) {
 				hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
-			last_buttons = buttons;
+				last_buttons = B_SECONDARY_MOUSE_BUTTON;
+			}
 		}
 	}
 
@@ -139,8 +141,10 @@ public:
 			return;
 
 		hal_callback.on_mouse_move((int)where.x, (int)where.y);
-		hal_callback.on_mouse_release(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
-		hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
+		if (last_buttons & B_PRIMARY_MOUSE_BUTTON)
+			hal_callback.on_mouse_release(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
+		if (last_buttons & B_SECONDARY_MOUSE_BUTTON)
+			hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
 	}
 
 	void KeyDown(const char* bytes, int32 numBytes) override
