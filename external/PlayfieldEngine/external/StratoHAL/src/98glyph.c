@@ -2,7 +2,7 @@
 
 /*
  * Playfield Engine
- * Glyph HAL for PC98
+ * Glyph HAL for PC98 Font ROM
  */
 
 /*-
@@ -363,25 +363,16 @@ get_pc98_font(uint16_t jis_code)
 
 	memset(font_buf, 0, sizeof(font_buf));
 
-	/* NEC特殊記号行(0x29-0x2F)と外字行(0x76-0x7F)はCGウィンドウに
-	 * 半分ずつしか現れない。(旧コードの 0x2B21-0x2F7E より広い) */
 	if (ku >= 0x29 && ku <= 0x2f)
 		is_gaiji_or_symbol = 1;
 	else if (ku >= 0x76 && ku <= 0x7f)
 		is_gaiji_or_symbol = 1;
 
-	/* 表示と衝突しないようVSYNC先頭を待つ (特にANKはVSYNC外読みが不定)。 */
 	wait_vsync();
 
-	/* KCGドットアクセスモードへ。 */
 	outp(0x68, 0x0b);
 
 	if (ku == 0x20) {
-		/*
-		 * ANK 8x16。内部コードは 0x00nn:
-		 *   A1h(上位) = 0x00, A3h(下位) = ANKコード
-		 * ※旧コードはここが逆(a3=0, a1=ten)で、これが主原因。
-		 */
 		outp(0xa1, 0x00);
 		outp(0xa3, ten);
 		outp(0xa5, 0x00);
@@ -389,11 +380,6 @@ get_pc98_font(uint16_t jis_code)
 		for (i = 0; i < 16; i++)
 			font_buf[i] = cg[i * 2 + 1];
 	} else if (!is_gaiji_or_symbol) {
-		/*
-		 * 通常の16x16漢字。内部コードはTVRAMと同じスワップ形式:
-		 *   A1h(上位) = JIS第2バイト, A3h(下位) = JIS第1バイト - 0x20
-		 * ウィンドウには 左,右,左,右,... の32バイトがそのまま現れる。
-		 */
 		outp(0xa1, ten);
 		outp(0xa3, (uint8_t)(ku - 0x20));
 		outp(0xa5, 0x00);
@@ -401,32 +387,24 @@ get_pc98_font(uint16_t jis_code)
 		for (i = 0; i < 32; i++)
 			font_buf[i] = cg[i];
 	} else {
-		/* 外字・特殊記号: 奇数バイトのみ有効。A5h bit5で左右を選ぶ。 */
 		outp(0xa1, ten);
 		outp(0xa3, (uint8_t)(ku - 0x20));
 
-		/* 左半分 (bit5=1) */
 		outp(0xa5, 0x20);
 		for (i = 0; i < 16; i++)
 			font_buf[i * 2 + 0] = cg[i * 2 + 1];
 
-		/* 右半分 (bit5=0) */
 		outp(0xa5, 0x00);
 		for (i = 0; i < 16; i++)
 			font_buf[i * 2 + 1] = cg[i * 2 + 1];
 	}
 
-	/* コードアクセスに戻す。戻さないとテキスト画面が化ける。 */
 	outp(0x68, 0x0a);
 
 	return font_buf;
 }
 
-/*
- * Convert Unicode to PC-98 CGROM JIS code.
- *  - ASCII/半角カナ は擬似コード 0x20xx (ANK)
- *  - それ以外は JIS X 0208 テーブルをバイナリサーチ (かな・記号・漢字すべて)
- */
+/* Convert Unicode to PC-98 CGROM JIS code. */
 static uint16_t
 unicode_to_jis(uint32_t unicode_codepoint)
 {
@@ -442,11 +420,11 @@ unicode_to_jis(uint32_t unicode_codepoint)
 	if (u < 0x80)
 		return (uint16_t)(0x2000 | u);
 
-	/* 半角カナ (U+FF61-FF9F -> ANK 0xA1-0xDF) */
+	/* Half Kana (U+FF61-FF9F -> ANK 0xA1-0xDF) */
 	if (u >= 0xff61 && u <= 0xff9f)
 		return (uint16_t)(0x2000 | (0xa1 + (u - 0xff61)));
 
-	/* Unicode -> JIS X 0208 (旧switch文の記号類もすべてテーブルに含む) */
+	/* Unicode -> JIS X 0208 */
 	lo = 0;
 	hi = U2J_TABLE_SIZE;
 	while (lo < hi) {
@@ -462,10 +440,7 @@ unicode_to_jis(uint32_t unicode_codepoint)
 	return 0;
 }
 
-/*
- * Wait for VSYNC start.
- * I/O 0060h bit 5 = VERTICAL SYNC.
- */
+/* Wait for VSYNC start. I/O 0060h bit 5 = VERTICAL SYNC. */
 static void
 wait_vsync(void)
 {

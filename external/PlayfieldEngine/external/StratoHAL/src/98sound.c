@@ -2,32 +2,7 @@
 
 /*
  * StratoHAL
- * Sound HAL for Sound Blaster 16/98 (CT2720) on NEC PC-9800 + DOS/4GW
- *
- * Design:
- *  - 16-bit signed stereo (SB16_S16_STEREO) or 8-bit signed monaural
- *    (SB16_S8_MONO) PCM, auto-initialize DMA, double buffer.
- *    In the 8-bit signed format, silence is 0x00 (not 0x80 as in the
- *    unsigned format), so plain memset(0) produces silence.
- *  - The SB16 raises an IRQ each time it finishes one half of the DMA
- *    buffer.  The ISR only flips flags and acknowledges the interrupt.
- *  - Actual decoding/mixing (hal_get_wave_samples) is done in the main
- *    thread context by sb16_sound_poll(), which must be called once per
- *    frame from the main loop.  This avoids calling non-reentrant DOS
- *    services (file I/O in the OGG decoder etc.) from interrupt context.
- *  - If the main loop misses a refill deadline, the ISR fills the stale
- *    half with silence so that auto-init DMA repeats silence, not noise.
- *
- * Hardware notes (Sound Blaster 16 for PC-9800, CT2720):
- *  - I/O mapping differs from PC/AT: register offset goes to the HIGH
- *    byte, the board base (D2h/D4h/.../DEh, jumper JP9) goes to the LOW
- *    byte.  e.g. AT 2x6h (DSP reset) -> 98 26D2h.
- *  - Board defaults: I/O base D2h, DMA ch3, IRQ5 (PC-98 INT1).
- *  - The current jumper setting can be read back from mixer registers
- *    80h (IRQ) and 81h (DMA), which this driver uses for auto-detection.
- *  - PC-98 has no 16-bit DMA channels; 16-bit PCM is transferred over
- *    the byte-wide DMA channel (ch0 or ch3) of the on-board uPD71037
- *    (i8237A compatible) DMA controller.  The board pairs the bytes.
+ * Sound HAL for Sound Blaster 16 on PC98 (CT2720)
  */
 
 /*-
@@ -53,6 +28,35 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
+/*
+ * Design:
+ *   - 44.1kHz 16-bit signed stereo (SB16_S16_44K_STEREO) or
+ *     8kHz 8-bit signed monaural (SB16_S8_8K_MONO) PCM
+ *   - Auto-initialize DMA
+ *   - Double buffer
+ *   - SB16 raises an IRQ each time it finishes one half of the DMA
+ *     buffer.
+ *   - The ISR only flips flags and acknowledges the interrupt.
+ *   - Actual decoding/mixing (hal_get_wave_samples) is done in the main
+ *     thread context by sb16_sound_poll(), which must be called once per
+ *     frame from the main loop.
+ *   - This avoids calling non-reentrant DOS services (file I/O in the Ogg
+ *   - Vorbis decoder etc.) from interrupt context.
+ *   - If the main loop misses a refill deadline, the ISR fills the stale
+ *     half with silence so that auto-init DMA repeats silence, not noise.
+ *
+ * Hardware notes (Sound Blaster 16 for PC-9800, CT2720):
+ *   - I/O mapping differs from PC/AT: register offset goes to the HIGH
+ *     byte, the board base (D2h/D4h/.../DEh, jumper JP9) goes to the LOW
+ *     byte.  e.g. AT 2x6h (DSP reset) -> 98 26D2h.
+ *   - Board defaults: I/O base D2h, DMA ch3, IRQ5 (PC-98 INT1).
+ *   - The current jumper setting can be read back from mixer registers
+ *     80h (IRQ) and 81h (DMA), which this driver uses for auto-detection.
+ *   - PC-98 has no 16-bit DMA channels; 16-bit PCM is transferred over
+ *     the byte-wide DMA channel (ch0 or ch3) of the on-board uPD71037
+ *     (i8237A compatible) DMA controller.  The board pairs the bytes.
+ */
+
 /* Base */
 #include <strato/strato.h>
 
@@ -70,8 +74,8 @@
  * Config Select
  */
 
-#undef  SB16_S16_44K_STEREO
 #define SB16_S16_8K_MONO	/* Here! */
+#undef  SB16_S16_44K_STEREO
 #undef  SB16_S8_8K_MONO
 
 /*
@@ -108,6 +112,7 @@
  * must be called at least that often.  Increase HALF_FRAMES if the
  * game loop can be slower than that.
  */
+
 #define HALF_BYTES	(HALF_FRAMES * FRAME_SIZE)
 #define BUF_BYTES	(HALF_BYTES * 2)
 
@@ -655,9 +660,7 @@ free_dma_buffer(void)
 	dma_buf = NULL;
 }
 
-/*
- * DMA Controller Setup (auto-initialize, memory -> device)
- */
+/* DMA Controller Setup (auto-initialize, memory -> device) */
 static void
 setup_dma(void)
 {
@@ -698,9 +701,7 @@ stop_dma(void)
 	outp(DMA_PORT_SMASK, 0x04 | sb_dma);
 }
 
-/*
- * DSP Playback Start
- */
+/* DSP Playback Start */
 static void
 start_playback(void)
 {
