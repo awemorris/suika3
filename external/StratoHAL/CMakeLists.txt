@@ -215,7 +215,8 @@ if(STRATO_ENABLE_DIST)
   find_package(JPEG REQUIRED)
   find_package(WebP REQUIRED)
   find_package(Ogg REQUIRED)
-  find_package(Vorbis MODULE REQUIRED)
+  #find_package(Vorbis MODULE REQUIRED)
+  find_package(Tremor MODULE REQUIRED)    # Instead of libvorbis, use libvorbisidec
   find_package(Freetype REQUIRED)
   find_package(ZLIB REQUIRED)
 else()
@@ -224,7 +225,10 @@ else()
     include(cmake/ext/zlib.cmake)
     include(cmake/ext/libpng.cmake)
     include(cmake/ext/libogg.cmake)
-    include(cmake/ext/tremor.cmake)
+    #include(cmake/ext/jpeg.cmake)        # Very slow, don't use
+    #include(cmake/ext/libwebp.cmake)     # Can't be compiled on OpenWatcom
+    #include(cmake/ext/libvorbis.cmake)   # Very slow, don't use
+    include(cmake/ext/tremor.cmake)       # Instead of libvorbis, use libvorbisidec
     include(cmake/ext/freetype.cmake)
   else()
     include(cmake/ext/zlib.cmake)
@@ -232,7 +236,8 @@ else()
     include(cmake/ext/jpeg.cmake)
     include(cmake/ext/libwebp.cmake)
     include(cmake/ext/libogg.cmake)
-    include(cmake/ext/libvorbis.cmake)
+    #include(cmake/ext/libvorbis.cmake)   # Replaced by Tremor
+    include(cmake/ext/tremor.cmake)       # Instead of libvorbis, use libvorbisidec
     include(cmake/ext/freetype.cmake)
   endif()
 endif()
@@ -709,8 +714,7 @@ if(NOT STRATO_ENABLE_DIST)
         $<TARGET_OBJECTS:png>
         $<TARGET_OBJECTS:jpeg>
         $<TARGET_OBJECTS:webp>
-        $<TARGET_OBJECTS:vorbisfile>
-        $<TARGET_OBJECTS:vorbis>
+        $<TARGET_OBJECTS:tremor>
         $<TARGET_OBJECTS:ogg>
         $<TARGET_OBJECTS:freetype>
         $<TARGET_OBJECTS:z>
@@ -760,7 +764,7 @@ target_include_directories(strato PRIVATE ${PNG_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${JPEG_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${WEBP_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${OGG_INCLUDE_DIRS})
-target_include_directories(strato PRIVATE ${VORBIS_INCLUDE_DIRS})
+#target_include_directories(strato PRIVATE ${VORBIS_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${TREMOR_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${FREETYPE_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${ZLIB_INCLUDE_DIRS})
@@ -1080,8 +1084,9 @@ if(STRATO_ENABLE_SHARED OR STRATO_ENABLE_DIST)
     ${PNG_LIBRARIES}
     ${JPEG_LIBRARIES}
     ${WEBP_LIBRARIES}
-    ${VORBIS_LIBRARY}
-    ${VORBISFILE_LIBRARY}
+#   ${VORBIS_LIBRARY}
+#   ${VORBISFILE_LIBRARY}
+    ${TREMOR_LIBRARY}
     ${OGG_LIBRARY}
     ${FREETYPE_LIBRARY}
     ${ZLIB_LIBRARIES}

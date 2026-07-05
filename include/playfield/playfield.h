@@ -369,6 +369,7 @@ pf_draw(
 /*
  * Write a texture to a file.
  */
+PF_DLL
 bool
 pf_write_texture(
 	int tex_id,

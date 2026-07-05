@@ -34,11 +34,18 @@
 #include <string.h>
 #include <assert.h>
 
-#if defined(HAL_TARGET_PC98) || defined(HAL_TARGET_PCAT)
+#if defined(HAL_USE_EXTDLL)
+#include <tremor/ivorbiscodec.h>
+#include <tremor/ivorbisfile.h>
+#else
 #include <ivorbiscodec.h>
 #include <ivorbisfile.h>
+#endif
+
 #define USE_TREMOR
-#else
+
+/* libvorbis */
+#if 0
 #if defined(__llvm__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wshorten-64-to-32"
@@ -53,7 +60,7 @@
 #else
 #include <vorbis/vorbisfile.h>
 #endif
-#endif /* defined(HAL_TARGET_PC98) || defined(HAL_TARGET_PCAT) */
+#endif
 
 #define SAMPLING_RATE	(44100)
 #define IOSIZE		(4096)

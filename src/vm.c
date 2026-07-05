@@ -227,12 +227,13 @@ load_startup_file(void)
 
 #if defined(PF_USE_UNSAFE)
 
+extern int hal_argc;
+extern char **hal_argv;
+
 /* Parse the command line arguments. */
 static bool
 parse_cli_options(void)
 {
-	extern int hal_argc;
-	extern char **hal_argv;
 	int i;
 
 	for (i = 1; i < hal_argc; i++) {
