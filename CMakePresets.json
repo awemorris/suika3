@@ -410,7 +410,7 @@
                 "CMAKE_BUILD_TYPE":            "Release",
                 "SUIKA_TARGET_LINUX":          "ON",
                 "SUIKA_ENABLE_INSTALL":        "ON",
-                "SUIKA_ENABLE_DIST_STATIC_PF": "ON",
+                "SUIKA_ENABLE_DIST_CONSERVATIVE": "ON",
                 "SUIKA_ENABLE_FREEDESKTOP":    "ON",
                 "SUIKA_ENABLE_JIT":            "ON",
                 "SUIKA_ENABLE_I18N":           "ON",

@@ -62,12 +62,12 @@ option(SUIKA_TARGET_PCAT             "Build for IBM PC/AT"                      
 option(SUIKA_ENABLE_DIST "Build for OS package" OFF)
 
 #
-# [SUIKA_ENABLE_DIST_STATIC_PF]
+# [SUIKA_ENABLE_DIST2]
 #  - For distribution packaging.
 #  - Statically links "Playfield Engine", "StratoHAL", and "NoctLang".
 #  - Other dependencies are linked dynamically.
 #
-option(SUIKA_ENABLE_DIST_SINGLE "Build for OS package (static link to Playfield Engine)" OFF)
+option(SUIKA_ENABLE_DIST_CONSERVATIVE "Build for OS package" OFF)
 
 #
 # [SUIKA_ENABLE_INSTALL]
@@ -391,6 +391,10 @@ if(   NOT SUIKA_ENABLE_DIST
     set(PLAYFIELD_ENABLE_STATIC ON)
   endif()
 
+  if(SUIKA_ENABLE_DIST_CONSERVATIVE)
+    set(PLAYFIELD_ENABLE_DIST_CONSERVATIVE ON)
+  endif()
+
   # Use pf_init_hook() function.
   set(PLAYFIELD_ENABLE_INITHOOK  ON)
 
@@ -585,7 +589,7 @@ if(   SUIKA_TARGET_MACOS
   # Exclude Homebrew packaging.
   #  - Homebrew provides arch-specific libraries.
   #  - If we try to make a fat binary, link will fail.
-  if(NOT SUIKA_ENABLE_DIST AND NOT SUIKA_ENABLE_DIST_STATIC_PF)
+  if(NOT SUIKA_ENABLE_DIST AND NOT SUIKA_ENABLE_DIST_CONSERVATIVE)
     set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "" FORCE)
   endif()
 endif()
@@ -748,7 +752,7 @@ if(   SUIKA_ENABLE_STATIC
   endif()
 
   # Link dependencies into the library.
-  if(NOT SUIKA_ENABLE_DIST)
+  if(NOT SUIKA_ENABLE_DIST AND NOT SUIKA_ENABLE_DIST_CONSERVATIVE)
     if(   SUIKA_TARGET_PC98
        OR SUIKA_TARGET_PCAT
        OR SUIKA_TARGET_MACOS7)
@@ -913,26 +917,38 @@ endif()
 #
 
 # Link Playfield Engine
-if(NOT SUIKA_ENABLE_DIST)
+if(SUIKA_ENABLE_DIST)
   if(SUIKA_ENABLE_UNSAFE)
-    set(NOCTAPI_LIB noctapi)
+    set(NOCTAPI_LIB Noct::api)
   endif()
-
-  target_link_libraries(suika3 PRIVATE
-    playfield
-    strato
-    playfield  # Specify twice to resolve circular references.
-    noct
-    ${NOCTAPI_LIB}
-  )
-else()
   target_link_libraries(suika3 PRIVATE
     Playfield::playfield
     StratoHAL::strato
     Playfield::playfield  # Specify twice to resolve circular references.
+    ${NOCTAPI_LIB}
     Noct::noct
-    Noct::api
-    noctapi
+  )
+elseif(SUIKA_ENABLE_DIST_CONSERVATIVE)
+  if(SUIKA_ENABLE_UNSAFE)
+    set(NOCTAPI_LIB noctapi)
+  endif()
+  target_link_libraries(suika3 PRIVATE
+    playfield
+    strato
+    playfield  # Specify twice to resolve circular references.
+    ${NOCTAPI_LIB}
+    noct
+  )
+else()
+  if(SUIKA_ENABLE_UNSAFE)
+    set(NOCTAPI_LIB noctapi)
+  endif()
+  target_link_libraries(suika3 PRIVATE
+    playfield
+    strato
+    playfield  # Specify twice to resolve circular references.
+    ${NOCTAPI_LIB}
+    noct
   )
 endif()
 
@@ -1341,7 +1357,7 @@ if(SUIKA_ENABLE_INSTALL)
   # Install the sample files.
   #
 
-  if(SUIKA_ENABLE_DIST OR SUIKA_ENABLE_DIST_STATIC_PF)
+  if(SUIKA_ENABLE_DIST OR SUIKA_ENABLE_DIST_CONSERVATIVE)
     if(NOT SUIKA_ENABLE_FLATPAK)
       # Exclude the font when packaging.
       # (A symlink to a system font should be created by packaging process.)
@@ -1373,7 +1389,7 @@ if(SUIKA_ENABLE_INSTALL)
   # Install the launcher files.
   #
 
-  if(SUIKA_ENABLE_DIST OR SUIKA_ENABLE_DIST_STATIC_PF)
+  if(SUIKA_ENABLE_DIST OR SUIKA_ENABLE_DIST_CONSERVATIVE)
     if(NOT SUIKA_ENABLE_FLATPAK)
       # Exclude the font when packaging.
       # (A symlink to a system font should be created by packaging process.)
@@ -1413,7 +1429,7 @@ if(SUIKA_ENABLE_INSTALL)
     )
 
     # Run update if not packaging.
-    if(NOT SUIKA_ENABLE_DIST AND NOT SUIKA_ENABLE_DIST_STATIC_PF)
+    if(NOT SUIKA_ENABLE_DIST AND NOT SUIKA_ENABLE_DIST_CONSERVATIVE)
       find_program(UPDATE_DESKTOP_DATABASE_EXECUTABLE NAMES update-desktop-database)
       find_program(UPDATE_MIME_DATABASE_EXECUTABLE NAMES update-mime-database)
       if(UPDATE_DESKTOP_DATABASE_EXECUTABLE)

@@ -51,6 +51,7 @@ option(PLAYFIELD_ENABLE_SHARED           "Build a dynamic library"              
 option(PLAYFIELD_ENABLE_OBJECT           "Build an object library"                    OFF)
 option(PLAYFIELD_ENABLE_BIN              "Build an executable"                        OFF)
 option(PLAYFIELD_ENABLE_DIST             "Link shared libraries"                      OFF)
+option(PLAYFIELD_ENABLE_DIST_CONSERVATIVE "Link shared libraries"                      OFF)
 option(PLAYFIELD_ENABLE_INSTALL          "Install library and header files"           OFF)
 option(PLAYFIELD_ENABLE_JIT              "Enable JIT"                                 OFF)
 option(PLAYFIELD_ENABLE_I18N             "Enable translation"                         OFF)
@@ -264,6 +265,11 @@ endif()
 if(NOT PLAYFIELD_ENABLE_DIST)
   # Merge object files
   set(STRATO_ENABLE_OBJECT ON)
+
+  # Use system libraries
+  if(PLAYFIELD_ENABLE_DIST_CONSERVATIVE)
+    set(STRATO_ENABLE_DIST ON)
+  endif()
 
   # Propagate the target and its specific options.
   if(PLAYFIELD_TARGET_WINDOWS)
@@ -503,7 +509,7 @@ elseif(PLAYFIELD_ENABLE_OBJECT)
 endif()
 
 # Determine the objects if we use static linking.
-if(NOT PLAYFIELD_ENABLE_DIST)
+if(NOT PLAYFIELD_ENABLE_DIST AND NOT PLAYFIELD_ENABLE_DIST_CONSERVATIVE)
   if(PLAYFIELD_TARGET_PC98 OR PLAYFIELD_TARGET_PCAT)
     set(PLAYFIELD_DEPS
         $<TARGET_OBJECTS:png>
@@ -657,7 +663,7 @@ endif()
 
 # Unsafe
 if(PLAYFIELD_ENABLE_UNSAFE)
-    target_compile_definitions(playfield PRIVATE PF_USE_UNSAFE)
+  target_compile_definitions(playfield PRIVATE PF_USE_UNSAFE)
 endif()
 
 # ---
@@ -694,12 +700,13 @@ endif()
 if(NOT PLAYFIELD_ENABLE_DIST)
   target_link_libraries(playfield PUBLIC
     noct
+    noctapi
     strato
   )
 else()
   target_link_libraries(playfield PUBLIC
     ${NOCT_LIBRARY}
-    noctapi
+    ${NOCTAPI_LIBRARY}
     ${STRATO_LIBRARY}
   )
 endif()
