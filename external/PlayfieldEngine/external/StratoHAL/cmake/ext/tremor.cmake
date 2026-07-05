@@ -9,12 +9,10 @@ add_library(tremor OBJECT
   ${CMAKE_BINARY_DIR}/tremor/floor0.c
   ${CMAKE_BINARY_DIR}/tremor/sharedbook.c
   ${CMAKE_BINARY_DIR}/tremor/registry.c
-  ${CMAKE_BINARY_DIR}/tremor/iseeking_example.c
   ${CMAKE_BINARY_DIR}/tremor/res012.c
   ${CMAKE_BINARY_DIR}/tremor/floor1.c
   ${CMAKE_BINARY_DIR}/tremor/vorbisfile.c
   ${CMAKE_BINARY_DIR}/tremor/info.c
-  ${CMAKE_BINARY_DIR}/tremor/ivorbisfile_example.c
   ${CMAKE_BINARY_DIR}/tremor/block.c
   ${CMAKE_BINARY_DIR}/tremor/window.c
   ${CMAKE_BINARY_DIR}/tremor/synthesis.c
