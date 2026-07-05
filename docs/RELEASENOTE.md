@@ -18,6 +18,19 @@ feature requests, testing, and discussions for this release:
 
 ## Notes
 
+### Suika3 26.07.6 LTS: July 5, 2026
+
+Changes:
+- Reduce memory usage (minimum 64MB -> minumum 16MB)
+- Lower CPU usage for audio decoding (libvorbis --> tremor)
+
+Dependencies
+| Component        | Version    |
+|------------------|------------|
+| Playfield Engine | 1.1.0      |
+| StratoHAL        | 1.1.0      |
+| NoctLang         | 1.1.5      |
+
 ### Suika3 26.07.6 LTS: July 3, 2026
 
 Changes:
