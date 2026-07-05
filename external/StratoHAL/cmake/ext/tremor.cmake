@@ -9,12 +9,10 @@ add_library(tremor OBJECT
   ${CMAKE_BINARY_DIR}/tremor/floor0.c
   ${CMAKE_BINARY_DIR}/tremor/sharedbook.c
   ${CMAKE_BINARY_DIR}/tremor/registry.c
-  ${CMAKE_BINARY_DIR}/tremor/iseeking_example.c
   ${CMAKE_BINARY_DIR}/tremor/res012.c
   ${CMAKE_BINARY_DIR}/tremor/floor1.c
   ${CMAKE_BINARY_DIR}/tremor/vorbisfile.c
   ${CMAKE_BINARY_DIR}/tremor/info.c
-  ${CMAKE_BINARY_DIR}/tremor/ivorbisfile_example.c
   ${CMAKE_BINARY_DIR}/tremor/block.c
   ${CMAKE_BINARY_DIR}/tremor/window.c
   ${CMAKE_BINARY_DIR}/tremor/synthesis.c
@@ -22,11 +20,9 @@ add_library(tremor OBJECT
 )
 
 target_include_directories(tremor PRIVATE ${CMAKE_BINARY_DIR}/libogg/include)
-target_include_directories(tremor PUBLIC  ${CMAKE_BINARY_DIR}/tremor)
-set(TREMOR_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/tremor)
-
-target_include_directories(tremor PRIVATE ${CMAKE_BINARY_DIR}/libogg/include)
-target_include_directories(tremor PUBLIC  ${CMAKE_BINARY_DIR}/tremor)
+target_include_directories(tremor PRIVATE ${CMAKE_BINARY_DIR}/tremor/include/tremor)
+target_include_directories(tremor PUBLIC  ${CMAKE_BINARY_DIR}/tremor/include)
+set(TREMOR_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/tremor/include)
 
 target_link_libraries(tremor PRIVATE ogg)
 
@@ -41,7 +37,4 @@ if(STRATO_TARGET_PC98 OR STRATO_TARGET_PCAT)
   target_compile_definitions(tremor PUBLIC _LOW_ACCURACY_)
   target_compile_definitions(tremor PUBLIC HAVE_ALLOCA_H)
   target_compile_definitions(tremor PUBLIC STIN=static)
-  target_compile_definitions(tremor PUBLIC BYTE_ORDER=1)
-  target_compile_definitions(tremor PUBLIC LITTLE_ENDIAN=1)
-  target_compile_definitions(tremor PUBLIC BIG_ENDIAN=0)
 endif()
