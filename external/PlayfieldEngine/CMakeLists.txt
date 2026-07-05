@@ -697,17 +697,23 @@ endif()
 #
 
 # Link NoctLang and Strato
-if(NOT PLAYFIELD_ENABLE_DIST)
+if(PLAYFIELD_ENABLE_DIST)
+  if(SUIKA_ENABLE_UNSAFE)
+    set(NOCTAPI_LIB Noct::api)
+  endif()
   target_link_libraries(playfield PUBLIC
-    noct
-    noctapi
-    strato
+    ${NOCTAPI_LIB}
+    ${NOCT_LIBRARY}
+    ${STRATO_LIBRARY}
   )
 else()
+  if(SUIKA_ENABLE_UNSAFE)
+    set(NOCTAPI_LIB noctapi)
+  endif()
   target_link_libraries(playfield PUBLIC
-    ${NOCT_LIBRARY}
-    ${NOCTAPI_LIBRARY}
-    ${STRATO_LIBRARY}
+    ${NOCTAPI_LIB}
+    noct
+    strato
   )
 endif()
 
