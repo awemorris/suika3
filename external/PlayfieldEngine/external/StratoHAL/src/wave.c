@@ -34,13 +34,9 @@
 #include <string.h>
 #include <assert.h>
 
-#if defined(HAL_USE_EXTDLL)
+
 #include <tremor/ivorbiscodec.h>
 #include <tremor/ivorbisfile.h>
-#else
-#include <ivorbiscodec.h>
-#include <ivorbisfile.h>
-#endif
 
 #define USE_TREMOR
 

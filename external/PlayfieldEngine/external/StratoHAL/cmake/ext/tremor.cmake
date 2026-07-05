@@ -22,11 +22,9 @@ add_library(tremor OBJECT
 )
 
 target_include_directories(tremor PRIVATE ${CMAKE_BINARY_DIR}/libogg/include)
-target_include_directories(tremor PUBLIC  ${CMAKE_BINARY_DIR}/tremor)
-set(TREMOR_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/tremor)
-
-target_include_directories(tremor PRIVATE ${CMAKE_BINARY_DIR}/libogg/include)
-target_include_directories(tremor PUBLIC  ${CMAKE_BINARY_DIR}/tremor)
+target_include_directories(tremor PRIVATE ${CMAKE_BINARY_DIR}/tremor/include/tremor)
+target_include_directories(tremor PUBLIC  ${CMAKE_BINARY_DIR}/tremor/include)
+set(TREMOR_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/tremor/include)
 
 target_link_libraries(tremor PRIVATE ogg)
 
