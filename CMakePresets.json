@@ -402,10 +402,32 @@
             }
         },
         {
-            "name":           "linux-debian",
-            "displayName":    "Linux Debian",
+            "name":           "linux-package",
+            "displayName":    "Linux Distribution Packaging",
             "generator":      "Unix Makefiles",
-            "binaryDir":      "${sourceDir}/build-linux-debian",
+            "binaryDir":      "${sourceDir}/build-linux-package",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
+                "SUIKA_TARGET_LINUX":          "ON",
+                "SUIKA_ENABLE_INSTALL":        "ON",
+                "SUIKA_ENABLE_DIST_STATIC_PF": "ON",
+                "SUIKA_ENABLE_FREEDESKTOP":    "ON",
+                "SUIKA_ENABLE_JIT":            "ON",
+                "SUIKA_ENABLE_I18N":           "ON",
+                "SUIKA_ENABLE_I18N_LIBINTL":   "ON",
+                "SUIKA_ENABLE_PACK":           "ON",
+                "SUIKA_ENABLE_BCC":            "ON",
+                "SUIKA_ENABLE_AOTC":           "ON",
+                "SUIKA_ENABLE_GST":            "ON",
+                "SUIKA_ENABLE_PORTAL":         "ON",
+                "SUIKA_ENABLE_UNSAFE":         "ON"
+            }
+        },
+        {
+            "name":           "linux-package-pfdyn",
+            "displayName":    "Linux Distribution Packaging (dynamic link to Playfield Engine)",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-linux-packaging-pfdyn",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":          "Release",
                 "SUIKA_TARGET_LINUX":        "ON",
@@ -1143,8 +1165,12 @@
             "configurePreset": "linux-debug"
         },
         {
-            "name": "linux-debian",
-            "configurePreset": "linux-debian"
+            "name": "linux-package",
+            "configurePreset": "linux-package"
+        },
+        {
+            "name": "linux-package-pfdyn",
+            "configurePreset": "linux-package-pfdyn"
         },
         {
             "name": "linux-x11",

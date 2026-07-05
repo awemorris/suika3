@@ -56,12 +56,18 @@ option(SUIKA_TARGET_PCAT             "Build for IBM PC/AT"                      
 
 #
 # [SUIKA_ENABLE_DIST]
-#  - Build for OS packages such as FreeBSD Ports and Debian packages.
-#  - This configuration uses dynamic linking to system's shared libraries for
-#    dependencies such as libpng, libvorbis, and freetype2.
+#  - For distribution packaging.
+#  - Link all dependencies as shared libraries for packaging.
 #
 option(SUIKA_ENABLE_DIST "Build for OS package" OFF)
-option(SUIKA_ENABLE_DIST_SINGLE "Build for OS package (but suika3-only)" OFF)
+
+#
+# [SUIKA_ENABLE_DIST_STATIC_PF]
+#  - For distribution packaging.
+#  - Statically links "Playfield Engine", "StratoHAL", and "NoctLang".
+#  - Other dependencies are linked dynamically.
+#
+option(SUIKA_ENABLE_DIST_SINGLE "Build for OS package (static link to Playfield Engine)" OFF)
 
 #
 # [SUIKA_ENABLE_INSTALL]
@@ -579,7 +585,7 @@ if(   SUIKA_TARGET_MACOS
   # Exclude Homebrew packaging.
   #  - Homebrew provides arch-specific libraries.
   #  - If we try to make a fat binary, link will fail.
-  if(NOT SUIKA_ENABLE_DIST AND NOT SUIKA_ENABLE_DIST_SINGLE)
+  if(NOT SUIKA_ENABLE_DIST AND NOT SUIKA_ENABLE_DIST_STATIC_PF)
     set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "" FORCE)
   endif()
 endif()
@@ -741,13 +747,15 @@ if(   SUIKA_ENABLE_STATIC
     set(SUIKA_LIB_TYPE OBJECT)
   endif()
 
-  # Link dependencies into the library if not packaing.
+  # Link dependencies into the library.
   if(NOT SUIKA_ENABLE_DIST)
-    if(SUIKA_TARGET_PC98 OR SUIKA_TARGET_PCAT)
+    if(   SUIKA_TARGET_PC98
+       OR SUIKA_TARGET_PCAT
+       OR SUIKA_TARGET_MACOS7)
       set(SUIKA_DEPS
           $<TARGET_OBJECTS:png>
           $<TARGET_OBJECTS:freetype>
-          $<TARGET_OBJECTS:trmor>
+          $<TARGET_OBJECTS:tremor>
           $<TARGET_OBJECTS:ogg>
           $<TARGET_OBJECTS:z>
       )
@@ -756,8 +764,7 @@ if(   SUIKA_ENABLE_STATIC
           $<TARGET_OBJECTS:png>
           $<TARGET_OBJECTS:jpeg>
           $<TARGET_OBJECTS:webp>
-          $<TARGET_OBJECTS:vorbisfile>
-          $<TARGET_OBJECTS:vorbis>
+          $<TARGET_OBJECTS:tremor>
           $<TARGET_OBJECTS:ogg>
           $<TARGET_OBJECTS:freetype>
           $<TARGET_OBJECTS:z>
@@ -1334,52 +1341,56 @@ if(SUIKA_ENABLE_INSTALL)
   # Install the sample files.
   #
 
-  if(SUIKA_ENABLE_DIST AND NOT SUIKA_ENABLE_FLATPAK)
-    # Exclude the font when packaging.
-    # (A symlink to a system font should be created by packaging process.)
-    install(
-      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game/"
-      DESTINATION "${SUIKA_DIR_SAMPLE}"
-      FILES_MATCHING
-      PATTERN "*"
-      PATTERN "system/font/*" EXCLUDE
-    )
-    install(
-      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/elisp/"
-      DESTINATION "${SUIKA_DIR_ELISP}"
-    )
-  else()
-    # Include the font.
-    install(
-      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game/"
-      DESTINATION "${SUIKA_DIR_SAMPLE}"
-    )
-    install(
-      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/elisp/"
-      DESTINATION "${SUIKA_DIR_ELISP}"
-    )
+  if(SUIKA_ENABLE_DIST OR SUIKA_ENABLE_DIST_STATIC_PF)
+    if(NOT SUIKA_ENABLE_FLATPAK)
+      # Exclude the font when packaging.
+      # (A symlink to a system font should be created by packaging process.)
+      install(
+        DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game/"
+        DESTINATION "${SUIKA_DIR_SAMPLE}"
+        FILES_MATCHING
+        PATTERN "*"
+        PATTERN "system/font/*" EXCLUDE
+      )
+      install(
+        DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/elisp/"
+        DESTINATION "${SUIKA_DIR_ELISP}"
+      )
+    else()
+      # Include the font.
+      install(
+        DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/game/"
+        DESTINATION "${SUIKA_DIR_SAMPLE}"
+      )
+      install(
+        DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/elisp/"
+        DESTINATION "${SUIKA_DIR_ELISP}"
+      )
+    endif()
   endif()
 
   #
   # Install the launcher files.
   #
 
-  if(SUIKA_ENABLE_DIST AND NOT SUIKA_ENABLE_FLATPAK)
-    # Exclude the font when packaging.
-    # (A symlink to a system font should be created by packaging process.)
-    install(
-      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/launcher/"
-      DESTINATION "${SUIKA_DIR_LAUNCHER}"
-      FILES_MATCHING
-      PATTERN "*"
-      PATTERN "system/font/*" EXCLUDE
-    )
-  else()
-    # Include the font.
-    install(
-      DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/launcher/"
-      DESTINATION "${SUIKA_DIR_LAUNCHER}"
-    )
+  if(SUIKA_ENABLE_DIST OR SUIKA_ENABLE_DIST_STATIC_PF)
+    if(NOT SUIKA_ENABLE_FLATPAK)
+      # Exclude the font when packaging.
+      # (A symlink to a system font should be created by packaging process.)
+      install(
+        DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/launcher/"
+        DESTINATION "${SUIKA_DIR_LAUNCHER}"
+        FILES_MATCHING
+        PATTERN "*"
+        PATTERN "system/font/*" EXCLUDE
+      )
+    else()
+      # Include the font.
+      install(
+        DIRECTORY   "${CMAKE_CURRENT_SOURCE_DIR}/resources/launcher/"
+        DESTINATION "${SUIKA_DIR_LAUNCHER}"
+      )
+    endif()
   endif()
 
   #
@@ -1402,7 +1413,7 @@ if(SUIKA_ENABLE_INSTALL)
     )
 
     # Run update if not packaging.
-    if(NOT SUIKA_ENABLE_DIST)
+    if(NOT SUIKA_ENABLE_DIST AND NOT SUIKA_ENABLE_DIST_STATIC_PF)
       find_program(UPDATE_DESKTOP_DATABASE_EXECUTABLE NAMES update-desktop-database)
       find_program(UPDATE_MIME_DATABASE_EXECUTABLE NAMES update-mime-database)
       if(UPDATE_DESKTOP_DATABASE_EXECUTABLE)
@@ -1421,6 +1432,8 @@ if(SUIKA_ENABLE_INSTALL)
           )
         ")
       endif()
-    endif() # NOT SUIKA_ENABLE_DIST
+    endif()
+
   endif() # SUIKA_ENABLE_FREEDESKTOP
+
 endif()
