@@ -160,6 +160,12 @@ extern "C" {
 #define HAL_ARCH_SPARC64
 #define HAL_ARCH_BE
 
+#elif defined(__m68k__)
+
+/* m68k */
+#define HAL_ARCH_M68K
+#define HAL_ARCH_BE
+
 #endif
 
 /*

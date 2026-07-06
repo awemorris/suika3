@@ -441,6 +441,8 @@ struct hal_image {
  */
 #if defined(HAL_TARGET_SOLARIS11) && defined(HAL_ARCH_BE)
 #define ORDER_RGBA
+#elif defined(HAL_TARGET_LINUX) && defined(HAL_ARCH_BE)
+#define ORDER_RGBA
 #elif !defined(HAL_USE_QT) && \
     ( \
         defined(HAL_TARGET_WINDOWS) || \
