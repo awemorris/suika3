@@ -38,51 +38,43 @@
 
 /*
  * Format
- *
- * WSS playback format register 08h:
- *   40h = 8000Hz / 16-bit signed linear / mono
  */
 #define SAMPLING_RATE	(8000)
 #define CHANNELS        (1)
 #define FRAME_SIZE      (2)		/* 16-bit mono */
-#define HALF_FRAMES     (1024)		/* about 1.024 sec per half */
+#define HALF_FRAMES     (8192)		/* about 1.024 sec per half at 8kHz */
 
 #define HALF_BYTES      (HALF_FRAMES * FRAME_SIZE)
 #define BUF_BYTES       (HALF_BYTES * 2)
 
 /*
- * For V13 internal WSS / CS4231-compatible codec:
+ * Playback Base Count register 0Eh/0Fh.
  *
- *   Playback Base Count register 0Eh/0Fh:
- *     16-bit mode count = transferred bytes / 2 - 1
+ * The unit is SAMPLES, not bytes: the PI interrupt fires every
+ * (count + 1) samples.  NP21W confirms this:
  *
- * Half-buffer periodic IRQ:
+ *   playcount = (playcount regs) * cs4231_playcountshift[fmt] + 4;
+ *
+ * i.e. the register value is multiplied by bytes-per-sample.
+ * For 16-bit mono, 1 sample = 1 frame = 2 bytes, so one half of
+ * the buffer is HALF_FRAMES samples -> count = HALF_FRAMES - 1.
  */
-#define WSS_BLOCK_COUNT        ((HALF_BYTES / 2) - 1)
+#define WSS_BLOCK_COUNT        (HALF_FRAMES - 1)
 
 /*
  * WSS I/O ports
  */
-#if !defined(WSS_BASE)
 #define WSS_BASE		0x0f40
-#endif
 
 /* PC-9821-only registers */
-#define P_WSS_IRQ_CONFIG        (WSS_BASE + 0)  /* 0F40h: R/W */
-#define P_WSS_SOUND_ID          (WSS_BASE + 3)  /* 0F43h: Read Only */
+#define P_WSS_IRQ_CONFIG        (WSS_BASE + 0)  	/* 0F40h: R/W */
+#define P_WSS_SOUND_ID          (WSS_BASE + 3)  	/* 0F43h: Read Only */
 
 /* PC/AT compatible registers */
-#define P_WSS_INDEX             (WSS_BASE + 4)  /* 0F44h: R/W (MCE, INDEX) */
-#define P_WSS_DATA              (WSS_BASE + 5)  /* 0F45h: R/W (DATA) */
-#define P_WSS_STATUS            (WSS_BASE + 6)  /* 0F46h: Read Only (STATUS) */
-#define P_WSS_PIO               (WSS_BASE + 7)  /* 0F47h: R/W (PIO DATA) */
-
-#if 0
-#define P_WSS_INDEX		(WSS_BASE + 0)
-#define P_WSS_DATA		(WSS_BASE + 1)
-#define P_WSS_STATUS		(WSS_BASE + 2)
-#define P_WSS_PIO		(WSS_BASE + 3)
-#endif
+#define P_WSS_INDEX             (WSS_BASE + 4)		/* 0F44h: R/W (MCE, INDEX) */
+#define P_WSS_DATA              (WSS_BASE + 5)		/* 0F45h: R/W (DATA) */
+#define P_WSS_STATUS            (WSS_BASE + 6)		/* 0F46h: Read Only (STATUS) */
+#define P_WSS_PIO               (WSS_BASE + 7)		/* 0F47h: R/W (PIO DATA) */
 
 /*
  * WSS / CS4231 internal registers
@@ -99,12 +91,24 @@
 #define WSS_REG_LOOPBACK	0x0d
 #define WSS_REG_PCNT_H		0x0e
 #define WSS_REG_PCNT_L		0x0f
+#define WSS_REG_ALTSTAT		0x18	/* Alternate Feature Status (I24) */
 
-#define WSS_IFACE_PEN           0x01
-#define WSS_IFACE_CEN           0x02
-#define WSS_IFACE_SDC           0x04
+#define WSS_IFACE_PEN		0x01	/* Interface Control register 09h */
+#define WSS_IFACE_CEN           0x02	/* Capture Enable */
+#define WSS_IFACE_SDC           0x04	/* Single DMA channel */
+#define WSS_IFACE_PPIO		0x40	/* Playback PIO Enable */
+#define WSS_IFACE_CPIO		0x80	/* Capture PIO Enable */
 
-#define WSS_PIN_IEN             0x02
+/* Pin Control register 0Ah */
+#define WSS_PIN_IEN             0x02	/* Interrupt Enable */
+
+/* Error Status and Initialization register 0Bh */
+#define WSS_INIT_ACI		0x20	/* Auto-calibrate In-Progress */
+
+/* Alternate Feature Status register 18h (I24) */
+#define WSS_ALTSTAT_PI		0x10	/* Playback Interrupt pending */
+#define WSS_ALTSTAT_CI		0x20	/* Capture Interrupt pending */
+#define WSS_ALTSTAT_TI		0x40	/* Timer Interrupt pending */
 
 /*
  * Index register bits
@@ -115,44 +119,43 @@
 #define WSS_INDEX_MASK		0x1f
 
 /*
- * Playback format:
- *   8000Hz / 16-bit signed linear / mono
+ * CS4231 playback format register 08h.
+ *
+ * Upper nibble of I8 = (FMT << 1) | S/M:
+ *   FMT (bits 7:5): 000 = 8bit unsigned
+ *                   001 = u-Law
+ *                   010 = 16bit signed little-endian
+ *                   011 = A-Law
+ *                   110 = 16bit signed big-endian
+ *   S/M (bit 4):    0 = mono, 1 = stereo
+ *
+ * Lower nibble: C2SL = 0 (24.576MHz), CFS = 000 -> 8000Hz.
  */
 #define WSS_FMT_8K_S16_MONO	0x40
-
-/*
- * Interface Control register 09h
- *
- * Based on the information used for this port:
- *   bit0 = PEN  playback enable
- *   bit1 = PIEN playback interrupt enable
- */
-#define WSS_IFACE_PEN		0x01
-#define WSS_IFACE_PIEN		0x02
 
 /*
  * PC-98 DMA Controller
  *
  * Same uPD71037/i8237A-compatible programming model as existing SB16/98 code.
  */
-#define WSS_DMA_CH		1
 
 #define DMA_PORT_SMASK		0x15        /* single mask */
 #define DMA_PORT_MODE		0x17        /* mode */
 #define DMA_PORT_CLRFF		0x19        /* clear byte pointer flip-flop */
 
+/* 8237 DMA mode: */
+#define DMA_MODE_SINGLE         0x40	/* single transfer mode */
+#define DMA_MODE_AUTO_INIT      0x10	/* auto initialize */
+#define DMA_MODE_READ           0x08	/* memory -> device */
+
+/* PC-98 DMA ports per channel (0,1,2,3) */
 static const int dma_port_addr[4]  = { 0x01, 0x05, 0x09, 0x0d };
 static const int dma_port_count[4] = { 0x03, 0x07, 0x0b, 0x0f };
 static const int dma_port_bank[4]  = { 0x27, 0x21, 0x23, 0x25 };
 
 /*
  * PC-98 PIC
- *
- * INT5  -> vector 0Dh.
  */
-//#define WSS_IRQ			12		/* IRQ12 (slave 4) */
-//#define WSS_VECTOR		0x14		/* Vector for INT5 */
-
 #define PIC0_CMD		0x00
 #define PIC0_IMR		0x02
 #define PIC1_CMD		0x08
@@ -206,14 +209,12 @@ static uint32_t pull_buf[HALF_FRAMES];
  * Forward Declarations
  */
 static bool wss_detect(void);
+static void wss_init_chip(void);
 static void wss_wait_ready(void);
 static void wss_write(int reg, int val);
 static int wss_read(int reg);
 static void wss_stop_codec(void);
-static void wss_set_format_and_count(void);
-static void wss_set_volume(void);
 static void wss_ack_irq(void);
-static void wss_start_codec(void);
 
 static bool alloc_dma_buffer(void);
 static void free_dma_buffer(void);
@@ -237,8 +238,15 @@ bool
 wss_init_sound(void)
 {
 	int n;
+	int cfg;
+	const int irq_tbl[8] = { -1, 3, 5, 10, 12, -1, -1, -1 };
+	const int dma_tbl[8] = { -1, 0, 1, 3, -1, -1, -1, -1 };
 
 	wss_ok = false;
+
+	cur_half = 0;
+	fill_half = 0;
+	fill_pending = 0;
 
 	for (n = 0; n < HAL_SOUND_TRACKS; n++) {
 		wave[n] = NULL;
@@ -246,33 +254,66 @@ wss_init_sound(void)
 		finish[n] = false;
 	}
 
+	/* Detect a chip. */
 	if (!wss_detect())
 		return false;
 
-	hal_log_info("Mate-X PCM: found a card.");
+	hal_log_info("WSS: found a card.");
 
-	/* init_sound()内、wss_detect()成功後 */
-	{
-		int cfg = inp(P_WSS_IRQ_CONFIG);   /* セットアップメニューの設定を反映した値 */
-		static const int irq_tbl[8] = { -1, 3, 5, 10, 12, -1, -1, -1 };
-		static const int dma_tbl[8] = { -1, 0, 1, 3, -1, -1, -1, -1 };
+	/* Read the config register. */
+	cfg = inp(P_WSS_IRQ_CONFIG);
+	hal_log_info("WSS: 0F40h = %02Xh", cfg & 0xff);
 
-		hal_log_info("WSS: 0F40h = %02Xh", cfg & 0xff);
+	/* Check for IRQ. */
+	wss_irq = irq_tbl[(cfg >> 3) & 7];
+	if (wss_irq < 0) {
+		hal_log_info("WSS: IRQ field is wrong, setting IRQ12 (INT5)...");
 
-		wss_irq    = irq_tbl[(cfg >> 3) & 7];
-		wss_dma_ch = dma_tbl[cfg & 7];
-
-		if (wss_irq < 0 || wss_dma_ch < 0)
-			return false;    /* 内蔵サウンド切り離し状態など */
-
-		printf("Mate-X PCM: IRQ %d\n", wss_irq);
+		/*
+		 * FIX: actually program the config register.
+		 * The previous code only overwrote the variable; the
+		 * board kept routing the codec IRQ nowhere.
+		 * Field value 4 = IRQ12 (see irq_tbl).
+		 */
+		wss_irq = 12;
+		cfg = (cfg & ~(7 << 3)) | (4 << 3);
+		outp(P_WSS_IRQ_CONFIG, cfg);
+		outp(WAIT_PORT, 0);
+		cfg = inp(P_WSS_IRQ_CONFIG);
+		if (irq_tbl[(cfg >> 3) & 7] != 12) {
+			hal_log_info("WSS: Failed to set IRQ.");
+			return false;
+		}
 	}
+	hal_log_info("WSS: IRQ %d\n", wss_irq);
 
+	/* Check for DMA. */
+	wss_dma_ch = dma_tbl[cfg & 7];
+	if (wss_dma_ch < 0) {
+		hal_log_info("WSS: DMA channel is not set, setting DMA1...");
+
+		wss_dma_ch = 1;
+
+		/* Write the config. */
+		cfg = (cfg & ~7) | 2;
+		outp(P_WSS_IRQ_CONFIG, cfg);
+		outp(WAIT_PORT, 0);
+
+		/* Check for DMA again. */
+		cfg = inp(P_WSS_IRQ_CONFIG);
+		wss_dma_ch = dma_tbl[cfg & 7];
+		if (wss_dma_ch < 0) {
+			hal_log_info("WSS: Failed. WSS is not available.");
+			return false;
+		}
+	}
+	hal_log_info("WSS: DMA %d\n", wss_dma_ch);
+
+	/* Allocate a DMA buffer. */
 	if (!alloc_dma_buffer()) {
-		hal_log_info("Mate-X PCM: failed to allocate DMA buffer.");
+		hal_log_info("WSS: failed to allocate DMA buffer.");
 		return false;
 	}
-
 	memset(dma_buf, 0, BUF_BYTES);
 
 	/*
@@ -282,44 +323,184 @@ wss_init_sound(void)
 	dpmi_lock_region((void *)dma_buf, BUF_BYTES);
 	dpmi_lock_region((void *)&cur_half, 4096);
 
-	/*
-	 * Stop codec first, then configure it.
-	 */
-	wss_stop_codec();
-	wss_set_format_and_count();
-	wss_set_volume();
-
-	/*
-	 * PC-9821 IRQ/DMA routing:
-	 *   bit5-3 = 100b (INT5 / IRQ12), bit2-0 = 011b (DMA #3)
-	 */
-	outp(P_WSS_IRQ_CONFIG, 0x23);
-	outp(WAIT_PORT, 0);
-
-	/*
-	 * Install interrupt handler before enabling playback IRQ.
-	 */
+	/* Install interrupt handler before enabling playback IRQ. */
 	hook_irq();
 
-	/*
-	 * Program DMA controller for auto-init transfer over the full buffer.
-	 */
+	/* Program DMA controller for auto-init transfer over the full buffer. */
 	setup_dma();
 
 	/*
-	 * Start WSS playback.
+	 * Initialize the WSS chip.
+	 * This also starts playback (PEN) as its very last step.
 	 */
-	cur_half = 0;
-	fill_half = 0;
-	fill_pending = 0;
-
-	wss_start_codec();
+	wss_init_chip();
 
 	wss_ok = true;
 
-	printf("Sound enabled.\n");
+	hal_log_info("Sound enabled.\n");
 
 	return true;
+}
+
+/*
+ * Simple WSS presence check.
+ *
+ * This intentionally touches only the playback attenuator register.
+ */
+static bool
+wss_detect(void)
+{
+        int id_val;
+        int oldv;
+        int v;
+
+        /*
+	 * Step 1: Check for PC-9821-only Sound ID port.
+         * (0xff if not implemented)
+	 */
+        id_val = inp(P_WSS_SOUND_ID);
+
+        /*
+	 * On PC-9821 with internal WSS, the lower bits are set to 000100b (0x04).
+	 * Upper bits varies by chip revisions.
+	 */
+        if ((id_val & 0x3F) != 0x04)
+                return false;
+
+        /*
+	 * Step 2: Check for CS4231 response.
+	 */
+
+        wss_wait_ready();
+
+        oldv = wss_read(WSS_REG_LEFT_OUTPUT);
+
+        /* Write 0x80 mute bit and check the difference. */
+        wss_write(WSS_REG_LEFT_OUTPUT, 0x80);
+        v = wss_read(WSS_REG_LEFT_OUTPUT);
+
+        /* Set the old value back. */
+        wss_write(WSS_REG_LEFT_OUTPUT, oldv);
+
+        if ((v & 0x80) != 0x80)
+                return false;
+
+        return true;
+}
+
+/*
+ * Initialize the WSS chip.
+ *
+ * The correct canonical sequence is:
+ *
+ *   1. MCE on: write format (I8) and interface mode bits (I9,
+ *      SDC/PPIO/CPIO, but PEN=0).  These are the only registers
+ *      that actually require MCE.
+ *   2. MCE off, wait for INIT to clear and autocalibration (ACI
+ *      in I11) to finish.
+ *   3. In normal mode: program the base count (I14/I15), unmute
+ *      the DAC (I6/I7), clear pending interrupts, then enable IEN
+ *      (I10).
+ *   4. Finally set PEN.  PEN is documented to be set and reset
+ *      WITHOUT MCE, and setting it is what starts DMA playback
+ *      (in NP21W this is the write that triggers DMAEXT_START).
+ */
+static void
+wss_init_chip(void)
+{
+	unsigned int count;
+	unsigned int iface;
+	unsigned int pin;
+	long i;
+
+	count = WSS_BLOCK_COUNT;
+
+	wss_wait_ready();
+
+	/*
+	 * --- MCE phase -------------------------------------------
+	 *
+	 * Playback format (I8):
+	 *   0x40 = 8000Hz / 16-bit signed little-endian / mono
+	 */
+	outp(P_WSS_INDEX, WSS_INDEX_MCE | WSS_REG_FORMAT);
+	outp(WAIT_PORT, 0);
+	outp(P_WSS_DATA, WSS_FMT_8K_S16_MONO);
+	outp(WAIT_PORT, 0);
+	wss_wait_ready();
+
+	/*
+	 * Interface register (I9), mode bits only:
+	 *   PEN  = 0 (started later, without MCE)
+	 *   CEN  = 0
+	 *   SDC  = 1 (single DMA channel, matches the board wiring)
+	 *   PPIO = 0, CPIO = 0 (DMA, not PIO)
+	 */
+	outp(P_WSS_INDEX, WSS_INDEX_MCE | WSS_REG_IFACE);
+	outp(WAIT_PORT, 0);
+	outp(P_WSS_DATA, WSS_IFACE_SDC);
+	outp(WAIT_PORT, 0);
+
+	wss_wait_ready();
+
+	/*
+	 * --- leave MCE -------------------------------------------
+	 */
+	outp(P_WSS_INDEX, 0);
+	outp(WAIT_PORT, 0);
+
+	/* Wait for INIT to clear (bounded, unlike the old loop). */
+	wss_wait_ready();
+
+	/* Wait for autocalibration to finish (bounded). */
+	for (i = 0; i < 100000L; i++) {
+		if (!(wss_read(WSS_REG_TEST_INIT) & WSS_INIT_ACI))
+			break;
+		outp(WAIT_PORT, 0);
+	}
+
+	wss_wait_ready();
+
+	/*
+	 * --- normal mode programming -----------------------------
+	 *
+	 * Playback base count (I14 = upper, I15 = lower).
+	 * Unit is samples - 1; PI fires every (count + 1) samples,
+	 * i.e. once per half buffer.  The base registers do not
+	 * require MCE and are loaded into the current count when
+	 * PEN is set.
+	 */
+	wss_write(WSS_REG_PCNT_H, (count >> 8) & 0xff);
+	wss_write(WSS_REG_PCNT_L, count & 0xff);
+
+	/*
+	 * Unmute the DAC and set full volume (I6/I7):
+	 *   bit7 = mute, lower bits = attenuation, 00h = max.
+	 */
+	wss_write(WSS_REG_LEFT_OUTPUT, 0x00);
+	wss_write(WSS_REG_RIGHT_OUTPUT, 0x00);
+
+	/*
+	 * Clear any pending interrupt state (Status register and
+	 * I24) before enabling the interrupt output.
+	 */
+	wss_ack_irq();
+
+	/*
+	 * Pin Control register (I10), bit1 = IEN.
+	 * This enables the codec interrupt output.  Do this before
+	 * PEN so the very first half-buffer interrupt is not lost.
+	 */
+	pin = wss_read(WSS_REG_PIN);
+	wss_write(WSS_REG_PIN, pin | WSS_PIN_IEN);
+
+	/*
+	 * --- start playback --------------------------------------
+	 */
+	iface = wss_read(WSS_REG_IFACE);
+	iface |= WSS_IFACE_PEN;
+	iface &= ~(WSS_IFACE_CEN | WSS_IFACE_PPIO | WSS_IFACE_CPIO);
+	wss_write(WSS_REG_IFACE, iface);
 }
 
 /*
@@ -357,12 +538,8 @@ wss_sound_poll(void)
 	if (!wss_ok)
 		return;
 
-printf("FILL1\n");
-
 	if (!fill_pending)
 		return;
-
-printf("FILL2\n");
 
 	_disable();
 	half = fill_half;
@@ -383,7 +560,6 @@ wss_play_sound(
 	assert(n < HAL_SOUND_TRACKS);
 	assert(w != NULL);
 
-printf("PLAY\n");
 	if (!wss_ok)
 		return true;
 
@@ -477,7 +653,7 @@ wss_wait_ready(void)
 	for (i = 0; i < 100000L; i++) {
 		if ((inp(P_WSS_INDEX) & WSS_INDEX_INIT) == 0)
 			break;
-		outp(WAIT_PORT, 0); // バスウェイトを入れる
+		outp(WAIT_PORT, 0); /* バスウェイトを入れる */
 	}
 }
 
@@ -487,201 +663,56 @@ wss_write(
 	int val)
 {
 	wss_wait_ready();
+	_disable();
 	outp(P_WSS_INDEX, reg & WSS_INDEX_MASK);
 	outp(WAIT_PORT, 0);
 	outp(P_WSS_DATA, val);
 	outp(WAIT_PORT, 0);
+	_enable();
 }
 
 static int
 wss_read(
 	int reg)
 {
+	int v;
+
 	wss_wait_ready();
+	_disable();
 	outp(P_WSS_INDEX, reg & WSS_INDEX_MASK);
 	outp(WAIT_PORT, 0);
-	return inp(P_WSS_DATA);
-}
-
-/*
- * Simple WSS presence check.
- *
- * This intentionally touches only the playback attenuator register.
- */
-static bool
-wss_detect(void)
-{
-        int id_val;
-        int oldv;
-        int v;
-
-        /*
-	 * Step 1: Check for PC-9821-only Sound ID port.
-         * (0xff if not implemented)
-	 */
-        id_val = inp(P_WSS_SOUND_ID);
-        
-        /*
-	 * PC-9821内蔵WSSの場合、下位ビットに「000100b (0x04)」が定義されています
-	 * チップのマイナーリビジョンによって上位ビットが変わるため、マスクして比較します
-	 */
-        if ((id_val & 0x3F) != 0x04)
-                return false; 
-
-        /* Step 2: CS4231のレジスタが応答するか（提示されたR/Wテストのポート修正版） */
-        wss_wait_ready();
-
-        oldv = wss_read(WSS_REG_LEFT_OUTPUT);
-
-        /* 0x80（ミュートビットなど）を書き込んで変化を見る */
-        wss_write(WSS_REG_LEFT_OUTPUT, 0x80);
-        v = wss_read(WSS_REG_LEFT_OUTPUT);
-
-        /* 元の設定に戻す */
-        wss_write(WSS_REG_LEFT_OUTPUT, oldv);
-
-        if ((v & 0x80) != 0x80)
-                return false;
-
-        return true;
+	v = inp(P_WSS_DATA);
+	_enable();
+	return v;
 }
 
 static void
 wss_stop_codec(void)
 {
-    int pin;
-
-    /*
-     * Stop playback/capture.
-     */
-    wss_write(WSS_REG_IFACE, 0x00);
-
-    /*
-     * Disable codec IRQ output.
-     */
-    pin = wss_read(WSS_REG_PIN);
-    wss_write(WSS_REG_PIN, pin & ~WSS_PIN_IEN);
-
-    wss_ack_irq();
-}
-
-/*
- * Configure:
- *   8000Hz / 16-bit signed linear / mono
- *   playback block count = HALF_BYTES / 2 - 1
- *
- * Format and base count are programmed while MCE is enabled.
- */
-static void
-wss_set_format_and_count(void)
-{
-	unsigned count;
-
-	count = WSS_BLOCK_COUNT;
-
-	wss_wait_ready();
-
-	/*
-	 * MCE on, select playback format register.
-	 */
-	outp(P_WSS_INDEX, WSS_INDEX_MCE | WSS_REG_FORMAT);
-	outp(WAIT_PORT, 0);
-
-	/*
-	 * Playback format:
-	 *   20h = 8000Hz / 16-bit signed linear / mono
-	 */
-	outp(P_WSS_DATA, WSS_FMT_8K_S16_MONO);
-	outp(WAIT_PORT, 0);
-
-	/*
-	 * Playback base count high.
-	 */
-	outp(P_WSS_INDEX, WSS_INDEX_MCE | WSS_REG_PCNT_H);
-	outp(WAIT_PORT, 0);
-	outp(P_WSS_DATA, (count >> 8) & 0xff);
-	outp(WAIT_PORT, 0);
-
-	/*
-	 * Playback base count low.
-	 */
-	outp(P_WSS_INDEX, WSS_INDEX_MCE | WSS_REG_PCNT_L);
-	outp(WAIT_PORT, 0);
-	outp(P_WSS_DATA, count & 0xff);
-	outp(WAIT_PORT, 0);
-
-	/*
-	 * MCE off.
-	 */
-	outp(P_WSS_INDEX, WSS_REG_FORMAT);
-	outp(WAIT_PORT, 0);
-
-	while (inp(P_WSS_INDEX) & WSS_INDEX_INIT)
-		outp(WAIT_PORT, 0);
-
-	while (wss_read(WSS_REG_TEST_INIT) & 0x10)
-		;
-
-	wss_wait_ready();
-}
-
-static void
-wss_set_volume(void)
-{
-	/*
-	 * Playback DAC attenuator:
-	 *   bit7 = mute
-	 *   lower bits = attenuation
-	 *
-	 * 00h is maximum volume on many CS4231-compatible codecs.
-	 */
-	wss_write(WSS_REG_LEFT_OUTPUT, 0x00);
-	wss_write(WSS_REG_RIGHT_OUTPUT, 0x00);
-
-	/*
-	 * Optional: mute line input to avoid noise.
-	 * If this causes trouble on V13, remove these two writes.
-	 */
-	wss_write(WSS_REG_LEFT_INPUT, 0x80);
-	wss_write(WSS_REG_RIGHT_INPUT, 0x80);
-}
-
-static void
-wss_ack_irq(void)
-{
-	/*
-	 * WSS status port IRQ clear.
-	 * Some implementations clear by writing 00h; a read before write
-	 * is harmless and useful on several compatible devices.
-	 */
-	(void)inp(P_WSS_STATUS);
-	outp(WAIT_PORT, 0);
-	outp(P_WSS_STATUS, 0x00);
-	outp(WAIT_PORT, 0);
-}
-
-static void
-wss_start_codec(void)
-{
 	int pin;
 	int iface;
 
-	/*
-	 * Enable codec IRQ output.
-	 * Pin Control register 0Ah, bit1 = interrupt enable.
-	 */
+	/* Disable the codec IRQ output first, then stop playback. */
 	pin = wss_read(WSS_REG_PIN);
-	wss_write(WSS_REG_PIN, pin | WSS_PIN_IEN);
+	wss_write(WSS_REG_PIN, pin & ~WSS_PIN_IEN);
 
-	/*
-	 * Start playback.
-	 *
-	 * Important:
-	 *   Do NOT set bit1 here as "playback IRQ enable".
-	 *   On AD1848/CS4231-like codecs, bit1 is usually capture enable.
-	 */
+	/* PEN off (allowed without MCE). */
 	iface = wss_read(WSS_REG_IFACE);
-	wss_write(WSS_REG_IFACE, iface | WSS_IFACE_PEN);
+	wss_write(WSS_REG_IFACE, iface & ~(WSS_IFACE_PEN | WSS_IFACE_CEN));
+
+	wss_ack_irq();
+}
+
+/* Acknowledge / clear codec interrupt state (mainline version). */
+static void
+wss_ack_irq(void)
+{
+	(void)inp(P_WSS_STATUS);
+	outp(P_WSS_STATUS, 0x00);
+	outp(WAIT_PORT, 0);
+
+	/* Clear PI/TI/CI in I24. */
+	wss_write(WSS_REG_ALTSTAT, 0x00);
 }
 
 /*
@@ -741,59 +772,41 @@ free_dma_buffer(void)
 /*
  * DMA Controller Setup
  *
- * ch3, auto-init, memory -> device.
+ * Auto-init, memory -> device, over the full double buffer.
  */
 static void
 setup_dma(void)
 {
 	int ch;
+	uint16_t count;
 
-	ch = WSS_DMA_CH;
+	ch = wss_dma_ch;
+	count = BUF_BYTES - 1;
 
 	_disable();
 
-	/*
-	 * Mask channel.
-	 */
+	/* Mask channel. */
 	outp(DMA_PORT_SMASK, 0x04 | ch);
 
-	/*
-	 * Mode:
-	 *   single transfer
-	 *   address increment
-	 *   auto-init
-	 *   read transfer, memory -> device
-	 *
-	 * This follows the existing PC-98 SB16 driver style.
-	 */
-	outp(DMA_PORT_MODE, 0x58 | ch);
+	/* Program DMA mode for the actual channel. */
+	outp(DMA_PORT_MODE, DMA_MODE_SINGLE | DMA_MODE_AUTO_INIT | DMA_MODE_READ | (ch & 3));
 
-	/*
-	 * Clear byte pointer flip-flop.
-	 */
+	/* Clear byte pointer flip-flop. */
 	outp(DMA_PORT_CLRFF, 0);
 
-	/*
-	 * Address A0-A15.
-	 */
+	/* Address A0-A15. */
 	outp(dma_port_addr[ch], (int)(dma_phys & 0xff));
 	outp(dma_port_addr[ch], (int)((dma_phys >> 8) & 0xff));
 
-	/*
-	 * Bank A16-A23.
-	 */
+	/* Bank A16-A23. */
 	outp(dma_port_bank[ch], (int)((dma_phys >> 16) & 0xff));
 
-	/*
-	 * Count: full double buffer, bytes - 1.
-	 */
+	/* Count: full double buffer, bytes - 1. */
 	outp(DMA_PORT_CLRFF, 0);
-	outp(dma_port_count[ch], (BUF_BYTES - 1) & 0xff);
-	outp(dma_port_count[ch], ((BUF_BYTES - 1) >> 8) & 0xff);
+	outp(dma_port_count[ch], count & 0xff);
+	outp(dma_port_count[ch], (count >> 8) & 0xff);
 
-	/*
-	 * Unmask channel.
-	 */
+	/* Unmask channel. */
 	outp(DMA_PORT_SMASK, ch);
 
 	_enable();
@@ -802,7 +815,7 @@ setup_dma(void)
 static void
 stop_dma(void)
 {
-	outp(DMA_PORT_SMASK, 0x04 | WSS_DMA_CH);
+	outp(DMA_PORT_SMASK, 0x04 | wss_dma_ch);
 }
 
 /*
@@ -827,10 +840,10 @@ hook_irq(void)
 	    wss_vector = -1;
 
     if (wss_vector == -1) {
-	    printf("Invalid IRQ number\n");
+	    hal_log_info("Invalid IRQ number\n");
 	    return;
     }
-	    
+
     old_isr = _dos_getvect(wss_vector);
     _dos_setvect(wss_vector, wss_isr);
 
@@ -887,6 +900,19 @@ unhook_irq(void)
 #endif
 }
 
+
+static void
+pic_eoi_for_irq(int irq)
+{
+    if (irq >= 8) {
+        outp(PIC1_CMD, PIC_EOI);
+        outp(PIC0_CMD, PIC_EOI);
+    } else {
+        outp(PIC0_CMD, PIC_EOI);
+    }
+}
+
+
 #if defined(__WATCOMC__)
 /*
  * WSS interrupt handler.
@@ -895,28 +921,43 @@ unhook_irq(void)
  *   - Keep this short.
  *   - Do not call hal_get_wave_samples() here.
  *   - Do not use DOS services here.
+ *   - Raw port I/O only: wss_read/wss_write must not be used here
+ *     because they call _enable().
  */
 static void __interrupt __far
 wss_isr(void)
 {
-    /*
-     * Acknowledge WSS interrupt first.
-     */
-    wss_ack_irq();
+	/*
+	 * Acknowledge the codec interrupt source.
+	 *
+	 * 1. Any write to the Status register (0F46h) clears the
+	 *    interrupt on the real chip.
+	 * 2. FIX: additionally clear PI/TI/CI in I24.  NP21W only
+	 *    calls pic_resetirq() when all three bits have been
+	 *    written to 0 (cs4231_control, CS4231REG_IRQSTAT), so
+	 *    without this the emulated IRQ line stays asserted and
+	 *    no further interrupts arrive.
+	 */
+	(void)inp(P_WSS_STATUS);
+	outp(P_WSS_STATUS, 0x00);
+	outp(WAIT_PORT, 0);
 
-    if (fill_pending)
-        memset(dma_buf + fill_half * HALF_BYTES, 0, HALF_BYTES);
+	outp(P_WSS_INDEX, WSS_REG_ALTSTAT);	/* no MCE */
+	outp(WAIT_PORT, 0);
+	outp(P_WSS_DATA, 0x00);			/* clear PI/TI/CI */
+	outp(WAIT_PORT, 0);
 
-    fill_half = cur_half;
-    cur_half ^= 1;
-    fill_pending = 1;
+	/*
+	 * Then acknowledge the PIC (slave first, then master).
+	 */
+	pic_eoi_for_irq(wss_irq);
 
-    /*
-     * IRQ12 is on the slave PIC.
-     * Send EOI to slave first, then master.
-     */
-    outp(PIC1_CMD, PIC_EOI);
-    outp(PIC0_CMD, PIC_EOI);
+	/*
+	 * Minimal bookkeeping only.
+	 */
+	cur_half ^= 1;
+	fill_half = cur_half ^ 1;
+	fill_pending = 1;
 }
 #endif
 

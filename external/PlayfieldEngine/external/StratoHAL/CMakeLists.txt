@@ -697,9 +697,10 @@ if(STRATO_TARGET_PC98)
       src/wave.c
       src/stdfile.c
       src/98main.c
-      # src/glyph.c
+      # src/glyph.c         # FreeType2
       src/98glyph.c         # PC98 font
-      src/98sound.c         # PCM driver selector
+      src/98disp_gdc.c      # GDC 640x400x4
+      src/98disp_cirrus.c   # CIRRUS 640x48x24
       src/98sound_sb16.c    # PCM SB16
       src/98sound_wss.c     # PCM WSS
     )
