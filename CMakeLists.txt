@@ -764,7 +764,8 @@ if(   SUIKA_ENABLE_STATIC
           $<TARGET_OBJECTS:z>
       )
     else()
-      set(SUIKA_DEPS
+      if(NOT CMAKE_C_COMPILER_ID MATCHES "Watcom")
+        set(SUIKA_DEPS
           $<TARGET_OBJECTS:png>
           $<TARGET_OBJECTS:jpeg>
           $<TARGET_OBJECTS:webp>
@@ -772,7 +773,17 @@ if(   SUIKA_ENABLE_STATIC
           $<TARGET_OBJECTS:ogg>
           $<TARGET_OBJECTS:freetype>
           $<TARGET_OBJECTS:z>
-      )
+        )
+      else()
+        set(SUIKA_DEPS
+          $<TARGET_OBJECTS:png>
+          $<TARGET_OBJECTS:jpeg>
+          $<TARGET_OBJECTS:tremor>
+          $<TARGET_OBJECTS:ogg>
+          $<TARGET_OBJECTS:freetype>
+          $<TARGET_OBJECTS:z>
+        )
+      endif()
     endif()
   endif()
 
@@ -839,7 +850,7 @@ endif()
 if(SUIKA_TARGET_WINDOWS95)
   if(MSVC)
     add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
-  else()
+  elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
     add_compile_definitions(_WIN32_WINNT=0x0400 __USE_MINGW_ANSI_STDIO=1)
     add_definitions(-UUNICODE -U_UNICODE)
   endif()
@@ -896,7 +907,7 @@ endif()
 if(SUIKA_TARGET_WINDOWS)
   if(MSVC)
     target_compile_options(suika3 PRIVATE /utf-8)
-  else()
+  elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
     target_compile_options(suika3 PRIVATE -municode -finput-charset=utf-8 -fexec-charset=utf-8)
   endif()
 endif()
@@ -905,7 +916,7 @@ endif()
 if(SUIKA_TARGET_WINDOWS95)
   if(MSVC)
     target_compile_options(suika3 PRIVATE /utf-8)
-  else()
+  elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
     target_compile_options(suika3 PRIVATE -finput-charset=utf-8 -fexec-charset=shift-jis)
   endif()
 endif()
@@ -960,7 +971,7 @@ if(SUIKA_TARGET_WINDOWS)
     else()
       target_link_options(suika3 PRIVATE /SUBSYSTEM:CONSOLE /ENTRY:wWinMainCRTStartup /MANIFEST:NO)
 	endif()
-  else()
+  elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
     if(NOT SUIKA_ENABLE_CONSOLE)
       target_link_options(suika3 PRIVATE -mwindows -static -static-libgcc -Wl,-u,wWinMain -Wl,-u,_wWinMain@16)
     else()
@@ -973,7 +984,7 @@ endif()
 if(SUIKA_TARGET_WINDOWS95)
   if(MSVC)
     target_link_options(suika3 PRIVATE /SUBSYSTEM:WINDOWS)
-  else()
+  elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
     target_link_options(suika3 PRIVATE -mwindows -static -static-libgcc -Wl,-u,WinMain -Wl,-u,_WinMain@16)
   endif()
 endif()

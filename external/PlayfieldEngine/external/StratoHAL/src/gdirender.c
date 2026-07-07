@@ -41,6 +41,8 @@ static int nWindowHeight;
 BOOL GDIInitialize(HWND hWnd, int nWidth, int nHeight)
 {
 	uint32_t *masks;
+	BITMAPINFO bi;
+	hal_pixel_t *pixels;
 
 	hMainWnd = hWnd;
 
@@ -51,7 +53,6 @@ BOOL GDIInitialize(HWND hWnd, int nWidth, int nHeight)
 	hWndDC = GetDC(hMainWnd);
 
 	// Create a device conetxt for RGBA32 bitmap.
-	BITMAPINFO bi;
 	memset(&bi, 0, sizeof(BITMAPINFO));
 	bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 	bi.bmiHeader.biWidth = (LONG)nWidth;
@@ -68,7 +69,7 @@ BOOL GDIInitialize(HWND hWnd, int nWidth, int nHeight)
 		return FALSE;
 
 	// Create a backing bitmap.
-	hal_pixel_t *pixels = NULL;
+	pixels = NULL;
 	hBitmap = CreateDIBSection(hBitmapDC, &bi, DIB_RGB_COLORS, (VOID **)&pixels, NULL, 0);
 	if(hBitmap == NULL || pixels == NULL)
 		return FALSE;

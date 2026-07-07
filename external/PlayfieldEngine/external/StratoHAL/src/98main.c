@@ -195,9 +195,7 @@ int hal_main(int argc, char *argv[])
 		return 1;
 	}
 
-	if (init_sound())
-		printf("SB16 sound card initialized.\n");
-	else
+	if (!init_sound())
 		printf("No sound card.\n");
 
 	if (!hal_bootstrap_ptr(
@@ -252,6 +250,7 @@ init_vram(void)
 {
 	init_vram_gdc();
 
+#if 0
 	if (init_vram_cirrus()) {
 		fb_bpp = 24;
 		ofs_x = (CIRRUS_WIDTH - game_width) / 2;
@@ -259,6 +258,7 @@ init_vram(void)
 
 		return;
 	}
+#endif
 }
 
 /* Cleanup G-VRAM. */

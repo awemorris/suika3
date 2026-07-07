@@ -60,6 +60,13 @@ target_compile_definitions(png
   PNG_NO_STDIO
 )
 
+if(CMAKE_C_COMPILER_ID MATCHES "Watcom")
+  target_compile_definitions(png
+    PUBLIC
+    PNGCAPI=__watcall
+  )
+endif()
+
 target_link_libraries(png PRIVATE z)
 
 # Suppress compilation errors.

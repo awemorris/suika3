@@ -1788,7 +1788,7 @@ int WINAPI WinMain(							\
 	{								\
 		int WINAPI hal_WinMain(HINSTANCE,			\
 				       HINSTANCE,			\
-				       LPWSTR,				\
+				       LPSTR,				\
 				       int);				\
 		hal_bootstrap_ptr = hal_bootstrap;			\
 		chain_ptr1 = chain1;					\

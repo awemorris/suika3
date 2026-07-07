@@ -1079,6 +1079,18 @@
                 "SUIKA_ENABLE_MAIN2":  "ON",
                 "SUIKA_ENABLE_UNSAFE": "ON"
 	    }
+        },
+        {
+            "name":           "win32-openwatcom",
+            "displayName":    "Win32 OpenWatcom V2",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-win32-openwatcom",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/openwatcom-win32.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":      "Release",
+                "SUIKA_TARGET_WINDOWS":  "ON",
+                "SUIKA_ENABLE_JIT":      "OFF"
+	    }
         }
     ],
     "buildPresets": [
