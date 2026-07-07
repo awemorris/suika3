@@ -317,6 +317,8 @@ init_sound(void)
 
 	wss_ok = true;
 
+	printf("Sound enabled.\n");
+
 	return true;
 }
 

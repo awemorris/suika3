@@ -2,7 +2,7 @@
 
 /*
  * StratoHAL
- * Sound HAL PC98 (driver selector)
+ * Sound HAL for Sound Blaster 16 on PC98 (CT2720)
  */
 
 /*-
@@ -70,28 +70,263 @@
 #include <conio.h>
 #include <i86.h>
 
-#define SOUND_NONE	0
-#define SOUND_SB16	1
-#define SOUND_WSS	2
+/*
+ * Config Select
+ */
 
-static int sound_driver;
+#define SB16_S16_8K_MONO	/* Here! */
+#undef  SB16_S16_44K_STEREO
+#undef  SB16_S8_8K_MONO
+
+/*
+ * Format
+ */
+
+#ifdef SB16_S16_44K_STEREO
+#define SAMPLING_RATE	(44100)		/* 44100Hz */
+#define CHANNELS	(2)		/* 2ch */
+#define FRAME_SIZE	(4)		/* 16-bit x 2ch */
+#define HALF_FRAMES	(2048)		/* 46ms per half */
+#endif
+
+#ifdef SB16_S16_8K_MONO
+#define SAMPLING_RATE	(8000)		/* 8000Hz */
+#define CHANNELS	(1)		/* 1ch */
+#define FRAME_SIZE	(2)		/* 16-bit x 1ch */
+#define HALF_FRAMES	(8192)		/* 184ms per half */
+#endif
+
+#ifdef SB16_S8_8K_MONO
+#define SAMPLING_RATE	(8000)		/* 8000Hz */
+#define CHANNELS	(1)		/* 1ch */
+#define FRAME_SIZE	(1)		/* 8-bit x 1ch */
+#define HALF_FRAMES	(4096)		/* 512ms per half */
+#endif
+
+/*
+ * Sound Buffer Config
+ *
+ * The DMA buffer is split into two halves.  The DSP interrupts at the
+ * end of each half (block size = half).  HALF_FRAMES is defined per
+ * format above so that one half is roughly 50ms; sb16_sound_poll()
+ * must be called at least that often.  Increase HALF_FRAMES if the
+ * game loop can be slower than that.
+ */
+
+#define HALF_BYTES	(HALF_FRAMES * FRAME_SIZE)
+#define BUF_BYTES	(HALF_BYTES * 2)
+
+/*
+ * The DSP block length parameter (minus one) follows the SB16
+ * convention: 16-bit commands (0xB6) count 16-bit samples, 8-bit
+ * commands (0xC6) count 8-bit samples, i.e. bytes.
+ */
+
+#ifdef SB16_S16_44K_STEREO
+#define DSP_BLOCK_LEN	(HALF_FRAMES * 2 - 1)	/* 16-bit samples - 1 */
+#endif
+
+#ifdef SB16_S16_8K_MONO
+#define DSP_BLOCK_LEN	(HALF_FRAMES - 1)	/* 16-bit samples - 1 */
+#endif
+
+#ifdef SB16_S8_8K_MONO
+#define DSP_BLOCK_LEN	(HALF_BYTES - 1)	/* bytes - 1 */
+#endif
+
+/*
+ * SB16/98 I/O Ports
+ *
+ * The base (low byte) is D2h by default and can be changed with JP9.
+ * Define SB16_BASE at compile time to override (D2h/D4h/D6h/.../DEh).
+ */
+#if !defined(SB16_BASE)
+#define SB16_BASE	0xd2
+#endif
+#define SB_PORT(ofs)	(((ofs) << 8) | SB16_BASE)
+#define P_MIXER_ADDR	SB_PORT(0x24)	/* AT 2x4h: Mixer index */
+#define P_MIXER_DATA	SB_PORT(0x25)	/* AT 2x5h: Mixer data */
+#define P_DSP_RESET	SB_PORT(0x26)	/* AT 2x6h: DSP reset */
+#define P_DSP_READ	SB_PORT(0x2a)	/* AT 2xAh: DSP read data */
+#define P_DSP_WRITE	SB_PORT(0x2c)	/* AT 2xCh: DSP write cmd/data, read: bit7=busy */
+#define P_DSP_RSTAT	SB_PORT(0x2e)	/* AT 2xEh: read status (bit7), 8-bit IRQ ack */
+#define P_DSP_ACK16	SB_PORT(0x2f)	/* AT 2xFh: 16-bit IRQ ack */
+
+/* DSP commands */
+#define DSP_SET_OUTPUT_RATE	0x41
+#define DSP_SPEAKER_ON		0xd1
+#define DSP_PLAY_16BIT_AUTO	0xb6	/* 16-bit output, auto-init, FIFO */
+#define DSP_PLAY_8BIT_AUTO	0xc6	/* 8-bit output, auto-init, FIFO */
+#define DSP_MODE_U_MONO		0x00	/* unsigned, mono */
+#define DSP_MODE_S_MONO		0x10	/* signed, mono */
+#define DSP_MODE_U_STEREO	0x20	/* unsigned, stereo */
+#define DSP_MODE_S_STEREO	0x30	/* signed, stereo */
+#define DSP_EXIT_16BIT_AUTO	0xd9
+#define DSP_EXIT_8BIT_AUTO	0xda
+#define DSP_PAUSE_16BIT		0xd5
+#define DSP_PAUSE_8BIT		0xd0
+
+/* Mixer (CT1745) registers */
+#define MIX_RESET		0x00
+#define MIX_MASTER_L		0x30
+#define MIX_MASTER_R		0x31
+#define MIX_VOICE_L		0x32
+#define MIX_VOICE_R		0x33
+#define MIX_IRQ_SELECT		0x80
+#define MIX_DMA_SELECT		0x81
+#define MIX_IRQ_STATUS		0x82
+
+/*
+ * PC-98 DMA Controller (uPD71037/i8237A compatible)
+ *
+ * Per-channel registers (odd port addresses):
+ *   ch:      0     1     2     3
+ *   addr:   01h   05h   09h   0Dh   (low/high via internal flip-flop)
+ *   count:  03h   07h   0Bh   0Fh   (byte count minus one)
+ *   bank:   27h   21h   23h   25h   (address bits A16-A23, PC-98 specific)
+ */
+#define DMA_PORT_SMASK	0x15		/* single mask */
+#define DMA_PORT_MODE	0x17		/* mode */
+#define DMA_PORT_CLRFF	0x19		/* clear byte pointer flip-flop */
+static const int dma_port_addr[4]  = { 0x01, 0x05, 0x09, 0x0d };
+static const int dma_port_count[4] = { 0x03, 0x07, 0x0b, 0x0f };
+static const int dma_port_bank[4]  = { 0x27, 0x21, 0x23, 0x25 };
+
+/*
+ * PC-98 Interrupt Controller (i8259 x2)
+ *
+ * Master: 00h/02h, Slave: 08h/0Ah, slave cascades into master IR7.
+ * IRQ0-7 -> vector 08h-0Fh, IRQ8-15 -> vector 10h-17h.
+ */
+#define PIC0_CMD	0x00
+#define PIC0_IMR	0x02
+#define PIC1_CMD	0x08
+#define PIC1_IMR	0x0a
+#define PIC_EOI		0x20
+
+/* PC-98 0.6us wait port. */
+#define WAIT_PORT	0x5f
+
+/*
+ * Driver State
+ */
+
+/* True if the board was detected and initialized. */
+static bool sb16_ok;
+
+/* Detected configuration. */
+static int sb_irq;		/* PC-98 IRQ number (3/5/10/12) */
+static int sb_vec;		/* CPU vector */
+static int sb_dma;		/* PC-98 DMA channel (0 or 3) */
+static uint8_t sb_dma_sel;	/* raw mixer 81h value (for 82h ack decision) */
+
+/* DMA buffer (DOS memory below 1MB, does not cross a 64KB boundary). */
+static uint8_t *dma_buf;	/* linear == physical under DOS/4GW */
+static uint32_t dma_phys;
+static uint16_t dos_selector;	/* for freeing the DOS block */
+
+/* Double buffer bookkeeping (shared with the ISR). */
+static volatile int cur_half;		/* half the DSP is playing now */
+static volatile int fill_half;		/* half waiting to be refilled */
+static volatile int fill_pending;	/* 1 if fill_half needs a refill */
+
+/* Old interrupt vector and old PIC mask bit. */
+#if defined(__WATCOMC__)
+static void (__interrupt __far *old_isr)(void);
+#endif
+static int old_imr_masked;
+
+/* Input Streams */
+static struct hal_wave *wave[HAL_SOUND_TRACKS];
+
+/* Volume Values (Q15 fixed point, 0..32767) */
+static int volume_q15[HAL_SOUND_TRACKS];
+
+/* Finish Flags */
+static volatile bool finish[HAL_SOUND_TRACKS];
+
+/* Mixing Buffers */
+static int32_t mix_buf[HALF_FRAMES * 2];
+static uint32_t pull_buf[HALF_FRAMES];
+
+/*
+ * Forward Declarations
+ */
+static bool dsp_reset(void);
+static bool dsp_write(int val);
+static int dsp_read(void);
+static void mixer_write(int reg, int val);
+static int mixer_read(int reg);
+static bool detect_config(void);
+static bool alloc_dma_buffer(void);
+static void free_dma_buffer(void);
+static void setup_dma(void);
+static void stop_dma(void);
+static void start_playback(void);
+static void hook_irq(void);
+static void unhook_irq(void);
+static void fill_half_buffer(int half);
+static void dpmi_lock_region(void *p, uint32_t size);
+#if defined(__WATCOMC__)
+static void __interrupt __far sb16_isr(void);
+#endif
 
 /*
  * Initialize the Sound Blaster 16/98.
  */
 bool
-init_sound(void)
+sb16_init_sound(void)
 {
-	if (sb16_init_sound()) {
-		sound_driver = SOUND_SB16;
+	int n;
+
+	sb16_ok = false;
+
+	for (n = 0; n < HAL_SOUND_TRACKS; n++) {
+		wave[n] = NULL;
+		volume_q15[n] = 32767;
+		finish[n] = false;
+	}
+
+	/* Reset and detect the DSP. */
+	if (!dsp_reset()) {
+		hal_log_info("SB16/98 not found (DSP reset failed).");
+		return true;	/* Run without sound, like the ALSA HAL. */
+	}
+
+	/* Read the IRQ/DMA jumper settings back from the mixer. */
+	if (!detect_config()) {
+		hal_log_info("SB16/98: unsupported IRQ/DMA configuration.");
 		return true;
 	}
 
-	if (wss_init_sound()) {
-		sound_driver = SOUND_WSS;
+	/* Allocate a DMA buffer in DOS memory. */
+	if (!alloc_dma_buffer()) {
+		hal_log_info("SB16/98: failed to allocate a DMA buffer.");
 		return true;
 	}
+	memset(dma_buf, 0, BUF_BYTES);
 
+	/* Lock the ISR-touched memory so it is never paged out. */
+	dpmi_lock_region((void *)dma_buf, BUF_BYTES);
+	dpmi_lock_region((void *)&cur_half, 4096);
+
+	/* Unmute and set the mixer volumes. */
+	mixer_write(MIX_RESET, 0);
+	mixer_write(MIX_MASTER_L, 0xf8);
+	mixer_write(MIX_MASTER_R, 0xf8);
+	mixer_write(MIX_VOICE_L, 0xf8);
+	mixer_write(MIX_VOICE_R, 0xf8);
+
+	/* Install the interrupt handler. */
+	hook_irq();
+
+	/* Program the DMA controller (auto-init, whole buffer). */
+	setup_dma();
+
+	/* Program the DSP and start the transfer. */
+	start_playback();
+
+	sb16_ok = true;
 	return true;
 }
 
@@ -101,70 +336,149 @@ init_sound(void)
 void
 cleanup_sound(void)
 {
-	if (sound_driver == SOUND_SB16)
-		sb16_cleanup_sound();
-	else if (sound_driver == SOUND_SB16)
-		wss_cleanup_sound();
+	int n;
+
+	if (!sb16_ok)
+		return;
+
+	sb16_ok = false;
+
+	for (n = 0; n < HAL_SOUND_TRACKS; n++)
+		wave[n] = NULL;
+
+	/* Stop the DSP transfer. */
+#ifdef SB16_S16_44K_STEREO
+	dsp_write(DSP_EXIT_16BIT_AUTO);
+	dsp_write(DSP_PAUSE_16BIT);
+#endif
+#ifdef SB16_S16_8K_MONO
+	dsp_write(DSP_EXIT_16BIT_AUTO);
+	dsp_write(DSP_PAUSE_16BIT);
+#endif
+#ifdef SB16_S8_8K_MONO
+	dsp_write(DSP_EXIT_8BIT_AUTO);
+	dsp_write(DSP_PAUSE_8BIT);
+#endif
+	dsp_reset();
+
+	/* Stop the DMA channel. */
+	stop_dma();
+
+	/* Restore the interrupt vector and the PIC mask. */
+	unhook_irq();
+
+	/* Free the DMA buffer. */
+	free_dma_buffer();
 }
 
+/*
+ * Pump the sound: decode and mix into the DMA buffer.
+ *
+ * [IMPORTANT]
+ *  - Call this once per frame from the main loop.
+ *  - hal_get_wave_samples() is called here, in the main thread context,
+ *    because it may perform DOS file I/O which must never happen inside
+ *    an interrupt handler.
+ */
 void
-sound_poll(void)
+sb16_sound_poll(void)
 {
-	if (sound_driver == SOUND_SB16)
-		sb16_sound_poll();
-	else if (sound_driver == SOUND_WSS)
-		wss_sound_poll();
+	int half;
+
+	if (!sb16_ok)
+		return;
+
+	if (!fill_pending)
+		return;
+
+	_disable();
+	half = fill_half;
+	fill_pending = 0;
+	_enable();
+
+	fill_half_buffer(half);
 }
 
+/*
+ * Start sound playback on a stream.
+ */
 bool
 hal_play_sound(
 	int n,
 	struct hal_wave *w)
 {
-	if (sound_driver == SOUND_SB16)
-		return sb16_play_sound(n, w);
-	else if (sound_driver == SOUND_WSS)
-		return wss_play_sound(n, w);
+	assert(n < HAL_SOUND_TRACKS);
+	assert(w != NULL);
+
+	if (!sb16_ok)
+		return true;
+
+	_disable();
+	{
+		wave[n] = w;
+		finish[n] = false;
+	}
+	_enable();
+
+	/* Refill as early as possible. */
+	sb16_sound_poll();
 
 	return true;
 }
 
+/*
+ * Stop sound playback on a stream.
+ */
 bool
 hal_stop_sound(
 	int n)
 {
-	if (sound_driver == SOUND_SB16)
-		return sb16_stop_sound(n, w);
-	else if (sound_driver == SOUND_WSS)
-		return wss_stop_sound(n, w);
+	assert(n < HAL_SOUND_TRACKS);
+
+	if (!sb16_ok)
+		return true;
+
+	_disable();
+	{
+		wave[n] = NULL;
+	}
+	_enable();
 
 	return true;
 }
 
+/*
+ * Set a sound volume for a stream.
+ */
 bool
 hal_set_sound_volume(
 	int n,
 	float vol)
 {
-	if (sound_driver == SOUND_SB16)
-		return sb16_set_sound_volume(n, vol);
-	else if (sound_driver == SOUND_WSS)
-		return wss_set_sound_volume(n, vol);
+	double scale;
+
+	assert(n < HAL_SOUND_TRACKS);
+	assert(vol >= 0 && vol <= 1.0f);
+
+	/* Convert a scale factor to an exponential value. (Same curve as the ALSA HAL.) */
+	scale = (pow(10.0, (double)vol) - 1.0) / (10.0 - 1.0);
+
+	volume_q15[n] = (int)(scale * 32767.0);
+	if (volume_q15[n] > 32767)
+		volume_q15[n] = 32767;
+	if (volume_q15[n] < 0)
+		volume_q15[n] = 0;
 
 	return true;
 }
 
+/*
+ * Check if a sound stream is finished.
+ */
 bool
 hal_is_sound_finished(
 	int n)
 {
-	if (sound_driver == SOUND_SB16)
-		return sb16_set_sound_volume(n, vol);
-	else if (sound_driver == SOUND_WSS)
-		return wss_set_sound_volume(n, vol);
-
-	return true;
-
 	if (!sb16_ok)
 		return true;
 

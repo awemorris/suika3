@@ -75,7 +75,7 @@ BOOL GDIInitialize(HWND hWnd, int nWidth, int nHeight)
 	masks[1] = 0x0000ff00; // Green mask
 	masks[2] = 0x000000ff; // Blue mask
 	pixels = NULL;
-	hBitmap = CreateDIBSection(hBitmapDC, &bi, DIB_RGB_COLORS, (VOID **)&pixels, NULL, 0);
+	hBitmap = CreateDIBSection(hBitmapDC, (BITMAPINFO *)&bi, DIB_RGB_COLORS, (VOID **)&pixels, NULL, 0);
 	if(hBitmap == NULL || pixels == NULL)
 	{
 		hal_log_error("CreateDIBSection() failed.");
