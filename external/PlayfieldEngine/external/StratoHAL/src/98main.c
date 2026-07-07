@@ -141,6 +141,7 @@ static int ofs_y;
 static int cur_bank;		/* current Cirrus bank (GR09) */
 static uint8_t cirrus_id;	/* WAB machine ID */
 static uint8_t cirrus_crt27;	/* Cirrus chip ID (CR27) */
+static bool is_true_color_enabled;
 
 /* Log */
 static FILE *log_fp;
@@ -188,6 +189,8 @@ int hal_main(int argc, char *argv[])
 			printf("Version 2026.05\n");
 			return 0;
 		}
+		if (strcmp(argv[1], "--true-color") == 0)
+			is_true_color_enabled = true;
 	}
 
 	if (!init_file()) {
@@ -197,6 +200,8 @@ int hal_main(int argc, char *argv[])
 
 	if (!init_sound())
 		printf("No sound card.\n");
+
+	getchar();
 
 	if (!hal_bootstrap_ptr(
 		    &game_title,
@@ -250,15 +255,15 @@ init_vram(void)
 {
 	init_vram_gdc();
 
-#if 0
-	if (init_vram_cirrus()) {
-		fb_bpp = 24;
-		ofs_x = (CIRRUS_WIDTH - game_width) / 2;
-		ofs_y = (CIRRUS_HEIGHT - game_height) / 2;
+	if (is_true_color_enabled) {
+		if (init_vram_cirrus()) {
+			fb_bpp = 24;
+			ofs_x = (CIRRUS_WIDTH - game_width) / 2;
+			ofs_y = (CIRRUS_HEIGHT - game_height) / 2;
 
-		return;
+			return;
+		}
 	}
-#endif
 }
 
 /* Cleanup G-VRAM. */

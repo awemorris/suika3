@@ -234,7 +234,7 @@ static void __interrupt __far wss_isr(void);
  * Initialize the WSS sound driver.
  */
 bool
-init_sound(void)
+wss_init_sound(void)
 {
 	int n;
 
@@ -247,9 +247,9 @@ init_sound(void)
 	}
 
 	if (!wss_detect())
-		return true;
+		return false;
 
-	hal_log_info("Mate-X PCM found.");
+	hal_log_info("Mate-X PCM: found a card.");
 
 	/* init_sound()内、wss_detect()成功後 */
 	{
@@ -263,14 +263,14 @@ init_sound(void)
 		wss_dma_ch = dma_tbl[cfg & 7];
 
 		if (wss_irq < 0 || wss_dma_ch < 0)
-			return true;    /* 内蔵サウンド切り離し状態など */
+			return false;    /* 内蔵サウンド切り離し状態など */
 
-		printf("WSS IRQ %d\n", wss_irq);
+		printf("Mate-X PCM: IRQ %d\n", wss_irq);
 	}
 
 	if (!alloc_dma_buffer()) {
-		hal_log_info("WSS: failed to allocate DMA buffer.");
-		return true;
+		hal_log_info("Mate-X PCM: failed to allocate DMA buffer.");
+		return false;
 	}
 
 	memset(dma_buf, 0, BUF_BYTES);
@@ -326,7 +326,7 @@ init_sound(void)
  * Cleanup the WSS sound driver.
  */
 void
-cleanup_sound(void)
+wss_cleanup_sound(void)
 {
 	int n;
 
@@ -373,19 +373,10 @@ printf("FILL2\n");
 }
 
 /*
- * Compatibility alias if existing code calls sb16_sound_poll().
- */
-void
-sb16_sound_poll(void)
-{
-	wss_sound_poll();
-}
-
-/*
  * Start sound playback on a stream.
  */
 bool
-hal_play_sound(
+wss_play_sound(
 	int n,
 	struct hal_wave *w)
 {
@@ -417,7 +408,7 @@ printf("PLAY\n");
  * Stop sound playback on a stream.
  */
 bool
-hal_stop_sound(
+wss_stop_sound(
 	int n)
 {
 	assert(n < HAL_SOUND_TRACKS);
@@ -438,7 +429,7 @@ hal_stop_sound(
  * Set a sound volume for a stream.
  */
 bool
-hal_set_sound_volume(
+wss_set_sound_volume(
 	int n,
 	float vol)
 {
@@ -463,7 +454,7 @@ hal_set_sound_volume(
  * Check if a sound stream is finished.
  */
 bool
-hal_is_sound_finished(
+wss_is_sound_finished(
 	int n)
 {
 	if (!wss_ok)

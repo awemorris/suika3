@@ -288,21 +288,21 @@ sb16_init_sound(void)
 	}
 
 	/* Reset and detect the DSP. */
-	if (!dsp_reset()) {
-		hal_log_info("SB16/98 not found (DSP reset failed).");
-		return true;	/* Run without sound, like the ALSA HAL. */
-	}
+	if (!dsp_reset())
+		return false;
+
+	hal_log_info("SB16: found a card.");
 
 	/* Read the IRQ/DMA jumper settings back from the mixer. */
 	if (!detect_config()) {
-		hal_log_info("SB16/98: unsupported IRQ/DMA configuration.");
-		return true;
+		hal_log_info("SB16: unsupported IRQ/DMA configuration.");
+		return false;
 	}
 
 	/* Allocate a DMA buffer in DOS memory. */
 	if (!alloc_dma_buffer()) {
-		hal_log_info("SB16/98: failed to allocate a DMA buffer.");
-		return true;
+		hal_log_info("SB16: failed to allocate a DMA buffer.");
+		return false;
 	}
 	memset(dma_buf, 0, BUF_BYTES);
 
@@ -334,7 +334,7 @@ sb16_init_sound(void)
  * Cleanup the Sound Blaster 16/98.
  */
 void
-cleanup_sound(void)
+sb16_cleanup_sound(void)
 {
 	int n;
 
@@ -403,7 +403,7 @@ sb16_sound_poll(void)
  * Start sound playback on a stream.
  */
 bool
-hal_play_sound(
+sb16_play_sound(
 	int n,
 	struct hal_wave *w)
 {
@@ -430,7 +430,7 @@ hal_play_sound(
  * Stop sound playback on a stream.
  */
 bool
-hal_stop_sound(
+sb16_stop_sound(
 	int n)
 {
 	assert(n < HAL_SOUND_TRACKS);
@@ -451,7 +451,7 @@ hal_stop_sound(
  * Set a sound volume for a stream.
  */
 bool
-hal_set_sound_volume(
+sb16_set_sound_volume(
 	int n,
 	float vol)
 {
@@ -476,7 +476,7 @@ hal_set_sound_volume(
  * Check if a sound stream is finished.
  */
 bool
-hal_is_sound_finished(
+sb16_is_sound_finished(
 	int n)
 {
 	if (!sb16_ok)
@@ -530,6 +530,7 @@ dsp_write(int val)
 	return false;
 }
 
+#if 0
 /* Read a data byte from the DSP. (-1 on timeout) */
 static int
 dsp_read(void)
@@ -542,6 +543,7 @@ dsp_read(void)
 	}
 	return -1;
 }
+#endif
 
 /*
  * Mixer Access
@@ -901,7 +903,7 @@ fill_half_buffer(int half)
 	uint16_t *dst;
 	uint32_t frame;
 	int32_t il, ir;
-	int16_t sl, sr;
+	int16_t sl;
 	int n, i, got, q15;
 	bool eos;
 
