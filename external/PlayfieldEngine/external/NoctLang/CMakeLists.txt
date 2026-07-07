@@ -391,7 +391,8 @@ endif()
 # LDFLAGS
 #
 
-if(NOT MSVC)
+if(    NOT MSVC
+   AND NOT CMAKE_C_COMPILER_ID MATCHES "Watcom")
   target_link_libraries(noct PUBLIC m)
 endif()
 

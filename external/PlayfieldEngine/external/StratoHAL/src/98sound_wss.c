@@ -7,7 +7,7 @@
  * Target:
  *   PC-9821 V13 internal WSS-compatible PCM
  *   I/O base: 0F40h
- *   IRQ: INT5, vector 0Dh
+ *   IRQ: IRQ12 (INT5), vector 14h
  *   DMA: ch3
  *
  * Format:
@@ -26,6 +26,7 @@
 #include <strato/strato.h>
 
 /* Standard C */
+#include <stdio.h>
 #include <math.h>
 #include <string.h>
 #include <assert.h>
@@ -39,7 +40,7 @@
  * Format
  *
  * WSS playback format register 08h:
- *   20h = 8000Hz / 16-bit signed linear / mono
+ *   40h = 8000Hz / 16-bit signed linear / mono
  */
 #define SAMPLING_RATE	(8000)
 #define CHANNELS        (1)
@@ -261,6 +262,13 @@ init_sound(void)
 	dpmi_lock_region((void *)&cur_half, 4096);
 
 	/*
+	 * PC-9821 IRQ/DMA routing:
+	 *   bit5-3 = 100b (INT5 / IRQ12), bit2-0 = 011b (DMA #3)
+	 */
+	outp(P_WSS_IRQ_CONFIG, 0x23);
+	outp(WAIT_PORT, 0);
+
+	/*
 	 * Stop codec first, then configure it.
 	 */
 	wss_stop_codec();
@@ -285,18 +293,6 @@ init_sound(void)
 	fill_pending = 0;
 
 	wss_start_codec();
-
-	/* PC-9821内蔵ミキサー(A-Volume)のPCM出力を最大にする */
-	//outp(0x04F0, 0x01); // 左PCM音量指定レジスタを選択
-	//outp(0x04F2, 0x00); // 左PCM音量：00hで最大 (Bit7=0でミュート解除)
-	//outp(0x04F0, 0x02); // 右PCM音量指定レジスタを選択
-	//outp(0x04F2, 0x00); // 右PCM音量：00hで最大
-
-	/* 参考：念のためマスターボリュームも最大（00h）にする */
-	//outp(0x04F0, 0x00); // 左マスター音量
-	//outp(0x04F2, 0x00);
-	//outp(0x04F0, 0x03); // 右マスター音量
-	//outp(0x04F2, 0x00);
 
 	wss_ok = true;
 
@@ -341,7 +337,7 @@ wss_sound_poll(void)
 	if (!fill_pending)
 		return;
 
-printf("fill\n");
+printf("FILL\n");
 
 	_disable();
 	half = fill_half;
@@ -388,12 +384,6 @@ printf("PLAY\n");
 	 * until the first half-buffer IRQ.
 	 */
 	wss_sound_poll();
-
-
-if (inp(P_WSS_STATUS) & 0x01)
-    printf("WSS status IRQ bit is set.\n");
-else
-    printf("NG: WSS status IRQ bit is not set.\n");
 
 	return true;
 }
@@ -471,7 +461,7 @@ wss_wait_ready(void)
 	for (i = 0; i < 100000L; i++) {
 		if ((inp(P_WSS_INDEX) & WSS_INDEX_INIT) == 0)
 			break;
-//		outp(WAIT_PORT, 0); // バスウェイトを入れる
+		outp(WAIT_PORT, 0); // バスウェイトを入れる
 	}
 }
 
@@ -612,6 +602,9 @@ wss_set_format_and_count(void)
 
 	while (inp(P_WSS_INDEX) & WSS_INDEX_INIT)
 		outp(WAIT_PORT, 0);
+
+	while (wss_read(WSS_REG_TEST_INIT) & 0x10)
+		;
 
 	wss_wait_ready();
 }
