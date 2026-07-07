@@ -114,7 +114,6 @@ int hal_main(int argc, char *argv[])
 	if (!init_sound()) {
 		/* Ignore no sound card. */
 	}
-	getchar();
 
 	if (!init_disp()) {
 		/* Error: screen is not available. */
