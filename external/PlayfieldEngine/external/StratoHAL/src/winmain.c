@@ -1742,8 +1742,10 @@ StopVideo(VOID)
 				MFVStopVideo();
 			else
 #endif
+#ifdef HAL_USE_DSVIDEO
 			if (bDShowEnabled)
 				DShowStopVideo();
+#endif
 
 			ShowWindow(hWndRender, SW_SHOW);
 			ShowWindow(hWndVideo, SW_HIDE);

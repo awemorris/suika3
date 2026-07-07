@@ -7,11 +7,9 @@ set(CMAKE_CXX_COMPILER wcl386)
 set(CMAKE_C_COMPILER_TARGET windows)
 set(CMAKE_CXX_COMPILER_TARGET windows)
 
-set(CMAKE_C_FLAGS_INIT "-bt=windows -oneatx -oe=200 -oh -oi -zp4 -fpi87")
+set(CMAKE_C_FLAGS_INIT "-bt=windows")
 
-set(CMAKE_EXE_LINKER_FLAGS
-    "library clib3r"
-    CACHE STRING "" FORCE)
+#set(CMAKE_EXE_LINKER_FLAGS "library clib3r" CACHE STRING "" FORCE)
 
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
