@@ -8,7 +8,7 @@
  *   PC-9821 V13 internal WSS-compatible PCM
  *   I/O base: 0F40h
  *   IRQ: IRQ12 (INT5), vector 14h
- *   DMA: ch3
+ *   DMA: ch1
  *
  * Format:
  *   8000Hz, 16-bit signed little-endian, monaural
@@ -135,7 +135,7 @@
  *
  * Same uPD71037/i8237A-compatible programming model as existing SB16/98 code.
  */
-#define WSS_DMA_CH		3
+#define WSS_DMA_CH		1
 
 #define DMA_PORT_SMASK		0x15        /* single mask */
 #define DMA_PORT_MODE		0x17        /* mode */
@@ -150,8 +150,8 @@ static const int dma_port_bank[4]  = { 0x27, 0x21, 0x23, 0x25 };
  *
  * INT5  -> vector 0Dh.
  */
-#define WSS_IRQ			12		/* IRQ12 (slave 4) */
-#define WSS_VECTOR		0x14		/* Vector for INT5 */
+//#define WSS_IRQ			12		/* IRQ12 (slave 4) */
+//#define WSS_VECTOR		0x14		/* Vector for INT5 */
 
 #define PIC0_CMD		0x00
 #define PIC0_IMR		0x02
@@ -168,6 +168,10 @@ static const int dma_port_bank[4]  = { 0x27, 0x21, 0x23, 0x25 };
  * Driver State
  */
 static bool wss_ok;
+
+static int wss_irq = 12;
+static int wss_vector = 0x14;
+static int wss_dma_ch = 1;
 
 /* DMA buffer below 1MB, not crossing a 64KB boundary. */
 static uint8_t *dma_buf;
@@ -247,6 +251,23 @@ init_sound(void)
 
 	hal_log_info("Mate-X PCM found.");
 
+	/* init_sound()内、wss_detect()成功後 */
+	{
+		int cfg = inp(P_WSS_IRQ_CONFIG);   /* セットアップメニューの設定を反映した値 */
+		static const int irq_tbl[8] = { -1, 3, 5, 10, 12, -1, -1, -1 };
+		static const int dma_tbl[8] = { -1, 0, 1, 3, -1, -1, -1, -1 };
+
+		hal_log_info("WSS: 0F40h = %02Xh", cfg & 0xff);
+
+		wss_irq    = irq_tbl[(cfg >> 3) & 7];
+		wss_dma_ch = dma_tbl[cfg & 7];
+
+		if (wss_irq < 0 || wss_dma_ch < 0)
+			return true;    /* 内蔵サウンド切り離し状態など */
+
+		printf("WSS IRQ %d\n", wss_irq);
+	}
+
 	if (!alloc_dma_buffer()) {
 		hal_log_info("WSS: failed to allocate DMA buffer.");
 		return true;
@@ -262,18 +283,18 @@ init_sound(void)
 	dpmi_lock_region((void *)&cur_half, 4096);
 
 	/*
-	 * PC-9821 IRQ/DMA routing:
-	 *   bit5-3 = 100b (INT5 / IRQ12), bit2-0 = 011b (DMA #3)
-	 */
-	outp(P_WSS_IRQ_CONFIG, 0x23);
-	outp(WAIT_PORT, 0);
-
-	/*
 	 * Stop codec first, then configure it.
 	 */
 	wss_stop_codec();
 	wss_set_format_and_count();
 	wss_set_volume();
+
+	/*
+	 * PC-9821 IRQ/DMA routing:
+	 *   bit5-3 = 100b (INT5 / IRQ12), bit2-0 = 011b (DMA #3)
+	 */
+	outp(P_WSS_IRQ_CONFIG, 0x23);
+	outp(WAIT_PORT, 0);
 
 	/*
 	 * Install interrupt handler before enabling playback IRQ.
@@ -334,10 +355,12 @@ wss_sound_poll(void)
 	if (!wss_ok)
 		return;
 
+printf("FILL1\n");
+
 	if (!fill_pending)
 		return;
 
-printf("FILL\n");
+printf("FILL2\n");
 
 	_disable();
 	half = fill_half;
@@ -799,17 +822,33 @@ hook_irq(void)
     int imr_port;
     int bit;
 
-    old_isr = _dos_getvect(WSS_VECTOR);
-    _dos_setvect(WSS_VECTOR, wss_isr);
+    if (wss_irq == 12)
+	    wss_vector = 0x14;
+    else if (wss_irq == 10)
+	    wss_vector = 0x12;
+    else if (wss_irq == 5)
+	    wss_vector = 0x0d;
+    else if (wss_irq == 3)
+	    wss_vector = 0x0b;
+    else
+	    wss_vector = -1;
+
+    if (wss_vector == -1) {
+	    printf("Invalid IRQ number\n");
+	    return;
+    }
+	    
+    old_isr = _dos_getvect(wss_vector);
+    _dos_setvect(wss_vector, wss_isr);
 
     _disable();
 
-    if (WSS_IRQ < 8) {
+    if (wss_irq < 8) {
         imr_port = PIC0_IMR;
-        bit = 1 << WSS_IRQ;
+        bit = 1 << wss_irq;
     } else {
         imr_port = PIC1_IMR;
-        bit = 1 << (WSS_IRQ - 8);
+        bit = 1 << (wss_irq - 8);
     }
 
     old_imr_masked = inp(imr_port) & bit;
@@ -817,7 +856,7 @@ hook_irq(void)
     /* Unmask WSS IRQ. */
     outp(imr_port, inp(imr_port) & ~bit);
 
-    if (WSS_IRQ >= 8) {
+    if (wss_irq >= 8) {
         /*
          * PC-98 slave PIC cascades into master IR7.
          * Make sure master IR7 is also unmasked.
@@ -838,12 +877,12 @@ unhook_irq(void)
 
     _disable();
 
-    if (WSS_IRQ < 8) {
+    if (wss_irq < 8) {
         imr_port = PIC0_IMR;
-        bit = 1 << WSS_IRQ;
+        bit = 1 << wss_irq;
     } else {
         imr_port = PIC1_IMR;
-        bit = 1 << (WSS_IRQ - 8);
+        bit = 1 << (wss_irq - 8);
     }
 
     if (old_imr_masked)
@@ -851,7 +890,7 @@ unhook_irq(void)
 
     _enable();
 
-    _dos_setvect(WSS_VECTOR, old_isr);
+    _dos_setvect(wss_vector, old_isr);
 #endif
 }
 
