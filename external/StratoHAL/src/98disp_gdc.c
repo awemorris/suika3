@@ -31,7 +31,6 @@
 /* HAL */
 #include <strato/strato.h>	/* Public Interface */
 #include "stdfile.h"		/* Standard C File Implementation */
-#include "98sound.h"		/* PC98 Sound Implementation */
 
 /* Standard C */
 #include <stdio.h>
