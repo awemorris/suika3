@@ -171,7 +171,7 @@ suika3
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-haiku.webp" alt="Suika3 on Haiku OS" width="480"><br>
   <br>
   <br>
-  NEC PC-9801 (80386/JIT)<br>
+  NEC PC-9801 (80386/JIT, PCM sound)<br>
   <img src="https://raw.githubusercontent.com/awemorris/suika3/refs/heads/main/docs/img/screenshot-pc98.png" alt="Suika3 on NEC PC-9801" width="480"><br>
   <br>
   <br>

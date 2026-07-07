@@ -2,6 +2,9 @@
 
 I am pleased to be able to release the first LTS here.
 
+June 30, 2026
+Awe Morris
+
 ## Contributors
 
 Thanks to everyone who contributed code, pull requests, bug reports,
@@ -17,6 +20,19 @@ feature requests, testing, and discussions for this release:
 * @Kotsuider ... reporting critical bugs
 
 ## Notes
+
+### Suika3 26.07.7 LTS: July 8, 2026
+
+Changes:
+- Add PC98 sound (SB16 and WSS)
+- Add PC98 24bpp (Cirrus)
+
+Dependencies
+| Component        | Version    |
+|------------------|------------|
+| Playfield Engine | 1.1.1      |
+| StratoHAL        | 1.1.1      |
+| NoctLang         | 1.1.6      |
 
 ### Suika3 26.07.6 LTS: July 5, 2026
 
