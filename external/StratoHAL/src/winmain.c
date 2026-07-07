@@ -53,6 +53,17 @@
 #include <io.h>				/* _access() */
 #include <locale.h>			/* setlocale() */
 
+
+#ifndef SM_CXVIRTUALSCREEN
+#define SM_CXVIRTUALSCREEN	78
+#endif
+#ifndef SM_CYVIRTUALSCREEN
+#define SM_CYVIRTUALSCREEN	79
+#endif
+#ifndef SM_CMONITORS
+#define SM_CMONITORS		80
+#endif
+
 /* A macro to check whether a file exists. */
 #define FILE_EXISTS(fname)	(_access(fname, 0) != -1)
 
@@ -365,6 +376,7 @@ InitApp(
 	if (rcClient.right != nWindowWidth || rcClient.bottom != nWindowHeight)
 		UpdateScreenOffsetAndScale(rcClient.right, rcClient.bottom);
 
+#if defined(HAL_USE_DSVIDEO)
 	/* Initialize the sound HAL. */
 	if (!DSInitialize(hWndMain))
 	{
@@ -372,25 +384,37 @@ InitApp(
 
 		/* Fall-thru. */
 	}
+#endif
 
+#if defined(HAL_USE_DINPUT)
 	/* Initialize the joystick HAL. */
 	DInputInitialize(hInstance, hWndMain);
+#endif
 
 	/* Init video. */
 #if defined(HAL_ARCH_X86_64) || defined(HAL_ARCH_ARM64)
 	/* On 64-bit environments, DirectShow does not work properly. So, we use Media Foundation if available. */
+#if defined(HAL_USE_MFVIDEO)
 	if (MFVInit())
 		bMFVEnabled = TRUE;
+#endif
 #elif defined(HAL_USE_MFVIDEO)
 	/* On 32-bit environments, we first try using Media Foundation, and if it fails, we try using DirectShow. */
+#if defined(HAL_USE_MFVIDEO)
 	if (MFVInit())
 		bMFVEnabled = TRUE;
-	else if (DShowInit())
-		bDShowEnabled = TRUE;
-#else
-	/* On 32-bit environments, we first try using Media Foundation, and if it fails, we try using DirectShow. */
+	else
+#endif
+#if defined(HAL_USE_DSVIDEO)
 	if (DShowInit())
 		bDShowEnabled = TRUE;
+#endif
+#else
+	/* On 32-bit environments, we first try using Media Foundation, and if it fails, we try using DirectShow. */
+#if defined(HAL_USE_DSVIDEO)
+	if (DShowInit())
+		bDShowEnabled = TRUE;
+#endif
 #endif
 
 	return TRUE;
@@ -400,14 +424,18 @@ InitApp(
 static void
 CleanupApp(void)
 {
+#ifdef HAL_USE_DINPUT
 	/* Cleanup the joystick HAL. */
     DInputCleanup();
+#endif
 
 	/* Cleanup the graphics HAL. */
 	D3DCleanup();
 
+#ifdef HAL_USE_DSVIDEO
 	/* Cleanup the sound HAL. */
 	DSCleanup();
+#endif
 
 	/* Close the log file if opened. */
 	if(pLogFile != NULL)
@@ -687,8 +715,12 @@ RunFrame(void)
 		return TRUE;
 
 	/* Update the gamepad input. */
+#ifdef HAL_USE_DINPUT
 	DInputUpdate();
+#endif
+#ifdef HAL_USE_XINPUT
 	XInputUpdate();
+#endif
 
 	/* If a video is showing. */
 	if(bVideoMode && IsVideoPlaying())
@@ -1398,14 +1430,16 @@ OnSize(void)
 
 	if(bNeedFullScreen)
 	{
+#if defined(_UNICODE) && !defined(HAL_OPENWATCOM)
 		HMONITOR monitor;
 		MONITORINFOEX minfo;
+#endif
 
 		bNeedFullScreen = FALSE;
 		bNeedWindowed = FALSE;
 		bFullScreen = TRUE;
 
-#ifdef _UNICODE
+#if defined(_UNICODE) && !defined(HAL_OPENWATCOM)
 		monitor = MonitorFromWindow(hWndMain, MONITOR_DEFAULTTONEAREST);
 		minfo.cbSize = sizeof(MONITORINFOEX);
 		GetMonitorInfo(monitor, (LPMONITORINFO)&minfo);
@@ -1673,6 +1707,7 @@ PlayVideo(
 		return TRUE;
 	}
 #endif
+#ifdef HAL_USE_DSVIDEO
 	if (bDShowEnabled)
 	{
 		if (!DShowPlayVideo(hWndVideo, pszFileName, nViewportOffsetX, nViewportOffsetY, nViewportWidth, nViewportHeight))
@@ -1685,6 +1720,7 @@ PlayVideo(
 		bVideoMode = TRUE;
 		return TRUE;
 	}
+#endif
 
 	/* No video support. */
 	bVideoMode = FALSE;
@@ -1706,8 +1742,10 @@ StopVideo(VOID)
 				MFVStopVideo();
 			else
 #endif
+#ifdef HAL_USE_DSVIDEO
 			if (bDShowEnabled)
 				DShowStopVideo();
+#endif
 
 			ShowWindow(hWndRender, SW_SHOW);
 			ShowWindow(hWndVideo, SW_HIDE);
@@ -1743,6 +1781,7 @@ IsVideoPlaying(VOID)
 	}
 	else
 #endif
+#ifdef HAL_USE_DSVIDEO
 	if (bDShowEnabled)
 	{
 		if (!DShowIsVideoPlaying())
@@ -1757,6 +1796,7 @@ IsVideoPlaying(VOID)
 		}
 		return TRUE;
 	}
+#endif
 	return FALSE;
 }
 
@@ -1769,8 +1809,10 @@ ProcessVideoEvents(VOID)
 		MFVProcessEvents();
 	else
 #endif
+#ifdef HAL_USE_DSVIDEO
 	if (bDShowEnabled)
 		DShowProcessEvents();
+#endif
 }
 
 /* Do event processing for WM_GRAPHNOTIFY. */
@@ -1779,6 +1821,7 @@ ProcessGraphNotify(VOID)
 {
 	if (bDShowEnabled)
 	{
+#ifdef HAL_USE_DSVIDEO
 		if (!DShowProcessEvents())
 		{
 			bVideoMode = FALSE;
@@ -1788,6 +1831,7 @@ ProcessGraphNotify(VOID)
 			UpdateWindow(hWndRender);
 			UpdateWindow(hWndVideo);
 		}
+#endif
 	}
 }
 

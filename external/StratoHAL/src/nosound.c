@@ -50,7 +50,7 @@ void cleanup_sound(void)
 /*
  * Start sound playback on a stream.
  */
-bool play_sound(int n, struct hal_wave *w)
+bool hal_play_sound(int n, struct hal_wave *w)
 {
 	UNUSED_PARAMETER(n);
 	UNUSED_PARAMETER(w);
@@ -60,7 +60,7 @@ bool play_sound(int n, struct hal_wave *w)
 /*
  * Stop sound playback on a stream.
  */
-bool stop_sound(int n)
+bool hal_stop_sound(int n)
 {
 	UNUSED_PARAMETER(n);
 	return true;
@@ -69,7 +69,7 @@ bool stop_sound(int n)
 /*
  * Set a sound volume for a stream.
  */
-bool set_sound_volume(int n, float vol)
+bool hal_set_sound_volume(int n, float vol)
 {
 	UNUSED_PARAMETER(n);
 	UNUSED_PARAMETER(vol);
@@ -79,7 +79,7 @@ bool set_sound_volume(int n, float vol)
 /*
  * Check if a sound stream is finished.
  */
-bool is_sound_finished(int n)
+bool hal_is_sound_finished(int n)
 {
 	UNUSED_PARAMETER(n);
 	return true;

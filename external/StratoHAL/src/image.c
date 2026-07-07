@@ -1875,8 +1875,7 @@ hal_create_image_with_jpeg(
 /*
  * WebP
  */
-
-#if !defined(HAL_TARGET_PC98) && !defined(HAL_TARGET_PCAT)
+#if !defined(HAL_TARGET_PC98) && !defined(HAL_TARGET_PCAT) && !defined(HAL_OPENWATCOM)
 
 #include <webp/decode.h>
 

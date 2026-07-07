@@ -441,6 +441,8 @@ struct hal_image {
  */
 #if defined(HAL_TARGET_SOLARIS11) && defined(HAL_ARCH_BE)
 #define ORDER_RGBA
+#elif defined(HAL_TARGET_LINUX) && defined(HAL_ARCH_BE)
+#define ORDER_RGBA
 #elif !defined(HAL_USE_QT) && \
     ( \
         defined(HAL_TARGET_WINDOWS) || \
@@ -1786,7 +1788,7 @@ int WINAPI WinMain(							\
 	{								\
 		int WINAPI hal_WinMain(HINSTANCE,			\
 				       HINSTANCE,			\
-				       LPWSTR,				\
+				       LPSTR,				\
 				       int);				\
 		hal_bootstrap_ptr = hal_bootstrap;			\
 		chain_ptr1 = chain1;					\

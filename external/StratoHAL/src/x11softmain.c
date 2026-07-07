@@ -128,6 +128,10 @@ extern char *icon_xpm[35];
 struct hal_callback hal_callback;
 HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
 
+/* argc/argv */
+HAL_DLL int hal_argc;
+HAL_DLL char **hal_argv;
+
 /* forward declaration */
 static void init_locale(void);
 static bool init_hal(int argc, char *argv[]);
@@ -169,6 +173,9 @@ hal_main(
 	int argc,
 	char *argv[])
 {
+	hal_argc = argc;
+	hal_argv = argv;
+
 	/* Initialize HAL. */
 	if (!init_hal(argc, argv))
 		return 1;

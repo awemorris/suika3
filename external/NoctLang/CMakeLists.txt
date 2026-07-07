@@ -377,7 +377,7 @@ if(WIN32)
     if(NOCT_ENABLE_API)
       target_compile_options(noctapi PRIVATE /utf-8)
     endif()
-  else()
+  elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
     target_compile_options(noct PRIVATE -municode -finput-charset=utf-8 -fexec-charset=utf-8)
     if(NOCT_ENABLE_API)
       target_compile_options(noctapi PRIVATE -municode -finput-charset=utf-8 -fexec-charset=utf-8)
@@ -391,7 +391,8 @@ endif()
 # LDFLAGS
 #
 
-if(NOT MSVC)
+if(    NOT MSVC
+   AND NOT CMAKE_C_COMPILER_ID MATCHES "Watcom")
   target_link_libraries(noct PUBLIC m)
 endif()
 
@@ -514,7 +515,7 @@ if(NOCT_ENABLE_CLI)
   if(WIN32)
     if(MSVC)
       target_compile_options(noctcli PRIVATE /utf-8)
-    else()
+    elseif(CMAKE_C_COMPILER_ID MATCHES "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "GNU")
       target_compile_options(noctcli PRIVATE -municode -finput-charset=utf-8 -fexec-charset=utf-8)
     endif()
   endif()

@@ -234,7 +234,9 @@ else()
     include(cmake/ext/zlib.cmake)
     include(cmake/ext/libpng.cmake)
     include(cmake/ext/jpeg.cmake)
-    include(cmake/ext/libwebp.cmake)
+    if(NOT CMAKE_C_COMPILER_ID MATCHES "Watcom")
+      include(cmake/ext/libwebp.cmake)
+    endif()
     include(cmake/ext/libogg.cmake)
     #include(cmake/ext/libvorbis.cmake)   # Replaced by Tremor
     include(cmake/ext/tremor.cmake)       # Instead of libvorbis, use libvorbisidec
@@ -366,6 +368,26 @@ if(STRATO_TARGET_WINDOWS)
   enable_language(CXX)
   set(CMAKE_CXX_STANDARD 11)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  if(NOT CMAKE_C_COMPILER_ID MATCHES "Watcom")
+    set(SRC_D3D9RENDER   src/d3d9render.cc)
+    set(SRC_D3D11RENDER  src/d3d11render.cc)
+    set(SRC_D3D12RENDER  src/d3d12render.cc)
+    set(SRC_DSOUND       src/dsound.c)
+    set(SRC_MFVIDEO      src/mfvideo.cc)
+    set(SRC_DSVIDEO      src/dsvideo.cc)
+    set(SRC_DIGAMEPAD    src/digamepad.cc)
+    set(SRC_XIGAMEPAD    src/xigamepad.c)
+    set(MFVIDEO_FLAGS    HAL_USE_MFVIDEO)
+    set(DSVIDEO_FLAGS    HAL_USE_DSVIDEO)
+    set(DINPUT_FLAGS     HAL_USE_DINPUT)
+    set(XINPUT_FLAGS     HAL_USE_XINPUT)
+  else()
+    set(SRC_DSOUND       src/nosound.c)
+    set(D3D9_FLAGS       HAL_NOD3D9)
+    set(D3D11_FLAGS      HAL_NOD3D11)
+    set(D3D12_FLAGS      HAL_NOD3D12)
+  endif()
+
   set(STRATO_SOURCES
     src/image.c
     src/glyph.c
@@ -373,15 +395,15 @@ if(STRATO_TARGET_WINDOWS)
     src/stdfile.c
     src/winmain.c
     src/d3drender.c
-    src/d3d9render.cc
-    src/d3d11render.cc
-    src/d3d12render.cc
+    ${SRC_D3D9RENDER}
+    ${SRC_D3D11RENDER}
+    ${SRC_D3D12RENDER}
     src/gdirender.c
-    src/dsound.c
-    src/mfvideo.cc
-    src/dsvideo.cc
-    src/digamepad.cc
-    src/xigamepad.c
+    ${SRC_DSOUND}
+    ${SRC_MFVIDEO}
+    ${SRC_DSVIDEO}
+    ${SRC_DIGAMEPAD}
+    ${SRC_XIGAMEPAD}
   )
 endif()
 if(STRATO_TARGET_WINDOWS95)
@@ -675,9 +697,12 @@ if(STRATO_TARGET_PC98)
       src/wave.c
       src/stdfile.c
       src/98main.c
-      # src/glyph.c
-      src/98glyph.c   # PC98 font
-      src/98sound.c
+      # src/glyph.c         # FreeType2
+      src/98glyph.c         # PC98 font
+      src/98disp_gdc.c      # GDC 640x400x4
+      src/98disp_cirrus.c   # CIRRUS 640x48x24
+      src/98sound_sb16.c    # PCM SB16
+      src/98sound_wss.c     # PCM WSS
     )
 endif()
 
@@ -703,14 +728,15 @@ endif()
 if(NOT STRATO_ENABLE_DIST)
   if(STRATO_TARGET_PC98 OR STRATO_TARGET_PCAT)
     set(STRATO_DEPS
-        $<TARGET_OBJECTS:png>
-        $<TARGET_OBJECTS:freetype>
-        $<TARGET_OBJECTS:tremor>
-        $<TARGET_OBJECTS:ogg>
-        $<TARGET_OBJECTS:z>
+      $<TARGET_OBJECTS:png>
+      $<TARGET_OBJECTS:freetype>
+      $<TARGET_OBJECTS:tremor>
+      $<TARGET_OBJECTS:ogg>
+      $<TARGET_OBJECTS:z>
     )
   else()
-    set(STRATO_DEPS
+    if(NOT CMAKE_C_COMPILER_ID MATCHES "Watcom")
+      set(STRATO_DEPS
         $<TARGET_OBJECTS:png>
         $<TARGET_OBJECTS:jpeg>
         $<TARGET_OBJECTS:webp>
@@ -718,7 +744,17 @@ if(NOT STRATO_ENABLE_DIST)
         $<TARGET_OBJECTS:ogg>
         $<TARGET_OBJECTS:freetype>
         $<TARGET_OBJECTS:z>
-    )
+      )
+    else()
+      set(STRATO_DEPS
+        $<TARGET_OBJECTS:png>
+        $<TARGET_OBJECTS:jpeg>
+        $<TARGET_OBJECTS:tremor>
+        $<TARGET_OBJECTS:ogg>
+        $<TARGET_OBJECTS:freetype>
+        $<TARGET_OBJECTS:z>
+      )
+    endif()
   endif()
 endif()
 
@@ -795,7 +831,25 @@ if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_GDK_XBOX_XS)
   add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 
-  target_compile_definitions(strato PRIVATE HAL_USE_MFVIDEO HAL_USE_DSVIDEO)
+  target_compile_definitions(
+    strato
+    PRIVATE
+    ${MFVIDEO_FLAGS}
+    ${DSVIDEO_FLAGS}
+    ${D3D9_FLAGS}
+    ${D3D11_FLAGS}
+    ${D3D12_FLAGS}
+    ${DINPUT_FLAGS}
+    ${XINPUT_FLAGS}
+  )
+
+  if(CMAKE_C_COMPILER_ID MATCHES "Watcom")
+    target_compile_definitions(strato
+      PUBLIC
+      PNGCAPI=__watcall
+      HAL_OPENWATCOM
+    )
+  endif()
 
   target_include_directories(
     strato
