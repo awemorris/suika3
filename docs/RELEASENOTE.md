@@ -26,6 +26,7 @@ feature requests, testing, and discussions for this release:
 Changes:
 - Add PC98 sound (SB16 and WSS)
 - Add PC98 24bpp (Cirrus)
+- Prepare for Debian packaging
 
 Dependencies
 | Component        | Version    |
