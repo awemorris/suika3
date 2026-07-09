@@ -21,6 +21,18 @@ feature requests, testing, and discussions for this release:
 
 ## Notes
 
+### Suika3 26.07.8 LTS: July 10, 2026
+
+Changes:
+- "[BUG] Choose font outline inherits its color from Choose font (Issue #73)"
+
+Dependencies
+| Component        | Version    |
+|------------------|------------|
+| Playfield Engine | 1.1.1      |
+| StratoHAL        | 1.1.1      |
+| NoctLang         | 1.1.6      |
+
 ### Suika3 26.07.7 LTS: July 8, 2026
 
 Changes:

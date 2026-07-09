@@ -525,9 +525,9 @@ draw_text(
 				      (uint32_t)conf_choose_font_idle_g,
 				      (uint32_t)conf_choose_font_idle_b);
 		outline_color = s3_make_pixel(255,
-					      (uint32_t)conf_choose_font_idle_r,
-					      (uint32_t)conf_choose_font_idle_g,
-					      (uint32_t)conf_choose_font_idle_b);
+					      (uint32_t)conf_choose_font_idle_outline_r,
+					      (uint32_t)conf_choose_font_idle_outline_g,
+					      (uint32_t)conf_choose_font_idle_outline_b);
 		outline_width = conf_choose_font_idle_outline_width;
 	} else {
 		color = s3_make_pixel(255,
@@ -535,9 +535,9 @@ draw_text(
 				      (uint32_t)conf_choose_font_hover_g,
 				      (uint32_t)conf_choose_font_hover_b);
 		outline_color = s3_make_pixel(255,
-					      (uint32_t)conf_choose_font_hover_r,
-					      (uint32_t)conf_choose_font_hover_g,
-					      (uint32_t)conf_choose_font_hover_b);
+					      (uint32_t)conf_choose_font_hover_outline_r,
+					      (uint32_t)conf_choose_font_hover_outline_g,
+					      (uint32_t)conf_choose_font_hover_outline_b);
 		outline_width = conf_choose_font_hover_outline_width;
 	}
 

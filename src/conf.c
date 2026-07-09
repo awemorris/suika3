@@ -1891,6 +1891,10 @@ static bool save_value(const char *k, const char *v)
 	char *dup;
 	int i;
 
+	if (strcmp(k, "choose.font.idle.outline.g") == 0) {
+		i = 1;
+	}
+
 	/* Search the rule table and store a value. */
 	for (i = 0; i < RULE_TBL_SIZE; i++) {
 		/* Go to next if the key doesn't match. */
