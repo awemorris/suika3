@@ -111,6 +111,12 @@ jit_build(
                         void *toc;
                         void *env;
                 } desc;
+
+                if (ctx.code_top + 24 >= ctx.code_top) {
+                        rt_error(env, "No JIT space");
+                        return false;
+                }
+
                 desc.entry = (void *)(ctx.code + 24);
                 desc.toc = ppc64_elf_v1_get_toc();
                 desc.env = NULL;
@@ -130,7 +136,7 @@ jit_build(
                 return false;
 
         /* Increment the JIT pointer. */
-        jit_code_region_cur = ctx.code;
+        jit_code_region_cur = (void *)(((uintptr_t)ctx.code + 15) & (uintptr_t)~0xf);
 
         /* Patch branches. */
         for (i = 0; i < ctx.branch_patch_count; i++) {

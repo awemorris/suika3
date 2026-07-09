@@ -1283,13 +1283,12 @@ rt_intrin_Packed_int8(
 	NoctEnv *env)
 {
 	NoctValue v_size, v_ret;
-	int i_size;
+	size_t i_size;
 
 	noct_pin_local(env, 2, &v_size, &v_ret);
 
-	if (!noct_get_arg_check_int(env, 0, &v_size, &i_size))
+	if (!noct_get_arg_check_int_long(env, 0, &v_size, &i_size))
 		return false;
-
 	if (i_size == 0) {
 		noct_error(env, "Packed size is 0.");
 		return false;
@@ -1317,9 +1316,7 @@ rt_intrin_Packed_uint8(
 
 	noct_pin_local(env, 2, &v_size, &v_ret);
 
-	if (!noct_get_arg(env, 0, &v_size))
-		return false;
-	if (!noct_get_size_t(env, &v_size, &i_size))
+	if (!noct_get_arg_check_int_long(env, 0, &v_size, &i_size))
 		return false;
 	if (i_size == 0) {
 		noct_error(env, "Packed size is 0.");
@@ -1348,12 +1345,10 @@ rt_intrin_Packed_int16(
 
 	noct_pin_local(env, 2, &v_size, &v_ret);
 
-	if (!noct_get_arg(env, 0, &v_size))
-		return false;
-	if (!noct_get_size_t(env, &v_size, &i_size))
+	if (!noct_get_arg_check_int_long(env, 0, &v_size, &i_size))
 		return false;
 	if (i_size == 0) {
-		noct_error(env, N_TR("Packed size is 0."));
+		noct_error(env, "Packed size is 0.");
 		return false;
 	}
 	if (i_size > SIZE_MAX / 2) {
@@ -1418,12 +1413,10 @@ rt_intrin_Packed_int32(
 
 	noct_pin_local(env, 2, &v_size, &v_ret);
 
-	if (!noct_get_arg(env, 0, &v_size))
-		return false;
-	if (!noct_get_size_t(env, &v_size, &i_size))
+	if (!noct_get_arg_check_int_long(env, 0, &v_size, &i_size))
 		return false;
 	if (i_size == 0) {
-		noct_error(env, N_TR("Packed size is 0."));
+		noct_error(env, "Packed size is 0.");
 		return false;
 	}
 	if (i_size > SIZE_MAX / 4) {
@@ -1453,12 +1446,10 @@ rt_intrin_Packed_uint32(
 
 	noct_pin_local(env, 2, &v_size, &v_ret);
 
-	if (!noct_get_arg(env, 0, &v_size))
-		return false;
-	if (!noct_get_size_t(env, &v_size, &i_size))
+	if (!noct_get_arg_check_int_long(env, 0, &v_size, &i_size))
 		return false;
 	if (i_size == 0) {
-		noct_error(env, N_TR("Packed size is 0."));
+		noct_error(env, "Packed size is 0.");
 		return false;
 	}
 	if (i_size > SIZE_MAX / 4) {
@@ -1488,12 +1479,14 @@ rt_intrin_Packed_int64(
 
 	noct_pin_local(env, 2, &v_size, &v_ret);
 
-	if (!noct_get_arg(env, 0, &v_size))
-		return false;
-	if (!noct_get_size_t(env, &v_size, &i_size))
+	if (!noct_get_arg_check_int_long(env, 0, &v_size, &i_size))
 		return false;
 	if (i_size == 0) {
 		noct_error(env, "Packed size is 0.");
+		return false;
+	}
+	if (i_size > SIZE_MAX / 8) {
+		noct_error(env, N_TR("Packed size is too large."));
 		return false;
 	}
 
@@ -1519,12 +1512,10 @@ rt_intrin_Packed_uint64(
 
 	noct_pin_local(env, 2, &v_size, &v_ret);
 
-	if (!noct_get_arg(env, 0, &v_size))
-		return false;
-	if (!noct_get_size_t(env, &v_size, &i_size))
+	if (!noct_get_arg_check_int_long(env, 0, &v_size, &i_size))
 		return false;
 	if (i_size == 0) {
-		noct_error(env, N_TR("Packed size is 0."));
+		noct_error(env, "Packed size is 0.");
 		return false;
 	}
 	if (i_size > SIZE_MAX / 8) {
@@ -1554,12 +1545,10 @@ rt_intrin_Packed_float32(
 
 	noct_pin_local(env, 2, &v_size, &v_ret);
 
-	if (!noct_get_arg(env, 0, &v_size))
-		return false;
-	if (!noct_get_size_t(env, &v_size, &i_size))
+	if (!noct_get_arg_check_int_long(env, 0, &v_size, &i_size))
 		return false;
 	if (i_size == 0) {
-		noct_error(env, N_TR("Packed size is 0."));
+		noct_error(env, "Packed size is 0.");
 		return false;
 	}
 	if (i_size > SIZE_MAX / 4) {
@@ -1589,12 +1578,10 @@ rt_intrin_Packed_float64(
 
 	noct_pin_local(env, 2, &v_size, &v_ret);
 
-	if (!noct_get_arg(env, 0, &v_size))
-		return false;
-	if (!noct_get_size_t(env, &v_size, &i_size))
+	if (!noct_get_arg_check_int_long(env, 0, &v_size, &i_size))
 		return false;
 	if (i_size == 0) {
-		noct_error(env, N_TR("Packed size is 0."));
+		noct_error(env, "Packed size is 0.");
 		return false;
 	}
 	if (i_size > SIZE_MAX / 8) {
