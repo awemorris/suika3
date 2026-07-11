@@ -30,6 +30,10 @@
 
 #include <strato/strato.h>
 
+#if defined(HAL_TARGET_PC98)
+void hal_poll_sound(void);
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -284,9 +288,15 @@ hal_clear_image_rect(
 
 	/* Clear pixels of a rectangle. */
 	pixels = img->pixels;
-	for (i = y; i < y + h; i++)
+	for (i = y; i < y + h; i++) {
+#if defined(HAL_TARGET_PC98)
+		/* Let the sound buffer be refilled while we clear the screen. */
+		if ((i & 31) == 0)
+			hal_poll_sound();
+#endif
 		for (j = x; j < x + w; j++)
 			pixels[img->width * i + j] = color;
+	}
 
 	/* Request a texture update. */
 	hal_notify_image_update(img);

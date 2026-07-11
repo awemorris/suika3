@@ -43,6 +43,10 @@
  */
 
 #include <strato/strato.h>
+
+#if defined(HAL_TARGET_PC98)
+void hal_poll_sound(void);
+#endif
 #include "stdfile.h"
 
 #include <stdio.h>
@@ -503,6 +507,16 @@ hal_read_rfile(
 
 	assert(f != NULL);
 	assert(f->fp != NULL);
+
+#if defined(HAL_TARGET_PC98)
+	/*
+	 * Asset loading (PNG decode) never passes through the drawing loops,
+	 * so on a slow machine the sound buffer starves while an image is
+	 * being loaded.  Give it a chance here too.  hal_poll_sound() has a
+	 * reentrancy guard, so the ogg reads issued from inside it are safe.
+	 */
+	hal_poll_sound();
+#endif
 
 	if (f->is_packaged) {
 		/*

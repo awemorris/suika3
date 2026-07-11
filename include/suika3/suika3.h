@@ -406,6 +406,7 @@ struct s3_image;
  */
 struct s3_fade_desc {
 	bool stay;
+	bool param_only;
 	const char *fname;
 	struct s3_image *image;
 	int x;

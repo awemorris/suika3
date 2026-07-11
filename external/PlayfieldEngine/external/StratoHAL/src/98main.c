@@ -69,12 +69,17 @@ HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct 
 int hal_argc;
 char **hal_argv;
 
+/* Alpha blend table. */
+uint8_t alphatable[256][256];
+
 /* Forward Declaration */
+static void init_alphatable(void);
 static bool init_disp(void);
 static void cleanup_disp(void);
 static bool init_sound(void);
 static void cleanup_sound(void);
 static void sound_poll(void);
+void hal_poll_sound(void);
 static void process_input(void);
 static void flip(void);
 static bool open_log_file(void);
@@ -130,6 +135,8 @@ int hal_main(int argc, char *argv[])
 		return 1;
 	}
 
+	init_alphatable();
+
 	while (1) {
 		sound_poll();
 		process_input();
@@ -148,6 +155,18 @@ int hal_main(int argc, char *argv[])
 	cleanup_disp();
 
 	return 0;
+}
+
+static void
+init_alphatable(void)
+{
+	int a, b;
+
+	for (a = 0; a < 256; a++) {
+		for (b = 0; b < 256; b++) {
+			alphatable[a][b] = (uint8_t)(int)(((float)a / 255.0f) * ((float)b / 255.0f) * 255.0f);
+		}
+	}
 }
 
 /*
@@ -945,8 +964,35 @@ cleanup_sound(void)
 {
 	if (sound_driver == SOUND_SB16)
 		sb16_cleanup_sound();
-	else if (sound_driver == SOUND_SB16)
+	else if (sound_driver == SOUND_WSS)
 		wss_cleanup_sound();
+}
+
+/*
+ * Sound buffer refill is driven from the main loop only (sound_poll()).
+ * On a slow machine one iteration of the main loop can take several seconds,
+ * while one half of the WSS/SB16 DMA buffer is only 1.024 s of audio.  The
+ * ISR then flips the half before the app ever gets a chance to refill it, and
+ * the stale half is played again.  Giving the long scanning loops a chance to
+ * poll fixes it: hal_poll_sound() returns immediately unless fill_pending is
+ * set, so the per-row cost is negligible.
+ */
+void
+hal_poll_sound(void)
+{
+	/*
+	 * Reentrancy guard: hal_poll_sound() is also called from
+	 * hal_read_rfile(), and sound_poll() itself reads the ogg stream
+	 * through hal_read_rfile().  Without the guard we would recurse.
+	 */
+	static bool inside = false;
+
+	if (inside)
+		return;
+
+	inside = true;
+	sound_poll();
+	inside = false;
 }
 
 static void

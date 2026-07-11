@@ -80,9 +80,17 @@
 #define WAB_WINDOW_ADDR	0x00F20000UL
 #define WAB_WINDOW_SIZE	0x8000
 
-/* WAB_REG_RELAY: bit1 = register enable, bit0 = 1:98 GDC / 0:accelerator */
-#define WAB_RELAY_GDC	0x03
-#define WAB_RELAY_WAB	0x02
+/*
+ * WAB_REG_RELAY: bit1 = output relay (1: accelerator / 0: 98 GDC),
+ * bit0 = register/MMIO access enable.
+ * (Semantics per NP21/W cirrusvga_ofab(): "dat & 0x2" drives the
+ * relay, "dat & 0x1" is the access enable.  Earlier revisions of
+ * this file had the two bits swapped, so the relay was never
+ * switched back to the GDC on cleanup.)
+ */
+#define WAB_RELAY_GDC	0x00	/* GDC output, access off (exit state) */
+#define WAB_RELAY_SETUP	0x01	/* GDC output, register access on */
+#define WAB_RELAY_WAB	0x03	/* accelerator output, access on */
 
 /* PCI models (Xa7e etc.) have a second relay at 0FACh */
 #define WAB_RELAY2_PORT	0x0fac
@@ -130,6 +138,7 @@ static bool detect_cirrus(void);
 static void wab_write(int reg, int val);
 static int wab_read(int reg);
 static void seq_write(int reg, int val);
+static int seq_read(int reg);
 static void gfx_write(int reg, int val);
 static int crtc_read(int reg);
 static void crtc_write(int reg, int val);
@@ -148,32 +157,48 @@ static void *dpmi_map_physical(uint32_t phys, uint32_t size);
 bool
 cirrus_init_disp(void)
 {
-	/* Standard VGA CRTC values for 640x480, plus our pitch. */
+	/*
+	 * CRTC values for 640x480@60Hz (25.175MHz dot clock).
+	 *
+	 * These are NOT the plain IBM VGA table values: they are the
+	 * exact values the Linux cirrusfb driver computes and writes
+	 * on real Alpine (GD5430/5434/5440) hardware.  The important
+	 * difference is horizontal blanking: on the Cirrus chips the
+	 * Horizontal Blanking End compare is extended to 8 bits with
+	 * CR1A[5:4] as bits <7:6>, so blanking end is programmed as
+	 * the full horizontal total (100 characters = 0110 0100b):
+	 *   CR03[4:0] = 00100b, CR05[7] = 1, CR1A[5:4] = 01b.
+	 * The stock VGA table (CR03=82h/CR1A=00h) leaves the 8-bit
+	 * compare value at 34, so on the real chip the blanking pulse
+	 * never terminates where it should - one cause of a torn or
+	 * blank picture that an emulator (which ignores blanking
+	 * timing entirely) will never show.
+	 */
 	static const uint8_t crtc_tab[] = {
-		0x5f,	/* 00: Horizontal Total */
-		0x4f,	/* 01: Horizontal Display End */
-		0x50,	/* 02: Horizontal Blanking Start */
-		0x82,	/* 03: Horizontal Blanking End */
-		0x54,	/* 04: Horizontal Sync Start */
-		0x80,	/* 05: Horizontal Sync End */
-		0x0b,	/* 06: Vertical Total */
+		0x5f,	/* 00: Horizontal Total (800/8 - 5) */
+		0x4f,	/* 01: Horizontal Display End (640/8 - 1) */
+		0x50,	/* 02: Horizontal Blanking Start (640/8) */
+		0x84,	/* 03: Horizontal Blanking End (=100, low 5 bits) */
+		0x53,	/* 04: Horizontal Sync Start (656/8 + 1) */
+		0x9f,	/* 05: Hsync End (752/8+1)%32, bit7=HBE bit5 */
+		0x0b,	/* 06: Vertical Total (525 - 2, low byte) */
 		0x3e,	/* 07: Overflow */
 		0x00,	/* 08: Preset Row Scan */
-		0x40,	/* 09: Max Scan Line */
+		0x40,	/* 09: Max Scan Line (bit6 = line compare bit9) */
 		0x20,	/* 0A: Cursor Start (off) */
 		0x00,	/* 0B: Cursor End */
 		0x00,	/* 0C: Start Address High */
 		0x00,	/* 0D: Start Address Low */
 		0x00,	/* 0E: Cursor Location High */
 		0x00,	/* 0F: Cursor Location Low */
-		0xea,	/* 10: Vertical Sync Start */
-		0x0c,	/* 11: Vertical Sync End (unprotected) */
-		0xdf,	/* 12: Vertical Display End */
+		0xe9,	/* 10: Vertical Sync Start (489, low byte) */
+		0x6b,	/* 11: Vsync End (491%16), no V-int, unprotected */
+		0xdf,	/* 12: Vertical Display End (479, low byte) */
 		0xf0,	/* 13: Offset (pitch/8 = 1920/8 = 240) */
-		0x00,	/* 14: Underline (byte mode) */
-		0xe7,	/* 15: Vertical Blanking Start */
-		0x04,	/* 16: Vertical Blanking End */
-		0xc3,	/* 17: Mode Control */
+		0x00,	/* 14: Underline */
+		0xe0,	/* 15: Vertical Blanking Start (480, low byte) */
+		0x0b,	/* 16: Vertical Blanking End (523, low byte) */
+		0xc3,	/* 17: Mode Control (byte mode, wrap) */
 		0xff	/* 18: Line Compare */
 	};
 	int i, sr07;
@@ -193,8 +218,8 @@ cirrus_init_disp(void)
 	outp(WAB_PFF82, 0x01);
 	outp(P_SLEEP, 0x01);
 
-	/* Enable WAB registers, keep the 98 GDC on screen for now. */
-	wab_write(WAB_REG_RELAY, WAB_RELAY_GDC);
+	/* Enable WAB register access, keep the 98 GDC on screen for now. */
+	wab_write(WAB_REG_RELAY, WAB_RELAY_SETUP);
 
 	/* Place the VRAM window at 0xF20000. */
 	wab_write(WAB_REG_WINDOW, WAB_WINDOW_F2);
@@ -223,6 +248,21 @@ cirrus_init_disp(void)
 	cirrus_crt27 = (uint8_t)crtc_read(0x27);
 	is_alpine = (cirrus_crt27 >= 0xa0);
 
+	/*
+	 * On PC-98 no VGA BIOS has ever run, so extended registers may
+	 * hold whatever the NEC firmware / a previous OS driver left in
+	 * them.  Explicitly clear the state that can corrupt the
+	 * display (per cirrusfb's init_vgachip):
+	 */
+	if (is_alpine)
+		gfx_write(0x33, 0x00);	/* BLT: back to 542x-compatible */
+	gfx_write(0x31, 0x04);		/* BitBLT reset... */
+	gfx_write(0x31, 0x00);		/* ...end of reset */
+	seq_write(0x10, 0x00);		/* HW cursor X */
+	seq_write(0x11, 0x00);		/* HW cursor Y */
+	seq_write(0x12, 0x00);		/* HW cursor attributes: OFF */
+	seq_write(0x13, 0x00);		/* HW cursor pattern address */
+
 	if (!is_alpine) {
 		/* GD5428: performance/DRAM control (per cirrusfb) */
 		seq_write(0x16, 0x0f);
@@ -247,11 +287,19 @@ cirrus_init_disp(void)
 	 * VCLK3 (selected by MISC clock select = 11b).
 	 * VClk = 14.31818MHz * N / (D * (1 + P)),
 	 * SR0E = N, SR1E = (D << 1) | P.
+	 *
+	 * On the Alpine family (GD5430/34/40) SR1E bit7 MUST also be
+	 * set (cirrusfb: "6 bit denom; ONLY 5434!!! (bugged me 10
+	 * days)"); without it the denominator is misinterpreted and
+	 * the pixel clock - and therefore the H/V sync frequencies -
+	 * come out wrong on real silicon.  Emulators ignore the clock
+	 * registers completely, which is why this was invisible on
+	 * NP21/W.
 	 */
 	if (is_alpine) {
 		/* 3 x 25.175 = 75.525MHz -> N=95, D=18, P=0 (75.57MHz) */
 		seq_write(0x0e, 0x5f);
-		seq_write(0x1e, 0x24);
+		seq_write(0x1e, 0x80 | 0x24);
 	} else {
 		/* 25.175MHz (5428 does not need x3) -> N=74, D=21, P=1 */
 		seq_write(0x0e, 0x4a);
@@ -259,18 +307,30 @@ cirrus_init_disp(void)
 	}
 
 	/*
+	 * SR1F bit6 = "derive VCLK from MCLK".  If a previous driver
+	 * (e.g. the Windows one) left it set, the SR0E/SR1E values
+	 * above would simply be ignored.  Clear it, but preserve the
+	 * MCLK frequency bits NEC programmed for this board's DRAM.
+	 */
+	seq_write(0x1f, seq_read(0x1f) & ~0x40);
+
+	/*
 	 * Miscellaneous Output: negative H/V sync (480-line mode),
 	 * clock select = VCLK3, display memory enabled, color I/O.
 	 */
 	outp(P_MISC_W, 0xcf);
 
-	/* CRTC: unprotect CR0-7 (CR11 bit7), then program the table. */
+	/* CRTC: unprotect CR0-7 (CR11 bit7), then program the table.
+	   CR11 in the table keeps bit7 clear (cirrusfb leaves the
+	   CRTC unprotected too). */
 	crtc_write(0x11, crtc_read(0x11) & 0x7f);
 	for (i = 0; i < (int)sizeof(crtc_tab); i++)
 		crtc_write(i, crtc_tab[i]);
-	crtc_write(0x11, 0x8c);	/* re-protect */
-	crtc_write(0x1a, 0x00);	/* no interlace */
+	/* CR1A: no interlace; bits5:4 = Horiz. Blanking End <7:6>.
+	   Htotal is 100 characters (01100100b) -> bit6 set. */
+	crtc_write(0x1a, 0x10);
 	crtc_write(0x1b, 0x22);	/* ext display: 16bit wrap, pitch bit8=0 */
+	crtc_write(0x1d, 0x00);	/* ext overflow: start address bit19 = 0 */
 
 	/* Graphics Controller */
 	gfx_write(0x00, 0x00);
@@ -333,12 +393,26 @@ cirrus_init_disp(void)
 void
 cirrus_cleanup_disp(void)
 {
-	/* Relay back to the 98 GDC output. */
-	wab_write(WAB_REG_RELAY, WAB_RELAY_GDC);
-	outp(WAB_RELAY2_PORT, 0x00);
+	/* Blank the accelerator output first (SR1 bit5). */
+	seq_write(0x01, 0x21);
+
+	/*
+	 * Relay back to the 98 GDC output: clear bit1 of the relay
+	 * register.  Keep bit0 (register access) for the moment so
+	 * the write above and the ones below still reach the chip,
+	 * then drop it as the final WAB access.
+	 */
+	wab_write(WAB_REG_RELAY, WAB_RELAY_SETUP);
+	outp(WAB_RELAY2_PORT, 0x00);	/* PCI models (harmless elsewhere) */
 
 	/* Return the shared VRAM to the GDC. */
 	outp(VRAM_SW_PORT, VRAM_SW_GDC);
+
+	/* Disable register access; leave the relay on the GDC side. */
+	wab_write(WAB_REG_RELAY, WAB_RELAY_GDC);
+
+	/* Put the video subsystem back to sleep (mirror of init). */
+	outp(WAB_PFF82, 0x00);
 }
 
 /*
@@ -422,6 +496,13 @@ seq_write(int reg, int val)
 {
 	outp(P_SEQ_I, reg);
 	outp(P_SEQ_D, val);
+}
+
+static int
+seq_read(int reg)
+{
+	outp(P_SEQ_I, reg);
+	return inp(P_SEQ_D);
 }
 
 static void

@@ -2602,7 +2602,7 @@ s3_start_fade(
 		int fo_layer= info[i].fo_layer;
 
 		/* Swap the image if the stay flag is not set. */
-		if (!desc[i].stay) {
+		if (!desc[i].stay && !desc[i].param_only) {
 			s3_new_anime_sequence(layer);
 			s3_add_anime_sequence_property_f("start", 0);
 			s3_add_anime_sequence_property_f("end", t);
@@ -2619,7 +2619,6 @@ s3_start_fade(
 			s3_add_anime_sequence_property_i("center-x", desc[i].center_x);
 			s3_add_anime_sequence_property_i("center-y", desc[i].center_y);
 			s3_add_anime_sequence_property_f("from-rotate", desc[i].rotate);
-			s3_add_anime_sequence_property_f("to-rotate", desc[i].rotate);
 			s3_add_anime_sequence_property_f("to-rotate", desc[i].rotate);
 			s3_add_anime_sequence_property_i("blend", blend);
 
@@ -2673,6 +2672,49 @@ s3_start_fade(
 			/* Set the new image file name. */
 			if (!s3_set_layer_file_name(layer, desc[i].fname))
 				return false;
+
+			/* Start the animes. */
+			s3_start_layer_anime(layer);
+			s3_start_layer_anime(fo_layer);
+		} else if (!desc[i].stay && desc[i].param_only) {
+			s3_new_anime_sequence(layer);
+			s3_add_anime_sequence_property_f("start", 0);
+			s3_add_anime_sequence_property_f("end", t);
+			s3_add_anime_sequence_property_i("from-x", layer_x[layer]);
+			s3_add_anime_sequence_property_i("to-x", desc[i].x);
+			s3_add_anime_sequence_property_i("from-y", layer_y[layer]);
+			s3_add_anime_sequence_property_i("to-y", desc[i].y);
+			s3_add_anime_sequence_property_i("from-a", layer_alpha[layer]);
+			s3_add_anime_sequence_property_i("to-a", desc[i].alpha);
+			s3_add_anime_sequence_property_f("from-scale-x", layer_scale_x[layer]);
+			s3_add_anime_sequence_property_f("to-scale-x", desc[i].scale_x);
+			s3_add_anime_sequence_property_f("from-scale-y", layer_scale_y[layer]);
+			s3_add_anime_sequence_property_f("to-scale-y", desc[i].scale_y);
+			s3_add_anime_sequence_property_i("center-x", desc[i].center_x);
+			s3_add_anime_sequence_property_i("center-y", desc[i].center_y);
+			s3_add_anime_sequence_property_f("from-rotate", layer_rotate[layer]);
+			s3_add_anime_sequence_property_f("to-rotate", desc[i].rotate);
+			s3_add_anime_sequence_property_i("blend", blend);
+
+			layer_fading[layer] = true;
+			layer_fading[fo_layer] = false;
+
+			/* Blend. */
+			layer_blend[layer] = method;
+			layer_blend[fo_layer] = method;
+
+			/* Dimming. */
+			layer_dim[layer] = desc[i].dim;
+
+			/* Stop the eye and lip animes. */
+			if (info[i].eye_layer != -1) {
+				s3_clear_layer_anime_sequence(info[i].eye_layer);
+				s3_set_layer_alpha(info[i].eye_layer, 0);
+			}
+			if (info[i].lip_layer != -1) {
+				s3_clear_layer_anime_sequence(info[i].lip_layer);
+				s3_set_layer_alpha(info[i].lip_layer, 0);
+			}
 
 			/* Start the animes. */
 			s3_start_layer_anime(layer);
@@ -2805,6 +2847,10 @@ s3_finish_fade(void)
 		destroy_layer(S3_LAYER_CHC_FO);
 	if (layer_image[S3_LAYER_CHF_FO] != layer_image[S3_LAYER_CHF])
 		destroy_layer(S3_LAYER_CHF_FO);
+
+	/* Restart eye anime.*/
+	for (i = 0; i < S3_CH_ALL_LAYERS; i++)
+		s3_reload_eye_anime(i);
 
 	/* Reset the stage mode. */
 	stage_mode = STAGE_MODE_IDLE;

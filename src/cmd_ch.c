@@ -374,10 +374,12 @@ init(void)
 
 				is_file_specified = true;
 			}
+			desc[i].param_only = false;
 		} else {
 			/* Not specified, leave the image as is. */
 			desc[i].fname = s3_get_layer_file_name(LAYER_INDEX);
 			desc[i].image = s3_get_layer_image(LAYER_INDEX);
+			desc[i].param_only = true;
 		}
 
 		/* Has a x position argument? */
