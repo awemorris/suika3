@@ -288,28 +288,24 @@ See [config.md](config.md) for the full reference.
 
 ### Showing Choices
 
-The `[choose]` tag presents the player with options and jumps to a label based on their selection.
+The `[choose]` tag presents the player with options and set a value to a variable.
 
 ```
 [choose
-    text1="Go to the café"     label1="cafe"
-    text2="Stay in the park"   label2="park"
+    name="result"
+    text1="Go to the cafe"     value1="cafe"
+    text2="Stay in the park"   value2="park"
 ]
 ```
 
 When the player picks an option, execution jumps to the corresponding `[label]`.
 
 ```
-[label name="cafe"]
-[text name="Midori" text="Great idea! Let's go."]
-[click]
-[goto label="end"]
-
-[label name="park"]
-[text name="Midori" text="Actually, let's stay a little longer."]
-[click]
-
-[label name="end"]
+[if lhs="${result}" op="==" rhs="cafe"]
+  [text text="Cafe is selected."]
+[elseif lhs="${result}" op="==" rhs="park"]
+  [text text="Park is selected."]
+[endif]
 ```
 
 You can define up to 8 choices. Add `text3`, `label3`, and so on for more options.
@@ -322,23 +318,21 @@ First, set a variable with the `[choose]` tag's `var` parameter:
 
 ```
 [choose
-    text1="Agree"     label1="agreed"
-    text2="Decline"   label2="declined"
     var="response"
-    val1="agree"
-    val2="decline"
+    text1="Agree"     value1="agreed"
+    text2="Decline"   value2="declined"
 ]
 ```
 
 Then check it later:
 
 ```
-[if cond="response == 'agree'"]
-[text name="Xiaoling" text="I knew you'd say yes!"]
-[click]
-[elseif cond="response == 'decline'"]
-[text name="Xiaoling" text="Oh, that's a shame."]
-[click]
+[if lhs="${response}" op="==" rhs="agreed"]
+    [text name="Xiaoling" text="I knew you'd say yes!"]
+    [click]
+[elseif lhs="${response}" op="==" rhs="declined"]
+    [text name="Xiaoling" text="Oh, that's a shame."]
+    [click]
 [endif]
 ```
 
