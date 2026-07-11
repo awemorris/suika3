@@ -195,7 +195,7 @@ For a complete list of tags, see [novelml-tags.md](novelml-tags.md).
 The `[bg]` tag changes the background image with a crossfade effect.
 
 ```
-[bg file="assets/bg/park.png" time=0.5]
+[bg file="assets/bg/park.png" time="0.5"]
 ```
 
 | Parameter | Description                                      |
@@ -206,7 +206,7 @@ The `[bg]` tag changes the background image with a crossfade effect.
 Place your background images in `assets/bg/`. For our sample game, add a park scene image.
 
 ```
-[bg file="assets/bg/park.png" time=0.5]
+[bg file="assets/bg/park.png" time="0.5"]
 [text name="Midori" text="The park is so peaceful today."]
 [click]
 ```
@@ -218,7 +218,7 @@ Suika3 uses a **layer system**: each character occupies a named layer (`left`, `
 and you can show, hide, or replace characters independently.
 
 ```
-[ch layer="left" file="assets/ch/midori/normal.png" time=0.3]
+[ch layer="left" file="assets/ch/midori/normal.png" time="0.3"]
 ```
 
 | Parameter | Description                                           |
@@ -230,15 +230,15 @@ and you can show, hide, or replace characters independently.
 To hide a character, omit `file` (or set it to empty):
 
 ```
-[ch layer="left" time=0.3]
+[ch layer="left" time="0.3"]
 ```
 
 Add Midori and Xiaoling to the park scene:
 
 ```
-[bg file="assets/bg/park.png" time=0.5]
-[ch layer="left" file="assets/ch/midori/normal.png" time=0.3]
-[ch layer="right" file="assets/ch/xiaoling/normal.png" time=0.3]
+[bg file="assets/bg/park.png" time="0.5"]
+[ch layer="left" file="assets/ch/midori/normal.png" time="0.3"]
+[ch layer="right" file="assets/ch/xiaoling/normal.png" time="0.3"]
 [text name="Midori" text="Oh, Xiaoling! I was just thinking of you."]
 [click]
 [text name="Xiaoling" text="What a coincidence. I was heading to the café."]
@@ -250,7 +250,7 @@ Add Midori and Xiaoling to the park scene:
 `[bgm]` starts a background music track (Ogg Vorbis format). It loops by default.
 
 ```
-[bgm file="assets/bgm/afternoon.ogg" volume=0.8]
+[bgm file="assets/bgm/afternoon.ogg" volume="0.8"]
 ```
 
 `[se]` plays a one-shot sound effect:
@@ -507,7 +507,7 @@ For simple character movements, `[move]` is a convenient shorthand
 that does not require a separate anime file:
 
 ```
-[move layer="left" time=0.5 to-x=r50]
+[move layer="left" time="0.5" to-x="r50"]
 ```
 
 This slides the `left` layer 50 pixels to the right over 0.5 seconds.
@@ -517,8 +517,8 @@ This slides the `left` layer 50 pixels to the right over 0.5 seconds.
 Let's animate Xiaoling entering from the right side:
 
 ```
-[bg file="assets/bg/park.png" time=0.5]
-[ch layer="left" file="assets/ch/midori/normal.png" time=0.3]
+[bg file="assets/bg/park.png" time="0.5"]
+[ch layer="left" file="assets/ch/midori/normal.png" time="0.3"]
 [anime file="assets/anime/slide_in_right.anime"]
 [text name="Midori" text="Oh! You startled me."]
 [click]
