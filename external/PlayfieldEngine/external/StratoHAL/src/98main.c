@@ -105,7 +105,7 @@ int hal_main(int argc, char *argv[])
 	}
 
 	if (!init_file()) {
-		printf("Failed to initialize the file system.\n");
+		hal_log_error("Failed to initialize the file system.\n");
 		return 1;
 	}
 
