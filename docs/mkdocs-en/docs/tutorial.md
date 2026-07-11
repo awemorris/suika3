@@ -152,7 +152,7 @@ Use `[label]` to mark a position in the script, and `[goto]` to jump to it.
 [label name="start"]
 [text name="Midori" text="Let's take a walk!"]
 [click]
-[goto label="start"]
+[goto name="start"]
 ```
 
 This loops the line indefinitely — not very useful here, but essential for menus and loops.
