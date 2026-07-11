@@ -1013,8 +1013,10 @@ parse_tag_document(
 		case ST_TAGNAME:
 			if (len == 0 && (c == ' ' || c == '\r' || c == '\t' || c == '\n'))
 				continue;
-			if (c == '\n')
+			if (c == '\n') {
 				line++;
+				continue;
+			}
 			if (c == ' ' || c == '\r' || c == '\t' || c == '\n') {
 				assert(len > 0);
 				tag_name[len] = '\0';
@@ -1058,8 +1060,10 @@ parse_tag_document(
 				prop_count = 0;
 				continue;
 			}
-			if (len == 0 && c == '\n')
+			if (len == 0 && c == '\n') {
 				line++;
+				continue;
+			}
 			if (len == 0 && (c == ' ' || c == '\r' || c == '\t' || c == '\n'))
 				continue;
 			if (len > 0 && c == '=') {
@@ -1087,10 +1091,12 @@ parse_tag_document(
 			}
 			*error_msg = strdup(S3_TR("Invalid character."));
 			*error_line = line;
-			continue;
+			return false;
 		case ST_PROPVALUE_QUOTE:
-			if (c == '\n')
+			if (c == '\n') {
 				line++;
+				continue;
+			}
 			if (c == ' ' || c == '\r' || c == '\t' || c == '\n')
 				continue;
 			if (c == '\"') {
@@ -1111,7 +1117,9 @@ parse_tag_document(
 				}
 				continue;
 			}
-			continue;
+			*error_msg = strdup(S3_TR("Invalid character."));
+			*error_line = line;
+			return false;
 		case ST_PROPVALUE_BODY:
 			if (c == '\\') {
 				switch (*top) {
