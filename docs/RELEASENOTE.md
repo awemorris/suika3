@@ -21,6 +21,19 @@ feature requests, testing, and discussions for this release:
 
 ## Notes
 
+### Suika3 26.07.9 LTS: July 12, 2026
+
+Changes:
+- [improve] Support alpha-only changes by ch tag #74
+- [fix] [bug] Generate error on unquoted parameter #75
+
+Dependencies
+| Component        | Version    |
+|------------------|------------|
+| Playfield Engine | 1.1.2      |
+| StratoHAL        | 1.1.2      |
+| NoctLang         | 1.1.6      |
+
 ### Suika3 26.07.8 LTS: July 10, 2026
 
 Changes:
