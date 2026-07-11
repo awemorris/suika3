@@ -763,7 +763,7 @@ init_special_action(bool *exit)
 	}
 
 	if (strcmp(action, "hide") == 0) {
-		/* Show the message box. */
+		/* Hide the message box. */
 		s3_show_msgbox(false);
 		s3_show_namebox(false);
 
@@ -773,8 +773,8 @@ init_special_action(bool *exit)
 	}
 	
 	if (strcmp(action, "show") == 0) {
-		/* Hide the message box. */
-		s3_show_msgbox(false);
+		/* Show the message box. */
+		s3_show_msgbox(true);
 
 		/* Exit. */
 		*exit = true;
