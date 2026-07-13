@@ -1399,9 +1399,14 @@ init_click(void)
 static void
 init_repetition(void)
 {
+s3_log_info("%s", is_skippable() ? "skippable" : "not skippable");
+s3_log_info("%s", s3_is_non_interruptible() ? "non-int" : "int");
+s3_log_info("%s", s3_is_control_key_pressed() ? "control" : "not control");
 	if (is_skippable() && !s3_is_non_interruptible() &&
-	    (s3_is_skip_mode() || (!s3_is_auto_mode() && s3_is_control_key_pressed()))) {
+	    (s3_is_skip_mode() ||
+	     (!s3_is_auto_mode() && s3_is_control_key_pressed()))) {
 		/* Do not repeat, display immediately */
+s3_log_info("Hmm?");
 	} else {
 		/* Make the command be called repeatedly */
 		s3_start_command_repetition();
@@ -2008,6 +2013,10 @@ is_fast_forward_by_click(void)
 	if (s3_is_down_key_pressed())
 		return true;
 
+	/* If Control key is pressed, move to click wait */
+	if (s3_is_control_key_pressed())
+		return true;
+
 	/* If clicked, move to click wait */
 	if (is_next_set ||
 	    s3_is_mouse_left_clicked() ||
@@ -2526,13 +2535,13 @@ is_skippable(void)
 	bool is_seen;
 
 	is_seen = s3_get_seen_flags() != 0;
-	if (is_seen) {
+	if (is_seen)
 		return true;
-	} else {
-		if (conf_msgbox_skip_unseen)
-			return true;
-		return false;
-	}
+
+	if (conf_msgbox_skip_unseen)
+		return true;
+
+	return false;
 }
 
 /* Perform text-to-speech */

@@ -214,6 +214,9 @@ s3_move_to_tag_file(const char *file)
 	/* Free the file content. */
 	free(buf);
 
+	/* Load the seen file. */
+	(void)s3_load_seen();
+
 	return true;
 }
 
