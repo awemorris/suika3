@@ -406,6 +406,24 @@ bool conf_gui_history_text_font_tategaki;
 int conf_gui_history_text_margin_line;
 int conf_gui_history_text_margin_char;
 
+/*
+ * Variable Text Font
+ *  - Added in 26.07.10
+ *  - For compatibiity, conf_gui_var_font_select is -1 initially.
+ */
+int conf_gui_var_font_select = -1;
+int conf_gui_var_font_size;
+int conf_gui_var_font_r;
+int conf_gui_var_font_g;
+int conf_gui_var_font_b;
+int conf_gui_var_font_outline_width;
+int conf_gui_var_font_outline_r;
+int conf_gui_var_font_outline_g;
+int conf_gui_var_font_outline_b;
+int conf_gui_var_font_ruby;
+bool conf_gui_var_font_tategaki;
+int conf_gui_var_margin_char;
+
 /* Misc. */
 char *conf_gui_history_quote_name_separator;
 char *conf_gui_history_quote_start;
@@ -881,6 +899,18 @@ static struct rule {
 	{'i',	"gui.preview.font.outline.b",		&conf_gui_preview_font_outline_b,		MUST,	SAVE,	LOCAL},
 	{'i',	"gui.preview.font.ruby",		&conf_gui_preview_font_ruby,			MUST,	SAVE,	LOCAL},
 	{'b',	"gui.preview.font.tategaki",		&conf_gui_preview_font_tategaki,		MUST,	SAVE,	LOCAL},
+	{'i',	"gui.var.font.select",			&conf_gui_var_font_select,			OPTIONAL,	SAVE,	LOCAL},
+	{'i',	"gui.var.font.size",			&conf_gui_var_font_size,			OPTIONAL,	SAVE,	LOCAL},
+	{'i',	"gui.var.font.r",			&conf_gui_var_font_r,				OPTIONAL,	SAVE,	LOCAL},
+	{'i',	"gui.var.font.g",			&conf_gui_var_font_g,				OPTIONAL,	SAVE,	LOCAL},
+	{'i',	"gui.var.font.b",			&conf_gui_var_font_b,				OPTIONAL,	SAVE,	LOCAL},
+	{'i',	"gui.var.font.outline.width",		&conf_gui_var_font_outline_width,		OPTIONAL,	SAVE,	LOCAL},
+	{'i',	"gui.var.font.outline.r",		&conf_gui_var_font_outline_r,			OPTIONAL,	SAVE,	LOCAL},
+	{'i',	"gui.var.font.outline.g",		&conf_gui_var_font_outline_g,			OPTIONAL,	SAVE,	LOCAL},
+	{'i',	"gui.var.font.outline.b",		&conf_gui_var_font_outline_b,			OPTIONAL,	SAVE,	LOCAL},
+	{'i',	"gui.var.font.ruby",			&conf_gui_var_font_ruby,			OPTIONAL,	SAVE,	LOCAL},
+	{'b',	"gui.var.font.tategaki",		&conf_gui_var_font_tategaki,			OPTIONAL,	SAVE,	LOCAL},
+	{'i',	"gui.var.margin.char",			&conf_gui_var_margin_char,			OPTIONAL,	SAVE,	LOCAL},
 
 	/* Initial Volumes (no need to save) */
 	{'f',	"sound.vol.bgm",		&conf_sound_vol_bgm,			MUST,	NOSAVE,	GLOBAL},

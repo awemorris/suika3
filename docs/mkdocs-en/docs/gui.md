@@ -540,10 +540,10 @@ It is used for name editing.
 ```
 var1 {
     type: var;
-    variable: variable_name;
-    x: 0;
-    y: 0;
-    image-idle:    idle.png;
+    var:  variable_name;
+    x:    0;
+    y:    0;
+    image-idle: idle.png;   # Omissible; Add width and height instead.
 }
 ```
 
@@ -554,13 +554,14 @@ It is used for name editing.
 
 ```
 char1 {
-    type: char;
-    variable: variable_name; # Variable name.
-    msg: A;                  # Text to append.
-    x: 0;
-    y: 0;
-    image-idle:    idle.png;
-    image-hover:   hover.png;
+    type:  char;
+    var:   variable_name;   # Variable name.
+    msg:   A;               # Text to append.
+    max:   10;              # Maximum characters.
+    x:     0;
+    y:     0;
+    image-idle:  idle.png;  # Omissible; Add width and height instead.
+    image-hover: hover.png; # Omissible; Add width and height instead.
 }
 ```
 

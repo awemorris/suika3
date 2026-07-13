@@ -3671,17 +3671,19 @@ init_var_buttons(void)
 		if (button[i].rt.img_canvas_idle == NULL)
 			return false;
 
-		s3_draw_image(button[i].rt.img_canvas_idle,
-			      0,
-			      0,
-			      button[i].rt.img_idle,
-			      0,
-			      0,
-			      s3_get_image_width(button[i].rt.img_idle),
-			      s3_get_image_height(button[i].rt.img_idle),
-			      255,
-			      S3_BLEND_COPY);
-		s3_notify_image_update(button[i].rt.img_canvas_idle);
+		if (button[i].rt.img_idle != NULL) {
+			s3_draw_image(button[i].rt.img_canvas_idle,
+				      0,
+				      0,
+				      button[i].rt.img_idle,
+				      0,
+				      0,
+				      s3_get_image_width(button[i].rt.img_idle),
+				      s3_get_image_height(button[i].rt.img_idle),
+				      255,
+				      S3_BLEND_COPY);
+			s3_notify_image_update(button[i].rt.img_canvas_idle);
+		}
 	}
 
 	return true;
@@ -3702,16 +3704,18 @@ draw_var_buttons(void)
 static void
 draw_var_button(int index)
 {
-	s3_draw_image(button[index].rt.img_canvas_idle,
-		      0,
-		      0,
-		      button[index].rt.img_idle,
-		      0,
-		      0,
-		      s3_get_image_width(button[index].rt.img_idle),
-		      s3_get_image_height(button[index].rt.img_idle),
-		      255,
-		      S3_BLEND_COPY);
+	if (button[index].rt.img_idle != NULL) {
+		s3_draw_image(button[index].rt.img_canvas_idle,
+			      0,
+			      0,
+			      button[index].rt.img_idle,
+			      0,
+			      0,
+			      s3_get_image_width(button[index].rt.img_idle),
+			      s3_get_image_height(button[index].rt.img_idle),
+			      255,
+			      S3_BLEND_COPY);
+	}
 	draw_var_value(index);
 }
 
@@ -3725,18 +3729,40 @@ draw_var_value(
 	const char *name;
 	s3_pixel_t color, outline_color;
 	int char_count;
+	int font_select, font_size, outline_width, margin_char;
 
 	b = &button[index];
 
 	/* Get colors. */
-	color = s3_make_pixel(0xff,
-			      (uint32_t)conf_msgbox_font_r,
-			      (uint32_t)conf_msgbox_font_g,
-			      (uint32_t)conf_msgbox_font_b);
-	outline_color = s3_make_pixel(0xff,
-				      (uint32_t)conf_msgbox_font_outline_r,
-				      (uint32_t)conf_msgbox_font_outline_g,
-				      (uint32_t)conf_msgbox_font_outline_b);
+	if (conf_gui_var_font_select == -1) {
+		/* For compatibility before 26.07.10. */
+		font_select = conf_msgbox_font_select;
+		font_size = conf_msgbox_font_size;
+		outline_width = conf_msgbox_font_outline_width;
+		margin_char = conf_msgbox_margin_char;
+		color = s3_make_pixel(0xff,
+				      (uint32_t)conf_msgbox_font_r,
+				      (uint32_t)conf_msgbox_font_g,
+				      (uint32_t)conf_msgbox_font_b);
+		outline_color = s3_make_pixel(0xff,
+					      (uint32_t)conf_msgbox_font_outline_r,
+					      (uint32_t)conf_msgbox_font_outline_g,
+					      (uint32_t)conf_msgbox_font_outline_b);
+	} else {
+		/* Added in 26.07.10. */
+		font_select = conf_gui_var_font_select;
+		font_size = conf_gui_var_font_size;
+		outline_width = conf_gui_var_font_outline_width;
+		margin_char = conf_gui_var_margin_char;
+		color = s3_make_pixel(0xff,
+				      (uint32_t)conf_gui_var_font_r,
+				      (uint32_t)conf_gui_var_font_g,
+				      (uint32_t)conf_gui_var_font_b);
+		outline_color = s3_make_pixel(0xff,
+					      (uint32_t)conf_gui_var_font_outline_r,
+					      (uint32_t)conf_gui_var_font_outline_g,
+					      (uint32_t)conf_gui_var_font_outline_b);
+	}
 
 	/* Get the string to draw. */
 	name = s3_get_variable_string(b->var);
@@ -3746,36 +3772,36 @@ draw_var_value(
 	context = s3_create_drawmsg(
 		b->rt.img_canvas_idle,
 		name,
-		conf_msgbox_font_select,
-		conf_msgbox_font_size,
-		conf_msgbox_font_size,
-		conf_msgbox_font_ruby,
-		conf_msgbox_font_outline_width,
-		0,		/* pen_x */
-		0,		/* pen_y */
+		font_select,
+		font_size,
+		font_size,
+		0,			/* ruby_size */
+		outline_width,
+		0,			/* pen_x */
+		0,			/* pen_y */
 		b->width,
 		b->height,
 		b->margin_left,		/* left_margin */
 		b->margin_right,	/* right_margin */
 		b->margin_top,		/* top_margin */
 		b->margin_bottom,	/* bottom_margin */
-		0,		/* line_margin */
-		conf_msgbox_margin_char,
+		0,			/* line_margin */
+		margin_char,
 		color,
 		outline_color,
-		0,		/* bg_color */
-		false,		/* fill_bg */
-		false,		/* is_dimming */
-		false,		/* ignore_linefeed */
-		false,		/* ignore_font */
-		false,		/* ignore_outline */
-		false,		/* ignore_color */
-		false,		/* ignore_size */
-		false,		/* ignore_position */
-		false,		/* ignore_ruby */
-		true,		/* ignore_wait */
-		NULL,		/* inline_wait_hook */
-		false);		/* use_tategaki */
+		0,			/* bg_color */
+		false,			/* fill_bg */
+		false,			/* is_dimming */
+		false,			/* ignore_linefeed */
+		false,			/* ignore_font */
+		false,			/* ignore_outline */
+		false,			/* ignore_color */
+		false,			/* ignore_size */
+		false,			/* ignore_position */
+		false,			/* ignore_ruby */
+		true,			/* ignore_wait */
+		NULL,			/* inline_wait_hook */
+		false);			/* use_tategaki */
 	if (context == NULL)
 		return;
 	char_count = s3_count_drawmsg_chars(context, NULL);
