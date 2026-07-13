@@ -537,8 +537,10 @@ init(
 	if (!init_special_action(&exit_special)) {
 		return false;
 	} else {
-		if (exit_special)
+		if (exit_special) {
+			*cont = true;
 			return true;
+		}
 	}
 
 	/* Initialize if in auto mode */
@@ -1087,7 +1089,7 @@ init_msgbox(void)
 		return true;
 
 	/* Do LF for page mode if `action="inline"` is not specified. */
-	if (s3_is_page_mode() & !is_page_top && !is_inline) {
+	if (s3_is_page_mode() && !is_page_top && !is_inline) {
 		if (!conf_msgbox_font_tategaki) {
 			pen_x = conf_msgbox_margin_left;
 			pen_y += conf_msgbox_margin_line;
@@ -1647,8 +1649,8 @@ frame_sysbtn(void)
 	}
 
 	/* Load. */
-	if (s3_is_s_key_pressed()) {
-		need_save_mode = true;
+	if (s3_is_l_key_pressed()) {
+		need_load_mode = true;
 		s3_clear_input_state();
 		return true;
 	}
