@@ -51,7 +51,7 @@ static struct s3_image *emoji_image[S3_EMOJI_COUNT];
  * Last codepoint and the cached image.
  */
 struct glyph_cache {
-	int slot;
+	int phys_font_index;
 	uint32_t codepoint;
 	int size;
 	s3_pixel_t color;
@@ -362,21 +362,23 @@ s3_get_string_height(int font_type, int font_size, const char *mbs)
 /* Load a glyph */
 static struct s3_image *
 load_cached_glyph(
-	int slot,
+	int font_slot,
 	uint32_t codepoint,
 	int size,
 	s3_pixel_t color,
 	int outline_width,
 	s3_pixel_t outline_color)
 {
-	int i, lru_index;
+	int i;
+	int phys_font_index;
+	int lru_index;
 	uint64_t lru_time;
 
-	assert(slot >= 0 && slot < S3_FONT_COUNT);
+	assert(font_slot >= 1 && font_slot <= S3_FONT_COUNT);
 	assert(size > 0);
 	assert(outline_width >= 0);
 
-	slot = translate_font_type(slot);
+	phys_font_index = translate_font_type(font_slot);
 
 	/* If cached. */
 	lru_index = 0;
@@ -390,7 +392,7 @@ load_cached_glyph(
 		}
 
 		/* If found a cached glyph. */
-		if (glyph_cache[i].slot == slot &&
+		if (glyph_cache[i].phys_font_index == phys_font_index &&
 		    glyph_cache[i].codepoint == codepoint &&
 		    glyph_cache[i].size == size &&
 		    glyph_cache[i].color == color &&
@@ -415,14 +417,14 @@ load_cached_glyph(
 	}
 
 	/* Load a glyph. */
-	glyph_cache[lru_index].slot = slot;
+	glyph_cache[lru_index].phys_font_index = phys_font_index;
 	glyph_cache[lru_index].codepoint = codepoint;
 	glyph_cache[lru_index].size = size;
 	glyph_cache[lru_index].color = color;
 	glyph_cache[lru_index].outline_width = outline_width;
 	glyph_cache[lru_index].outline_color = outline_color;
 	glyph_cache[lru_index].lru_time = glyph_cache_time++;
-	glyph_cache[lru_index].image = s3_load_glyph_image(slot,
+	glyph_cache[lru_index].image = s3_load_glyph_image(phys_font_index,
 							   codepoint,
 							   size,
 							   color,
@@ -436,12 +438,17 @@ load_cached_glyph(
 
 /* Get an alternative font slot if needed. */
 static int
-translate_font_type(int font_type)
+translate_font_type(
+	int font_type)
 {
-	if (conf_font_ttf[font_type] == NULL)
+	/* Font type starts from 1. */
+	if (font_type <= 0)
+		return S3_FONT_SELECT1;
+		
+	if (conf_font_ttf[font_type - 1] == NULL)
 		return S3_FONT_SELECT1;
 
-	return font_type;
+	return font_type - 1;
 }
 
 /* Check if a supported glyph. */
@@ -819,8 +826,6 @@ s3_draw_message(
 	int i, mblen;
 	int glyph_width, glyph_height, next_glyph_width, next_glyph_height, ofs_x, ofs_y;
 	int ret_width = 0, ret_height = 0;
-
-	context->font = translate_font_type(context->font);
 
 	if (char_count == -1)
 		char_count = s3_count_drawmsg_chars(context, NULL);

@@ -210,7 +210,7 @@ s3_get_image_height(
  */
 struct s3_image *
 s3_load_glyph_image(
-	int font_type,
+	int phys_font_index,
 	uint32_t codepoint,
 	int size,
 	pf_pixel_t color,
@@ -220,7 +220,7 @@ s3_load_glyph_image(
 	struct s3_image *img;
 	char mbs[6];
 
-	assert(font_type >= 0 && font_type < S3_FONT_COUNT);
+	assert(phys_font_index >= 0 && phys_font_index < S3_FONT_COUNT);
 	assert(size > 0);
 	assert(outline_width >= 0);
 
@@ -255,7 +255,7 @@ s3_load_glyph_image(
 
 	/* Get a texture. */
 	if (outline_width == 0) {
-		if (!pf_create_text_texture(font_type,
+		if (!pf_create_text_texture(phys_font_index,
 					    mbs,
 					    size,
 					    color,
@@ -266,7 +266,7 @@ s3_load_glyph_image(
 			return NULL;
 		}
 	} else {
-		if (!pf_create_text_texture_outline(font_type,
+		if (!pf_create_text_texture_outline(phys_font_index,
 						    mbs,
 						    size,
 						    color,
