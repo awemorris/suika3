@@ -1401,14 +1401,10 @@ init_click(void)
 static void
 init_repetition(void)
 {
-s3_log_info("%s", is_skippable() ? "skippable" : "not skippable");
-s3_log_info("%s", s3_is_non_interruptible() ? "non-int" : "int");
-s3_log_info("%s", s3_is_control_key_pressed() ? "control" : "not control");
 	if (is_skippable() && !s3_is_non_interruptible() &&
 	    (s3_is_skip_mode() ||
 	     (!s3_is_auto_mode() && s3_is_control_key_pressed()))) {
 		/* Do not repeat, display immediately */
-s3_log_info("Hmm?");
 	} else {
 		/* Make the command be called repeatedly */
 		s3_start_command_repetition();
