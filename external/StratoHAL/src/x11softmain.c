@@ -1001,14 +1001,14 @@ draw_video_frame(void)
 
 	/* Draw. */
 	hal_draw_image_3d_alpha(back_image,
-				dst_x,
-				dst_y,
-				dst_x + dst_width,
-				dst_y,
-				dst_x,
-				dst_y + dst_height,
-				dst_x + dst_width,
-				dst_y + dst_height,
+				(float)dst_x,
+				(float)dst_y,
+				(float)(dst_x + dst_width),
+				(float)dst_y,
+				(float)dst_x,
+				(float)(dst_y + dst_height),
+				(float)(dst_x + dst_width),
+				(float)(dst_y + dst_height),
 				video_image,
 				0,
 				0,
@@ -1872,10 +1872,10 @@ hal_render_image_cross(
 	hal_draw_image_cross(back_image,
 			     src1_img,
 			     src2_img,
-			     src1_left,
-			     src1_top,
-			     src2_left,
-			     src2_top,
+			     (int)src1_left,
+			     (int)src1_top,
+			     (int)src2_left,
+			     (int)src2_top,
 			     alpha);
 }
 

@@ -495,13 +495,13 @@ on_update(void)
 	pf_is_end_key_pressed = false;
 	pf_is_pageup_key_pressed = false;
 	pf_is_pagedown_key_pressed = false;
-	pf_is_shift_key_pressed = false;
-	pf_is_control_key_pressed = false;
-	pf_is_alt_key_pressed = false;
-	pf_is_left_key_pressed = false;
-	pf_is_right_key_pressed = false;
-	pf_is_up_key_pressed = false;
-	pf_is_down_key_pressed = false;
+	/* pf_is_shift_key_pressed = false; */
+	/* pf_is_control_key_pressed = false; */
+	/* pf_is_alt_key_pressed = false; */
+	/* pf_is_left_key_pressed = false; */
+	/* pf_is_right_key_pressed = false; */
+	/* pf_is_up_key_pressed = false; */
+	/* pf_is_down_key_pressed = false; */
 	pf_is_a_key_pressed = false;
 	pf_is_b_key_pressed = false;
 	pf_is_c_key_pressed = false;
@@ -584,13 +584,13 @@ on_update(void)
 	pfi_set_vm_int("isEndKeyPressed", 0);
 	pfi_set_vm_int("isPageupKeyPressed", 0);
 	pfi_set_vm_int("isPagedownKeyPressed", 0);
-	pfi_set_vm_int("isShiftKeyPressed", 0);
-	pfi_set_vm_int("isControlKeyPressed", 0);
-	pfi_set_vm_int("isAltKeyPressed", 0);
-	pfi_set_vm_int("isLeftKeyPressed", 0);
-	pfi_set_vm_int("isRightKeyPressed", 0);
-	pfi_set_vm_int("isUpKeyPressed", 0);
-	pfi_set_vm_int("isDownKeyPressed", 0);
+	/*pfi_set_vm_int("isShiftKeyPressed", 0); */
+	/*pfi_set_vm_int("isControlKeyPressed", 0); */
+	/*pfi_set_vm_int("isAltKeyPressed", 0); */
+	/*pfi_set_vm_int("isLeftKeyPressed", 0); */
+	/*pfi_set_vm_int("isRightKeyPressed", 0); */
+	/*pfi_set_vm_int("isUpKeyPressed", 0); */
+	/*pfi_set_vm_int("isDownKeyPressed", 0); */
 	pfi_set_vm_int("isAKeyPressed", 0);
 	pfi_set_vm_int("isBKeyPressed", 0);
 	pfi_set_vm_int("isCKeyPressed", 0);

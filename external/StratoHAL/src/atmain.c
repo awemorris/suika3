@@ -179,6 +179,9 @@ static int rshift_b;
 static uint16_t dos_seg;	/* real mode segment */
 static uint16_t dos_sel;	/* protected mode selector (for freeing) */
 
+/* Alpha blend table. */
+uint8_t alphatable[256][256];
+
 /* Log */
 static FILE *log_fp;
 
@@ -191,6 +194,7 @@ int hal_argc;
 char **hal_argv;
 
 /* Forward Declaration */
+static void init_alphatable(void);
 static void init_vram(void);
 static void init_vram_vga_fallback(void);
 static void cleanup_vram(void);
@@ -296,6 +300,18 @@ int hal_main(int argc, char *argv[])
 	cleanup_vram();
 
 	return 0;
+}
+
+static void
+init_alphatable(void)
+{
+	int a, b;
+
+	for (a = 0; a < 256; a++) {
+		for (b = 0; b < 256; b++) {
+			alphatable[a][b] = (uint8_t)(int)(((float)a / 255.0f) * ((float)b / 255.0f) * 255.0f);
+		}
+	}
 }
 
 /* Initialize G-VRAM. */
