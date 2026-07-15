@@ -21,11 +21,13 @@ feature requests, testing, and discussions for this release:
 
 ## Notes
 
-### Suika3 26.07.9 LTS: July 12, 2026
+### Suika3 26.07.9 LTS: July 15, 2026
 
 Changes:
 - [improve] Support alpha-only changes by ch tag #74
 - [fix] [bug] Generate error on unquoted parameter #75
+- [bug] [confirmed] [Question / Feedback] Ctrl key only skips a single message #77
+- [fix] [BUG] font.select always uses base font #78
 
 Dependencies
 | Component        | Version    |
