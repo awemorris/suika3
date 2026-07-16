@@ -1592,7 +1592,7 @@ stories to life.
 
 For studios and developers requiring formal and guaranteed maintenance
 contracts, priority bug fixes, or private consultations, please
-contact us directly via email. I'm committed to ensuring your
+contact me directly via email. I'm committed to ensuring your
 project's success in high-stakes production environments.
 
 In addition, console game development often comes with strict limits
@@ -1609,13 +1609,15 @@ project's scale:
 - Enterprise Titles: Capped at a maximum of 3,000 USD per title
 - Discounts available
 
-- **Contact**: Awe Morris <awe@suika3.vn>
+- **Legal & Business Contact**: `Awe Morris <awe@suika3.vn>`
 
 Not looking for a formal contract? No problem. If you are an indie
-developer or hobbyist and prefer to keep things casual, just ping us
-on GitHub Issue or Discord with any questions. I'm always happy to
-chat, and I'll do my best to respond or push a fix as soon as
-possible! ;-)
+developer or hobbyist and prefer to keep things casual, just ping me
+on GitHub Issue, Discord, or the E-mail below with any questions. I'm
+always happy to chat, and I'll do my best to respond or push a fix as
+soon as possible! ;-)
+
+- **Casual Contact**: `zako@mesugaki.mom`  (Please be gentle, guys...!)
 
 ---
 
