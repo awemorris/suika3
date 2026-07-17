@@ -31,6 +31,7 @@
 /* HAL */
 #include <strato/strato.h>	/* Public Interface */
 #include "stdfile.h"		/* Standard C File Implementation */
+#include "98disp.h"
 
 /* Standard C */
 #include <stdio.h>
@@ -856,13 +857,6 @@ double rint(double x)
 
 static int disp_driver;
 
-bool gdc_init_disp(void);
-bool gdc_cleanup_disp(void);
-bool gdc_flip(void);
-bool cirrus_init_disp(void);
-bool cirrus_cleanup_disp(void);
-bool cirrus_flip(void);
-
 static bool
 init_disp(void)
 {
@@ -875,7 +869,7 @@ init_disp(void)
 		is_gdc_ok = false;
 
 	if (is_true_color_enabled) {
-		if (cirrus_init_disp()) {
+		if (cirrus_init_disp(DISP_640X480, -1)) {
 			disp_driver = DISP_CIRRUS;
 			return true;
 		}
