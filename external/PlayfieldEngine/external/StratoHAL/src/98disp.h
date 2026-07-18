@@ -104,8 +104,8 @@
  * | 1996   | ValueStar       | V12           | Cirrus Logic GD-5446        | Core-Graph Bridge     |                                |
  * | 1996   | ValueStar       | V13           | Cirrus Logic GD-5446        | Core-Graph Bridge     |                                |
  * | 1996   | ValueStar       | V16           | Cirrus Logic GD-5446        | Core-Graph Bridge     |                                |
- * | 1995   | 98NOTE          | Nb10          | Cirrus Logic GD-7548        | PCI (Hybrid)          | Internal CG->Cirrus path.      |
- * | 1996   | 98NOTE          | Nr12          | Cirrus Logic GD-7555        | PCI (Hybrid)          |                                |
+ * | 1995   | 98NOTE          | Nb10          | Cirrus Logic GD-7548        | PCI                   | Internal CG->Cirrus path.      |
+ * | 1996   | 98NOTE          | Nr12          | Cirrus Logic GD-7555        | PCI                   |                                |
  * | 1996   | ValueStar       | V150          | Cirrus Logic GD-5446        | PCI                   | Core-Graph is independent.     |
  * | 1996   | ValueStar       | V166          | Cirrus Logic GD-5446        | PCI                   |                                |
  * | 1996   | ValueStar       | V200          | Cirrus Logic GD-5446        | PCI                   |                                |

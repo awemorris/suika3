@@ -30,281 +30,300 @@
 
 /*
  * ===========================================================================
- * PC-98 built-in Cirrus graphics: analysis summary
+ * PC-9821 graphics attachment taxonomy and Cirrus hardware findings
  * ===========================================================================
  *
- * Three relevant attachment styles exist on PC-9821:
+ * PC-9821 accelerators must be classified by BOTH the graphics chip and the
+ * motherboard-side attachment.  The same GD54xx register file can sit behind
+ * very different address decoders, output relays and clock/mux gates.
+ * Treating every 0FAAh/0FABh interface as a physical WAB was the original
+ * cause of the V13 failure.
  *
- *  (A) Physical WAB / fixed-interface GD5428/5430/5440.  The board or
- *      motherboard exposes 0FAAh/0FABh and relocated VGA registers.
- *  (B) Core-Graph integrated GD5430/5440 (V13 class).  It also exposes
- *      0FAAh/0FABh and relocated registers, but is not a physical WAB and
- *      does not use the WAB-era 0904h/FF82h/6Ah controls.
- *  (C) Independently enumerated PCI Cirrus devices: GD754x/755x laptops
- *      and desktop GD54xx parts such as GD5446.
+ * The useful architectural classes are:
  *
- * For every GD54xx style above, this revision deliberately uses the host
- * memory window only as the CPU-source BitBLT FIFO.  It never depends on
- * CPU-readable VRAM.  The separately verified GD754x/755x path remains
- * linear-aperture based.
+ *  (1) Physical WAB
+ *      A C-bus/local-bus board with a small banked VRAM aperture and legacy
+ *      board wake/ownership controls.  Mate A and early built-ins belong here.
  *
- * ---------------------------------------------------------------------------
- * A. WAB machines (GD5428/5430/5440)
- * ---------------------------------------------------------------------------
- * Machines: PC-9821 Bp/Bs/Be/Bf/Ts/Cs2/Np/Ne2/Nd/Cb/Cx/Cf/Nf/Xe/Cb2/
- * Cx2/Xe10/Xa7e, PC-9801 BX4, SV-98 model1/2/3.
+ *  (2) WAB emulation
+ *      A PCI-era motherboard translates the old WAB programming model for
+ *      DOS/Windows compatibility.  Mate X S3 machines are the main example.
+ *      The accelerator may be PCI/VL internally even though software sees
+ *      WAB-style ports and windows.
  *
- *  - Two-stage indexed I/O at 0FAAh (index) / 0FABh (data):
- *      reg 00h: machine ID (RO).  50h-5Dh and 70h = Cirrus models;
- *               other values are S3/Matrox/Trident WABs; 00h/FFh =
- *               no two-stage accelerator.  The PCI models (Nb10 and
- *               friends) read FFh here.
- *      reg 01h: VRAM window placement.  Values 80h/A0h/C0h/E0h put
- *               the 32KB window at F20000/F00000/F60000/F40000.
- *               (The NT miniport also honors reg 04h bits2:0:
- *               0-3 -> F00000/F20000/F40000/F60000.)
- *      reg 03h: bit1 = video output relay (1: accelerator, 0: the
- *               98 GDC), bit0 = register/MMIO access enable.
- *               Semantics per NP21/W cirrusvga_ofab(); an earlier
- *               revision of this driver had the two bits swapped, so
- *               the relay was never switched back on cleanup.
- *  - Wakeup: 0904h bit5 enables access to POS102 (FF82h); POS102
- *    bit0 and the Sleep Address register (native 3C3h -> relocated
- *    0CA3h) bit0 enable the video subsystem.
- *  - VGA register relocation: 3C0h-3CFh -> 0CA0h-0CAFh, 3D4h ->
- *    0DA4h, 3DAh -> 0DAAh; the mono block 3B0h-3BFh -> 0BA0h-0BAFh
- *    (the NT miniport's access ranges list all three 0BA0h/0CA0h/
- *    0DA0h blocks).  B-MATE would use 0C50h/0D54h/0D5Ah instead
- *    (not needed so far).
- *  - VRAM: 1MB, banked through the 32KB window.  GR09/GR0A are the
- *    bank offset registers, GR0B bit5 selects 16KB granularity.
- *    The mainboard VRAM is shared with the 98 GDC: port 6Ah, 8Eh =
- *    GDC owns it, 8Fh = the accelerator owns it.
- *  - The PCI-era WAB models (Xa7e etc.) add a second relay latch at
- *    0FACh; writing it is harmless on the others.
- *  - The 98NOTE WAB models cannot drive their panels at 24bpp; the
- *    useful depth per machine ID (nec_clgd.txt):
- *        53h Ns / 54h Ts / 56h Ne2: TFT, 4096 colors -> 16bpp
- *        55h Np,Es / 70h Nf:        TFT, full color  -> 16bpp
- *        57h Nd:                    DSTN, 512 colors ->  8bpp
- *        desktops:                                      24bpp
+ *  (3) Core-Graph Bridge with a non-PnP accelerator backend
+ *      The PC-98 GDC/text/relay logic and the accelerator are integrated by a
+ *      NEC bridge.  The accelerator is NOT independently enumerable through
+ *      PCI configuration space; its addresses are fixed by the motherboard.
+ *      ValueStar V7/V10/V13-class GD5430/5440 systems use this arrangement.
  *
- * Chip programming notes (PC-98 has no VGA BIOS, so nothing has ever
- * POSTed the chip; every register must be set by hand and leftover
- * state from previous drivers must be cleaned):
- *  - CR27 >= A0h identifies the Alpine (GD5430/5440) register
- *    semantics vs. the plain GD5428.
- *  - On Alpine, SR1E bit7 MUST be set (6-bit VCLK denominator
- *    select; cirrusfb: "ONLY 5434!!! (bugged me 10 days)").  Without
- *    it the pixel clock and sync frequencies come out wrong on real
- *    silicon.  Emulators ignore the clock registers entirely, which
- *    is why this is invisible on NP21/W.
- *  - SR1F bit6 = "derive VCLK from MCLK".  A previous driver (e.g.
- *    the Windows one) may have left it set, silently overriding
- *    SR0E/SR1E.  Clear it but preserve the MCLK frequency bits NEC
- *    programmed for the board's DRAM.
- *  - Horizontal Blanking End is an 8-bit compare on Cirrus
- *    (CR03[4:0] + CR05[7] + CR1A[5:4]); program the full horizontal
- *    total or the blanking pulse never terminates - a torn or blank
- *    picture on real hardware that emulators (which ignore blanking
- *    timing) will never show.
- *  - The Hidden DAC register is reached by reading 3C6h four times;
- *    the fifth access hits it.
+ *  (4) Core-Graph plus an independently visible PCI accelerator
+ *      The legacy DOS 16-color/text display remains in Core-Graph, while the
+ *      Windows/SVGA accelerator has its own PCI function and BAR.  The Nb10
+ *      (GD7548) is the verified example: 1033:0009 and 1013:0038 coexist.
+ *
+ *  (5) Direct PCI accelerator
+ *      The graphics chip is a normal PCI device with a BAR, as on later
+ *      ValueStar GD5446 systems and PC/AT-like late PC-9821 notebooks.
+ *
+ * This distinction is useful beyond Cirrus.  When porting S3, Trident,
+ * Matrox or NeoMagic support, separate the implementation into two layers:
+ *
+ *   board layer: PCI/Core-Graph detection, external mux/clock/gate sequences,
+ *                relay selection, fixed aperture placement and cleanup;
+ *   chip layer : sequencer/CRTC/graphics/DAC registers, pixel format, pitch,
+ *                clocks and accelerator commands.
+ *
+ * A correctly programmed chip can still produce a continuously drifting or
+ * periodically blanked picture when the board-side Core-Graph gate remains in
+ * the 98-GDC state.  Conversely, a working relay proves only that the output
+ * mux switched; it does not prove that the accelerator clock and VRAM owner
+ * were selected.
  *
  * ---------------------------------------------------------------------------
- * B. PCI built-ins, in particular the CL-GD7548 (PC-9821 Nb10)
+ * A. Fixed 0FAAh/0FABh interface shared by WAB and Core-Graph machines
  * ---------------------------------------------------------------------------
- * PCI topology of the Nb10 (verified on hardware):
  *
- *    0:0.0  8086:1235  class 06h  Intel 430MX host bridge
- *    0:2.0  1033:0009  class 03h  NEC graphics bus bridge.
- *                      BAR0/BAR1 = 0, cmd = 0003h; cfg[40h] =
- *                      00000002h, cfg[44h] = 00000001h - purpose
- *                      unknown, sweeping the values changes nothing.
- *    0:3.0  1013:0038  class 03h  CL-GD7548.  BAR0 = F0000000h
- *                      (size mask FF000000h = a genuine 16MB BAR),
- *                      BAR1 = 0, cmd = 0003h, cfg[40h-FFh] all zero.
+ * Two-stage indexed I/O:
  *
- *  - Part ID CR27 = 38h, continuing VGADOC's 0Bh=7542 / 0Ch=7543 /
- *    0Dh=7541 lineage; the NT driver's internal chip tag is 0Eh.
- *  - VGA registers respond at the NATIVE 3C0h/3D4h block (no
- *    relocation).
- *  - Panel: 640x480 TFT (CR2C = C0h).  VRAM: 1MB, dedicated.
- *  - Video output relay: port 0FACh.  Writing 00h -> 02h latches and
- *    actually switches the panel to the accelerator (verified).
- *  - The ITF firmware POSTs the chip; observed defaults:
- *        SR07=C0 SR09=00 SR0F=11 SR14=00 SR16=F0 SR17=01 SR1F=18
- *        GR0B=00 SR2D=00 CR20=02 CR2C=C0 CR2D=00
- *    SR1F=18h means MCLK is programmed - the "dead because nothing
- *    initialized it" theory was ruled out.
+ *   0FAAh = index, 0FABh = data
  *
- * Symptom that stalled this port: the chip, its VRAM, the BitBLT
- * engine, the scanout and the relay are all alive (register-driven
- * BLT fills reach the panel - white screen / stripe pattern tests),
- * yet reads at BAR0+0 return 00h (decode exists, data does not flow)
- * and writes go nowhere, for every SR07 upper-nibble candidate
- * (F0/C0/00/10/A0), every enable combination ({none, 0FACh=02,
- * 6Ah=8Fh, both, 0904h+FF82h}) and every 4MB quadrant of the BAR;
- * CPU-source BLT FIFO pushes starve everywhere too.  Only the host
- * path looked closed.
+ *   reg00h  machine/interface ID (read only)
+ *   reg01h  legacy bank-window placement
+ *   reg02h  linear-aperture high address byte (physical base = value << 24)
+ *   reg03h  bit1: accelerator output; bit0: register access enable
+ *   reg04h  additional legacy-window selection bits on some machines
  *
- * False positives to beware of on this machine:
- *  - F00000h / C00000h / F20000h are plain system RAM.  Reads and
- *    writes "succeed" but it is not VRAM.
- *  - The BIOS work area 0401h (extended memory amount) is rewritten
- *    by HIMEM (allocations are subtracted), so it cannot be used as
- *    a RAM-amount guard; it reads 1024KB on the test machine.
- *  - The reliable oracle is the BLT engine: fill VRAM with a BLT and
- *    check whether the candidate window follows.  Plain RAM cannot
- *    follow a BLT, so it can never misidentify.
+ * Relocated Cirrus VGA I/O used by the verified GD54xx fixed interface:
  *
- * The breakthrough came from disassembling NEC's own PC-98 NT 4.0
- * miniport CIRRUS.SYS (PE32 native i386, 50,832 bytes, 1996-10-13),
- * which drives this exact chip.  It does not import VideoPortInt10 -
- * it carries a complete VGA-BIOS-less initialization.  Findings (VAs
- * refer to that binary):
+ *   3C0h-3CFh -> 0CA0h-0CAFh
+ *   3D4h/3D5h -> 0DA4h/0DA5h
+ *   3DAh      -> 0DAAh
+ *   mono CRTC -> 0BA4h/0BA5h, status at 0BAAh
+ *   sleep 3C3h -> 0CA3h
  *
- *  - VA 192EDh, the branch taken when [esi+40h] == 40h (= the 7548
- *    path): reads BAR0 from PCI config space (CF8h/CFCh), then ADDS
- *    0C00000h.  ** The 7548 framebuffer is at BAR0 + 12MB, linear,
- *    1MB long - NOT at BAR0 + 0. **  This is the root cause of the
- *    long stall.
- *  - VA 19475h: [esi+40h] == 4 -> banked (window length 20000h =
- *    128KB, VideoPortMapBankedMemory, bank switch writes bank*2 to
- *    GR09/GR0A = 16KB units); anything else -> linear 1MB.  The
- *    7548 is 40h -> linear.
- *  - VA 1A212h, machine dispatch on the Part ID:
- *        38h (7548): tag 0Eh, panel flag 0, [esi+40h]=40h, linear
- *                    1MB, register base swapped to native
- *                    3B0h/3C0h/3D0h.
- *        3Eh / 47h : read port 4B8Eh bits1:0 -> tag 0Fh / 10h.
- *        41h       : write 60h to 8F0h, read 8F2h, bit0 -> tag
- *                    12h / 13h.
- *        others    : bail out with error 37h.
- *  - Access ranges (.data VA 113A0h, defaults; swapped per machine):
- *        I/O: 0BA0h (len 210h), 0CA0h, 0DA0h  (relocated VGA blocks)
- *             5Fh, 68h, 6Ah, A2h
- *             0FAAh/0FABh (variant machines: 0FA2h/0FA3h)
- *             0904h, 0FF82h (variant: 0902h), 09A8h
- *             0FACh (the relay), 0C8Eh, 08F0h, 08F2h
- *        Mem: 00F00000h len 20000h - replaced by BAR0+12MB on the
- *             7548 path, where the port offset table (VA 114B0h+)
- *             also becomes native (+04h=3B4h, +14h=3C4h, +24h=3D4h).
- *  - VA 1B033h: linear machines ([esi+40h] == 8 or 40h) get
- *    SR17 |= 44h.  VGADOC: SR17 bit2 = Enable Memory-Mapped I/O,
- *    bit6 = place the MMIO block in the LAST 256 BYTES of the linear
- *    memory block.  NP21/W's cirrus_linear_writeb uses
- *    (SR17 & 44h) == 44h as its MMIO predicate.
- *  - Mode table at VA 17AE0h, stride 90h, 27 modes.  Layout:
- *    +00h AttributeFlags, +02h planes, +04h bpp, +0Ah/+0Ch/+0Eh
- *    width/height/stride, +14h/+18h X/YMillimeter, +1Ch Frequency,
- *    +34h valid flag, +38h + tag*4 = per-chip-tag command stream
- *    pointer array, +8Ch extra stream.  The interpreter at VA 1AC74h
- *    executes NT4 DDK CMDCNST.H command streams ([ebp-1] selects
- *    MMIO wrappers vs. port I/O).
- *  - Streams valid for tag 0Eh (7548):
- *        mode  8: 640x480   8bpp, stride  640, VA 14080h  (ported)
- *        mode 16: 640x480  16bpp, stride 1280, VA 141F0h  (ported)
- *        mode 23: 640x480  24bpp, stride 2048, VA 14360h  (ported)
- *        mode 11: 800x600   8bpp,             VA 144D0h  (unported)
- *        mode 18: 800x600  16bpp,             VA 14640h  (unported)
- *        mode 13: 1024x768  8bpp,             VA 147B0h  (unported)
- *    (VgaSetMode swaps tag 0Ch for 0Dh when CR2C[7:6]==11b (TFT);
- *    the 7548's tag 0Eh is not subject to that swap.)
- *  - The captured mode set drives the CRTC at the MONO block
- *    3B4h/3B5h because it programs MISC bit0 = 0; it includes the
- *    754x LCD shadow-bank dance (CR2D=80h ... shadow CRTC values ...
- *    CR2D=11h) in the middle of the CRTC list; and it uses fixed
- *    per-depth values:
- *          8bpp : SR07=C1 SR0E=6E SR16=F3 SR1E=2A MISC=E2 HDAC=00
- *          16bpp: SR07=C3 SR0E=66 SR16=F7 SR1E=3A MISC=EE HDAC=E1
- *          24bpp: SR07=C5 SR0E=6E SR16=FE SR1E=2A MISC=EE HDAC=E5
- *    The SR07 upper nibble KEEPS the firmware's Ch - a blind sweep
- *    that tried F1/01/11/A1 could never land on the one correct C3.
- *    The low nibble is the per-depth clocking.  Strides are 640/
- *    1280/2048: note the 24bpp pitch is 2048, not 640*3=1920
- *    (CR13=00h with CR1B bit4 = offset bit8 -> offset 100h chars).
- *    CRTC deltas per depth: CR04/05 = 55/9F (8bpp) vs 54/9E
- *    (16/24), CR13 = 50/A0/00, CR1B = 02/02/12, CR40 = C0/BF/BF,
- *    CR43 = 02/01/00.
- *  - 754x shadow register semantics (confirmed against the NT4 DDK
- *    sample SR754X.C):
- *        CR2C bit3   = 0: access the vertical shadow registers
- *                      (CR6,7,10,11,15,16)
- *        CR2C bit5:4 = 0: X shadow set (with CR2D bit7), 2: Y, 3: Z
- *        CR2D bit7   = access the LCD timing registers
- *                      (CR19h-30h, CR40h-4Fh)
+ * Some B-MATE/variant machines use another relocation and/or FA2h/FA3h;
+ * those variants remain an open porting item.
  *
- * Ecosystem status (why nobody else's code helps here):
- *  - XFree86/X.Org supports only the CLGD755x generation on PC-98
- *    (La series / Aile); the only delta La13 needed was VRAM size
- *    detection, i.e. THAT generation's BAR opens plainly.  Nobody
- *    ever ported the 7548 generation (Nb10 / Na13).
- *  - Windows 3.1 on the Nb10 ships EGCN4.DRV, the standard NEC EGC
- *    driver: it never touches the 7548 at all (GDC passthrough), so
- *    "Windows displays fine" proves nothing about the host path.
- *  - NP21/W: the PCI CL-GD5446 model works with plain BAR access
- *    (24bpp, 2MB VRAM, relay 0FACh FCh -> FEh), and its AUTO WAB
- *    type morphs into an Xe10 the moment 0FAAh is touched - pin the
- *    emulator to a fixed PCI type when testing this path.
+ * reg01 legacy aperture values seen in NEC documentation/emulators include:
+ *
+ *   10h -> 000B0000h
+ *   A0h -> 00F00000h
+ *   80h -> 00F20000h
+ *   C0h -> 00F40000h
+ *   E0h -> 00F60000h
+ *
+ * The bank registers are standard Cirrus GR09/GR0A.  GR0B bit5 selects
+ * 16KB bank units.  Do not confuse GR09 with an aperture-enable register:
+ * it changes the VRAM offset visible through the already selected window.
+ *
+ * reg02 is the NEC linear-window selector.  Writing F0h exposes the linear
+ * host aperture at physical F0000000h on the verified V13.  This fixed
+ * address is not a PCI BAR and does not imply that a 1013:xxxx PCI function
+ * exists.
+ *
+ * ---------------------------------------------------------------------------
+ * B. V13 Core-Graph GD5440: verified facts and interpretation
+ * ---------------------------------------------------------------------------
+ *
+ * Verified PCI enumeration on the test PC-9821 V13:
+ *
+ *   0:0.0  8086:122D class 06h
+ *   0:5.0  1033:0016 class 06h
+ *   0:6.0  1033:0001 class 06h
+ *   0:7.0  1033:0009 class 03h  NEC Core-Graph marker
+ *
+ * No independently enumerable 1013:00A0 GD5440 exists.  The fixed interface
+ * returns ID 5Bh and the relocated Cirrus block returns CR27=A0h.  NEC's
+ * PC-98 display miniport classifies this machine as internal path 08h, rather
+ * than the path-04h banked-WAB route or a normal PCI device.
+ *
+ * The following board-side sequence was recovered from NEC's Windows NT 4.0
+ * CIRRUS.SYS and was reproduced on a real V13.  It is outside the Cirrus VGA
+ * command stream and must precede the vendor mode-register programming:
+ *
+ *   enter accelerator/Core-Graph scanout:
+ *     68h <- 0Eh
+ *     6Ah <- 07h, 8Fh, 06h
+ *     fixed-interface reg03 <- 03h
+ *     5Fh <- 00h twice
+ *     relocated sleep 0CA3h <- 01h
+ *
+ *   return to the 98 GDC:
+ *     relocated sleep 0CA3h <- 00h
+ *     fixed-interface reg03 <- 00h
+ *     5Fh <- 00h
+ *     6Ah <- 07h, 8Eh, 06h
+ *     delay through 5Fh
+ *     68h <- 0Fh
+ *
+ * Documented part of port 006Ah:
+ *
+ *   UNDOCUMENTED 9801/9821 Vol.2, io_disp.txt documents 06h and 07h as
+ *   inhibition/permission of modifications to protected mode flip-flops.
+ *   The same protection state can be queried through the 09A0h status
+ *   mechanism, status selector 08h.  The familiar EGC sequence
+ *   07h -> 05h -> 06h is an established use of this mechanism.
+ *
+ * Important limit of that documentation:
+ *
+ *   io_disp.txt does not mark 8Eh/8Fh as members of the protected-F/F set,
+ *   and its Cirrus VRAM-use description covers GD5428/GD5430, not this
+ *   GD5440 Core-Graph generation.  Therefore it is a verified fact that NEC
+ *   brackets 8Eh/8Fh with 07h/06h here, but it is still an interpretation --
+ *   not a documented specification -- that 8Eh/8Fh themselves require the
+ *   protection window on the V13.
+ *
+ * Hardware observation:
+ *
+ *   Programming the GD5440 and switching reg03 alone produced recognizable
+ *   but continuously drifting scanout with periodic missing pixel groups.
+ *   Replaying the COMPLETE NEC-driver gate sequence made the image stable.
+ *
+ * Likely interpretation (not isolated experimentally):
+ *
+ *   The sequence changes external Core-Graph routing, accelerator/GDC VRAM
+ *   ownership or display-fetch arbitration.  The unstable picture resembled
+ *   a scanout FIFO starvation pattern, but the exact roles of 68h, 5Fh, the
+ *   order of reg03, and the protected 6Ah triplet have not been separated by
+ *   one-at-a-time A/B tests.  Keep the sequence verbatim.  It is included as
+ *   a reference for future S3, Trident, Matrox and NeoMagic Core-Graph ports,
+ *   not as proof that those machines use identical values.
+ *
+ * The recovered path-08h Cirrus mode stream is also board-specific.  For
+ * 640x480 24bpp the verified key state is:
+ *
+ *   SR07=15h  SR0E=60h  SR1E=3Bh  SR17=75h  SR18=00h  SR1F=20h
+ *   MISC=E3h  CR13=00h  CR1B=32h  GR0B=21h  Hidden DAC=E5h
+ *   pitch=2048 bytes (not 640*3)
+ *
+ * SR07's high nibble describes the board memory wiring; copying A5h from a
+ * normally attached PCI Alpine is wrong on this route.  SR17 bit2 and bit6
+ * enable MMIO in the final 256 bytes of the linear aperture.  Direct clears
+ * must not overwrite that area; the visible 640x480x2048 scanout occupies
+ * offsets 000000h-0EFFFFh and is safe.
+ *
+ * ---------------------------------------------------------------------------
+ * C. VRAM aperture and CPU-source BitBLT FIFO: both verified on the V13
+ * ---------------------------------------------------------------------------
+ *
+ * The Core-Graph gate sequence was the missing prerequisite for normal host
+ * access.  With it active, reg02=F0h exposes a working 1MB linear framebuffer
+ * at physical F0000000h, and direct CPU rendering is stable on real hardware.
+ *
+ * The SAME host window also feeds a Cirrus MEMSYSSRC system-to-screen BLT.
+ * There is no separate S3-style I/O pixel-transfer port: while the BLT waits
+ * for source data, memory writes to the host aperture are consumed by its
+ * source FIFO; while the BLT is idle, ordinary writes reach VRAM.
+ *
+ * Verified V13 behavior:
+ *
+ *   - reg02=F0h/F0000000h works as a direct linear framebuffer after the
+ *     NEC-driver board sequence has selected the accelerator path.
+ *   - the same reg02 window satisfies MEMSYSSRC CPU-source BLTs.
+ *   - reg01=A0h/F00000h did not satisfy that FIFO transfer; GR31 remained
+ *     0Bh waiting for source data.
+ *   - 1-byte and 2-byte FIFO writes did not complete a 921600-byte transfer.
+ *   - 4-byte writes completed after exactly 230400 dword cycles.
+ *
+ * FIFO submission on this path therefore uses 32-bit writes.  The proven FIFO
+ * implementation remains as a fallback and hardware oracle; select it with
+ * STRATO_CIRRUS_HOST=fifo.  Direct VRAM aperture rendering is the default.
+ *
+ * Before direct aperture access, reset the BLT engine with GR31 04h->00h.
+ * An interrupted system-source BLT would otherwise steal framebuffer writes
+ * and make a valid aperture appear broken.  With SR17=75h, also avoid the
+ * MMIO block in the final 256 bytes of the 1MB host window.
+ *
+ * ---------------------------------------------------------------------------
+ * D. Physical WAB/fixed-interface path
+ * ---------------------------------------------------------------------------
+ *
+ * Physical/older machines may require the WAB wake controls:
+ *
+ *   0904h bit5, FF82h bit0, relocated sleep bit0 and the 6Ah ownership path.
+ *
+ * The 32KB reg01 window is used with GR09 bank changes.  The driver preserves
+ * and restores every board register instead of writing fixed cleanup values.
+ * PCI-era WAB-emulation systems may additionally use 0FACh.  Do not infer the
+ * necessary relay/gate sequence solely from chip vendor/device IDs; use the
+ * machine ID and, where available, the NEC driver dispatch path.
+ *
+ * ---------------------------------------------------------------------------
+ * E. Independently visible PCI Cirrus
+ * ---------------------------------------------------------------------------
+ *
+ * Desktop GD543x/5446/5480 parts use their PCI BAR directly.  They can use
+ * either direct aperture writes (default) or the retained CPU-source FIFO.
+ * NP21/W's PCI GD5446 has verified the common FIFO code and direct BAR path.
+ *
+ * The Nb10 is different: Core-Graph still owns the DOS text/16-color path,
+ * while GD7548 is independently visible as 1013:0038.  The GD7548 framebuffer
+ * is at BAR0+0C00000h, not BAR0+0.  It uses native VGA ports and 0FACh as the
+ * panel/output mux.  Its LCD mode streams and 2048-byte 24bpp pitch remain a
+ * separate path in this file.
+ *
+ * ---------------------------------------------------------------------------
+ * F. Porting guidance for S3, Trident, Matrox and other PC-9821 accelerators
+ * ---------------------------------------------------------------------------
+ *
+ *  1. Enumerate PCI first, but a class-03 NEC bridge may represent only the
+ *     board front-end.  Absence of the accelerator vendor ID does not mean
+ *     absence of the accelerator.
+ *  2. Probe fixed-interface IDs non-destructively and validate the backend
+ *     chip through its relocated register lock/ID mechanism.
+ *  3. Recover the motherboard gate/relay sequence separately from the chip
+ *     mode table.  NEC miniports often execute board I/O before/after the
+ *     vendor command stream.
+ *  4. Preserve exact command order.  68h/6Ah sequences and wait-port writes
+ *     are not replaceable by read-modify-write of a single imagined register.
+ *  5. Distinguish the DOS/GDC plane from the Windows accelerator plane.
+ *     Core-Graph and a PCI accelerator may coexist, especially on notebooks.
+ *  6. Verify host-memory semantics with a hardware oracle: BLT completion,
+ *     stable scanout and reversible cleanup are stronger evidence than a
+ *     successful CPU readback from a candidate physical address.
+ *  7. Keep a FIFO/accelerator diagnostic path even after direct framebuffer
+ *     rendering works; it can prove the VRAM and scanout independently of
+ *     CPU readback and is invaluable on another Core-Graph generation.
+ *
+ * ---------------------------------------------------------------------------
+ * Driver design in this revision
+ * ---------------------------------------------------------------------------
+ *
+ *  - Probe independently visible PCI devices first, then the fixed
+ *    0FAAh/0FABh interface.
+ *  - V13 ID 5Bh uses the recovered NEC-driver path-08h board sequence and
+ *    Cirrus mode stream; function names use _necdrv_ to describe provenance
+ *    without tying the hardware mechanism to a particular operating system.
+ *  - GD54xx default host path is verified direct VRAM aperture rendering.
+ *  - STRATO_CIRRUS_HOST=fifo retains the verified 32-bit CPU-source BLT path.
+ *  - Fixed physical WABs use their banked reg01 aperture for direct drawing.
+ *  - Core-Graph path 08h uses reg02=F0h and a 1MB map at F0000000h.
+ *  - PCI desktop GD54xx maps the BAR framebuffer for direct drawing.
+ *  - GD754x/755x continue to use their separately verified linear path.
+ *  - Hardware logs and explanatory comments are intentionally retained as a
+ *    porting record for other Core-Graph-backed graphics chips.
+ *
+ * References used during bring-up:
+ *  - NEC PC-98 Windows NT 4.0 CIRRUS.SYS disassembly (board gates, dispatch,
+ *    framebuffer placement and exact Cirrus mode streams)
+ *  - Windows NT DDK Cirrus miniport samples/command-stream definitions
+ *  - UNDOCUMENTED 9801/9821 Vol.2 (Odaka/Kono), especially io_disp.txt
+ *    port 006Ah and 09A0h status 08h; also io_egc.txt, io_wab.txt and
+ *    nec_clgd.txt (published at webtech.co.jp)
+ *  - CL-GD54xx/7548 documentation and VGADOC register descriptions
+ *  - Linux cirrusfb and XFree86 PC-98 drivers
+ *  - NP21/W wab/cirrus_vga.c and fixed-machine models
  *
  * Open items:
- *  - Real-hardware confirmation that the +12MB aperture works.
- *  - The 800x600 / 1024x768 754x streams are unported (needed for
- *    the larger Lavie panels, e.g. Na13).
- *  - Ports 0FA2h/0FA3h (used by NT's variant machines instead of
- *    0FAAh/0FABh) are worth cross-checking against the WAB path.
- *  - Ports 4B8Eh, 8F0h/8F2h, 0C8Eh, 09A8h, 0902h/0904h, 0FF82h:
- *    detailed purpose unknown (unused on the 7548 path).
- *  - CR29 bit6 flutters run-to-run (08h<->48h): suspected V-Port
- *    live status.
- *  - The meaning of BAR1's low bits (& E0h) read by the
- *    [esi+40h]==80h branch (BAR1=0 on the 7548, irrelevant there).
- *
- * References:
- *  - NEC PC-98 NT4 miniport CIRRUS.SYS disassembly (primary source:
- *    FB address, mode streams, SR17, access ranges)
- *  - NT4 DDK video/miniport/cirrus (CMDCNST.H stream format,
- *    SR754X.C, structure layouts)
- *  - VGADOC CIRRUS.TXT (SR07[7:4] map field, SR09[3:0] VRAM size,
- *    CR2C/CR2D)
- *  - Linux cirrusfb (Alpine init, chip-side mode values)
- *  - XFree86 alp_driver.c (754x VRAM sizing, LCD probe)
- *  - NP21/W wab/wab.c, wab/cirrus_vga.c (WAB relay semantics, PCI
- *    model behavior)
- *  - UNDOCUMENTED 9801/9821 Vol.2 io_wab.txt / nec_clgd.txt
- *  - CL-GD7548 Product Bulletin (dual aperture, programmable linear
- *    addressing)
- *
+ *  - Isolate which members of the complete NEC-driver gate sequence are
+ *    individually necessary; in particular test 07h/06h, 68h and 5Fh one at
+ *    a time, and inspect the 09A0h protection status where practical.
+ *  - Port path-08h 800x600 streams and variant fixed-interface port bases.
+ *  - Recover equivalent board-side Core-Graph sequences for S3, Trident,
+ *    Matrox and NeoMagic instead of assuming the V13 values are universal.
+ *  - Confirm physical-WAB FIFO behavior separately from direct banked writes.
  * ===========================================================================
- * Driver design
- * ===========================================================================
- *  - cirrus_init_disp(mode, bpp) probes PCI first, then uses WAB as
- *    a fallback.  This avoids false WAB IDs on PCI-on-board systems
- *    such as V13.  Each probe is
- *    non-destructive until a chip is positively identified; if
- *    neither finds a Cirrus, false is returned so the main code can
- *    try other display chips.
- *  - GD54xx host writes are FIFO-only: both fixed-interface GD5428/
- *    5430/5440 and independently enumerated PCI GD54xx use the same
- *    CPU-source BitBLT path.  The host window is only a write port for
- *    source dwords; it is never treated as readable VRAM.  GD754x/755x
- *    retain their separately verified linear-aperture path.
- *  - Modes: the WAB and desktop-PCI paths support 640x480 (8/16/24
- *    bpp) and 800x600 (8/16 bpp; 24bpp does not fit 1MB VRAM).  The
- *    754x laptop path supports 640x480 only (NEC's streams for the
- *    larger modes exist but are unported).  1024x768/1280x1024 are
- *    rejected.
- *  - bpp == -1 picks the highest depth the machine supports: 24 on
- *    desktops, the panel cap on WAB 98NOTEs, and NEC's panel default
- *    of 16bpp on the 754x laptops (24bpp remains selectable
- *    explicitly; the NT miniport offers it too).
- *  - STRATO_CIRRUS_FORCE=54|75 restricts the probe to one family
- *    for real-hardware bring-up.
- *  - Verbose by design: this driver only runs when the user passes
- *    the -24 option, so the detailed WAB/PCI/register dumps below
- *    are expected output, and they have repeatedly been the only
- *    way to debug real hardware.
  */
 
 /* HAL */
@@ -366,13 +385,14 @@ static struct cirrus_disp {
 	uint16_t io_3d4_col, io_3da_col;
 	uint16_t io_3d4_mono, io_3da_mono;
 
-	/* Host-visible memory window (FIFO port on GD54xx). */
+	/* Host-visible aperture; the same writes become FIFO data during MEMSYSSRC. */
 	uint8_t *fb;
 	uint32_t fb_phys;
 	bool linear;		/* true: linear; false: 32KB banked window */
 	uint32_t vram_size;
 	int cur_bank;
-	bool fifo_only;	/* true: all host-to-VRAM writes go through CPU-source BLT */
+	bool fifo_only;	/* true: CPU-source BLT FIFO; false: direct aperture */
+	bool fifo_capable;	/* GD54xx host path can use retained FIFO code */
 
 	/* Chip information (for logging / decisions). */
 	uint8_t wab_id;		/* raw 0FAAh register 00h readout */
@@ -384,6 +404,12 @@ static struct cirrus_disp {
 	int lcd_w;
 	int lcd_h;
 } cdisp;
+
+/*
+ * Requested GD54xx host path.  Direct aperture is the default; the proven
+ * CPU-source FIFO path remains selectable for diagnosis and fallback.
+ */
+static bool gd54_fifo_requested;
 
 /* Blit placement (centering + clip against the screen). */
 static int ofs_x, ofs_y;
@@ -424,7 +450,7 @@ static void cl_program_crtc(void);
 static void cl_program_gc_ac(void);
 static void cl_load_palette(void);
 static void cl_modeset_generic(bool banked);
-static void cl_modeset_coregraph_nt4(void);
+static void cl_modeset_coregraph_necdrv(void);
 static int cl_resolve_bpp(int req, int cap, int w, int h,
 			  uint32_t vram, const char *tag);
 
@@ -432,6 +458,7 @@ static int cl_resolve_bpp(int req, int cap, int w, int h,
 static void *cl_map_physical(uint32_t phys, uint32_t size);
 static bool cl_unmap_physical(void *linear);
 static void cl_release_fb_mapping(void);
+static bool cl_aperture_clear_visible(void);
 static bool cl_blt_fifo_clear_visible(void);
 static bool cl_blt_fifo_pattern_visible(void);
 static void cirrus_flip_fifo(void);
@@ -451,7 +478,7 @@ static void cirrus75_cleanup(void);
 bool
 cirrus_init_disp(int mode, int bpp)
 {
-	const char *force, *yoff_env;
+	const char *force, *host_env, *yoff_env;
 	char *endp;
 	long yoff_value;
 	int max_y;
@@ -470,7 +497,20 @@ cirrus_init_disp(int mode, int bpp)
 
 	hal_log_info("CIRRUS: probing; requested %dx%d, depth %d (-1 = auto).",
 		     disp_geo[mode].w, disp_geo[mode].h, bpp);
-	hal_log_info("CIRRUS-BUILD: GD54XX-FIFO V13-PRODUCTION V6.");
+	hal_log_info("CIRRUS-BUILD: GD54XX COREGRAPH SUMMARY V8.");
+
+	gd54_fifo_requested = false;
+	host_env = getenv("STRATO_CIRRUS_HOST");
+	if (host_env != NULL) {
+		if (strcmp(host_env, "fifo") == 0)
+			gd54_fifo_requested = true;
+		else if (strcmp(host_env, "aperture") != 0)
+			hal_log_info("CIRRUS: unknown STRATO_CIRRUS_HOST=%s; "
+			             "using aperture.", host_env);
+	}
+	hal_log_info("CIRRUS: requested GD54xx host path: %s.",
+	             gd54_fifo_requested ? "CPU-source BLT FIFO" :
+	                                     "direct VRAM aperture");
 
 	force = getenv("STRATO_CIRRUS_FORCE");
 	if (force != NULL)
@@ -559,9 +599,12 @@ cirrus_init_disp(int mode, int bpp)
 			     "%08lXh, 16KB granularity, %luKB VRAM.",
 			     (unsigned long)cdisp.fb_phys,
 			     (unsigned long)(cdisp.vram_size >> 10));
-	hal_log_info("CIRRUS: blitter  : %s.",
-	             cdisp.fifo_only ? "CPU-source FIFO for all GD54xx transfers" :
-	                               "unused (aperture-only driver)");
+	if (cdisp.fifo_only)
+		hal_log_info("CIRRUS: blitter  : CPU-source FIFO is the active host path.");
+	else if (cdisp.fifo_capable)
+		hal_log_info("CIRRUS: blitter  : idle; CPU-source FIFO code retained as fallback.");
+	else
+		hal_log_info("CIRRUS: blitter  : unused on this chip path.");
 	hal_log_info("CIRRUS: blit     : game %dx%d -> +%d,+%d "
 		     "(draw %dx%d).",
 		     game_width, game_height, ofs_x, ofs_y, draw_w, draw_h);
@@ -1235,20 +1278,35 @@ cl_modeset_generic(bool banked)
 
 
 /*
- * NEC NT4 CIRRUS.SYS "path 8" mode set for the linear onboard GD54xx
+ * NEC-driver "path 08h" mode set for the linear onboard GD54xx
  * family (machine IDs 58h-5Dh, including the V13 ID 5Bh).
  *
- * These values are intentionally not folded into cl_modeset_generic().
- * The board wiring is different from both a classic banked WAB and a
- * normally enumerated PCI Alpine: SR07 uses the 1xh map, MISC is E3h,
- * GR0B is 21h, and 24bpp uses a fixed 2048-byte pitch.
+ * IMPORTANT FOR OTHER CORE-GRAPH PORTS:
+ * This is only the vendor-chip half of mode setting.  The caller must first
+ * execute coregraph_necdrv_gate_enter(), which configures the surrounding NEC
+ * clock/MUX/VRAM-routing LSI.  S3, Trident or Matrox Core-Graph ports should
+ * expect the same two-layer design, but must recover their own board sequence
+ * and their own vendor register stream rather than copying these Cirrus values.
  *
- * Only the three 640x480 streams have been transcribed so far.  The
- * function leaves the screen blanked after programming; the caller clears
- * VRAM and then writes SR01=01h.
+ * These values are intentionally not folded into cl_modeset_generic().
+ * The board wiring is different from both a classic banked WAB and a normally
+ * enumerated PCI Alpine:
+ *
+ *   SR07  high nibble selects the Core-Graph memory wiring; low bits select
+ *         packed-pixel depth.  V13 24bpp is 15h, not the PCI-Alpine A5h.
+ *   SR0E/SR1E form VCLK3; SR1F must not override it from MCLK.
+ *   SR17  enables the linear host path and places MMIO in its final 256 bytes.
+ *   SR18  bit6 is cleared by the NEC postlude after the command stream.
+ *   CR13/CR1B together encode the scanline offset; 24bpp is 2048 bytes.
+ *   MISC  E3h selects the clock/sync and keeps the relocated color CRTC block.
+ *   HDR   selects the RAMDAC packed-pixel interpretation (E5h for 24bpp).
+ *
+ * Only the three 640x480 streams have been transcribed so far.  The function
+ * leaves the screen blanked; the caller resets BLT state, clears VRAM through
+ * the selected host method and finally writes SR01=01h.
  */
 static void
-cl_modeset_coregraph_nt4(void)
+cl_modeset_coregraph_necdrv(void)
 {
 	static const uint8_t seq_idx[] = {
 		0x00, 0x01, 0x02, 0x03, 0x04, 0x07, 0x08,
@@ -1372,7 +1430,7 @@ cl_modeset_coregraph_nt4(void)
 	cl_seq_write(0x17, (uint8_t)(cl_seq_read(0x17) | 0x44));
 
 	/*
-	 * Exact NT4 postlude for chip tag 07h (V13 ID 5Bh): after the mode
+	 * Exact NEC-driver postlude for chip tag 07h (V13 ID 5Bh): after the mode
 	 * command stream and SR17 update, CIRRUS.SYS clears SR18 bit6.
 	 * The previous diagnostic transcription missed this operation and left
 	 * the Signature Generator Control register at 40h.
@@ -1391,7 +1449,7 @@ cl_modeset_coregraph_nt4(void)
 	/* Keep scanout blank until the framebuffer has been cleared. */
 	cl_seq_write(0x01, 0x21);
 
-	hal_log_info("CIRRUS-CORE: exact NT4 path-8 mode: SR07=%02Xh "
+	hal_log_info("CIRRUS-CORE: NEC-driver path-08h mode: SR07=%02Xh "
 		     "SR0E=%02Xh SR1E=%02Xh SR17=%02Xh SR18=%02Xh "
 		     "MISC=%02Xh CR13=%02Xh CR1B=%02Xh GR0B=%02Xh "
 		     "GR31=%02Xh HDR=%02Xh.",
@@ -1493,7 +1551,50 @@ cl_release_fb_mapping(void)
 	cdisp.fb = NULL;
 }
 
-/* Cirrus BitBLT registers used for every GD54xx host-to-VRAM transfer. */
+/*
+ * Clear only the scanout-visible portion through the normal VRAM aperture.
+ *
+ * On linear machines SR17 may place MMIO in the final 256 bytes of the 1MB
+ * aperture.  The supported visible modes fit below that region, and the
+ * bounds check below prevents a future mode from accidentally memset()ing
+ * BLT registers.  A banked row is at most 2048 bytes; with 16KB bank units
+ * and a 32KB window one bank selection per row remains sufficient.
+ */
+static bool
+cl_aperture_clear_visible(void)
+{
+	uint32_t visible, limit;
+	int y;
+
+	if (cdisp.fb == NULL)
+		return false;
+
+	visible = cdisp.pitch * (uint32_t)cdisp.scr_h;
+	limit = cdisp.vram_size;
+	if (cdisp.linear && (cl_seq_read(0x17) & 0x44) == 0x44 &&
+	    limit >= 0x100)
+		limit -= 0x100;
+	if (visible > limit) {
+		hal_log_info("CIRRUS: visible aperture clear %lu bytes exceeds "
+		             "safe host range %lu bytes.",
+		             (unsigned long)visible, (unsigned long)limit);
+		return false;
+	}
+
+	if (cdisp.linear) {
+		memset(cdisp.fb, 0, visible);
+	} else {
+		for (y = 0; y < cdisp.scr_h; y++) {
+			uint32_t off = (uint32_t)y * cdisp.pitch;
+			cl_set_bank((int)(off >> CL_BANK_SHIFT));
+			memset(cdisp.fb + (off & CL_BANK_MASK), 0, cdisp.pitch);
+		}
+		cl_set_bank(0);
+	}
+	return true;
+}
+
+/* Cirrus BitBLT registers retained for GD54xx FIFO diagnosis/fallback. */
 #define CL_BLT_MODE_MEMSYS_SRC   0x04
 #define CL_BLT_MODE_PIX8         0x00
 #define CL_BLT_MODE_PIX16        0x10
@@ -1843,7 +1944,7 @@ static bool nec_coregraph_seen;
 static int nec_coregraph_bus, nec_coregraph_dev, nec_coregraph_fn;
 
 static bool
-gd54_nt_path8_id(uint8_t id)
+gd54_necdrv_path8_id(uint8_t id)
 {
 	return id >= 0x58 && id <= 0x5d;
 }
@@ -1957,7 +2058,7 @@ wab_validate_cirrus(void)
 	 * Core-Graph machines expose the relocated Cirrus block directly;
 	 * 0904h/FF82h are WAB-era controls and read FFh on the V13.
 	 */
-	if (!gd54_nt_path8_id(cdisp.wab_id)) {
+	if (!gd54_necdrv_path8_id(cdisp.wab_id)) {
 		outp(WAB_P904, old_p904 | 0x20);
 		outp(WAB_PFF82, old_pff82 | 0x01);
 	}
@@ -1974,7 +2075,7 @@ wab_validate_cirrus(void)
 	cl_seq_write(0x06, old_sr06);
 	wab_write(WAB_REG_RELAY, old_relay);
 	outp(P54_SLEEP, old_sleep);
-	if (!gd54_nt_path8_id(cdisp.wab_id)) {
+	if (!gd54_necdrv_path8_id(cdisp.wab_id)) {
 		outp(WAB_PFF82, old_pff82);
 		outp(WAB_P904, old_p904);
 	}
@@ -2042,7 +2143,7 @@ wab_default_bpp(uint8_t id)
 }
 
 /*
- * NEC NT4 CIRRUS.SYS board-side entry/exit sequence for internal path 08h.
+ * NEC-driver board-side entry/exit sequence for internal path 08h.
  *
  * This is outside the VGA command stream.  It configures the PC-98
  * Core-Graph/GDC routing logic before the GD5440 timing registers are
@@ -2050,7 +2151,7 @@ wab_default_bpp(uint8_t id)
  * surrounding clock/mux state in the 98-GDC configuration, which produces a
  * continuously drifting, periodically blanked picture even with static VRAM.
  *
- * Enter order observed in CIRRUS.SYS:
+ * Enter order observed in NEC CIRRUS.SYS:
  *   68h <- 0Eh
  *   6Ah <- 07h, 8Fh, 06h
  *   indexed reg03 <- 03h
@@ -2058,9 +2159,15 @@ wab_default_bpp(uint8_t id)
  *   relocated Sleep Address <- 01h (path 08h)
  *
  * Exit uses the complementary 8Eh selection and 68h <- 0Fh.
+ *
+ * io_disp.txt documents 07h/06h as permission/inhibition of protected
+ * mode-F/F modification.  It does NOT document 8Eh/8Fh as protected on this
+ * GD5440 generation.  The likely routing/ownership interpretation therefore
+ * remains a hypothesis; the exact sequence itself is a NEC-driver observation
+ * and a V13 hardware requirement.  Preserve it verbatim for porting reference.
  */
 static void
-coregraph_nt4_gate_enter(void)
+coregraph_necdrv_gate_enter(void)
 {
 	outp(PC98_GDC_MODE_PORT, 0x0e);
 	outp(VRAM_SW_PORT, 0x07);
@@ -2071,13 +2178,13 @@ coregraph_nt4_gate_enter(void)
 	outp(PC98_WAIT_PORT, 0x00);
 	outp(P54_SLEEP, 0x01);
 
-	hal_log_info("CIRRUS-CORE: NT4 gate enter: 68h=0Eh; "
+	hal_log_info("CIRRUS-CORE: NEC-driver gate enter: 68h=0Eh; "
 	             "6Ah sequence 07h,8Fh,06h; reg03=%02Xh; sleep=%02Xh.",
 	             wab_read(WAB_REG_RELAY), inp(P54_SLEEP));
 }
 
 static void
-coregraph_nt4_gate_leave(void)
+coregraph_necdrv_gate_leave(void)
 {
 	unsigned long i;
 
@@ -2092,7 +2199,7 @@ coregraph_nt4_gate_leave(void)
 		outp(PC98_WAIT_PORT, 0x00);
 	outp(PC98_GDC_MODE_PORT, 0x0f);
 
-	hal_log_info("CIRRUS-CORE: NT4 gate leave: reg03=%02Xh; "
+	hal_log_info("CIRRUS-CORE: NEC-driver gate leave: reg03=%02Xh; "
 	             "6Ah sequence 07h,8Eh,06h; 68h=0Fh.",
 	             wab_read(WAB_REG_RELAY));
 }
@@ -2107,7 +2214,7 @@ cirrus54_init(int mode, int req_bpp)
 	if (!wab_detect())
 		return false;
 
-	coregraph = gd54_nt_path8_id(cdisp.wab_id);
+	coregraph = gd54_necdrv_path8_id(cdisp.wab_id);
 	gd54_coregraph = coregraph;
 
 	hal_log_info("CIRRUS: onboard/legacy GD54xx control interface found "
@@ -2115,18 +2222,18 @@ cirrus54_init(int mode, int req_bpp)
 	             cdisp.wab_id);
 	wab_dump();
 	if (coregraph && nec_coregraph_seen)
-		hal_log_info("CIRRUS-CORE: ID %02Xh selects NT4 path 8; "
+		hal_log_info("CIRRUS-CORE: ID %02Xh selects NEC-driver path 08h; "
 		             "NEC 1033:0009 marker is at PCI %d:%d.%d.",
 		             cdisp.wab_id, nec_coregraph_bus, nec_coregraph_dev,
 		             nec_coregraph_fn);
 	else if (coregraph)
-		hal_log_info("CIRRUS-CORE: ID %02Xh selects NT4 path 8 "
+		hal_log_info("CIRRUS-CORE: ID %02Xh selects NEC-driver path 08h "
 		             "(no 1033:0009 marker was observed).", cdisp.wab_id);
 
 	w = disp_geo[mode].w;
 	h = disp_geo[mode].h;
 	if (coregraph && mode != DISP_640X480) {
-		hal_log_info("CIRRUS-CORE: only the exact NT4 640x480 streams "
+		hal_log_info("CIRRUS-CORE: only the recovered NEC-driver 640x480 streams "
 		             "are currently enabled.");
 		return false;
 	}
@@ -2152,8 +2259,9 @@ cirrus54_init(int mode, int req_bpp)
 	} else {
 		cdisp.pitch = (uint32_t)w * (uint32_t)(bpp / 8);
 	}
-	cdisp.linear = false;
-	cdisp.fifo_only = true;
+	cdisp.linear = coregraph;
+	cdisp.fifo_only = gd54_fifo_requested;
+	cdisp.fifo_capable = true;
 
 	cl_set_iobase(IO54_3C0, IO54_3D4, IO54_3DA, IO54_3B4, IO54_3BA);
 
@@ -2184,45 +2292,53 @@ cirrus54_init(int mode, int req_bpp)
 
 	if (!gd54_identity_at_stage("after wake + register enable")) {
 		hal_log_info("CIRRUS: register identity vanished during wake; "
-		             "aborting before any FIFO write.");
+		             "aborting before any host-memory access.");
 		gd54_restore_board_state();
 		return false;
 	}
 
 	/*
-	 * CPU-source BLT data must be written through the chip's linear
-	 * aperture on the GD543x/544x-compatible interface.  On the V13
-	 * (NT path 8), reg02=F0h exposes that host aperture at F0000000h.
-	 * It is used strictly as a write-only FIFO port while a MEMSYSSRC
-	 * BLT is active; no framebuffer readback semantics are assumed.
+	 * Select the host aperture independently from the transfer method.
 	 *
-	 * Classic path-4 WABs continue to use the reg01 32KB window.
+	 * Core-Graph path 08h: reg02=F0h opens a 1MB linear window at
+	 * F0000000h.  With the BLT idle it is ordinary VRAM; during a
+	 * MEMSYSSRC BLT the same write cycles become FIFO source dwords.
+	 * Direct mode maps the full 1MB, while FIFO mode needs only 64KB.
+	 *
+	 * Classic path-04h/WAB machines use the reg01 32KB bank window for
+	 * direct VRAM access.  The retained FIFO path uses the same mapped
+	 * window, though its behavior still needs confirmation on every WAB.
 	 */
 	if (coregraph) {
 		wab_write(WAB_REG_LINEAR, 0xf0);
 		if ((uint8_t)wab_read(WAB_REG_LINEAR) != 0xf0) {
 			hal_log_info("CIRRUS-BLT: reg02 did not retain F0h "
-			             "(reads %02Xh); cannot open Core-Graph FIFO aperture.",
+			             "(reads %02Xh); cannot open Core-Graph host aperture.",
 			             wab_read(WAB_REG_LINEAR));
 			gd54_restore_board_state();
 			return false;
 		}
 		cdisp.fb_phys = 0xf0000000UL;
-		cdisp.fb = (uint8_t *)cl_map_physical(cdisp.fb_phys, 0x10000UL);
+		cdisp.fb = (uint8_t *)cl_map_physical(cdisp.fb_phys,
+		                                      cdisp.fifo_only ? 0x10000UL :
+		                                                        cdisp.vram_size);
 		if (cdisp.fb == NULL) {
-			hal_log_info("CIRRUS-BLT: cannot map Core-Graph linear FIFO "
+			hal_log_info("CIRRUS: cannot map Core-Graph linear host "
 			             "aperture at %08lXh.",
 			             (unsigned long)cdisp.fb_phys);
 			gd54_restore_board_state();
 			return false;
 		}
-		hal_log_info("CIRRUS-BLT: Core-Graph FIFO aperture is "
-		             "reg02=%02Xh -> %08lXh; write-only during MEMSYSSRC BLT.",
+		hal_log_info("CIRRUS-CORE: reg02=%02Xh opens %s host aperture "
+		             "at %08lXh (%luKB mapped).",
 		             wab_read(WAB_REG_LINEAR),
-		             (unsigned long)cdisp.fb_phys);
+		             cdisp.fifo_only ? "CPU-source FIFO" : "linear VRAM",
+		             (unsigned long)cdisp.fb_phys,
+		             (unsigned long)((cdisp.fifo_only ? 0x10000UL :
+		                                               cdisp.vram_size) >> 10));
 	} else {
 		wab_write(WAB_REG_WINDOW, WAB_WINDOW_F2);
-		if (!gd54_identity_at_stage("after selecting FIFO host window")) {
+		if (!gd54_identity_at_stage("after selecting reg01 host window")) {
 			hal_log_info("CIRRUS: reg01 window selection disabled the chip.");
 			gd54_restore_board_state();
 			return false;
@@ -2237,13 +2353,14 @@ cirrus54_init(int mode, int req_bpp)
 		}
 		cdisp.fb = (uint8_t *)cl_map_physical(cdisp.fb_phys, WAB_WINDOW_SIZE);
 		if (cdisp.fb == NULL) {
-			hal_log_info("CIRRUS-BLT: cannot map FIFO host window at %08lXh.",
+			hal_log_info("CIRRUS: cannot map reg01 host window at %08lXh.",
 			             (unsigned long)cdisp.fb_phys);
 			gd54_restore_board_state();
 			return false;
 		}
-		hal_log_info("CIRRUS-BLT: physical-WAB FIFO host window is "
+		hal_log_info("CIRRUS: physical-WAB %s window is "
 		             "reg01=%02Xh -> %08lXh; reg02 left at %02Xh.",
+		             cdisp.fifo_only ? "FIFO host" : "banked VRAM",
 		             wab_read(WAB_REG_WINDOW),
 		             (unsigned long)cdisp.fb_phys, gd54_saved_linear);
 	}
@@ -2261,31 +2378,44 @@ cirrus54_init(int mode, int req_bpp)
 	}
 
 	/*
-	 * The external Core-Graph mux/clock gate must be switched before the
+	 * The recovered NEC-driver Core-Graph board sequence must run before the
 	 * path-8 VGA stream, exactly as NEC's miniport does.
 	 */
 	if (coregraph)
-		coregraph_nt4_gate_enter();
+		coregraph_necdrv_gate_enter();
 
-	/* Use NEC's exact path-8 stream on Core-Graph; generic on path 4. */
+	/* Use the recovered NEC-driver path-08h stream on Core-Graph; generic on path 04h. */
 	if (coregraph)
-		cl_modeset_coregraph_nt4();
+		cl_modeset_coregraph_necdrv();
 	else
 		cl_modeset_generic(true);
 	if (cdisp.crt27 == 0x00 || cdisp.crt27 == 0xff) {
-		hal_log_info("CIRRUS: CR27 became %02Xh before FIFO clear; aborting.",
+		hal_log_info("CIRRUS: CR27 became %02Xh before host-memory clear; aborting.",
 		             cdisp.crt27);
 		gd54_restore_board_state();
 		cl_release_fb_mapping();
 		return false;
 	}
 
+	/*
+	 * Reset the engine even in aperture mode.  A stale MEMSYSSRC command
+	 * would otherwise consume the following framebuffer clear as FIFO data.
+	 */
 	cl_blt_reset();
-	if (!cl_blt_fifo_clear_visible()) {
-		hal_log_info("CIRRUS-BLT: initial visible-screen FIFO clear failed.");
-		gd54_restore_board_state();
-		cl_release_fb_mapping();
-		return false;
+	if (cdisp.fifo_only) {
+		if (!cl_blt_fifo_clear_visible()) {
+			hal_log_info("CIRRUS-BLT: initial visible-screen FIFO clear failed.");
+			gd54_restore_board_state();
+			cl_release_fb_mapping();
+			return false;
+		}
+	} else {
+		if (!cl_aperture_clear_visible()) {
+			hal_log_info("CIRRUS: initial visible-screen aperture clear failed.");
+			gd54_restore_board_state();
+			cl_release_fb_mapping();
+			return false;
+		}
 	}
 
 	/* Screen on.  Core-Graph reg03 was already selected before the mode stream. */
@@ -2300,7 +2430,9 @@ cirrus54_init(int mode, int req_bpp)
 		hal_log_info("CIRRUS-CORE: output selected via reg03=%02Xh; "
 		             "0FACh untouched (reads %02Xh).",
 		             wab_read(WAB_REG_RELAY), inp(WAB_RELAY2_PORT));
-		hal_log_info("CIRRUS-BLT: visible screen cleared to black via CPU-source FIFO.");
+		hal_log_info("CIRRUS-CORE: visible screen cleared to black via %s.",
+		             cdisp.fifo_only ? "CPU-source FIFO" :
+		                               "direct linear VRAM aperture");
 	} else
 		hal_log_info("CIRRUS: GD54xx output selected (reg03=%02Xh, 0FACh=%02Xh).",
 		             wab_read(WAB_REG_RELAY), inp(WAB_RELAY2_PORT));
@@ -2318,7 +2450,7 @@ cirrus54_cleanup(void)
 	/* Keep register access enabled while blanking, then unwind board routing. */
 	cl_seq_write(0x01, 0x21);
 	if (gd54_coregraph)
-		coregraph_nt4_gate_leave();
+		coregraph_necdrv_gate_leave();
 	else
 		outp(WAB_RELAY2_PORT, 0x00);
 	gd54_restore_board_state();
@@ -2986,7 +3118,8 @@ cirrus75_init(int mode, int req_bpp)
 	cdisp.fb_phys = bar0 + chip->fb_offset;
 	cdisp.vram_size = PCI_FB_LENGTH;
 	cdisp.linear = true;
-	cdisp.fifo_only = !chip->laptop;
+	cdisp.fifo_capable = !chip->laptop;
+	cdisp.fifo_only = cdisp.fifo_capable && gd54_fifo_requested;
 	hal_log_info("CIRRUS: framebuffer = BAR0 + %08lXh = %08lXh.",
 		     (unsigned long)chip->fb_offset,
 		     (unsigned long)cdisp.fb_phys);
@@ -3067,16 +3200,32 @@ cirrus75_init(int mode, int req_bpp)
 	else
 		cl_modeset_generic(false);
 
-	if (cdisp.fifo_only) {
-		/* PCI GD54xx: BAR writes are used only as CPU-source FIFO cycles. */
+	if (cdisp.fifo_capable) {
+		/*
+		 * Desktop PCI GD54xx can use either interpretation of the BAR:
+		 * ordinary linear VRAM while the BLT is idle, or source FIFO while
+		 * MEMSYSSRC is active.  Always reset before a direct clear.
+		 */
 		cl_blt_reset();
-		if (!cl_blt_fifo_clear_visible()) {
-			hal_log_info("CIRRUS-BLT: PCI GD54xx FIFO clear failed.");
-			restore_state();
-			cl_release_fb_mapping();
-			return false;
+		if (cdisp.fifo_only) {
+			if (!cl_blt_fifo_clear_visible()) {
+				hal_log_info("CIRRUS-BLT: PCI GD54xx FIFO clear failed.");
+				restore_state();
+				cl_release_fb_mapping();
+				return false;
+			}
+			hal_log_info("CIRRUS-BLT: PCI GD54xx host path selected: "
+			             "CPU-source FIFO.");
+		} else {
+			if (!cl_aperture_clear_visible()) {
+				hal_log_info("CIRRUS: PCI GD54xx aperture clear failed.");
+				restore_state();
+				cl_release_fb_mapping();
+				return false;
+			}
+			hal_log_info("CIRRUS: PCI GD54xx host path selected: "
+			             "direct linear VRAM aperture.");
 		}
-		hal_log_info("CIRRUS-BLT: PCI GD54xx host path forced to CPU-source FIFO.");
 	} else {
 		/* GD75xx/755x retain their known-good direct linear path. */
 		memset(cdisp.fb, 0, cdisp.vram_size - 0x100);
