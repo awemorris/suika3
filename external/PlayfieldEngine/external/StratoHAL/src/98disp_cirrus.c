@@ -33,17 +33,20 @@
  * PC-98 built-in Cirrus graphics: analysis summary
  * ===========================================================================
  *
- * Two distinct families of Cirrus built-ins exist on PC-9821:
+ * Three relevant attachment styles exist on PC-9821:
  *
- *  (A) The C-bus "window accelerator" (WAB) built-ins: CL-GD5428/
- *      5430/5440.  Detected by the machine ID at the two-stage I/O
- *      0FAAh/0FABh; VGA registers at the relocated PC-98 addresses;
- *      VRAM through a banked 32KB window at F20000h.
- *  (B) The PCI built-ins: CL-GD7548 (98NOTE Lavie Nb10/Na13...),
- *      CL-GD7555/7556 (La/Aile) and the desktop Alpine parts
- *      (GD5430...5480).  Detected via PCI configuration space; VGA
- *      registers usually at the native 3C0h block; VRAM through the
- *      linear PCI aperture.
+ *  (A) Physical WAB / fixed-interface GD5428/5430/5440.  The board or
+ *      motherboard exposes 0FAAh/0FABh and relocated VGA registers.
+ *  (B) Core-Graph integrated GD5430/5440 (V13 class).  It also exposes
+ *      0FAAh/0FABh and relocated registers, but is not a physical WAB and
+ *      does not use the WAB-era 0904h/FF82h/6Ah controls.
+ *  (C) Independently enumerated PCI Cirrus devices: GD754x/755x laptops
+ *      and desktop GD54xx parts such as GD5446.
+ *
+ * For every GD54xx style above, this revision deliberately uses the host
+ * memory window only as the CPU-source BitBLT FIFO.  It never depends on
+ * CPU-readable VRAM.  The separately verified GD754x/755x path remains
+ * linear-aperture based.
  *
  * ---------------------------------------------------------------------------
  * A. WAB machines (GD5428/5430/5440)
@@ -56,14 +59,6 @@
  *               other values are S3/Matrox/Trident WABs; 00h/FFh =
  *               no two-stage accelerator.  The PCI models (Nb10 and
  *               friends) read FFh here.
- *               ** The ID is only a HINT.  The ValueStar V16
- *               (onboard Trident TGUI9680XGi) reads 5Bh - inside
- *               the supposed Cirrus range - and its relay/window
- *               registers work, but the VGA file at 0CA0h floats
- *               (CR27 reads FFh).  Switching the relay anyway gives
- *               a white, torn screen.  So the chip itself must be
- *               fingerprinted (SR06 unlock readback = 12h and a
- *               plausible CR27) before anything is programmed. **
  *      reg 01h: VRAM window placement.  Values 80h/A0h/C0h/E0h put
  *               the 32KB window at F20000/F00000/F60000/F40000.
  *               (The NT miniport also honors reg 04h bits2:0:
@@ -284,15 +279,17 @@
  * ===========================================================================
  * Driver design
  * ===========================================================================
- *  - cirrus_init_disp(mode, bpp) probes the WAB interface first
- *    (desktop machines take priority; a machine without the WAB
- *    ports is assumed to be a PCI 98NOTE), then PCI.  Each probe is
+ *  - cirrus_init_disp(mode, bpp) probes PCI first, then uses WAB as
+ *    a fallback.  This avoids false WAB IDs on PCI-on-board systems
+ *    such as V13.  Each probe is
  *    non-destructive until a chip is positively identified; if
  *    neither finds a Cirrus, false is returned so the main code can
  *    try other display chips.
- *  - Aperture-only: frames are written straight into VRAM - through
- *    the banked 32KB window on WAB machines, through the linear PCI
- *    aperture on the PCI machines.  The BLT engine is not used.
+ *  - GD54xx host writes are FIFO-only: both fixed-interface GD5428/
+ *    5430/5440 and independently enumerated PCI GD54xx use the same
+ *    CPU-source BitBLT path.  The host window is only a write port for
+ *    source dwords; it is never treated as readable VRAM.  GD754x/755x
+ *    retain their separately verified linear-aperture path.
  *  - Modes: the WAB and desktop-PCI paths support 640x480 (8/16/24
  *    bpp) and 800x600 (8/16 bpp; 24bpp does not fit 1MB VRAM).  The
  *    754x laptop path supports 640x480 only (NEC's streams for the
@@ -343,8 +340,9 @@ static const struct disp_geo {
 
 enum cirrus_path {
 	CIRRUS_PATH_NONE = 0,
-	CIRRUS_PATH_54,		/* C-bus WAB built-in */
-	CIRRUS_PATH_75		/* PCI built-in */
+	CIRRUS_PATH_54_BANKED,	/* classic banked onboard/WAB interface */
+	CIRRUS_PATH_54_COREGRAPH,	/* V13-class Core-Graph linear GD5440 */
+	CIRRUS_PATH_75		/* independently enumerated PCI Cirrus */
 };
 
 static struct cirrus_disp {
@@ -368,12 +366,13 @@ static struct cirrus_disp {
 	uint16_t io_3d4_col, io_3da_col;
 	uint16_t io_3d4_mono, io_3da_mono;
 
-	/* VRAM aperture. */
+	/* Host-visible memory window (FIFO port on GD54xx). */
 	uint8_t *fb;
 	uint32_t fb_phys;
 	bool linear;		/* true: linear; false: 32KB banked window */
 	uint32_t vram_size;
 	int cur_bank;
+	bool fifo_only;	/* true: all host-to-VRAM writes go through CPU-source BLT */
 
 	/* Chip information (for logging / decisions). */
 	uint8_t wab_id;		/* raw 0FAAh register 00h readout */
@@ -425,13 +424,19 @@ static void cl_program_crtc(void);
 static void cl_program_gc_ac(void);
 static void cl_load_palette(void);
 static void cl_modeset_generic(bool banked);
+static void cl_modeset_coregraph_nt4(void);
 static int cl_resolve_bpp(int req, int cap, int w, int h,
 			  uint32_t vram, const char *tag);
 
 /* Misc. */
 static void *cl_map_physical(uint32_t phys, uint32_t size);
+static bool cl_unmap_physical(void *linear);
+static void cl_release_fb_mapping(void);
+static bool cl_blt_fifo_clear_visible(void);
+static bool cl_blt_fifo_pattern_visible(void);
+static void cirrus_flip_fifo(void);
 
-/* WAB (C-bus GD54xx) module. */
+/* Fixed 0FAA/0FAB GD54xx interface (Core-Graph or banked WAB). */
 static bool cirrus54_init(int mode, int req_bpp);
 static void cirrus54_cleanup(void);
 
@@ -446,7 +451,10 @@ static void cirrus75_cleanup(void);
 bool
 cirrus_init_disp(int mode, int bpp)
 {
-	const char *force;
+	const char *force, *yoff_env;
+	char *endp;
+	long yoff_value;
+	int max_y;
 	bool ok;
 
 	if (mode < DISP_640X480 || mode > DISP_1280X1024) {
@@ -462,23 +470,32 @@ cirrus_init_disp(int mode, int bpp)
 
 	hal_log_info("CIRRUS: probing; requested %dx%d, depth %d (-1 = auto).",
 		     disp_geo[mode].w, disp_geo[mode].h, bpp);
+	hal_log_info("CIRRUS-BUILD: GD54XX-FIFO V13-PRODUCTION V6.");
 
 	force = getenv("STRATO_CIRRUS_FORCE");
 	if (force != NULL)
 		hal_log_info("CIRRUS: STRATO_CIRRUS_FORCE=%s.", force);
 
 	/*
-	 * WAB first: the two-stage 0FAAh/0FABh interface identifies
-	 * the classic desktop (and pre-PCI 98NOTE) built-ins by a
-	 * single harmless read.  Machines without it (the PCI 98NOTE
-	 * Lavie line, PCI desktops) read FFh there and fall through
-	 * to the PCI configuration space scan.
+	 * Automatic probing is PCI first.  Some PCI-on-board machines
+	 * (notably the V13 family) return a WAB-looking ID such as 5Bh
+	 * even though no WAB exists.  Touching the WAB path first would
+	 * therefore select a bogus banked aperture and may corrupt normal
+	 * memory.  Explicit FORCE=54/75 keeps the requested single path.
 	 */
 	ok = false;
-	if (force == NULL || strcmp(force, "75") != 0)
+	if (force != NULL && strcmp(force, "54") == 0) {
+		hal_log_info("CIRRUS: probe order: forced fixed 0FAA/0FAB GD54xx path only.");
 		ok = cirrus54_init(mode, bpp);
-	if (!ok && (force == NULL || strcmp(force, "54") != 0))
+	} else if (force != NULL && strcmp(force, "75") == 0) {
+		hal_log_info("CIRRUS: probe order: forced PCI path only.");
 		ok = cirrus75_init(mode, bpp);
+	} else {
+		hal_log_info("CIRRUS: probe order: PCI first, then fixed 0FAA/0FAB interface.");
+		ok = cirrus75_init(mode, bpp);
+		if (!ok)
+			ok = cirrus54_init(mode, bpp);
+	}
 	if (!ok) {
 		hal_log_info("CIRRUS: no usable Cirrus built-in; "
 			     "yielding to other drivers.");
@@ -496,17 +513,44 @@ cirrus_init_disp(int mode, int bpp)
 	draw_h = game_height < cdisp.scr_h ? game_height : cdisp.scr_h;
 	draw_w &= ~3;	/* the row converters work 4 pixels at a time */
 
+	/* Optional vertical placement override for 640x360-on-640x480 games. */
+	yoff_env = getenv("STRATO_CIRRUS_YOFF");
+	max_y = cdisp.scr_h - draw_h;
+	if (max_y < 0)
+		max_y = 0;
+	if (yoff_env != NULL) {
+		endp = NULL;
+		yoff_value = strtol(yoff_env, &endp, 0);
+		if (endp != yoff_env && *endp == '\0' &&
+		    yoff_value >= 0 && yoff_value <= max_y) {
+			ofs_y = (int)yoff_value;
+			hal_log_info("CIRRUS: STRATO_CIRRUS_YOFF=%d applied.", ofs_y);
+		} else {
+			hal_log_info("CIRRUS: invalid STRATO_CIRRUS_YOFF=%s "
+			             "(valid range 0..%d); using centered y=%d.",
+			             yoff_env, max_y, ofs_y);
+		}
+	}
+	hal_log_info("CIRRUS: viewport : y=%d..%d; top/bottom borders %d/%d.",
+	             ofs_y, ofs_y + draw_h - 1, ofs_y,
+	             cdisp.scr_h - (ofs_y + draw_h));
+
 	hal_log_info("CIRRUS: === configuration summary ===");
 	hal_log_info("CIRRUS: path     : %s.",
-		     cdisp.path == CIRRUS_PATH_54 ?
-		     "WAB (C-bus built-in, 0FAAh/0FABh)" :
+		     cdisp.path == CIRRUS_PATH_54_BANKED ?
+		     "GD54xx fixed-interface / WAB" :
+		     cdisp.path == CIRRUS_PATH_54_COREGRAPH ?
+		     "NEC Core-Graph integrated GD54xx" :
 		     "PCI (configuration space)");
-	hal_log_info("CIRRUS: chip     : %s, CR27=%02Xh, WAB ID=%02Xh.",
+	hal_log_info("CIRRUS: chip     : %s, CR27=%02Xh, fixed ID=%02Xh.",
 		     cdisp.chip_name, cdisp.crt27, cdisp.wab_id);
 	hal_log_info("CIRRUS: mode     : %dx%d, %d bpp, pitch %lu bytes.",
 		     cdisp.scr_w, cdisp.scr_h, cdisp.bpp,
 		     (unsigned long)cdisp.pitch);
-	if (cdisp.linear)
+	if (cdisp.fifo_only)
+		hal_log_info("CIRRUS: host path: CPU-source BLT FIFO dword writes at %08lXh; VRAM is never read directly.",
+		             (unsigned long)cdisp.fb_phys);
+	else if (cdisp.linear)
 		hal_log_info("CIRRUS: aperture : linear, %luKB at %08lXh.",
 			     (unsigned long)(cdisp.vram_size >> 10),
 			     (unsigned long)cdisp.fb_phys);
@@ -515,7 +559,9 @@ cirrus_init_disp(int mode, int bpp)
 			     "%08lXh, 16KB granularity, %luKB VRAM.",
 			     (unsigned long)cdisp.fb_phys,
 			     (unsigned long)(cdisp.vram_size >> 10));
-	hal_log_info("CIRRUS: blitter  : unused (aperture-only driver).");
+	hal_log_info("CIRRUS: blitter  : %s.",
+	             cdisp.fifo_only ? "CPU-source FIFO for all GD54xx transfers" :
+	                               "unused (aperture-only driver)");
 	hal_log_info("CIRRUS: blit     : game %dx%d -> +%d,+%d "
 		     "(draw %dx%d).",
 		     game_width, game_height, ofs_x, ofs_y, draw_w, draw_h);
@@ -527,7 +573,8 @@ void
 cirrus_cleanup_disp(void)
 {
 	switch (cdisp.path) {
-	case CIRRUS_PATH_54:
+	case CIRRUS_PATH_54_BANKED:
+	case CIRRUS_PATH_54_COREGRAPH:
 		cirrus54_cleanup();
 		break;
 	case CIRRUS_PATH_75:
@@ -568,6 +615,11 @@ cirrus_flip_vram(void)
 {
 	const uint32_t *pixels;
 	int y, bytespp;
+
+	if (cdisp.fifo_only) {
+		cirrus_flip_fifo();
+		return;
+	}
 
 	pixels = back_image->pixels;
 	bytespp = cdisp.bpp / 8;
@@ -1181,6 +1233,176 @@ cl_modeset_generic(bool banked)
 	cl_hidden_dac_write(cl_hdr_value());
 }
 
+
+/*
+ * NEC NT4 CIRRUS.SYS "path 8" mode set for the linear onboard GD54xx
+ * family (machine IDs 58h-5Dh, including the V13 ID 5Bh).
+ *
+ * These values are intentionally not folded into cl_modeset_generic().
+ * The board wiring is different from both a classic banked WAB and a
+ * normally enumerated PCI Alpine: SR07 uses the 1xh map, MISC is E3h,
+ * GR0B is 21h, and 24bpp uses a fixed 2048-byte pitch.
+ *
+ * Only the three 640x480 streams have been transcribed so far.  The
+ * function leaves the screen blanked after programming; the caller clears
+ * VRAM and then writes SR01=01h.
+ */
+static void
+cl_modeset_coregraph_nt4(void)
+{
+	static const uint8_t seq_idx[] = {
+		0x00, 0x01, 0x02, 0x03, 0x04, 0x07, 0x08,
+		0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x16, 0x18,
+		0x1b, 0x1c, 0x1d, 0x1e, 0x1f
+	};
+	static const uint8_t seq8[] = {
+		0x01, 0x01, 0x0f, 0x00, 0x0e, 0x11, 0x00,
+		0x66, 0x48, 0x56, 0x60, 0x30, 0x58, 0x40,
+		0x3b, 0x23, 0x3d, 0x3b, 0x20
+	};
+	static const uint8_t seq16[] = {
+		0x01, 0x01, 0x0f, 0x00, 0x0e, 0x13, 0x00,
+		0x6d, 0x48, 0x56, 0x60, 0x30, 0x58, 0x40,
+		0x3e, 0x23, 0x3d, 0x3b, 0x20
+	};
+	static const uint8_t seq24[] = {
+		0x01, 0x01, 0x0f, 0x00, 0x0e, 0x15, 0x00,
+		0x3a, 0x48, 0x56, 0x60, 0x30, 0x58, 0x40,
+		0x16, 0x23, 0x3d, 0x3b, 0x20
+	};
+	static const uint8_t crtc8[0x1c] = {
+		0x5f,0x4f,0x50,0x84,0x54,0x80,0x0b,0x3e,
+		0x00,0x40,0x00,0x00,0x00,0x00,0x00,0x00,
+		0xe5,0x87,0xdf,0x50,0x00,0xe7,0x04,0xe3,
+		0xff,0x00,0x90,0x22
+	};
+	static const uint8_t crtc16[0x1c] = {
+		0x5f,0x4f,0x50,0x84,0x53,0x9f,0x0b,0x3e,
+		0x00,0x40,0x00,0x00,0x00,0x00,0x00,0x00,
+		0xe5,0x87,0xdf,0xa0,0x00,0xe7,0x04,0xe3,
+		0xff,0x00,0x90,0x22
+	};
+	static const uint8_t crtc24[0x1c] = {
+		0x5f,0x4f,0x50,0x84,0x53,0x9f,0x0b,0x3e,
+		0x00,0x40,0x00,0x00,0x00,0x00,0x00,0x00,
+		0xe5,0x87,0xdf,0x00,0x00,0xe7,0x04,0xe3,
+		0xff,0x00,0x90,0x32
+	};
+	static const uint8_t gfx[9] = {
+		0x00,0x00,0x00,0x00,0x00,0x40,0x05,0x0f,0xff
+	};
+	static const uint8_t attr[21] = {
+		0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,
+		0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f,
+		0x41,0x00,0x0f,0x00,0x00
+	};
+	const uint8_t *seq, *crtc;
+	int hdr, i;
+
+	if (cdisp.bpp == 8) {
+		seq = seq8;
+		crtc = crtc8;
+		hdr = 0x20;
+	} else if (cdisp.bpp == 16) {
+		seq = seq16;
+		crtc = crtc16;
+		hdr = 0xe1;
+	} else {
+		seq = seq24;
+		crtc = crtc24;
+		hdr = 0xe5;
+	}
+
+	/*
+	 * A previous driver or interrupted BLT may have left the engine waiting
+	 * for CPU-source data.  In that state, ordinary linear-aperture writes
+	 * are consumed by the BLT FIFO instead of reaching VRAM.  Log the stale
+	 * state, then reset exactly as the Cirrus reset edge requires (04h->00h).
+	 */
+	hal_log_info("CIRRUS-CORE: pre-mode BLT: GR30=%02Xh GR31=%02Xh "
+	             "GR32=%02Xh GR33=%02Xh; SR18=%02Xh.",
+	             cl_gfx_read(0x30), cl_gfx_read(0x31),
+	             cl_gfx_read(0x32), cl_gfx_read(0x33),
+	             cl_seq_read(0x18));
+	cl_gfx_write(0x33, 0x00);
+	cl_gfx_write(0x31, 0x04);
+	cl_gfx_write(0x31, 0x00);
+
+	/* The stream starts by unlocking extensions and disabling the cursor. */
+	cl_seq_write(0x06, 0x12);
+	cl_seq_write(0x12, 0x00);
+	for (i = 0; i < (int)sizeof(seq_idx); i++)
+		cl_seq_write(seq_idx[i], seq[i]);
+
+	/* Preserve board-specific DRAM bits exactly as NEC's interpreter does. */
+	cl_seq_write(0x0f, (cl_seq_read(0x0f) & 0xdf) | 0x20);
+
+	/* E3h keeps the relocated CRTC on the color block (0DA4h). */
+	cl_misc_write(0xe3);
+	cl_gfx_write(0x06, 0x05);
+	cl_seq_write(0x00, 0x03);
+
+	/* Unlock CR0-7, then replay CR00-CR1B verbatim. */
+	cl_crtc_write(0x11, 0x20);
+	for (i = 0; i < 0x1c; i++)
+		cl_crtc_write(i, crtc[i]);
+
+	for (i = 0; i < 9; i++)
+		cl_gfx_write(i, gfx[i]);
+
+	/* Attribute stream: one flip-flop reset, then index/data pairs. */
+	(void)inp(cdisp.io_3da);
+	for (i = 0; i < 21; i++) {
+		outp(cdisp.io_3c0, i);
+		outp(cdisp.io_3c0, attr[i]);
+	}
+	(void)inp(cdisp.io_3da);
+	outp(cdisp.io_3c0, 0x20);
+
+	cl_hidden_dac_write(hdr);
+	outp(cdisp.io_3c0 + 0x06, 0xff);
+
+	/* Linear aperture, 16KB bank units, no active bank offset. */
+	cl_gfx_write(0x09, 0x00);
+	cl_gfx_write(0x0a, 0x00);
+	cl_gfx_write(0x0b, 0x21);
+	cdisp.cur_bank = 0;
+
+	/* Path 8 is a linear machine: MMIO occupies the final 256 bytes. */
+	cl_seq_write(0x17, (uint8_t)(cl_seq_read(0x17) | 0x44));
+
+	/*
+	 * Exact NT4 postlude for chip tag 07h (V13 ID 5Bh): after the mode
+	 * command stream and SR17 update, CIRRUS.SYS clears SR18 bit6.
+	 * The previous diagnostic transcription missed this operation and left
+	 * the Signature Generator Control register at 40h.
+	 */
+	cl_seq_write(0x18, (uint8_t)(cl_seq_read(0x18) & 0xbf));
+
+	/* Reset once more after the full stream, before any aperture write. */
+	cl_gfx_write(0x31, 0x04);
+	cl_gfx_write(0x31, 0x00);
+
+	cl_load_palette();
+
+	cdisp.crt27 = (uint8_t)cl_crtc_read(0x27);
+	cdisp.alpine = (cdisp.crt27 >= 0xa0);
+
+	/* Keep scanout blank until the framebuffer has been cleared. */
+	cl_seq_write(0x01, 0x21);
+
+	hal_log_info("CIRRUS-CORE: exact NT4 path-8 mode: SR07=%02Xh "
+		     "SR0E=%02Xh SR1E=%02Xh SR17=%02Xh SR18=%02Xh "
+		     "MISC=%02Xh CR13=%02Xh CR1B=%02Xh GR0B=%02Xh "
+		     "GR31=%02Xh HDR=%02Xh.",
+		     cl_seq_read(0x07), cl_seq_read(0x0e),
+		     cl_seq_read(0x1e), cl_seq_read(0x17),
+		     cl_seq_read(0x18), cl_misc_read(),
+		     cl_crtc_read(0x13), cl_crtc_read(0x1b),
+		     cl_gfx_read(0x0b), cl_gfx_read(0x31),
+		     cl_hidden_dac_read());
+}
+
 /*
  * Resolve the depth for a request.  req == -1: pick the highest
  * depth that both the machine cap (panel/DAC) and VRAM allow.
@@ -1244,8 +1466,319 @@ cl_map_physical(uint32_t phys, uint32_t size)
 	return (void *)(((uint32_t)r.w.bx << 16) | r.w.cx);
 }
 
+/* DPMI 0x0801: release a mapping returned by function 0x0800. */
+static bool
+cl_unmap_physical(void *linear)
+{
+	union REGS r;
+	uint32_t addr = (uint32_t)linear;
+
+	memset(&r, 0, sizeof(r));
+	r.w.ax = 0x0801;
+	r.w.bx = (uint16_t)(addr >> 16);
+	r.w.cx = (uint16_t)(addr & 0xffff);
+	int386(0x31, &r, &r);
+	return !r.w.cflag;
+}
+
+static void
+cl_release_fb_mapping(void)
+{
+	if (cdisp.fb == NULL)
+		return;
+	if (cdisp.fb_phys >= 0x00100000UL &&
+	    !cl_unmap_physical(cdisp.fb))
+		hal_log_info("CIRRUS: warning: DPMI could not release host window mapping at %08lXh.",
+		             (unsigned long)cdisp.fb_phys);
+	cdisp.fb = NULL;
+}
+
+/* Cirrus BitBLT registers used for every GD54xx host-to-VRAM transfer. */
+#define CL_BLT_MODE_MEMSYS_SRC   0x04
+#define CL_BLT_MODE_PIX8         0x00
+#define CL_BLT_MODE_PIX16        0x10
+#define CL_BLT_MODE_PIX24        0x20
+#define CL_BLT_STATUS_BUSY       0x01
+#define CL_BLT_STATUS_START      0x02
+#define CL_BLT_STATUS_RESET      0x04
+#define CL_BLT_ROP_SRC           0x0d
+
+static void
+cl_blt_write16(int lo_reg, uint32_t value)
+{
+	cl_gfx_write(lo_reg, (int)(value & 0xff));
+	cl_gfx_write(lo_reg + 1, (int)((value >> 8) & 0xff));
+}
+
+static void
+cl_blt_write24(int lo_reg, uint32_t value)
+{
+	cl_gfx_write(lo_reg, (int)(value & 0xff));
+	cl_gfx_write(lo_reg + 1, (int)((value >> 8) & 0xff));
+	cl_gfx_write(lo_reg + 2, (int)((value >> 16) & 0x3f));
+}
+
+static bool
+cl_blt_wait_idle(unsigned long limit, const char *where)
+{
+	unsigned long i;
+	int status;
+
+	for (i = 0; i < limit; i++) {
+		status = cl_gfx_read(0x31);
+		if ((status & CL_BLT_STATUS_BUSY) == 0)
+			return true;
+	}
+	hal_log_info("CIRRUS-BLT: timeout %s; GR31=%02Xh.",
+	             where, cl_gfx_read(0x31));
+	return false;
+}
+
+static void
+cl_blt_reset(void)
+{
+	cl_gfx_write(0x31, CL_BLT_STATUS_RESET);
+	cl_gfx_write(0x31, 0x00);
+}
+
+static int
+cl_blt_pixel_mode(void)
+{
+	switch (cdisp.bpp) {
+	case 24:
+		return CL_BLT_MODE_PIX24;
+	case 16:
+		return CL_BLT_MODE_PIX16;
+	default:
+		return CL_BLT_MODE_PIX8;
+	}
+}
+
+/*
+ * Start a host-to-video BitBLT.  width_bytes is the number of source bytes
+ * consumed per scanline, not the destination pitch.  The source pitch is
+ * programmed to the same value; all supported row widths are dword-aligned.
+ */
+static bool
+cl_blt_fifo_start(uint32_t dst, uint32_t width_bytes, uint32_t height)
+{
+	int status;
+
+	if (cdisp.fb == NULL || width_bytes == 0 || height == 0)
+		return false;
+	if (!cl_blt_wait_idle(2000000UL, "before CPU-source start"))
+		return false;
+
+	cl_blt_reset();
+	cl_blt_write16(0x20, width_bytes - 1);       /* width in bytes minus one */
+	cl_blt_write16(0x22, height - 1);            /* height minus one */
+	cl_blt_write16(0x24, cdisp.pitch);           /* destination pitch */
+	cl_blt_write16(0x26, width_bytes);           /* source pitch */
+	cl_blt_write24(0x28, dst);                   /* destination VRAM address */
+	cl_blt_write24(0x2c, 0x000000UL);            /* unused for MEMSYSSRC */
+	cl_gfx_write(0x2f, 0x00);                    /* no left-edge skip */
+	/* NP21/W/QEMU also uses GR30[5:4] as the BLT pixel width. */
+	cl_gfx_write(0x30, CL_BLT_MODE_MEMSYS_SRC | cl_blt_pixel_mode());
+	cl_gfx_write(0x32, CL_BLT_ROP_SRC);          /* source copy */
+	cl_gfx_write(0x33, 0x00);
+	cl_gfx_write(0x31, CL_BLT_STATUS_START);
+
+	status = cl_gfx_read(0x31);
+	if ((status & CL_BLT_STATUS_BUSY) == 0) {
+		hal_log_info("CIRRUS-BLT: engine did not enter BUSY; "
+		             "GR30=%02Xh GR31=%02Xh.",
+		             cl_gfx_read(0x30), status);
+		cl_blt_reset();
+		return false;
+	}
+	return true;
+}
+
+/*
+ * Push one scanline into the active CPU-source FIFO.  Cirrus requires host
+ * source data to be supplied as dword writes.  While MEMSYSSRC is active and
+ * GR31.PAUSE is clear, the chip ignores the memory address and consumes the
+ * data cycle, so repeatedly writing the first dword of either the PCI BAR or
+ * the fixed reg01 window is intentional.
+ *
+ * The final partial dword is zero-padded.  For non-color-expanded transfers
+ * the programmed byte width makes the chip ignore up to three padding bytes
+ * at the end of each scanline.
+ */
+static void
+cl_blt_fifo_feed_row(const uint8_t *src, uint32_t count)
+{
+	volatile uint32_t *fifo = (volatile uint32_t *)cdisp.fb;
+	uint32_t value;
+
+	while (count >= 4) {
+		value = (uint32_t)src[0] |
+		        ((uint32_t)src[1] << 8) |
+		        ((uint32_t)src[2] << 16) |
+		        ((uint32_t)src[3] << 24);
+		fifo[0] = value;
+		src += 4;
+		count -= 4;
+	}
+	if (count != 0) {
+		value = (uint32_t)src[0];
+		if (count > 1)
+			value |= (uint32_t)src[1] << 8;
+		if (count > 2)
+			value |= (uint32_t)src[2] << 16;
+		fifo[0] = value;
+	}
+}
+
+/* Clear the visible display through exactly the same FIFO used for frames. */
+static bool
+cl_blt_fifo_clear_visible(void)
+{
+	static uint32_t zeros32[512];       /* 2048 zero bytes */
+	const uint8_t *zeros = (const uint8_t *)zeros32;
+	uint32_t row_bytes;
+	int y;
+
+	row_bytes = (uint32_t)cdisp.scr_w * (uint32_t)(cdisp.bpp / 8);
+	if (row_bytes > sizeof(zeros32)) {
+		hal_log_info("CIRRUS-BLT: clear row %lu exceeds FIFO staging buffer.",
+		             (unsigned long)row_bytes);
+		return false;
+	}
+	if (!cl_blt_fifo_start(0, row_bytes, (uint32_t)cdisp.scr_h))
+		return false;
+
+	for (y = 0; y < cdisp.scr_h; y++)
+		cl_blt_fifo_feed_row(zeros, row_bytes);
+
+	if (!cl_blt_wait_idle(4000000UL, "after FIFO clear")) {
+		cl_blt_reset();
+		return false;
+	}
+	return true;
+}
+
+
+/*
+ * Fill the full visible screen with eight vertical color bars through the
+ * CPU-source FIFO.  This is a self-contained hardware diagnostic: it does
+ * not use back_image and never reads VRAM.
+ */
+static bool
+cl_blt_fifo_pattern_visible(void)
+{
+	static uint32_t row32[512];       /* 2048-byte aligned staging row */
+	uint8_t *row = (uint8_t *)row32;
+	static const uint8_t rgb[8][3] = {
+		{255,255,255}, {255,255,  0}, {  0,255,255}, {  0,255,  0},
+		{255,  0,255}, {255,  0,  0}, {  0,  0,255}, {  0,  0,  0}
+	};
+	uint32_t row_bytes;
+	int x, y, bar;
+
+	row_bytes = (uint32_t)cdisp.scr_w * (uint32_t)(cdisp.bpp / 8);
+	if (row_bytes > sizeof(row32)) {
+		hal_log_info("CIRRUS-BLT: pattern row %lu exceeds FIFO staging buffer.",
+		             (unsigned long)row_bytes);
+		return false;
+	}
+	if (!cl_blt_fifo_start(0, row_bytes, (uint32_t)cdisp.scr_h))
+		return false;
+
+	for (y = 0; y < cdisp.scr_h; y++) {
+		for (x = 0; x < cdisp.scr_w; x++) {
+			uint8_t r, g, b;
+			bar = (x * 8) / cdisp.scr_w;
+			if (bar > 7)
+				bar = 7;
+			r = rgb[bar][0];
+			g = rgb[bar][1];
+			b = rgb[bar][2];
+
+			/* Alternate brightness every 16 lines to expose pitch errors. */
+			if (y & 0x10) {
+				r >>= 1;
+				g >>= 1;
+				b >>= 1;
+			}
+
+			if (cdisp.bpp == 24) {
+				row[x * 3 + 0] = b;
+				row[x * 3 + 1] = g;
+				row[x * 3 + 2] = r;
+			} else if (cdisp.bpp == 16) {
+				uint16_t p = (uint16_t)(((uint16_t)(r & 0xf8) << 8) |
+				                        ((uint16_t)(g & 0xfc) << 3) |
+				                        ((uint16_t)b >> 3));
+				row[x * 2 + 0] = (uint8_t)p;
+				row[x * 2 + 1] = (uint8_t)(p >> 8);
+			} else {
+				row[x] = (uint8_t)((r & 0xe0) |
+				                   ((g >> 3) & 0x1c) |
+				                   ((b >> 6) & 0x03));
+			}
+		}
+		cl_blt_fifo_feed_row(row, row_bytes);
+	}
+
+	if (!cl_blt_wait_idle(4000000UL, "after FIFO pattern")) {
+		cl_blt_reset();
+		return false;
+	}
+	return true;
+}
+
+/* Present one game frame using CPU-source BitBLT only. */
+static void
+cirrus_flip_fifo(void)
+{
+	uint32_t row32[512];        /* 2048-byte naturally aligned staging row */
+	uint8_t *row = (uint8_t *)row32;
+	const uint32_t *pixels;
+	uint32_t row_bytes, dst;
+	int y, bytespp;
+
+	if (back_image == NULL || back_image->pixels == NULL ||
+	    draw_w <= 0 || draw_h <= 0)
+		return;
+
+	pixels = back_image->pixels;
+	bytespp = cdisp.bpp / 8;
+	row_bytes = (uint32_t)draw_w * (uint32_t)bytespp;
+	if (row_bytes > sizeof(row32)) {
+		hal_log_info("CIRRUS-BLT: frame row %lu exceeds FIFO staging buffer.",
+		             (unsigned long)row_bytes);
+		return;
+	}
+
+	dst = (uint32_t)ofs_y * cdisp.pitch +
+	      (uint32_t)ofs_x * (uint32_t)bytespp;
+	if (!cl_blt_fifo_start(dst, row_bytes, (uint32_t)draw_h))
+		return;
+
+	for (y = 0; y < draw_h; y++) {
+		const uint32_t *src = pixels + y * game_width;
+
+		switch (cdisp.bpp) {
+		case 24:
+			conv_row24(row, src, draw_w);
+			break;
+		case 16:
+			conv_row16(row, src, draw_w);
+			break;
+		default:
+			conv_row8(row, src, draw_w);
+			break;
+		}
+		cl_blt_fifo_feed_row(row, row_bytes);
+	}
+
+	if (!cl_blt_wait_idle(4000000UL, "after frame FIFO feed"))
+		cl_blt_reset();
+}
+
 /*****************************************************************************/
-/* WAB module: the C-bus GD5428/5430/5440 built-ins                          */
+/* Fixed 0FAA/0FAB module: Core-Graph GD54xx and physical WABs             */
 /*****************************************************************************/
 
 /* Two-stage indexed I/O of the window accelerator interface. */
@@ -1254,7 +1787,8 @@ cl_map_physical(uint32_t phys, uint32_t size)
 
 /* WAB registers */
 #define WAB_REG_ID	0x00	/* machine ID (read only) */
-#define WAB_REG_WINDOW	0x01	/* VRAM window address */
+#define WAB_REG_WINDOW	0x01	/* banked VRAM window address */
+#define WAB_REG_LINEAR	0x02	/* linear aperture base, value << 24 */
 #define WAB_REG_RELAY	0x03	/* video output relay */
 
 /* WAB_REG_WINDOW value: window at 0xF20000 (32KB) */
@@ -1268,6 +1802,7 @@ cl_map_physical(uint32_t phys, uint32_t size)
  */
 #define WAB_RELAY_GDC	0x00	/* GDC output, access off (exit state) */
 #define WAB_RELAY_SETUP	0x01	/* GDC output, register access on */
+#define WAB_RELAY_VIDEO 0x02    /* GDC output, accelerator video output */
 #define WAB_RELAY_WAB	0x03	/* accelerator output, access on */
 
 /* Second relay latch on the PCI-era WAB models (Xa7e etc.). */
@@ -1278,14 +1813,40 @@ cl_map_physical(uint32_t phys, uint32_t size)
 #define VRAM_SW_GDC	0x8e
 #define VRAM_SW_WAB	0x8f
 
+/* PC-98 Core-Graph/GDC routing ports used by NEC CIRRUS.SYS path 8. */
+#define PC98_WAIT_PORT	0x5f
+#define PC98_GDC_MODE_PORT	0x68
+
+
 /* Wakeup ports. */
 #define WAB_P904	0x0904	/* 102 Access Control (bit5) */
 #define WAB_PFF82	0xff82	/* POS102 (bit0 = video subsystem enable) */
-/*
- * (The Sleep Address - native 3C3h - and the relocated VGA register
- * bases live at base+offset of whichever block answers; see the
- * table inside wab_probe_cirrus_regs().)
- */
+#define P54_SLEEP	0x0ca3	/* 3C3: Sleep Address (bit0 = enable) */
+
+/* Relocated VGA register bases on the WAB machines. */
+#define IO54_3C0	0x0ca0
+#define IO54_3D4	0x0da4
+#define IO54_3DA	0x0daa
+#define IO54_3B4	0x0ba4	/* mono block, per the NT access ranges */
+#define IO54_3BA	0x0baa
+
+/* Saved motherboard control state for the onboard/legacy GD54xx path. */
+static uint8_t gd54_saved_p904, gd54_saved_pff82, gd54_saved_sleep;
+static uint8_t gd54_saved_relay, gd54_saved_window, gd54_saved_linear;
+static uint8_t gd54_saved_vram_sw;
+static bool gd54_saved_valid;
+static bool gd54_used_vram_switch;
+static bool gd54_coregraph;
+
+/* Seen during the PCI pre-scan: NEC 1033:0009 Core-Graph bridge. */
+static bool nec_coregraph_seen;
+static int nec_coregraph_bus, nec_coregraph_dev, nec_coregraph_fn;
+
+static bool
+gd54_nt_path8_id(uint8_t id)
+{
+	return id >= 0x58 && id <= 0x5d;
+}
 
 static void
 wab_write(int reg, int val)
@@ -1301,21 +1862,137 @@ wab_read(int reg)
 	return inp(WAB_DATA);
 }
 
+/* Decode the firmware-selected 32KB host window from fixed register 01h. */
+static uint32_t
+gd54_window_phys(uint8_t value)
+{
+	switch (value & 0xe0) {
+	case 0x80:
+		return 0x00f20000UL;
+	case 0xa0:
+		return 0x00f00000UL;
+	case 0xc0:
+		return 0x00f60000UL;
+	case 0xe0:
+		return 0x00f40000UL;
+	default:
+		return 0;
+	}
+}
+
 /*
- * Detect the built-in window accelerator interface.
+ * Detect the built-in CIRRUS accelerator.
  *
- * WAB register 00h returns the machine ID; the CIRRUS models are
- * said to use 50h-5Dh and 70h.  (Other values are S3/Matrox/Trident
- * models or 00h/FFh when no two-stage I/O accelerator is present.
- * Note the PCI-connected models - Nb10 and friends - read FFh here;
- * those are handled by the PCI module below.  NP21/W's AUTO WAB
- * type morphs into an Xe10 the moment this port is touched - pin
- * the emulator to a fixed type when testing.)
- *
- * The ID is treated as a HINT only: the ValueStar V16 reads 5Bh
- * here yet carries a Trident TGUI9680XGi, so a positive ID must be
- * followed by wab_probe_cirrus_regs() before any programming.
+ * WAB register 00h returns the machine ID; CIRRUS models use
+ * 50h-5Dh and 70h.  (Other values are S3/Matrox/Trident models or
+ * 00h/FFh when no two-stage I/O accelerator is present.  Note the
+ * PCI-connected models - Nb10 and friends - read FFh here; those
+ * are handled by the PCI module below.  NP21/W's AUTO WAB type
+ * morphs into an Xe10 the moment this port is touched - pin the
+ * emulator to a fixed type when testing.)
  */
+/*
+ * Confirm that a WAB-ID-looking value really belongs to a relocated
+ * Cirrus VGA block.  Some PCI-on-board machines (notably the V13
+ * family) return 5Bh through 0FAAh/0FABh even though they have no WAB.
+ * Accepting that value alone selects the banked path, reads CR27=FFh,
+ * and can overwrite ordinary memory at the supposed F20000h VRAM
+ * window.
+ *
+ * This probe is deliberately reversible and runs before the VRAM
+ * window is mapped or port 6Ah changes ownership.
+ */
+static bool
+gd54_identity_at_stage(const char *stage)
+{
+	uint8_t sr06, cr27;
+
+	cl_select_crtc(cl_misc_read());
+	cl_seq_write(0x06, 0x12);
+	sr06 = (uint8_t)cl_seq_read(0x06);
+	cr27 = sr06 == 0x12 ? (uint8_t)cl_crtc_read(0x27) : 0xff;
+	hal_log_info("CIRRUS-V13: %s: SR06=%02Xh CR27=%02Xh "
+		     "(0904=%02Xh FF82=%02Xh sleep=%02Xh reg03=%02Xh "
+		     "reg01=%02Xh reg02=%02Xh 6A=%02Xh).",
+		     stage, sr06, cr27, inp(WAB_P904), inp(WAB_PFF82),
+		     inp(P54_SLEEP), wab_read(WAB_REG_RELAY),
+		     wab_read(WAB_REG_WINDOW), wab_read(WAB_REG_LINEAR),
+		     inp(VRAM_SW_PORT));
+	return sr06 == 0x12 && cr27 != 0x00 && cr27 != 0xff;
+}
+
+static void
+gd54_restore_board_state(void)
+{
+	if (!gd54_saved_valid)
+		return;
+
+	if (!gd54_coregraph)
+		outp(VRAM_SW_PORT, gd54_saved_vram_sw);
+	wab_write(WAB_REG_LINEAR, gd54_saved_linear);
+	wab_write(WAB_REG_WINDOW, gd54_saved_window);
+	wab_write(WAB_REG_RELAY, gd54_saved_relay);
+	outp(P54_SLEEP, gd54_saved_sleep);
+	if (!gd54_coregraph) {
+		outp(WAB_PFF82, gd54_saved_pff82);
+		outp(WAB_P904, gd54_saved_p904);
+	}
+	gd54_saved_valid = false;
+}
+
+static bool
+wab_validate_cirrus(void)
+{
+	uint8_t old_relay, old_sr06, sr06, cr27;
+	uint8_t old_p904, old_pff82, old_sleep;
+
+	cl_set_iobase(IO54_3C0, IO54_3D4, IO54_3DA, IO54_3B4, IO54_3BA);
+
+	old_p904 = (uint8_t)inp(WAB_P904);
+	old_pff82 = (uint8_t)inp(WAB_PFF82);
+	old_sleep = (uint8_t)inp(P54_SLEEP);
+	old_relay = (uint8_t)wab_read(WAB_REG_RELAY);
+
+	/*
+	 * Core-Graph machines expose the relocated Cirrus block directly;
+	 * 0904h/FF82h are WAB-era controls and read FFh on the V13.
+	 */
+	if (!gd54_nt_path8_id(cdisp.wab_id)) {
+		outp(WAB_P904, old_p904 | 0x20);
+		outp(WAB_PFF82, old_pff82 | 0x01);
+	}
+	outp(P54_SLEEP, old_sleep | 0x01);
+	wab_write(WAB_REG_RELAY, old_relay | WAB_RELAY_SETUP);
+
+	cl_select_crtc(cl_misc_read());
+	old_sr06 = (uint8_t)cl_seq_read(0x06);
+	cl_seq_write(0x06, 0x12);
+	sr06 = (uint8_t)cl_seq_read(0x06);
+	cr27 = sr06 == 0x12 ? (uint8_t)cl_crtc_read(0x27) : 0xff;
+
+	/* Restore every temporary enable before returning. */
+	cl_seq_write(0x06, old_sr06);
+	wab_write(WAB_REG_RELAY, old_relay);
+	outp(P54_SLEEP, old_sleep);
+	if (!gd54_nt_path8_id(cdisp.wab_id)) {
+		outp(WAB_PFF82, old_pff82);
+		outp(WAB_P904, old_p904);
+	}
+
+	if (sr06 != 0x12 || cr27 == 0x00 || cr27 == 0xff) {
+		hal_log_info("CIRRUS: WAB ID %02Xh is a false positive: "
+			     "relocated VGA validation SR06=%02Xh CR27=%02Xh; "
+			     "continuing with PCI probe.",
+			     cdisp.wab_id, sr06, cr27);
+		return false;
+	}
+
+	hal_log_info("CIRRUS: fixed-interface ID %02Xh validated by relocated "
+		     "Cirrus registers (SR06=%02Xh CR27=%02Xh).",
+		     cdisp.wab_id, sr06, cr27);
+	return true;
+}
+
 static bool
 wab_detect(void)
 {
@@ -1323,19 +2000,19 @@ wab_detect(void)
 
 	if (!((cdisp.wab_id >= 0x50 && cdisp.wab_id <= 0x5d) ||
 	      cdisp.wab_id == 0x70)) {
-		hal_log_info("CIRRUS: WAB ID reads %02Xh, "
+		hal_log_info("CIRRUS: fixed-interface ID reads %02Xh, "
 			     "not a GD54xx built-in.", cdisp.wab_id);
 		return false;
 	}
 
-	return true;
+	return wab_validate_cirrus();
 }
 
 /* Dump the WAB interface registers (called once a Cirrus ID is seen). */
 static void
 wab_dump(void)
 {
-	hal_log_info("CIRRUS: WAB regs: 00=%02Xh 01=%02Xh 02=%02Xh "
+	hal_log_info("CIRRUS: fixed-interface regs: 00=%02Xh 01=%02Xh 02=%02Xh "
 		     "03=%02Xh 04=%02Xh; relay2 0FACh=%02Xh.",
 		     wab_read(0x00), wab_read(0x01), wab_read(0x02),
 		     wab_read(0x03), wab_read(0x04),
@@ -1365,217 +2042,288 @@ wab_default_bpp(uint8_t id)
 }
 
 /*
- * Fingerprint the chip behind the WAB interface.  The machine ID
- * alone is unreliable (the V16 reads 5Bh with a Trident TGUI9680XGi
- * behind it; its relay/window registers work, the VGA file does
- * not, and switching the relay to an unprogrammed foreign chip
- * yields a white, torn screen).
+ * NEC NT4 CIRRUS.SYS board-side entry/exit sequence for internal path 08h.
  *
- * The signature used is the Cirrus SR06 extension lock, which is
- * not a storage register: writing 0Fh (lock) reads back FFh, and
- * writing the 12h key reads back 12h.  A scratch register echoes
- * the 0Fh, a floating bus reads FFh for both - either way the pair
- * of checks fails.  CR27 (aligned to the block MISC bit0 selects)
- * must additionally look like a GD542x/543x/544x ID (80h-BFh).
+ * This is outside the VGA command stream.  It configures the PC-98
+ * Core-Graph/GDC routing logic before the GD5440 timing registers are
+ * programmed.  Omitting it leaves the accelerator relay switched but the
+ * surrounding clock/mux state in the 98-GDC configuration, which produces a
+ * continuously drifting, periodically blanked picture even with static VRAM.
  *
- * The register file is probed at the standard relocation, the
- * B-MATE relocation and the native block, in that order; the sleep
- * address (native 3C3h) lives at base+3 in each block and is
- * enabled per attempt.  On success the I/O base is left selected
- * for the rest of the init.
+ * Enter order observed in CIRRUS.SYS:
+ *   68h <- 0Eh
+ *   6Ah <- 07h, 8Fh, 06h
+ *   indexed reg03 <- 03h
+ *   two writes to wait port 5Fh
+ *   relocated Sleep Address <- 01h (path 08h)
+ *
+ * Exit uses the complementary 8Eh selection and 68h <- 0Fh.
  */
-static bool
-wab_probe_cirrus_regs(void)
+static void
+coregraph_nt4_gate_enter(void)
 {
-	static const struct {
-		uint16_t b3c0, d4c, dac, d4m, dam;
-		const char *name;
-	} bases[] = {
-		{ 0x0ca0, 0x0da4, 0x0daa, 0x0ba4, 0x0baa, "relocated" },
-		{ 0x0c50, 0x0d54, 0x0d5a, 0x0b54, 0x0b5a, "B-MATE" },
-		{ 0x03c0, 0x03d4, 0x03da, 0x03b4, 0x03ba, "native" }
-	};
-	int i, lock, key, misc, cr27;
+	outp(PC98_GDC_MODE_PORT, 0x0e);
+	outp(VRAM_SW_PORT, 0x07);
+	outp(VRAM_SW_PORT, 0x8f);
+	outp(VRAM_SW_PORT, 0x06);
+	wab_write(WAB_REG_RELAY, WAB_RELAY_WAB);
+	outp(PC98_WAIT_PORT, 0x00);
+	outp(PC98_WAIT_PORT, 0x00);
+	outp(P54_SLEEP, 0x01);
 
-	for (i = 0; i < (int)(sizeof(bases) / sizeof(bases[0])); i++) {
-		cl_set_iobase(bases[i].b3c0, bases[i].d4c, bases[i].dac,
-			      bases[i].d4m, bases[i].dam);
-
-		/* Sleep Address (3C3h equivalent): enable the chip. */
-		outp(cdisp.io_3c0 + 0x03, 0x01);
-
-		cl_seq_write(0x06, 0x0f);	/* lock: must read FFh */
-		lock = cl_seq_read(0x06);
-		cl_seq_write(0x06, 0x12);	/* unlock: must echo 12h */
-		key = cl_seq_read(0x06);
-		if (lock != 0xff || key != 0x12) {
-			hal_log_info("CIRRUS: no Cirrus SR06 at the %s "
-				     "base (lock=%02Xh key=%02Xh).",
-				     bases[i].name, lock, key);
-			continue;
-		}
-
-		misc = cl_misc_read();
-		cl_select_crtc(misc);
-		cr27 = cl_crtc_read(0x27);
-		if (cr27 < 0x80 || cr27 > 0xbf) {
-			hal_log_info("CIRRUS: SR06 answers at the %s base "
-				     "but CR27=%02Xh is not a GD54xx.",
-				     bases[i].name, cr27);
-			continue;
-		}
-
-		hal_log_info("CIRRUS: chip fingerprint OK at the %s base "
-			     "(3C0h=%03Xh): SR06 lock/key=FFh/12h, "
-			     "MISC=%02Xh, CR27=%02Xh.",
-			     bases[i].name, cdisp.io_3c0, misc, cr27);
-		return true;
-	}
-
-	hal_log_info("CIRRUS: WAB ID %02Xh, but no Cirrus register file "
-		     "answers - likely an S3/Trident/Matrox accelerator; "
-		     "leaving it alone.", cdisp.wab_id);
-	return false;
+	hal_log_info("CIRRUS-CORE: NT4 gate enter: 68h=0Eh; "
+	             "6Ah sequence 07h,8Fh,06h; reg03=%02Xh; sleep=%02Xh.",
+	             wab_read(WAB_REG_RELAY), inp(P54_SLEEP));
 }
 
-/* Undo the wakeup/relay side effects when aborting mid-init. */
 static void
-wab_abort(void)
+coregraph_nt4_gate_leave(void)
 {
+	unsigned long i;
+
+	/* Exact path-08h unwind order from NEC's miniport. */
+	outp(P54_SLEEP, 0x00);
 	wab_write(WAB_REG_RELAY, WAB_RELAY_GDC);
-	outp(WAB_PFF82, 0x00);
+	outp(PC98_WAIT_PORT, 0x00);
+	outp(VRAM_SW_PORT, 0x07);
+	outp(VRAM_SW_PORT, 0x8e);
+	outp(VRAM_SW_PORT, 0x06);
+	for (i = 0; i < 200000UL; i++)
+		outp(PC98_WAIT_PORT, 0x00);
+	outp(PC98_GDC_MODE_PORT, 0x0f);
+
+	hal_log_info("CIRRUS-CORE: NT4 gate leave: reg03=%02Xh; "
+	             "6Ah sequence 07h,8Eh,06h; 68h=0Fh.",
+	             wab_read(WAB_REG_RELAY));
 }
 
 static bool
 cirrus54_init(int mode, int req_bpp)
 {
-	int i, w, h, bpp;
+	int w, h, bpp;
+	uint8_t relay_setup;
+	bool coregraph;
 
 	if (!wab_detect())
 		return false;
 
-	hal_log_info("CIRRUS: CL-GD54xx built-in found (WAB ID %02Xh).",
-		     cdisp.wab_id);
+	coregraph = gd54_nt_path8_id(cdisp.wab_id);
+	gd54_coregraph = coregraph;
+
+	hal_log_info("CIRRUS: onboard/legacy GD54xx control interface found "
+	             "(ID %02Xh; not assumed to be a physical WAB).",
+	             cdisp.wab_id);
 	wab_dump();
+	if (coregraph && nec_coregraph_seen)
+		hal_log_info("CIRRUS-CORE: ID %02Xh selects NT4 path 8; "
+		             "NEC 1033:0009 marker is at PCI %d:%d.%d.",
+		             cdisp.wab_id, nec_coregraph_bus, nec_coregraph_dev,
+		             nec_coregraph_fn);
+	else if (coregraph)
+		hal_log_info("CIRRUS-CORE: ID %02Xh selects NT4 path 8 "
+		             "(no 1033:0009 marker was observed).", cdisp.wab_id);
 
 	w = disp_geo[mode].w;
 	h = disp_geo[mode].h;
-	if (mode != DISP_640X480 && mode != DISP_800X600) {
-		hal_log_info("CIRRUS: WAB: %dx%d not supported "
-			     "(640x480 / 800x600 only).", w, h);
+	if (coregraph && mode != DISP_640X480) {
+		hal_log_info("CIRRUS-CORE: only the exact NT4 640x480 streams "
+		             "are currently enabled.");
 		return false;
 	}
-	if (mode == DISP_800X600)
-		hal_log_info("CIRRUS: WAB: 800x600 is untested on real "
-			     "hardware (40MHz VCLK).");
+	if (mode != DISP_640X480 && mode != DISP_800X600) {
+		hal_log_info("CIRRUS: GD54xx control path: %dx%d not supported "
+		             "(640x480 / 800x600 only).", w, h);
+		return false;
+	}
 
 	cdisp.vram_size = 1024UL * 1024UL;
 	bpp = cl_resolve_bpp(req_bpp, wab_default_bpp(cdisp.wab_id),
-			     w, h, cdisp.vram_size, "WAB");
+	                     w, h, cdisp.vram_size, "GD54xx onboard/legacy");
 	if (bpp < 0)
 		return false;
 
 	cdisp.scr_w = w;
 	cdisp.scr_h = h;
 	cdisp.bpp = bpp;
-	cdisp.pitch = (uint32_t)w * (uint32_t)(bpp / 8);
+	if (coregraph) {
+		/* Fixed by NEC's path-8 command streams. */
+		cdisp.pitch = bpp == 8 ? 640UL :
+		              (bpp == 16 ? 1280UL : 2048UL);
+	} else {
+		cdisp.pitch = (uint32_t)w * (uint32_t)(bpp / 8);
+	}
 	cdisp.linear = false;
+	cdisp.fifo_only = true;
+
+	cl_set_iobase(IO54_3C0, IO54_3D4, IO54_3DA, IO54_3B4, IO54_3BA);
+
+	/* Preserve all board-side registers before changing any routing. */
+	gd54_saved_p904 = (uint8_t)inp(WAB_P904);
+	gd54_saved_pff82 = (uint8_t)inp(WAB_PFF82);
+	gd54_saved_sleep = (uint8_t)inp(P54_SLEEP);
+	gd54_saved_relay = (uint8_t)wab_read(WAB_REG_RELAY);
+	gd54_saved_window = (uint8_t)wab_read(WAB_REG_WINDOW);
+	gd54_saved_linear = (uint8_t)wab_read(WAB_REG_LINEAR);
+	gd54_saved_vram_sw = (uint8_t)inp(VRAM_SW_PORT);
+	gd54_saved_valid = true;
+	gd54_used_vram_switch = false;
 
 	/*
-	 * Wake up the video subsystem.
-	 * 0904h bit5 enables access to POS102 (FF82h); POS102 bit0
-	 * and the Sleep Address (3C3h equivalent, base+3) bit0 -
-	 * written per candidate base inside the probe below - enable
-	 * the chip.
+	 * 0904h/FF82h belong to the older WAB wake path.  Core-Graph path 8
+	 * instead needs NEC's external 68h/6Ah gate sequence; that is issued
+	 * later, immediately before the VGA mode stream.
 	 */
-	outp(WAB_P904, 0x20);
-	outp(WAB_PFF82, 0x01);
-	hal_log_info("CIRRUS: WAB: video subsystem awake "
-		     "(0904h=20h FF82h=01h).");
+	if (!coregraph) {
+		outp(WAB_P904, gd54_saved_p904 | 0x20);
+		outp(WAB_PFF82, gd54_saved_pff82 | 0x01);
+	}
+	outp(P54_SLEEP, gd54_saved_sleep | 0x01);
+	relay_setup = (uint8_t)((gd54_saved_relay & ~WAB_RELAY_VIDEO) |
+	                        WAB_RELAY_SETUP);
+	wab_write(WAB_REG_RELAY, relay_setup);
 
-	/* Enable WAB register access, keep the 98 GDC on screen for now. */
-	wab_write(WAB_REG_RELAY, WAB_RELAY_SETUP);
-
-	/*
-	 * The machine ID said Cirrus; now make the chip prove it
-	 * before we program a single register (see the V16/Trident
-	 * story above).  This also selects the register base.
-	 */
-	if (!wab_probe_cirrus_regs()) {
-		wab_abort();
+	if (!gd54_identity_at_stage("after wake + register enable")) {
+		hal_log_info("CIRRUS: register identity vanished during wake; "
+		             "aborting before any FIFO write.");
+		gd54_restore_board_state();
 		return false;
 	}
 
-	/* Place the VRAM window at 0xF20000. */
-	wab_write(WAB_REG_WINDOW, WAB_WINDOW_F2);
-	hal_log_info("CIRRUS: WAB: 32KB VRAM window at %08lXh.",
-		     (unsigned long)WAB_WINDOW_ADDR);
+	/*
+	 * CPU-source BLT data must be written through the chip's linear
+	 * aperture on the GD543x/544x-compatible interface.  On the V13
+	 * (NT path 8), reg02=F0h exposes that host aperture at F0000000h.
+	 * It is used strictly as a write-only FIFO port while a MEMSYSSRC
+	 * BLT is active; no framebuffer readback semantics are assumed.
+	 *
+	 * Classic path-4 WABs continue to use the reg01 32KB window.
+	 */
+	if (coregraph) {
+		wab_write(WAB_REG_LINEAR, 0xf0);
+		if ((uint8_t)wab_read(WAB_REG_LINEAR) != 0xf0) {
+			hal_log_info("CIRRUS-BLT: reg02 did not retain F0h "
+			             "(reads %02Xh); cannot open Core-Graph FIFO aperture.",
+			             wab_read(WAB_REG_LINEAR));
+			gd54_restore_board_state();
+			return false;
+		}
+		cdisp.fb_phys = 0xf0000000UL;
+		cdisp.fb = (uint8_t *)cl_map_physical(cdisp.fb_phys, 0x10000UL);
+		if (cdisp.fb == NULL) {
+			hal_log_info("CIRRUS-BLT: cannot map Core-Graph linear FIFO "
+			             "aperture at %08lXh.",
+			             (unsigned long)cdisp.fb_phys);
+			gd54_restore_board_state();
+			return false;
+		}
+		hal_log_info("CIRRUS-BLT: Core-Graph FIFO aperture is "
+		             "reg02=%02Xh -> %08lXh; write-only during MEMSYSSRC BLT.",
+		             wab_read(WAB_REG_LINEAR),
+		             (unsigned long)cdisp.fb_phys);
+	} else {
+		wab_write(WAB_REG_WINDOW, WAB_WINDOW_F2);
+		if (!gd54_identity_at_stage("after selecting FIFO host window")) {
+			hal_log_info("CIRRUS: reg01 window selection disabled the chip.");
+			gd54_restore_board_state();
+			return false;
+		}
+		cdisp.fb_phys = gd54_window_phys((uint8_t)wab_read(WAB_REG_WINDOW));
+		if (cdisp.fb_phys == 0) {
+			hal_log_info("CIRRUS-BLT: reg01=%02Xh has no known "
+			             "32KB-window decoding.",
+			             wab_read(WAB_REG_WINDOW));
+			gd54_restore_board_state();
+			return false;
+		}
+		cdisp.fb = (uint8_t *)cl_map_physical(cdisp.fb_phys, WAB_WINDOW_SIZE);
+		if (cdisp.fb == NULL) {
+			hal_log_info("CIRRUS-BLT: cannot map FIFO host window at %08lXh.",
+			             (unsigned long)cdisp.fb_phys);
+			gd54_restore_board_state();
+			return false;
+		}
+		hal_log_info("CIRRUS-BLT: physical-WAB FIFO host window is "
+		             "reg01=%02Xh -> %08lXh; reg02 left at %02Xh.",
+		             wab_read(WAB_REG_WINDOW),
+		             (unsigned long)cdisp.fb_phys, gd54_saved_linear);
+	}
 
-	/* Map the window into our address space. */
-	cdisp.fb_phys = WAB_WINDOW_ADDR;
-	cdisp.fb = (uint8_t *)cl_map_physical(WAB_WINDOW_ADDR,
-					      WAB_WINDOW_SIZE);
-	if (cdisp.fb == NULL) {
-		hal_log_info("CIRRUS: can't map the VRAM window.");
-		wab_abort();
+	if (!coregraph) {
+		outp(VRAM_SW_PORT, VRAM_SW_WAB);
+		if ((uint8_t)inp(VRAM_SW_PORT) == VRAM_SW_WAB &&
+		    gd54_identity_at_stage("after 6Ah=8Fh")) {
+			gd54_used_vram_switch = true;
+			hal_log_info("CIRRUS: 6Ah=8Fh retained.");
+		} else {
+			outp(VRAM_SW_PORT, gd54_saved_vram_sw);
+			hal_log_info("CIRRUS: 6Ah=8Fh was not retained; original value restored.");
+		}
+	}
+
+	/*
+	 * The external Core-Graph mux/clock gate must be switched before the
+	 * path-8 VGA stream, exactly as NEC's miniport does.
+	 */
+	if (coregraph)
+		coregraph_nt4_gate_enter();
+
+	/* Use NEC's exact path-8 stream on Core-Graph; generic on path 4. */
+	if (coregraph)
+		cl_modeset_coregraph_nt4();
+	else
+		cl_modeset_generic(true);
+	if (cdisp.crt27 == 0x00 || cdisp.crt27 == 0xff) {
+		hal_log_info("CIRRUS: CR27 became %02Xh before FIFO clear; aborting.",
+		             cdisp.crt27);
+		gd54_restore_board_state();
+		cl_release_fb_mapping();
 		return false;
 	}
 
-	/* Hand the shared VRAM over to the accelerator. */
-	outp(VRAM_SW_PORT, VRAM_SW_WAB);
-	hal_log_info("CIRRUS: WAB: shared VRAM switched to the "
-		     "accelerator (6Ah=8Fh).");
-
-	/* Full mode set (leaves the screen blanked). */
-	cl_modeset_generic(true);
-
-	/* Clear the whole 1MB VRAM through the banked window. */
-	for (i = 0; i < (int)(cdisp.vram_size >> CL_BANK_SHIFT); i++) {
-		cl_set_bank(i);
-		memset(cdisp.fb, 0, 1 << CL_BANK_SHIFT);
+	cl_blt_reset();
+	if (!cl_blt_fifo_clear_visible()) {
+		hal_log_info("CIRRUS-BLT: initial visible-screen FIFO clear failed.");
+		gd54_restore_board_state();
+		cl_release_fb_mapping();
+		return false;
 	}
-	cl_set_bank(0);
 
-	/* Screen back on. */
+	/* Screen on.  Core-Graph reg03 was already selected before the mode stream. */
 	cl_seq_write(0x01, 0x01);
+	if (!coregraph) {
+		wab_write(WAB_REG_RELAY,
+		          relay_setup | WAB_RELAY_VIDEO | WAB_RELAY_SETUP);
+		outp(WAB_RELAY2_PORT, 0x02);
+	}
 
-	/* Switch the video output relay to the accelerator. */
-	wab_write(WAB_REG_RELAY, WAB_RELAY_WAB);
-	outp(WAB_RELAY2_PORT, 0x02);	/* PCI models (harmless elsewhere) */
-	hal_log_info("CIRRUS: WAB: relay switched to the accelerator "
-		     "(reg 03h=%02Xh, 0FACh=%02Xh).",
-		     wab_read(WAB_REG_RELAY), inp(WAB_RELAY2_PORT));
+	if (coregraph) {
+		hal_log_info("CIRRUS-CORE: output selected via reg03=%02Xh; "
+		             "0FACh untouched (reads %02Xh).",
+		             wab_read(WAB_REG_RELAY), inp(WAB_RELAY2_PORT));
+		hal_log_info("CIRRUS-BLT: visible screen cleared to black via CPU-source FIFO.");
+	} else
+		hal_log_info("CIRRUS: GD54xx output selected (reg03=%02Xh, 0FACh=%02Xh).",
+		             wab_read(WAB_REG_RELAY), inp(WAB_RELAY2_PORT));
 
-	cdisp.chip_name = cdisp.alpine ? "CL-GD5430/5440 (WAB)" :
-					 "CL-GD5428 (WAB)";
-	cdisp.path = CIRRUS_PATH_54;
-
+	cdisp.chip_name = cdisp.alpine ? "CL-GD5430/5440 (onboard/legacy)" :
+	                                 "CL-GD5428 (onboard/legacy)";
+	cdisp.path = coregraph ? CIRRUS_PATH_54_COREGRAPH :
+	                         CIRRUS_PATH_54_BANKED;
 	return true;
 }
 
 static void
 cirrus54_cleanup(void)
 {
-	/* Blank the accelerator output first (SR1 bit5). */
+	/* Keep register access enabled while blanking, then unwind board routing. */
 	cl_seq_write(0x01, 0x21);
-
-	/*
-	 * Relay back to the 98 GDC output: clear bit1 of the relay
-	 * register.  Keep bit0 (register access) for the moment so
-	 * the write above and the ones below still reach the chip,
-	 * then drop it as the final WAB access.
-	 */
-	wab_write(WAB_REG_RELAY, WAB_RELAY_SETUP);
-	outp(WAB_RELAY2_PORT, 0x00);	/* PCI models (harmless elsewhere) */
-
-	/* Return the shared VRAM to the GDC. */
-	outp(VRAM_SW_PORT, VRAM_SW_GDC);
-
-	/* Disable register access; leave the relay on the GDC side. */
-	wab_write(WAB_REG_RELAY, WAB_RELAY_GDC);
-
-	/* Put the video subsystem back to sleep (mirror of init). */
-	outp(WAB_PFF82, 0x00);
+	if (gd54_coregraph)
+		coregraph_nt4_gate_leave();
+	else
+		outp(WAB_RELAY2_PORT, 0x00);
+	gd54_restore_board_state();
+	cl_release_fb_mapping();
+	gd54_coregraph = false;
 }
 
 /*****************************************************************************/
@@ -1671,6 +2419,7 @@ pci_find_cirrus(int *obus, int *odev, int *ofn)
 	size_t i;
 
 	ndev = 0;
+	nec_coregraph_seen = false;
 	for (bus = 0; bus < 4; bus++) {
 		for (dev = 0; dev < 32; dev++) {
 			id = pci_read32(bus, dev, 0, 0x00);
@@ -1691,6 +2440,15 @@ pci_find_cirrus(int *obus, int *odev, int *ofn)
 					     (unsigned long)(id >> 16),
 					     (unsigned long)(classcode >> 24));
 				ndev++;
+				if ((id & 0xffff) == 0x1033 &&
+				    (uint16_t)(id >> 16) == 0x0009) {
+					nec_coregraph_seen = true;
+					nec_coregraph_bus = bus;
+					nec_coregraph_dev = dev;
+					nec_coregraph_fn = fn;
+					hal_log_info("CIRRUS: NEC Core-Graph bridge marker "
+					     "found at PCI %d:%d.%d.", bus, dev, fn);
+				}
 				if ((id & 0xffff) != PCI_VENDOR_CIRRUS)
 					continue;
 				for (i = 0;
@@ -2228,12 +2986,14 @@ cirrus75_init(int mode, int req_bpp)
 	cdisp.fb_phys = bar0 + chip->fb_offset;
 	cdisp.vram_size = PCI_FB_LENGTH;
 	cdisp.linear = true;
+	cdisp.fifo_only = !chip->laptop;
 	hal_log_info("CIRRUS: framebuffer = BAR0 + %08lXh = %08lXh.",
 		     (unsigned long)chip->fb_offset,
 		     (unsigned long)cdisp.fb_phys);
 
 	cdisp.fb = (uint8_t *)cl_map_physical(cdisp.fb_phys,
-					      cdisp.vram_size);
+					      cdisp.fifo_only ? 0x10000UL :
+					                        cdisp.vram_size);
 	if (cdisp.fb == NULL) {
 		hal_log_info("CIRRUS: can't map the framebuffer.");
 		return false;
@@ -2243,6 +3003,7 @@ cirrus75_init(int mode, int req_bpp)
 	if (!probe_regbase()) {
 		hal_log_info("CIRRUS: VGA registers not responding at "
 			     "the native or relocated base.");
+		cl_release_fb_mapping();
 		return false;
 	}
 	dump_fw_regs();
@@ -2269,8 +3030,10 @@ cirrus75_init(int mode, int req_bpp)
 	} else {
 		bpp = cl_resolve_bpp(req_bpp, 24, w, h, cdisp.vram_size,
 				     "PCI");
-		if (bpp < 0)
+		if (bpp < 0) {
+			cl_release_fb_mapping();
 			return false;
+		}
 	}
 
 	cdisp.scr_w = w;
@@ -2304,14 +3067,20 @@ cirrus75_init(int mode, int req_bpp)
 	else
 		cl_modeset_generic(false);
 
-	/*
-	 * Clear VRAM, but stop 256 bytes short of the end: with
-	 * SR17 bit6 set (NEC's linear-machine setting) the last 256
-	 * bytes of the linear block decode as memory-mapped BLT
-	 * registers, and a memset over them could start a random
-	 * blit.
-	 */
-	memset(cdisp.fb, 0, cdisp.vram_size - 0x100);
+	if (cdisp.fifo_only) {
+		/* PCI GD54xx: BAR writes are used only as CPU-source FIFO cycles. */
+		cl_blt_reset();
+		if (!cl_blt_fifo_clear_visible()) {
+			hal_log_info("CIRRUS-BLT: PCI GD54xx FIFO clear failed.");
+			restore_state();
+			cl_release_fb_mapping();
+			return false;
+		}
+		hal_log_info("CIRRUS-BLT: PCI GD54xx host path forced to CPU-source FIFO.");
+	} else {
+		/* GD75xx/755x retain their known-good direct linear path. */
+		memset(cdisp.fb, 0, cdisp.vram_size - 0x100);
+	}
 
 	/* Screen on. */
 	cl_seq_write(0x01, 0x01);
@@ -2340,4 +3109,6 @@ cirrus75_cleanup(void)
 	/* Re-lock the extensions if they were locked when we came. */
 	if (ext_was_locked)
 		cl_seq_write(0x06, 0x0f);
+
+	cl_release_fb_mapping();
 }

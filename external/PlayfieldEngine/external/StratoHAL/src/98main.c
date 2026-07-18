@@ -854,6 +854,7 @@ double rint(double x)
 
 #define DISP_GDC	0
 #define DISP_CIRRUS	1
+#define DISP_TRIDENT	2
 
 static int disp_driver;
 
@@ -869,6 +870,10 @@ init_disp(void)
 		is_gdc_ok = false;
 
 	if (is_true_color_enabled) {
+		if (trident_init_disp(DISP_640X480, -1)) {
+			disp_driver = DISP_TRIDENT;
+			return true;
+		}
 		if (cirrus_init_disp(DISP_640X480, -1)) {
 			disp_driver = DISP_CIRRUS;
 			return true;
@@ -892,20 +897,25 @@ cleanup_disp(void)
 	if (disp_driver == DISP_CIRRUS)
 		cirrus_cleanup_disp();
 
+	if (disp_driver == DISP_TRIDENT)
+		trident_cleanup_disp();
+
 	gdc_cleanup_disp();
 }
 
 static void
 flip(void)
 {
-	if (disp_driver == DISP_GDC) {
+	switch (disp_driver) {
+	case DISP_GDC:
 		gdc_flip();
-		return;
-	}
-	
-	if (disp_driver == DISP_CIRRUS) {
+		break;
+	case DISP_CIRRUS:
 		cirrus_flip();
-		return;
+		break;
+	case DISP_TRIDENT:
+		trident_flip();
+		break;
 	}
 }
 
