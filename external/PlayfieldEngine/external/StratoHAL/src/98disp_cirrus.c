@@ -62,10 +62,6 @@
  *      Windows/SVGA accelerator has its own PCI function and BAR.  The Nb10
  *      (GD7548) is the verified example: 1033:0009 and 1013:0038 coexist.
  *
- *  (5) Direct PCI accelerator
- *      The graphics chip is a normal PCI device with a BAR, as on later
- *      ValueStar GD5446 systems and PC/AT-like late PC-9821 notebooks.
- *
  * This distinction is useful beyond Cirrus.  When porting S3, Trident,
  * Matrox or NeoMagic support, separate the implementation into two layers:
  *
@@ -79,6 +75,234 @@
  * the 98-GDC state.  Conversely, a working relay proves only that the output
  * mux switched; it does not prove that the accelerator clock and VRAM owner
  * were selected.
+ *
+ * ---------------------------------------------------------------------------
+ * Chip & Model Identification Table
+ * ---------------------------------------------------------------------------
+ *
+ * | ChipFamily | Connectivity / Probe | Target Chip / Board | ModelCode                                | IoVariant             |
+ * |------------|----------------------|---------------------|------------------------------------------|-----------------------|
+ * | 0x04       | I/O Port (Native)    | GD5428 Series       | 0x00, 0x01, 0x02, 0x04, 0x09, 0x0A, 0x0B | 1 (WAB Native)        |
+ * | 0x04       | I/O Port (WAB Probe) | WAB (NEC WAB B3)    | 0x02                                     | 2 (WAB PCI)           |
+ * | 0x08       | I/O Port (Native)    | GD5430              | 0x03, 0x05, 0x06, 0x07, 0x08             | 1 (WAB Native)        |
+ * | 0x08       | I/O Port (Native)    | GD5440              | 0x14                                     | 3 (Core-Graph Bridge) |
+ * | 0x40       | PCI (DevID 0x1202)   | GD7543              | 0x0C, 0x0D                               | 4 (PCI)               |
+ * | 0x40       | PCI (DevID 0x0038)   | GD7548              | 0x0E, 0x0F, 0x10, 0x12, 0x13             | 4 (PCI)               |
+ * | 0x80       | PCI (DevID 0x00B8)   | GD5446              | 0x11                                     | 4 (PCI)               |
+ *
+ * ---------------------------------------------------------------------------
+ * Initialization
+ * ---------------------------------------------------------------------------
+ *
+ * Recovered from the NEC PC-98 Windows NT 4.0 CIRRUS.SYS disassembly.  The
+ * miniport does NOT expose one initialization path per attachment class.  It
+ * has a single detection entry point, and the taxonomy above is reconstructed
+ * inside one probe chain whose ORDER is the real classifier.
+ *
+ * Entry structure:
+ *
+ *   DriverEntry fills one VIDEO_HW_INITIALIZATION_DATA and calls
+ *   VideoPortInitialize twice: AdapterInterfaceType=Isa first, then Eisa if
+ *   the first attempt fails; the better status is returned.  There is no
+ *   third registration and no PnP-specific entry.  HwInitialize is nearly
+ *   empty.  HwResetHw re-enters the mode setter with mode 0.
+ *
+ * Probe order (first match wins).  Each step claims the machine or falls
+ * through to the next:
+ *
+ *   0. Claim 0FA2h, 0FA3h, 0FAAh, 0FABh as four 1-byte I/O ranges and map
+ *      them.  Both the WAB probe and the fixed-interface probe share this
+ *      claim.
+ *
+ *   1. WAB probe: 0FA2h <- 00h, 0FA3h <- FFh, read 0FA3h.  == 60h gives
+ *      ChipFamily 04h, ModelCode 02h, IoVariant 2.  Relocation switches to
+ *      0B50h/0C50h/0D50h and the index/data pair moves from 0FAAh/0FABh to
+ *      0FA2h/0FA3h.  VRAM is assumed 1MB without probing.
+ *
+ *   2. PCI 1013:1202 -> ChipFamily 40h, ModelCode 0Ch (GD7543).
+ *
+ *   3. PCI 1013:0038 -> GD7548.  The machine is then sub-classified from
+ *      firmware data, NOT from PCI: RtlQueryRegistryValues reads
+ *      "Configuration Data" under
+ *      \Registry\MACHINE\HARDWARE\DESCRIPTION\System\MultiFunctionAdapter\0,
+ *      checks a 98h 21h signature at buffer offset 228h, and takes a machine
+ *      byte at offset 267h:
+ *
+ *        38h        -> ModelCode 0Eh
+ *        3Eh / 47h  -> read 04B8Eh; (value & 3): 3 -> 0Fh, 2 -> 10h
+ *        41h        -> 08F0h <- 0060h, read 08F2h; bit0 -> 13h else 12h
+ *
+ *      Any ChipFamily 40h machine then relocates to native VGA 03B0h/03C0h/
+ *      03D0h (IoVariant 3).
+ *
+ *   4. Fixed interface: 0FAAh <- 00h, read 0FABh = reg00h ID.  Accepted when
+ *      (id & 0C0h) == 40h and id is 50h..5Dh or 70h, decoded by jump table:
+ *
+ *        50h     -> family 04h, ModelCode 00h
+ *        51h,52h -> 04h/02h        58h     -> 08h/03h
+ *        53h     -> 04h/0Bh        59h     -> 08h/05h
+ *        54h     -> 04h/01h        5Ah     -> 08h/06h
+ *        55h,70h -> 04h/04h        5Bh     -> 08h/07h   (verified V13)
+ *        56h     -> 04h/09h        5Ch,5Dh -> 08h/08h
+ *        57h     -> 04h/0Ah
+ *
+ *      5Eh..6Fh are rejected.  IoVariant 1; relocation stays at the default
+ *      0BA0h/0CA0h/0DA0h block.
+ *
+ *   5. PCI 1013:00B8 -> ChipFamily 80h, ModelCode 11h (GD5446).  Register
+ *      access moves to MMIO through BAR1 instead of the I/O block.
+ *
+ *   Otherwise the miniport reports no device.
+ *
+ * PCI probing is done by hand rather than through VideoPort helpers: the
+ * driver writes 80000000h + slot*800h to 0CF8h and compares 0CFCh against
+ * (DeviceID << 16) | 1013h across bus 0, devices 0..1Fh, function 0, keeping
+ * the matching slot for later BAR reads.  This is consistent with item F1:
+ * absence of a 1013:xxxx function simply drops the driver into step 4.
+ *
+ * Aperture determination, by ChipFamily:
+ *
+ *   04h  reg01h strap; 32KB-banked window; IsLinear = 0.
+ *        IoVariant 1: reg01h <- 01h, read data:
+ *          80h -> 00F20000h    A0h -> 00F00000h
+ *          C0h -> 00F60000h    E0h -> 00F40000h
+ *        then reg01h <- 02h, data <- 00h.
+ *        IoVariant 2: reg04h <- 04h, read data & 7 -> 0..3, then write the
+ *        selection back through reg01h:
+ *          0 -> 00F00000h (writes 0A0h)    1 -> 00F20000h (writes 80h)
+ *          2 -> 00F40000h (writes 0E0h)    3 -> 00F60000h (writes 0C0h)
+ *        Mapped length stays 20000h regardless of VRAM size.
+ *
+ *   08h  no strap read.  reg02h <- 0F0h and the aperture is taken as the
+ *        fixed value 0F0000000h.  This is the path-08h route and matches
+ *        section A's "physical base = value << 24"; no PCI BAR is consulted.
+ *
+ *   40h  PCI BAR0 (config offset 10h) + 0C00000h.  The low flag bits of BAR0
+ *        are NOT masked before the addition.
+ *
+ *   80h  PCI BAR0 & 0FF000000h for VRAM.  BAR1 (offset 14h) & 0FFFFFFE0h is
+ *        mapped separately as a 100h-byte MMIO block, after which the PCI
+ *        command register is set to memory-space-on / IO-off.  SR0Fh is then
+ *        read through MMIO and (value & 18h) == 18h promotes VRAM to 2MB.
+ *
+ * The framebuffer is mapped with VideoPortGetDeviceBase (InIoSpace = FALSE),
+ * not VideoPortMapMemory.  Length is 20000h for ChipFamily 04h and the full
+ * VRAM size otherwise; the same test sets IsLinear.
+ *
+ * Initialization / scanout split -- important when porting:
+ *
+ *   HwFindAdapter performs detection, relocation, aperture placement and the
+ *   framebuffer map, and nothing else.  It never touches 68h, 6Ah, 5Fh,
+ *   09A8h or reg03h.  Every board gate listed in section B runs later, from
+ *   the mode setter reached through IOCTL_VIDEO_SET_CURRENT_MODE, and from
+ *   HwResetHw for the return-to-GDC direction.  A port that replays only
+ *   HwFindAdapter will map a correct aperture and still produce the drifting
+ *   Core-Graph scanout described in section B.  The mode setter's enter/exit
+ *   ordering is exactly the section B sequence; the 0CA3h write in it is
+ *   emitted only for ChipFamily 08h.
+ *
+ * Bank-switch callback registration (ChipFamily 04h only):
+ *
+ *   HwFindAdapter only records IsLinear.  The callback is registered later,
+ *   when IOCTL_VIDEO_MAP_VIDEO_MEMORY runs, and IsLinear is the only test:
+ *
+ *     IsLinear == 0 -> VideoPortMapBankedMemory(..., BankLength = 8000h,
+ *                        ReadWriteBank = 0, BankRoutine, HwDeviceExtension)
+ *     IsLinear != 0 -> VideoPortMapMemory(...)
+ *
+ *   BankRoutine is a normal PBANKED_SECTION_ROUTINE (ReadBank, WriteBank,
+ *   Context).  It ignores Context, loads a global port bias instead, and
+ *   tail-calls a register-argument thunk that issues raw in/out:
+ *
+ *     port = 0AEh + bias        ; bias = 0C00h native -> 0CAEh
+ *                               ;        0BB0h WAB    -> 0C5Eh
+ *     save = in8(port)
+ *     out16(port, ((ReadBank  << 1) << 8) | 09h)    ; GR09
+ *     out16(port, ((WriteBank << 1) << 8) | 0Ah)    ; GR0A
+ *     out8(port, save)
+ *
+ *   0AEh + bias lands exactly on the relocated GR index port, so one thunk
+ *   serves both relocations.  The << 1 converts the 8000h BankLength into the
+ *   16KB GR09/GR0A unit, consistent with section A's note that GR0B bit5
+ *   selects 16KB banks.
+ *
+ *   A second group of small raw-I/O fragments is NOT registered with the OS.
+ *   IOCTL_VIDEO_GET_BANK_SELECT_CODE returns their (address, length) pairs in
+ *   a VIDEO_BANK_SELECT (34h bytes) so the display driver can copy the bytes
+ *   and execute them inline; the lengths are computed as the delta to the
+ *   next fragment.  The GR09/GR0A thunk above is shared by both consumers.
+ *   Only ChipFamily 80h uses the fragment variant that hardcodes 0AEh with no
+ *   bias.
+ *
+ * reg01h encoding, and a correction to section A:
+ *
+ *   The four ChipFamily 04h selections are contiguous:
+ *
+ *     aperture = 00F00000h + ApSel * 20000h,  ApSel = 0..3
+ *
+ *   but the reg01h byte that carries ApSel is NOT monotonic.  Recovering the
+ *   bit assignment from the driver's own pairing gives:
+ *
+ *     bit7 = 1 (fixed)
+ *     bit6 = ApSel bit1
+ *     bit5 = ApSel bit0, INVERTED
+ *
+ *     ApSel 0 -> 0A0h -> 00F00000h        ApSel 2 -> 0E0h -> 00F40000h
+ *     ApSel 1 -> 080h -> 00F20000h        ApSel 3 -> 0C0h -> 00F60000h
+ *
+ *   This model holds for all four selections in both directions, which is why
+ *   it is taken as correct here.  CIRRUS.SYS encodes the same pairing twice,
+ *   independently: the IoVariant 1 path reads reg01h and decodes it, and the
+ *   IoVariant 2 path derives ApSel from reg04h & 7 and writes reg01h back.
+ *   Both agree that C0h is 00F60000h and E0h is 00F40000h.
+ *
+ *   Section A previously carried C0h -> 00F40000h and E0h -> 00F60000h from
+ *   NEC documentation/emulator sources.  Those two rows are rejected and the
+ *   table there has been corrected.  Reading reg01h as a plain ascending
+ *   selector -- ignoring the inverted bit5 -- reproduces the rejected pair
+ *   exactly, so a transcription that assumed monotonicity is the most likely
+ *   origin.  A0h/00F00000h and 80h/00F20000h are unaffected and agree in
+ *   every source, which is consistent with the error being confined to the
+ *   bit5-inverted half of the field.
+ *
+ *   Scope note, not a reservation about the mapping: the shipping driver is
+ *   taken as authoritative here, but this particular strap belongs to the
+ *   ChipFamily 04h banked route and is therefore not exercised by the V13,
+ *   which is path-08h and uses reg02h.  The V13 bring-up neither confirms nor
+ *   contradicts it.  Emulators are also weak evidence on this point: C0h/E0h
+ *   are rare placements, and an emulator carrying the monotonic table would
+ *   not be caught by ordinary A0h/80h use.
+ *
+ * Other observations from the disassembly:
+ *
+ *   - ModelCode 04h uses reg80h/reg81h/reg82h for window setup and reg83h as
+ *     the register-access lock (unlock: reg83h <- 01h; lock: reg83h <- 03h).
+ *     Every other model uses 08F0h/08F2h for that lock instead, and
+ *     ChipFamily 40h adds a further 08F0h <- 0060h / clear-bit4 step.
+ *     reg80h..reg83h are outside section A's reg00h..reg04h list.
+ *   - 09A8h is written only when ModelCode == 01h: 400-line 8bpp -> 00h,
+ *     480-line 8bpp -> 01h, otherwise 03h, and 00h on the return to text.
+ *     No other model touches the scan-rate selector, so the remaining
+ *     machines inherit whatever the firmware left.
+ *   - 00A2h is claimed as an access range and mapped, but no code path ever
+ *     reads the resulting base.  It appears to be a dead resource claim.
+ *   - The return-to-text path spends 30D40h (200000) writes to 5Fh as its
+ *     settle delay before 68h <- 0Fh.  Section B's "delay through 5Fh" is
+ *     this loop.
+ *   - ChipFamily 08h refines ModelCode to 14h (GD5440) only after the
+ *     framebuffer map, by writing 28h to the relocated CRTC index and reading
+ *     back 03h.  Before that point a GD5440 is indistinguishable from a
+ *     GD5430 in the extension.
+ *   - 0FACh is driven for ModelCode 08h and 11h only (02h entering the
+ *     accelerator path, 00h leaving it), which matches section E's use of
+ *     0FACh as the Nb10 panel/output mux.
+ *
+ * Latent bug worth knowing when comparing against the binary: two rejection
+ * paths in the detect routine return 37h in AL, while the caller tests only
+ * AL != 0 and therefore reads them as success.  They are reached when the
+ * firmware machine byte is unknown (step 3) or the fixed-interface ID is
+ * 5Eh..6Fh (step 4).  Whether this is deliberate cannot be determined from
+ * the binary; a port should treat both as hard failures.
  *
  * ---------------------------------------------------------------------------
  * A. Fixed 0FAAh/0FABh interface shared by WAB and Core-Graph machines
@@ -105,13 +329,22 @@
  * Some B-MATE/variant machines use another relocation and/or FA2h/FA3h;
  * those variants remain an open porting item.
  *
- * reg01 legacy aperture values seen in NEC documentation/emulators include:
+ * reg01 legacy aperture values.  The C0h/E0h rows are corrected against
+ * CIRRUS.SYS; see the Initialization section for the derivation:
  *
  *   10h -> 000B0000h
  *   A0h -> 00F00000h
  *   80h -> 00F20000h
- *   C0h -> 00F40000h
- *   E0h -> 00F60000h
+ *   C0h -> 00F60000h
+ *   E0h -> 00F40000h
+ *
+ * NEC documentation/emulator sources are seen listing C0h -> 00F40000h and
+ * E0h -> 00F60000h.  Those two rows are rejected.  reg01 is not a monotonic
+ * selector: bit7 is fixed, bit6 carries the high select bit and bit5 carries
+ * the low select bit INVERTED, so the byte order 80h < A0h < C0h < E0h does
+ * not follow the aperture order.  Reading it as monotonic reproduces the
+ * rejected pair exactly, which is the likely origin of the error.  Use the
+ * table above.
  *
  * The bank registers are standard Cirrus GR09/GR0A.  GR0B bit5 selects
  * 16KB bank units.  Do not confuse GR09 with an aperture-enable register:
@@ -227,8 +460,8 @@
  *   - 4-byte writes completed after exactly 230400 dword cycles.
  *
  * FIFO submission on this path therefore uses 32-bit writes.  The proven FIFO
- * implementation remains as a fallback and hardware oracle; select it with
- * STRATO_CIRRUS_HOST=fifo.  Direct VRAM aperture rendering is the default.
+ * implementation remains a hardware oracle.  The Nb10 diagnostic revision
+ * below forces this 32-bit FIFO path and performs no direct VRAM rendering.
  *
  * Before direct aperture access, reset the BLT engine with GR31 04h->00h.
  * An interrupted system-source BLT would otherwise steal framebuffer writes
@@ -261,7 +494,10 @@
  * while GD7548 is independently visible as 1013:0038.  The GD7548 framebuffer
  * is at BAR0+0C00000h, not BAR0+0.  It uses native VGA ports and 0FACh as the
  * panel/output mux.  Its LCD mode streams and 2048-byte 24bpp pitch remain a
- * separate path in this file.
+ * separate path in this file.  The current Nb10 bring-up is deliberately
+ * experimental: it applies the V13 68h/6Ah/5Fh gate ordering, substitutes
+ * 0FACh for the V13 fixed-interface relay, and uses the BAR only as a
+ * CPU-source BitBLT FIFO write port.
  *
  * ---------------------------------------------------------------------------
  * F. Porting guidance for S3, Trident, Matrox and other PC-9821 accelerators
@@ -296,11 +532,12 @@
  *    Cirrus mode stream; function names use _necdrv_ to describe provenance
  *    without tying the hardware mechanism to a particular operating system.
  *  - GD54xx default host path is verified direct VRAM aperture rendering.
- *  - STRATO_CIRRUS_HOST=fifo retains the verified 32-bit CPU-source BLT path.
+ *  - The Nb10 diagnostic revision forces the 32-bit CPU-source BLT path.
  *  - Fixed physical WABs use their banked reg01 aperture for direct drawing.
  *  - Core-Graph path 08h uses reg02=F0h and a 1MB map at F0000000h.
  *  - PCI desktop GD54xx maps the BAR framebuffer for direct drawing.
- *  - GD754x/755x continue to use their separately verified linear path.
+ *  - Nb10/GD7548 uses an experimental V13-style board gate and forced FIFO;
+ *    other GD754x/755x retain their separately verified linear path.
  *  - Hardware logs and explanatory comments are intentionally retained as a
  *    porting record for other Core-Graph-backed graphics chips.
  *
@@ -320,6 +557,8 @@
  *    individually necessary; in particular test 07h/06h, 68h and 5Fh one at
  *    a time, and inspect the 09A0h protection status where practical.
  *  - Port path-08h 800x600 streams and variant fixed-interface port bases.
+ *  - Recover the real Nb10 board-side scanout sequence and determine which
+ *    V13-derived 68h/6Ah/5Fh operations are actually required.
  *  - Recover equivalent board-side Core-Graph sequences for S3, Trident,
  *    Matrox and NeoMagic instead of assuming the V13 values are universal.
  *  - Confirm physical-WAB FIFO behavior separately from direct banked writes.
@@ -392,7 +631,7 @@ static struct cirrus_disp {
 	uint32_t vram_size;
 	int cur_bank;
 	bool fifo_only;	/* true: CPU-source BLT FIFO; false: direct aperture */
-	bool fifo_capable;	/* GD54xx host path can use retained FIFO code */
+	bool fifo_capable;	/* host path can use the CPU-source FIFO code */
 
 	/* Chip information (for logging / decisions). */
 	uint8_t wab_id;		/* raw 0FAAh register 00h readout */
@@ -406,10 +645,55 @@ static struct cirrus_disp {
 } cdisp;
 
 /*
- * Requested GD54xx host path.  Direct aperture is the default; the proven
- * CPU-source FIFO path remains selectable for diagnosis and fallback.
+ * Shared host-path selector retained for the older code paths.  The active
+ * Nb10 V17 diagnostic sets it unconditionally and uses FIFO only.
  */
 static bool gd54_fifo_requested;
+
+/* Nb10 diagnostics are referenced by the shared FIFO presentation path. */
+static bool pci_nb10_experimental;
+static bool pci_nb10_diag_bars;
+static bool pci_nb10_diag_widths;
+static bool pci_nb10_diag_freeze;
+static unsigned long pci_nb10_flip_count;
+
+/*
+ * Interactive Nb10 scanout/pixel-pipeline oracle.  The NT4 mode stream is
+ * left intact.  Enter cycles the CRTC extended start-address bit, framebuffer
+ * destination, image contents, Hidden DAC value and Pixel Mask so that the
+ * remaining black-screen fault can be separated from host-aperture writes.
+ */
+#define NB10_ALT_SCANOUT_BASE 0x00020000UL
+enum nb10_scanout_test {
+	/*
+	 * V31: FIFO-only short cycle.  The aperture write path is no longer
+	 * trusted for anything; the ONLY image source is the BLT MEMSYSSRC
+	 * FIFO, drawn once at init and redrawn by the BASELINE test.  Every
+	 * other test re-asserts the complete NT4 baseline and then applies
+	 * exactly ONE delta to a sequencer/clock/LCD parameter, so whatever
+	 * changes on the LCD (and on an attached CRT) is attributable to
+	 * that parameter alone.  Deltas split the remaining fault between
+	 * "sequencer wait/period" (MCLK SR1F, display-FIFO threshold SR16,
+	 * VCLK select, dot clock, packed-mode SR07) and "LCD enable/timing"
+	 * (shadow-block re-dance, CR2C/CR2D variants).
+	 */
+	NB10_TEST_BASELINE = 0,		/* redraw FIFO bars + NT4 baseline  */
+	NB10_TEST_MCLK_NT4,		/* SR1F=23h: NT4 value (kills it?)  */
+	NB10_TEST_FIFOTHR_FW,		/* SR16=F0h: firmware FIFO threshold */
+	NB10_TEST_FIFOTHR_MAX,		/* SR16=FFh: display fetch priority */
+	NB10_TEST_9A8_01,		/* 9A8h=01h: does the display DIE?  */
+	NB10_TEST_9A8_00,		/* 9A8h=00h: does the display DIE?  */
+	NB10_TEST_9A8_DANCE,		/* 01h -> 00h -> 03h with settles   */
+	NB10_TEST_REG03_CLEAR,		/* reg03<-00h: display should DIE   */
+	NB10_TEST_LCD_REDANCE,		/* re-run the CR2D shadow sequence  */
+	NB10_TEST_CR2C_E3,		/* panel control E3h (watch CRT!)   */
+	NB10_TEST_FAC_CLEAR,		/* 0FACh<-00h with reg03=02h held   */
+	NB10_TEST_COUNT
+};
+static int pci_nb10_scanout_test;
+static int pci_nb10_saved_9a8 = -1;
+static int pci_nb10_fifo_gr30 = 0x04;
+static bool pci_nb10_interactive_ready;
 
 /* Blit placement (centering + clip against the screen). */
 static int ofs_x, ofs_y;
@@ -459,9 +743,16 @@ static void *cl_map_physical(uint32_t phys, uint32_t size);
 static bool cl_unmap_physical(void *linear);
 static void cl_release_fb_mapping(void);
 static bool cl_aperture_clear_visible(void);
+static bool cl_aperture_pattern_visible(void);
+static bool nb10_aperture_width_test(const char *stage);
+static void nb10_reloc_seq_write(int reg, int val);
+static int nb10_reloc_seq_read(int reg);
+static void nb10_scan_probe(const char *stage);
 static bool cl_blt_fifo_clear_visible(void);
 static bool cl_blt_fifo_pattern_visible(void);
 static void cirrus_flip_fifo(void);
+static bool nb10_run_scanout_test(int test, const char *stage);
+static void nb10_poll_enter(void);
 
 /* Fixed 0FAA/0FAB GD54xx interface (Core-Graph or banked WAB). */
 static bool cirrus54_init(int mode, int req_bpp);
@@ -471,6 +762,10 @@ static void cirrus54_cleanup(void);
 static bool cirrus75_init(int mode, int req_bpp);
 static void cirrus75_cleanup(void);
 
+/* NT4-structure full initialization rewrite. */
+static bool cirrus_nt4_rewrite_init(int mode, int req_bpp);
+static void cirrus_nt4_rewrite_cleanup(void);
+
 /*****************************************************************************/
 /* Public interface                                                          */
 /*****************************************************************************/
@@ -478,10 +773,6 @@ static void cirrus75_cleanup(void);
 bool
 cirrus_init_disp(int mode, int bpp)
 {
-	const char *force, *host_env, *yoff_env;
-	char *endp;
-	long yoff_value;
-	int max_y;
 	bool ok;
 
 	if (mode < DISP_640X480 || mode > DISP_1280X1024) {
@@ -497,52 +788,27 @@ cirrus_init_disp(int mode, int bpp)
 
 	hal_log_info("CIRRUS: probing; requested %dx%d, depth %d (-1 = auto).",
 		     disp_geo[mode].w, disp_geo[mode].h, bpp);
-	hal_log_info("CIRRUS-BUILD: GD54XX COREGRAPH SUMMARY V8.");
-
-	gd54_fifo_requested = false;
-	host_env = getenv("STRATO_CIRRUS_HOST");
-	if (host_env != NULL) {
-		if (strcmp(host_env, "fifo") == 0)
-			gd54_fifo_requested = true;
-		else if (strcmp(host_env, "aperture") != 0)
-			hal_log_info("CIRRUS: unknown STRATO_CIRRUS_HOST=%s; "
-			             "using aperture.", host_env);
-	}
-	hal_log_info("CIRRUS: requested GD54xx host path: %s.",
-	             gd54_fifo_requested ? "CPU-source BLT FIFO" :
-	                                     "direct VRAM aperture");
-
-	force = getenv("STRATO_CIRRUS_FORCE");
-	if (force != NULL)
-		hal_log_info("CIRRUS: STRATO_CIRRUS_FORCE=%s.", force);
+	hal_log_info("CIRRUS-BUILD: NB10 GD7548 V36 (FIRMWARE MCLK 18h BASELINE + DIRTY ROWS).");
 
 	/*
-	 * Automatic probing is PCI first.  Some PCI-on-board machines
-	 * (notably the V13 family) return a WAB-looking ID such as 5Bh
-	 * even though no WAB exists.  Touching the WAB path first would
-	 * therefore select a bogus banked aperture and may corrupt normal
-	 * memory.  Explicit FORCE=54/75 keeps the requested single path.
+	 * This diagnostic revision has no environment-variable controls.
+	 * It is deliberately fixed to the PC-9821 Nb10 and the recovered NT4
+	 * family-40h/model-0Eh initialization sequence.  After initialization,
+	 * Enter cycles scanout-base and DAC/pixel-mask diagnostic states.
 	 */
-	ok = false;
-	if (force != NULL && strcmp(force, "54") == 0) {
-		hal_log_info("CIRRUS: probe order: forced fixed 0FAA/0FAB GD54xx path only.");
-		ok = cirrus54_init(mode, bpp);
-	} else if (force != NULL && strcmp(force, "75") == 0) {
-		hal_log_info("CIRRUS: probe order: forced PCI path only.");
-		ok = cirrus75_init(mode, bpp);
-	} else {
-		hal_log_info("CIRRUS: probe order: PCI first, then fixed 0FAA/0FAB interface.");
-		ok = cirrus75_init(mode, bpp);
-		if (!ok)
-			ok = cirrus54_init(mode, bpp);
-	}
+	gd54_fifo_requested = false;
+	hal_log_info("CIRRUS: NB10 scanout diagnostic: direct aperture patterns at "
+	             "VRAM+0 and VRAM+20000h with CRTC/DAC state cycling.");
+	hal_log_info("CIRRUS: initialization architecture: strict Nb10 PCI signature, "
+	             "NT4 board/chip ordering, Enter-key scanout/pipeline cycling.");
+
+	ok = cirrus_nt4_rewrite_init(mode, bpp);
 	if (!ok) {
-		hal_log_info("CIRRUS: no usable Cirrus built-in; "
-			     "yielding to other drivers.");
+		hal_log_info("CIRRUS: Nb10 scanout/pixel-pipeline diagnostic initialization failed.");
 		return false;
 	}
 
-	/* Center the game image; clip if the screen is smaller. */
+	/* Center the game image; clipping is retained although flips are frozen. */
 	ofs_x = (cdisp.scr_w - game_width) / 2;
 	ofs_y = (cdisp.scr_h - game_height) / 2;
 	if (ofs_x < 0)
@@ -553,60 +819,25 @@ cirrus_init_disp(int mode, int bpp)
 	draw_h = game_height < cdisp.scr_h ? game_height : cdisp.scr_h;
 	draw_w &= ~3;	/* the row converters work 4 pixels at a time */
 
-	/* Optional vertical placement override for 640x360-on-640x480 games. */
-	yoff_env = getenv("STRATO_CIRRUS_YOFF");
-	max_y = cdisp.scr_h - draw_h;
-	if (max_y < 0)
-		max_y = 0;
-	if (yoff_env != NULL) {
-		endp = NULL;
-		yoff_value = strtol(yoff_env, &endp, 0);
-		if (endp != yoff_env && *endp == '\0' &&
-		    yoff_value >= 0 && yoff_value <= max_y) {
-			ofs_y = (int)yoff_value;
-			hal_log_info("CIRRUS: STRATO_CIRRUS_YOFF=%d applied.", ofs_y);
-		} else {
-			hal_log_info("CIRRUS: invalid STRATO_CIRRUS_YOFF=%s "
-			             "(valid range 0..%d); using centered y=%d.",
-			             yoff_env, max_y, ofs_y);
-		}
-	}
 	hal_log_info("CIRRUS: viewport : y=%d..%d; top/bottom borders %d/%d.",
 	             ofs_y, ofs_y + draw_h - 1, ofs_y,
 	             cdisp.scr_h - (ofs_y + draw_h));
 
 	hal_log_info("CIRRUS: === configuration summary ===");
-	hal_log_info("CIRRUS: path     : %s.",
-		     cdisp.path == CIRRUS_PATH_54_BANKED ?
-		     "GD54xx fixed-interface / WAB" :
-		     cdisp.path == CIRRUS_PATH_54_COREGRAPH ?
-		     "NEC Core-Graph integrated GD54xx" :
-		     "PCI (configuration space)");
+	hal_log_info("CIRRUS: path     : PCI (configuration space), Nb10 fixed.");
 	hal_log_info("CIRRUS: chip     : %s, CR27=%02Xh, fixed ID=%02Xh.",
 		     cdisp.chip_name, cdisp.crt27, cdisp.wab_id);
 	hal_log_info("CIRRUS: mode     : %dx%d, %d bpp, pitch %lu bytes.",
 		     cdisp.scr_w, cdisp.scr_h, cdisp.bpp,
 		     (unsigned long)cdisp.pitch);
-	if (cdisp.fifo_only)
-		hal_log_info("CIRRUS: host path: CPU-source BLT FIFO dword writes at %08lXh; VRAM is never read directly.",
-		             (unsigned long)cdisp.fb_phys);
-	else if (cdisp.linear)
-		hal_log_info("CIRRUS: aperture : linear, %luKB at %08lXh.",
-			     (unsigned long)(cdisp.vram_size >> 10),
-			     (unsigned long)cdisp.fb_phys);
-	else
-		hal_log_info("CIRRUS: aperture : banked 32KB window at "
-			     "%08lXh, 16KB granularity, %luKB VRAM.",
-			     (unsigned long)cdisp.fb_phys,
-			     (unsigned long)(cdisp.vram_size >> 10));
-	if (cdisp.fifo_only)
-		hal_log_info("CIRRUS: blitter  : CPU-source FIFO is the active host path.");
-	else if (cdisp.fifo_capable)
-		hal_log_info("CIRRUS: blitter  : idle; CPU-source FIFO code retained as fallback.");
-	else
-		hal_log_info("CIRRUS: blitter  : unused on this chip path.");
+	hal_log_info("CIRRUS: host path: direct 16-bit aperture writes through the 1MB "
+	             "linear window at physical %08lXh.",
+	             (unsigned long)cdisp.fb_phys);
+	hal_log_info("CIRRUS: test     : Enter cycles base/pattern/DAC controls plus "
+	             "DRAM decay probes and the reg03 relay variant; every state "
+	             "logs CRTC/AC/DAC state.");
 	hal_log_info("CIRRUS: blit     : game %dx%d -> +%d,+%d "
-		     "(draw %dx%d).",
+		     "(draw %dx%d; application flips LIVE; borders keep the bars).",
 		     game_width, game_height, ofs_x, ofs_y, draw_w, draw_h);
 
 	return true;
@@ -615,17 +846,8 @@ cirrus_init_disp(int mode, int bpp)
 void
 cirrus_cleanup_disp(void)
 {
-	switch (cdisp.path) {
-	case CIRRUS_PATH_54_BANKED:
-	case CIRRUS_PATH_54_COREGRAPH:
-		cirrus54_cleanup();
-		break;
-	case CIRRUS_PATH_75:
-		cirrus75_cleanup();
-		break;
-	default:
-		break;
-	}
+	if (cdisp.path != CIRRUS_PATH_NONE)
+		cirrus_nt4_rewrite_cleanup();
 	cdisp.path = CIRRUS_PATH_NONE;
 	hal_log_info("CIRRUS: cleanup done, output back on the 98 GDC.");
 }
@@ -635,6 +857,10 @@ cirrus_flip(void)
 {
 	if (cdisp.path == CIRRUS_PATH_NONE)
 		return;
+	if (pci_nb10_experimental && pci_nb10_diag_freeze) {
+		nb10_poll_enter();
+		return;
+	}
 	cirrus_flip_vram();
 }
 
@@ -659,6 +885,8 @@ cirrus_flip_vram(void)
 	const uint32_t *pixels;
 	int y, bytespp;
 
+	if (pci_nb10_experimental && pci_nb10_diag_freeze)
+		return;
 	if (cdisp.fifo_only) {
 		cirrus_flip_fifo();
 		return;
@@ -804,8 +1032,31 @@ cl_select_crtc(int misc)
 	}
 }
 
+/*
+ * V27 indexed-write widths, matched to NEC NT4 CIRRUS.SYS exactly.
+ *
+ * The CIRRUS.SYS mode streams program SR/GR/CRTC index+data as SINGLE
+ * 16-bit writes to the index port (stream opcode 20h: out16(idxport,
+ * (data<<8)|index); opcode 16h: WritePortBufferUshort).  The 8-bit
+ * two-cycle form appears ONLY in read-modify-write sequences (SR0Fh,
+ * SR17h, SR12h, SR02h: out8 index, in8 data, out8 data) and for the
+ * non-indexed MISC/ATTR/DAC accesses.  This machine has already shown
+ * two non-standard behaviors (the HDR read-does-not-reset counter and
+ * the intermittent byte-lane-1 memory anomalies), so "equivalent on a
+ * sane VGA" is no longer an assumption we lean on: cl_*_write are now
+ * single out16 like the streams, and the *_write8 variants replicate
+ * the two-cycle form at the exact places CIRRUS.SYS uses it.
+ * Reads keep the NT4 form: out8 index, in8 data.
+ */
 static void
 cl_seq_write(int reg, int val)
+{
+	outpw(cdisp.io_3c0 + 0x04,
+	      (uint16_t)(((uint16_t)(val & 0xff) << 8) | (reg & 0xff)));
+}
+
+static void
+cl_seq_write8(int reg, int val)
 {
 	outp(cdisp.io_3c0 + 0x04, reg);
 	outp(cdisp.io_3c0 + 0x05, val);
@@ -821,6 +1072,13 @@ cl_seq_read(int reg)
 static void
 cl_gfx_write(int reg, int val)
 {
+	outpw(cdisp.io_3c0 + 0x0e,
+	      (uint16_t)(((uint16_t)(val & 0xff) << 8) | (reg & 0xff)));
+}
+
+static void
+cl_gfx_write8(int reg, int val)
+{
 	outp(cdisp.io_3c0 + 0x0e, reg);
 	outp(cdisp.io_3c0 + 0x0f, val);
 }
@@ -834,6 +1092,13 @@ cl_gfx_read(int reg)
 
 static void
 cl_crtc_write(int reg, int val)
+{
+	outpw(cdisp.io_3d4,
+	      (uint16_t)(((uint16_t)(val & 0xff) << 8) | (reg & 0xff)));
+}
+
+static void
+cl_crtc_write8(int reg, int val)
 {
 	outp(cdisp.io_3d4, reg);
 	outp(cdisp.io_3d4 + 1, val);
@@ -883,24 +1148,41 @@ cl_misc_read(void)
  * The Cirrus Hidden DAC Register is accessed by reading the Pixel
  * Mask register (3C6h) four times; the fifth access hits the HDR.
  */
+/*
+ * GD7548 hidden-counter behavior, established empirically in the V22 FIFO
+ * run: a WRITE to the HDR resets the 3C6h access counter, but a READ of
+ * the HDR does NOT -- after a read the counter stays armed and the very
+ * next 3C6h access still hits the HDR.  (Proof: the stream's E1h was read
+ * back twice as E1h, then the next 3C6h mask write landed IN the HDR and
+ * every later dump read that value.)  Both helpers therefore bracket the
+ * sequence with a 3C8h read, which resets the counter deterministically
+ * on entry and disarms it again after a read.  This also makes the
+ * pipeline probe's Mask readback genuine instead of aliasing the HDR.
+ */
 static void
 cl_hidden_dac_write(int val)
 {
+	(void)inp(cdisp.io_3c0 + 0x08);		/* reset hidden counter */
 	(void)inp(cdisp.io_3c0 + 0x06);
 	(void)inp(cdisp.io_3c0 + 0x06);
 	(void)inp(cdisp.io_3c0 + 0x06);
 	(void)inp(cdisp.io_3c0 + 0x06);
-	outp(cdisp.io_3c0 + 0x06, val);
+	outp(cdisp.io_3c0 + 0x06, val);		/* write also resets */
 }
 
 static int
 cl_hidden_dac_read(void)
 {
+	int val;
+
+	(void)inp(cdisp.io_3c0 + 0x08);		/* reset hidden counter */
 	(void)inp(cdisp.io_3c0 + 0x06);
 	(void)inp(cdisp.io_3c0 + 0x06);
 	(void)inp(cdisp.io_3c0 + 0x06);
 	(void)inp(cdisp.io_3c0 + 0x06);
-	return inp(cdisp.io_3c0 + 0x06);
+	val = inp(cdisp.io_3c0 + 0x06);
+	(void)inp(cdisp.io_3c0 + 0x08);		/* read does NOT reset: disarm */
+	return val;
 }
 
 /* Select a 16KB VRAM bank via GR09 (Offset Register 0). */
@@ -1393,7 +1675,7 @@ cl_modeset_coregraph_necdrv(void)
 		cl_seq_write(seq_idx[i], seq[i]);
 
 	/* Preserve board-specific DRAM bits exactly as NEC's interpreter does. */
-	cl_seq_write(0x0f, (cl_seq_read(0x0f) & 0xdf) | 0x20);
+	cl_seq_write8(0x0f, (cl_seq_read(0x0f) & 0xdf) | 0x20);
 
 	/* E3h keeps the relocated CRTC on the color block (0DA4h). */
 	cl_misc_write(0xe3);
@@ -1427,7 +1709,7 @@ cl_modeset_coregraph_necdrv(void)
 	cdisp.cur_bank = 0;
 
 	/* Path 8 is a linear machine: MMIO occupies the final 256 bytes. */
-	cl_seq_write(0x17, (uint8_t)(cl_seq_read(0x17) | 0x44));
+	cl_seq_write8(0x17, (uint8_t)(cl_seq_read(0x17) | 0x44));
 
 	/*
 	 * Exact NEC-driver postlude for chip tag 07h (V13 ID 5Bh): after the mode
@@ -1435,7 +1717,7 @@ cl_modeset_coregraph_necdrv(void)
 	 * The previous diagnostic transcription missed this operation and left
 	 * the Signature Generator Control register at 40h.
 	 */
-	cl_seq_write(0x18, (uint8_t)(cl_seq_read(0x18) & 0xbf));
+	cl_seq_write8(0x18, (uint8_t)(cl_seq_read(0x18) & 0xbf));
 
 	/* Reset once more after the full stream, before any aperture write. */
 	cl_gfx_write(0x31, 0x04);
@@ -1571,8 +1853,8 @@ cl_aperture_clear_visible(void)
 
 	visible = cdisp.pitch * (uint32_t)cdisp.scr_h;
 	limit = cdisp.vram_size;
-	if (cdisp.linear && (cl_seq_read(0x17) & 0x44) == 0x44 &&
-	    limit >= 0x100)
+	if (!pci_nb10_experimental && cdisp.linear &&
+	    (cl_seq_read(0x17) & 0x44) == 0x44 && limit >= 0x100)
 		limit -= 0x100;
 	if (visible > limit) {
 		hal_log_info("CIRRUS: visible aperture clear %lu bytes exceeds "
@@ -1594,7 +1876,262 @@ cl_aperture_clear_visible(void)
 	return true;
 }
 
-/* Cirrus BitBLT registers retained for GD54xx FIFO diagnosis/fallback. */
+/*
+ * Exact class-40h sub_1B458 preparation used by the Nb10 NT4 miniport.
+ *
+ * The miniport re-enables all four VGA planes through SR02 and clears
+ * VideoMemorySize-1 bytes beginning at BAR0+0C00000h before it switches
+ * 0FACh to the accelerator.  Unlike the GD54xx MMIO layout, GD7548 MMIO is
+ * exposed elsewhere in the 16MB BAR (the miniport maps BAR0+0DFFF00h), so the
+ * final 256 bytes of this one-megabyte framebuffer aperture are ordinary VRAM.
+ */
+static bool
+nb10_nt4_prepare_full_vram(void)
+{
+	volatile uint32_t *dst32;
+	volatile uint8_t *dst8;
+	volatile uint32_t *probe;
+	uint32_t length, dwords, i;
+
+	if (!pci_nb10_experimental || cdisp.fb == NULL || !cdisp.linear ||
+	    cdisp.vram_size < 4)
+		return false;
+
+	nb10_reloc_seq_write(0x02,
+	    (uint8_t)(nb10_reloc_seq_read(0x02) | 0x0f));
+	length = cdisp.vram_size - 1;
+
+	/*
+	 * Do not let a C library memcpy/memset implementation choose the bus width
+	 * for this diagnostic path.  Clear the NT4-sized range with explicit
+	 * volatile dword stores, then clear the three-byte tail with byte stores.
+	 * The final byte remains untouched, exactly as VideoMemorySize-1 implies.
+	 */
+	dst32 = (volatile uint32_t *)cdisp.fb;
+	dwords = length / 4;
+	for (i = 0; i < dwords; i++)
+		dst32[i] = 0;
+	dst8 = (volatile uint8_t *)cdisp.fb;
+	for (i = dwords * 4; i < length; i++)
+		dst8[i] = 0;
+
+	/* Readback is diagnostic only; some VRAM mappings may be write-combined. */
+	probe = (volatile uint32_t *)cdisp.fb;
+	hal_log_info("CIRRUS-NB10: NT4 sub_1B458 VRAM prepare: "
+	             "native SR02=%02Xh relocated SR02=%02Xh, "
+	             "cleared %lu bytes with explicit 32-bit stores before relay; "
+	             "readback %08lX/%08lX/%08lX.",
+	             cl_seq_read(0x02), nb10_reloc_seq_read(0x02),
+	             (unsigned long)length,
+	             (unsigned long)probe[0],
+	             (unsigned long)probe[(cdisp.vram_size / 2) / 4],
+	             (unsigned long)probe[(cdisp.vram_size - 4) / 4]);
+	return true;
+}
+
+/*
+ * Fill the visible linear aperture with the same diagnostic bars used by the
+ * FIFO oracle.  This is useful on the Nb10 because an all-black application
+ * back buffer cannot distinguish a working aperture from an idle scanout.
+ */
+static bool
+cl_aperture_pattern_visible(void)
+{
+	static uint32_t row32[512];       /* 2048-byte aligned staging row */
+	uint8_t *row = (uint8_t *)row32;
+	static const uint8_t rgb[8][3] = {
+		{255,255,255}, {255,255,  0}, {  0,255,255}, {  0,255,  0},
+		{255,  0,255}, {255,  0,  0}, {  0,  0,255}, {  0,  0,  0}
+	};
+	uint32_t row_bytes, visible, limit;
+	int x, y, bar;
+
+	if (cdisp.fb == NULL || !cdisp.linear)
+		return false;
+	row_bytes = (uint32_t)cdisp.scr_w * (uint32_t)(cdisp.bpp / 8);
+	if (row_bytes > sizeof(row32) || row_bytes > cdisp.pitch)
+		return false;
+
+	visible = cdisp.pitch * (uint32_t)cdisp.scr_h;
+	limit = cdisp.vram_size;
+	if (!pci_nb10_experimental &&
+	    (cl_seq_read(0x17) & 0x44) == 0x44 && limit >= 0x100)
+		limit -= 0x100;
+	if (visible > limit)
+		return false;
+
+	for (y = 0; y < cdisp.scr_h; y++) {
+		for (x = 0; x < cdisp.scr_w; x++) {
+			uint8_t r, g, b;
+			bar = (x * 8) / cdisp.scr_w;
+			if (bar > 7)
+				bar = 7;
+			r = rgb[bar][0];
+			g = rgb[bar][1];
+			b = rgb[bar][2];
+			if (y & 0x10) {
+				r >>= 1;
+				g >>= 1;
+				b >>= 1;
+			}
+
+			if (cdisp.bpp == 24) {
+				row[x * 3 + 0] = b;
+				row[x * 3 + 1] = g;
+				row[x * 3 + 2] = r;
+			} else if (cdisp.bpp == 16) {
+				uint16_t pix = (uint16_t)(((uint16_t)(r & 0xf8) << 8) |
+				                           ((uint16_t)(g & 0xfc) << 3) |
+				                           ((uint16_t)b >> 3));
+				row[x * 2 + 0] = (uint8_t)pix;
+				row[x * 2 + 1] = (uint8_t)(pix >> 8);
+			} else {
+				row[x] = (uint8_t)((r & 0xe0) |
+				                   ((g >> 3) & 0x1c) |
+				                   ((b >> 6) & 0x03));
+			}
+		}
+		{
+			volatile uint8_t *dst;
+			uint32_t i;
+
+			dst = (volatile uint8_t *)cdisp.fb +
+			      (uint32_t)y * cdisp.pitch;
+			for (i = 0; i < row_bytes; i++)
+				dst[i] = row[i];
+			for (; i < cdisp.pitch; i++)
+				dst[i] = 0;
+		}
+	}
+	if (pci_nb10_experimental && cdisp.bpp == 16) {
+		volatile uint32_t *v = (volatile uint32_t *)cdisp.fb;
+		hal_log_info("CIRRUS-NB10: aperture bars readback: "
+		             "x=0 %08lX, x=80 %08lX, x=320 %08lX, x=560 %08lX.",
+		             (unsigned long)v[0],
+		             (unsigned long)v[(80 * 2) / 4],
+		             (unsigned long)v[(320 * 2) / 4],
+		             (unsigned long)v[(560 * 2) / 4]);
+	}
+	return true;
+}
+
+/* Return the RGB565 diagnostic colour for one x coordinate. */
+static uint16_t
+nb10_diag_pixel565(int x)
+{
+	static const uint16_t bars[8] = {
+		0xffff, 0xffe0, 0x07ff, 0x07e0,
+		0xf81f, 0xf800, 0x001f, 0x0000
+	};
+	int bar;
+
+	bar = (x * 8) / cdisp.scr_w;
+	if (bar < 0)
+		bar = 0;
+	if (bar > 7)
+		bar = 7;
+	return bars[bar];
+}
+
+static void
+nb10_log_width_row(const char *stage, const char *width_name, int y)
+{
+	volatile uint32_t *row;
+
+	row = (volatile uint32_t *)(cdisp.fb + (uint32_t)y * cdisp.pitch);
+	hal_log_info("CIRRUS-NB10: %s %s row y=%d readback: "
+	             "x=0 %08lX, x=80 %08lX, x=320 %08lX, x=560 %08lX.",
+	             stage, width_name, y,
+	             (unsigned long)row[(0 * 2) / 4],
+	             (unsigned long)row[(80 * 2) / 4],
+	             (unsigned long)row[(320 * 2) / 4],
+	             (unsigned long)row[(560 * 2) / 4]);
+}
+
+/*
+ * Nb10 aperture-width oracle.
+ *
+ * The visible 640x480x16 surface is divided into three horizontal bands:
+ *
+ *   top    y=0..159   : two volatile 8-bit stores per pixel
+ *   middle y=160..319 : one volatile 16-bit store per pixel
+ *   bottom y=320..479 : one volatile 32-bit store per two pixels
+ *
+ * Every band contains the same eight RGB565 colour bars.  The routine also
+ * writes an off-screen 44332211h signature three times, once with each store
+ * width.  It is deliberately called both before and after 0FACh switches so
+ * memory ownership and write-width effects can be separated from scanout.
+ */
+static bool
+nb10_aperture_width_test(const char *stage)
+{
+	volatile uint8_t *dst8;
+	volatile uint16_t *dst16;
+	volatile uint32_t *dst32;
+	volatile uint32_t *probe32;
+	uint32_t off, p32;
+	uint16_t p0, p1;
+	int x, y, band0, band1;
+
+	if (!pci_nb10_experimental || cdisp.fb == NULL || !cdisp.linear ||
+	    cdisp.bpp != 16 || cdisp.scr_w != 640 || cdisp.scr_h != 480 ||
+	    cdisp.pitch < 1280 || cdisp.vram_size < 0x0f0030UL)
+		return false;
+
+	band0 = cdisp.scr_h / 3;
+	band1 = (cdisp.scr_h * 2) / 3;
+
+	for (y = 0; y < cdisp.scr_h; y++) {
+		off = (uint32_t)y * cdisp.pitch;
+		if (y < band0) {
+			dst8 = (volatile uint8_t *)cdisp.fb + off;
+			for (x = 0; x < cdisp.scr_w; x++) {
+				p0 = nb10_diag_pixel565(x);
+				dst8[x * 2 + 0] = (uint8_t)p0;
+				dst8[x * 2 + 1] = (uint8_t)(p0 >> 8);
+			}
+		} else if (y < band1) {
+			dst16 = (volatile uint16_t *)(cdisp.fb + off);
+			for (x = 0; x < cdisp.scr_w; x++)
+				dst16[x] = nb10_diag_pixel565(x);
+		} else {
+			dst32 = (volatile uint32_t *)(cdisp.fb + off);
+			for (x = 0; x < cdisp.scr_w; x += 2) {
+				p0 = nb10_diag_pixel565(x);
+				p1 = nb10_diag_pixel565(x + 1);
+				p32 = (uint32_t)p0 | ((uint32_t)p1 << 16);
+				dst32[x / 2] = p32;
+			}
+		}
+	}
+
+	/* Independent off-screen signatures for byte, word and dword writes. */
+	dst8 = (volatile uint8_t *)cdisp.fb + 0x0f0000UL;
+	dst8[0] = 0x11;
+	dst8[1] = 0x22;
+	dst8[2] = 0x33;
+	dst8[3] = 0x44;
+	dst16 = (volatile uint16_t *)(cdisp.fb + 0x0f0010UL);
+	dst16[0] = 0x2211;
+	dst16[1] = 0x4433;
+	dst32 = (volatile uint32_t *)(cdisp.fb + 0x0f0020UL);
+	dst32[0] = 0x44332211UL;
+
+	probe32 = (volatile uint32_t *)cdisp.fb;
+	hal_log_info("CIRRUS-NB10: %s off-screen write-width probe: "
+	             "8-bit=%08lX, 16-bit=%08lX, 32-bit=%08lX "
+	             "(expected 44332211h each).",
+	             stage,
+	             (unsigned long)probe32[0x0f0000UL / 4],
+	             (unsigned long)probe32[0x0f0010UL / 4],
+	             (unsigned long)probe32[0x0f0020UL / 4]);
+	nb10_log_width_row(stage, "8-bit", band0 / 2);
+	nb10_log_width_row(stage, "16-bit", band0 + (band1 - band0) / 2);
+	nb10_log_width_row(stage, "32-bit", band1 + (cdisp.scr_h - band1) / 2);
+	return true;
+}
+
+/* Cirrus BitBLT registers used by GD54xx and the experimental Nb10 FIFO. */
 #define CL_BLT_MODE_MEMSYS_SRC   0x04
 #define CL_BLT_MODE_PIX8         0x00
 #define CL_BLT_MODE_PIX16        0x10
@@ -1678,10 +2215,29 @@ cl_blt_fifo_start(uint32_t dst, uint32_t width_bytes, uint32_t height)
 	cl_blt_write24(0x28, dst);                   /* destination VRAM address */
 	cl_blt_write24(0x2c, 0x000000UL);            /* unused for MEMSYSSRC */
 	cl_gfx_write(0x2f, 0x00);                    /* no left-edge skip */
-	/* NP21/W/QEMU also uses GR30[5:4] as the BLT pixel width. */
-	cl_gfx_write(0x30, CL_BLT_MODE_MEMSYS_SRC | cl_blt_pixel_mode());
+	/*
+	 * GR30[5:4] selects the expansion width, not the packed-pixel width
+	 * of an ordinary source-copy BLT.  The GD755x reference source-copy
+	 * example uses GR30=00h even in a 16bpp display mode.  Therefore the
+	 * Nb10 packed RGB565 MEMSYSSRC oracle sets only bit2: GR30=04h.
+	 * Keep the historical setting on the inactive generic paths.
+	 */
+	cl_gfx_write(0x30, pci_nb10_experimental ? pci_nb10_fifo_gr30 :
+	             (CL_BLT_MODE_MEMSYS_SRC | cl_blt_pixel_mode()));
 	cl_gfx_write(0x32, CL_BLT_ROP_SRC);          /* source copy */
 	cl_gfx_write(0x33, 0x00);
+	if (pci_nb10_experimental)
+		hal_log_info("CIRRUS-NB10: FIFO registers: "
+		             "W=%02X%02X H=%02X%02X DP=%02X%02X "
+		             "DST=%02X%02X%02X MASK=%02X MODE=%02X "
+		             "ROP=%02X EXT=%02X.",
+		             cl_gfx_read(0x21), cl_gfx_read(0x20),
+		             cl_gfx_read(0x23), cl_gfx_read(0x22),
+		             cl_gfx_read(0x25), cl_gfx_read(0x24),
+		             cl_gfx_read(0x2a), cl_gfx_read(0x29),
+		             cl_gfx_read(0x28), cl_gfx_read(0x2f),
+		             cl_gfx_read(0x30), cl_gfx_read(0x32),
+		             cl_gfx_read(0x33));
 	cl_gfx_write(0x31, CL_BLT_STATUS_START);
 
 	status = cl_gfx_read(0x31);
@@ -1729,6 +2285,27 @@ cl_blt_fifo_feed_row(const uint8_t *src, uint32_t count)
 			value |= (uint32_t)src[2] << 16;
 		fifo[0] = value;
 	}
+}
+
+/*
+ * V29 variant: push one scanline as 16-bit host writes (two per dword).
+ * The GD7548 datasheet family asks for dword source data, but this
+ * machine's bridge shows byte-lane faults on 32-bit cycles; if the
+ * bridge splits or mangles dwords, native 16-bit cycles may arrive
+ * clean.  Purely experimental: compare the comb between SOLID32 and
+ * SOLID16 on the panel.
+ */
+static void
+cl_blt_fifo_feed_row16(const uint8_t *src, uint32_t count)
+{
+	volatile uint16_t *fifo = (volatile uint16_t *)cdisp.fb;
+	uint32_t i;
+
+	for (i = 0; i + 2 <= count; i += 2)
+		fifo[0] = (uint16_t)((uint16_t)src[i] |
+		                     ((uint16_t)src[i + 1] << 8));
+	if (i < count)
+		fifo[0] = (uint16_t)src[i];
 }
 
 /* Clear the visible display through exactly the same FIFO used for frames. */
@@ -1830,34 +2407,32 @@ cl_blt_fifo_pattern_visible(void)
 }
 
 /* Present one game frame using CPU-source BitBLT only. */
-static void
-cirrus_flip_fifo(void)
+static bool
+nb10_flip_span(const uint32_t *pixels, uint8_t *row, uint32_t row_bytes,
+               int bytespp, int start, int len, int *gated)
 {
-	uint32_t row32[512];        /* 2048-byte naturally aligned staging row */
-	uint8_t *row = (uint8_t *)row32;
-	const uint32_t *pixels;
-	uint32_t row_bytes, dst;
-	int y, bytespp;
+	uint32_t dst;
+	int y;
 
-	if (back_image == NULL || back_image->pixels == NULL ||
-	    draw_w <= 0 || draw_h <= 0)
-		return;
+	if (len <= 0)
+		return true;
+	if (!*gated) {
+		/* One vertical-retrace gate per flip, before the first span.
+		 * (Briefly suspected for a V34 all-white screen; that turned
+		 * out to be bad game data, so the gate stands exonerated.) */
+		unsigned long t;
 
-	pixels = back_image->pixels;
-	bytespp = cdisp.bpp / 8;
-	row_bytes = (uint32_t)draw_w * (uint32_t)bytespp;
-	if (row_bytes > sizeof(row32)) {
-		hal_log_info("CIRRUS-BLT: frame row %lu exceeds FIFO staging buffer.",
-		             (unsigned long)row_bytes);
-		return;
+		for (t = 0; t < 400000UL && (inp(cdisp.io_3da) & 0x08); t++)
+			;
+		for (t = 0; t < 400000UL && !(inp(cdisp.io_3da) & 0x08); t++)
+			;
+		*gated = 1;
 	}
-
-	dst = (uint32_t)ofs_y * cdisp.pitch +
+	dst = (uint32_t)(ofs_y + start) * cdisp.pitch +
 	      (uint32_t)ofs_x * (uint32_t)bytespp;
-	if (!cl_blt_fifo_start(dst, row_bytes, (uint32_t)draw_h))
-		return;
-
-	for (y = 0; y < draw_h; y++) {
+	if (!cl_blt_fifo_start(dst, row_bytes, (uint32_t)len))
+		return false;
+	for (y = start; y < start + len; y++) {
 		const uint32_t *src = pixels + y * game_width;
 
 		switch (cdisp.bpp) {
@@ -1873,9 +2448,127 @@ cirrus_flip_fifo(void)
 		}
 		cl_blt_fifo_feed_row(row, row_bytes);
 	}
-
-	if (!cl_blt_wait_idle(4000000UL, "after frame FIFO feed"))
+	if (!cl_blt_wait_idle(4000000UL, "after span FIFO feed")) {
 		cl_blt_reset();
+		return false;
+	}
+	return true;
+}
+
+static void
+cirrus_flip_fifo(void)
+{
+	uint32_t row32[512];        /* 2048-byte naturally aligned staging row */
+	uint8_t *row = (uint8_t *)row32;
+	const uint32_t *pixels;
+	uint32_t row_bytes, dst, sig;
+	unsigned long nonzero;
+	int y, bytespp, sx, sy;
+
+	if (pci_nb10_experimental && pci_nb10_diag_freeze)
+		return;
+	if (back_image == NULL || back_image->pixels == NULL ||
+	    draw_w <= 0 || draw_h <= 0)
+		return;
+
+	pixels = back_image->pixels;
+	bytespp = cdisp.bpp / 8;
+	row_bytes = (uint32_t)draw_w * (uint32_t)bytespp;
+
+	if (pci_nb10_experimental && pci_nb10_flip_count < 3) {
+		sig = 2166136261UL;
+		nonzero = 0;
+		for (sy = 0; sy < draw_h; sy += 8) {
+			const uint32_t *sample = pixels + sy * game_width;
+			for (sx = 0; sx < draw_w; sx += 16) {
+				uint32_t v = sample[sx];
+				sig = (sig ^ v) * 16777619UL;
+				if (v & 0x00ffffffUL)
+					nonzero++;
+			}
+		}
+		hal_log_info("CIRRUS-NB10: frame %lu sample signature=%08lXh, "
+		             "nonblack samples=%lu, dst=%06lXh, row=%lu x %d.",
+		             pci_nb10_flip_count, (unsigned long)sig, nonzero,
+		             (unsigned long)((uint32_t)ofs_y * cdisp.pitch +
+		             (uint32_t)ofs_x * (uint32_t)bytespp),
+		             (unsigned long)row_bytes, draw_h);
+	}
+	if (row_bytes > sizeof(row32)) {
+		hal_log_info("CIRRUS-BLT: frame row %lu exceeds FIFO staging buffer.",
+		             (unsigned long)row_bytes);
+		return;
+	}
+
+	/*
+	 * V35: dirty-row transfer.  The application redraws every frame even
+	 * when nothing changes, so the previous full-frame FIFO transfer kept
+	 * ~450KB/frame of host traffic on the shared DRAM and starved the
+	 * display fetch (the observed flicker on LCD and CRT alike).  Hash
+	 * every source row (every 2nd dword, FNV-1a) against the previous
+	 * frame and feed only contiguous runs of changed rows.  A static
+	 * scene transfers nothing; a text update transfers a small band.
+	 * Every 256th frame forces a full transfer as a safety net against
+	 * hash collisions.  The vertical-retrace gate is applied once per
+	 * flip, before the first dirty span.
+	 */
+	{
+		static uint32_t row_hash[512];
+		static bool hash_valid;
+		uint32_t h;
+		int start, len, dirty_from, gated;
+		bool force;
+
+		if (draw_h > 512) {
+			hal_log_info("CIRRUS-BLT: draw_h %d exceeds hash table.",
+			             draw_h);
+			return;
+		}
+		force = !hash_valid ||
+		        (pci_nb10_flip_count & 0xff) == 0xff;
+		dirty_from = -1;
+		gated = 0;
+
+		for (y = 0; y < draw_h; y++) {
+			const uint32_t *src = pixels + y * game_width;
+
+			h = 2166136261UL;
+			for (sx = 0; sx < draw_w; sx += 2)
+				h = (h ^ src[sx]) * 16777619UL;
+			if (force || h != row_hash[y]) {
+				row_hash[y] = h;
+				if (dirty_from < 0)
+					dirty_from = y;
+			} else if (dirty_from >= 0) {
+				start = dirty_from;
+				len = y - dirty_from;
+				dirty_from = -1;
+				if (!nb10_flip_span(pixels, row, row_bytes,
+				                    bytespp, start, len,
+				                    &gated))
+					return;
+			}
+		}
+		if (dirty_from >= 0) {
+			start = dirty_from;
+			len = draw_h - dirty_from;
+			if (!nb10_flip_span(pixels, row, row_bytes, bytespp,
+			                    start, len, &gated))
+				return;
+		}
+		hash_valid = true;
+
+		if (gated && pci_nb10_experimental && pci_nb10_flip_count < 3)
+			hal_log_info("CIRRUS-NB10: frame %lu FIFO complete; "
+			             "GR30=%02Xh GR31=%02Xh GR32=%02Xh "
+			             "GR33=%02Xh.",
+			             pci_nb10_flip_count, cl_gfx_read(0x30),
+			             cl_gfx_read(0x31), cl_gfx_read(0x32),
+			             cl_gfx_read(0x33));
+	}
+	if (pci_nb10_experimental)
+		pci_nb10_flip_count++;
+	(void)dst;
 }
 
 /*****************************************************************************/
@@ -2507,6 +3200,47 @@ static const struct pci_model *chip;
 static int pci_bus, pci_dev, pci_fn;
 static bool ext_was_locked;
 
+/*
+ * PC-9821 Nb10 / GD7548 path recovered from NEC NT4 CIRRUS.SYS.
+ *
+ * CIRRUS.SYS classifies the independently enumerated 1013:0038 as attachment
+ * class 40h, chip tag 0Eh.  The motherboard sequence is NOT merely the V13
+ * relay sequence: it brackets the familiar 68h/6Ah route with NEC indexed
+ * 16-bit controls at 08F0h/08F2h, performs a CR24/relocated-control preamble,
+ * updates extended Sequencer registers through 04B4h/04B5h, and selects
+ * 0FACh only in the postlude.  The mode command stream itself continues to use
+ * the native VGA ports encoded as offsets from the class-40h 03B0h base.
+ */
+enum nb10_gate_mode {
+	NB10_GATE_NT4 = 0,
+	NB10_GATE_V13,
+	NB10_GATE_RELAY_ONLY,
+	NB10_GATE_NONE
+};
+
+#define NB10_NEC_INDEX_PORT	0x08f0
+#define NB10_NEC_DATA_PORT	0x08f2
+
+/*
+ * Class-40h uses the native VGA block for the mode command stream, but the
+ * NT4 postlude deliberately switches to the PC-98 relocated control ports.
+ * CIRRUS.SYS maps a 0x210-byte I/O window at 03B0h; offsets 100h/101h and
+ * 104h/105h are therefore 04B0h/04B1h and 04B4h/04B5h respectively.
+ */
+#define NB10_RELOC_CTL_INDEX	0x04b0
+#define NB10_RELOC_CTL_DATA	0x04b1
+#define NB10_RELOC_SEQ_INDEX	0x04b4
+#define NB10_RELOC_SEQ_DATA	0x04b5
+
+static bool pci_nb10_gate_active;
+static bool pci_nb10_chip_post_active;
+static bool pci_nb10_post_active;
+static enum nb10_gate_mode pci_nb10_gate_mode;
+static bool pci_nb10_relay_post;
+static bool pci_nb10_sleep_decoded;
+static uint8_t pci_nb10_saved_relay;
+static uint8_t pci_nb10_saved_sleep;
+
 /* Saved chip state (restored on cleanup). */
 static uint8_t sv_crtc[0x19];
 static uint8_t sv_cr1a, sv_cr1b, sv_cr1d, sv_cr2c, sv_cr2d;
@@ -2866,6 +3600,386 @@ relay_to_gdc(void)
 }
 
 /*
+ * Nb10 motherboard-side scanout gate.
+ *
+ * The default path is a direct transcription of the tag-0Eh/class-40h path
+ * in NEC NT4 CIRRUS.SYS.  The older v13/relay/none choices are retained only
+ * as A/B diagnostics.
+ */
+static const char *
+nb10_gate_name(void)
+{
+	switch (pci_nb10_gate_mode) {
+	case NB10_GATE_V13:
+		return "v13";
+	case NB10_GATE_RELAY_ONLY:
+		return "relay";
+	case NB10_GATE_NONE:
+		return "none";
+	default:
+		return "nt4";
+	}
+}
+
+static void
+nb10_reloc_seq_write(int reg, int val)
+{
+	outp(NB10_RELOC_SEQ_INDEX, reg);
+	outp(NB10_RELOC_SEQ_DATA, val);
+}
+
+static int
+nb10_reloc_seq_read(int reg)
+{
+	outp(NB10_RELOC_SEQ_INDEX, reg);
+	return inp(NB10_RELOC_SEQ_DATA);
+}
+
+/*
+ * Input Status 1 bit0 is Display Enable and bit3 is Vertical Retrace.
+ * A running CRTC must produce transitions on at least one of them during a
+ * sufficiently long tight poll.  Probe both mono and color status ports so a
+ * wrong MISC/CRTC-base assumption is visible in the log rather than guessed.
+ */
+static void
+nb10_scan_probe_port(const char *stage, uint16_t port)
+{
+	unsigned long i;
+	unsigned long de_trans, vr_trans;
+	int first, prev, val;
+	int de_seen, vr_seen;
+
+	first = prev = inp(port);
+	de_trans = 0;
+	vr_trans = 0;
+	de_seen = (first & 0x01) ? 2 : 1;
+	vr_seen = (first & 0x08) ? 2 : 1;
+	for (i = 0; i < 131072UL; i++) {
+		val = inp(port);
+		if ((val ^ prev) & 0x01)
+			de_trans++;
+		if ((val ^ prev) & 0x08)
+			vr_trans++;
+		de_seen |= (val & 0x01) ? 2 : 1;
+		vr_seen |= (val & 0x08) ? 2 : 1;
+		prev = val;
+	}
+
+	hal_log_info("CIRRUS-NB10: scan probe %s IS1@%03Xh: "
+	             "first=%02Xh last=%02Xh DE transitions=%lu seen=%s, "
+	             "VRETRACE transitions=%lu seen=%s.",
+	             stage, port, first, prev, de_trans,
+	             de_seen == 3 ? "0/1" : (de_seen == 2 ? "1-only" : "0-only"),
+	             vr_trans,
+	             vr_seen == 3 ? "0/1" : (vr_seen == 2 ? "1-only" : "0-only"));
+}
+
+static void
+nb10_scan_probe(const char *stage)
+{
+	if (!pci_nb10_experimental)
+		return;
+	nb10_scan_probe_port(stage, 0x03ba);
+	nb10_scan_probe_port(stage, 0x03da);
+}
+
+static void
+nb10_parse_options(void)
+{
+	/*
+	 * Kept for the older PCI bring-up path, but fixed to the same settings
+	 * as the active Nb10 diagnostic: exact NT4 ordering, post-mode relay,
+	 * direct scanout patterns, and frozen application flips.
+	 */
+	pci_nb10_gate_mode = NB10_GATE_NT4;
+	pci_nb10_relay_post = true;
+	pci_nb10_diag_bars = true;
+	pci_nb10_diag_widths = false;
+	/*
+	 * V33: application flips are LIVE.  The game blit covers y=60..419
+	 * only, so the top/bottom 60-line borders keep the color bars as a
+	 * permanent scanout witness while the game runs.
+	 */
+	pci_nb10_diag_freeze = false;
+	pci_nb10_flip_count = 0;
+	pci_nb10_scanout_test = NB10_TEST_BASELINE;
+	pci_nb10_fifo_gr30 = 0x04;
+	pci_nb10_interactive_ready = false;
+
+	hal_log_info("CIRRUS-NB10: fixed options: gate=nt4, relay=post-mode-set, "
+	             "diagnostic=scanout/pixel-pipeline cycling (frozen).");
+}
+
+static void
+nb10_dump_state(const char *stage)
+{
+	uint8_t old2d;
+	uint8_t lcd[15];
+	int i;
+
+	if (!pci_nb10_experimental)
+		return;
+
+	old2d = (uint8_t)cl_crtc_read(0x2d);
+	hal_log_info("CIRRUS-NB10: %s: relay=%02Xh MISC=%02Xh "
+	             "SR00=%02Xh SR01=%02Xh SR02=%02Xh SR07=%02Xh SR12=%02Xh "
+	             "SR16=%02Xh SR17=%02Xh SR18=%02Xh SR1F=%02Xh; "
+	             "GR0B=%02Xh GR30=%02Xh GR31=%02Xh GR32=%02Xh GR33=%02Xh.",
+	             stage, inp(PCI_RELAY_PORT), cl_misc_read(),
+	             cl_seq_read(0x00), cl_seq_read(0x01), cl_seq_read(0x02),
+	             cl_seq_read(0x07), cl_seq_read(0x12), cl_seq_read(0x16),
+	             cl_seq_read(0x17), cl_seq_read(0x18), cl_seq_read(0x1f),
+	             cl_gfx_read(0x0b), cl_gfx_read(0x30), cl_gfx_read(0x31),
+	             cl_gfx_read(0x32), cl_gfx_read(0x33));
+	hal_log_info("CIRRUS-NB10: %s: CR13=%02Xh CR17=%02Xh CR1B=%02Xh "
+	             "CR20=%02Xh CR24=%02Xh CR27=%02Xh CR2C=%02Xh CR2D=%02Xh.",
+	             stage, cl_crtc_read(0x13), cl_crtc_read(0x17),
+	             cl_crtc_read(0x1b), cl_crtc_read(0x20),
+	             cl_crtc_read(0x24), cl_crtc_read(0x27),
+	             cl_crtc_read(0x2c), old2d);
+
+	cl_crtc_write(0x2d, old2d | 0x80);
+	for (i = 0; i < 15; i++)
+		lcd[i] = (uint8_t)cl_crtc_read(0x40 + i);
+	cl_crtc_write(0x2d, old2d);
+
+	hal_log_info("CIRRUS-NB10: %s: LCD40-47=%02X %02X %02X %02X %02X %02X %02X %02X; "
+	             "LCD48-4E=%02X %02X %02X %02X %02X %02X %02X.",
+	             stage, lcd[0], lcd[1], lcd[2], lcd[3], lcd[4], lcd[5], lcd[6], lcd[7],
+	             lcd[8], lcd[9], lcd[10], lcd[11], lcd[12], lcd[13], lcd[14]);
+}
+
+/* sub_11138: select the accelerator-side NEC scan/arbitration state. */
+static void
+nb10_nt4_nec_enter(void)
+{
+	uint16_t old52, new52, old60, new60;
+
+	outpw(NB10_NEC_INDEX_PORT, 0x0052);
+	outp(PC98_WAIT_PORT, 0x00);
+	outp(PC98_WAIT_PORT, 0x00);
+	old52 = (uint16_t)inpw(NB10_NEC_DATA_PORT);
+	new52 = (uint16_t)(old52 | 0x0080);
+	outpw(NB10_NEC_DATA_PORT, new52);
+
+	outpw(NB10_NEC_INDEX_PORT, 0x0060);
+	old60 = (uint16_t)inpw(NB10_NEC_DATA_PORT);
+	new60 = (uint16_t)(old60 & 0xffef);
+	outpw(NB10_NEC_DATA_PORT, new60);
+
+	hal_log_info("CIRRUS-NB10: NT4 NEC enter: 8F2[52]=%04X->%04X, "
+	             "8F2[60]=%04X->%04X.", old52, new52, old60, new60);
+}
+
+/* sub_11090: complementary restoration used when returning to the GDC. */
+static void
+nb10_nt4_nec_leave(void)
+{
+	uint16_t old60, new60, old52, new52;
+
+	outpw(NB10_NEC_INDEX_PORT, 0x0060);
+	old60 = (uint16_t)inpw(NB10_NEC_DATA_PORT);
+	new60 = (uint16_t)(old60 | 0x0010);
+	outpw(NB10_NEC_DATA_PORT, new60);
+
+	outpw(NB10_NEC_INDEX_PORT, 0x0052);
+	outp(PC98_WAIT_PORT, 0x00);
+	outp(PC98_WAIT_PORT, 0x00);
+	old52 = (uint16_t)inpw(NB10_NEC_DATA_PORT);
+	new52 = (uint16_t)(old52 & 0xff7f);
+	outpw(NB10_NEC_DATA_PORT, new52);
+
+	hal_log_info("CIRRUS-NB10: NT4 NEC leave: 8F2[60]=%04X->%04X, "
+	             "8F2[52]=%04X->%04X.", old60, new60, old52, new52);
+}
+
+/* CR24/Attribute Controller preamble in sub_10DC2. */
+static void
+nb10_nt4_attr_preamble(void)
+{
+	int cr24, ctl;
+
+	outp(cdisp.io_3d4, 0x24);
+	cr24 = inp(cdisp.io_3d4 + 1);
+	if (cr24 & 0x80) {
+		ctl = inp(NB10_RELOC_CTL_DATA);
+		outp(NB10_RELOC_CTL_INDEX, ctl);
+	}
+	outp(NB10_RELOC_CTL_INDEX, 0x31);
+	outp(NB10_RELOC_CTL_INDEX, 0x00);
+	outp(NB10_RELOC_CTL_INDEX, 0x00);
+	hal_log_info("CIRRUS-NB10: NT4 relocated-control preamble: "
+	             "CR24=%02Xh, 4B0h<=31h,00h,00h.", cr24);
+}
+
+/* Final CR24/relocated-control enable in sub_10F24. */
+static void
+nb10_nt4_attr_enable(void)
+{
+	int cr24, ctl;
+
+	outp(cdisp.io_3d4, 0x24);
+	cr24 = inp(cdisp.io_3d4 + 1);
+	if (cr24 & 0x80) {
+		ctl = inp(NB10_RELOC_CTL_DATA);
+		outp(NB10_RELOC_CTL_INDEX, ctl);
+	}
+	outp(NB10_RELOC_CTL_INDEX, 0x20);
+	hal_log_info("CIRRUS-NB10: NT4 relocated-control enable: "
+	             "CR24=%02Xh, 4B0h<=20h.", cr24);
+}
+
+static void
+nb10_coregraph_gate_enter(void)
+{
+	if (!pci_nb10_experimental || pci_nb10_gate_active)
+		return;
+
+	pci_nb10_saved_relay = (uint8_t)inp(PCI_RELAY_PORT);
+	pci_nb10_saved_sleep = (uint8_t)inp(cdisp.io_3c0 + 0x03);
+	pci_nb10_sleep_decoded = (pci_nb10_saved_sleep != 0xff);
+	pci_nb10_chip_post_active = false;
+	pci_nb10_post_active = false;
+
+	if (pci_nb10_gate_mode == NB10_GATE_NT4) {
+		nb10_nt4_nec_enter();
+		outp(PC98_GDC_MODE_PORT, 0x0e);
+		outp(VRAM_SW_PORT, 0x07);
+		outp(VRAM_SW_PORT, 0x8f);
+		outp(VRAM_SW_PORT, 0x06);
+		nb10_nt4_attr_preamble();
+	} else if (pci_nb10_gate_mode == NB10_GATE_V13) {
+		outp(PC98_GDC_MODE_PORT, 0x0e);
+		outp(VRAM_SW_PORT, 0x07);
+		outp(VRAM_SW_PORT, 0x8f);
+		outp(VRAM_SW_PORT, 0x06);
+		if (!pci_nb10_relay_post)
+			outp(PCI_RELAY_PORT, 0x02);
+		outp(PC98_WAIT_PORT, 0x00);
+		outp(PC98_WAIT_PORT, 0x00);
+		if (pci_nb10_sleep_decoded)
+			outp(cdisp.io_3c0 + 0x03, 0x01);
+	} else if (pci_nb10_gate_mode == NB10_GATE_RELAY_ONLY &&
+	           !pci_nb10_relay_post) {
+		outp(PCI_RELAY_PORT, 0x02);
+	}
+
+	pci_nb10_gate_active = true;
+	hal_log_info("CIRRUS-NB10: gate enter: mode=%s; relay=%02Xh; "
+	             "3C3h=%02Xh (%s, saved %02Xh).",
+	             nb10_gate_name(), inp(PCI_RELAY_PORT),
+	             inp(cdisp.io_3c0 + 0x03),
+	             pci_nb10_sleep_decoded ? "decoded" : "undecoded; write skipped",
+	             pci_nb10_saved_sleep);
+}
+
+/*
+ * First half of the class-40h/tag-0Eh postlude in sub_1AF30.
+ * CIRRUS.SYS performs the class-40h relocated SR17 update here; tag 0Eh does not take the SR18 branch.
+ */
+static void
+nb10_coregraph_chip_post_mode(void)
+{
+	if (!pci_nb10_gate_active || pci_nb10_chip_post_active)
+		return;
+
+	if (pci_nb10_gate_mode == NB10_GATE_NT4) {
+		/* sub_1AF30 class-40h path uses relocated 4B4h/4B5h. */
+		nb10_reloc_seq_write(0x17,
+		    (uint8_t)(nb10_reloc_seq_read(0x17) | 0x44));
+		/* Tag 0Eh does not take the SR18-clearing branch. */
+	}
+
+	pci_nb10_chip_post_active = true;
+	hal_log_info("CIRRUS-NB10: chip post-mode: mode=%s; relay=%02Xh; "
+	             "native SR12/17/18=%02X/%02X/%02X, "
+	             "relocated SR12/17/18=%02X/%02X/%02X.",
+	             nb10_gate_name(), inp(PCI_RELAY_PORT),
+	             cl_seq_read(0x12), cl_seq_read(0x17), cl_seq_read(0x18),
+	             nb10_reloc_seq_read(0x12), nb10_reloc_seq_read(0x17),
+	             nb10_reloc_seq_read(0x18));
+}
+
+/*
+ * Second half, corresponding to sub_10F24.  It must run after sub_1B458 has
+ * enabled the planes and cleared/written the framebuffer aperture.
+ */
+static void
+nb10_coregraph_output_enable(void)
+{
+	unsigned long i;
+
+	if (!pci_nb10_gate_active || pci_nb10_post_active)
+		return;
+
+	if (pci_nb10_gate_mode == NB10_GATE_NT4) {
+		nb10_reloc_seq_write(0x12,
+		    (uint8_t)(nb10_reloc_seq_read(0x12) & 0xbf));
+		outp(PCI_RELAY_PORT, 0x02);
+		for (i = 0; i < 200000UL; i++)
+			outp(PC98_WAIT_PORT, 0x00);
+		nb10_nt4_attr_enable();
+	} else if (pci_nb10_gate_mode != NB10_GATE_NONE &&
+	           pci_nb10_relay_post) {
+		outp(PCI_RELAY_PORT, 0x02);
+	}
+
+	pci_nb10_post_active = true;
+	hal_log_info("CIRRUS-NB10: output enable: mode=%s; relay=%02Xh; "
+	             "native SR12/17/18=%02X/%02X/%02X, "
+	             "relocated SR12/17/18=%02X/%02X/%02X.",
+	             nb10_gate_name(), inp(PCI_RELAY_PORT),
+	             cl_seq_read(0x12), cl_seq_read(0x17), cl_seq_read(0x18),
+	             nb10_reloc_seq_read(0x12), nb10_reloc_seq_read(0x17),
+	             nb10_reloc_seq_read(0x18));
+}
+
+static void
+nb10_coregraph_gate_leave(void)
+{
+	unsigned long i;
+
+	if (!pci_nb10_gate_active)
+		return;
+
+	if (pci_nb10_gate_mode == NB10_GATE_NT4) {
+		/* sub_10C7E tag-0Eh path, followed by sub_11090. */
+		nb10_nt4_nec_enter();
+		cl_seq_write8(0x12, (uint8_t)(cl_seq_read(0x12) | 0x40));
+		outp(PC98_WAIT_PORT, 0x00);
+		outp(VRAM_SW_PORT, 0x07);
+		outp(VRAM_SW_PORT, 0x8e);
+		outp(VRAM_SW_PORT, 0x06);
+		outp(PCI_RELAY_PORT, 0x00);
+		for (i = 0; i < 200000UL; i++)
+			outp(PC98_WAIT_PORT, 0x00);
+		outp(PC98_GDC_MODE_PORT, 0x0f);
+		nb10_nt4_nec_leave();
+	} else {
+		if (pci_nb10_gate_mode == NB10_GATE_V13 && pci_nb10_sleep_decoded)
+			outp(cdisp.io_3c0 + 0x03, pci_nb10_saved_sleep);
+		if (pci_nb10_gate_mode != NB10_GATE_NONE)
+			outp(PCI_RELAY_PORT, pci_nb10_saved_relay);
+		if (pci_nb10_gate_mode == NB10_GATE_V13) {
+			outp(PC98_WAIT_PORT, 0x00);
+			outp(VRAM_SW_PORT, 0x07);
+			outp(VRAM_SW_PORT, 0x8e);
+			outp(VRAM_SW_PORT, 0x06);
+			for (i = 0; i < 200000UL; i++)
+				outp(PC98_WAIT_PORT, 0x00);
+			outp(PC98_GDC_MODE_PORT, 0x0f);
+		}
+	}
+
+	pci_nb10_gate_active = false;
+	pci_nb10_chip_post_active = false;
+	pci_nb10_post_active = false;
+	hal_log_info("CIRRUS-NB10: gate leave: mode=%s; relay=%02Xh; "
+	             "3C3h %s.", nb10_gate_name(), inp(PCI_RELAY_PORT),
+	             pci_nb10_sleep_decoded ? "restored/unused" : "untouched");
+}
+
+/*
  * CL-GD7548 mode-set register streams, extracted verbatim from the
  * PC-98 NT 4.0 miniport (CIRRUS.SYS, 1996-10-13, chip tag 0xE).
  * The streams program MISC bit0 = 0, so the CRTC is written at the
@@ -3009,15 +4123,16 @@ program_mode_754x(void)
 	seq_stream(seq, nseq);
 
 	/* SR0F: preserve the DRAM-type bits, force extended-mode bit. */
-	cl_seq_write(0x0f, (cl_seq_read(0x0f) & 0xdf) | 0x20);
+	cl_seq_write8(0x0f, (cl_seq_read(0x0f) & 0xdf) | 0x20);
 
 	/*
-	 * SR17 |= 44h: enable memory-mapped I/O with the MMIO block
-	 * in the last 256 bytes of the linear aperture (what the NT
-	 * miniport does for linear machines, VA 1B033h).  The VRAM
-	 * clear below therefore stops 256 bytes short of the end.
+	 * SR17 |= 44h enables linear MMIO.  CIRRUS.SYS applies this after
+	 * the complete command stream on the Nb10 tag-0Eh path, so defer it
+	 * to nb10_coregraph_gate_post_mode() there.  Keep the historical
+	 * placement for the other laptop variants until their paths are decoded.
 	 */
-	cl_seq_write(0x17, (uint8_t)(cl_seq_read(0x17) | 0x44));
+	if (!pci_nb10_experimental)
+		cl_seq_write8(0x17, (uint8_t)(cl_seq_read(0x17) | 0x44));
 
 	/*
 	 * Miscellaneous Output.  Bit0 = 0 -> the CRTC and Input
@@ -3030,8 +4145,16 @@ program_mode_754x(void)
 	/* GR06 = 05 (graphics, correct memory map) before the CRTC. */
 	cl_gfx_write(0x06, 0x05);
 
-	/* SR03 char map, then the CRTC incl. the LCD shadow dance. */
-	cl_seq_write(0x03, 0x00);
+	/*
+	 * CIRRUS.SYS stream VA 141F0h writes 0300h to the sequencer
+	 * index/data pair here: SR00=03h, releasing the synchronous reset
+	 * asserted by the earlier SR00=01h entry.  The previous port wrote
+	 * SR03=00h instead, leaving the display sequencer stopped; on the
+	 * Nb10 that presents as a powered, all-white LCD.
+	 */
+	cl_seq_write(0x00, 0x03);
+
+	/* CRTC incl. the LCD shadow dance (the list starts with CR11=20h). */
 	crtc_stream(crtc, ncrtc);
 
 	/* Graphics controller. */
@@ -3043,8 +4166,15 @@ program_mode_754x(void)
 		outp(cdisp.io_3c0, (uint8_t)i);
 		outp(cdisp.io_3c0, m754x_atc[i]);
 	}
-	(void)inp(cdisp.io_3da);
-	outp(cdisp.io_3c0, 0x20);		/* enable video output */
+	/*
+	 * The tag-0Eh NT4 stream leaves the Attribute Controller disabled
+	 * here.  sub_10F24 enables it only after VRAM preparation and the
+	 * 0FACh relay switch.  Preserve that order on the Nb10.
+	 */
+	if (!pci_nb10_experimental) {
+		(void)inp(cdisp.io_3da);
+		outp(cdisp.io_3c0, 0x20);
+	}
 
 	/* Hidden DAC / pixel mask (depth format). */
 	cl_hidden_dac_write(hdr);
@@ -3058,21 +4188,36 @@ program_mode_754x(void)
 	cl_gfx_write(0x0e, 0x00);
 	cdisp.cur_bank = 0;
 
-	/* DAC: the RGB332 palette for 8bpp / a ramp otherwise. */
-	cl_load_palette();
+	/*
+	 * Palette loading is not part of the tag-0Eh mode command stream.
+	 * It is immaterial in 16/24bpp, but skipping it keeps the Nb10 path
+	 * byte-for-byte ordered through the final GR0Eh write.
+	 */
+	if (!pci_nb10_experimental)
+		cl_load_palette();
 }
 
 static bool
 cirrus75_init(int mode, int req_bpp)
 {
 	uint32_t bar0, barsize, cmd;
+	uint32_t host_map_size;
 	int w, h, bpp;
 
 	if (!pci_find_cirrus(&pci_bus, &pci_dev, &pci_fn))
 		return false;
 
+	pci_nb10_experimental = (chip->dev == 0x0038);
+	pci_nb10_gate_active = false;
+	pci_nb10_post_active = false;
+	if (pci_nb10_experimental)
+		nb10_parse_options();
+
 	hal_log_info("CIRRUS: %s found at PCI %d:%d.%d (dev ID %04Xh).",
 		     chip->name, pci_bus, pci_dev, pci_fn, chip->dev);
+	if (pci_nb10_experimental)
+		hal_log_info("CIRRUS-NB10: enabling recovered NT4 motherboard gate "
+		             "and BAR0+0C00000h linear VRAM aperture path.");
 
 	w = disp_geo[mode].w;
 	h = disp_geo[mode].h;
@@ -3118,15 +4263,30 @@ cirrus75_init(int mode, int req_bpp)
 	cdisp.fb_phys = bar0 + chip->fb_offset;
 	cdisp.vram_size = PCI_FB_LENGTH;
 	cdisp.linear = true;
-	cdisp.fifo_capable = !chip->laptop;
+	cdisp.fifo_capable = !chip->laptop || pci_nb10_experimental;
 	cdisp.fifo_only = cdisp.fifo_capable && gd54_fifo_requested;
+	host_map_size = cdisp.fifo_only ? 0x10000UL : cdisp.vram_size;
+	if (barsize != 0 && chip->fb_offset + host_map_size > barsize) {
+		hal_log_info("CIRRUS: BAR0 decode (%lu bytes) is too small for "
+		             "offset %08lXh plus host window %lu bytes.",
+		             (unsigned long)barsize,
+		             (unsigned long)chip->fb_offset,
+		             (unsigned long)host_map_size);
+		return false;
+	}
 	hal_log_info("CIRRUS: framebuffer = BAR0 + %08lXh = %08lXh.",
 		     (unsigned long)chip->fb_offset,
 		     (unsigned long)cdisp.fb_phys);
+	if (pci_nb10_experimental) {
+		if (cdisp.fifo_only)
+			hal_log_info("CIRRUS-NB10: diagnostic FIFO fallback selected at "
+			             "BAR0+0C00000h.");
+		else
+			hal_log_info("CIRRUS-NB10: NT4 linear framebuffer aperture is "
+			             "BAR0+0C00000h; mapping the full 1MB VRAM window.");
+	}
 
-	cdisp.fb = (uint8_t *)cl_map_physical(cdisp.fb_phys,
-					      cdisp.fifo_only ? 0x10000UL :
-					                        cdisp.vram_size);
+	cdisp.fb = (uint8_t *)cl_map_physical(cdisp.fb_phys, host_map_size);
 	if (cdisp.fb == NULL) {
 		hal_log_info("CIRRUS: can't map the framebuffer.");
 		return false;
@@ -3193,49 +4353,155 @@ cirrus75_init(int mode, int req_bpp)
 		     w, h, bpp, (unsigned long)cdisp.pitch,
 		     chip->laptop ? "the NEC 754x register streams" :
 				    "the generic Alpine mode set");
+	if (pci_nb10_experimental && bpp == 16)
+		hal_log_info("CIRRUS-NB10: NT4 mode-table entry 16 selected: main stream VA=141F0h; +8Ch extra stream=NULL.");
+
+	/*
+	 * Nb10: execute the recovered NT4 class-40h/tag-0Eh pre-mode sequence.
+	 * In the exact path 0FACh remains on the GDC until the post-mode routine.
+	 */
+	if (pci_nb10_experimental) {
+		nb10_coregraph_gate_enter();
+		nb10_dump_state("after gate enter, before mode stream");
+	}
 
 	/* Program the mode. */
 	if (chip->laptop)
 		program_mode_754x();
 	else
 		cl_modeset_generic(false);
+	if (pci_nb10_experimental) {
+		nb10_dump_state("after GD7548 mode stream");
+		nb10_scan_probe("after mode stream");
+		nb10_coregraph_chip_post_mode();
+		nb10_dump_state("after NT4 chip post-mode");
+	}
 
 	if (cdisp.fifo_capable) {
 		/*
-		 * Desktop PCI GD54xx can use either interpretation of the BAR:
-		 * ordinary linear VRAM while the BLT is idle, or source FIFO while
-		 * MEMSYSSRC is active.  Always reset before a direct clear.
+		 * PCI GD54xx and the Nb10 GD7548 can use the BAR as ordinary linear
+		 * VRAM while the BLT is idle.  The FIFO path remains available only as
+		 * an explicit diagnostic fallback in older revisions.
 		 */
-		cl_blt_reset();
+		/*
+		 * The NT4 class-40h aperture path does not touch the BitBLT engine;
+		 * sub_1B458 writes the linear VRAM mapping directly.  Retain the reset
+		 * only for FIFO operation and for the other PCI Cirrus paths.
+		 */
+		if (!pci_nb10_experimental || cdisp.fifo_only)
+			cl_blt_reset();
 		if (cdisp.fifo_only) {
-			if (!cl_blt_fifo_clear_visible()) {
-				hal_log_info("CIRRUS-BLT: PCI GD54xx FIFO clear failed.");
+			if (pci_nb10_experimental && pci_nb10_diag_bars) {
+				if (!cl_blt_fifo_pattern_visible()) {
+					hal_log_info("CIRRUS-BLT: Nb10 FIFO color-bar diagnostic failed.");
+					if (pci_nb10_gate_active)
+						nb10_coregraph_gate_leave();
+					restore_state();
+					if (ext_was_locked)
+						cl_seq_write(0x06, 0x0f);
+					cl_release_fb_mapping();
+					return false;
+				}
+				hal_log_info("CIRRUS-NB10: FIFO color bars submitted; application flips are frozen.");
+			} else if (!cl_blt_fifo_clear_visible()) {
+				hal_log_info("CIRRUS-BLT: PCI Cirrus FIFO clear failed%s.",
+				             pci_nb10_experimental ?
+				             " on the experimental Nb10 path" : "");
+				if (pci_nb10_gate_active)
+					nb10_coregraph_gate_leave();
 				restore_state();
+				if (ext_was_locked)
+					cl_seq_write(0x06, 0x0f);
 				cl_release_fb_mapping();
 				return false;
 			}
-			hal_log_info("CIRRUS-BLT: PCI GD54xx host path selected: "
-			             "CPU-source FIFO.");
+			hal_log_info("CIRRUS-BLT: PCI %s host path selected: "
+			             "CPU-source FIFO dword writes.", chip->name);
+			if (pci_nb10_experimental)
+				nb10_dump_state("after initial FIFO transfer");
 		} else {
-			if (!cl_aperture_clear_visible()) {
-				hal_log_info("CIRRUS: PCI GD54xx aperture clear failed.");
+			bool aperture_ok;
+
+			if (pci_nb10_experimental) {
+				aperture_ok = nb10_nt4_prepare_full_vram();
+				if (aperture_ok && pci_nb10_diag_widths)
+					aperture_ok = nb10_aperture_width_test("pre-relay");
+				else if (aperture_ok && pci_nb10_diag_bars)
+					aperture_ok = cl_aperture_pattern_visible();
+			} else {
+				aperture_ok = cl_aperture_clear_visible();
+			}
+			if (!aperture_ok) {
+				hal_log_info("CIRRUS: PCI Cirrus aperture %s failed%s.",
+				             pci_nb10_diag_widths ? "write-width test" :
+				             (pci_nb10_diag_bars ? "pattern" : "clear"),
+				             pci_nb10_experimental ? " on the Nb10" : "");
+				if (pci_nb10_gate_active)
+					nb10_coregraph_gate_leave();
 				restore_state();
+				if (ext_was_locked)
+					cl_seq_write(0x06, 0x0f);
 				cl_release_fb_mapping();
 				return false;
 			}
-			hal_log_info("CIRRUS: PCI GD54xx host path selected: "
-			             "direct linear VRAM aperture.");
+			if (pci_nb10_experimental) {
+				hal_log_info("CIRRUS-NB10: NT4 host path selected: direct "
+				             "linear VRAM aperture at %08lXh.",
+				             (unsigned long)cdisp.fb_phys);
+				if (pci_nb10_diag_widths)
+					hal_log_info("CIRRUS-NB10: pre-relay 8/16/32-bit aperture bands written; application flips are frozen.");
+				else if (pci_nb10_diag_bars)
+					hal_log_info("CIRRUS-NB10: aperture color bars written; application flips are frozen.");
+				nb10_dump_state(pci_nb10_diag_widths ?
+				                  "after pre-relay width test" :
+				                 (pci_nb10_diag_bars ?
+				                  "after aperture color bars" :
+				                  "after initial aperture clear"));
+			} else {
+				hal_log_info("CIRRUS: PCI GD54xx host path selected: "
+				             "direct linear VRAM aperture.");
+			}
 		}
 	} else {
-		/* GD75xx/755x retain their known-good direct linear path. */
+		/* Remaining GD75xx/755x retain their known-good direct path. */
 		memset(cdisp.fb, 0, cdisp.vram_size - 0x100);
 	}
 
-	/* Screen on. */
-	cl_seq_write(0x01, 0x01);
+	/*
+	 * Exact NT4 order: sub_1B458 has now completed the VRAM operation;
+	 * only now run sub_10F24 to clear SR12 bit6, select 0FACh=02h, wait,
+	 * and re-enable the Attribute Controller output.
+	 */
+	if (pci_nb10_experimental) {
+		nb10_coregraph_output_enable();
+		nb10_dump_state("after NT4 output enable");
+		nb10_scan_probe("after output enable");
+		if (pci_nb10_diag_widths) {
+			if (nb10_aperture_width_test("post-relay"))
+				hal_log_info("CIRRUS-NB10: post-relay 8/16/32-bit aperture bands rewritten.");
+			else
+				hal_log_info("CIRRUS-NB10: post-relay write-width diagnostic failed.");
+		}
+	}
 
-	/* Switch the panel/output relay to the accelerator. */
-	relay_to_accel();
+	/*
+	 * The GD7548 command stream already leaves SR01=01h.  Do not add another
+	 * sequencer write after sub_10F24 on the exact Nb10 route.
+	 */
+	if (!pci_nb10_experimental)
+		cl_seq_write(0x01, 0x01);
+
+	/* Normal PCI paths switch here; Nb10 did so in the recovered postlude. */
+	if (!pci_nb10_experimental) {
+		relay_to_accel();
+	} else {
+		hal_log_info("CIRRUS-NB10: LCD scanout enabled; %s active, "
+		             "0FACh=%02Xh.",
+		             cdisp.fifo_only ? "FIFO diagnostic transport" :
+		                               "direct linear aperture",
+		             inp(PCI_RELAY_PORT));
+		nb10_dump_state("after screen on");
+	}
 
 	cdisp.chip_name = chip->name;
 	cdisp.path = CIRRUS_PATH_75;
@@ -3249,15 +4515,1564 @@ cirrus75_cleanup(void)
 	/* Blank while we unwind. */
 	cl_seq_write(0x01, 0x21);
 
-	/* Output back to the 98 GDC. */
-	relay_to_gdc();
+	if (pci_nb10_experimental) {
+		/* Follow the NT4 board-side mode-zero sequence, then restore firmware. */
+		nb10_coregraph_gate_leave();
+		restore_state();
+		if (ext_was_locked)
+			cl_seq_write(0x06, 0x0f);
+	} else {
+		/* Output back to the 98 GDC. */
+		relay_to_gdc();
 
-	/* Put every register back the way the firmware left it. */
-	restore_state();
+		/* Put every register back the way the firmware left it. */
+		restore_state();
 
-	/* Re-lock the extensions if they were locked when we came. */
-	if (ext_was_locked)
-		cl_seq_write(0x06, 0x0f);
+		/* Re-lock the extensions if they were locked when we came. */
+		if (ext_was_locked)
+			cl_seq_write(0x06, 0x0f);
+	}
 
 	cl_release_fb_mapping();
+	pci_nb10_experimental = false;
+	pci_nb10_gate_active = false;
+	pci_nb10_chip_post_active = false;
+	pci_nb10_post_active = false;
+	pci_nb10_diag_bars = false;
+	pci_nb10_diag_widths = false;
+	pci_nb10_diag_freeze = false;
+	pci_nb10_flip_count = 0;
+}
+
+/*****************************************************************************/
+/* V16: NT4-structure detector, aperture resolver and SetMode dispatcher      */
+/*****************************************************************************/
+
+/*
+ * This is the active initialization path in V16.  The older per-module
+ * initializers above remain as bring-up documentation, but are not called by
+ * the public entry point.  The structure and branch order follow the recovered
+ * CIRRUS.SYS pseudocode:
+ *
+ *   detect attachment/family -> select I/O layout -> resolve aperture ->
+ *   map VRAM -> run family SetGraphMode -> replay chip mode stream ->
+ *   family postlude/lock.
+ */
+enum nt4r_family {
+	NT4R_FAMILY_NONE = 0,
+	NT4R_FAMILY_4 = 4,
+	NT4R_FAMILY_8 = 8,
+	NT4R_FAMILY_754X = 0x40,
+	NT4R_FAMILY_5446 = 0x80
+};
+
+struct nt4r_adapter {
+	enum nt4r_family family;
+	uint16_t model;
+	uint16_t io_variant;
+	bool need_unlock;
+	bool ext_flags;
+	bool pci;
+	int bus, dev, fn;
+	uint16_t pci_device;
+	uint8_t fixed_id;
+	uint16_t io_base;
+	uint16_t index_port;
+	uint16_t data_port;
+	uint32_t aperture_phys;
+	uint32_t aperture_len;
+	uint32_t vram_size;
+	bool linear;
+	bool active;
+	bool state_saved;
+	bool board_saved;
+	uint8_t saved_index3;
+	uint8_t saved_window;
+	uint8_t saved_linear;
+	uint8_t saved_sleep;
+	uint8_t saved_p904;
+	uint8_t saved_pff82;
+	uint8_t saved_fac;
+	uint32_t saved_pci_cmd;
+};
+
+static struct nt4r_adapter nt4r;
+
+static uint8_t
+nt4r_idx_read(uint16_t index_port, uint16_t data_port, int reg)
+{
+	outp(index_port, reg);
+	return (uint8_t)inp(data_port);
+}
+
+static void
+nt4r_idx_write(uint16_t index_port, uint16_t data_port, int reg, int val)
+{
+	outp(index_port, reg);
+	outp(data_port, val);
+}
+
+static void
+nt4r_scan_pci(bool *have_core, bool *have_1202, int *dev_1202,
+              bool *have_0038, int *dev_0038,
+              bool *have_00b8, int *dev_00b8)
+{
+	uint32_t id, classcode;
+	int dev;
+
+	*have_core = false;
+	*have_1202 = false;
+	*have_0038 = false;
+	*have_00b8 = false;
+	*dev_1202 = *dev_0038 = *dev_00b8 = -1;
+
+	/* CIRRUS.SYS scans bus 0, function 0, devices 0..31. */
+	for (dev = 0; dev < 32; dev++) {
+		id = pci_read32(0, dev, 0, 0x00);
+		if ((id & 0xffff) == 0xffff || (id & 0xffff) == 0)
+			continue;
+		classcode = pci_read32(0, dev, 0, 0x08);
+		hal_log_info("CIRRUS-NT4: PCI 0:%d.0 = %04lX:%04lX class %02lXh.",
+		             dev, (unsigned long)(id & 0xffff),
+		             (unsigned long)(id >> 16),
+		             (unsigned long)(classcode >> 24));
+		if ((id & 0xffff) == 0x1033 && (uint16_t)(id >> 16) == 0x0009)
+			*have_core = true;
+		if ((id & 0xffff) != PCI_VENDOR_CIRRUS)
+			continue;
+		if ((uint16_t)(id >> 16) == 0x1202) {
+			*have_1202 = true;
+			*dev_1202 = dev;
+		} else if ((uint16_t)(id >> 16) == 0x0038) {
+			*have_0038 = true;
+			*dev_0038 = dev;
+		} else if ((uint16_t)(id >> 16) == 0x00b8) {
+			*have_00b8 = true;
+			*dev_00b8 = dev;
+		}
+	}
+}
+
+static bool
+nt4r_classify_fixed_id(uint8_t id)
+{
+	nt4r.fixed_id = id;
+	nt4r.io_variant = 1;
+	nt4r.index_port = 0x0faa;
+	nt4r.data_port = 0x0fab;
+	nt4r.vram_size = 0x100000UL;
+
+	switch (id) {
+	case 0x50:
+		nt4r.family = NT4R_FAMILY_4; nt4r.model = 0; nt4r.need_unlock = false; break;
+	case 0x51: case 0x52:
+		nt4r.family = NT4R_FAMILY_4; nt4r.model = 2; nt4r.need_unlock = false; break;
+	case 0x53:
+		nt4r.family = NT4R_FAMILY_4; nt4r.model = 0x0b; nt4r.need_unlock = true; break;
+	case 0x54:
+		nt4r.family = NT4R_FAMILY_4; nt4r.model = 1; nt4r.need_unlock = true; break;
+	case 0x55: case 0x70:
+		nt4r.family = NT4R_FAMILY_4; nt4r.model = 4; nt4r.need_unlock = true; break;
+	case 0x56:
+		nt4r.family = NT4R_FAMILY_4; nt4r.model = 9; nt4r.need_unlock = true; break;
+	case 0x57:
+		nt4r.family = NT4R_FAMILY_4; nt4r.model = 0x0a; nt4r.need_unlock = true; break;
+	case 0x58:
+		nt4r.family = NT4R_FAMILY_8; nt4r.model = 3; nt4r.ext_flags = true; break;
+	case 0x59:
+		nt4r.family = NT4R_FAMILY_8; nt4r.model = 5; nt4r.ext_flags = true; break;
+	case 0x5a:
+		nt4r.family = NT4R_FAMILY_8; nt4r.model = 6; nt4r.ext_flags = true; break;
+	case 0x5b:
+		nt4r.family = NT4R_FAMILY_8; nt4r.model = 7; nt4r.ext_flags = true; break;
+	case 0x5c: case 0x5d:
+		nt4r.family = NT4R_FAMILY_8; nt4r.model = 8; nt4r.ext_flags = true; break;
+	default:
+		return false;
+	}
+	return true;
+}
+
+static bool
+nt4r_detect_adapter(void)
+{
+	bool have_core, have_1202, have_0038, have_00b8;
+	int dev_1202, dev_0038, dev_00b8;
+
+	memset(&nt4r, 0, sizeof(nt4r));
+
+	/*
+	 * V17 is intentionally Nb10-only.  Do not touch the WAB/fixed-interface
+	 * probes: a non-Nb10 machine should be identified by PCI first and left
+	 * alone.  The DOS port cannot read NT's Configuration Data machine byte,
+	 * so the safe signature available here is the independently visible
+	 * 1013:0038 GD7548 together with the NEC 1033:0009 Core-Graph marker.
+	 */
+	nt4r_scan_pci(&have_core, &have_1202, &dev_1202,
+	               &have_0038, &dev_0038, &have_00b8, &dev_00b8);
+	nec_coregraph_seen = have_core;
+
+	if (!have_0038 || !have_core) {
+		hal_log_info("CIRRUS-WARNING: this does not match the Nb10 PCI signature "
+		             "(1013:0038=%s, 1033:0009=%s).",
+		             have_0038 ? "present" : "missing",
+		             have_core ? "present" : "missing");
+		hal_log_info("CIRRUS-WARNING: refusing to program Cirrus or PC-98 board "
+		             "registers on a non-Nb10/unknown machine.");
+		return false;
+	}
+
+	if (have_1202 || have_00b8)
+		hal_log_info("CIRRUS-WARNING: additional supported Cirrus PCI function "
+		             "detected (1202=%s, 00B8=%s); continuing only with "
+		             "the Nb10 1013:0038 function.",
+		             have_1202 ? "present" : "absent",
+		             have_00b8 ? "present" : "absent");
+
+	nt4r.family = NT4R_FAMILY_754X;
+	nt4r.model = 0x0e;		/* Nb10 firmware machine-ID 38h branch. */
+	nt4r.io_variant = 3;		/* Native VGA register layout. */
+	nt4r.need_unlock = true;
+	nt4r.pci = true;
+	nt4r.bus = 0;
+	nt4r.dev = dev_0038;
+	nt4r.fn = 0;
+	nt4r.pci_device = 0x0038;
+	nt4r.vram_size = 0x100000UL;
+
+	/*
+	 * The active NT4-rewrite path bypasses pci_find_cirrus(), which normally
+	 * initializes this shared model pointer.  DOS/4GW maps address zero, so a
+	 * NULL dereference here can silently read IVT bytes instead of faulting.
+	 * Pin it explicitly before save_state()/probe_lcd() inspect chip->laptop.
+	 */
+	chip = &pci_models[0];	/* table entry 0 is 1013:0038 / GD7548 */
+
+	hal_log_info("CIRRUS-NT4: Nb10 signature accepted: GD7548 at PCI 0:%d.0, "
+	             "NEC Core-Graph marker present; family 40h/model 0Eh.",
+	             dev_0038);
+	return true;
+}
+
+static void
+nt4r_select_io_layout(void)
+{
+	if (nt4r.io_variant == 2) {
+		nt4r.io_base = 0x0b50;
+		cl_set_iobase(0x0c50, 0x0d54, 0x0d5a, 0x0b54, 0x0b5a);
+	} else if (nt4r.io_variant == 1) {
+		nt4r.io_base = 0x0ba0;
+		cl_set_iobase(IO54_3C0, IO54_3D4, IO54_3DA, IO54_3B4, IO54_3BA);
+	} else {
+		nt4r.io_base = 0x03b0;
+		cl_set_iobase(0x03c0, 0x03d4, 0x03da, 0x03b4, 0x03ba);
+	}
+	cl_select_crtc(cl_misc_read());
+}
+
+static bool
+nt4r_resolve_aperture(void)
+{
+	uint8_t strap, ack;
+	uint32_t bar0, cmd;
+
+	nt4r.linear = true;
+	nt4r.aperture_len = nt4r.vram_size;
+
+	switch (nt4r.family) {
+	case NT4R_FAMILY_4:
+		nt4r.linear = false;
+		nt4r.aperture_len = 0x20000UL;
+		if (nt4r.io_variant == 2) {
+			strap = nt4r_idx_read(nt4r.index_port, nt4r.data_port, 4) & 7;
+			switch (strap) {
+			case 0: nt4r.aperture_phys = 0x00f00000UL; ack = 0xa0; break;
+			case 1: nt4r.aperture_phys = 0x00f20000UL; ack = 0x80; break;
+			case 2: nt4r.aperture_phys = 0x00f40000UL; ack = 0xe0; break;
+			case 3: nt4r.aperture_phys = 0x00f60000UL; ack = 0xc0; break;
+			default: return false;
+			}
+			nt4r_idx_write(nt4r.index_port, nt4r.data_port, 1, ack);
+		} else {
+			strap = nt4r_idx_read(nt4r.index_port, nt4r.data_port, 1);
+			nt4r.aperture_phys = gd54_window_phys(strap);
+			if (nt4r.aperture_phys == 0)
+				nt4r.aperture_phys = 0x00f00000UL;
+		}
+		break;
+	case NT4R_FAMILY_8:
+		nt4r_idx_write(nt4r.index_port, nt4r.data_port, 2, 0xf0);
+		nt4r.aperture_phys = 0xf0000000UL;
+		break;
+	case NT4R_FAMILY_754X:
+		/*
+		 * HwFindAdapter only records/maps BAR0+0C00000h.  PCI I/O+memory
+		 * decode is enabled later by class-40h SetGraphMode (sub_10DC2),
+		 * after the register state has been inspected and saved.  Keep that
+		 * ordering; the V17 path enabled decode prematurely here.
+		 *
+		 * CIRRUS.SYS adds 0C00000h to the raw BAR value.  Do not silently
+		 * change that recovered arithmetic by masking the low nibble.
+		 */
+		cmd = pci_read32(nt4r.bus, nt4r.dev, nt4r.fn, 0x04);
+		nt4r.saved_pci_cmd = cmd;
+		bar0 = pci_read32(nt4r.bus, nt4r.dev, nt4r.fn, 0x10);
+		if ((bar0 & ~0x0fUL) == 0)
+			return false;
+		nt4r.aperture_phys = bar0 + 0x00c00000UL;
+		hal_log_info("CIRRUS-NT4: Nb10 BAR0 raw=%08lXh, PCI cmd=%04lXh; "
+		             "decode enable deferred to sub_10DC2.",
+		             (unsigned long)bar0, (unsigned long)(cmd & 0xffff));
+		break;
+	case NT4R_FAMILY_5446:
+		cmd = pci_read32(nt4r.bus, nt4r.dev, nt4r.fn, 0x04);
+		nt4r.saved_pci_cmd = cmd;
+		pci_write32(nt4r.bus, nt4r.dev, nt4r.fn, 0x04,
+		            (cmd & ~1UL) | 2UL);
+		bar0 = pci_read32(nt4r.bus, nt4r.dev, nt4r.fn, 0x10) & 0xff000000UL;
+		if (bar0 == 0)
+			return false;
+		nt4r.aperture_phys = bar0;
+		break;
+	default:
+		return false;
+	}
+
+	cdisp.fb_phys = nt4r.aperture_phys;
+	cdisp.vram_size = nt4r.vram_size;
+	cdisp.linear = nt4r.linear;
+	cdisp.fb = (uint8_t *)cl_map_physical(nt4r.aperture_phys,
+	                                      nt4r.aperture_len);
+	if (cdisp.fb == NULL)
+		return false;
+
+	hal_log_info("CIRRUS-NT4: aperture resolved: family=%02Xh model=%02Xh, %s %luKB at %08lXh.",
+	             nt4r.family, nt4r.model,
+	             nt4r.linear ? "linear" : "banked",
+	             (unsigned long)(nt4r.aperture_len >> 10),
+	             (unsigned long)nt4r.aperture_phys);
+	return true;
+}
+
+static void
+nt4r_unlock(void)
+{
+	uint16_t v;
+
+	if (!nt4r.need_unlock)
+		return;
+	if (nt4r.model == 4) {
+		nt4r_idx_write(nt4r.index_port, nt4r.data_port, 0x83, 0x01);
+		return;
+	}
+	outpw(0x08f0, 0x0052);
+	outp(PC98_WAIT_PORT, 0);
+	outp(PC98_WAIT_PORT, 0);
+	v = (uint16_t)inpw(0x08f2);
+	outpw(0x08f2, v | 0x0080);
+	if (nt4r.family == NT4R_FAMILY_754X) {
+		outpw(0x08f0, 0x0060);
+		v = (uint16_t)inpw(0x08f2);
+		outpw(0x08f2, v & 0xffef);
+	}
+}
+
+static void
+nt4r_lock(void)
+{
+	uint16_t v;
+
+	if (!nt4r.need_unlock)
+		return;
+	if (nt4r.model == 4) {
+		nt4r_idx_write(nt4r.index_port, nt4r.data_port, 0x83, 0x03);
+		return;
+	}
+	if (nt4r.family == NT4R_FAMILY_754X) {
+		outpw(0x08f0, 0x0060);
+		v = (uint16_t)inpw(0x08f2);
+		outpw(0x08f2, v | 0x0010);
+	}
+	outpw(0x08f0, 0x0052);
+	outp(PC98_WAIT_PORT, 0);
+	outp(PC98_WAIT_PORT, 0);
+	v = (uint16_t)inpw(0x08f2);
+	outpw(0x08f2, v & 0xff7f);
+}
+
+/*
+ * Class-40h CR24/Attribute Controller preamble and final output enable.
+ *
+ * ChipDetect patches the family-40h RegOffset table before SetMode runs:
+ * ATTR index/data become IoBase+10h/+11h (03C0h/03C1h), and SEQ becomes
+ * IoBase+14h/+15h (03C4h/03C5h).  Offsets 100h/104h belong to the original
+ * PC-98-native layout and must not be added to the class-40h 03B0h base.
+ */
+static void
+nt4r_class40_attr_preamble(void)
+{
+	int cr24, attr;
+
+	outp(cdisp.io_3d4, 0x24);
+	cr24 = inp(cdisp.io_3d4 + 1);
+	if (cr24 & 0x80) {
+		attr = inp(cdisp.io_3c0 + 1);
+		outp(cdisp.io_3c0, attr);
+	}
+	outp(cdisp.io_3c0, 0x31);
+	outp(cdisp.io_3c0, 0x00);
+	outp(cdisp.io_3c0, 0x00);
+	hal_log_info("CIRRUS-NB10: NT4 native AC preamble: CR24=%02Xh, "
+	             "3C0h<=31h,00h,00h.", cr24);
+}
+
+static void
+nt4r_class40_attr_enable(void)
+{
+	int cr24, attr;
+
+	outp(cdisp.io_3d4, 0x24);
+	cr24 = inp(cdisp.io_3d4 + 1);
+	if (cr24 & 0x80) {
+		attr = inp(cdisp.io_3c0 + 1);
+		outp(cdisp.io_3c0, attr);
+	}
+	outp(cdisp.io_3c0, 0x20);
+	hal_log_info("CIRRUS-NB10: NT4 native AC enable: CR24=%02Xh, "
+	             "3C0h<=20h.", cr24);
+}
+
+static bool
+nt4r_zero_linear_vram(void)
+{
+	volatile uint32_t *p32;
+	volatile uint8_t *p8;
+	uint32_t bytes, n, i;
+
+	if (cdisp.fb == NULL || !cdisp.linear || cdisp.vram_size < 4)
+		return false;
+	cl_seq_write(0x02, cl_seq_read(0x02) | 0x0f);
+	bytes = cdisp.vram_size - 1;
+	p32 = (volatile uint32_t *)cdisp.fb;
+	n = bytes / 4;
+	for (i = 0; i < n; i++)
+		p32[i] = 0;
+	p8 = (volatile uint8_t *)cdisp.fb;
+	for (i = n * 4; i < bytes; i++)
+		p8[i] = 0;
+	return true;
+}
+
+static bool
+nt4r_fill_16bpp_bars(void)
+{
+	static const uint16_t col[8] = {
+		0xffff, 0xffe0, 0x07ff, 0x07e0,
+		0xf81f, 0xf800, 0x001f, 0x0000
+	};
+	volatile uint32_t *row;
+	uint32_t a, b;
+	int x, y, bar0, bar1;
+
+	if (cdisp.fb == NULL || !cdisp.linear || cdisp.bpp != 16)
+		return false;
+	for (y = 0; y < cdisp.scr_h; y++) {
+		row = (volatile uint32_t *)(cdisp.fb + (uint32_t)y * cdisp.pitch);
+		for (x = 0; x < cdisp.scr_w; x += 2) {
+			bar0 = x * 8 / cdisp.scr_w;
+			bar1 = (x + 1) * 8 / cdisp.scr_w;
+			a = col[bar0];
+			b = col[bar1];
+			row[x / 2] = a | (b << 16);
+		}
+	}
+	return true;
+}
+
+static void
+nt4r_save_legacy_board(void)
+{
+	nt4r.saved_index3 = nt4r_idx_read(nt4r.index_port, nt4r.data_port, 3);
+	nt4r.saved_window = nt4r_idx_read(nt4r.index_port, nt4r.data_port, 1);
+	nt4r.saved_linear = nt4r_idx_read(nt4r.index_port, nt4r.data_port, 2);
+	nt4r.saved_sleep = (uint8_t)inp(cdisp.io_3c0 + 3);
+	nt4r.saved_p904 = (uint8_t)inp(0x0904);
+	nt4r.saved_pff82 = (uint8_t)inp(0xff82);
+	nt4r.saved_fac = (uint8_t)inp(0x0fac);
+	nt4r.board_saved = true;
+}
+
+static void
+nt4r_v13_enter(void)
+{
+	/* This trace is intentionally identical to the verified V13 V15 path. */
+	outp(PC98_GDC_MODE_PORT, 0x0e);
+	outp(VRAM_SW_PORT, 0x07);
+	outp(VRAM_SW_PORT, 0x8f);
+	outp(VRAM_SW_PORT, 0x06);
+	nt4r_idx_write(nt4r.index_port, nt4r.data_port, 3, 3);
+	outp(PC98_WAIT_PORT, 0);
+	outp(PC98_WAIT_PORT, 0);
+	outp(cdisp.io_3c0 + 3, 1);
+}
+
+static void
+nt4r_v13_leave(void)
+{
+	unsigned long i;
+
+	outp(cdisp.io_3c0 + 3, 0);
+	nt4r_idx_write(nt4r.index_port, nt4r.data_port, 3, 0);
+	outp(PC98_WAIT_PORT, 0);
+	outp(VRAM_SW_PORT, 0x07);
+	outp(VRAM_SW_PORT, 0x8e);
+	outp(VRAM_SW_PORT, 0x06);
+	for (i = 0; i < 200000UL; i++)
+		outp(PC98_WAIT_PORT, 0);
+	outp(PC98_GDC_MODE_PORT, 0x0f);
+}
+
+static bool
+nt4r_init_v13(int mode, int req_bpp)
+{
+	int w, h, bpp;
+
+	w = disp_geo[mode].w;
+	h = disp_geo[mode].h;
+	if (mode != DISP_640X480) {
+		hal_log_info("CIRRUS-NT4: family 8 recovered stream currently supports 640x480 only.");
+		return false;
+	}
+	bpp = cl_resolve_bpp(req_bpp, 24, w, h, nt4r.vram_size, "family 8/V13");
+	if (bpp < 0)
+		return false;
+
+	cdisp.scr_w = w; cdisp.scr_h = h; cdisp.bpp = bpp;
+	cdisp.pitch = bpp == 8 ? 640UL : (bpp == 16 ? 1280UL : 2048UL);
+	cdisp.fifo_capable = true;
+	cdisp.fifo_only = gd54_fifo_requested;
+	cdisp.wab_id = nt4r.fixed_id;
+	nt4r_v13_enter();
+	cl_modeset_coregraph_necdrv();
+	if (cdisp.fifo_only) {
+		cl_blt_reset();
+		if (!cl_blt_fifo_clear_visible())
+			return false;
+	} else if (!cl_aperture_clear_visible()) {
+		return false;
+	}
+	cl_seq_write(0x01, 0x01);
+
+	cdisp.chip_name = "CL-GD5440 (NT4 family 8/model 7)";
+	cdisp.path = CIRRUS_PATH_54_COREGRAPH;
+	hal_log_info("CIRRUS-NT4: V13 equivalence contract active: identical gate trace, identical path-08h mode stream, identical pitch and screen-on write.");
+	return true;
+}
+
+static bool
+nt4r_init_family4(int mode, int req_bpp)
+{
+	int w, h, bpp;
+
+	w = disp_geo[mode].w;
+	h = disp_geo[mode].h;
+	if (mode != DISP_640X480 && mode != DISP_800X600)
+		return false;
+	bpp = cl_resolve_bpp(req_bpp, wab_default_bpp(nt4r.fixed_id),
+	                     w, h, nt4r.vram_size, "family 4/WAB");
+	if (bpp < 0)
+		return false;
+	cdisp.scr_w = w; cdisp.scr_h = h; cdisp.bpp = bpp;
+	cdisp.pitch = (uint32_t)w * (uint32_t)(bpp / 8);
+	cdisp.fifo_capable = true;
+	cdisp.fifo_only = gd54_fifo_requested;
+	nt4r_unlock();
+	outp(PC98_GDC_MODE_PORT, 0x0e);
+	outp(VRAM_SW_PORT, 0x07); outp(VRAM_SW_PORT, 0x8f); outp(VRAM_SW_PORT, 0x06);
+	nt4r_idx_write(nt4r.index_port, nt4r.data_port, 3, 3);
+	outp(PC98_WAIT_PORT, 0); outp(PC98_WAIT_PORT, 0);
+	outp(0x0904, 0); outp(nt4r.io_variant == 2 ? 0x0902 : 0xff82, 1); outp(0x0904, 0x20);
+	cl_modeset_generic(true);
+	if (!cl_aperture_clear_visible())
+		return false;
+	cl_seq_write(0x01, 0x01);
+	nt4r_lock();
+	cdisp.chip_name = "CL-GD5428/WAB (NT4 family 4)";
+	cdisp.path = CIRRUS_PATH_54_BANKED;
+	return true;
+}
+
+/*
+ * Read-only oracle after the MEMSYSSRC engine has become idle.  This does
+ * not establish that every platform supports reliable PCI VRAM reads, but
+ * it cleanly separates three outcomes on the Nb10:
+ *
+ *   expected bars -> FIFO reached VRAM; remaining fault is scanout/routing
+ *   all zero       -> BLT completed without updating the visible surface
+ *   other values   -> addressing/pitch/format or read-aperture aliasing
+ */
+static void
+nb10_make_bar_row(uint8_t *row, int y)
+{
+	static const uint8_t rgb[8][3] = {
+		{255,255,255}, {255,255,  0}, {  0,255,255}, {  0,255,  0},
+		{255,  0,255}, {255,  0,  0}, {  0,  0,255}, {  0,  0,  0}
+	};
+	int x, bar;
+
+	for (x = 0; x < 640; x++) {
+		uint8_t r, g, b;
+		uint16_t p;
+
+		bar = (x * 8) / 640;
+		if (bar > 7)
+			bar = 7;
+		r = rgb[bar][0];
+		g = rgb[bar][1];
+		b = rgb[bar][2];
+		if (y & 0x10) {
+			r >>= 1;
+			g >>= 1;
+			b >>= 1;
+		}
+		p = (uint16_t)(((uint16_t)(r & 0xf8) << 8) |
+		               ((uint16_t)(g & 0xfc) << 3) |
+		               ((uint16_t)b >> 3));
+		row[x * 2 + 0] = (uint8_t)p;
+		row[x * 2 + 1] = (uint8_t)(p >> 8);
+	}
+}
+
+static void
+nb10_host_readback_probe(const char *stage, uint32_t dst)
+{
+	volatile uint32_t *row0;
+	uint32_t p0, p80, p320, p560, plast;
+
+	if (!pci_nb10_experimental || cdisp.fb == NULL ||
+	    cdisp.bpp != 16 || cdisp.pitch != 1280 ||
+	    dst + cdisp.pitch > cdisp.vram_size)
+		return;
+
+	row0 = (volatile uint32_t *)(cdisp.fb + dst);
+	p0 = row0[(0 * 2) / 4];
+	p80 = row0[(80 * 2) / 4];
+	p320 = row0[(320 * 2) / 4];
+	p560 = row0[(560 * 2) / 4];
+	plast = row0[(638 * 2) / 4];
+
+	hal_log_info("CIRRUS-NB10: %s readback at +%05lX row0: "
+	             "x0=%08lX (FFFFFFFF), x80=%08lX (FFE0FFE0), "
+	             "x320=%08lX (F81FF81F), x560=%08lX (00000000), "
+	             "x638=%08lX (00000000).",
+	             stage, (unsigned long)dst,
+	             (unsigned long)p0, (unsigned long)p80,
+	             (unsigned long)p320, (unsigned long)p560,
+	             (unsigned long)plast);
+}
+
+static bool
+nb10_fifo_pattern_at(uint32_t dst, int gr30)
+{
+	static uint32_t row32[320];
+	uint8_t *row = (uint8_t *)row32;
+	int y;
+
+	if (dst + 1280UL * 480UL > cdisp.vram_size)
+		return false;
+	pci_nb10_fifo_gr30 = gr30;
+	cl_blt_reset();
+	if (!cl_blt_fifo_start(dst, 1280, 480))
+		return false;
+	for (y = 0; y < 480; y++) {
+		nb10_make_bar_row(row, y);
+		cl_blt_fifo_feed_row(row, 1280);
+	}
+	if (!cl_blt_wait_idle(4000000UL, "after Nb10 interactive FIFO bars")) {
+		cl_blt_reset();
+		return false;
+	}
+	return true;
+}
+
+static bool
+nb10_aperture_pattern_at(uint32_t dst, int store_width)
+{
+	static uint32_t row32[320];
+	uint8_t *row = (uint8_t *)row32;
+	int y;
+
+	if (cdisp.fb == NULL || dst + 1280UL * 480UL > cdisp.vram_size)
+		return false;
+	cl_blt_reset();
+	for (y = 0; y < 480; y++) {
+		volatile uint8_t *d8;
+		uint32_t off, i;
+
+		nb10_make_bar_row(row, y);
+		off = dst + (uint32_t)y * 1280UL;
+		d8 = (volatile uint8_t *)cdisp.fb + off;
+		if (store_width == 4) {
+			volatile uint32_t *d32 = (volatile uint32_t *)d8;
+			for (i = 0; i < 320; i++)
+				d32[i] = row32[i];
+		} else if (store_width == 2) {
+			volatile uint16_t *d16 = (volatile uint16_t *)d8;
+			const uint16_t *s16 = (const uint16_t *)row;
+			for (i = 0; i < 640; i++)
+				d16[i] = s16[i];
+		} else {
+			for (i = 0; i < 1280; i++)
+				d8[i] = row[i];
+		}
+	}
+	return true;
+}
+
+static bool
+nb10_aperture_solid_at(uint32_t dst, uint16_t color)
+{
+	volatile uint16_t *d16;
+	uint32_t pixels, i;
+
+	pixels = 640UL * 480UL;
+	if (cdisp.fb == NULL || dst + pixels * 2UL > cdisp.vram_size)
+		return false;
+	cl_blt_reset();
+	d16 = (volatile uint16_t *)(cdisp.fb + dst);
+	for (i = 0; i < pixels; i++)
+		d16[i] = color;
+	return true;
+}
+
+static void
+nb10_solid_readback_probe(const char *stage, uint32_t dst, uint16_t color)
+{
+	volatile uint32_t *row0;
+	uint32_t expected, p0, p80, p320, p560, plast;
+
+	if (cdisp.fb == NULL || dst + cdisp.pitch > cdisp.vram_size)
+		return;
+	expected = (uint32_t)color | ((uint32_t)color << 16);
+	row0 = (volatile uint32_t *)(cdisp.fb + dst);
+	p0 = row0[(0 * 2) / 4];
+	p80 = row0[(80 * 2) / 4];
+	p320 = row0[(320 * 2) / 4];
+	p560 = row0[(560 * 2) / 4];
+	plast = row0[(638 * 2) / 4];
+
+	hal_log_info("CIRRUS-NB10: %s readback at +%05lX row0: "
+	             "x0=%08lX x80=%08lX x320=%08lX x560=%08lX x638=%08lX "
+	             "(expected all %08lX).",
+	             stage, (unsigned long)dst,
+	             (unsigned long)p0, (unsigned long)p80,
+	             (unsigned long)p320, (unsigned long)p560,
+	             (unsigned long)plast, (unsigned long)expected);
+}
+
+static void
+nb10_force_pixel_pipeline(int hdr, int mask, bool ac_enable)
+{
+	/* Keep the display sequencer running and force the recovered RGB565 DAC. */
+	cl_seq_write(0x00, 0x03);
+	cl_seq_write8(0x01, (uint8_t)(cl_seq_read(0x01) & ~0x20));
+	cl_hidden_dac_write(hdr);
+	outp(cdisp.io_3c0 + 0x06, mask);
+
+	/* Attribute index bit5 is the video-enable latch. */
+	(void)inp(cdisp.io_3da);
+	outp(cdisp.io_3c0, ac_enable ? 0x20 : 0x00);
+}
+
+static void
+nb10_pipeline_probe(const char *stage, uint32_t dst)
+{
+	uint8_t hdr, mask;
+	int cr0c, cr0d, cr1b, cr24, cr26;
+
+	/* CIRRUS.SYS/save_state uses this exact order to recover HDR then mask. */
+	hdr = (uint8_t)cl_hidden_dac_read();
+	mask = (uint8_t)inp(cdisp.io_3c0 + 0x06);
+	cr0c = cl_crtc_read(0x0c);
+	cr0d = cl_crtc_read(0x0d);
+	cr1b = cl_crtc_read(0x1b);
+	cr24 = cl_crtc_read(0x24);
+	cr26 = cl_crtc_read(0x26);
+
+	hal_log_info("CIRRUS-NB10: %s pipeline: dst=+%05lX; "
+	             "CR0C=%02X CR0D=%02X CR1B=%02X CR24=%02X CR26=%02X "
+	             "(AC video=%s); HDR=%02X Mask=%02X; "
+	             "SR00=%02X SR01=%02X SR07=%02X SR17=%02X relay=%02X.",
+	             stage, (unsigned long)dst,
+	             cr0c, cr0d, cr1b, cr24, cr26,
+	             (cr26 & 0x20) ? "on" : "off",
+	             hdr, mask,
+	             cl_seq_read(0x00), cl_seq_read(0x01),
+	             cl_seq_read(0x07), cl_seq_read(0x17),
+	             inp(PCI_RELAY_PORT));
+}
+
+static const char *
+nb10_scanout_test_name(int test)
+{
+	switch (test) {
+	case NB10_TEST_MCLK_NT4:
+		return "SR1F=23h NT4 MCLK (baseline is 18h; expect degradation/loss)";
+	case NB10_TEST_FIFOTHR_FW:
+		return "SR16=F0h firmware display-FIFO threshold (was F7h)";
+	case NB10_TEST_FIFOTHR_MAX:
+		return "SR16=FFh maximum display-FIFO threshold (anti-flicker probe)";
+	case NB10_TEST_9A8_01:
+		return "9A8h=01h only (baseline is 03h; does the display die?)";
+	case NB10_TEST_9A8_00:
+		return "9A8h=00h (both bits off; does the display die?)";
+	case NB10_TEST_9A8_DANCE:
+		return "9A8h dance: 01h, settle, 00h, settle, 03h";
+	case NB10_TEST_REG03_CLEAR:
+		return "reg03<-00h (baseline is 02h; display should DIE on both outputs)";
+	case NB10_TEST_LCD_REDANCE:
+		return "LCD shadow re-dance: CR2D=80h, CR02..0E block, CR2D=11h";
+	case NB10_TEST_CR2C_E3:
+		return "CR2C=E3h panel control (WATCH LCD AND CRT)";
+	case NB10_TEST_FAC_CLEAR:
+		return "0FACh<-00h with reg03=02h held (which output dies? LCD only "
+		       "-> 0FACh is panel-scoped; both -> 0FACh is upstream)";
+	default:
+		return "BASELINE: NT4 registers + full-VRAM FIFO color bars";
+	}
+}
+
+static const uint16_t nb10_block_colors[15] = {
+	0xffff, 0xffe0, 0x07ff, 0x07e0, 0xf81f,
+	0xf800, 0x001f, 0x8410, 0xfbe0, 0x0410,
+	0x8010, 0x8400, 0x0010, 0x8000, 0xc618
+};
+
+/*
+ * Fill VRAM 000000h..0EFFFFh (fifteen 64KB blocks) with fifteen distinct
+ * solid RGB565 colors in one MEMSYSSRC BLT of 1280 x 768 rows (exactly
+ * F0000h bytes).  The engine's own VRAM addressing is used, so wherever
+ * the panel refresh fetches from, it shows that block's color: the panel
+ * reports the fetch address as ~51-row horizontal bands.
+ */
+static bool
+nb10_fifo_block_map(void)
+{
+	static uint32_t row32[512];
+	uint8_t *row = (uint8_t *)row32;
+	uint32_t off;
+	uint16_t px;
+	int x, y, blk;
+
+	hal_log_info("CIRRUS-NB10: block colors: 0=white 1=yellow 2=cyan 3=green "
+	             "4=magenta 5=red 6=blue 7=gray 8=orange 9=teal 10=purple "
+	             "11=olive 12=navy 13=maroon 14=silver; 64KB per block, "
+	             "~51 panel rows per band.");
+	cl_blt_reset();
+	if (!cl_blt_fifo_start(0, 1280, 768))
+		return false;
+	for (y = 0; y < 768; y++) {
+		off = (uint32_t)y * 1280UL;
+		for (x = 0; x < 640; x++) {
+			blk = (int)((off + (uint32_t)x * 2) >> 16);
+			px = nb10_block_colors[blk < 15 ? blk : 14];
+			row[x * 2 + 0] = (uint8_t)px;
+			row[x * 2 + 1] = (uint8_t)(px >> 8);
+		}
+		cl_blt_fifo_feed_row(row, 1280);
+	}
+	if (!cl_blt_wait_idle(4000000UL, "after FIFO block map")) {
+		cl_blt_reset();
+		return false;
+	}
+	return true;
+}
+
+/* Aperture dword at each block start: characterizes host-window aliasing. */
+static void
+nb10_fifo_block_readback(void)
+{
+	volatile uint32_t *fb32;
+	uint32_t v[15];
+	int i;
+
+	if (cdisp.fb == NULL)
+		return;
+	fb32 = (volatile uint32_t *)cdisp.fb;
+	for (i = 0; i < 15; i++)
+		v[i] = fb32[(uint32_t)i << 14];
+	hal_log_info("CIRRUS-NB10: aperture block starts 0-7: "
+	             "%08lX %08lX %08lX %08lX %08lX %08lX %08lX %08lX.",
+	             (unsigned long)v[0], (unsigned long)v[1],
+	             (unsigned long)v[2], (unsigned long)v[3],
+	             (unsigned long)v[4], (unsigned long)v[5],
+	             (unsigned long)v[6], (unsigned long)v[7]);
+	hal_log_info("CIRRUS-NB10: aperture block starts 8-14: "
+	             "%08lX %08lX %08lX %08lX %08lX %08lX %08lX "
+	             "(expected doubled block colors if the window is honest).",
+	             (unsigned long)v[8], (unsigned long)v[9],
+	             (unsigned long)v[10], (unsigned long)v[11],
+	             (unsigned long)v[12], (unsigned long)v[13],
+	             (unsigned long)v[14]);
+}
+
+/*
+ * V30: read the same four dwords twice -- native 32-bit loads vs assembly
+ * from two 16-bit loads.  The V29 log shows 32-bit reads returning a stale
+ * bus value in one half (byte1 in one run, word0 in the next, including
+ * C618h = the last color the FIFO ever carried): the signature of the
+ * bridge splitting dwords through a bad latch.  If the 16-bit assembly is
+ * consistently clean, the production rule is "16-bit host accesses only".
+ */
+static void
+nb10_dual_width_readback(const char *stage, uint32_t dst)
+{
+	volatile uint32_t *r32;
+	volatile uint16_t *r16;
+	uint32_t a[4], b[4], off;
+	int i;
+
+	if (cdisp.fb == NULL)
+		return;
+	for (i = 0; i < 4; i++) {
+		off = dst + (uint32_t)i * 320UL;
+		r32 = (volatile uint32_t *)(cdisp.fb + off);
+		a[i] = r32[0];
+		r16 = (volatile uint16_t *)(cdisp.fb + off);
+		b[i] = (uint32_t)r16[0] | ((uint32_t)r16[1] << 16);
+	}
+	hal_log_info("CIRRUS-NB10: %s dual-width readback at +%05lX: "
+	             "32-bit %08lX %08lX %08lX %08lX / "
+	             "16-bit %08lX %08lX %08lX %08lX.",
+	             stage, (unsigned long)dst,
+	             (unsigned long)a[0], (unsigned long)a[1],
+	             (unsigned long)a[2], (unsigned long)a[3],
+	             (unsigned long)b[0], (unsigned long)b[1],
+	             (unsigned long)b[2], (unsigned long)b[3]);
+}
+
+/*
+ * Engine-drawn ruler over VRAM 000000h..0EFFFFh (768 rows x 1280 bytes).
+ * Layout per 1280-byte data row (640 px RGB565):
+ *   px 0..7    : white row-start marker (8 px)
+ *   px 8..15   : row-number tint: red if (row&16), green if (row&32),
+ *                blue if (row&64) -- coarse vertical position encoding
+ *   every 64px : 1px white column (x=64,128,...)
+ *   background : dark gray 2104h, brightness-doubled every 16 rows
+ * Reading the panel: the row-start markers form a line; vertical =
+ * fetch pitch is 1280; slope right/left = fetch pitch larger/smaller,
+ * drift per displayed row = (P'-1280)/2 px.  Column spacing on screen
+ * measures the horizontal pixel mapping; the tint stripes locate which
+ * VRAM rows the visible window covers.
+ */
+static bool
+nb10_fifo_grid(void)
+{
+	static uint32_t row32[512];
+	uint8_t *row = (uint8_t *)row32;
+	uint16_t px;
+	int x, y;
+
+	cl_blt_reset();
+	if (!cl_blt_fifo_start(0, 1280, 768))
+		return false;
+	for (y = 0; y < 768; y++) {
+		for (x = 0; x < 640; x++) {
+			if (x < 8) {
+				px = 0xffff;
+			} else if (x < 16) {
+				px = 0x0000;
+				if (y & 16) px |= 0xf800;
+				if (y & 32) px |= 0x07e0;
+				if (y & 64) px |= 0x001f;
+			} else if ((x & 63) == 0) {
+				px = 0xffff;
+			} else {
+				px = (y & 16) ? 0x4208 : 0x2104;
+			}
+			row[x * 2 + 0] = (uint8_t)px;
+			row[x * 2 + 1] = (uint8_t)(px >> 8);
+		}
+		cl_blt_fifo_feed_row(row, 1280);
+	}
+	if (!cl_blt_wait_idle(4000000UL, "after FIFO grid")) {
+		cl_blt_reset();
+		return false;
+	}
+	return true;
+}
+
+/* Full-VRAM FIFO color bars: 8 bars, 16-row brightness alternation. */
+static bool
+nb10_fifo_bars_full(void)
+{
+	static const uint16_t bars[8] = {
+		0xffff, 0xffe0, 0x07ff, 0x07e0,
+		0xf81f, 0xf800, 0x001f, 0x0000
+	};
+	static uint32_t row32[512];
+	uint8_t *row = (uint8_t *)row32;
+	uint16_t px;
+	int x, y, bar;
+
+	cl_blt_reset();
+	if (!cl_blt_fifo_start(0, 1280, 768))
+		return false;
+	for (y = 0; y < 768; y++) {
+		for (x = 0; x < 640; x++) {
+			bar = (x * 8) / 640;
+			px = bars[bar > 7 ? 7 : bar];
+			if (y & 16)
+				px = (uint16_t)((px >> 1) & 0x7bef);
+			row[x * 2 + 0] = (uint8_t)px;
+			row[x * 2 + 1] = (uint8_t)(px >> 8);
+		}
+		cl_blt_fifo_feed_row(row, 1280);
+	}
+	if (!cl_blt_wait_idle(8000000UL, "after full-VRAM bars")) {
+		cl_blt_reset();
+		return false;
+	}
+	return true;
+}
+
+/*
+ * Re-assert the complete NT4 pixel/timing baseline.  Every interactive
+ * test starts from this state and applies one delta, so consecutive
+ * tests cannot pollute each other (the V29 stride-leak lesson).
+ */
+static void
+nb10_assert_baseline(void)
+{
+	cl_seq_write(0x00, 0x03);
+	cl_seq_write(0x01, 0x01);
+	cl_seq_write(0x07, 0xc3);
+	cl_seq_write(0x16, 0xf7);
+	/*
+	 * V36: MCLK baseline changed from NT4's 23h to the FIRMWARE's 18h.
+	 * Every boot since V31 asserted 23h and never displayed; the first
+	 * Enter (test 2 = SR1F=18h) made the picture appear.  The firmware
+	 * value is what NEC chose for THIS board's DRAM; NT4's faster 23h
+	 * appears to run the memory beyond what the display fetch can
+	 * survive here (and is the prime suspect for the banding/flicker
+	 * and the historical intermittent read corruption).
+	 */
+	cl_seq_write(0x1f, 0x18);
+	cl_misc_write(0xee);
+	cl_crtc_write(0x13, 0xa0);
+	cl_crtc_write(0x14, 0x00);
+	cl_crtc_write(0x17, 0xe3);
+	cl_crtc_write8(0x1b,
+	               (uint8_t)((cl_crtc_read(0x1b) & ~0x17) | 0x02));
+	cl_crtc_write(0x2c, 0xc3);
+	cl_crtc_write(0x2d, 0x11);
+	outp(0x09a8, 0x03);
+	outp(0x0fac, 0x02);	/* both relay stages are part of the baseline */
+	outp(0x0faa, 0x03);
+	outp(0x0fab, 0x02);
+}
+
+static bool
+nb10_run_scanout_test(int test, const char *stage)
+{
+	bool ok;
+
+	if (test < 0 || test >= NB10_TEST_COUNT)
+		test = NB10_TEST_BASELINE;
+	pci_nb10_scanout_test = test;
+
+	hal_log_info("CIRRUS-NB10: %s: test %d/%d: %s.",
+	             stage, test + 1, NB10_TEST_COUNT,
+	             nb10_scanout_test_name(test));
+
+	nt4r_unlock();
+	nb10_assert_baseline();
+	ok = true;
+
+	switch (test) {
+	case NB10_TEST_BASELINE:
+		ok = nb10_fifo_bars_full();
+		if (ok)
+			nb10_dual_width_readback("baseline bars", 0);
+		break;
+	case NB10_TEST_MCLK_NT4:
+		cl_seq_write(0x1f, 0x23);
+		break;
+	case NB10_TEST_FIFOTHR_FW:
+		cl_seq_write(0x16, 0xf0);
+		break;
+	case NB10_TEST_FIFOTHR_MAX:
+		cl_seq_write(0x16, 0xff);
+		break;
+	case NB10_TEST_9A8_01:
+		outp(0x09a8, 0x01);
+		break;
+	case NB10_TEST_9A8_00:
+		outp(0x09a8, 0x00);
+		break;
+	case NB10_TEST_9A8_DANCE: {
+		unsigned long n;
+
+		outp(0x09a8, 0x01);
+		for (n = 0; n < 400000UL; n++)
+			outp(PC98_WAIT_PORT, 0);
+		outp(0x09a8, 0x00);
+		for (n = 0; n < 400000UL; n++)
+			outp(PC98_WAIT_PORT, 0);
+		outp(0x09a8, 0x03);
+		break;
+	}
+	case NB10_TEST_REG03_CLEAR:
+		outp(0x0faa, 0x03);
+		outp(0x0fab, 0x00);
+		break;
+	case NB10_TEST_LCD_REDANCE:
+		/* The exact shadow sequence from stream VA 141F0h. */
+		cl_crtc_write(0x2d, 0x80);
+		cl_crtc_write(0x02, 0x00);
+		cl_crtc_write(0x03, 0xcc);
+		cl_crtc_write(0x04, 0xe5);
+		cl_crtc_write(0x05, 0xec);
+		cl_crtc_write(0x06, 0x15);
+		cl_crtc_write(0x07, 0x8d);
+		cl_crtc_write(0x08, 0x00);
+		cl_crtc_write(0x09, 0x02);
+		cl_crtc_write(0x0b, 0x00);
+		cl_crtc_write(0x0c, 0x00);
+		cl_crtc_write(0x0d, 0x00);
+		cl_crtc_write(0x0e, 0x00);
+		cl_crtc_write(0x2d, 0x11);
+		break;
+	case NB10_TEST_CR2C_E3:
+		cl_crtc_write(0x2c, 0xe3);
+		break;
+	case NB10_TEST_FAC_CLEAR:
+		outp(0x0fac, 0x00);
+		break;
+	default:
+		break;
+	}
+	nt4r_lock();
+
+	hal_log_info("CIRRUS-NB10: state: SR01=%02Xh SR07=%02Xh SR16=%02Xh "
+	             "SR1F=%02Xh MISC=%02Xh CR13=%02Xh CR1B=%02Xh "
+	             "CR2C=%02Xh CR2D=%02Xh 9A8h=%02Xh relay=%02Xh.  "
+	             "WATCH THE LCD AND THE CRT.",
+	             cl_seq_read(0x01), cl_seq_read(0x07), cl_seq_read(0x16),
+	             cl_seq_read(0x1f), cl_misc_read(),
+	             cl_crtc_read(0x13), cl_crtc_read(0x1b),
+	             cl_crtc_read(0x2c), cl_crtc_read(0x2d),
+	             inp(0x09a8), inp(PCI_RELAY_PORT));
+	return ok;
+}
+
+static void
+nb10_poll_enter(void)
+{
+	int ch, next;
+
+	if (!pci_nb10_interactive_ready || !kbhit())
+		return;
+	ch = getch();
+	if (ch == 0 || ch == 0xe0) {
+		if (kbhit())
+			(void)getch();
+		return;
+	}
+	if (ch != '\r' && ch != '\n')
+		return;
+
+	next = pci_nb10_scanout_test + 1;
+	if (next >= NB10_TEST_COUNT)
+		next = 0;
+	if (nb10_run_scanout_test(next, "Enter")) {
+		nb10_scan_probe("after interactive scanout/pipeline rewrite");
+		hal_log_info("CIRRUS-NB10: press Enter for next test: %s.",
+		             nb10_scanout_test_name((next + 1) % NB10_TEST_COUNT));
+	}
+}
+
+static bool
+nt4r_init_nb10(int mode, int req_bpp)
+{
+	unsigned long i;
+	bool unlocked, board_entered;
+	int w, h, bpp;
+
+	unlocked = false;
+	board_entered = false;
+
+	/*
+	 * Keep the diagnostic completely deterministic: the recovered Nb10
+	 * 640x480x16 stream and RGB565 pitch 1280.  Caller requests are logged
+	 * but do not alter the test; Enter later cycles scanout and DAC states.
+	 */
+	if (mode != DISP_640X480 || (req_bpp != -1 && req_bpp != 16))
+		hal_log_info("CIRRUS-WARNING: Nb10 scanout diagnostic forces 640x480x16 "
+		             "(caller requested %dx%d depth %d).",
+		             disp_geo[mode].w, disp_geo[mode].h, req_bpp);
+
+	w = 640;
+	h = 480;
+	bpp = 16;
+
+	cdisp.scr_w = w;
+	cdisp.scr_h = h;
+	cdisp.bpp = bpp;
+	cdisp.pitch = M16_PITCH;
+	cdisp.fifo_capable = true;
+	cdisp.fifo_only = false;
+
+	pci_nb10_experimental = true;
+	pci_nb10_diag_bars = true;
+	pci_nb10_diag_widths = false;
+	/*
+	 * V33: application flips are LIVE.  The game blit covers y=60..419
+	 * only, so the top/bottom 60-line borders keep the color bars as a
+	 * permanent scanout witness while the game runs.
+	 */
+	pci_nb10_diag_freeze = false;
+	pci_nb10_flip_count = 0;
+	pci_nb10_scanout_test = NB10_TEST_BASELINE;
+	pci_nb10_fifo_gr30 = 0x04;
+	pci_nb10_interactive_ready = false;
+
+	pci_bus = nt4r.bus;
+	pci_dev = nt4r.dev;
+	pci_fn = nt4r.fn;
+
+	/*
+	 * V25: capture the firmware 9A8h scan-rate latch and prime it to 01h
+	 * (31kHz/480-line) BEFORE the NT4 board sequence, mirroring the
+	 * machine state NT4 inherits from its own 480-line boot environment.
+	 * The original value is restored by cleanup.  The Enter cycle can
+	 * still toggle it live afterwards.
+	 */
+	pci_nb10_saved_9a8 = inp(0x09a8);
+	outp(0x09a8, 0x03);
+	hal_log_info("CIRRUS-NB10: 9A8h scan-rate latch: firmware=%02Xh, "
+	             "primed to 03h; readback=%02Xh.  (V32: every sighting of "
+	             "live output so far followed a 03h write -- bit1, not "
+	             "bit0, may be the panel enable.)",
+	             pci_nb10_saved_9a8, inp(0x09a8));
+
+	/*
+	 * V24 machine-group evidence.  CIRRUS.SYS maps firmware machine-ID
+	 * bytes to ModelCodes: 38h->0Eh; 3Eh/47h->in16(4B8Eh)&3 (3->0Fh,
+	 * 2->10h); 41h->8F2h bit0 after 8F0h<-60h (1->13h else 12h).  Our
+	 * "model 0Eh" is an assumption; these two raw reads are the cheap
+	 * observable half of the classification for THIS individual machine.
+	 */
+	{
+		unsigned v4b8e, v8f2;
+
+		v4b8e = inpw(0x4b8e);
+		outpw(0x08f0, 0x0060);
+		v8f2 = inpw(0x08f2);
+		hal_log_info("CIRRUS-NB10: machine-group probes: in16(4B8Eh)=%04Xh "
+		             "(low2=%u; 3->model 0Fh group, 2->model 10h group), "
+		             "8F2h[idx60]=%04Xh (bit0=%u).",
+		             v4b8e, v4b8e & 3, v8f2, v8f2 & 1);
+	}
+
+	if (!probe_regbase()) {
+		hal_log_info("CIRRUS-WARNING: Nb10 native VGA register block did not respond.");
+		return false;
+	}
+	dump_fw_regs();
+	cdisp.crt27 = (uint8_t)cl_crtc_read(0x27);
+	save_state();
+	nt4r.state_saved = true;
+	probe_lcd();
+
+	/*
+	 * sub_10DC2: enable PCI I/O+memory decode, unlock the NEC-side register
+	 * gates, select the accelerator PC-98 mode flip-flops, then execute the
+	 * native Attribute Controller preamble.  The 0FACh relay remains on the
+	 * GDC until sub_10F24 below.
+	 */
+	pci_write32(nt4r.bus, nt4r.dev, nt4r.fn, 0x04,
+	            pci_read32(nt4r.bus, nt4r.dev, nt4r.fn, 0x04) | 3);
+	nt4r_unlock();
+	unlocked = true;
+	outp(PC98_GDC_MODE_PORT, 0x0e);
+	outp(VRAM_SW_PORT, 0x07);
+	outp(VRAM_SW_PORT, 0x8f);
+	outp(VRAM_SW_PORT, 0x06);
+	board_entered = true;
+	nt4r_class40_attr_preamble();
+	nb10_dump_state("after sub_10DC2 preamble");
+
+	/* Main mode entry command stream; Nb10 tag 0Eh has no extra +8Ch stream. */
+	program_mode_754x();
+	/* V36: override the stream's SR1F=23h with the firmware MCLK 18h. */
+	cl_seq_write(0x1f, 0x18);
+	nb10_dump_state("after native GD7548 mode stream");
+
+	/*
+	 * sub_1AF30 class-40h postlude uses the patched native Sequencer
+	 * offsets, therefore physical 03C4h/03C5h.  Tag 0Eh has no SR18 branch.
+	 */
+	cl_seq_write8(0x17, (uint8_t)(cl_seq_read(0x17) | 0x44));
+	nb10_dump_state("after native SR17 postlude");
+
+	/*
+	 * sub_1B458 occupies this point in the exact NT4 order.  Keep its native
+	 * plane-enable operation and place a direct RGB565 image at VRAM offset 0,
+	 * matching the unextended CR0C/CR0D start-address registers.
+	 */
+	cl_seq_write8(0x02, (uint8_t)(cl_seq_read(0x02) | 0x0f));
+	/*
+	 * V31: the aperture write path is no longer trusted; the image is
+	 * placed by the BLT MEMSYSSRC FIFO only (full-VRAM color bars, so
+	 * any fetch geometry still lands on drawn data).
+	 */
+	if (!nb10_fifo_bars_full())
+		goto fail;
+	nb10_dual_width_readback("pre-relay FIFO bars", 0);
+	nb10_dump_state("after FIFO bars, before relay");
+
+	/*
+	 * sub_10F24: clear native SR12 bit6, switch 0FACh to the accelerator,
+	 * perform the 200000-write settle delay, enable Attribute output, and
+	 * finally re-lock the NEC-side gates.
+	 */
+	cl_seq_write8(0x12, (uint8_t)(cl_seq_read(0x12) & 0xbf));
+	outp(0x0fac, 0x02);
+	/*
+	 * V33: the second relay stage, discovered by the V32 REG03_HOLD
+	 * test: 0FACh=02h wakes the output path (sync, garbage view) but
+	 * the REAL Cirrus video source -- for the panel AND the CRT DAC --
+	 * is gated by WAB-style reg03 at 0FAAh/0FABh.  With 9A8h=03h and
+	 * reg03=02h held, the FIFO-drawn bars appeared on both outputs.
+	 * NT4's model-0Eh path writes only 0FACh, so under NT the reg03
+	 * state is evidently inherited from the boot environment.
+	 */
+	outp(0x0faa, 0x03);
+	outp(0x0fab, 0x02);
+	{
+		int fac_v, r03_v;
+
+		fac_v = inp(0x0fac);
+		outp(0x0faa, 0x03);
+		r03_v = inp(0x0fab);
+		hal_log_info("CIRRUS-NB10: dual relay engaged: 0FACh=%02Xh "
+		             "reg03=%02Xh.", fac_v, r03_v);
+	}
+	for (i = 0; i < 200000UL; i++)
+		outp(PC98_WAIT_PORT, 0);
+	nt4r_class40_attr_enable();
+	nt4r_lock();
+	unlocked = false;
+
+	/*
+	 * V32.1: redraw the bars AFTER the relay and output enable.  Every
+	 * confirmed on-screen sighting of FIFO content so far came from a
+	 * POST-relay draw; pre-relay engine draws have never been visually
+	 * confirmed (only through the untrusted aperture readback).  If the
+	 * bars appear now but did not at the pre-relay draw, engine writes
+	 * reach the scanned memory only once the output path is live.
+	 */
+	if (!nb10_run_scanout_test(NB10_TEST_BASELINE, "post-relay"))
+		goto fail;
+	nb10_scan_probe("after output enable");
+	nb10_dump_state("after native output enable and lock");
+	pci_nb10_interactive_ready = true;
+	hal_log_info("CIRRUS-NB10: press Enter to cycle eleven FIFO-only tests: "
+	             "1 baseline redraw (SR1F=18h + relays), 2 SR1F=23h NT4 MCLK, "
+	             "3 SR16=F0h threshold, 4 SR16=FFh, 5 9A8h=01h, 6 9A8h=00h, "
+	             "7 9A8h dance, 8 reg03 CLEAR (display should die), "
+	             "9 LCD shadow re-dance, 10 CR2C=E3h, 11 0FACh clear (reg03 held).  "
+	             "Watch the LCD and an attached CRT at every step.");
+
+	hal_log_info("CIRRUS-NT4: Nb10 scanout diagnostic post-state: "
+	             "native SR00/01/02/12/17=%02X/%02X/%02X/%02X/%02X; "
+	             "GR30=%02X GR31=%02X; native AC enabled; "
+	             "8F2[52/60] re-locked; relay=%02X.",
+	             cl_seq_read(0x00), cl_seq_read(0x01), cl_seq_read(0x02),
+	             cl_seq_read(0x12), cl_seq_read(0x17),
+	             cl_gfx_read(0x30), cl_gfx_read(0x31), inp(0x0fac));
+
+	cdisp.chip_name = "CL-GD7548 (Nb10 NT4 family 40h/model 0Eh, scanout diagnostic)";
+	cdisp.path = CIRRUS_PATH_75;
+	return true;
+
+fail:
+	pci_nb10_interactive_ready = false;
+	/*
+	 * Failure after board entry must not strand the notebook on the
+	 * accelerator path.  Unwind with the same mode-zero ordering used by
+	 * cleanup, restore the firmware chip state, and re-lock the NEC gates.
+	 */
+	if (board_entered) {
+		cl_blt_reset();
+		cl_seq_write8(0x12, (uint8_t)(cl_seq_read(0x12) | 0x40));
+		outp(PC98_WAIT_PORT, 0);
+		outp(VRAM_SW_PORT, 0x07);
+		outp(VRAM_SW_PORT, 0x8e);
+		outp(VRAM_SW_PORT, 0x06);
+		outp(0x0faa, 0x03);
+		outp(0x0fab, 0x00);
+		outp(0x0fac, 0x00);
+		for (i = 0; i < 200000UL; i++)
+			outp(PC98_WAIT_PORT, 0);
+		outp(PC98_GDC_MODE_PORT, 0x0f);
+	}
+	if (nt4r.state_saved) {
+		restore_state();
+		nt4r.state_saved = false;
+	}
+	if (ext_was_locked)
+		cl_seq_write(0x06, 0x0f);
+	if (unlocked)
+		nt4r_lock();
+	return false;
+}
+
+static bool
+nt4r_init_5446(int mode, int req_bpp)
+{
+	int w, h, bpp;
+
+	w = disp_geo[mode].w; h = disp_geo[mode].h;
+	if (mode != DISP_640X480 && mode != DISP_800X600)
+		return false;
+	bpp = cl_resolve_bpp(req_bpp, 24, w, h, nt4r.vram_size, "GD5446");
+	if (bpp < 0)
+		return false;
+	cdisp.scr_w = w; cdisp.scr_h = h; cdisp.bpp = bpp;
+	cdisp.pitch = (uint32_t)w * (uint32_t)(bpp / 8);
+	cdisp.fifo_capable = true;
+	cdisp.fifo_only = gd54_fifo_requested;
+	if (!probe_regbase())
+		return false;
+	save_state(); nt4r.state_saved = true;
+	outp(0x0fac, 2);
+	cl_modeset_generic(false);
+	if (!cl_aperture_clear_visible())
+		return false;
+	cl_seq_write(0x01, 1);
+	cdisp.chip_name = "CL-GD5446 (NT4 family 80h/model 11h)";
+	cdisp.path = CIRRUS_PATH_75;
+	return true;
+}
+
+static bool
+cirrus_nt4_rewrite_init(int mode, int req_bpp)
+{
+	bool ok;
+
+	if (!nt4r_detect_adapter()) {
+		hal_log_info("CIRRUS-WARNING: Nb10 was not identified; driver remains inactive.");
+		return false;
+	}
+	if (nt4r.family != NT4R_FAMILY_754X ||
+	    nt4r.model != 0x0e ||
+	    nt4r.pci_device != 0x0038) {
+		hal_log_info("CIRRUS-WARNING: detector returned a non-Nb10 model "
+		             "(family=%02Xh model=%02Xh device=%04Xh); refusing it.",
+		             nt4r.family, nt4r.model, nt4r.pci_device);
+		memset(&nt4r, 0, sizeof(nt4r));
+		return false;
+	}
+
+	nt4r_select_io_layout();
+	if (!nt4r_resolve_aperture()) {
+		hal_log_info("CIRRUS-WARNING: Nb10 BAR0+0C00000h aperture "
+		             "resolution/mapping failed.");
+		if (nt4r.pci)
+			pci_write32(nt4r.bus, nt4r.dev, nt4r.fn, 0x04,
+			            nt4r.saved_pci_cmd);
+		memset(&nt4r, 0, sizeof(nt4r));
+		return false;
+	}
+
+	cdisp.wab_id = 0;
+	ok = nt4r_init_nb10(mode, req_bpp);
+	if (!ok) {
+		if (nt4r.state_saved)
+			restore_state();
+		if (nt4r.pci)
+			pci_write32(nt4r.bus, nt4r.dev, nt4r.fn, 0x04,
+			            nt4r.saved_pci_cmd);
+		cl_release_fb_mapping();
+		pci_nb10_experimental = false;
+		pci_nb10_diag_bars = false;
+		pci_nb10_diag_widths = false;
+		pci_nb10_diag_freeze = false;
+		pci_nb10_interactive_ready = false;
+		memset(&nt4r, 0, sizeof(nt4r));
+		return false;
+	}
+
+	nt4r.active = true;
+	return true;
+}
+
+static void
+cirrus_nt4_rewrite_cleanup(void)
+{
+	unsigned long i;
+
+	if (!nt4r.active) {
+		cl_release_fb_mapping();
+		return;
+	}
+
+	if (nt4r.family == NT4R_FAMILY_8) {
+		cl_seq_write(0x01, 0x21);
+		nt4r_v13_leave();
+		if (nt4r.board_saved) {
+			nt4r_idx_write(nt4r.index_port, nt4r.data_port, 2, nt4r.saved_linear);
+			nt4r_idx_write(nt4r.index_port, nt4r.data_port, 1, nt4r.saved_window);
+			nt4r_idx_write(nt4r.index_port, nt4r.data_port, 3, nt4r.saved_index3);
+			outp(0x0904, nt4r.saved_p904);
+			outp(0xff82, nt4r.saved_pff82);
+		}
+	} else if (nt4r.family == NT4R_FAMILY_754X) {
+		/*
+		 * Mode-zero board postlude.  Reset the BLT while the NEC-side gates
+		 * are unlocked so an interrupted MEMSYSSRC command cannot consume
+		 * the firmware restore writes.
+		 */
+		nt4r_unlock();
+		cl_blt_reset();
+		cl_seq_write8(0x12, (uint8_t)(cl_seq_read(0x12) | 0x40));
+		outp(PC98_WAIT_PORT, 0);
+		outp(VRAM_SW_PORT, 0x07); outp(VRAM_SW_PORT, 0x8e); outp(VRAM_SW_PORT, 0x06);
+		outp(0x0fac, 0);
+		for (i = 0; i < 200000UL; i++)
+			outp(PC98_WAIT_PORT, 0);
+		outp(PC98_GDC_MODE_PORT, 0x0f);
+		if (pci_nb10_saved_9a8 >= 0) {
+			outp(0x09a8, pci_nb10_saved_9a8);
+			pci_nb10_saved_9a8 = -1;
+		}
+		if (nt4r.state_saved)
+			restore_state();
+		if (ext_was_locked)
+			cl_seq_write(0x06, 0x0f);
+		nt4r_lock();
+		pci_write32(nt4r.bus, nt4r.dev, nt4r.fn, 0x04, nt4r.saved_pci_cmd);
+	} else if (nt4r.family == NT4R_FAMILY_4) {
+		cl_seq_write(0x01, 0x21);
+		nt4r_idx_write(nt4r.index_port, nt4r.data_port, 3, 0);
+		outp(VRAM_SW_PORT, 0x07); outp(VRAM_SW_PORT, 0x8e); outp(VRAM_SW_PORT, 0x06);
+		for (i = 0; i < 200000UL; i++) outp(PC98_WAIT_PORT, 0);
+		outp(PC98_GDC_MODE_PORT, 0x0f);
+		nt4r_lock();
+	} else if (nt4r.family == NT4R_FAMILY_5446) {
+		outp(0x0fac, 0);
+		if (nt4r.state_saved)
+			restore_state();
+		pci_write32(nt4r.bus, nt4r.dev, nt4r.fn, 0x04, nt4r.saved_pci_cmd);
+	}
+
+	cl_release_fb_mapping();
+	pci_nb10_experimental = false;
+	pci_nb10_diag_bars = false;
+	pci_nb10_diag_widths = false;
+	pci_nb10_diag_freeze = false;
+	pci_nb10_interactive_ready = false;
+	memset(&nt4r, 0, sizeof(nt4r));
 }

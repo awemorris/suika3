@@ -2,10 +2,8 @@
 # Remove # to use NVL mode.
 #
 
-[bgm file="sound/bgm/afternoon.ogg"]
-
-[bg file="images/bg/cat1.png"]
+[bg file="images/bg/cat2.png"]
 [text text="Meow..."]
-[bg file="images/bg/cat2.png" time="1.0"]
 [text name="Cats" text="Meow! Meow! Meow!"]
 [text name="みどり" text="うわあぁぁ！！"]
+[text name="みどり" text="PC98 テスト"]

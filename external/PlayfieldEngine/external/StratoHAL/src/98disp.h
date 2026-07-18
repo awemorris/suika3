@@ -51,80 +51,89 @@
  * arrived, they aggressively dropped WAB port mapping in favor of
  * pure PCI (BAR-based) architectures.
  *
- * | Year   | Series          | Models        | Video Chipset               | Graphics              | Description                    |
- * |--------|-----------------|---------------|-----------------------------|-----------------------|--------------------------------|
- * | 1993   | MATE A          | Ae            | S3 86C928                   | WAB                   | Original PC-9821 WAB.          |
- * | 1993   | MATE A          | Ap            | S3 86C928                   | WAB                   |                                |
- * | 1993   | MATE A          | Ap2           | S3 86C928                   | WAB                   |                                |
- * | 1993   | MATE A          | As            | S3 86C928                   | WAB                   |                                |
- * | 1993   | MATE A          | As2           | S3 86C928                   | WAB                   |                                |
- * | 1993   | MATE B          | Be            | S3 86C805                   | WAB                   |                                |
- * | 1993   | MATE B          | Bp            | S3 86C805                   | WAB                   |                                |
- * | 1993   | MATE B          | Bs            | S3 86C805                   | WAB                   |                                |
- * | 1994   | MATE A          | An            | S3 Vision864                | WAB                   |                                |
- * | 1994   | MATE A          | Ap3           | S3 Vision864                | WAB                   |                                |
- * | 1994   | MATE A          | As3           | S3 Vision864                | WAB                   |                                |
- * | 1995   | 98NOTE          | Na7           | S3 86C868                   | WAB Reduced           | Simply ported GAB.             |
- * | 1995   | 98NOTE          | Na9           | S3 86C868                   | WAB Reduced           |                                |
- * | 1994   | MATE X          | Xa            | S3 Vision864                | WAB Emulation         | Moved to PCI translation.      |
- * | 1994   | MATE X          | Xf            | S3 Vision864                | WAB Emulation         |                                |
- * | 1994   | MATE X          | Xn            | S3 Vision864                | WAB Emulation         |                                |
- * | 1994   | MATE X          | Xp            | S3 Vision964                | WAB Emulation         |                                |
- * | 1994   | MATE X          | Xt            | S3 Vision964                | WAB Emulation         |                                |
- * | 1995   | MATE X          | Xa10          | S3 Trio64                   | WAB Emulation         |                                |
- * | 1995   | MATE X          | Xa7           | S3 Trio64                   | WAB Emulation         |                                |
- * | 1995   | MATE X          | Xa9           | S3 Trio64                   | WAB Emulation         |                                |
- * | 1995   | MATE X          | Xt13          | S3 Trio64                   | WAB Emulation         |                                |
- * | 1996   | MATE X          | Xa12/C        | S3 Trio64V+                 | WAB Emulation         |                                |
- * | 1996   | MATE X          | Xa13/W        | S3 Trio64V+                 | WAB Emulation         |                                |
- * | 1996   | MATE X          | Xv13          | S3 Trio64V+                 | WAB Emulation         |                                |
- * | 1996   | MATE X          | Xv20          | S3 Trio64V+                 | WAB Emulation         |                                |
- * | 1994   | 98NOTE          | Nd            | Cirrus Logic GD-5428        | Core-Graph Bridge     | Integrated GDC + Cirrus.       |
- * | 1994   | 98NOTE          | Ne            | Cirrus Logic GD-5428        | Core-Graph Bridge     |                                |
- * | 1994   | 98NOTE          | Nf            | Cirrus Logic GD-5428        | Core-Graph Bridge     |                                |
- * | 1994   | 98NOTE          | Np            | Cirrus Logic GD-5428        | Core-Graph Bridge     |                                |
- * | 1994   | 98NOTE          | Ns            | Cirrus Logic GD-5428        | Core-Graph Bridge     |                                |
- * | 1994   | 98NOTE          | Nx            | Cirrus Logic GD-5428        | Core-Graph Bridge     |                                |
- * | 1994   | CanBe           | Cb            | S3 Trio64                   | Core-Graph Bridge     | Used faster S3.                |
- * | 1994   | CanBe           | Cf            | S3 Trio64                   | Core-Graph Bridge     |                                |
- * | 1994   | CanBe           | Cx            | S3 Trio64                   | Core-Graph Bridge     |                                |
- * | 1995   | CanBe           | Ct            | S3 Trio64V+                 | Core-Graph Bridge     |                                |
- * | 1995   | CanBe           | Cu            | S3 Trio64V+                 | Core-Graph Bridge     |                                |
- * | 1996   | 98NOTE          | Na12          | S3 Trio64V+                 | Core-Graph Bridge     |                                |
- * | 1996   | 98NOTE          | Na13          | S3 Trio64                   | Core-Graph Bridge     |                                |
- * | 1996   | 98NOTE          | Na15          | S3 Trio64V+                 | Core-Graph Bridge     |                                |
- * | 1995   | ValueStar       | V10           | Cirrus Logic GD-5440        | Core-Graph Bridge     | Used cheap Cirrus for desktop. |
- * | 1995   | ValueStar       | V13           | Cirrus Logic GD-5440        | Core-Graph Bridge     |                                |
- * | 1995   | ValueStar       | V7            | Cirrus Logic GD-5430        | Core-Graph Bridge     |                                |
- * | 1995   | ValueStar       | V9            | Cirrus Logic GD-5430        | Core-Graph Bridge     |                                |
- * | 1996   | MATE X          | Xa12          | Matrox MGA-2064W            | Core-Graph Bridge     | Highend Matrox model.          |
- * | 1996   | MATE X          | Xa13          | Matrox MGA-2064W            | Core-Graph Bridge     |                                |
- * | 1996   | MATE X          | Xa16          | Matrox MGA-2064W            | Core-Graph Bridge     |                                |
- * | 1996   | 98NOTE          | Ls12          | NeoMagic MagicGraph128      | Core-Graph Bridge     |                                |
- * | 1996   | ValueStar       | V12           | Cirrus Logic GD-5446        | Core-Graph Bridge     |                                |
- * | 1996   | ValueStar       | V13           | Cirrus Logic GD-5446        | Core-Graph Bridge     |                                |
- * | 1996   | ValueStar       | V16           | Cirrus Logic GD-5446        | Core-Graph Bridge     |                                |
- * | 1995   | 98NOTE          | Nb10          | Cirrus Logic GD-7548        | PCI                   | Internal CG->Cirrus path.      |
- * | 1996   | 98NOTE          | Nr12          | Cirrus Logic GD-7555        | PCI                   |                                |
- * | 1996   | ValueStar       | V150          | Cirrus Logic GD-5446        | PCI                   | Core-Graph is independent.     |
- * | 1996   | ValueStar       | V166          | Cirrus Logic GD-5446        | PCI                   |                                |
- * | 1996   | ValueStar       | V200          | Cirrus Logic GD-5446        | PCI                   |                                |
- * | 1997   | ValueStar       | V233          | Cirrus Logic GD-5446        | PCI                   |                                |
- * | 1997   | MATE R          | Rv20          | Matrox MGA-1064SG           | PCI                   |                                |
- * | 1996   | MATE X          | Xt16          | Matrox MGA-2064W            | PCI                   |                                |
- * | 1997   | 98NOTE          | Ls150         | NeoMagic MagicGraph128      | PCI                   | Used PC/AT laptop de-facto.    |
- * | 1998   | 98NOTE          | Lw23          | NeoMagic MagicMedia256      | PCI                   |                                |
- * | 1998   | 98NOTE          | Lw26          | NeoMagic MagicMedia256      | PCI                   |                                |
- * | 1999   | 98NOTE          | Lw33          | NeoMagic MagicMedia256      | PCI                   |                                |
- * | 1997   | MATE R          | Ra266         | Trident TGUI9682XGi         | PCI                   | Used Trident overlay mixing.   |
- * | 1998   | MATE R          | Ra33          | Trident TGUI9682XGi         | PCI                   |                                |
- * | 1999   | MATE R          | Ra43          | Trident TGUI9682XGi         | PCI                   |                                |
- * | 1997   | 98NOTE          | Nr13          | Trident Cyber9385           | PCI                   |                                |
- * | 1997   | 98NOTE          | Nr150         | Trident Cyber9385           | PCI                   |                                |
- * | 1997   | 98NOTE          | Nr166         | Trident Cyber9385           | PCI                   |                                |
- * | 1998   | 98NOTE          | Nr233         | Trident Cyber9397           | PCI                   |                                |
- * | 1998   | 98NOTE          | Nr266         | Trident Cyber9397           | PCI                   |                                |
- * | 1999   | 98NOTE          | Nr300         | Trident Cyber9397           | PCI                   |                                |
+ * | Y/M     | Series         | Models        | CPU        | Video Chipset               | Graphics                    | Driver Pattern        |
+ * |---------|----------------|---------------|------------|-----------------------------|-----------------------------|-----------------------|
+ * | 1993/02 | MATE A         | Ae/M2         |            | S3 86C928                   | WAB (Local-Bus Slot)        | WAB                   |
+ * | 1993/02 | MATE A         | Ae/M7         |            | S3 86C928                   | WAB (Local-Bus Slot)        | WAB                   |
+ * | 1993/02 | MATE A         | Ap/U2         |            | S3 86C928                   | WAB (Local-Bus Slot)        | WAB                   |
+ * | 1993/02 | MATE A         | As/U2         |            | S3 86C928                   | WAB (Local-Bus Slot)        | WAB                   |
+ * | 1993/08 | MATE A         | Af/U9W        |            | S3 86C928                   | WAB (Local-Bus Slot)        | WAB                   |
+ * | 1994/05 | MATE A         | An/U2         |            | S3 Vision864                | WAB (Local-Bus Slot)        | WAB                   |
+ * | 1993   | MATE A          | Ap2           | S3 86C928                   | WAB (Local-Bus Slot)        | WAB                   |
+ * | 1993   | MATE A          | As2           | S3 86C928                   | WAB (Local-Bus Slot)        | WAB                   |
+ * | 1994   | MATE A          | Ap3           | S3 Vision864                | WAB (Local-Bus Slot)        | WAB                   |
+ * | 1994   | MATE A          | As3           | S3 Vision864                | WAB (Local-Bus Slot)        | WAB                   |
+ * | 1994   | MATE X          | Xn            | S3 Vision864                | WAB (Onboard Internal Bus)  | WAB                   |
+ * | 1994   | MATE X          | Xs            | S3 Vision864                | WAB (Onboard Internal Bus)  | WAB                   |
+ * | 1994   | MATE X          | Xp            | S3 Vision864                | WAB (Onboard Internal Bus)  | WAB                   |
+ * | 1994   | MATE X          | Xf            | Matrox MGA-II               | WAB (Onboard Internal Bus)  | WAB                   |
+ * | 1993   | MATE B          | Be            | Cirrus Logic GD5428         | WAB (Onboard Internal Bus)  | WAB                   |
+ * | 1993   | MATE B          | Bp            | Cirrus Logic GD5428         | WAB (Onboard Internal Bus)  | WAB                   |
+ * | 1993   | MATE B          | Bs            | Cirrus Logic GD5428         | WAB (Onboard Internal Bus)  | WAB                   |
+ * | 1994   | 98NOTE          | Ne            | Cirrus Logic GD5428         | WAB (Onboard Internal Bus)  | WAB                   |
+ * | 1994   | 98NOTE          | Nf            | Cirrus Logic GD5428         | WAB (Onboard Internal Bus)  | WAB                   |
+ * | 1994   | 98NOTE          | Np            | Cirrus Logic GD5428         | WAB (Onboard Internal Bus)  | WAB                   |
+ * | 1994   | 98NOTE          | Ns            | Cirrus Logic GD5428         | WAB (Onboard Internal Bus)  | WAB                   |
+ * | 1994   | 98NOTE          | Nx            | Cirrus Logic GD5428         | WAB (Onboard Internal Bus)  | WAB                   |
+ * | 1994   | 98NOTE          | Nd            | Cirrus Logic GD5428         | WAB (Onboard Internal Bus)  | WAB                   |
+ * | 1994   | 98NOTE          | Ne2           | Cirrus Logic GD5428         | WAB (Onboard Internal Bus)  | WAB                   |
+ * | 1995   | MATE X          | Xe10          | Cirrus Logic GD5440         | WAB (Onboard Internal Bus)  | WAB                   |
+ * | 1994   | CanBe           | Cb            | Cirrus Logic GD5430         | Core-Graph Bridge (Non-PnP) | CG                    |
+ * | 1994   | CanBe           | Cx            | Cirrus Logic GD5430         | Core-Graph Bridge (Non-PnP) | CG                    |
+ * | 1995   | CanBe           | Cx2           | Cirrus Logic GD5430         | Core-Graph Bridge (Non-PnP) | CG                    |
+ * | 1995   | CanBe           | Cb2           | Cirrus Logic GD5430         | Core-Graph Bridge (Non-PnP) | CG                    |
+ * | 1995   | ValueStar       | V7            | Cirrus Logic GD5440         | Core-Graph Bridge (Non-PnP) | CG                    |
+ * | 1996   | ValueStar       | V13           | Cirrus Logic GD5440         | Core-Graph Bridge (Non-PnP) | CG                    |
+ * | 1996   | ValueStar       | V20           | Cirrus Logic GD5440         | Core-Graph Bridge (Non-PnP) | CG                    |
+ * | 1995   | CanBe           | Ct16          | Cirrus Logic GD5446         | PCI                         | PCI Cirrus            |
+ * | 1995   | CanBe           | Cu10          | Cirrus Logic GD5446         | PCI                         | PCI Cirrus            |
+ * | 1995   | ValueStar       | V10           | Cirrus Logic GD5446         | PCI                         | PCI Cirrus            |
+ * | 1996   | ValueStar       | V12           | Cirrus Logic GD5446         | PCI                         | PCI Cirrus            |
+ * | 1997   | ValueStar       | V16/S5P       | Cirrus Logic GD5446         | PCI                         | PCI Cirrus            |
+ * | 1995   | 98NOTE          | Nb7           | Cirrus Logic GD7543         | PCI                         | PCI Cirrus            |
+ * | 1996   | 98NOTE          | Nb10          | Cirrus Logic GD7548         | PCI                         | PCI Cirrus            |
+ * | 1996   | 98NOTE          | Na12          | Cirrus Logic GD7548         | PCI                         | PCI Cirrus            |
+ * | 1996   | 98NOTE          | Na13          | Cirrus Logic GD7548         | PCI                         | PCI Cirrus            |
+ * | 1996   | 98NOTE          | Ls12          | Cirrus Logic GD7555         | PCI                         | PCI Cirrus            |
+ * | 1997   | 98NOTE          | Nr12          | Cirrus Logic GD7555         | PCI                         | PCI Cirrus            |
+ * | 1997   | 98NOTE          | Nr13          | Cirrus Logic GD7555         | PCI                         | PCI Cirrus            |
+ * | 1997   | 98NOTE          | Ls13          | Cirrus Logic GD7555         | PCI                         | PCI Cirrus            |
+ * | 1997   | 98NOTE          | Ls150         | Cirrus Logic GD7555         | PCI                         | PCI Cirrus            |
+ * | 1995   | MATE X          | Xt13          | Matrox MGA-2064W            | PCI                         | PCI Matrox            |
+ * | 1996   | MATE X          | Xv13          | Matrox MGA-2064W            | PCI                         | PCI Matrox            |
+ * | 1996   | MATE X          | Xt16          | Matrox MGA-2064W            | PCI                         | PCI Matrox            |
+ * | 1996   | MATE X          | Xv20          | Matrox MGA-2064W            | PCI                         | PCI Matrox            |
+ * | 1997   | MATE R          | Rv20          | Matrox MGA-2064W            | PCI                         | PCI Matrox            |
+ * | 1997   | ValueStar       | V166          | Matrox MGA-1064SG           | PCI                         | PCI Matrox            |
+ * | 1997   | ValueStar       | V200          | Matrox MGA-1064SG           | PCI                         | PCI Matrox            |
+ * | 1997   | ValueStar       | V233          | Matrox MGA-1064SG           | PCI                         | PCI Matrox            |
+ * | 1995   | 98NOTE          | Nx            | Trident Cyber9320           | PCI                         | PCI Trident           |
+ * | 1995   | 98NOTE          | Nd2           | Trident Cyber9320           | PCI                         | PCI Trident           |
+ * | 1995   | 98NOTE          | Lt2           | Trident Cyber9320           | PCI                         | PCI Trident           |
+ * | 1995   | 98NOTE          | Ne3           | Trident Cyber9320           | PCI                         | PCI Trident           |
+ * | 1995   | 98NOTE          | Na7           | Trident Cyber9320           | PCI                         | PCI Trident           |
+ * | 1995   | 98NOTE          | Na9           | Trident Cyber9320           | PCI                         | PCI Trident           |
+ * | 1996   | 98NOTE          | Na15          | Trident Cyber9382           | PCI                         | PCI Trident           |
+ * | 1997   | 98NOTE          | Nr15          | Trident Cyber9385           | PCI                         | PCI Trident           |
+ * | 1997   | 98NOTE          | Nr150         | Trident Cyber9385           | PCI                         | PCI Trident           |
+ * | 1997   | 98NOTE          | Nr166         | Trident Cyber9385           | PCI                         | PCI Trident           |
+ * | 1997   | 98NOTE          | Nw133         | Trident Cyber9385           | PCI                         | PCI Trident           |
+ * | 1997   | 98NOTE          | Nw150         | Trident Cyber9385           | PCI                         | PCI Trident           |
+ * | 1998   | 98NOTE          | Nr233         | Trident Cyber9385           | PCI                         | PCI Trident           |
+ * | 1998   | 98NOTE          | Nr266         | Trident Cyber9385           | PCI                         | PCI Trident           |
+ * | 1999   | 98NOTE          | Nr300         | Trident Cyber9385           | PCI                         | PCI Trident           |
+ * | 1995   | CanBe           | Cu13          | Trident TGUI9685            | PCI                         | PCI Trident           |
+ * | 1995   | CanBe           | Ct20          | Trident TGUI9685            | PCI                         | PCI Trident           |
+ * | 1995   | MATE X          | Xa7           | Trident TGUI9680XGi         | PCI                         | PCI Trident           |
+ * | 1995   | MATE X          | Xa10          | Trident TGUI9680XGi         | PCI                         | PCI Trident           |
+ * | 1996   | MATE X          | Xa12          | Trident TGUI9680XGi         | PCI                         | PCI Trident           |
+ * | 1996   | MATE X          | Xa13          | Trident TGUI9680XGi         | PCI                         | PCI Trident           |
+ * | 1996   | MATE X          | Xa16          | Trident TGUI9680XGi         | PCI                         | PCI Trident           |
+ * | 1996   | ValueStar       | V16/M7        | Trident TGUI9682XGi         | PCI                         | PCI Trident           |
+ * | 1997   | MATE R          | Ra266         | Trident TGUI9682XGi         | PCI                         | PCI Trident           |
+ * | 1998   | MATE R          | Ra300         | Trident TGUI9682XGi         | PCI                         | PCI Trident           |
+ * | 1998   | MATE R          | Ra333         | Trident TGUI9682XGi         | PCI                         | PCI Trident           |
+ * | 2000   | MATE R          | Ra43          | Trident TGUI9682XGi         | PCI                         | PCI Trident           |
  */
 
 /*
