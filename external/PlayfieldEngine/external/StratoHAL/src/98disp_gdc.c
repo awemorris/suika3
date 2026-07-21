@@ -81,6 +81,13 @@ gdc_init_disp(void)
 	if (game_width > SCREEN_WIDTH || game_height > SCREEN_HEIGHT)
 		return false;
 
+	/* XXX */
+	{
+		volatile char *gvram = (volatile char *)0xa8000;
+		for (i = 0; i < 640 * 400 / 8; i++)
+			gvram[i] = 0xf0;
+	}
+
 	/*
 	 * Set CRT display mode and G-VRAM areas.
 	 *  - 640x400 4-bpp

@@ -45,7 +45,7 @@
  *  - For a text, a flag must be 0 (unseen) or 1 (seen).
  *  - For a choose, the bit N of a flag indicates whether the option N was chosen (1) or not (0).
  */
-static uint8_t seen_flag[SEEN_COUNT / 8];
+static uint8_t seen_flag[SEEN_COUNT];
 
 /* Is initialized. */
 static bool is_initialized;

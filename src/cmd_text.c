@@ -254,6 +254,9 @@ static bool need_dimming;
  * Others
  */
 
+/* Is immediate return? */
+static bool is_immediate_return;
+
 /* Page top flag. */
 static bool is_page_top;
 
@@ -370,7 +373,7 @@ s3i_tag_text(
 	postprocess();
 
 	/* Termination processing */
-	if (!s3_is_in_command_repetition())
+	if (!s3_is_in_command_repetition() || is_immediate_return)
 		if (!cleanup())
 			return false;
 
@@ -713,6 +716,7 @@ init_flags_and_vars(void)
 	is_page_top = s3_is_page_top();
 
 	/* Others. */
+	is_immediate_return = false;
 	is_inline = false;
 }
 
@@ -1405,6 +1409,7 @@ init_repetition(void)
 	    (s3_is_skip_mode() ||
 	     (!s3_is_auto_mode() && s3_is_control_key_pressed()))) {
 		/* Do not repeat, display immediately */
+		is_immediate_return = true;
 	} else {
 		/* Make the command be called repeatedly */
 		s3_start_command_repetition();
@@ -2633,7 +2638,7 @@ cleanup(void)
 
 	/* Hide the click animation */
 	s3_show_click(false);
-
+	
 	/*
 	 * When moving to the next command, set the active message to none
 	 *  - Keep it active when transitioning to system GUI

@@ -870,10 +870,10 @@ init_disp(void)
 		is_gdc_ok = false;
 
 	if (is_true_color_enabled) {
-		if (trident_init_disp(DISP_640X480, -1)) {
-			disp_driver = DISP_TRIDENT;
-			return true;
-		}
+//		if (trident_init_disp(DISP_640X480, -1)) {
+//			disp_driver = DISP_TRIDENT;
+//			return true;
+//		}
 		if (cirrus_init_disp(DISP_640X480, -1)) {
 			disp_driver = DISP_CIRRUS;
 			return true;
