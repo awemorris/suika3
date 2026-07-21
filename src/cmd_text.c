@@ -1210,7 +1210,8 @@ play_voice(void)
 		return true;
 
 	/* Set the character volume */
-	set_character_volume_by_name(name_top);
+	if (name_top != NULL)
+		set_character_volume_by_name(name_top);
 
 	/* Play the PCM stream */
 	s3_set_mixer_input_file(S3_TRACK_VOICE, voice_file, false);
