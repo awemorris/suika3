@@ -96,7 +96,10 @@ int hal_main(int argc, char *argv[])
 	       "Suika3 Game Engine for PC-9801\n"
 	       "Copyright (c) 2026 Awe Morris\n");
 
-	requested_bpp = -1;
+	/* Default BPP = 4. */
+	requested_bpp = 4;
+
+	/* Parse command line arguments. */
 	if (argc >= 2) {
 		if (strcmp(argv[1], "--version") == 0) {
 			printf("Version 2026.05\n");
@@ -114,13 +117,19 @@ int hal_main(int argc, char *argv[])
 			requested_bpp = 8;
 			hal_argc = 1;
 		}
+		if (strcmp(argv[1], "-4") == 0) {
+			requested_bpp = 4;
+			hal_argc = 1;
+		}
 	}
 
+	/* Initialize the file. (Mount the assets.arc file if exists.) */
 	if (!init_file()) {
 		hal_log_error("Failed to initialize the file system.\n");
 		return 1;
 	}
 
+	/* Call setup() in the script. */
 	if (!hal_bootstrap_ptr(
 		    &game_title,
 		    &game_width,
@@ -128,29 +137,36 @@ int hal_main(int argc, char *argv[])
 		    &hal_callback))
 		return 1;
 
+	/* Initialize the sound. */
 	if (!init_sound()) {
-		/* Ignore no sound card. */
+		/* Ignore if no sound card. */
 	}
 
+	/* Initialize the display. */
 	if (!init_disp()) {
 		/* Error: screen is not available. */
 		return 1;
 	}
 
+	/* Create a backing image. */
 	if (!hal_create_image(game_width, game_height, &back_image)) {
 		printf("Error on creating image.\n");
 		return 1;
 	}
 
+	/* Call start() in the script. */
 	if (!hal_callback.on_start()) {
 		printf("Error on start.\n");
 		return 1;
 	}
 
+	/* Create the alpha blending LUT. */
 	init_alphatable();
 
+	/* Game loop. */
 	while (1) {
 		sound_poll();
+
 		process_input();
 
 		hal_clear_image(back_image, 0);
@@ -163,6 +179,7 @@ int hal_main(int argc, char *argv[])
 		flip();
 	}
 
+	/* Cleanup. */
 	cleanup_sound();
 	cleanup_disp();
 

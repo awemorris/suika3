@@ -21,6 +21,18 @@ feature requests, testing, and discussions for this release:
 
 ## Notes
 
+### Suika3 26.07.10 LTS: July 23, 2026
+
+Changes:
+- [fix] [BUG] Access violation (0xc0000005) Crash #79
+
+Dependencies
+| Component        | Version    |
+|------------------|------------|
+| Playfield Engine | 1.1.3      |
+| StratoHAL        | 1.1.3      |
+| NoctLang         | 1.1.6      |
+
 ### Suika3 26.07.9 LTS: July 15, 2026
 
 Changes:
