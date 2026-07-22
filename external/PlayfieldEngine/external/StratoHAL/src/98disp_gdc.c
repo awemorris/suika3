@@ -78,14 +78,9 @@ gdc_init_disp(void)
 	volatile uint16_t *text;
 	int i;
 
-	if (game_width > SCREEN_WIDTH || game_height > SCREEN_HEIGHT)
+	if (game_width > 640 || game_height > 400) {
+		hal_log_info("Game screen size %dx%d is too large.", game_width, game_height);
 		return false;
-
-	/* XXX */
-	{
-		volatile char *gvram = (volatile char *)0xa8000;
-		for (i = 0; i < 640 * 400 / 8; i++)
-			gvram[i] = 0xf0;
 	}
 
 	/*

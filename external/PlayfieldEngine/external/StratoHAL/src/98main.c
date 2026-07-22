@@ -50,6 +50,9 @@
 /* Log */
 #define LOG_FILE	"log.txt"
 
+/* Command Line Options */
+static int requested_bpp;
+
 /* Game Info */
 static char *game_title;
 int game_width;
@@ -57,7 +60,6 @@ int game_height;
 
 /* Screen */
 struct hal_image *back_image;
-static bool is_true_color_enabled;
 
 /* Log */
 static FILE *log_fp;
@@ -94,13 +96,22 @@ int hal_main(int argc, char *argv[])
 	       "Suika3 Game Engine for PC-9801\n"
 	       "Copyright (c) 2026 Awe Morris\n");
 
+	requested_bpp = -1;
 	if (argc >= 2) {
 		if (strcmp(argv[1], "--version") == 0) {
 			printf("Version 2026.05\n");
 			return 0;
 		}
 		if (strcmp(argv[1], "-24") == 0) {
-			is_true_color_enabled = true;
+			requested_bpp = 24;
+			hal_argc = 1;
+		}
+		if (strcmp(argv[1], "-16") == 0) {
+			requested_bpp = 16;
+			hal_argc = 1;
+		}
+		if (strcmp(argv[1], "-8") == 0) {
+			requested_bpp = 8;
 			hal_argc = 1;
 		}
 	}
@@ -861,34 +872,42 @@ static int disp_driver;
 static bool
 init_disp(void)
 {
-	bool is_gdc_ok;
-
-	is_gdc_ok = true;
-	disp_driver = DISP_GDC;
-
-	if (!gdc_init_disp())
-		is_gdc_ok = false;
-
-	if (is_true_color_enabled) {
-//		if (trident_init_disp(DISP_640X480, -1)) {
-//			disp_driver = DISP_TRIDENT;
-//			return true;
-//		}
-		if (cirrus_init_disp(DISP_640X480, -1)) {
+	/*
+	 * If no bpp option is specified or 8/16/24-bpp option is
+	 * specified, try initializing the SVGA chip.
+	 */
+	if (requested_bpp == -1 || requested_bpp == 8 ||
+	    requested_bpp == 16 || requested_bpp == 24) {
+		if (cirrus_init_disp(DISP_640X480, requested_bpp)) {
 			disp_driver = DISP_CIRRUS;
+			return true;
+		}
+
+		if (trident_init_disp(DISP_640X480, requested_bpp)) {
+			disp_driver = DISP_TRIDENT;
+			return true;
+		}
+
+	}
+
+	/*
+	 * TODO: If 8-bpp option is specified, try initializing
+	 * PEGC 8-bpp.
+	 */
+
+	/*
+	 * If no bpp option is specified or 4-bpp option is specified,
+	 * try initializing GDC 4-bpp.
+	 */
+	if (requested_bpp == -1 || requested_bpp == 4) {
+		if (gdc_init_disp()) {
+			disp_driver = DISP_GDC;
 			return true;
 		}
 	}
 
-	if (!is_gdc_ok) {
-		if (game_width > 640 || game_height > 400) {
-			hal_log_info("Game screen size %dx%d is too large.", game_width, game_height);
-			return false;
-		}
-		return false;
-	}
-
-	return true;
+	/* Failed. */
+	return false;
 }
 
 static void

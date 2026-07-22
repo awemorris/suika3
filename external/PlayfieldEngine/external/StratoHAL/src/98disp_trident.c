@@ -35,7 +35,6 @@
  *
  * Target machines (desktops with the on-board Trident):
  *
- *   ValueStar V13/V16 (M7 etc.)   Trident TGUI9680XGi, VRAM 2MB
  *   MATE R Ra43/Ra33/Ra266/Ra300  Trident TGUI9682XGi, VRAM 2MB
  *
  * The single most important discovery: XFree86 3.3.x shipped a
@@ -134,8 +133,8 @@
  *  - Board tuning pc98_tgui.c ChipInit() performs on these exact
  *    machines (DRAM/FIFO/latency values, MCLK=80MHz nominal,
  *    SYNCDAC[0]=01h, GR2Fh=20h, GR5Eh=88h, GR5Fh=48h):
- *    replayed here 1:1, but guarded by STRATO_TRIDENT_NOTUNE=1 for
- *    bring-up in case the ITF already programmed saner values.
+ *    replayed here 1:1, but opt-in via M=1 for bring-up in case
+ *    the ITF already programmed saner values.
  *    (The MCLK encodings in XF98 and Xorg disagree about the
  *    resulting frequency; the register VALUE 53h/00h is what XF98
  *    proved on the V13/V16, so the value is replayed verbatim
@@ -151,8 +150,10 @@
  *  - The 24bpp VRAM byte order is assumed B,G,R (little-endian
  *    convention, like the Cirrus).  If red/blue come out swapped on
  *    the real DAC, conv_row24() is the one place to touch.
- *  - Whether MCLK/DRAM tuning is required or the power-on defaults
- *    suffice (STRATO_TRIDENT_NOTUNE=1 to compare).
+ *  - [ANSWERED 2026-07] MCLK/DRAM tuning: the ITF defaults are
+ *    fine for display; the XF98 tuning (M=1) does not fix the
+ *    bulk-write dword drops either.  Paced+verified stores (V=1)
+ *    are what makes the output pixel-perfect.
  *  - 800x600x24 would sit exactly at the 40MHz limit XF98 imposes on
  *    24bpp (Bpp_Clocks[3] = 40000); NEC never shipped that mode, so
  *    it is rejected here.
@@ -231,7 +232,178 @@
  *    while the CR21-decoded window is where VRAM answers.
  * The relay/glue tables and sequences extracted from the binary are
  * replayed below (tg_nt_* and the tg_glue_* tables).  The XF98
- * variant is kept selectable via STRATO_TRIDENT_RELAY=xf98.
+ * variant is documented above but not selectable in this build.
+ *
+ * ---------------------------------------------------------------------------
+ * H. Relay experiment matrix (T=0..9 in the environment)
+ * ---------------------------------------------------------------------------
+ * With T set, trident_init_disp() replaces the normal relay with one
+ * of the experiments below, then runs a common observation phase:
+ *   1. register dump
+ *   2. SR01 bit5 blink x3   -> changes on screen = Trident owns video
+ *   3. 8bpp palette cycle   -> changes on screen = DAC path alive
+ *   4. wait for a key; cleanup mirrors the exact experiment
+ *
+ *   T=0  minimal, FAC=02h                      (current default)
+ *   T=1  minimal, FAC=03h                      (NT's value)
+ *   T=2  minimal + XF98 SDAC[04] sync path     (06h -> 08h -> 01h)
+ *   T=3  minimal + NT GR24/GR33 sync power-up  (one bit per frame)
+ *   T=4  = T=3 + FAA[84h] |= 11h               (NT non-93h monitor)
+ *   T=5  = T=4 + 8F0h bracket                  (full NT periphery)
+ *   T=6  XF98 full dance
+ *   T=7  NT full dance
+ *   T=8  interactive FAC sweep 00h..03h x FAA84 (key after each)
+ *   T=9  no relay at all                       (is white just the
+ *                                               GDC teardown?)
+ *
+ * Run with -8 (8bpp) so the palette test is meaningful; 24bpp
+ * bypasses the DAC lookup.
+ *
+ * ---------------------------------------------------------------------------
+ * I. NEC's NT 4.0 GDI driver (trident.dll) - the accelerator protocol
+ * ---------------------------------------------------------------------------
+ * Field observation: direct CPU stores through the linear aperture
+ * land only probabilistically while the CRTC is scanning out - the
+ * classic sign that the DRAM interface does not arbitrate raw host
+ * writes against refresh/scanout on this board.  NEC's own NT4 GDI
+ * driver never bulk-writes the aperture as plain memory; every
+ * paint goes through the graphics engine, whose FIFO is the
+ * arbitrated path into VRAM.  Disassembling trident.dll (PE32,
+ * imports only WIN32K Eng* helpers) yielded the exact protocol:
+ *
+ *  - WHERE THE GE BLOCK LIVES (settled by disassembling NEC's
+ *    trident.sys miniport): the GE registers are an INDEPENDENT
+ *    chip-level memory decode - NOT inside BAR1 at +2100h.  Its
+ *    64KB page is placed by two CRTC registers:
+ *        CR34 = GE physical address bits 23:16
+ *        CR35 = GE physical address bits 31:24
+ *    and the registers sit at offsets 00h..FFh inside that page
+ *    (the classic map minus the 2100h bias).  The miniport, in
+ *    its IOCTL_VIDEO_QUERY_PUBLIC_ACCESS_RANGES handler, points
+ *    CR34/35 at BAR1 and hands the mapped range to the GDI
+ *    driver.  The placement is CHIP-TYPED (miniport types by
+ *    SR0B/SR09): the TGUI9660 family (SR0B=D3h - the Ra43 class)
+ *    gets BAR1 + 0, range 100h, i.e. the GE registers co-reside
+ *    with the register file in the BOTTOM 256 BYTES of BAR1 (VGA
+ *    relocations start at 3C0h; no overlap); only the TGUI9320
+ *    (SR0B=A3h) gets BAR1 + 10000h with a 64KB range.  The GDI
+ *    then addresses the registers as raw offsets off the range
+ *    pointer:
+ *        +20h  status      (word polled, mask 20h = engine busy;
+ *                            mask 40h polled before pattern stores)
+ *        +22h  operation mode (word; see below)
+ *        +24h  command     (01h = BitBLT, 04h = Bresenham line,
+ *                            05h = short vector)
+ *        +27h  FMIX/ROP    (CCh = copy source, F0h = copy pattern)
+ *        +28h  drawflag    (dword; 04h = source is display memory,
+ *                            20h = mono pattern, 40h = mono source,
+ *                            1000h = transparent, 4000h = solid
+ *                            fill; ** neither 04h nor 40h set means
+ *                            the source is the CPU data stream **)
+ *        +2Ch  foreground colour   +30h  background colour
+ *        +38h/+3Ah  dest X/Y       +3Ch/+3Eh  src X/Y
+ *        +40h/+42h  dimension X/Y, PROGRAMMED AS W-1 / H-1
+ *        +48h..+4Fh clip: src X/Y = top-left, dest X/Y =
+ *                            bottom-right (96xx clips CPU-source
+ *                            pixels - must be opened up, cf.
+ *                            tridentfb tgui_init_accel())
+ *        +80h..+FFh pattern data
+ *    The miniport's other GE prerequisites, all replayed here:
+ *    PCI cfg 14h |= 02h (the "hidden decode enable"), SR0E |= 80h,
+ *    CR39 |= 01h.  And the enable proper, field-found on the Ra43
+ *    (whose ITF ships it OFF) and confirmed in 86Box's
+ *    tgui_recalcmapping():
+ *        ** CR36 bits1:0 = GE memory-decode select: 00b = decode
+ *        DISABLED, 01b = legacy window at B4000h, 10b = legacy
+ *        window at BC000h, 11b = the CR34/35-placed block. **
+ *    The miniport binary itself never writes CR36 - the value
+ *    rides in its per-mode CRTC tables - which is why the first
+ *    Ra43 probe of the CR34/35 block read like unclaimed memory
+ *    (only a stray dword "latched": ordinary 25%-survival direct
+ *    stores, not registers).
+ *    (The 2100h-biased register block of the AT-world literature
+ *    is the legacy/emulator view of the same registers; the Ra43
+ *    field test proved it does not answer over BAR1 MMIO -
+ *    everything read 00h until CR34/35 placed the real block.)
+ *  - The CPU-source data port IS THE LINEAR APERTURE: the driver
+ *    stores the framebuffer pointer from IOCTL_VIDEO_MAP_VIDEO_-
+ *    MEMORY and, after issuing a CPU-source BLT, streams the pixel
+ *    data with rep movsd to that address (restarting at the base
+ *    for every scan of the operation).  While such a BLT is live
+ *    the chip consumes ALL aperture stores into the engine FIFO in
+ *    memory order (86Box models this 1:1 in tgui_accel_write_fb_*),
+ *    which is what buys the scanout arbitration.
+ *  - Per-operation sequence used by every paint path in the DLL:
+ *        1. poll 2120h until bit5 clear
+ *        2. 2127h = ROP, 2128h = drawflag, colours if needed
+ *        3. 2138h/213Ah dest, 2140h/2142h = W-1/H-1
+ *        4. 2124h = 01h
+ *        5. poll 2120h bit5 again, then stream the data (CPU-source
+ *           operations only; pattern/solid ops run on step 4)
+ *  - 2122h operation mode, written once per mode from a
+ *    pitch-x-depth table in DrvEnableSurface.  The power-of-two
+ *    rows of NT's table match Linux tridentfb tgui_init_accel()
+ *    exactly, which decodes the encoding as
+ *        low byte = depth (8bpp: 0, 16bpp: 1, 24bpp: 3)
+ *                 | engine pitch (512/8192: 00h, 1024: 04h,
+ *                                 2048: 08h, 4096: 0Ch)
+ *    (NT's high-byte values 40h..90h are the fractional-pitch
+ *    variants for non-power-of-two pitches like 640/1920/2496;
+ *    this driver sidesteps them by using power-of-two pitches.)
+ *  - 24bpp: NT uses depth code 3, but the engine granularity at
+ *    24bpp is the byte (86Box maps 24bpp to the 8bpp engine); this
+ *    driver drives 24bpp with depth code 0 and byte coordinates
+ *    (x*3, w*3), the same trick XFree86 used on chips of the era,
+ *    so the semantics are identical on real silicon and emulators.
+ *
+ * The frame presentation below therefore runs as a CPU source FIFO
+ * BLT: one full-rectangle BLT per frame, rows streamed through the
+ * aperture.  The engine is self-tested at init (register readback,
+ * solid fill, host blit, all verified through the aperture); if
+ * anything fails the driver falls back to the old direct writes.
+ *
+ * FIELD OUTCOME (2026-07, verified-store build): with the paced,
+ * read-verified direct stores (V=1, the default) the picture is
+ * PIXEL-PERFECT at 8, 16, and 24bpp on the Ra43.  The dword-
+ * granular write drops are a hardware-level defect of this
+ * board's host-write path under scanout (whole PCI dword
+ * transactions vanish from bulk bursts, ~75% of them, while
+ * isolated writes and all reads are reliable); the XF98 board
+ * tuning (M=1: MCLK 53h, GR2F/5E/5F, SYNCDAC) does NOT cure it -
+ * M=1 with raw stores (V=0) still fails - so the mitigation is
+ * the software layer: never offer the FIFO more than 4 dwords
+ * between draining reads, then patch whatever still dropped.
+ * M stays default-off.
+ *
+ * The graphics engine itself remains DARK on the Ra43: with the
+ * full NT recipe applied (CR34/35 placement, CR36 bits1:0 = 11b,
+ * cfg14h.1, SR0E.7, CR39.0), both placements read back 00h in
+ * every register and execute nothing, under M=0 and M=1 alike.
+ * (The lone "flags = 24h,50h" seen at BAR1+10000h is a stray
+ * surviving direct store into unclaimed space, not a register -
+ * it appears only at the placement that is outside BAR1's 64KB
+ * claim.)  Presentation therefore runs on the verified stores;
+ * the engine bring-up code and this protocol record stay for a
+ * future attempt - the untapped lead is the miniport's per-mode
+ * register tables (HwSetMode path), which may carry a further
+ * gate this driver has not replayed.
+ *
+ * FIELD ADDENDUM - operating without a usable aperture: on the
+ * target board the linear window cannot be trusted even for reads,
+ * so nothing may depend on aperture verification.  Two facts make
+ * the engine viable regardless:
+ *  - the FIFO capture of CPU-source data is a PCI-target mechanism
+ *    keyed on the chip's memory DECODE (armed while CR21 bit5 is
+ *    set), independent of whether direct stores survive the DRAM
+ *    path - so the window still serves as a WRITE-ONLY data port;
+ *  - everything else the protocol needs is registers, which work.
+ * Hence: the self-test accepts the engine on register proof alone
+ * when the aperture is unverified (and even engages it blind if
+ * the registers turn out write-only, provided the status neither
+ * floats FFh nor sticks busy), the CR21-decoded window is adopted
+ * as the write-only port, and the end-to-end judgement is the
+ * fetch-experiment color bars, which are themselves drawn through
+ * the CPU-source FIFO BLT.
  *
  * References:
  *  - XFree86 3.3.6 xfree98 pc98_tgui.c / pc98_tgui.h (primary:
@@ -248,6 +420,12 @@
  *  - VGADOC TRIDENT.TXT (register names)
  *  - NEC PC-9821V16/M7 official spec sheet (TGUI9680XGi, VRAM 2MB,
  *    640x480 16.77M / 800x600 65K / 1024x768 65K / 1280x1024 256)
+ *  - NEC's NT4 trident.dll (GDI display driver; disassembled: GE
+ *    register map, busy bits, CPU-source protocol, 2122h table)
+ *  - NEC's NT4 trident.sys (miniport; disassembled: CR34/35 GE
+ *    block placement, cfg14h.1 decode enable, access ranges)
+ *  - 86Box vid_tgui9440.c (TGUI9660/9680 engine model: drawflag
+ *    bit meanings, FIFO consumption of aperture stores, clipping)
  *
  * ===========================================================================
  * Driver design
@@ -263,20 +441,28 @@
  *    fingerprinted (SR0B chip ID D3h + the SR0E write-0-reads-2
  *    signature); state is saved before anything is programmed and
  *    restored on cleanup.
- *  - Aperture-only: frames are written straight into the linear
- *    framebuffer at BAR0.  The graphics engine is never enabled.
+ *  - Frame presentation: a CPU-source FIFO BLT through the graphics
+ *    engine (the NT4 trident.dll protocol, section I) - the FIFO is
+ *    the path that arbitrates against CRTC scanout.  The engine is
+ *    self-tested at init; on any failure the driver falls back to
+ *    direct stores through the linear aperture (the old behavior).
+ *  - The pitch is the smallest power of two >= w * bytespp (1024/
+ *    2048/4096) so the engine pitch code in GER 2122h is exact.
  *  - Modes: 640x480 (8/16/24bpp) and 800x600 (8/16bpp).  bpp == -1
  *    picks 24bpp when it fits the VRAM.
- *  - STRATO_TRIDENT_RELAY=min|nt|xf98 selects the relay sequence.
- *    Default is "min": flip only the 0FACh output mux and the GDC
- *    display element, leaving every ITF-configured NEC glue
- *    register alone (the Ra43 field test showed the full 1996-era
- *    NT sequence kills the sync there, while the ITF state works).
- *  - STRATO_TRIDENT_FAC=n overrides the 0FACh accel value
- *    (default 3, the NT driver's choice; XF98 used 2).
- *  - STRATO_TRIDENT_TUNE=1 opts in to the XF98 DRAM/MCLK tuning +
- *    NEC board glue (default off: the ITF already tuned the board).
- *  - STRATO_TRIDENT_NOTUNE=1 forces the tuning off (compat).
+ *  - The relay sequence is the "min" one: flip only the 0FACh
+ *    output mux and the GDC display element, leaving every
+ *    ITF-configured NEC glue register alone (the Ra43 field test
+ *    showed the full 1996-era NT sequence kills the sync there,
+ *    while the ITF state works).
+ *  - No environment variables: the field-proven configuration is
+ *    unconditional (paced + verified LFB stores, ITF tuning kept,
+ *    fetch combo 0).  Two compile-time knobs near the includes:
+ *    TG_TRY_GE re-arms the graphics-engine bring-up for the next
+ *    step, TG_FETCH_EXPERIMENT restores the interactive fetch
+ *    walk.  (The former M/G/V env options are retired: M=1 XF98
+ *    tuning was proven not to help, V=1 verified stores are now
+ *    always on, G is TG_TRY_GE.)
  *  - Verbose by design, like the Cirrus driver: this driver only
  *    runs when the user passes the -24 option, and the register
  *    dumps have repeatedly been the only way to debug real hardware.
@@ -296,6 +482,25 @@
 #include <conio.h>
 #include <i86.h>
 #include <stdint.h>
+
+/*
+ * Compile-time build knobs.  No environment variables: the driver
+ * runs the field-proven configuration unconditionally.
+ *  - TG_TRY_GE 1 re-arms the graphics-engine bring-up (the CPU
+ *    source FIFO BLT of section I).  Parked at 0: the engine never
+ *    responded on the Ra43; the protocol record and code stay for
+ *    the next attempt.
+ *  - TG_FETCH_EXPERIMENT 1 restores the interactive fetch-combo
+ *    walk (color bars, key presses).  At 0 the driver silently
+ *    applies combo 0, the state under which the Ra43 showed a
+ *    pixel-perfect picture.
+ */
+#ifndef TG_TRY_GE
+#define TG_TRY_GE 0
+#endif
+#ifndef TG_FETCH_EXPERIMENT
+#define TG_FETCH_EXPERIMENT 0
+#endif
 
 /*
  * Requested geometry per DISP_* selector.
@@ -320,10 +525,8 @@ static struct trident_disp {
 	uint32_t pitch;		/* bytes per scanline */
 
 	/*
-	 * VGA register file.  Expected at the native block on these
-	 * machines; kept relocatable anyway so a surprise on real
-	 * hardware only needs a table entry.  io_3d4/io_3da follow
-	 * MISC bit0 between the color and mono blocks.
+	 * VGA register file.  io_3d4/io_3da follow MISC bit0 between
+	 * the color and mono blocks.
 	 */
 	uint16_t io_3c0;
 	uint16_t io_3d4;
@@ -337,13 +540,25 @@ static struct trident_disp {
 	 * Register access path.  When use_mmio is set, every VGA
 	 * register access goes through the BAR1 MMIO block (the port
 	 * number doubles as the offset inside the block); the PC-98
-	 * platform ports (0FACh, 68h, 6Ah, 9A8h, 5Fh, the wakeup
-	 * ports) are always real I/O.
+	 * platform ports (0FACh, 68h, 6Ah, 9A8h, 5Fh) stay real I/O.
 	 */
 	bool use_mmio;
 	int aper_width;		/* 4 = dwords OK, 1 = byte-only lane */
 	volatile uint8_t *mmio;	/* mapped BAR1, 64KB */
 	uint32_t mmio_phys;
+
+	/*
+	 * Graphics engine (CPU-source FIFO BLT, see section I).
+	 * ge_xmul is the pixel -> engine-coordinate multiplier:
+	 * 1 at 8/16bpp, 3 at 24bpp (byte-granular engine mode).
+	 */
+	bool use_ge;		/* engine self-tested OK and in use */
+	bool aper_ok;		/* aperture verified readable/writable */
+	int ge_xmul;
+	uint8_t ge_opermode;	/* GER 2122h low byte */
+	volatile uint8_t *ge;	/* CR34/35-decoded GE block (NULL =
+				 * legacy 2100h fallback) */
+	uint32_t ge_phys;
 
 	/* VRAM aperture (always linear on this driver). */
 	uint8_t *fb;
@@ -368,10 +583,30 @@ extern int game_width;
 extern int game_height;
 
 /* Frame presentation. */
+static int tg_store_verified(volatile uint8_t *dst, const uint8_t *src,
+			     int nbytes);
+static void tg_clear_screen(void);
 static void trident_flip_vram(void);
+#if TG_TRY_GE
+static void trident_flip_ge(void);
+#endif
 static void conv_row24(uint8_t *dst, const uint32_t *src, int n);
 static void conv_row16(uint8_t *dst, const uint32_t *src, int n);
 static void conv_row8(uint8_t *dst, const uint32_t *src, int n);
+
+#if TG_TRY_GE
+/* Graphics engine (CPU-source FIFO BLT, trident.dll protocol). */
+static void tg_ge_out8(int reg, int val);
+static void tg_ge_out16(int reg, int val);
+static void tg_ge_out32(int reg, uint32_t val);
+static int tg_ge_in8(int reg);
+static bool tg_ge_wait(const char *who);
+static uint32_t tg_ge_color(uint32_t c);
+static void tg_ge_fill(int xu, int y, int wu, int h, uint32_t color);
+static bool tg_ge_selftest(void);
+static void tg_ge_init(void);
+#endif /* TG_TRY_GE */
+
 
 /* Low-level register access. */
 static int tg_inb(unsigned port);
@@ -409,8 +644,8 @@ static void tg_wakeup_blind_pc98(void);
 static bool tg_fingerprint(void);
 static uint32_t tg_vram_size(void);
 static uint32_t tg_vram_probe(void);
+static bool tg_aperture_test(const char *tag);
 static bool tg_aperture_fix(void);
-static void tg_board_tune(void);
 static void tg_dump_regs(const char *tag);
 
 /* Mode set. */
@@ -418,162 +653,23 @@ static void tg_modeset(void);
 static void tg_load_palette(void);
 static int tg_resolve_bpp(int req, int w, int h, uint32_t vram);
 
-/* Relay. */
+/* Relay (fixed: minimal teardown + XF98 SDAC path + FAC=02h). */
 static void tg_relay_to_accel(void);
 static void tg_relay_to_gdc(void);
-static void tg_relay_to_accel_xf98(void);
-static void tg_relay_to_gdc_xf98(void);
-static void tg_nt_relay_to_accel(void);
-static void tg_nt_relay_to_gdc(void);
-static void tg_nt_sync_on(void);
-static void tg_nt_sync_off(void);
-static int tg_nt_monitor_sense(void);
-static void tg_8f0_rmw(int idx, int and_mask, int or_bits);
-static void tg_wait_frames(int n);
-static void tg_apply_triplets(const uint8_t *t, int n, const char *tag);
-static bool tg_use_xf98_relay(void);
-static int tg_relay_policy(void);
-static int tg_fac_value(void);
-static void tg_min_relay_to_accel(void);
-static void tg_min_relay_to_gdc(void);
 
-#define TG_RELAY_MIN	0
-#define TG_RELAY_NT	1
-#define TG_RELAY_XF98	2
-
-/* Board init (applied once at bring-up; NT table @13ab8h). */
-static const uint8_t tg_glue_board[] = {
-	0x94, 0xe0, 0xe0,	/* GR24 |= E0h		*/
-	0x95, 0xff, 0x00,	/* GR25  = 00h		*/
-	0x94, 0xff, 0x00,	/* GR24  = 00h		*/
-	0x92, 0xff, 0x26,	/* GR22  = 26h		*/
-	0x96, 0xff, 0x00,	/* GR26  = 00h		*/
-	0x9a, 0xff, 0x01,	/* GR2A  = 01h		*/
-	0x91, 0xff, 0x00,	/* GR21  = 00h		*/
-	0xf2, 0x04, 0x0f,	/* SDAC[04h] = 0Fh	*/
-	0x90, 0xff, 0x05,	/* GR20  = 05h		*/
-	0xf2, 0x37, 0x33,	/* SDAC[37h] = 33h	*/
-	0xf2, 0x38, 0x04,	/* SDAC[38h] = 04h	*/
-	0x93, 0x08, 0x08,	/* GR23 |= 08h		*/
-	0xf2, 0x08, 0x73,	/* SDAC[08h] = 73h	*/
-	0xf2, 0x09, 0x86	/* SDAC[09h] = 86h	*/
-};
-/*
- * 640x480 sync-glue for the 96xx desktops (NT table @13c05h, the
- * machine-type-27h variant): sync mode regs GR30/40/42/43/50-53,
- * the 3A4h shadow CRTC loaded with 640x480 timings, CR11 protect,
- * CR29 relay bits.  800x600 has no glue table in the NT driver.
- */
-static const uint8_t tg_glue_640x480[] = {
-	0xa0, 0x30, 0x30,	/* GR30 bits5:4 = 11b	*/
-	0xb0, 0xff, 0x12,	/* GR40  = 12h		*/
-	0xb2, 0xff, 0xb4,	/* GR42  = B4h		*/
-	0xb3, 0xff, 0x88,	/* GR43  = 88h		*/
-	0xc0, 0xff, 0x59,	/* GR50  = 59h		*/
-	0xc1, 0xff, 0xa7,	/* GR51  = A7h		*/
-	0xc2, 0xcf, 0x93,	/* GR52  = 93h (mask CFh) */
-	0xc3, 0xff, 0xa3,	/* GR53  = A3h		*/
-	0x61, 0x80, 0x00,	/* CRB11h bit7 = 0 (unlock) */
-	0x50, 0xff, 0x5f,	/* CRB00h = 5Fh		*/
-	0x53, 0xff, 0x82,	/* CRB03h = 82h		*/
-	0x54, 0xff, 0x53,	/* CRB04h = 53h		*/
-	0x55, 0x3f, 0x9f,	/* CRB05h = 9Fh (mask 3Fh) */
-	0x56, 0xff, 0x0b,	/* CRB06h = 0Bh		*/
-	0x57, 0xa5, 0x3e,	/* CRB07h = 3Eh (mask A5h) */
-	0x60, 0xff, 0xe5,	/* CRB10h = E5h		*/
-	0x61, 0xff, 0xa7,	/* CRB11h = A7h		*/
-	0x66, 0xff, 0x04,	/* CRB16h = 04h		*/
-	0x11, 0x80, 0xa7,	/* CR11 bit7 = 1	*/
-	0x29, 0xe0, 0xa0	/* CR29 bits7:5 = 101b	*/
-};
-/* Sync power-up, one bit per frame (NT setD @13b1bh). */
-static const uint8_t tg_glue_sync_on[] = {
-	0x94, 0x04, 0xef,	/* GR24 |= 04h		*/
-	0xf0, 0x00, 0x01,	/* wait 1 frame		*/
-	0x94, 0x02, 0xef,	/* GR24 |= 02h		*/
-	0xf0, 0x00, 0x03,	/* wait 3 frames	*/
-	0x94, 0x01, 0xef,	/* GR24 |= 01h		*/
-	0xf0, 0x00, 0x01,	/* wait 1 frame		*/
-	0x94, 0x08, 0xef,	/* GR24 |= 08h		*/
-	0xa3, 0x10, 0x10,	/* GR33 |= 10h		*/
-	0xa0, 0x40, 0x00	/* GR30 &= ~40h		*/
-};
-/* Sync power-down (NT setC @13b36h). */
-static const uint8_t tg_glue_sync_off[] = {
-	0x94, 0xff, 0xef,	/* GR24  = EFh		*/
-	0x95, 0xff, 0xef,	/* GR25  = EFh		*/
-	0x94, 0x08, 0xe0,	/* GR24 &= ~08h		*/
-	0xf0, 0x00, 0x01,	/* wait 1 frame		*/
-	0x94, 0x01, 0xe0,	/* GR24 &= ~01h		*/
-	0xf0, 0x00, 0x03,	/* wait 3 frames	*/
-	0x94, 0x02, 0xe0,	/* GR24 &= ~02h		*/
-	0xf0, 0x00, 0x01,	/* wait 1 frame		*/
-	0x94, 0x04, 0xe0,	/* GR24 &= ~04h		*/
-	0xa3, 0x10, 0x00	/* GR33 &= ~10h		*/
-};
-
+/* Fetch-path experiment (runs automatically at init). */
+static void tg_fetch_apply_default(void);
+#if TG_FETCH_EXPERIMENT
+static void tg_fetch_experiment(void);
+#endif
+static void tg_fetch_capture_itf(void);
+#if TG_FETCH_EXPERIMENT
+static void tg_fetch_pattern(void);
+#endif
 
 /* State save/restore. */
 static void tg_save_state(void);
 static void tg_restore_state(void);
-
-/*
- * CPU cache control (CR0.CD), for the STRATO_TRIDENT_NOCACHE=1
- * experiment: rules the CPU cache/write-buffer path in or out when
- * the aperture readback misbehaves.  DOS/4GW runs the client in
- * ring 0, so CR0 is directly writable.
- */
-static void tg_cache_disable(void);
-static void tg_cache_enable(void);
-static bool tg_cache_disabled = false;
-
-#ifdef __WATCOMC__
-/*
- * Raw opcode bytes so the inline assembler's CPU level doesn't
- * matter (wbinvd is 486+):
- *   0F 09           wbinvd
- *   0F 20 C0        mov eax, cr0
- *   0D 00 00 00 40  or  eax, 40000000h   (CD)
- *   25 FF FF FF 9F  and eax, 9FFFFFFFh   (~CD & ~NW)
- *   0F 22 C0        mov cr0, eax
- */
-void tg_cache_disable_asm(void);
-#pragma aux tg_cache_disable_asm =		\
-	0x0f 0x09				\
-	0x0f 0x20 0xc0				\
-	0x0d 0x00 0x00 0x00 0x40		\
-	0x0f 0x22 0xc0				\
-	0x0f 0x09				\
-	modify [eax];
-void tg_cache_enable_asm(void);
-#pragma aux tg_cache_enable_asm =		\
-	0x0f 0x20 0xc0				\
-	0x25 0xff 0xff 0xff 0x9f		\
-	0x0f 0x22 0xc0				\
-	modify [eax];
-#else
-static void tg_cache_disable_asm(void) { }
-static void tg_cache_enable_asm(void) { }
-#endif
-
-static void
-tg_cache_disable(void)
-{
-	tg_cache_disable_asm();
-	tg_cache_disabled = true;
-	hal_log_info("TRIDENT: CPU cache disabled (CR0.CD=1 + "
-		     "WBINVD) for this session.");
-}
-
-static void
-tg_cache_enable(void)
-{
-	if (!tg_cache_disabled)
-		return;
-	tg_cache_enable_asm();
-	tg_cache_disabled = false;
-	hal_log_info("TRIDENT: CPU cache re-enabled.");
-}
 
 /* PCI access (defined in the PCI detection section). */
 static uint32_t pci_read32(int bus, int dev, int fn, int reg);
@@ -581,6 +677,10 @@ static void pci_write32(int bus, int dev, int fn, int reg,
 			uint32_t val);
 static int pci_bus, pci_dev, pci_fn;
 static uint32_t sv_cfg14 = 0xffffffffUL;	/* PCI cfg 14h as found */
+
+/* Scratch row (conversion, verified stores, clears; 4096 >= pitch). */
+static uint8_t tg_rowbuf[4096];
+
 
 /* Misc. */
 static void *tg_map_physical(uint32_t phys, uint32_t size);
@@ -611,12 +711,15 @@ trident_init_disp(int mode, int bpp)
 	h = disp_geo[mode].h;
 	hal_log_info("TRIDENT: probing; requested %dx%d, depth %d "
 		     "(-1 = auto).", w, h, bpp);
+	hal_log_info("TRIDENT-BUILD: LFB build (paced + verified "
+		     "stores%s%s).",
+		     TG_TRY_GE ? ", engine bring-up armed" : "",
+		     TG_FETCH_EXPERIMENT
+		     ? ", interactive fetch walk" : "");
 
 	/*
-	 * The WAB machine ID, for the log only.  The 96xx machines do
-	 * not use the two-stage interface (the V16 answers 5Bh here
-	 * while its VGA file lives at the native block); the value is
-	 * still the quickest machine fingerprint we have.
+	 * The WAB machine ID, for the log only (the 96xx machines do
+	 * not use the two-stage interface).
 	 */
 	outp(0x0faa, 0x00);
 	tdisp.wab_id = (uint8_t)inp(0x0fab);
@@ -649,10 +752,6 @@ trident_init_disp(int mode, int bpp)
 	if (!tg_fingerprint())
 		return false;
 
-	/* Optional cache experiment before any aperture traffic. */
-	if (getenv("STRATO_TRIDENT_NOCACHE") != NULL)
-		tg_cache_disable();
-
 	/* Save the horizontal sync rate of the GDC side (9A8h). */
 	tdisp.hsync31 = inp(0x09a8) & 0x01;
 	hal_log_info("TRIDENT: GDC horizontal sync is %skHz (9A8h).",
@@ -673,7 +772,42 @@ trident_init_disp(int mode, int bpp)
 	tdisp.scr_w = w;
 	tdisp.scr_h = h;
 	tdisp.aper_width = 4;
-	tdisp.pitch = (uint32_t)w * (uint32_t)(tdisp.bpp / 8);
+
+	/*
+	 * The pitch: smallest power of two holding a scanline, so
+	 * the engine pitch code in GER 2122h is exact (1024: 04h,
+	 * 2048: 08h, 4096: 0Ch - section I).  24bpp runs the engine
+	 * byte-granular (depth code 0, coordinates x3).
+	 */
+	tdisp.pitch = 1024;
+	while (tdisp.pitch < (uint32_t)w * (uint32_t)(tdisp.bpp / 8))
+		tdisp.pitch <<= 1;
+	switch (tdisp.bpp) {
+	case 16:
+		tdisp.ge_opermode = 0x01;
+		tdisp.ge_xmul = 1;
+		break;
+	case 24:
+		tdisp.ge_opermode = 0x00;	/* byte-granular */
+		tdisp.ge_xmul = 3;
+		break;
+	default:
+		tdisp.ge_opermode = 0x00;
+		tdisp.ge_xmul = 1;
+		break;
+	}
+	switch (tdisp.pitch) {
+	case 1024:
+		tdisp.ge_opermode |= 0x04;
+		break;
+	case 2048:
+		tdisp.ge_opermode |= 0x08;
+		break;
+	default:			/* 4096 */
+		tdisp.ge_opermode |= 0x0c;
+		break;
+	}
+
 	need = (uint32_t)h * tdisp.pitch;
 	if (need > tdisp.vram_size) {
 		hal_log_info("TRIDENT: %dx%d %dbpp needs %luKB but only "
@@ -697,54 +831,30 @@ trident_init_disp(int mode, int bpp)
 	tg_dump_regs("as found");
 
 	/*
-	 * Board bring-up (XF98 ChipInit + NEC board glue).  The Ra43
-	 * ITF already leaves the board tuned (its own MCLK, DRAM
-	 * timings and glue state), and overwriting that config with
-	 * values from older machines proved harmful, so this now
-	 * defaults OFF.  STRATO_TRIDENT_TUNE=1 opts in;
-	 * STRATO_TRIDENT_NOTUNE=1 still forces it off.
+	 * The ITF board tuning is kept: the XF98 values (MCLK 53h,
+	 * GR2F/5E/5F, SYNCDAC) were tried in the field and neither
+	 * fix the bulk-write drops nor improve anything (2026-07).
 	 */
-	if (getenv("STRATO_TRIDENT_TUNE") != NULL &&
-	    getenv("STRATO_TRIDENT_NOTUNE") == NULL)
-		tg_board_tune();
-	else
-		hal_log_info("TRIDENT: keeping the ITF board tuning "
-			     "(MCLK/DRAM/glue untouched; "
-			     "STRATO_TRIDENT_TUNE=1 to override).");
+	hal_log_info("TRIDENT: keeping the ITF board tuning.");
 
 	/* Full mode set (leaves the screen blanked). */
 	tg_modeset();
 	tg_dump_regs("after mode set");
 
 	/*
-	 * NEC sync glue (sync mode regs + the 3A4h shadow CRTC
-	 * timings): only with the full NT relay.  On the Ra43 the
-	 * ITF-provided glue state is already correct and loading
-	 * the 1996 tables broke the sync, so the minimal path
-	 * leaves all of it alone.  The NT driver carries no glue
-	 * table for 800x600 either way.
-	 */
-	if (tg_relay_policy() == TG_RELAY_NT && tdisp.scr_w == 640)
-		tg_apply_triplets(tg_glue_640x480,
-				  sizeof(tg_glue_640x480) / 3,
-				  "640x480 NEC sync glue");
-
-	/*
 	 * Switch the video output relay to the accelerator with the
-	 * screen still blanked (SR01 bit5 is set by the mode set):
-	 * sync runs, video is dark, and the aperture check plus the
-	 * VRAM clear below happen out of sight.
+	 * screen still blanked (SR01 bit5 is set by the mode set).
 	 */
 	tg_relay_to_accel();
 
 	/*
-	 * Verify the linear aperture actually reaches VRAM - the
-	 * Ra43 field test showed decode problems here - trying CR21
-	 * variants if the first attempt fails.  Continue either way
-	 * (a garbage picture with working sync still tells us more
-	 * than a dead screen).
+	 * Verify the linear aperture actually reaches VRAM, trying
+	 * CR21 variants if the first attempt fails.  Continue either
+	 * way (a garbage picture with working sync still tells us
+	 * more than a dead screen).
 	 */
-	if (tg_aperture_fix()) {
+	tdisp.aper_ok = tg_aperture_fix();
+	if (tdisp.aper_ok) {
 		uint32_t real;
 
 		/* With the aperture live, measure the real VRAM. */
@@ -770,16 +880,31 @@ trident_init_disp(int mode, int bpp)
 		}
 	}
 
-	/* Clear VRAM through the linear aperture (width-aware). */
-	if (tdisp.aper_width == 1) {
-		volatile uint8_t *out = tdisp.fb;
-		uint32_t i;
 
-		for (i = 0; i < tdisp.vram_size; i++)
-			out[i] = 0;
-	} else {
-		memset(tdisp.fb, 0, tdisp.vram_size);
-	}
+	/*
+	 * ORDER MATTERS from here (Ra43 field lesson, 2026-07): the
+	 * fetch-path registers (CR1E bit7 "extended memory access",
+	 * GR0F, ...) govern the HOST addressing of VRAM through the
+	 * aperture, not just the display fetch.  Under the ITF state
+	 * (CR1E=00h) host accesses wrap at 256KB and interleave
+	 * differently from the final scanout view - a clear executed
+	 * there lands in the wrong places and self-verifies through
+	 * the same wrong path.  So: apply combo 0 FIRST (screen
+	 * still blanked), then run every bulk host access (engine
+	 * bring-up, clear), then unblank.
+	 */
+#if TG_FETCH_EXPERIMENT
+	tg_clear_screen();	/* best effort under the ITF state;
+				 * the bars repaint everything */
+	tg_fetch_experiment();	/* applies combos, unblanks itself */
+#else
+	tg_fetch_apply_default();	/* combo 0, still blanked */
+#if TG_TRY_GE
+	tg_ge_init();
+#endif
+	tg_clear_screen();
+	tg_seq_write(0x01, tg_seq_read(0x01) & ~0x20);	/* unblank */
+#endif
 
 	/* Screen on (unblank: SR01 bit5 off). */
 	tg_seq_write(0x01, 0x01);
@@ -805,12 +930,17 @@ trident_init_disp(int mode, int bpp)
 	hal_log_info("TRIDENT: mode     : %dx%d, %d bpp, pitch %lu bytes.",
 		     tdisp.scr_w, tdisp.scr_h, tdisp.bpp,
 		     (unsigned long)tdisp.pitch);
-	hal_log_info("TRIDENT: aperture : linear, %luKB at %08lXh%s.",
+	hal_log_info("TRIDENT: aperture : linear, %luKB at %08lXh%s, "
+		     "%s.",
 		     (unsigned long)(tdisp.vram_size >> 10),
 		     (unsigned long)tdisp.fb_phys,
 		     tdisp.fb_phys == 0x73000000UL
 		     ? " (the NEC fixed window, not BAR0)"
-		     : " (BAR0 + 0)");
+		     : "",
+		     tdisp.aper_ok
+		     ? "verified"
+		     : "UNVERIFIED (used as a write-only FIFO "
+		       "port only)");
 	if (tdisp.use_mmio)
 		hal_log_info("TRIDENT: registers: BAR1 MMIO at %08lXh "
 			     "(legacy VGA I/O is dead on this board).",
@@ -818,7 +948,21 @@ trident_init_disp(int mode, int bpp)
 	else
 		hal_log_info("TRIDENT: registers: legacy VGA I/O at "
 			     "%03Xh.", tdisp.io_3c0);
-	hal_log_info("TRIDENT: blitter  : unused (aperture-only driver).");
+#if TG_TRY_GE
+	if (tdisp.use_ge)
+		hal_log_info("TRIDENT: blitter  : CPU-source FIFO BLT "
+			     "(GER22=%02Xh, %s coords).",
+			     tdisp.ge_opermode,
+			     tdisp.ge_xmul == 3 ? "byte" : "pixel");
+	else
+		hal_log_info("TRIDENT: blitter  : engine did not "
+			     "pass its self-test; paced+verified "
+			     "aperture stores in use.");
+#else
+	hal_log_info("TRIDENT: blitter  : parked (TG_TRY_GE=0); "
+		     "frames go through paced+verified aperture "
+		     "stores.");
+#endif
 	hal_log_info("TRIDENT: blit     : game %dx%d -> +%d,+%d "
 		     "(draw %dx%d).",
 		     game_width, game_height, ofs_x, ofs_y, draw_w, draw_h);
@@ -832,10 +976,16 @@ trident_cleanup_disp(void)
 	if (!tdisp.active)
 		return;
 
+#if TG_TRY_GE
+	/* Never restore registers under a live engine operation. */
+	if (tdisp.use_ge)
+		(void)tg_ge_wait("cleanup");
+#endif
+
 	/* Blank while we unwind. */
 	tg_seq_write(0x01, tg_seq_read(0x01) | 0x20);
 
-	/* Output back to the 98 GDC (the XF98 mirror dance). */
+	/* Output back to the 98 GDC (mirror of the fixed relay). */
 	tg_relay_to_gdc();
 
 	/* Put every register back the way we found it. */
@@ -846,8 +996,6 @@ trident_cleanup_disp(void)
 		pci_write32(pci_bus, pci_dev, pci_fn, 0x14, sv_cfg14);
 		sv_cfg14 = 0xffffffffUL;
 	}
-
-	tg_cache_enable();
 
 	tdisp.active = false;
 	hal_log_info("TRIDENT: cleanup done, output back on the 98 GDC.");
@@ -870,52 +1018,153 @@ trident_flip(void)
  *
  * StratoHAL pixel layout (BGRA): low byte = B, then G, then R.
  * The Trident 24bpp framebuffer is assumed to be the same B,G,R
- * order (see the "open items" note at the top).
+ * order.
+ *
+ * The default path is the CPU-source FIFO BLT (section I): one
+ * BLT covering the whole destination rectangle, the converted
+ * rows streamed through the aperture into the engine FIFO, which
+ * is the VRAM path the chip arbitrates against scanout.  Direct
+ * aperture stores remain as the fallback when the engine did not
+ * pass its self-test (or died mid-session).
  */
-/* Scratch row for the byte-lane fallback (800 * 3 bytes max). */
-static uint8_t tg_rowbuf[2400];
+/*
+ * Verified, FIFO-paced store of one row.
+ *
+ * Field finding (Ra43, 8bpp): bulk back-to-back stores lose WHOLE
+ * DWORD TRANSACTIONS (~75% of them under active scanout) while
+ * isolated stores always land and reads are reliable - the chip's
+ * host-write FIFO overruns without throttling.  Countermeasures,
+ * layered:
+ *   - pacing: a dummy read after every 4 dwords forces the posted
+ *     writes to retire before more are queued (PCI ordering), so
+ *     the FIFO is never offered more than it can hold;
+ *   - verify passes: re-read and rewrite whatever still dropped,
+ *     up to 8 passes.
+ * Returns the number of patch passes needed (0 = clean on the
+ * first verify), or -1 if bytes still differ after the cap.
+ */
+static int
+tg_store_verified(volatile uint8_t *dst, const uint8_t *src, int nbytes)
+{
+	int pass, i, bad;
+
+	if (tdisp.aper_width == 1) {
+		for (pass = 0; pass < 8; pass++) {
+			bad = 0;
+			for (i = 0; i < nbytes; i++) {
+				if (pass == 0 || dst[i] != src[i]) {
+					dst[i] = src[i];
+					bad++;
+					if ((bad & 3) == 0)
+						(void)dst[i];
+				}
+			}
+			if (pass > 0 && bad == 0)
+				return pass - 1;
+		}
+		return -1;
+	}
+
+	{
+		volatile uint32_t *d = (volatile uint32_t *)dst;
+		const uint32_t *s = (const uint32_t *)src;
+		int n = nbytes / 4;
+
+		for (i = 0; i < n; i++) {
+			d[i] = s[i];
+			if ((i & 3) == 3)
+				(void)d[i];	/* drain the FIFO */
+		}
+		for (pass = 0; pass < 8; pass++) {
+			bad = 0;
+			for (i = 0; i < n; i++) {
+				if (d[i] != s[i]) {
+					d[i] = s[i];
+					(void)d[i];
+					bad++;
+				}
+			}
+			if (bad == 0)
+				return pass;
+		}
+	}
+	return -1;
+}
+
+/*
+ * Clear the visible screen (pitch * scr_h) with verified row
+ * stores.  Must run under the final fetch-path register state
+ * (combo 0) - see the ordering note in trident_init_disp().
+ */
+static void
+tg_clear_screen(void)
+{
+	uint32_t y;
+
+	if (!tdisp.aper_ok) {
+		hal_log_info("TRIDENT: skipping the VRAM clear "
+			     "(aperture unverified).");
+		return;
+	}
+	memset(tg_rowbuf, 0, sizeof(tg_rowbuf));
+	for (y = 0; y < (uint32_t)tdisp.scr_h; y++)
+		(void)tg_store_verified(tdisp.fb + y * tdisp.pitch,
+					tg_rowbuf, (int)tdisp.pitch);
+}
 
 static void
 trident_flip_vram(void)
 {
+	static int drop_logged = 0;
 	const uint32_t *pixels;
-	int y, bytespp, rowlen;
+	int y, bytespp, rowlen, worst;
+
+#if TG_TRY_GE
+	if (tdisp.use_ge) {
+		trident_flip_ge();
+		return;
+	}
+#endif
 
 	pixels = back_image->pixels;
 	bytespp = tdisp.bpp / 8;
 	rowlen = draw_w * bytespp;
+	worst = 0;
 
 	for (y = 0; y < draw_h; y++) {
 		const uint32_t *src = pixels + y * game_width;
 		uint32_t off = (uint32_t)(y + ofs_y) * tdisp.pitch +
 			       (uint32_t)ofs_x * (uint32_t)bytespp;
-		uint8_t *dst = tdisp.fb + off;
-		uint8_t *conv = (tdisp.aper_width == 1)
-				? tg_rowbuf : dst;
+		int passes;
 
 		switch (tdisp.bpp) {
 		case 24:
-			conv_row24(conv, src, draw_w);
+			conv_row24(tg_rowbuf, src, draw_w);
 			break;
 		case 16:
-			conv_row16(conv, src, draw_w);
+			conv_row16(tg_rowbuf, src, draw_w);
 			break;
 		default:
-			conv_row8(conv, src, draw_w);
+			conv_row8(tg_rowbuf, src, draw_w);
 			break;
 		}
 
-		/*
-		 * Byte-lane-only aperture: the converters built the
-		 * row in RAM; push it out one byte at a time.
-		 */
-		if (tdisp.aper_width == 1) {
-			volatile uint8_t *out = dst;
-			int i;
+		passes = tg_store_verified(tdisp.fb + off,
+					   tg_rowbuf, rowlen);
+		if (passes < 0)
+			passes = 8;
+		if (passes > worst)
+			worst = passes;
+	}
 
-			for (i = 0; i < rowlen; i++)
-				out[i] = tg_rowbuf[i];
-		}
+	if (worst > 0 && drop_logged < 3) {
+		drop_logged++;
+		hal_log_info("TRIDENT: direct path needed up to %d "
+			     "patch pass%s this frame (dword drops "
+			     "under bulk stores).%s",
+			     worst, worst == 1 ? "" : "es",
+			     drop_logged == 3
+			     ? "  (last such log)" : "");
 	}
 }
 
@@ -981,20 +1230,582 @@ conv_row8(uint8_t *dst8, const uint32_t *src, int n)
 	}
 }
 
+#if TG_TRY_GE
+/*
+ * Frame presentation through the engine, one CPU-source BitBLT PER
+ * ROW.  Per-row operations are self-healing: a new command write
+ * resets the engine's operation state (86Box: command latch clears
+ * the internal x/y and recomputes the destination), so if a data
+ * dword is ever lost on the bus the damage is confined to that one
+ * row and the geometry re-syncs on the next, instead of shearing
+ * the rest of the frame.  ROP and drawflag persist across rows.
+ *
+ * When the aperture is readable, the tail of the last row is read
+ * back after the frame as a FIFO-loss diagnostic (first three
+ * failures are logged).
+ */
+static void
+trident_flip_ge(void)
+{
+	static int vfy_logged = 0;
+	const uint32_t *pixels;
+	int y, bytespp, rowlen;
+
+	pixels = back_image->pixels;
+	bytespp = tdisp.bpp / 8;
+	rowlen = draw_w * bytespp;	/* dword multiple: draw_w &= ~3 */
+
+	if (!tg_ge_wait("flip")) {
+		/*
+		 * The engine was just retired (no operation of ours
+		 * can be pending); draw this very frame through the
+		 * direct path instead of dropping it.
+		 */
+		trident_flip_vram();
+		return;
+	}
+
+	tg_ge_out8(0x27, 0xcc);				/* ROP: copy */
+	tg_ge_out32(0x28, 0x00000000UL);		/* CPU source */
+	tg_ge_out16(0x38, ofs_x * tdisp.ge_xmul);	/* dest X */
+	tg_ge_out16(0x40, draw_w * tdisp.ge_xmul - 1);	/* W - 1 */
+	tg_ge_out16(0x42, 0);				/* H - 1 = 0 */
+
+	for (y = 0; y < draw_h; y++) {
+		const uint32_t *src = pixels + y * game_width;
+
+		switch (tdisp.bpp) {
+		case 24:
+			conv_row24(tg_rowbuf, src, draw_w);
+			break;
+		case 16:
+			conv_row16(tg_rowbuf, src, draw_w);
+			break;
+		default:
+			conv_row8(tg_rowbuf, src, draw_w);
+			break;
+		}
+
+		tg_ge_out16(0x3a, ofs_y + y);		/* dest Y */
+		tg_ge_out8(0x24, 0x01);			/* BitBLT */
+		if (!tg_ge_wait("flip data"))
+			return;
+
+		/*
+		 * Stream the row into the FIFO through the aperture
+		 * base, sequential like the NT driver's rep movsd.
+		 */
+		if (tdisp.aper_width == 1) {
+			volatile uint8_t *out = tdisp.fb;
+			int i;
+
+			for (i = 0; i < rowlen; i++)
+				out[i] = tg_rowbuf[i];
+		} else {
+			volatile uint32_t *out =
+				(volatile uint32_t *)tdisp.fb;
+			const uint32_t *in = (const uint32_t *)tg_rowbuf;
+			int i, n = rowlen / 4;
+
+			for (i = 0; i < n; i++)
+				out[i] = in[i];
+		}
+	}
+
+	if (!tg_ge_wait("flip end"))
+		return;
+
+	/* FIFO-loss diagnostic: the last row's head, read back. */
+	if (tdisp.aper_ok && vfy_logged < 3) {
+		volatile uint8_t *row = tdisp.fb +
+			(uint32_t)(ofs_y + draw_h - 1) * tdisp.pitch +
+			(uint32_t)ofs_x * (uint32_t)bytespp;
+		int i, bad = 0;
+
+		for (i = 0; i < 16; i++)
+			if (row[i] != tg_rowbuf[i])
+				bad++;
+		if (bad != 0) {
+			vfy_logged++;
+			hal_log_info("TRIDENT-GE: frame verify: %d "
+				     "of 16 tail bytes differ "
+				     "(FIFO stream lost data this "
+				     "frame; damage is per-row and "
+				     "heals next frame).%s", bad,
+				     vfy_logged == 3
+				     ? "  (last such log)" : "");
+		}
+	}
+}
+
+#endif /* TG_TRY_GE */
+
+#if TG_TRY_GE
 /*****************************************************************************/
-/* Register file access                                                      */
+/* Graphics engine (CPU-source FIFO BLT - the trident.dll protocol)          */
 /*****************************************************************************/
 
 /*
- * The register block is the native VGA layout at 3C0h on all known
- * machines (see the analysis).  A base variable is kept anyway; the
- * extended DAC aliases (VCLK at 43C8h, SYNCDAC at 83C8h) are derived
- * from the base so a relocated surprise stays a one-line fix.
+ * GE register accessors.
  *
- * The CRTC and Input Status 1 follow MISC bit0 between the color
- * (3D4h) and mono (3B4h) blocks; tg_misc_write() keeps the selected
- * base coherent (our modes always program bit0 = 1).
+ * PRIMARY (the trident.sys recipe): the GE registers live in an
+ * INDEPENDENT 64KB memory decode placed by CR34 (physical bits
+ * 23:16) and CR35 (bits 31:24), at offsets 00h..FFh inside that
+ * page - the miniport points it at BAR1 (+10000h on one machine
+ * class) and NEC's GDI driver addresses the registers as raw
+ * offsets 20h..FFh off the block, exactly the classic map minus
+ * the 2100h bias.  tg_ge_init() places the block at BAR1+10000h
+ * and maps it; tdisp.ge is that mapping.
+ *
+ * FALLBACK (tdisp.ge == NULL): the classic 2100h-biased access
+ * through the register file / I/O, kept for boards without a
+ * usable BAR1.  Register arguments are always the raw offsets
+ * (20h..FFh).
  */
+static void
+tg_ge_out8(int reg, int val)
+{
+	if (tdisp.ge != NULL)
+		tdisp.ge[reg] = (uint8_t)val;
+	else
+		tg_outb(0x2100 + reg, val);
+}
+
+static void
+tg_ge_out16(int reg, int val)
+{
+	if (tdisp.ge != NULL)
+		*(volatile uint16_t *)(tdisp.ge + reg) = (uint16_t)val;
+	else if (tdisp.use_mmio)
+		*(volatile uint16_t *)(tdisp.mmio + 0x2100 + reg) =
+			(uint16_t)val;
+	else
+		outpw(0x2100 + reg, (unsigned short)val);
+}
+
+static void
+tg_ge_out32(int reg, uint32_t val)
+{
+	if (tdisp.ge != NULL)
+		*(volatile uint32_t *)(tdisp.ge + reg) = val;
+	else if (tdisp.use_mmio)
+		*(volatile uint32_t *)(tdisp.mmio + 0x2100 + reg) = val;
+	else
+		outpd(0x2100 + reg, val);
+}
+
+static int
+tg_ge_in8(int reg)
+{
+	if (tdisp.ge != NULL)
+		return tdisp.ge[reg];
+	return tg_inb(0x2100 + reg);
+}
+
+/*
+ * Engine-busy poll: status 2120h bit5, the bit the NT driver spins
+ * on before programming and before streaming data.  Bounded: on a
+ * timeout the engine is retired for the session and the caller's
+ * path falls back to direct aperture stores.
+ */
+#define TG_GE_TIMEOUT	1000000L
+
+static bool
+tg_ge_wait(const char *who)
+{
+	long n;
+
+	for (n = 0; n < TG_GE_TIMEOUT; n++) {
+		if ((tg_ge_in8(0x20) & 0x20) == 0)
+			return true;
+	}
+	hal_log_info("TRIDENT-GE: busy timeout (%s, status=%02Xh); "
+		     "disabling the engine, falling back to direct "
+		     "aperture stores.", who, tg_ge_in8(0x20));
+	tdisp.use_ge = false;
+	return false;
+}
+
+/* Replicate a pixel value across the 32-bit colour registers. */
+static uint32_t
+tg_ge_color(uint32_t c)
+{
+	if (tdisp.bpp == 16) {
+		c &= 0xffffUL;
+		return c | (c << 16);
+	}
+	/* 8bpp, and 24bpp in the byte-granular engine mode. */
+	c &= 0xffUL;
+	return c | (c << 8) | (c << 16) | (c << 24);
+}
+
+/*
+ * Solid fill (ROP F0h + drawflag 4000h, per trident.dll).  xu/wu
+ * are engine coordinates (pixels at 8/16bpp, bytes at 24bpp).
+ * Runs on the command write; no data phase.
+ */
+static void
+tg_ge_fill(int xu, int y, int wu, int h, uint32_t color)
+{
+	if (!tg_ge_wait("fill"))
+		return;
+	tg_ge_out8(0x27, 0xf0);
+	tg_ge_out32(0x28, 0x00004000UL);
+	tg_ge_out32(0x2c, tg_ge_color(color));
+	tg_ge_out16(0x38, xu);
+	tg_ge_out16(0x3a, y);
+	tg_ge_out16(0x40, wu - 1);
+	tg_ge_out16(0x42, h - 1);
+	tg_ge_out8(0x24, 0x01);
+	(void)tg_ge_wait("fill end");
+}
+
+/*
+ * Prove the engine before trusting a frame to it.
+ *
+ * Field lesson (Ra43 log of 2026-07): GE registers other than the
+ * 2120h status read back 00h on real silicon - they are write-only
+ * (NEC's own NT4 GDI driver never reads any GE register except the
+ * status, which corroborates this).  Register readback is therefore
+ * DIAGNOSTIC ONLY and never fails the test; the decision is purely
+ * functional:
+ *
+ *  Stage A (informational): readback of ROP/drawflag/dest/status,
+ *  logged for the record.
+ *
+ *  Stage B (decisive, needs a readable aperture): a 16-unit solid
+ *  fill and a 16-byte CPU-source blit, executed by the engine and
+ *  verified through the aperture.  Reads through the aperture are
+ *  reliable on the target board (only bulk WRITES drop), and the
+ *  pre-zeroing is retried with verification to survive the ~25%
+ *  direct-write success rate.
+ *
+ *  Without a readable aperture stage B is impossible; the engine
+ *  is then accepted blind (see tg_ge_init) and judged on screen.
+ */
+
+/* Zero the first n bytes of a row, verified, direct-write-loss
+ * tolerant (bounded retry; aperture reads are reliable). */
+static bool
+tg_ge_zero(volatile uint8_t *chk, int n)
+{
+	int pass, i;
+
+	for (pass = 0; pass < 64; pass++) {
+		bool ok = true;
+
+		for (i = 0; i < n; i++)
+			chk[i] = 0;
+		for (i = 0; i < n; i++)
+			if (chk[i] != 0) {
+				ok = false;
+				break;
+			}
+		if (ok)
+			return true;
+	}
+	hal_log_info("TRIDENT-GE: cannot even zero %d bytes through "
+		     "the aperture after 64 verified passes; "
+		     "residue: %02Xh %02Xh %02Xh %02Xh %02Xh %02Xh "
+		     "%02Xh %02Xh.", n,
+		     chk[0], chk[1], chk[2], chk[3],
+		     chk[4], chk[5], chk[6], chk[7]);
+	return false;
+}
+
+static bool
+tg_ge_selftest(void)
+{
+	static const uint8_t pat[16] = {
+		0x5a, 0xa5, 0x3c, 0xc3, 0x0f, 0xf0, 0x69, 0x96,
+		0x12, 0x34, 0x56, 0x78, 0x9a, 0xbc, 0xde, 0xf1
+	};
+	volatile uint8_t *chk;
+	int xu, i, bad, nfill, round;
+
+	/* --- Stage A: readback, for the log only ------------------ */
+
+	tg_ge_out8(0x27, 0xcc);
+	tg_ge_out32(0x28, 0x00005024UL);
+	tg_ge_out16(0x38, 0x0123);
+	hal_log_info("TRIDENT-GE: readback (diagnostic): status="
+		     "%02Xh ROP(cc)=%02Xh flags(24,50)=%02Xh,%02Xh "
+		     "destX(23,01)=%02Xh,%02Xh GER22(%02Xh)=%02Xh.",
+		     tg_ge_in8(0x20), tg_ge_in8(0x27),
+		     tg_ge_in8(0x28), tg_ge_in8(0x29),
+		     tg_ge_in8(0x38), tg_ge_in8(0x39),
+		     tdisp.ge_opermode, tg_ge_in8(0x22));
+	tg_ge_out32(0x28, 0x00000000UL);
+	tg_ge_out16(0x38, 0);
+
+	if (!tdisp.aper_ok) {
+		hal_log_info("TRIDENT-GE: aperture unreadable: no "
+			     "functional test possible here; the "
+			     "engine is accepted and judged by the "
+			     "fetch-experiment bars on screen.");
+		return true;
+	}
+
+	/* --- Stage B: functional, verified through the aperture ---
+	 * Test location: byte offset 64 of row 0 - inside the base
+	 * region the aperture test already proved good (row scr_h
+	 * turned out to be un-writable on the field board for
+	 * reasons still unknown; do not test there).  The transient
+	 * visible pixels are repainted by the engine clear on
+	 * success and by the fetch bars on failure. */
+
+	xu = 64 / ((tdisp.bpp == 16) ? 2 : 1);
+	chk = tdisp.fb + 64;
+	nfill = (tdisp.bpp == 16) ? 32 : 16;
+
+	/* Solid fill of 16 engine units with A5h in every byte. */
+	if (!tg_ge_zero(chk, 32))
+		return false;
+	tg_ge_fill(xu, 0, 16,  1,
+		   (tdisp.bpp == 16) ? 0xa5a5UL : 0xa5UL);
+	bad = 0;
+	for (i = 0; i < nfill; i++)
+		if (chk[i] != 0xa5)
+			bad++;
+	if (bad != 0) {
+		/*
+		 * The status may be write-only silicon (reads 00h)
+		 * so the waits cannot pace a slow engine; give it
+		 * a settle and look again before condemning it.
+		 */
+		tg_wait_ms(2);
+		bad = 0;
+		for (i = 0; i < nfill; i++)
+			if (chk[i] != 0xa5)
+				bad++;
+	}
+	if (bad != 0) {
+		hal_log_info("TRIDENT-GE: solid-fill test failed "
+			     "(%d of %d bytes wrong at offset 64: "
+			     "%02Xh %02Xh %02Xh %02Xh ...); the "
+			     "engine is not executing.",
+			     bad, nfill,
+			     chk[0], chk[1], chk[2], chk[3]);
+		return false;
+	}
+	hal_log_info("TRIDENT-GE: solid-fill test PASSED (engine "
+		     "executes; register readback state is "
+		     "irrelevant).");
+
+	/* CPU-source blit of the 16-byte pattern.  If the data
+	 * stream itself gets dropped on the bus the operation sits
+	 * waiting; retry the stream a few rounds and log how many
+	 * it took - that number is the FIFO-loss diagnostic. */
+	if (!tg_ge_wait("selftest"))
+		return false;
+	tg_ge_out8(0x27, 0xcc);
+	tg_ge_out32(0x28, 0x00000000UL);
+	tg_ge_out16(0x38, xu);
+	tg_ge_out16(0x3a, 0);
+	tg_ge_out16(0x40, ((tdisp.bpp == 16) ? 8 : 16) - 1);
+	tg_ge_out16(0x42, 0);
+	tg_ge_out8(0x24, 0x01);
+	if (!tg_ge_wait("selftest data"))
+		return false;
+	for (round = 0; round < 4; round++) {
+		if (tdisp.aper_width == 1) {
+			volatile uint8_t *out = tdisp.fb;
+
+			for (i = 0; i < 16; i++)
+				out[i] = pat[i];
+		} else {
+			volatile uint32_t *out =
+				(volatile uint32_t *)tdisp.fb;
+			const uint32_t *in = (const uint32_t *)pat;
+
+			for (i = 0; i < 4; i++)
+				out[i] = in[i];
+		}
+		bad = 0;
+		for (i = 0; i < 16; i++)
+			if (chk[i] != pat[i])
+				bad++;
+		if (bad != 0) {
+			tg_wait_ms(1);	/* settle, then re-check */
+			bad = 0;
+			for (i = 0; i < 16; i++)
+				if (chk[i] != pat[i])
+					bad++;
+		}
+		if (bad == 0)
+			break;
+	}
+	if (bad != 0) {
+		hal_log_info("TRIDENT-GE: CPU-source test failed "
+			     "after %d stream rounds (%d of 16 "
+			     "bytes wrong at offset 64: %02Xh %02Xh "
+			     "%02Xh %02Xh ...).",
+			     round, bad,
+			     chk[0], chk[1], chk[2], chk[3]);
+		return false;
+	}
+	hal_log_info("TRIDENT-GE: CPU-source test PASSED in %d "
+		     "stream round%s.",
+		     round + 1, round == 0 ? "" : "s");
+
+	/* Scrub the test row (verified). */
+	(void)tg_ge_zero(chk, 32);
+	return true;
+}
+
+/*
+ * Engine bring-up: operation mode + open clipping, then the
+ * self-test, then an engine clear of the visible screen (which
+ * also repairs any direct-store droppage from the memset above).
+ */
+static void
+tg_ge_init(void)
+{
+	tdisp.use_ge = false;
+
+	/*
+	 * With the aperture unverified, the CPU-source data still
+	 * has to be addressed AT the chip's memory decode - the
+	 * FIFO capture is a PCI-target mechanism, independent of
+	 * whether DRAM commits from direct stores survive.  Point
+	 * the port at the CR21-decoded window (the decode that is
+	 * field-proven on this wiring); it is used write-only.
+	 */
+	if (!tdisp.aper_ok) {
+		int cr21 = tg_crtc_read(0x21);
+		uint32_t w = ((uint32_t)(cr21 & 0x0f) << 28) |
+			     ((uint32_t)((cr21 >> 6) & 0x03) << 24);
+
+		if (w != 0 && w != tdisp.fb_phys) {
+			uint8_t *port;
+
+			port = (uint8_t *)tg_map_physical(w,
+							  tdisp.pitch);
+			if (port != NULL) {
+				tdisp.fb = port;
+				tdisp.fb_phys = w;
+			}
+		}
+		hal_log_info("TRIDENT-GE: aperture unverified; the "
+			     "FIFO data port is the CR21(%02Xh)-"
+			     "decoded window at %08lXh, write-only.",
+			     cr21, (unsigned long)tdisp.fb_phys);
+	}
+
+	/*
+	 * Place the GE block (the trident.sys recipe, chip-typed):
+	 * the miniport types the chip by SR0B/SR09 and hands the GDI
+	 * a GE range of BAR1 + 0, length 100h for the TGUI9660
+	 * family (SR0B=D3h; the Ra43 class) - the GE registers
+	 * co-reside with the register file in the BOTTOM 256 BYTES
+	 * of BAR1 (VGA relocations start at 3C0h, no overlap).  Only
+	 * the TGUI9320 (SR0B=A3h, "type 2") uses BAR1 + 10000h with
+	 * a 64KB range.  Both placements are tried here, NEC's pick
+	 * for this family first, with the functional self-test as
+	 * the oracle.  For each: CR34 = physical bits 23:16, CR35 =
+	 * bits 31:24, CR36 bits1:0 = 11b (decode select: 00b =
+	 * DISABLED - the Ra43 ITF state, 01b/10b = legacy B4000h/
+	 * BC000h windows, 11b = the CR34/35 block; cf. 86Box
+	 * tgui_recalcmapping).  PCI cfg 14h bit1 is set the way the
+	 * miniport does at init; everything is restored at cleanup.
+	 */
+	tdisp.ge = NULL;
+	tdisp.ge_phys = 0;
+	{
+		uint32_t bar1 = tdisp.mmio_phys;
+		int cand;
+
+		if (bar1 == 0)
+			bar1 = pci_read32(pci_bus, pci_dev, pci_fn,
+					  0x14) & ~0xfUL;
+		if (bar1 == 0) {
+			hal_log_info("TRIDENT-GE: no BAR1; cannot "
+				     "place the engine block.");
+		} else {
+			uint32_t v;
+
+			v = pci_read32(pci_bus, pci_dev, pci_fn, 0x14);
+			if ((v & 0x02UL) == 0) {
+				if (sv_cfg14 == 0xffffffffUL)
+					sv_cfg14 = v;
+				pci_write32(pci_bus, pci_dev, pci_fn,
+					    0x14, v | 0x02UL);
+			}
+		}
+
+		for (cand = 0; bar1 != 0 && cand < 2; cand++) {
+			uint32_t phys = bar1 +
+				(cand == 0 ? 0UL : 0x10000UL);
+			volatile uint8_t *map;
+			int cr36;
+
+			if (cand == 0 && tdisp.use_mmio &&
+			    tdisp.mmio != NULL)
+				map = tdisp.mmio;
+			else
+				map = (volatile uint8_t *)
+					tg_map_physical(phys, 0x10000);
+			if (map == NULL)
+				continue;
+
+			tdisp.ge = map;
+			tdisp.ge_phys = phys;
+			tg_crtc_write(0x34,
+				      (int)((phys >> 16) & 0xff));
+			tg_crtc_write(0x35,
+				      (int)((phys >> 24) & 0xff));
+			cr36 = tg_crtc_read(0x36);
+			tg_crtc_write(0x36, (cr36 & ~0x03) | 0x03);
+			hal_log_info("TRIDENT-GE: placement %d: block "
+				     "at %08lXh (BAR1+%lXh), CR34/35="
+				     "%02Xh/%02Xh, CR36 %02Xh->%02Xh.",
+				     cand, (unsigned long)phys,
+				     (unsigned long)(phys - bar1),
+				     tg_crtc_read(0x34),
+				     tg_crtc_read(0x35),
+				     cr36, tg_crtc_read(0x36));
+
+			/* Program the neutral engine state. */
+			tg_ge_out16(0x22, tdisp.ge_opermode);
+			tg_ge_out32(0x48, 0x00000000UL);
+			tg_ge_out32(0x4c, (2047UL << 16) | 4095UL);
+			tg_ge_out32(0x28, 0x00000000UL);
+			tg_ge_out16(0x3c, 0);
+			tg_ge_out16(0x3e, 0);
+			tg_ge_out16(0x34, 0);
+
+			if (tg_ge_selftest())
+				goto placed;
+		}
+		tdisp.ge = NULL;
+		tdisp.ge_phys = 0;
+	}
+
+	if (tdisp.ge == NULL) {
+		hal_log_info("TRIDENT-GE: no placement passed the "
+			     "functional test; frames will go through "
+			     "direct aperture stores (the old path).");
+		tdisp.use_ge = false;
+		return;
+	}
+placed:
+
+	tdisp.use_ge = true;
+	hal_log_info("TRIDENT-GE: self-test passed; frames will go "
+		     "through the CPU-source FIFO BLT "
+		     "(GER22=%02Xh, clip open, %s coordinates).",
+		     tdisp.ge_opermode,
+		     tdisp.ge_xmul == 3 ? "byte" : "pixel");
+
+	/* Engine clear of the visible screen. */
+	tg_ge_fill(0, 0, tdisp.scr_w * tdisp.ge_xmul, tdisp.scr_h, 0);
+}
+
+#endif /* TG_TRY_GE */
+
+/*****************************************************************************/
+/* Register file access                                                      */
+/*****************************************************************************/
 
 /*
  * The access-path switch.  MMIO uses the port number as the offset
@@ -1237,8 +2048,6 @@ pci_write32(int bus, int dev, int fn, int reg, uint32_t val)
 
 /*
  * Scan the first buses for a Trident, logging everything we pass by.
- * The 9660 family is what the target desktops carry; the revision
- * (config 08h low byte, mirrored in SR09) splits 9660/9680/9682/9685.
  */
 static bool
 tg_pci_find(void)
@@ -1290,13 +2099,6 @@ tg_pci_find(void)
 				pci_dev = dev;
 				pci_fn = fn;
 
-				/*
-				 * The Ra43 reports the odd revision
-				 * D3h (the SR0B chip-ID value), so
-				 * the PCI revision is informational;
-				 * the name is refined from SR09 once
-				 * register access works.
-				 */
 				tdisp.chip_name = "TGUI96xx family";
 
 				/* BAR0 + decode size + enable. */
@@ -1336,20 +2138,13 @@ tg_pci_find(void)
 					return false;
 				}
 
-				/*
-				 * The linear framebuffer is at BAR0 + 0
-				 * (XF98: ChipLinearBase = MemBase; the
-				 * GE MMIO block would be at +400000h).
-				 */
 				tdisp.fb_phys = bar0;
 
 				/*
 				 * BAR1 is the 64KB register MMIO
 				 * block (tridentfb/Xorg).  If the ITF
 				 * left it unassigned, park it just
-				 * past BAR0's 4MB decode - the very
-				 * address XF98 used for its GE
-				 * window, known-free on these boards.
+				 * past BAR0's 4MB decode.
 				 */
 				{
 					uint32_t bar1;
@@ -1396,8 +2191,7 @@ tg_pci_find(void)
 }
 
 /*
- * Dump the Trident's PCI configuration header to the log - the raw
- * material for diagnosing a machine whose wiring we don't know yet.
+ * Dump a PCI configuration header to the log.
  */
 static void
 tg_pci_dump_header(int bus, int dev, int fn)
@@ -1423,22 +2217,7 @@ tg_pci_dump_header(int bus, int dev, int fn)
 static void
 tg_pci_dump_config(void)
 {
-	int reg;
-
-	hal_log_info("TRIDENT: PCI config header of %d:%d.%d:",
-		     pci_bus, pci_dev, pci_fn);
-	for (reg = 0; reg < 0x40; reg += 0x10) {
-		hal_log_info("TRIDENT:   %02Xh: %08lXh %08lXh "
-			     "%08lXh %08lXh.", reg,
-			     (unsigned long)pci_read32(pci_bus, pci_dev,
-						       pci_fn, reg),
-			     (unsigned long)pci_read32(pci_bus, pci_dev,
-						       pci_fn, reg + 4),
-			     (unsigned long)pci_read32(pci_bus, pci_dev,
-						       pci_fn, reg + 8),
-			     (unsigned long)pci_read32(pci_bus, pci_dev,
-						       pci_fn, reg + 12));
-	}
+	tg_pci_dump_header(pci_bus, pci_dev, pci_fn);
 }
 
 /*****************************************************************************/
@@ -1531,12 +2310,8 @@ tg_wakeup_blind_pc98(void)
 /*
  * Establish a working register access path.
  *
- *  1. Legacy PIO at the native 3C0h block (the V13/V16 wiring; XF98
- *     proved it there).
- *  2. BAR1 MMIO (the Ra wiring: NEC ships those with PCI I/O decode
- *     off and the legacy block dead; the full register file appears
- *     inside the 64KB BAR1 window at its port offsets, gated by
- *     CR39 bit0 which such boards have set out of reset).
+ *  1. Legacy PIO at the native 3C0h block (the V13/V16 wiring).
+ *  2. BAR1 MMIO (the Ra wiring; CR39 bit0 strapped on).
  *  3. Blind wakeups (AT scheme first, the FDC-hazardous 94h scheme
  *     last), then a PIO retest.
  */
@@ -1666,9 +2441,10 @@ tg_fingerprint(void)
 
 /*
  * One write/read cycle against the mapped framebuffer, fully
- * logged: what the first dwords read as found, what they read
- * after a test pattern.  The Ra43 aperture came up dead, so the
- * raw values matter for diagnosis.
+ * logged.  Retried up to three times: on this board direct stores
+ * are known to be dropped probabilistically against scanout (the
+ * very defect the FIFO BLT path exists for), and a single dropped
+ * dword must not condemn a live aperture.
  */
 static bool
 tg_aperture_test(const char *tag)
@@ -1677,36 +2453,44 @@ tg_aperture_test(const char *tag)
 	volatile uint8_t *b = (volatile uint8_t *)tdisp.fb;
 	uint32_t r0, r1, w0, w1;
 	int b0, b1, b2, b3;
+	int attempt;
 	bool dw_ok, by_ok;
 
-	/* Dword cycles at offsets 0/4. */
-	r0 = p[0];
-	r1 = p[1];
-	p[0] = 0x55aa1234UL;
-	p[1] = 0xc3a5960fUL;
-	w0 = p[0];
-	w1 = p[1];
-	dw_ok = (w0 == 0x55aa1234UL && w1 == 0xc3a5960fUL);
+	dw_ok = by_ok = false;
+	r0 = r1 = w0 = w1 = 0;
+	b0 = b1 = b2 = b3 = 0;
 
-	/*
-	 * Byte cycles at offsets 8..0Bh: the register block only
-	 * proves byte access works on this wiring, so the aperture
-	 * may be byte-lane-limited too.
-	 */
-	b[8] = 0xa5;
-	b[9] = 0x5a;
-	b[10] = 0xc3;
-	b[11] = 0x3c;
-	b0 = b[8];
-	b1 = b[9];
-	b2 = b[10];
-	b3 = b[11];
-	by_ok = (b0 == 0xa5 && b1 == 0x5a && b2 == 0xc3 && b3 == 0x3c);
+	for (attempt = 1; attempt <= 3; attempt++) {
+		/* Dword cycles at offsets 0/4. */
+		r0 = p[0];
+		r1 = p[1];
+		p[0] = 0x55aa1234UL;
+		p[1] = 0xc3a5960fUL;
+		w0 = p[0];
+		w1 = p[1];
+		dw_ok = (w0 == 0x55aa1234UL && w1 == 0xc3a5960fUL);
 
-	hal_log_info("TRIDENT: aperture test (%s): dwords found "
-		     "%08lXh %08lXh, after write %08lXh %08lXh -> "
+		/* Byte cycles at offsets 8..0Bh. */
+		b[8] = 0xa5;
+		b[9] = 0x5a;
+		b[10] = 0xc3;
+		b[11] = 0x3c;
+		b0 = b[8];
+		b1 = b[9];
+		b2 = b[10];
+		b3 = b[11];
+		by_ok = (b0 == 0xa5 && b1 == 0x5a &&
+			 b2 == 0xc3 && b3 == 0x3c);
+
+		if (dw_ok || by_ok)
+			break;
+	}
+
+	hal_log_info("TRIDENT: aperture test (%s, attempt %d): "
+		     "dwords found %08lXh %08lXh, after write "
+		     "%08lXh %08lXh -> "
 		     "%s; bytes read %02Xh %02Xh %02Xh %02Xh -> %s.",
-		     tag,
+		     tag, attempt > 3 ? 3 : attempt,
 		     (unsigned long)r0, (unsigned long)r1,
 		     (unsigned long)w0, (unsigned long)w1,
 		     dw_ok ? "OK" : "dead",
@@ -1727,21 +2511,9 @@ tg_aperture_test(const char *tag)
 }
 
 /*
- * Get the linear aperture reaching VRAM.
- *
- * NEC's NT4 trident.sys accesses the framebuffer at the FIXED
- * physical address 73000000h (its access-range table; it never
- * reads BAR0).  The Ra43 ITF leaves CR21 = C7h, and C7h decodes to
- * exactly that address under the hypothesis
- *
- *     linear base = (CR21 bits3:0 << 28) | (CR21 bits7:6 << 24)
- *
- * (7 -> 70000000h, plus 11b -> 03000000h), with bit5 the enable.
- * So on this wiring CR21 is a window-placement register and the
- * framebuffer lives at 73000000h - NOT behind BAR0.  When the
- * BAR0 test fails, remap the framebuffer at the CR21-decoded
- * address (and at the literal NT address as a backstop) and test
- * there.
+ * Get the linear aperture reaching VRAM (BAR0 first, then the NT
+ * hidden decode enable, then BAR2 / the CR21-decoded window / the
+ * NT4 fixed 73000000h window).
  */
 static bool
 tg_aperture_fix(void)
@@ -1756,10 +2528,7 @@ tg_aperture_fix(void)
 
 	/*
 	 * The NT4 driver's enable path sets bit1 of PCI config reg
-	 * 14h (nominally BAR1, read-only low bits on compliant
-	 * hardware) before touching the framebuffer - i.e. it is a
-	 * vendor memory-decode enable on this chip.  Set it and
-	 * retest.
+	 * 14h before touching the framebuffer.  Set it and retest.
 	 */
 	{
 		uint32_t v;
@@ -1781,7 +2550,6 @@ tg_aperture_fix(void)
 
 	cr21 = tg_crtc_read(0x21);
 
-	/* BAR2 (config 18h): the third window NEC assigns. */
 	cand[0] = pci_read32(pci_bus, pci_dev, pci_fn, 0x18) & ~0xfUL;
 	cname[0] = "BAR2";
 	cand[1] = ((uint32_t)(cr21 & 0x0f) << 28) |
@@ -1836,10 +2604,8 @@ tg_aperture_fix(void)
 
 /*
  * Measure the VRAM through the linear aperture: plant distinct tags
- * just under each candidate size, largest first; on a smaller chip
- * the higher writes wrap and get overwritten, so the largest intact
- * tag is the true size.  Used when CR1F carries a code we can't
- * decode (the Ra43 reads F5h).
+ * just under each candidate size, largest first; the largest intact
+ * tag is the true size.
  */
 static uint32_t
 tg_vram_probe(void)
@@ -1853,11 +2619,6 @@ tg_vram_probe(void)
 	sizes[1] = 2048UL * 1024UL;
 	sizes[2] = 1024UL * 1024UL;
 
-	/*
-	 * One-shot 4MB scratch mapping; DOS4GW address space is
-	 * plentiful and there is no DPMI unmap on the exit path
-	 * anyway.
-	 */
 	p = (volatile uint32_t *)tg_map_physical(tdisp.fb_phys,
 						 sizes[0]);
 	if (p == NULL)
@@ -1954,11 +2715,12 @@ tg_dump_regs(const char *tag)
 		     tg_crtc_read(0x29), tg_crtc_read(0x2a),
 		     tg_crtc_read(0x2b));
 	hal_log_info("TRIDENT:   CR20=%02Xh CR23=%02Xh CR25=%02Xh "
-		     "CR2F=%02Xh CR30=%02Xh CR36=%02Xh CR38=%02Xh "
-		     "CR39=%02Xh.",
+		     "CR2F=%02Xh CR30=%02Xh CR34=%02Xh CR35=%02Xh "
+		     "CR36=%02Xh CR38=%02Xh CR39=%02Xh.",
 		     tg_crtc_read(0x20), tg_crtc_read(0x23),
 		     tg_crtc_read(0x25), tg_crtc_read(0x2f),
-		     tg_crtc_read(0x30), tg_crtc_read(0x36),
+		     tg_crtc_read(0x30), tg_crtc_read(0x34),
+		     tg_crtc_read(0x35), tg_crtc_read(0x36),
 		     tg_crtc_read(0x38), tg_crtc_read(0x39));
 	hal_log_info("TRIDENT:   GR0F=%02Xh GR23=%02Xh GR2F=%02Xh; "
 		     "VCLK=%02Xh/%02Xh MCLK=%02Xh/%02Xh; "
@@ -1969,99 +2731,6 @@ tg_dump_regs(const char *tag)
 		     tg_inb(tdisp.io_vclk - 2), tg_inb(tdisp.io_vclk - 1),
 		     tg_sdac_read(0x00), tg_sdac_read(0x04),
 		     inp(0x0fac));
-
-	/* The NEC sync-glue register file (see section G). */
-	hal_log_info("TRIDENT:   GR21=%02Xh GR24=%02Xh GR25=%02Xh "
-		     "GR2C=%02Xh GR30=%02Xh GR33=%02Xh.",
-		     tg_gfx_read(0x21), tg_gfx_read(0x24),
-		     tg_gfx_read(0x25), tg_gfx_read(0x2c),
-		     tg_gfx_read(0x30), tg_gfx_read(0x33));
-	hal_log_info("TRIDENT:   GR40=%02Xh GR42=%02Xh GR43=%02Xh "
-		     "GR50=%02Xh GR51=%02Xh GR52=%02Xh GR53=%02Xh "
-		     "GR5A=%02Xh GR5B=%02Xh.",
-		     tg_gfx_read(0x40), tg_gfx_read(0x42),
-		     tg_gfx_read(0x43), tg_gfx_read(0x50),
-		     tg_gfx_read(0x51), tg_gfx_read(0x52),
-		     tg_gfx_read(0x53), tg_gfx_read(0x5a),
-		     tg_gfx_read(0x5b));
-	{
-		int gr30, crb00, crb06, crb10, crb11;
-		unsigned w52, w60;
-
-		gr30 = tg_gfx_read(0x30);
-		if ((gr30 & 0x40) == 0)
-			tg_gfx_write(0x30, gr30 | 0x40);
-		tg_outb(0x03a4, 0x00); crb00 = tg_inb(0x03a5);
-		tg_outb(0x03a4, 0x06); crb06 = tg_inb(0x03a5);
-		tg_outb(0x03a4, 0x10); crb10 = tg_inb(0x03a5);
-		tg_outb(0x03a4, 0x11); crb11 = tg_inb(0x03a5);
-		if ((gr30 & 0x40) == 0)
-			tg_gfx_write(0x30, gr30);
-		outpw(0x08f0, 0x52); w52 = inpw(0x08f2);
-		outpw(0x08f0, 0x60); w60 = inpw(0x08f2);
-		outp(0x0faa, 0x84);
-		hal_log_info("TRIDENT:   CRB00=%02Xh CRB06=%02Xh "
-			     "CRB10=%02Xh CRB11=%02Xh; 8F0h[52]=%04Xh "
-			     "[60]=%04Xh; FAA[84h]=%02Xh.",
-			     crb00, crb06, crb10, crb11, w52, w60,
-			     inp(0x0fab));
-	}
-}
-
-/*****************************************************************************/
-/* Board bring-up (pc98_tgui.c ChipInit(), minus the graphics engine)        */
-/*****************************************************************************/
-
-static void
-tg_board_tune(void)
-{
-	hal_log_info("TRIDENT: board tune (XF98 ChipInit values): "
-		     "old MCLK=%02Xh/%02Xh.",
-		     tg_inb(tdisp.io_vclk - 2), tg_inb(tdisp.io_vclk - 1));
-
-	tg_sw_new();
-	tg_seq_write(0x0e, tg_seq_read(0x0e) | 0x80);	/* unlock ext */
-
-	tg_seq_write(0x0f, tg_seq_read(0x0f) & 0xef);
-
-	tg_select_crtc(tg_misc_read());
-
-	/* Bus & DRAM setup, values verbatim from XF98. */
-	tg_crtc_write(0x2a, tg_crtc_read(0x2a) | 0x40);	/* local bus/DRAM */
-	tg_crtc_write(0x20, 0x38);	/* Command FIFO */
-	tg_crtc_write(0x23, 0xe8);	/* DRAM Timing Control */
-	tg_crtc_write(0x25, 0x0a);	/* RAMDAC R/W Timing */
-	tg_crtc_write(0x2f, 0x27);	/* Performance Tuning */
-	tg_crtc_write(0x30, 0x0f);	/* Display Queue Latency */
-	tg_crtc_write(0x33, 0x01);	/* Read Cache Control */
-	tg_crtc_write(0x3b, 0x21);	/* Clock and Tuning */
-	tg_crtc_write(0x3c, 0x00);	/* Miscellaneous Control */
-
-	/*
-	 * MCLK: the exact register value XF98 programs on the
-	 * V13/V16 for its nominal "80MHz" (n=10 m=3 k=0 in its own
-	 * encoding).  Replayed as a value, not recomputed - see the
-	 * header note about the conflicting MCLK formulas.
-	 */
-	tg_outb(tdisp.io_vclk - 2, 0x53);	/* 43C6h */
-	tg_outb(tdisp.io_vclk - 1, 0x00);	/* 43C7h */
-
-	/* The graphics engine (CR34/35/36) stays disabled. */
-	tg_crtc_write(0x36, 0x00);
-
-	/* NEC glue defaults from ChipInit. */
-	tg_sdac_write(0x00, 0x01);
-	tg_gfx_write(0x2f, 0x20);
-	tg_gfx_write(0x5e, 0x88);
-	tg_gfx_write(0x5f, 0x48);
-
-	/*
-	 * The NEC board-init glue NEC's own NT4 driver applies
-	 * (GR20h-2Ah, GR23h, SDAC 04h/08h/09h/37h/38h); byte-exact
-	 * from trident.sys, see section G.
-	 */
-	tg_apply_triplets(tg_glue_board, sizeof(tg_glue_board) / 3,
-			  "NEC board glue");
 }
 
 /*****************************************************************************/
@@ -2070,8 +2739,7 @@ tg_board_tune(void)
 
 /*
  * CRTC values built with the tridentfb rules (standard VGA layout;
- * Trident keeps the 6-bit Horizontal Blanking End compare, unlike
- * the Cirrus 8-bit extension).
+ * Trident keeps the 6-bit Horizontal Blanking End compare).
  *
  * 640x480@60: 25.175MHz, H 640/16/96/48, V 480/10/2/33, -h -v sync.
  */
@@ -2210,6 +2878,11 @@ tg_load_palette(void)
  * The full mode set, assembled from tridentfb's BIOS-less order and
  * XF98's SetRegisters().  Leaves the screen blanked (SR01 bit5); the
  * caller unblanks after clearing VRAM.
+ *
+ * The five fetch-path registers (CR1E, CR2A, CR2F, GR0F, GR2F) are
+ * NOT touched here: neither the XF98 values (stripes) nor the ITF
+ * values (blue-only) are right on the Ra43-class board, so they are
+ * owned by tg_fetch_experiment(), which walks the combinations.
  */
 static void
 tg_modeset(void)
@@ -2274,11 +2947,8 @@ tg_modeset(void)
 	tg_crtc_write(0x27, (tg_crtc_read(0x27) & 0x07) | 0x08);
 	/* CR2B: horizontal overflow bits 8 (all zero for our modes). */
 	tg_crtc_write(0x2b, 0x00);
-	/* CR1E: enable access to extended memory, no interlace. */
-	tg_crtc_write(0x1e, 0x80);
 	/*
-	 * CR21: linear aperture on (base = PCI BAR0).  The Ra43 ITF
-	 * leaves C7h here - bits of unknown meaning on the 9682 -
+	 * CR21: linear aperture on.  The Ra43 ITF leaves C7h here,
 	 * so set bit5 and preserve the rest instead of overwriting.
 	 */
 	{
@@ -2292,10 +2962,7 @@ tg_modeset(void)
 	/* CR29: pitch bits 9:8 (keep bit2 - the relay uses it). */
 	tg_crtc_write(0x29, (tg_crtc_read(0x29) & 0xcf) |
 			    (int)((offset & 0x300) >> 4));
-	/* CR2A: 32-bit bus mode. */
-	tg_crtc_write(0x2a, tg_crtc_read(0x2a) | 0x40);
-	/* CR2F: performance bit (tridentfb/Xorg both set it). */
-	tg_crtc_write(0x2f, tg_crtc_read(0x2f) | 0x10);
+
 	/* CR38: pixel bus = the depth. */
 	tg_crtc_write(0x38, tg_pixelbus_value());
 	/*
@@ -2320,10 +2987,7 @@ tg_modeset(void)
 	tg_gfx_write(0x06, 0x05);	/* misc: graphics, A0000 64KB */
 	tg_gfx_write(0x07, 0x0f);
 	tg_gfx_write(0x08, 0xff);
-	/* GR0F: keep the strap bits, extended memory + tridentfb bits. */
-	tg_gfx_write(0x0f, (tg_gfx_read(0x0f) & 0xf0) | 0x12);
-	/* GR2F: XF98 value (ChipInit 20h, mode set ORs 04h). */
-	tg_gfx_write(0x2f, 0x24);
+	/* (GR0F / GR2F belong to the fetch experiment.) */
 
 	/* Attribute controller: identity palette + graphics mode. */
 	(void)tg_inb(tdisp.io_3da);		/* reset flip-flop */
@@ -2353,7 +3017,7 @@ tg_modeset(void)
 
 /*
  * Resolve the depth for a request.  req == -1: the highest depth
- * that fits VRAM (these desktops have full 24bpp DACs).
+ * that fits VRAM.
  */
 static int
 tg_resolve_bpp(int req, int w, int h, uint32_t vram)
@@ -2383,446 +3047,32 @@ tg_resolve_bpp(int req, int w, int h, uint32_t vram)
 }
 
 /*****************************************************************************/
-/* Video output relay                                                        */
+/* Video output relay (fixed: the field-proven sequence)                     */
 /*****************************************************************************/
 
 /*
- * Two relay implementations are carried:
- *  - the NT path (default): the sequence NEC's own NT4 trident.sys
- *    performs, extracted by disassembly (see section G);
- *  - the XF98 path (STRATO_TRIDENT_RELAY=xf98): the pc98_tgui.c
- *    dance, kept as a fallback since it too ran on real V13/V16.
+ * The relay, fixed to the sequence that the T=0..9 experiment
+ * matrix proved on the Ra43-class board (tests 2 and 6 produced a
+ * picture; everything else was white or lost sync):
+ *   minimal GDC teardown + the XF98 SDAC[04] sync path + FAC=02h.
+ * FAC=03h (the NT value) kills sync on this board and must not be
+ * used.
  */
-
-/*
- * Relay policy.  The Ra43 field test showed that the full NT
- * sequence (from a 1996 driver that predates the Ra43) kills the
- * sync outputs on that board, while the ITF leaves the NEC glue in
- * a working state (SDAC[04]=0Fh, CR29 bit2, tuned MCLK).  The
- * default is therefore MINIMAL: switch the 0FACh mux and touch
- * nothing NEC-specific.  STRATO_TRIDENT_RELAY=nt|xf98 escalates to
- * the full dances for comparison.
- */
-static int
-tg_relay_policy(void)
-{
-	const char *s = getenv("STRATO_TRIDENT_RELAY");
-
-	if (s == NULL)
-		return TG_RELAY_MIN;
-	if (s[0] == 'x' || s[0] == 'X')
-		return TG_RELAY_XF98;
-	if (s[0] == 'n' || s[0] == 'N')
-		return TG_RELAY_NT;
-	return TG_RELAY_MIN;
-}
-
-static bool
-tg_use_xf98_relay(void)
-{
-	return tg_relay_policy() == TG_RELAY_XF98;
-}
-
-/*
- * The 0FACh relay value.  Field-tested on the Ra43: 02h (XF98's
- * value) selects the accelerator with working sync; 03h (the NT4
- * driver's value, from older machines) kills the sync outputs
- * there.  Default 02h, overridable for experiments.
- */
-static int
-tg_fac_value(void)
-{
-	const char *s = getenv("STRATO_TRIDENT_FAC");
-
-	if (s != NULL && s[0] >= '0' && s[0] <= '9')
-		return s[0] - '0';
-	return 0x02;
-}
-
-/*
- * The minimal relay: leave every NEC glue register exactly as the
- * ITF configured it and only flip what selects the output source -
- * the 98 GDC display element and the 0FACh latch.
- */
-static void
-tg_min_relay_to_accel(void)
-{
-	outp(0x68, 0x0e);	/* GDC display element off */
-	(void)inp(0x5f);
-	(void)inp(0x5f);
-
-	/* NT enable path: GR21 bit5 cleared on the way to the accel. */
-	tg_gfx_write(0x21, tg_gfx_read(0x21) & ~0x20);
-
-	outp(0x0fac, tg_fac_value());
-
-	/*
-	 * NT strobes SDAC[00h] bit6 right after the relay latch -
-	 * it looks like a "load settings" pulse for the DAC glue.
-	 */
-	tg_sdac_write(0x00, tg_sdac_read(0x00) | 0x40);
-	tg_wait_ms(1);
-	tg_sdac_write(0x00, tg_sdac_read(0x00) & ~0x40);
-
-	/* Overscan black, ATC output enabled. */
-	tg_attr_write(0x31, 0x00);
-	(void)tg_inb(tdisp.io_3da);
-	tg_outb(tdisp.io_3c0, 0x20);
-}
-
-static void
-tg_min_relay_to_gdc(void)
-{
-	outp(0x0fac, 0x00);
-	(void)inp(0x5f);
-	(void)inp(0x5f);
-
-	/* NT disable path: GR21 bit5 set on the way back to the GDC. */
-	tg_gfx_write(0x21, tg_gfx_read(0x21) | 0x20);
-
-	outp(0x68, 0x0f);	/* GDC display element on */
-}
-
 static void
 tg_relay_to_accel(void)
 {
 	hal_log_info("TRIDENT: relay: 0FACh reads %02Xh, "
-		     "SDAC[04]=%02Xh; switching to the accelerator "
-		     "(%s sequence).",
-		     inp(0x0fac), tg_sdac_read(0x04),
-		     tg_relay_policy() == TG_RELAY_XF98 ? "XF98" :
-		     tg_relay_policy() == TG_RELAY_NT ? "NT" :
-		     "minimal");
+		     "SDAC[04]=%02Xh; switching (SDAC path).",
+		     inp(0x0fac), tg_sdac_read(0x04));
 
-	switch (tg_relay_policy()) {
-	case TG_RELAY_XF98:
-		tg_relay_to_accel_xf98();
-		break;
-	case TG_RELAY_NT:
-		tg_nt_relay_to_accel();
-		break;
-	default:
-		tg_min_relay_to_accel();
-		break;
-	}
-
-	hal_log_info("TRIDENT: relay: 0FACh now reads %02Xh, "
-		     "GR24=%02Xh GR33=%02Xh SDAC[04]=%02Xh.",
-		     inp(0x0fac), tg_gfx_read(0x24),
-		     tg_gfx_read(0x33), tg_sdac_read(0x04));
-}
-
-static void
-tg_relay_to_gdc(void)
-{
-	switch (tg_relay_policy()) {
-	case TG_RELAY_XF98:
-		tg_relay_to_gdc_xf98();
-		break;
-	case TG_RELAY_NT:
-		tg_nt_relay_to_gdc();
-		break;
-	default:
-		tg_min_relay_to_gdc();
-		break;
-	}
-}
-
-/*
- * Wait for n vertical sync periods by watching Input Status 1 bit3.
- * NEC's NT driver steps the sync power sequence in units of whole
- * frames, so this is load-bearing, not cosmetic.  Timeouts (~25ms
- * per phase, counted in 5Fh wait-port reads) keep a dead or
- * blank-screen chip from hanging the machine.
- */
-static void
-tg_wait_frames(int n)
-{
-	long guard;
-
-	while (n-- > 0) {
-		guard = 40000L;
-		while ((tg_inb(tdisp.io_3da) & 0x08) != 0 && guard-- > 0)
-			(void)inp(0x5f);
-		guard = 40000L;
-		while ((tg_inb(tdisp.io_3da) & 0x08) == 0 && guard-- > 0)
-			(void)inp(0x5f);
-	}
-}
-
-/*
- * The undocumented indexed 16-bit interface at 8F0h (index) / 8F2h
- * (data) that NEC's NT driver brackets the relay with.  Real port
- * I/O, not a chip register.
- */
-static void
-tg_8f0_rmw(int idx, int and_mask, int or_bits)
-{
-	unsigned v;
-
-	outpw(0x08f0, (unsigned)idx);
-	v = inpw(0x08f2);
-	outpw(0x08f2, (v & (unsigned)and_mask) | (unsigned)or_bits);
-}
-
-/*
- * The register-script interpreter matching the NT driver's triplet
- * tables: each entry is (selector, mask-or-index, value).
- *   selector 00h-4Fh : CRTC reg, new = (val & mask) | (old & ~mask)
- *   selector 50h-6Fh : shadow CRTC at 3A4h (reg - 50h), gated by
- *                      GR30 bit6 which is restored afterwards
- *   selector 70h-DFh : GR reg (selector - 70h)
- *   selector F0h     : wait <value> vsync frames
- *   selector F2h     : SYNCDAC[<mask>] = value (direct)
- *   selector F3h/F4h : MCLK / VCLK pair (43C6h,43C7h / 43C8h,43C9h)
- */
-static void
-tg_apply_triplets(const uint8_t *t, int n, const char *tag)
-{
-	int sel, mask, val, old, gr30;
-
-	hal_log_info("TRIDENT: applying %s (%d entries).", tag, n);
-	for (; n-- > 0; t += 3) {
-		sel = t[0];
-		mask = t[1];
-		val = t[2];
-
-		if (sel < 0x50) {
-			if (sel == 0x11) {
-				/* respect the CR0-7 protect bit */
-				old = tg_crtc_read(0x11);
-				tg_crtc_write(0x11, (val & mask) |
-						    (old & ~mask));
-				continue;
-			}
-			old = tg_crtc_read(sel);
-			tg_crtc_write(sel, (val & mask) | (old & ~mask));
-		} else if (sel < 0x70) {
-			gr30 = tg_gfx_read(0x30);
-			if ((gr30 & 0x40) == 0)
-				tg_gfx_write(0x30, gr30 | 0x40);
-			tg_outb(0x03a4, sel - 0x50);
-			old = tg_inb(0x03a5);
-			tg_outb(0x03a5, (val & mask) | (old & ~mask));
-			if ((gr30 & 0x40) == 0)
-				tg_gfx_write(0x30, gr30);
-		} else if (sel < 0xe0) {
-			old = tg_gfx_read(sel - 0x70);
-			tg_gfx_write(sel - 0x70,
-				     (val & mask) | (old & ~mask));
-		} else if (sel == 0xf0) {
-			tg_wait_frames(val);
-		} else if (sel == 0xf2) {
-			tg_sdac_write(mask, val);
-		} else if (sel == 0xf3) {
-			tg_outb(tdisp.io_vclk - 2, mask);
-			tg_outb(tdisp.io_vclk - 1, val);
-		} else if (sel == 0xf4) {
-			tg_outb(tdisp.io_vclk, mask);
-			tg_outb(tdisp.io_vclk + 1, val);
-		}
-	}
-}
-
-/*
- * The tables below are byte-exact extractions from NEC's NT4
- * trident.sys (.data), re-encoded for the interpreter above (the
- * binary uses high-nibble dispatch; here CRTC = raw index, shadow
- * CRTC = +50h, GR = +70h).
- */
-
-
-
-
-
-/*
- * Monitor sense, NT style: GR42 bit7, mapped through the machine
- * type 27h row of the NT code table (93h = one monitor family,
- * 13h = the other).  The code is then folded back into GR42/GR43
- * and SR0F bit2 is cleared, exactly as the NT driver does.
- */
-static int
-tg_nt_monitor_sense(void)
-{
-	int code, v;
-
-	code = (tg_gfx_read(0x42) & 0x80) ? 0x13 : 0x93;
-
-	v = tg_gfx_read(0x42);
-	tg_gfx_write(0x42, (v & 0x0f) | ((code & 0x0f) << 4));
-	v = tg_gfx_read(0x43);
-	tg_gfx_write(0x43, (v & 0x07) | (code & 0xf8));
-	tg_seq_write(0x0f, tg_seq_read(0x0f) & ~0x04);
-
-	hal_log_info("TRIDENT: monitor sense: GR42 bit7 -> code %02Xh.",
-		     code);
-	return code;
-}
-
-/* Enable the sync outputs (NT display-on path). */
-static void
-tg_nt_sync_on(void)
-{
-	int i;
-
-	tg_gfx_write(0x33, tg_gfx_read(0x33) | 0x20);
-	tg_apply_triplets(tg_glue_sync_on,
-			  sizeof(tg_glue_sync_on) / 3, "sync-on script");
-
-	/* GR5A scratch flags, as the NT driver maintains them. */
-	tg_gfx_write(0x5a, (tg_gfx_read(0x5a) & ~0x04) | 0x03);
-
-	/* Wait for the settle flag (GR23 bit4), max ~15 frames. */
-	tg_wait_frames(1);
-	for (i = 0; i < 15; i++) {
-		if ((tg_gfx_read(0x23) & 0x10) == 0)
-			break;
-		tg_wait_frames(1);
-	}
-	hal_log_info("TRIDENT: sync-on settled after %d extra "
-		     "frame(s), GR23=%02Xh.", i, tg_gfx_read(0x23));
-}
-
-/* Disable the sync outputs (NT display-off path). */
-static void
-tg_nt_sync_off(void)
-{
-	tg_apply_triplets(tg_glue_sync_off,
-			  sizeof(tg_glue_sync_off) / 3, "sync-off script");
-	tg_gfx_write(0x5a, (tg_gfx_read(0x5a) & ~0x03) | 0x04);
-}
-
-/*
- * The NT relay to the accelerator (trident.sys 10F04h, byte-faithful
- * where possible; the 0x21-byte table copies are pre-baked above).
- */
-static void
-tg_nt_relay_to_accel(void)
-{
-	int code;
-
-	/* Bracket open on the undocumented 8F0h interface. */
-	tg_8f0_rmw(0x52, 0xffff, 0x0080);
-
-	/* 98 GDC display element off. */
-	outp(0x68, 0x0e);
-	outp(0x6a, 0x07);
-	outp(0x6a, 0x8f);
-	outp(0x6a, 0x06);
+	outp(0x68, 0x0e);	/* GDC display element off */
 	(void)inp(0x5f);
 	(void)inp(0x5f);
-	(void)inp(0x5f);
+	tg_gfx_write(0x21, tg_gfx_read(0x21) & ~0x20);
 
-	/* Re-assert video subsystem enable through the register path. */
-	tg_outb(tdisp.io_3c0 + 0x03, 0x01);	/* 3C3h */
-	tg_outb(0x46e8, 0x08);
-	tg_misc_write(tg_misc_read() | 0x01);
-	tg_seq_write(0x0f, tg_seq_read(0x0f) & ~0x10);
-
-	/* Sync path handover. */
+	/* The XF98 SDAC[04] sync path (the load-bearing part). */
 	tg_crtc_write(0x23, tg_crtc_read(0x23) & ~0x20);
-	tg_gfx_write(0x2c, tg_gfx_read(0x2c) | 0x06);
-	tg_gfx_write(0x21, tg_gfx_read(0x21) & ~0x28);
-	tg_wait_ms(2);
-
-	code = tg_nt_monitor_sense();
-
-	/* The relay latch: NT writes 03h here, not XF98's 02h. */
-	outp(0x0fac, 0x03);
-	if (code != 0x93) {
-		outp(0x0faa, 0x84);
-		outp(0x0fab, inp(0x0fab) | 0x11);
-		hal_log_info("TRIDENT: relay: FAA[84h] |= 11h "
-			     "(monitor code %02Xh).", code);
-	}
-	(void)inp(0x5f);
-	(void)inp(0x5f);
-	(void)inp(0x5f);
-
-	/* Bracket close. */
-	tg_8f0_rmw(0x60, 0xffef, 0x0000);
-
-	/* Overscan black; keep the ATC video output enabled. */
-	tg_attr_write(0x31, 0x00);
-	(void)tg_inb(tdisp.io_3da);
-	tg_outb(tdisp.io_3c0, 0x20);
-
-	/* Sync outputs up, one bit per frame. */
-	tg_nt_sync_on();
-}
-
-/* The NT relay back to the 98 GDC (trident.sys 11109h). */
-static void
-tg_nt_relay_to_gdc(void)
-{
-	int code;
-
-	/* Sync outputs down first (NT display-off path). */
-	tg_nt_sync_off();
-
-	tg_8f0_rmw(0x60, 0xffff, 0x0010);
-	tg_8f0_rmw(0x52, 0xffff, 0x0080);
-
-	/* Overscan black. */
-	tg_attr_write(0x11, 0x00);
-
-	tg_sw_new();
-	tg_seq_write(0x0e, tg_seq_read(0x0e) | 0x80);
-
-	tg_crtc_write(0x23, tg_crtc_read(0x23) | 0x20);
-	(void)inp(0x5f);
-	(void)inp(0x5f);
-	(void)inp(0x5f);
-
-	/* 98 GDC display element on. */
-	outp(0x6a, 0x07);
-	outp(0x6a, 0x8e);
-	outp(0x6a, 0x06);
-	(void)inp(0x5f);
-	(void)inp(0x5f);
-	(void)inp(0x5f);
-
-	tg_gfx_write(0x2c, tg_gfx_read(0x2c) | 0x06);
-
-	code = (tg_gfx_read(0x42) & 0x80) ? 0x13 : 0x93;
-	outp(0x0fac, 0x00);
-	if (code != 0x93) {
-		outp(0x0faa, 0x84);
-		outp(0x0fab, inp(0x0fab) & ~0x11);
-	}
-	(void)inp(0x5f);
-	(void)inp(0x5f);
-	(void)inp(0x5f);
-
-	if (code == 0x93)
-		tg_wait_ms(16);		/* the NT extra settle */
-	tg_wait_ms(4);
-
-	outp(0x68, 0x0f);
-	tg_8f0_rmw(0x52, 0xff7f, 0x0000);
-}
-
-/*****************************************************************************/
-/* Video output relay - XF98 variant (pc98_tgui.c crtswNEC96xx())            */
-/*****************************************************************************/
-
-static void
-tg_relay_to_accel_xf98(void)
-{
-	/* 1. The 98 GDC side off (crtswNECGen(1)). */
-	outp(0x68, 0x0e);
-	outp(0x6a, 0x07);
-	outp(0x6a, 0x8f);
-	outp(0x6a, 0x06);
-	if (tdisp.hsync31 == 0)
-		outp(0x09a8, 0x01);	/* 24.8kHz -> 31.5kHz */
-
-	/* 2. The Trident sync path on (crtswTGUiGen(1)). */
-	tg_sw_new();
-	tg_select_crtc(tg_misc_read());
-	tg_crtc_write(0x23, tg_crtc_read(0x23) & 0xdf);
 	tg_crtc_write(0x29, tg_crtc_read(0x29) | 0x04);
-
 	tg_sdac_write(0x04, tg_sdac_read(0x04) | 0x06);
 	tg_wait_ms(1);
 	tg_sdac_write(0x04, tg_sdac_read(0x04) | 0x08);
@@ -2830,36 +3080,263 @@ tg_relay_to_accel_xf98(void)
 	tg_sdac_write(0x04, tg_sdac_read(0x04) | 0x01);
 	tg_seq_write(0x01, tg_seq_read(0x01) & ~0x10);
 
-	/* 3. The relay latch. */
 	outp(0x0fac, 0x02);
+
+	hal_log_info("TRIDENT: relay: 0FACh now reads %02Xh, "
+		     "SDAC[04]=%02Xh.",
+		     inp(0x0fac), tg_sdac_read(0x04));
 }
 
 static void
-tg_relay_to_gdc_xf98(void)
+tg_relay_to_gdc(void)
 {
-	/* 1. The relay latch back. */
 	outp(0x0fac, 0x00);
 
-	/* 2. The Trident sync path off (crtswTGUiGen(0)). */
-	tg_sw_new();
-	tg_select_crtc(tg_misc_read());
+	/* SDAC sync path off (mirror). */
 	tg_seq_write(0x01, tg_seq_read(0x01) | 0x10);
-	tg_sdac_write(0x04, tg_sdac_read(0x04) & ~0x01);
+	tg_sdac_write(0x04, tg_sdac_read(0x04) & ~0x0f);
 	tg_gfx_write(0x23, 0x01 | (tg_gfx_read(0x23) & ~0x03));
-	tg_sdac_write(0x04, tg_sdac_read(0x04) & ~0x02);
-	tg_sdac_write(0x04, tg_sdac_read(0x04) & ~0x30);
-	tg_sdac_write(0x04, tg_sdac_read(0x04) & ~0x08);
-	tg_sdac_write(0x04, tg_sdac_read(0x04) & ~0x04);
 	tg_crtc_write(0x29, tg_crtc_read(0x29) & ~0x04);
 	tg_crtc_write(0x23, tg_crtc_read(0x23) | 0x20);
 
-	/* 3. The 98 GDC side on (crtswNECGen(0)). */
-	if (tdisp.hsync31 == 0)
-		outp(0x09a8, 0x00);	/* back to 24.8kHz */
-	outp(0x6a, 0x07);
-	outp(0x6a, 0x8e);
-	outp(0x6a, 0x06);
-	outp(0x68, 0x0f);
+	tg_gfx_write(0x21, tg_gfx_read(0x21) | 0x20);
+	outp(0x68, 0x0f);	/* GDC display element on */
+}
+
+/*****************************************************************************/
+/* Fetch-path experiment (runs automatically; key press to advance)          */
+/*****************************************************************************/
+
+/*
+ * Five registers differ between the XF98 recipe and the ITF state,
+ * and neither endpoint works (see the header).  This walks the
+ * combinations from the most likely fix downward.
+ */
+
+struct tg_fetch_combo {
+	const char *name;
+	uint8_t cr1e;		/* absolute value; 0 = keep the ITF value */
+	uint8_t cr2a_or;	/* OR onto the ITF value */
+	uint8_t cr2f_or;	/* OR onto the ITF value */
+	int gr0f_ext;		/* 1: (itf & F0h) | 12h, 0: the ITF value */
+	int gr2f_set;		/* 1: write 24h, 0: the ITF value */
+};
+
+static const struct tg_fetch_combo tg_fetch_combos[] = {
+	/* 0: the prime suspect fix: XF98 minus CR2A bit6. */
+	{ "XF98 minus CR2A.6",		0x80, 0x00, 0x10, 1, 1 },
+	/* 1: minimum extension: ITF + CR1E only. */
+	{ "ITF + CR1E=80h",		0x80, 0x00, 0x00, 0, 0 },
+	/* 2: ITF + GR0F ext only. */
+	{ "ITF + GR0F ext",		0x00, 0x00, 0x00, 1, 0 },
+	/* 3: CR1E + GR0F, no CR2A.6, no GR2F. */
+	{ "CR1E + GR0F ext",		0x80, 0x00, 0x00, 1, 0 },
+	/* 4: 3 + GR2F=24h. */
+	{ "CR1E + GR0F + GR2F",		0x80, 0x00, 0x00, 1, 1 },
+	/* 5: full XF98 (the striped baseline, for comparison). */
+	{ "full XF98 (stripes?)",	0x80, 0x40, 0x10, 1, 1 },
+	/* 6: full ITF (the blue-only baseline, for comparison). */
+	{ "full ITF (blue?)",		0x00, 0x00, 0x00, 0, 0 }
+};
+#define TG_NFETCH \
+	(int)(sizeof(tg_fetch_combos) / sizeof(tg_fetch_combos[0]))
+
+/* The ITF values, captured before the first combo is applied. */
+static uint8_t tg_itf_cr1e, tg_itf_cr2a, tg_itf_cr2f;
+static uint8_t tg_itf_gr0f, tg_itf_gr2f;
+
+static void
+tg_fetch_capture_itf(void)
+{
+	tg_itf_cr1e = (uint8_t)tg_crtc_read(0x1e);
+	tg_itf_cr2a = (uint8_t)tg_crtc_read(0x2a);
+	tg_itf_cr2f = (uint8_t)tg_crtc_read(0x2f);
+	tg_itf_gr0f = (uint8_t)tg_gfx_read(0x0f);
+	tg_itf_gr2f = (uint8_t)tg_gfx_read(0x2f);
+	hal_log_info("TRIDENT-F: ITF fetch state: CR1E=%02Xh "
+		     "CR2A=%02Xh CR2F=%02Xh GR0F=%02Xh GR2F=%02Xh.",
+		     tg_itf_cr1e, tg_itf_cr2a, tg_itf_cr2f,
+		     tg_itf_gr0f, tg_itf_gr2f);
+}
+
+static void
+tg_fetch_apply(const struct tg_fetch_combo *c)
+{
+	tg_crtc_write(0x1e, c->cr1e ? c->cr1e : tg_itf_cr1e);
+	tg_crtc_write(0x2a, tg_itf_cr2a | c->cr2a_or);
+	tg_crtc_write(0x2f, tg_itf_cr2f | c->cr2f_or);
+	if (c->gr0f_ext)
+		tg_gfx_write(0x0f, (tg_itf_gr0f & 0xf0) | 0x12);
+	else
+		tg_gfx_write(0x0f, tg_itf_gr0f);
+	if (c->gr2f_set)
+		tg_gfx_write(0x2f, 0x24);
+	else
+		tg_gfx_write(0x2f, tg_itf_gr2f);
+
+	hal_log_info("TRIDENT-F: applied: CR1E=%02Xh CR2A=%02Xh "
+		     "CR2F=%02Xh GR0F=%02Xh GR2F=%02Xh.",
+		     tg_crtc_read(0x1e), tg_crtc_read(0x2a),
+		     tg_crtc_read(0x2f), tg_gfx_read(0x0f),
+		     tg_gfx_read(0x2f));
+}
+
+/*
+ * Draw eight color bars + a grayscale gradient strip at the bottom,
+ * byte-lane writes only (the aperture is byte-only on this board).
+ * Correct rendering: white, yellow, cyan, green, magenta, red,
+ * blue, black, darker every 16 lines.
+ */
+#if TG_FETCH_EXPERIMENT
+/* Generate one row of the test pattern in the mode's pixel format. */
+static void
+tg_fetch_row(int y, uint8_t *dst)
+{
+	static const uint8_t rgb[8][3] = {
+		{255,255,255}, {255,255,0}, {0,255,255}, {0,255,0},
+		{255,0,255},   {255,0,0},   {0,0,255},   {0,0,0}
+	};
+	int x, bar;
+
+	for (x = 0; x < tdisp.scr_w; x++) {
+		uint8_t r, g, b;
+
+		if (y >= tdisp.scr_h - 64) {
+			/* bottom strip: gradient */
+			r = g = b = (uint8_t)
+				((x * 255) / (tdisp.scr_w - 1));
+		} else {
+			bar = (x * 8) / tdisp.scr_w;
+			if (bar > 7)
+				bar = 7;
+			r = rgb[bar][0];
+			g = rgb[bar][1];
+			b = rgb[bar][2];
+			if (y & 0x10) {
+				r >>= 1;
+				g >>= 1;
+				b >>= 1;
+			}
+		}
+
+		if (tdisp.bpp == 24) {
+			dst[x * 3 + 0] = b;
+			dst[x * 3 + 1] = g;
+			dst[x * 3 + 2] = r;
+		} else if (tdisp.bpp == 16) {
+			unsigned p = ((r & 0xf8) << 8) |
+				     ((g & 0xfc) << 3) |
+				     (b >> 3);
+			dst[x * 2 + 0] = (uint8_t)p;
+			dst[x * 2 + 1] = (uint8_t)(p >> 8);
+		} else {
+			dst[x] = (uint8_t)((r & 0xe0) |
+				((g >> 3) & 0x1c) | (b >> 6));
+		}
+	}
+}
+
+/*
+ * Draw the test pattern.  With the engine up this goes through the
+ * CPU-source FIFO BLT and doubles as the end-to-end proof of that
+ * path (this is the definitive test when the aperture cannot be
+ * read back); otherwise it falls back to direct aperture stores.
+ */
+static void
+tg_fetch_pattern(void)
+{
+	int y, rowlen;
+
+	rowlen = tdisp.scr_w * (tdisp.bpp / 8);
+
+#if TG_TRY_GE
+	if (tdisp.use_ge && tg_ge_wait("fetch pattern")) {
+		int i;
+
+		tg_ge_out8(0x27, 0xcc);
+		tg_ge_out32(0x28, 0x00000000UL);
+		tg_ge_out16(0x38, 0);
+		tg_ge_out16(0x40, tdisp.scr_w * tdisp.ge_xmul - 1);
+		tg_ge_out16(0x42, 0);		/* one row per op */
+		for (y = 0; y < tdisp.scr_h; y++) {
+			tg_fetch_row(y, tg_rowbuf);
+			tg_ge_out16(0x3a, y);
+			tg_ge_out8(0x24, 0x01);
+			if (!tg_ge_wait("fetch pattern data"))
+				return;
+			if (tdisp.aper_width == 1) {
+				volatile uint8_t *out = tdisp.fb;
+
+				for (i = 0; i < rowlen; i++)
+					out[i] = tg_rowbuf[i];
+			} else {
+				volatile uint32_t *out =
+					(volatile uint32_t *)tdisp.fb;
+				const uint32_t *in =
+					(const uint32_t *)tg_rowbuf;
+				int n = rowlen / 4;
+
+				for (i = 0; i < n; i++)
+					out[i] = in[i];
+			}
+		}
+		(void)tg_ge_wait("fetch pattern end");
+		return;
+	}
+#endif /* TG_TRY_GE */
+
+	/* Fallback: verified direct row stores through the aperture. */
+	for (y = 0; y < tdisp.scr_h; y++) {
+		tg_fetch_row(y, tg_rowbuf);
+		(void)tg_store_verified(tdisp.fb +
+					(uint32_t)y * tdisp.pitch,
+					tg_rowbuf, rowlen);
+	}
+}
+
+/*
+ * The experiment driver: called once after the relay and the VRAM
+ * clear.  Unblanks, steps through the combos (key press to
+ * advance), leaves combo 0 in force at the end.
+ */
+static void
+tg_fetch_experiment(void)
+{
+	int i;
+
+	tg_fetch_capture_itf();
+	tg_seq_write(0x01, tg_seq_read(0x01) & ~0x20);	/* unblank */
+
+	for (i = 0; i < TG_NFETCH; i++) {
+		hal_log_info("TRIDENT-F: === combo %d: %s ===",
+			     i, tg_fetch_combos[i].name);
+		tg_fetch_apply(&tg_fetch_combos[i]);
+		tg_fetch_pattern();
+		hal_log_info("TRIDENT-F: combo %d on screen -- press "
+			     "a key for the next.", i);
+		(void)getch();
+	}
+
+	/* Leave the most likely candidate (combo 0) in force. */
+	hal_log_info("TRIDENT-F: sequence done; re-applying combo 0.");
+	tg_fetch_apply(&tg_fetch_combos[0]);
+	tg_fetch_pattern();
+}
+#endif /* TG_FETCH_EXPERIMENT */
+
+/*
+ * The production path: apply combo 0 (the fetch state under which
+ * the Ra43 field test showed a pixel-perfect picture) and unblank.
+ * No bars, no key presses.
+ */
+static void
+tg_fetch_apply_default(void)
+{
+	tg_fetch_capture_itf();
+	tg_fetch_apply(&tg_fetch_combos[0]);
+	hal_log_info("TRIDENT: fetch path = combo 0 (%s), the "
+		     "Ra43-proven state.", tg_fetch_combos[0].name);
+	/* NOTE: does not unblank - the caller clears first. */
 }
 
 /*****************************************************************************/
@@ -2868,9 +3345,8 @@ tg_relay_to_gdc_xf98(void)
 
 /*
  * Save ranges follow NEC's own NT driver, which snapshots CRTC
- * 00h-50h and GR 00h-5Fh (we take 00h-6Fh: the NEC sync glue also
- * writes GR60h-6Dh) plus the clocks.  The 3A4h shadow CRTC bank is
- * saved too since the sync glue programs it.
+ * 00h-50h and GR 00h-5Fh (we take 00h-6Fh) plus the clocks.  The
+ * 3A4h shadow CRTC bank is saved too.
  */
 static uint8_t sv_crtc[0x51];
 static uint8_t sv_sr[0x10];		/* new mode; 0Bh skipped */
