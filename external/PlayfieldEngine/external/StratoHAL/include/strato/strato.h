@@ -626,6 +626,16 @@ hal_create_image_with_webp(
 	struct hal_image **img);
 
 /*
+ * Create an image with a HCG file.
+ */
+HAL_DLL
+bool
+hal_create_image_with_hcg(
+	const uint8_t *data,
+	size_t size,
+	struct hal_image **img);
+
+/*
  * Destroy an image.
  */
 HAL_DLL
@@ -998,10 +1008,18 @@ hal_notify_image_free(
 	struct hal_image *img);
 
 /*
- * Write an image to a file.
+ * Write an image to a file. (PNG)
  */
 bool
 hal_write_image(
+	struct hal_image *image,
+	struct hal_wfile *wf);
+
+/*
+ * Write an image to a file. (HCG)
+ */
+bool
+hal_write_image_hcg(
 	struct hal_image *image,
 	struct hal_wfile *wf);
 

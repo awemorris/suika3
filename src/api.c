@@ -151,6 +151,7 @@ static bool Suika_drawImage3D(void *p);
 static bool Suika_makeColor(void *p);
 static bool Suika_fillImageRect(void *p);
 static bool Suika_writeImage(void *p);
+static bool Suika_writeImageHCG(void *p);
 
 /* Stage */
 static bool Suika_reloadStageImages(void *p);
@@ -519,6 +520,7 @@ static struct api_func api_func[] = {
 	{"makeColor",			Suika_makeColor,		1, dict_param},
 	{"fillImageRect",		Suika_fillImageRect,		1, dict_param},
 	{"writeImage",			Suika_writeImage,		1, dict_param},
+	{"writeImageHCG",		Suika_writeImageHCG,		1, dict_param},
 
 	/* Stage */
 	{"reloadStageImages",		Suika_reloadStageImages,	0, NULL},
@@ -3089,7 +3091,6 @@ Suika_updateImagePixels(void *p)
 {
 	int image;
 	struct s3_image *img;
-	int val;
 	bool ret;
 
 	UNUSED_PARAMETER(p);
@@ -3119,7 +3120,6 @@ Suika_updateImagePixels(void *p)
 static bool
 Suika_makePixel(void *p)
 {
-	NoctEnv *env;
 	uint32_t r, g, b, a, pix;
 	bool ret;
 
@@ -3137,16 +3137,10 @@ Suika_makePixel(void *p)
 		if (!pf_get_call_arg_int("a", (int *)&a, false, -1))
 			break;
 
-		if (r < 0)
-			r = 0;
 		if (r > 255)
 			r = 255;
-		if (g < 0)
-			g = 0;
 		if (g > 255)
 			g = 255;
-		if (b < 0)
-			b = 0;
 		if (b > 255)
 			b = 255;
 
@@ -3555,6 +3549,46 @@ Suika_writeImage(void *p)
 			break;
 
 		if (!s3_write_image(img, file))
+			break;
+
+		/* Set the return value. */
+		if (!pf_set_return_int(1))
+			break;
+
+		ret = true;
+	} while (0);
+
+	if (file != NULL)
+		free(file);
+
+	return ret;
+}
+
+static bool
+Suika_writeImageHCG(void *p)
+{
+	int image;
+	char *file;
+
+	struct s3_image *img;
+	bool ret;
+
+	UNUSED_PARAMETER(p);
+
+	ret = false;
+	file = NULL;
+	do {
+		/* Get the argument. */
+		if (!pf_get_call_arg_int("image", &image, false, -1))
+			break;
+		if (!pf_get_call_arg_string("file", &file, false, NULL))
+			break;
+
+		img = s3i_int_to_image(image);
+		if (img == NULL)
+			break;
+
+		if (!s3_write_image_hcg(img, file))
 			break;
 
 		/* Set the return value. */

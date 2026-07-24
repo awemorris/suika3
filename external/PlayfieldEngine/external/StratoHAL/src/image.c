@@ -1966,3 +1966,85 @@ hal_create_image_with_webp(
 }
 
 #endif /* !defined(HAL_TARGET_PC98) && !defined(HAL_TARGET_PCAT) */
+
+/*
+ * HCG Image
+ */
+
+#undef HCG_ENABLED
+
+bool hcg_decode(const uint8_t *data_ptr, size_t data_size, uint32_t **dst_pixels, size_t *dst_width, size_t *dst_height);
+bool hcg_encode(uint32_t *src_ptr, size_t src_width, size_t src_height, void (*output_func)(void *ptr, size_t size, void *arg), void *arg);
+static void hcg_output_handler(void *ptr, size_t size, void *arg);
+
+/*
+ * Create an image with an HCG file.
+ */
+bool
+hal_create_image_with_hcg(
+	const uint8_t *data,
+	size_t size,
+	struct hal_image **img)
+{
+#ifdef HCG_ENABLED
+	uint32_t *pixels, *src, *dst;
+	size_t width, height, y, x;
+
+	/* Decode. */
+	if (!hcg_decode(data, size, &pixels, &width, &height))
+		return false;
+
+	/* Create an image. */
+	if (!hal_create_image((int)width, (int)height, img))
+		return false;
+
+	src = pixels;
+	dst = (*img)->pixels;
+	for (y = 0; y < height; y++)
+		for (x = 0; x < width; x++)
+			*dst++ = *src++;
+	free(pixels);
+			
+	return true;
+#else
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(size);
+	UNUSED_PARAMETER(img);
+
+	return false;
+#endif
+}
+
+/*
+ * Write an image to an HCG file.
+ */
+bool
+hal_write_image_hcg(
+	struct hal_image *image,
+	struct hal_wfile *wf)
+{
+#ifdef HCG_ENABLED
+	if (!hcg_encode(image->pixels,
+			(size_t)image->width,
+			(size_t)image->height,
+			hcg_output_handler,
+			wf))
+		return false;
+
+	return true;
+#else
+	return false;
+#endif
+}
+
+#ifdef HCG_ENABLED
+void hcg_output_handler(void *ptr, size_t size, void *arg)
+{
+	struct hal_wfile *wf;
+	size_t ret;
+
+	wf = (struct hal_wfile *) arg;
+
+	hal_write_wfile_plain(wf, ptr, size, &ret);
+}
+#endif

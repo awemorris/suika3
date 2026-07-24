@@ -1019,6 +1019,7 @@ if(   SUIKA_TARGET_LINUX
    OR SUIKA_TARGET_GENERICUNIX
    OR SUIKA_TARGET_HAIKU)
   target_link_libraries(suika3 PRIVATE m)
+  target_link_libraries(suika3 PRIVATE zstd)
 endif()
 
 # Emscripten

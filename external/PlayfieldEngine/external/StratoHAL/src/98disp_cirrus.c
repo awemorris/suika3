@@ -30,7 +30,7 @@
 
 /*
  * ===========================================================================
- * PC-9821 Graphics Architecture
+ * PC-9821 Graphics Architecture: WAB vs. PCI/BAR Access
  * ===========================================================================
  *
  * PC-9821 accelerators are classified by BOTH the graphics chip and
@@ -209,9 +209,221 @@
  *              generation for both LCD and CRT, and the final source
  *              selection (GDC vs Cirrus), 
  *
- *     Our analysis shows GD75xx doesn't have a first-class LFB.  Instead,
- *     CPU-source FIFO is required.  This is due to lack of a nice arbitrator
- *     for the Cirrus VRAM.
+ *     Normal frame submission on the verified Nb10 uses the CPU-source FIFO;
+ *     direct CPU rendering has not been established as a stable game path.
+ *     The NT4 miniport nevertheless writes BAR0+00C00000h directly while
+ *     zeroing vram_size-1 bytes during every accepted mode SET.  The Nb10
+ *     path below therefore keeps FIFO rendering but reproduces those direct
+ *     SET-time zero writes exactly in address, length and sequence position.
+ *
+ * ---------------------------------------------------------------------------
+ * A. Fixed 0FAAh/0FABh interface shared by WAB and Core-Graph machines
+ * ---------------------------------------------------------------------------
+ *
+ * Two-stage indexed I/O:
+ *
+ *   0FAAh = index, 0FABh = data
+ *
+ *   reg00h  machine/interface ID (read only)
+ *   reg01h  legacy bank-window placement
+ *   reg02h  linear-aperture high address byte (physical base = value << 24)
+ *   reg03h  bit1: accelerator output; bit0: register access enable
+ *   reg04h  additional legacy-window selection bits on some machines
+ *
+ * Relocated Cirrus VGA I/O used by the verified GD54xx fixed interface:
+ *
+ *   3C0h-3CFh -> 0CA0h-0CAFh
+ *   3D4h/3D5h -> 0DA4h/0DA5h
+ *   3DAh      -> 0DAAh
+ *   mono CRTC -> 0BA4h/0BA5h, status at 0BAAh
+ *   sleep 3C3h -> 0CA3h
+ *
+ * Some B-MATE/variant machines use another relocation and/or FA2h/FA3h;
+ * those variants remain an open porting item.
+ *
+ * reg01 legacy aperture values seen in NEC documentation/emulators include:
+ *
+ *   10h -> 000B0000h
+ *   A0h -> 00F00000h
+ *   80h -> 00F20000h
+ *   C0h -> 00F40000h
+ *   E0h -> 00F60000h
+ *
+ * The bank registers are standard Cirrus GR09/GR0A.  GR0B bit5 selects
+ * 16KB bank units.  Do not confuse GR09 with an aperture-enable register:
+ * it changes the VRAM offset visible through the already selected window.
+ *
+ * reg02 is the NEC linear-window selector.  Writing F0h exposes the linear
+ * host aperture at physical F0000000h on the verified V13.  This fixed
+ * address is not a PCI BAR and does not imply that a 1013:xxxx PCI function
+ * exists.
+ *
+ * ---------------------------------------------------------------------------
+ * B. V13 Core-Graph GD5440: verified facts and interpretation
+ * ---------------------------------------------------------------------------
+ *
+ * Verified PCI enumeration on the test PC-9821 V13:
+ *
+ *   0:0.0  8086:122D class 06h
+ *   0:5.0  1033:0016 class 06h
+ *   0:6.0  1033:0001 class 06h
+ *   0:7.0  1033:0009 class 03h  NEC Core-Graph marker
+ *
+ * No independently enumerable 1013:00A0 GD5440 exists.  The fixed interface
+ * returns ID 5Bh and the relocated Cirrus block returns CR27=A0h.  NEC's
+ * PC-98 display miniport classifies this machine as internal path 08h, rather
+ * than the path-04h banked-WAB route or a normal PCI device.
+ *
+ * The following board-side sequence was recovered from NEC's Windows NT 4.0
+ * CIRRUS.SYS and was reproduced on a real V13.  It is outside the Cirrus VGA
+ * command stream and must precede the vendor mode-register programming:
+ *
+ *   enter accelerator/Core-Graph scanout:
+ *     68h <- 0Eh
+ *     6Ah <- 07h, 8Fh, 06h
+ *     fixed-interface reg03 <- 03h
+ *     5Fh <- 00h twice
+ *     relocated sleep 0CA3h <- 01h
+ *
+ *   return to the 98 GDC:
+ *     relocated sleep 0CA3h <- 00h
+ *     fixed-interface reg03 <- 00h
+ *     5Fh <- 00h
+ *     6Ah <- 07h, 8Eh, 06h
+ *     delay through 5Fh
+ *     68h <- 0Fh
+ *
+ * Documented part of port 006Ah:
+ *
+ *   UNDOCUMENTED 9801/9821 Vol.2, io_disp.txt documents 06h and 07h as
+ *   inhibition/permission of modifications to protected mode flip-flops.
+ *   The same protection state can be queried through the 09A0h status
+ *   mechanism, status selector 08h.  The familiar EGC sequence
+ *   07h -> 05h -> 06h is an established use of this mechanism.
+ *
+ * Important limit of that documentation:
+ *
+ *   io_disp.txt does not mark 8Eh/8Fh as members of the protected-F/F set,
+ *   and its Cirrus VRAM-use description covers GD5428/GD5430, not this
+ *   GD5440 Core-Graph generation.  Therefore it is a verified fact that NEC
+ *   brackets 8Eh/8Fh with 07h/06h here, but it is still an interpretation --
+ *   not a documented specification -- that 8Eh/8Fh themselves require the
+ *   protection window on the V13.
+ *
+ * Hardware observation:
+ *
+ *   Programming the GD5440 and switching reg03 alone produced recognizable
+ *   but continuously drifting scanout with periodic missing pixel groups.
+ *   Replaying the COMPLETE NEC-driver gate sequence made the image stable.
+ *
+ * Likely interpretation (not isolated experimentally):
+ *
+ *   The sequence changes external Core-Graph routing, accelerator/GDC VRAM
+ *   ownership or display-fetch arbitration.  The unstable picture resembled
+ *   a scanout FIFO starvation pattern, but the exact roles of 68h, 5Fh, the
+ *   order of reg03, and the protected 6Ah triplet have not been separated by
+ *   one-at-a-time A/B tests.  Keep the sequence verbatim.  It is included as
+ *   a reference for future S3, Trident, Matrox and NeoMagic Core-Graph ports,
+ *   not as proof that those machines use identical values.
+ *
+ * The recovered path-08h Cirrus mode stream is also board-specific.  For
+ * 640x480 24bpp the verified key state is:
+ *
+ *   SR07=15h  SR0E=60h  SR1E=3Bh  SR17=75h  SR18=00h  SR1F=20h
+ *   MISC=E3h  CR13=00h  CR1B=32h  GR0B=21h  Hidden DAC=E5h
+ *   pitch=2048 bytes (not 640*3)
+ *
+ * SR07's high nibble describes the board memory wiring; copying A5h from a
+ * normally attached PCI Alpine is wrong on this route.  SR17 bit2 and bit6
+ * enable MMIO in the final 256 bytes of the linear aperture.  Direct clears
+ * must not overwrite that area; the visible 640x480x2048 scanout occupies
+ * offsets 000000h-0EFFFFh and is safe.
+ *
+ * ---------------------------------------------------------------------------
+ * C. VRAM aperture and CPU-source BitBLT FIFO: both verified on the V13
+ * ---------------------------------------------------------------------------
+ *
+ * The Core-Graph gate sequence was the missing prerequisite for normal host
+ * access.  With it active, reg02=F0h exposes a working 1MB linear framebuffer
+ * at physical F0000000h, and direct CPU rendering is stable on real hardware.
+ *
+ * The SAME host window also feeds a Cirrus MEMSYSSRC system-to-screen BLT.
+ * There is no separate S3-style I/O pixel-transfer port: while the BLT waits
+ * for source data, memory writes to the host aperture are consumed by its
+ * source FIFO; while the BLT is idle, ordinary writes reach VRAM.
+ *
+ * Verified V13 behavior:
+ *
+ *   - reg02=F0h/F0000000h works as a direct linear framebuffer after the
+ *     NEC-driver board sequence has selected the accelerator path.
+ *   - the same reg02 window satisfies MEMSYSSRC CPU-source BLTs.
+ *   - reg01=A0h/F00000h did not satisfy that FIFO transfer; GR31 remained
+ *     0Bh waiting for source data.
+ *   - 1-byte and 2-byte FIFO writes did not complete a 921600-byte transfer.
+ *   - 4-byte writes completed after exactly 230400 dword cycles.
+ *
+ * FIFO submission on this path therefore uses 32-bit writes.  The proven FIFO
+ * implementation remains as a fallback and hardware oracle; select it with
+ * STRATO_CIRRUS_HOST=fifo.  Direct VRAM aperture rendering is the default.
+ *
+ * Before direct aperture access, reset the BLT engine with GR31 04h->00h.
+ * An interrupted system-source BLT would otherwise steal framebuffer writes
+ * and make a valid aperture appear broken.  With SR17=75h, also avoid the
+ * MMIO block in the final 256 bytes of the 1MB host window.
+ *
+ * ---------------------------------------------------------------------------
+ * D. Physical WAB/fixed-interface path
+ * ---------------------------------------------------------------------------
+ *
+ * Physical/older machines may require the WAB wake controls:
+ *
+ *   0904h bit5, FF82h bit0, relocated sleep bit0 and the 6Ah ownership path.
+ *
+ * The 32KB reg01 window is used with GR09 bank changes.  The driver preserves
+ * and restores every board register instead of writing fixed cleanup values.
+ * PCI-era WAB-emulation systems may additionally use 0FACh.  Do not infer the
+ * necessary relay/gate sequence solely from chip vendor/device IDs; use the
+ * machine ID and, where available, the NEC driver dispatch path.
+ *
+ * ---------------------------------------------------------------------------
+ * E. Independently visible PCI Cirrus
+ * ---------------------------------------------------------------------------
+ *
+ * Desktop GD543x/5446/5480 parts use their PCI BAR directly.  They can use
+ * either direct aperture writes (default) or the retained CPU-source FIFO.
+ * NP21/W's PCI GD5446 has verified the common FIFO code and direct BAR path.
+ *
+ * The Nb10 is different: Core-Graph still owns the DOS text/16-color path,
+ * while GD7548 is independently visible as 1013:0038.  The GD7548 host/VRAM
+ * aperture used by CIRRUS.SYS is at BAR0+0C00000h, not BAR0+0; cirrus.dll also
+ * obtains a 256-byte public MMIO page at BAR0+0DFFF00h.  This file reproduces
+ * the two accepted NT4 hardware SETs, their direct 1MB-minus-one zero writes,
+ * and the DLL postlude.  Normal game frames still use the verified CPU-source
+ * FIFO.  Native VGA ports and 0FACh control the laptop display path; the LCD
+ * mode streams retain the recovered 2048-byte 24bpp pitch.
+ *
+ * ---------------------------------------------------------------------------
+ * F. Porting guidance for S3, Trident, Matrox and other PC-9821 accelerators
+ * ---------------------------------------------------------------------------
+ *
+ *  1. Enumerate PCI first, but a class-03 NEC bridge may represent only the
+ *     board front-end.  Absence of the accelerator vendor ID does not mean
+ *     absence of the accelerator.
+ *  2. Probe fixed-interface IDs non-destructively and validate the backend
+ *     chip through its relocated register lock/ID mechanism.
+ *  3. Recover the motherboard gate/relay sequence separately from the chip
+ *     mode table.  NEC miniports often execute board I/O before/after the
+ *     vendor command stream.
+ *  4. Preserve exact command order.  68h/6Ah sequences and wait-port writes
+ *     are not replaceable by read-modify-write of a single imagined register.
+ *  5. Distinguish the DOS/GDC plane from the Windows accelerator plane.
+ *     Core-Graph and a PCI accelerator may coexist, especially on notebooks.
+ *  6. Verify host-memory semantics with a hardware oracle: BLT completion,
+ *     stable scanout and reversible cleanup are stronger evidence than a
+ *     successful CPU readback from a candidate physical address.
+ *  7. Keep a FIFO/accelerator diagnostic path even after direct framebuffer
+ *     rendering works; it can prove the VRAM and scanout independently of
+ *     CPU readback and is invaluable on another Core-Graph generation.
  */
 
 /* HAL */
@@ -219,15 +431,13 @@
 #include "98disp.h"
 
 /* Standard C */
-#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
 
 /* DOS */
 #include <dos.h>
-#include <conio.h>
 #include <i86.h>
+#include <conio.h>
 #include <stdint.h>
 
 /*
@@ -242,17 +452,25 @@ static const struct disp_geo {
 	{ 1280, 1024 }		/* DISP_1280X1024 */
 };
 
-/* Cirrus bank granularity for the 32KB window: 16KB (GR0B bit5 = 1) */
+/*
+ * Bank granularity for the 32KB window: 16KB (GR0B bit5 = 1)
+ */
 #define CL_BANK_SHIFT	14
 #define CL_BANK_MASK	0x3fff
 
+/*
+ * Cirrus device path.
+ */
 enum cirrus_path {
 	CIRRUS_PATH_NONE = 0,
-	CIRRUS_PATH_54_BANKED,	/* classic banked onboard/WAB interface */
-	CIRRUS_PATH_54_COREGRAPH,	/* V13-class Core-Graph linear GD5440 */
-	CIRRUS_PATH_75		/* independently enumerated PCI Cirrus */
+	CIRRUS_PATH_WAB,	/* WAB (GD5428, GD5430) */
+	CIRRUS_PATH_COREGRAPH,	/* Core-Graph (GD5440, GD5446) */
+	CIRRUS_PATH_PCI		/* PCI (GD7543, GD7548, GD7555) */
 };
 
+/*
+ * Display info.
+ */
 static struct cirrus_disp {
 	enum cirrus_path path;
 	const char *chip_name;
@@ -264,23 +482,28 @@ static struct cirrus_disp {
 	uint32_t pitch;		/* bytes per scanline (may exceed w*bpp/8) */
 
 	/*
-	 * Relocatable VGA register file.  io_3d4/io_3da follow MISC
+	 * Relocatable VGA register file. io_3d4/io_3da follow MISC
 	 * bit0 between the color (3D4h-style) and mono (3B4h-style)
-	 * blocks; see cl_select_crtc().
+	 * blocks. See cl_select_crtc().
 	 */
 	uint16_t io_3c0;	/* base of the 3C0h-3CFh block */
 	uint16_t io_3d4;	/* currently selected CRTC index */
 	uint16_t io_3da;	/* currently selected Input Status 1 */
-	uint16_t io_3d4_col, io_3da_col;
-	uint16_t io_3d4_mono, io_3da_mono;
+	uint16_t io_3d4_col;
+	uint16_t io_3da_col;
+	uint16_t io_3d4_mono;
+	uint16_t io_3da_mono;
 
-	/* Host-visible aperture; the same writes become FIFO data during MEMSYSSRC. */
+	/*
+	 * Host-visible aperture. The same writes become FIFO data
+	 * during MEMSYSSRC.
+	 */
 	uint8_t *fb;
 	uint32_t fb_phys;
-	bool linear;		/* true: linear; false: 32KB banked window */
+	bool linear;		/* true: linear. false: 32KB banked window */
 	uint32_t vram_size;
 	int cur_bank;
-	bool fifo_only;	/* true: CPU-source BLT FIFO; false: direct aperture */
+	bool fifo_only;		/* true: CPU-source BLT FIFO. false: direct aperture. */
 	bool fifo_capable;	/* GD54xx host path can use retained FIFO code */
 
 	/* Chip information (for logging / decisions). */
@@ -288,7 +511,7 @@ static struct cirrus_disp {
 	uint8_t crt27;		/* Cirrus chip ID register */
 	bool alpine;		/* GD5430/5440-or-later register semantics */
 
-	/* LCD panel (GD754x laptops). */
+	/* LCD panel (GD75xx laptops). */
 	bool lcd;
 	int lcd_w;
 	int lcd_h;
@@ -300,233 +523,42 @@ static struct cirrus_disp {
  */
 static bool gd54_fifo_requested;
 
-/* Set before native GD7548 register programming. */
-static bool pci_nb10_active;
+/*
+ * Set before native GD7548 register programming.
+ */
+static bool pci_gd75_active;
 
 /*
- * Nb10 FAA/FAB indexed register 03h experiment.
- *
- * Environment variable T selects exactly one condition:
- *
- *   T=0  never read or write FAA/FAB reg03, including cleanup.
- *        This is the strict NT4 family-40h/model-0Eh condition.
- *   T=1  write reg03=01h at the historical early point.
- *        bit0 only; cleanup writes 00h and therefore creates bit0 falling edge.
- *   T=2  write reg03=02h at the historical early point.
- *        bit1 only; bit0 is never raised, so cleanup has no bit0 falling edge.
- *   T=3  write reg03=03h at the historical early point.
- *        Current known-output baseline; cleanup creates bit0 falling edge.
- *
- * Port 0FACh is a separate, canonical Nb10 relay and is not part of this
- * experiment.  FAC=02h on enter and FAC=00h on leave remain enabled for
- * every T value.
+ * The matching NT4 miniport/display-DLL pair never touches FAA/FAB indexed
+ * register 03h on model 0Eh.  The DOS environment nevertheless produces no
+ * signal unless bit1 is asserted.  Keep that one measured requirement as a
+ * deliberately isolated visibility shim: write reg03=02h once in the first
+ * hardware-SET prelude, carry it unchanged through the second SET, and return
+ * it to 00h on cleanup.  No environment-variable experiment remains.
  */
-static int nb10_reg03_test;
-static bool nb10_reg03_touched;
+static bool nb10_reg03_dos_shim_active;
 
 /*
- * Nb10 SR12 bit6 experiment, selected with environment variable S.
- *
- *   S=0  normal operation.
- *   S=1  after the first completed game-frame FIFO BLT, allow four GD7548
- *        frames, then set SR12 bit6 while the initial pixel-perfect state
- *        should still be active ("freeze-before").
- *   S=2  after the first completed game-frame FIFO BLT, wait for the user to
- *        observe the stable 1+1 attractor and press Enter, then set SR12 bit6
- *        ("freeze-after").
- *
- * In S=1 and S=2, no further frame BLTs occur while the experiment prompts
- * are active.  The program first closes the gate, waits for Enter, reopens it,
- * then waits for a second Enter so the restart transition can be observed.
+ * Blit placement (centering + clip against the screen).
  */
-static int nb10_sr12_test;
-static bool nb10_sr12_test_done;
-
-/*
- * Nb10 gate-order experiment selected by environment variable C.
- *
- *   C=0  Current baseline:
- *        pattern/clear -> SR12 open -> FACh=02h -> AC enable.
- *
- *   C=1  Stream-first, output hidden:
- *        preload a static color-bar pattern;
- *        SR12 open while FACh remains 00h and AC remains disabled;
- *        wait at least three seconds with no CPU-source BLT;
- *        then select FACh=02h and enable AC.
- *
- *   C=2  Output-first, stream hidden:
- *        preload the same static pattern;
- *        close SR12, select FACh=02h and enable AC;
- *        wait at least three seconds with no CPU-source BLT;
- *        then reopen SR12.
- *
- * C=1 and C=2 pause once before the final edge and once afterwards.  The
- * second pause occurs before the game is allowed to submit another BLT, so
- * the first visible transition belongs to the gate order, not frame drawing.
- */
-static int nb10_gate_order_test;
-
-/*
- * Nb10 FACh/AC split experiment selected by environment variable D.
- *
- * The C experiment showed that reopening SR12 alone can re-trigger the
- * X calibration.  D separates the two remaining final output edges - the
- * 0FACh relay and the VGA attribute-controller enable - to determine which
- * of them starts the calibration FSM.
- *
- *   D=0  Current baseline: after SR12 open, FACh=02h and AC enable are
- *        issued back to back (identical to C=0).
- *
- *   D=1  FACh first, AC later:
- *        preload the static color-bar pattern;
- *        SR12 open, FACh=02h, AC left disabled;
- *        wait at least three seconds with no CPU-source BLT;
- *        key -> AC enable.
- *
- *   D=2  AC first, FACh later:
- *        preload the same static pattern;
- *        SR12 open, FACh left at its idle value (not written), AC enabled;
- *        wait at least three seconds with no CPU-source BLT;
- *        key -> FACh=02h.
- *
- * Interpretation:
- *
- *   D=1 image already in the attractor at the AC edge
- *        -> calibration progressed during the FACh-only dwell
- *        -> FACh is the trigger.
- *   D=2 image already in the attractor at the FACh edge
- *        -> calibration progressed during the AC-only dwell
- *        -> AC enable is the trigger.
- *   Either case starting pixel-perfect and only then calibrating
- *        -> calibration begins only once both gates are up.
- *
- * D=1/2 requires C=0 and S=0; a nonzero D overrides both so exactly one
- * experiment manipulates the final gates.  During the D=2 dwell the FACh
- * value is read and logged but deliberately never written: an idempotent
- * 00h write would itself be an extra edge on the port under test.
- */
-static int nb10_fach_ac_test;
-
-/*
- * Nb10 gate-cycle experiment selected by environment variable E.
- *
- * The D experiment established that the X calibration runs whenever
- * SR12 is open AND at least one of the two output gates (FACh relay,
- * AC enable) is up; with both gates down the calibration does not
- * progress.  E asks whether the both-down state merely PAUSES the
- * calibration FSM or RESETS the (mis)trained gear lock.
- *
- * All variants start normally (baseline enter) and let the game run.
- * The experiment arms after the first frame (draining stale keystrokes)
- * and triggers on ANY key pressed during gameplay: press it once the
- * attractor is stable on real game content.  The frame on screen at the
- * keypress stays put - no further CPU-source BLT runs until the final
- * prompt is acknowledged.  (v300.8 blocked at the first game frame,
- * which is typically black and therefore unobservable.)
- *
- *   E=0  normal operation.
- *   E=1  close BOTH gates (AC disable, FACh=00h), dwell, reopen both.
- *   E=2  cycle FACh alone (00h then 02h); AC stays enabled.
- *   E=3  cycle AC alone (disable then enable); FACh stays 02h.
- *
- * Interpretation on reopen:
- *
- *   immediately in the 1+1 attractor
- *        -> the trained gear survives the closed dwell (pause only).
- *   pixel-perfect followed by the horizontal-noise transition
- *        -> the both-down state resets the trained gear.
- *
- * Under the OR model E=2/3 keep one gate up, so calibration continues
- * during their dwell and reopen should show the attractor immediately;
- * they serve as controls for E=1.
- *
- * These FACh writes happen after nb10_nec_lock(), unlike enter/leave.
- * Whether the NEC lock gates port 0FACh is unknown, so every write is
- * followed by a logged readback; a mismatch means the lock blocks FACh
- * and the experiment must be reissued with an unlock bracket.
- */
-static int nb10_gate_cycle_test;
-static bool nb10_gate_cycle_done;
-static bool nb10_gate_cycle_armed;
-
-/*
- * Nb10 NT4 initialization-order experiment selected by environment variable F.
- *
- * Static analysis of the matching NT4 cirrus.dll/CIRRUS.SYS pair showed that
- * the first surface enable performs TWO successful full SET_CURRENT_MODE
- * operations.  The second SET starts immediately after the first one has
- * finished, with this inherited state:
- *
- *   SR12 open, FACh=02h, AC enabled, NEC registers locked.
- *
- * Its prelude unlocks NEC and disables AC, but deliberately leaves FACh at
- * 02h.  The GD7548 stream is then synchronously reset/restarted by the same
- * mode stream (SR00=01h -> 03h) while the NEC receiver is exposed through
- * FACh.  This ordering has not existed in the DOS path before v300.10.
- *
- *   F=0  Existing single successful mode-set baseline.
- *   F=1  After the baseline pass, immediately execute the complete NT4-style
- *        second pass while carrying FACh=02h across the stream reset.  The
- *        second pass never reads or writes FAA/FAB reg03 and contains no
- *        user wait between passes.
- *
- * F=1 overrides S/C/D/E so the initialization-order change is the only
- * active experiment.  T remains independent: T=2 tests the new ordering on
- * the established DOS visibility baseline; T=0 additionally tests the strict
- * NT4 reg03-no-touch condition.
- */
-static int nb10_nt4_init_order_test;
-
-/*
- * Nb10 successful-SET checkpoint experiment selected by G and W.
- *
- * The NT4 DLL issues three SET_CURRENT_MODE IOCTL requests during first
- * enable, but the first request (mode | 40000000h) is rejected by the
- * miniport before hardware access.  There are therefore only TWO successful
- * hardware mode sets:
- *
- *   IOCTL request #2 = successful hardware SET #1
- *   IOCTL request #3 = successful hardware SET #2 (after memory mapping)
- *
- * G selects which successful SET is allowed to evolve on an all-black
- * framebuffer before a single static diagnostic pattern reveals the current
- * NEC/Cirrus phase state:
- *
- *   G=0  no checkpoint.
- *   G=1  stop after successful hardware SET #1; do not execute SET #2.
- *   G=2  execute the NT4-style SET #2, then stop after it.
- *
- * W is the automatic black dwell in seconds (0..60, default 10).  During the
- * dwell SR12 is open, FACh=02h and AC is enabled exactly as at the end of the
- * selected SET.  The screen is black because VRAM was cleared, not because a
- * gate is changed.  No CPU-source BLT or display-register polling occurs.
- * After W seconds one static FIFO pattern is written, then all further BLTs
- * are blocked at a key prompt so both the immediate state and any autonomous
- * later transition can be observed.
- *
- * G overrides F to select the requested successful SET and overrides S/C/D/E
- * to keep the checkpoint as the only experiment.  T remains independent.
- */
-static int nb10_modeset_checkpoint_test;
-static int nb10_modeset_black_dwell_seconds;
-
-/* Blit placement (centering + clip against the screen). */
 static int ofs_x, ofs_y;
 static int draw_w, draw_h;
 
+/*
+ * Variables defined in 98main.c
+ */
 extern struct hal_image *back_image;
 extern int game_width;
 extern int game_height;
 
-/* Frame presentation. */
+/*
+ * Forward declaration.
+ */
 static void cirrus_flip_vram(void);
 static void conv_row24(uint8_t *dst, const uint32_t *src, int n);
 static void conv_row16(uint8_t *dst, const uint32_t *src, int n);
 static void conv_row8(uint8_t *dst, const uint32_t *src, int n);
-
-/* Low-level register access. */
-static void cl_set_iobase(uint16_t b3c0, uint16_t d4c, uint16_t dac,
-			  uint16_t d4m, uint16_t dam);
+static void cl_set_iobase(uint16_t b3c0, uint16_t d4c, uint16_t dac, uint16_t d4m, uint16_t dam);
 static void cl_select_crtc(int misc);
 static void cl_seq_write(int reg, int val);
 static void cl_seq_write8(int reg, int val);
@@ -542,8 +574,6 @@ static int cl_misc_read(void);
 static void cl_hidden_dac_write(int val);
 static int cl_hidden_dac_read(void);
 static void cl_set_bank(int bank);
-
-/* Shared mode-set building blocks. */
 static int cl_hdr_value(void);
 static void cl_program_vclk3(void);
 static void cl_program_crtc(void);
@@ -551,26 +581,17 @@ static void cl_program_gc_ac(void);
 static void cl_load_palette(void);
 static void cl_modeset_generic(bool banked);
 static void cl_modeset_coregraph_necdrv(void);
-static int cl_resolve_bpp(int req, int cap, int w, int h,
-			  uint32_t vram, const char *tag);
-
-/* Misc. */
-static void nb10_gate_cycle_poll(void);
+static int cl_resolve_bpp(int req, int cap, int w, int h, uint32_t vram, const char *tag);
 static void *cl_map_physical(uint32_t phys, uint32_t size);
 static bool cl_unmap_physical(void *linear);
 static void cl_release_fb_mapping(void);
 static bool cl_aperture_clear_visible(void);
 static bool cl_blt_fifo_clear_visible(void);
-static bool cl_blt_fifo_pattern_visible(void);
 static void cirrus_flip_fifo(void);
-
-/* Fixed 0FAA/0FAB GD54xx interface (Core-Graph or banked WAB). */
 static bool cirrus54_init(int mode, int req_bpp);
 static void cirrus54_cleanup(void);
-
-/* PCI (GD75xx / PCI GD54xx) module. */
-static bool cirrus75_init(int mode, int req_bpp);
-static void cirrus75_cleanup(void);
+static bool cirrus_pci_init(int mode, int req_bpp);
+static void cirrus_pci_cleanup(void);
 
 /*****************************************************************************/
 /* Public interface                                                          */
@@ -598,7 +619,7 @@ cirrus_init_disp(int mode, int bpp)
 
 	hal_log_info("CIRRUS: probing; requested %dx%d, depth %d (-1 = auto).",
 		     disp_geo[mode].w, disp_geo[mode].h, bpp);
-	hal_log_info("CIRRUS-BUILD: v300.11 Nb10 SET-stage black-dwell (G/W) experiment.");
+	hal_log_info("CIRRUS-BUILD: v300.12 Nb10 NT4 first-enable replay + DOS reg03 shim.");
 
 	gd54_fifo_requested = false;
 	host_env = getenv("STRATO_CIRRUS_HOST");
@@ -625,18 +646,10 @@ cirrus_init_disp(int mode, int bpp)
 	 * memory.  Explicit FORCE=54/75 keeps the requested single path.
 	 */
 	ok = false;
-	if (force != NULL && strcmp(force, "54") == 0) {
-		hal_log_info("CIRRUS: probe order: forced fixed 0FAA/0FAB GD54xx path only.");
+	hal_log_info("CIRRUS: probe order: PCI first, then fixed 0FAA/0FAB interface.");
+	ok = cirrus_pci_init(mode, bpp);
+	if (!ok)
 		ok = cirrus54_init(mode, bpp);
-	} else if (force != NULL && strcmp(force, "75") == 0) {
-		hal_log_info("CIRRUS: probe order: forced PCI path only.");
-		ok = cirrus75_init(mode, bpp);
-	} else {
-		hal_log_info("CIRRUS: probe order: PCI first, then fixed 0FAA/0FAB interface.");
-		ok = cirrus75_init(mode, bpp);
-		if (!ok)
-			ok = cirrus54_init(mode, bpp);
-	}
 	if (!ok) {
 		hal_log_info("CIRRUS: no usable Cirrus built-in; "
 			     "yielding to other drivers.");
@@ -678,9 +691,9 @@ cirrus_init_disp(int mode, int bpp)
 
 	hal_log_info("CIRRUS: === configuration summary ===");
 	hal_log_info("CIRRUS: path     : %s.",
-		     cdisp.path == CIRRUS_PATH_54_BANKED ?
+		     cdisp.path == CIRRUS_PATH_WAB ?
 		     "GD54xx fixed-interface / WAB" :
-		     cdisp.path == CIRRUS_PATH_54_COREGRAPH ?
+		     cdisp.path == CIRRUS_PATH_COREGRAPH ?
 		     "NEC Core-Graph integrated GD54xx" :
 		     "PCI (configuration space)");
 	hal_log_info("CIRRUS: chip     : %s, CR27=%02Xh, fixed ID=%02Xh.",
@@ -688,7 +701,11 @@ cirrus_init_disp(int mode, int bpp)
 	hal_log_info("CIRRUS: mode     : %dx%d, %d bpp, pitch %lu bytes.",
 		     cdisp.scr_w, cdisp.scr_h, cdisp.bpp,
 		     (unsigned long)cdisp.pitch);
-	if (cdisp.fifo_only)
+	if (cdisp.fifo_only && pci_gd75_active)
+		hal_log_info("CIRRUS: host path: CPU-source BLT FIFO for frames at %08lXh; "
+		             "the NT4 SET replay also performs direct zero writes through the full 1MB aperture.",
+		             (unsigned long)cdisp.fb_phys);
+	else if (cdisp.fifo_only)
 		hal_log_info("CIRRUS: host path: CPU-source BLT FIFO dword writes at %08lXh; VRAM is never read directly.",
 		             (unsigned long)cdisp.fb_phys);
 	else if (cdisp.linear)
@@ -717,12 +734,12 @@ void
 cirrus_cleanup_disp(void)
 {
 	switch (cdisp.path) {
-	case CIRRUS_PATH_54_BANKED:
-	case CIRRUS_PATH_54_COREGRAPH:
+	case CIRRUS_PATH_WAB:
+	case CIRRUS_PATH_COREGRAPH:
 		cirrus54_cleanup();
 		break;
-	case CIRRUS_PATH_75:
-		cirrus75_cleanup();
+	case CIRRUS_PATH_PCI:
+		cirrus_pci_cleanup();
 		break;
 	default:
 		break;
@@ -908,7 +925,7 @@ cl_select_crtc(int misc)
 static void
 cl_seq_write(int reg, int val)
 {
-	if (pci_nb10_active)
+	if (pci_gd75_active)
 		outpw(cdisp.io_3c0 + 0x04,
 		      (uint16_t)(((uint16_t)(val & 0xff) << 8) |
 		                 (uint16_t)(reg & 0xff)));
@@ -935,7 +952,7 @@ cl_seq_read(int reg)
 static void
 cl_gfx_write(int reg, int val)
 {
-	if (pci_nb10_active)
+	if (pci_gd75_active)
 		outpw(cdisp.io_3c0 + 0x0e,
 		      (uint16_t)(((uint16_t)(val & 0xff) << 8) |
 		                 (uint16_t)(reg & 0xff)));
@@ -955,7 +972,7 @@ cl_gfx_read(int reg)
 static void
 cl_crtc_write(int reg, int val)
 {
-	if (pci_nb10_active)
+	if (pci_gd75_active)
 		outpw(cdisp.io_3d4,
 		      (uint16_t)(((uint16_t)(val & 0xff) << 8) |
 		                 (uint16_t)(reg & 0xff)));
@@ -1014,6 +1031,17 @@ cl_hidden_dac_write(int val)
 {
 	/* Reset the hidden-DAC access counter deterministically. */
 	(void)inp(cdisp.io_3c0 + 0x08);
+	(void)inp(cdisp.io_3c0 + 0x06);
+	(void)inp(cdisp.io_3c0 + 0x06);
+	(void)inp(cdisp.io_3c0 + 0x06);
+	(void)inp(cdisp.io_3c0 + 0x06);
+	outp(cdisp.io_3c0 + 0x06, val);
+}
+
+/* Exact Hidden-DAC opcode emitted by the NT4 command stream. */
+static void
+cl_hidden_dac_write_nt4_stream(int val)
+{
 	(void)inp(cdisp.io_3c0 + 0x06);
 	(void)inp(cdisp.io_3c0 + 0x06);
 	(void)inp(cdisp.io_3c0 + 0x06);
@@ -1643,7 +1671,7 @@ cl_map_physical(uint32_t phys, uint32_t size)
 	union REGS r;
 
 	if (phys < 0x100000UL)
-		return (void *)phys;	/* first MB is identity-mapped */
+		return (void *)(uintptr_t)phys;	/* first MB is identity-mapped */
 
 	memset(&r, 0, sizeof(r));
 	r.w.ax = 0x0800;
@@ -1655,7 +1683,7 @@ cl_map_physical(uint32_t phys, uint32_t size)
 	if (r.w.cflag)
 		return NULL;
 
-	return (void *)(((uint32_t)r.w.bx << 16) | r.w.cx);
+	return (void *)(uintptr_t)(((uint32_t)r.w.bx << 16) | r.w.cx);
 }
 
 /* DPMI 0x0801: release a mapping returned by function 0x0800. */
@@ -1663,7 +1691,7 @@ static bool
 cl_unmap_physical(void *linear)
 {
 	union REGS r;
-	uint32_t addr = (uint32_t)linear;
+	uint32_t addr = (uint32_t)(uintptr_t)linear;
 
 	memset(&r, 0, sizeof(r));
 	r.w.ax = 0x0801;
@@ -1813,7 +1841,7 @@ cl_blt_fifo_start(uint32_t dst, uint32_t width_bytes, uint32_t height)
 	cl_blt_write24(0x2c, 0x000000UL);            /* unused for MEMSYSSRC */
 	cl_gfx_write(0x2f, 0x00);                    /* no left-edge skip */
 	/* NP21/W/QEMU also uses GR30[5:4] as the BLT pixel width. */
-	cl_gfx_write(0x30, pci_nb10_active ? CL_BLT_MODE_MEMSYS_SRC :
+	cl_gfx_write(0x30, pci_gd75_active ? CL_BLT_MODE_MEMSYS_SRC :
 	             (CL_BLT_MODE_MEMSYS_SRC | cl_blt_pixel_mode()));
 	cl_gfx_write(0x32, CL_BLT_ROP_SRC);          /* source copy */
 	cl_gfx_write(0x33, 0x00);
@@ -1902,502 +1930,6 @@ cl_blt_fifo_clear_visible(void)
 }
 
 
-/*
- * Fill the full visible screen with eight vertical color bars through the
- * CPU-source FIFO.  This is a self-contained hardware diagnostic: it does
- * not use back_image and never reads VRAM.
- */
-static bool
-cl_blt_fifo_pattern_visible(void)
-{
-	static uint32_t row32[512];       /* 2048-byte aligned staging row */
-	uint8_t *row = (uint8_t *)row32;
-	static const uint8_t rgb[8][3] = {
-		{255,255,255}, {255,255,  0}, {  0,255,255}, {  0,255,  0},
-		{255,  0,255}, {255,  0,  0}, {  0,  0,255}, {  0,  0,  0}
-	};
-	uint32_t row_bytes;
-	int x, y, bar;
-
-	row_bytes = (uint32_t)cdisp.scr_w * (uint32_t)(cdisp.bpp / 8);
-	if (row_bytes > sizeof(row32)) {
-		hal_log_info("CIRRUS-BLT: pattern row %lu exceeds FIFO staging buffer.",
-		             (unsigned long)row_bytes);
-		return false;
-	}
-	if (!cl_blt_fifo_start(0, row_bytes, (uint32_t)cdisp.scr_h))
-		return false;
-
-	for (y = 0; y < cdisp.scr_h; y++) {
-		for (x = 0; x < cdisp.scr_w; x++) {
-			uint8_t r, g, b;
-			bar = (x * 8) / cdisp.scr_w;
-			if (bar > 7)
-				bar = 7;
-			r = rgb[bar][0];
-			g = rgb[bar][1];
-			b = rgb[bar][2];
-
-			/* Alternate brightness every 16 lines to expose pitch errors. */
-			if (y & 0x10) {
-				r >>= 1;
-				g >>= 1;
-				b >>= 1;
-			}
-
-			if (cdisp.bpp == 24) {
-				row[x * 3 + 0] = b;
-				row[x * 3 + 1] = g;
-				row[x * 3 + 2] = r;
-			} else if (cdisp.bpp == 16) {
-				uint16_t p = (uint16_t)(((uint16_t)(r & 0xf8) << 8) |
-				                        ((uint16_t)(g & 0xfc) << 3) |
-				                        ((uint16_t)b >> 3));
-				row[x * 2 + 0] = (uint8_t)p;
-				row[x * 2 + 1] = (uint8_t)(p >> 8);
-			} else {
-				row[x] = (uint8_t)((r & 0xe0) |
-				                   ((g >> 3) & 0x1c) |
-				                   ((b >> 6) & 0x03));
-			}
-		}
-		cl_blt_fifo_feed_row(row, row_bytes);
-	}
-
-	if (!cl_blt_wait_idle(4000000UL, "after FIFO pattern")) {
-		cl_blt_reset();
-		return false;
-	}
-	return true;
-}
-
-
-/*
- * Wait on the GD7548 Input Status 1 vertical-retrace bit.
- *
- * This is used only to place the S=1 gate edge a few complete GD7548 frames
- * after the first BLT.  It does not claim that this status bit describes the
- * final NEC-side LCD/CRT blanking interval.
- */
-static bool
-nb10_wait_status1(int want_set, unsigned long limit)
-{
-	unsigned long i;
-
-	for (i = 0; i < limit; i++) {
-		int set = (inp(cdisp.io_3da) & 0x08) != 0;
-		if (set == want_set)
-			return true;
-	}
-	return false;
-}
-
-static bool
-nb10_wait_complete_frames(int frames)
-{
-	int i;
-
-	for (i = 0; i < frames; i++) {
-		/* Finish any current retrace, then observe one complete next retrace. */
-		if (!nb10_wait_status1(0, 1000000UL) ||
-		    !nb10_wait_status1(1, 1000000UL) ||
-		    !nb10_wait_status1(0, 1000000UL))
-			return false;
-	}
-	return true;
-}
-
-static void
-nb10_sr12_configure(void)
-{
-	const char *env;
-	char *endp;
-	long value;
-
-	nb10_sr12_test = 0;
-	nb10_sr12_test_done = false;
-
-	env = getenv("S");
-	if (env != NULL) {
-		endp = NULL;
-		value = strtol(env, &endp, 0);
-		if (endp != env && *endp == '\0' &&
-		    value >= 0 && value <= 2) {
-			nb10_sr12_test = (int)value;
-		} else {
-			hal_log_info("CIRRUS-NB10: invalid S=%s; using S=0.",
-			             env);
-		}
-	}
-
-	hal_log_info("CIRRUS-NB10: SR12 experiment S=%d: %s.",
-	             nb10_sr12_test,
-	             nb10_sr12_test == 0 ? "normal operation" :
-	             nb10_sr12_test == 1 ?
-	                 "freeze-before after four complete GD7548 frames" :
-	                 "freeze-after on user key at the stable attractor");
-}
-
-
-static void
-nb10_gate_order_configure(void)
-{
-	const char *env;
-	char *endp;
-	long value;
-
-	nb10_gate_order_test = 0;
-
-	env = getenv("C");
-	if (env != NULL) {
-		endp = NULL;
-		value = strtol(env, &endp, 0);
-		if (endp != env && *endp == '\0' &&
-		    value >= 0 && value <= 2) {
-			nb10_gate_order_test = (int)value;
-		} else {
-			hal_log_info("CIRRUS-NB10: invalid C=%s; using C=0.",
-			             env);
-		}
-	}
-
-	/*
-	 * S manipulates SR12 after the first game frame.  Combining it with C
-	 * would add a second independent SR12 experiment and obscure the result.
-	 */
-	if (nb10_gate_order_test != 0 && nb10_sr12_test != 0) {
-		hal_log_info("CIRRUS-NB10: C=%d requires S=0; overriding S=%d.",
-		             nb10_gate_order_test, nb10_sr12_test);
-		nb10_sr12_test = 0;
-		nb10_sr12_test_done = false;
-	}
-
-	hal_log_info("CIRRUS-NB10: gate-order experiment C=%d: %s.",
-	             nb10_gate_order_test,
-	             nb10_gate_order_test == 0 ?
-	                 "baseline SR12 -> FACh -> AC order" :
-	             nb10_gate_order_test == 1 ?
-	                 "SR12 stream first; FACh/AC hidden for manual 3-second dwell" :
-	                 "FACh/AC first; SR12 closed for manual 3-second dwell");
-}
-
-static void
-nb10_fach_ac_configure(void)
-{
-	const char *env;
-	char *endp;
-	long value;
-
-	nb10_fach_ac_test = 0;
-
-	env = getenv("D");
-	if (env != NULL) {
-		endp = NULL;
-		value = strtol(env, &endp, 0);
-		if (endp != env && *endp == '\0' &&
-		    value >= 0 && value <= 2) {
-			nb10_fach_ac_test = (int)value;
-		} else {
-			hal_log_info("CIRRUS-NB10: invalid D=%s; using D=0.",
-			             env);
-		}
-	}
-
-	/*
-	 * D splits the same final edges that C reorders and that S retests
-	 * after the first frame.  Exactly one of them may be active.
-	 */
-	if (nb10_fach_ac_test != 0 && nb10_gate_order_test != 0) {
-		hal_log_info("CIRRUS-NB10: D=%d requires C=0; overriding C=%d.",
-		             nb10_fach_ac_test, nb10_gate_order_test);
-		nb10_gate_order_test = 0;
-	}
-	if (nb10_fach_ac_test != 0 && nb10_sr12_test != 0) {
-		hal_log_info("CIRRUS-NB10: D=%d requires S=0; overriding S=%d.",
-		             nb10_fach_ac_test, nb10_sr12_test);
-		nb10_sr12_test = 0;
-		nb10_sr12_test_done = false;
-	}
-
-	hal_log_info("CIRRUS-NB10: FACh/AC split experiment D=%d: %s.",
-	             nb10_fach_ac_test,
-	             nb10_fach_ac_test == 0 ?
-	                 "baseline back-to-back FACh + AC enable" :
-	             nb10_fach_ac_test == 1 ?
-	                 "FACh=02h first; AC held disabled for manual 3-second dwell" :
-	                 "AC enabled first; FACh untouched for manual 3-second dwell");
-}
-
-static void
-nb10_gate_cycle_configure(void)
-{
-	const char *env;
-	char *endp;
-	long value;
-
-	nb10_gate_cycle_test = 0;
-	nb10_gate_cycle_done = false;
-	nb10_gate_cycle_armed = false;
-
-	env = getenv("E");
-	if (env != NULL) {
-		endp = NULL;
-		value = strtol(env, &endp, 0);
-		if (endp != env && *endp == '\0' &&
-		    value >= 0 && value <= 3) {
-			nb10_gate_cycle_test = (int)value;
-		} else {
-			hal_log_info("CIRRUS-NB10: invalid E=%s; using E=0.",
-			             env);
-		}
-	}
-
-	/* E cycles the same gates the other experiments manipulate. */
-	if (nb10_gate_cycle_test != 0 && nb10_sr12_test != 0) {
-		hal_log_info("CIRRUS-NB10: E=%d requires S=0; overriding S=%d.",
-		             nb10_gate_cycle_test, nb10_sr12_test);
-		nb10_sr12_test = 0;
-		nb10_sr12_test_done = false;
-	}
-	if (nb10_gate_cycle_test != 0 && nb10_gate_order_test != 0) {
-		hal_log_info("CIRRUS-NB10: E=%d requires C=0; overriding C=%d.",
-		             nb10_gate_cycle_test, nb10_gate_order_test);
-		nb10_gate_order_test = 0;
-	}
-	if (nb10_gate_cycle_test != 0 && nb10_fach_ac_test != 0) {
-		hal_log_info("CIRRUS-NB10: E=%d requires D=0; overriding D=%d.",
-		             nb10_gate_cycle_test, nb10_fach_ac_test);
-		nb10_fach_ac_test = 0;
-	}
-
-	hal_log_info("CIRRUS-NB10: gate-cycle experiment E=%d: %s.",
-	             nb10_gate_cycle_test,
-	             nb10_gate_cycle_test == 0 ?
-	                 "normal operation" :
-	             nb10_gate_cycle_test == 1 ?
-	                 "close both FACh and AC at the attractor, dwell, reopen" :
-	             nb10_gate_cycle_test == 2 ?
-	                 "cycle FACh alone at the attractor; AC stays enabled" :
-	                 "cycle AC alone at the attractor; FACh stays 02h");
-}
-
-static void
-nb10_nt4_init_order_configure(void)
-{
-	const char *env;
-	char *endp;
-	long value;
-
-	nb10_nt4_init_order_test = 0;
-
-	env = getenv("F");
-	if (env != NULL) {
-		endp = NULL;
-		value = strtol(env, &endp, 0);
-		if (endp != env && *endp == '\0' &&
-		    value >= 0 && value <= 1) {
-			nb10_nt4_init_order_test = (int)value;
-		} else {
-			hal_log_info("CIRRUS-NB10: invalid F=%s; using F=0.",
-			             env);
-		}
-	}
-
-	/*
-	 * F changes the cold initialization sequence itself.  Combining it with
-	 * a later SR12/gate experiment would make the initial state ambiguous, so
-	 * keep F=1 as a clean one-variable comparison.  T intentionally remains
-	 * independent because T=0 versus T=2 is part of the NT4/DOS difference.
-	 */
-	if (nb10_nt4_init_order_test != 0 && nb10_sr12_test != 0) {
-		hal_log_info("CIRRUS-NB10: F=%d requires S=0; overriding S=%d.",
-		             nb10_nt4_init_order_test, nb10_sr12_test);
-		nb10_sr12_test = 0;
-		nb10_sr12_test_done = false;
-	}
-	if (nb10_nt4_init_order_test != 0 && nb10_gate_order_test != 0) {
-		hal_log_info("CIRRUS-NB10: F=%d requires C=0; overriding C=%d.",
-		             nb10_nt4_init_order_test, nb10_gate_order_test);
-		nb10_gate_order_test = 0;
-	}
-	if (nb10_nt4_init_order_test != 0 && nb10_fach_ac_test != 0) {
-		hal_log_info("CIRRUS-NB10: F=%d requires D=0; overriding D=%d.",
-		             nb10_nt4_init_order_test, nb10_fach_ac_test);
-		nb10_fach_ac_test = 0;
-	}
-	if (nb10_nt4_init_order_test != 0 && nb10_gate_cycle_test != 0) {
-		hal_log_info("CIRRUS-NB10: F=%d requires E=0; overriding E=%d.",
-		             nb10_nt4_init_order_test, nb10_gate_cycle_test);
-		nb10_gate_cycle_test = 0;
-		nb10_gate_cycle_done = false;
-		nb10_gate_cycle_armed = false;
-	}
-
-	hal_log_info("CIRRUS-NB10: NT4 initialization-order experiment F=%d: %s.",
-	             nb10_nt4_init_order_test,
-	             nb10_nt4_init_order_test == 0 ?
-	                 "single successful SET_CURRENT_MODE baseline" :
-	                 "two immediate full mode sets; pass 2 carries FACh=02h across SR00 reset and does not touch reg03");
-}
-
-static void
-nb10_modeset_checkpoint_configure(void)
-{
-	const char *env;
-	char *endp;
-	long value;
-
-	nb10_modeset_checkpoint_test = 0;
-	nb10_modeset_black_dwell_seconds = 10;
-
-	env = getenv("G");
-	if (env != NULL) {
-		endp = NULL;
-		value = strtol(env, &endp, 0);
-		if (endp != env && *endp == '\0' &&
-		    value >= 0 && value <= 2) {
-			nb10_modeset_checkpoint_test = (int)value;
-		} else {
-			hal_log_info("CIRRUS-NB10: invalid G=%s; using G=0.",
-			             env);
-		}
-	}
-
-	env = getenv("W");
-	if (env != NULL) {
-		endp = NULL;
-		value = strtol(env, &endp, 0);
-		if (endp != env && *endp == '\0' &&
-		    value >= 0 && value <= 60) {
-			nb10_modeset_black_dwell_seconds = (int)value;
-		} else {
-			hal_log_info("CIRRUS-NB10: invalid W=%s; using W=10 seconds.",
-			             env);
-		}
-	}
-
-	if (nb10_modeset_checkpoint_test == 1 &&
-	    nb10_nt4_init_order_test != 0) {
-		hal_log_info("CIRRUS-NB10: G=1 observes hardware SET #1 only; "
-		             "overriding F=%d to F=0.",
-		             nb10_nt4_init_order_test);
-		nb10_nt4_init_order_test = 0;
-	} else if (nb10_modeset_checkpoint_test == 2 &&
-	           nb10_nt4_init_order_test != 1) {
-		hal_log_info("CIRRUS-NB10: G=2 requires the NT4-style hardware "
-		             "SET #2; overriding F=%d to F=1.",
-		             nb10_nt4_init_order_test);
-		nb10_nt4_init_order_test = 1;
-	}
-
-	/* G owns initialization and the first visible diagnostic frame. */
-	if (nb10_modeset_checkpoint_test != 0 && nb10_sr12_test != 0) {
-		hal_log_info("CIRRUS-NB10: G=%d requires S=0; overriding S=%d.",
-		             nb10_modeset_checkpoint_test, nb10_sr12_test);
-		nb10_sr12_test = 0;
-		nb10_sr12_test_done = false;
-	}
-	if (nb10_modeset_checkpoint_test != 0 && nb10_gate_order_test != 0) {
-		hal_log_info("CIRRUS-NB10: G=%d requires C=0; overriding C=%d.",
-		             nb10_modeset_checkpoint_test, nb10_gate_order_test);
-		nb10_gate_order_test = 0;
-	}
-	if (nb10_modeset_checkpoint_test != 0 && nb10_fach_ac_test != 0) {
-		hal_log_info("CIRRUS-NB10: G=%d requires D=0; overriding D=%d.",
-		             nb10_modeset_checkpoint_test, nb10_fach_ac_test);
-		nb10_fach_ac_test = 0;
-	}
-	if (nb10_modeset_checkpoint_test != 0 && nb10_gate_cycle_test != 0) {
-		hal_log_info("CIRRUS-NB10: G=%d requires E=0; overriding E=%d.",
-		             nb10_modeset_checkpoint_test, nb10_gate_cycle_test);
-		nb10_gate_cycle_test = 0;
-		nb10_gate_cycle_done = false;
-		nb10_gate_cycle_armed = false;
-	}
-
-	hal_log_info("CIRRUS-NB10: successful-SET checkpoint G=%d, W=%d sec: %s.",
-	             nb10_modeset_checkpoint_test,
-	             nb10_modeset_black_dwell_seconds,
-	             nb10_modeset_checkpoint_test == 0 ?
-	                 "disabled" :
-	             nb10_modeset_checkpoint_test == 1 ?
-	                 "black dwell after IOCTL request #2 / hardware SET #1" :
-	                 "black dwell after IOCTL request #3 / hardware SET #2");
-}
-
-static void
-nb10_wait_key(const char *message)
-{
-	/* Discard stale keystrokes so one Enter advances exactly one stage. */
-	while (kbhit())
-		(void)getch();
-
-	hal_log_info("%s", message);
-	printf("%s\n", message);
-	fflush(stdout);
-	(void)getch();
-}
-
-static void
-nb10_sr12_close(void)
-{
-	uint8_t before, after;
-
-	before = (uint8_t)cl_seq_read(0x12);
-	cl_seq_write8(0x12, before | 0x40);
-	after = (uint8_t)cl_seq_read(0x12);
-	hal_log_info("CIRRUS-NB10: SR12 gate closed: %02Xh -> %02Xh.",
-	             before, after);
-}
-
-static void
-nb10_sr12_open(void)
-{
-	uint8_t before, after;
-
-	before = (uint8_t)cl_seq_read(0x12);
-	cl_seq_write8(0x12, before & 0xbf);
-	after = (uint8_t)cl_seq_read(0x12);
-	hal_log_info("CIRRUS-NB10: SR12 gate reopened: %02Xh -> %02Xh.",
-	             before, after);
-}
-
-/*
- * Run once, immediately after the first game-frame FIFO BLT has completed.
- * Blocking here deliberately prevents all subsequent CPU-source BLTs while
- * the static image and SR12 gate behavior are observed.
- */
-static void
-nb10_sr12_after_first_frame(void)
-{
-	if (!pci_nb10_active || nb10_sr12_test == 0 ||
-	    nb10_sr12_test_done)
-		return;
-
-	nb10_sr12_test_done = true;
-
-	if (nb10_sr12_test == 1) {
-		if (!nb10_wait_complete_frames(4))
-			hal_log_info("CIRRUS-NB10: S=1 vertical-status wait "
-			             "timed out; closing SR12 anyway.");
-	} else {
-		nb10_wait_key(
-		    "CIRRUS-NB10 S=2: wait for the stable 1+1 attractor, "
-		    "then press Enter to close SR12 bit6.");
-	}
-
-	nb10_sr12_close();
-	nb10_wait_key(
-	    "CIRRUS-NB10: SR12 is closed. Observe whether the current "
-	    "image remains pixel-perfect/1+1, changes, or goes black; "
-	    "then press Enter to reopen.");
-	nb10_sr12_open();
-	nb10_wait_key(
-	    "CIRRUS-NB10: SR12 is open again. Observe whether restart is "
-	    "immediately pixel-perfect, immediately 1+1, or repeats the "
-	    "horizontal-noise calibration sequence; press Enter to continue.");
-}
-
 /* Present one game frame using CPU-source BitBLT only. */
 static void
 cirrus_flip_fifo(void)
@@ -2448,8 +1980,6 @@ cirrus_flip_fifo(void)
 		return;
 	}
 
-	nb10_sr12_after_first_frame();
-	nb10_gate_cycle_poll();
 }
 
 /*****************************************************************************/
@@ -2865,57 +2395,49 @@ cirrus54_init(int mode, int req_bpp)
 {
 	int w, h, bpp;
 	uint8_t relay_setup;
-	bool coregraph;
 
 	if (!wab_detect())
 		return false;
 
-	coregraph = gd54_necdrv_path8_id(cdisp.wab_id);
-	gd54_coregraph = coregraph;
+	hal_log_info("CIRRUS: GD54xx control interface found (ID %02Xh).", cdisp.wab_id);
 
-	hal_log_info("CIRRUS: onboard/legacy GD54xx control interface found "
-	             "(ID %02Xh; not assumed to be a physical WAB).",
-	             cdisp.wab_id);
 	wab_dump();
-	if (coregraph && nec_coregraph_seen)
-		hal_log_info("CIRRUS-CORE: ID %02Xh selects NEC-driver path 08h; "
-		             "NEC 1033:0009 marker is at PCI %d:%d.%d.",
-		             cdisp.wab_id, nec_coregraph_bus, nec_coregraph_dev,
+
+	gd54_coregraph = gd54_necdrv_path8_id(cdisp.wab_id);
+	if (gd54_coregraph && nec_coregraph_seen) {
+		hal_log_info("CIRRUS: Core-Graph found. WAB ID %02Xh, NEC 1033:0009 marker is at PCI %d:%d.%d.",
+		             cdisp.wab_id,
+			     nec_coregraph_bus,
+			     nec_coregraph_dev,
 		             nec_coregraph_fn);
-	else if (coregraph)
-		hal_log_info("CIRRUS-CORE: ID %02Xh selects NEC-driver path 08h "
-		             "(no 1033:0009 marker was observed).", cdisp.wab_id);
+	} else if (gd54_coregraph) {
+		hal_log_info("CIRRUS: Core-Graph found. WAB ID %02Xh, (no 1033:0009 found).",
+			     cdisp.wab_id);
+	}
 
 	w = disp_geo[mode].w;
 	h = disp_geo[mode].h;
-	if (coregraph && mode != DISP_640X480) {
-		hal_log_info("CIRRUS-CORE: only the recovered NEC-driver 640x480 streams "
-		             "are currently enabled.");
-		return false;
-	}
-	if (mode != DISP_640X480 && mode != DISP_800X600) {
-		hal_log_info("CIRRUS: GD54xx control path: %dx%d not supported "
-		             "(640x480 / 800x600 only).", w, h);
-		return false;
-	}
-
 	cdisp.vram_size = 1024UL * 1024UL;
-	bpp = cl_resolve_bpp(req_bpp, wab_default_bpp(cdisp.wab_id),
-	                     w, h, cdisp.vram_size, "GD54xx onboard/legacy");
+	bpp = cl_resolve_bpp(req_bpp,
+			     wab_default_bpp(cdisp.wab_id),
+	                     w,
+			     h,
+			     cdisp.vram_size,
+			     "GD54xx");
 	if (bpp < 0)
 		return false;
 
 	cdisp.scr_w = w;
 	cdisp.scr_h = h;
 	cdisp.bpp = bpp;
-	if (coregraph) {
+	if (gd54_coregraph) {
 		/* Fixed by NEC's path-8 command streams. */
 		cdisp.pitch = bpp == 8 ? 640UL :
 		              (bpp == 16 ? 1280UL : 2048UL);
 	} else {
 		cdisp.pitch = (uint32_t)w * (uint32_t)(bpp / 8);
 	}
-	cdisp.linear = coregraph;
+	cdisp.linear = gd54_coregraph;
 	cdisp.fifo_only = gd54_fifo_requested;
 	cdisp.fifo_capable = true;
 
@@ -2938,7 +2460,7 @@ cirrus54_init(int mode, int req_bpp)
 	 * instead needs NEC's external 68h/6Ah gate sequence; that is issued
 	 * later, immediately before the VGA mode stream.
 	 */
-	if (!coregraph) {
+	if (!gd54_coregraph) {
 		if (gd54_io_variant == 2) {
 			/* Exact NEC IoVariant-2 wake sequence. */
 			outp(WAB_P904, 0x00);
@@ -2973,11 +2495,10 @@ cirrus54_init(int mode, int req_bpp)
 	 * direct VRAM access.  The retained FIFO path uses the same mapped
 	 * window, though its behavior still needs confirmation on every WAB.
 	 */
-	if (coregraph) {
+	if (gd54_coregraph) {
 		wab_write(WAB_REG_LINEAR, 0xf0);
 		if ((uint8_t)wab_read(WAB_REG_LINEAR) != 0xf0) {
-			hal_log_info("CIRRUS-BLT: reg02 did not retain F0h "
-			             "(reads %02Xh); cannot open Core-Graph host aperture.",
+			hal_log_info("CIRRUS: reg02 did not retain F0h (reads %02Xh); cannot open Core-Graph host aperture.",
 			             wab_read(WAB_REG_LINEAR));
 			gd54_restore_board_state();
 			return false;
@@ -2987,14 +2508,12 @@ cirrus54_init(int mode, int req_bpp)
 		                                      cdisp.fifo_only ? 0x10000UL :
 		                                                        cdisp.vram_size);
 		if (cdisp.fb == NULL) {
-			hal_log_info("CIRRUS: cannot map Core-Graph linear host "
-			             "aperture at %08lXh.",
+			hal_log_info("CIRRUS: cannot map Core-Graph linear host aperture at %08lXh.",
 			             (unsigned long)cdisp.fb_phys);
 			gd54_restore_board_state();
 			return false;
 		}
-		hal_log_info("CIRRUS-CORE: reg02=%02Xh opens %s host aperture "
-		             "at %08lXh (%luKB mapped).",
+		hal_log_info("CIRRUS: reg02=%02Xh opens %s host aperture at %08lXh (%luKB mapped).",
 		             wab_read(WAB_REG_LINEAR),
 		             cdisp.fifo_only ? "CPU-source FIFO" : "linear VRAM",
 		             (unsigned long)cdisp.fb_phys,
@@ -3015,19 +2534,18 @@ cirrus54_init(int mode, int req_bpp)
 			case 2: ack = 0xe0; cdisp.fb_phys = 0x00f40000UL; break;
 			case 3: ack = 0xc0; cdisp.fb_phys = 0x00f60000UL; break;
 			default:
-				hal_log_info("CIRRUS: WAB IoVariant 2 reg04 strap "
-				             "%02Xh is unsupported.", strap);
+				hal_log_info("CIRRUS: WAB IoVariant 2 reg04 strap %02Xh is unsupported.", strap);
 				gd54_restore_board_state();
 				return false;
 			}
 			wab_write(WAB_REG_WINDOW, ack);
-			hal_log_info("CIRRUS: WAB IoVariant 2 aperture strap=%u, "
-			             "reg01=%02Xh -> %08lXh.",
-			             strap, ack, (unsigned long)cdisp.fb_phys);
+			hal_log_info("CIRRUS: WAB IoVariant 2 aperture strap=%u, reg01=%02Xh -> %08lXh.",
+			             strap,
+				     ack,
+				     (unsigned long)cdisp.fb_phys);
 		} else {
 			wab_write(WAB_REG_WINDOW, WAB_WINDOW_F2);
-			cdisp.fb_phys =
-			    gd54_window_phys((uint8_t)wab_read(WAB_REG_WINDOW));
+			cdisp.fb_phys = gd54_window_phys((uint8_t)wab_read(WAB_REG_WINDOW));
 		}
 
 		if (!gd54_identity_at_stage("after selecting reg01 host window")) {
@@ -3036,8 +2554,7 @@ cirrus54_init(int mode, int req_bpp)
 			return false;
 		}
 		if (cdisp.fb_phys == 0) {
-			hal_log_info("CIRRUS-BLT: reg01=%02Xh has no known "
-			             "32KB-window decoding.",
+			hal_log_info("CIRRUS-BLT: reg01=%02Xh has no known 32KB-window decoding.",
 			             wab_read(WAB_REG_WINDOW));
 			gd54_restore_board_state();
 			return false;
@@ -3049,14 +2566,13 @@ cirrus54_init(int mode, int req_bpp)
 			gd54_restore_board_state();
 			return false;
 		}
-		hal_log_info("CIRRUS: physical-WAB %s window is "
-		             "reg01=%02Xh -> %08lXh; reg02 left at %02Xh.",
+		hal_log_info("CIRRUS: physical-WAB %s window is reg01=%02Xh -> %08lXh; reg02 left at %02Xh.",
 		             cdisp.fifo_only ? "FIFO host" : "banked VRAM",
 		             wab_read(WAB_REG_WINDOW),
 		             (unsigned long)cdisp.fb_phys, gd54_saved_linear);
 	}
 
-	if (!coregraph) {
+	if (!gd54_coregraph) {
 		outp(VRAM_SW_PORT, VRAM_SW_WAB);
 		if ((uint8_t)inp(VRAM_SW_PORT) == VRAM_SW_WAB &&
 		    gd54_identity_at_stage("after 6Ah=8Fh")) {
@@ -3072,11 +2588,11 @@ cirrus54_init(int mode, int req_bpp)
 	 * The recovered NEC-driver Core-Graph board sequence must run before the
 	 * path-8 VGA stream, exactly as NEC's miniport does.
 	 */
-	if (coregraph)
+	if (gd54_coregraph)
 		coregraph_necdrv_gate_enter();
 
 	/* Use the recovered NEC-driver path-08h stream on Core-Graph; generic on path 04h. */
-	if (coregraph)
+	if (gd54_coregraph)
 		cl_modeset_coregraph_necdrv();
 	else
 		cl_modeset_generic(true);
@@ -3095,7 +2611,7 @@ cirrus54_init(int mode, int req_bpp)
 	cl_blt_reset();
 	if (cdisp.fifo_only) {
 		if (!cl_blt_fifo_clear_visible()) {
-			hal_log_info("CIRRUS-BLT: initial visible-screen FIFO clear failed.");
+			hal_log_info("CIRRUS: initial visible-screen FIFO clear failed.");
 			gd54_restore_board_state();
 			cl_release_fb_mapping();
 			return false;
@@ -3111,27 +2627,25 @@ cirrus54_init(int mode, int req_bpp)
 
 	/* Screen on.  Core-Graph reg03 was already selected before the mode stream. */
 	cl_seq_write(0x01, 0x01);
-	if (!coregraph) {
+	if (!gd54_coregraph) {
 		wab_write(WAB_REG_RELAY,
 		          relay_setup | WAB_RELAY_VIDEO | WAB_RELAY_SETUP);
 		outp(WAB_RELAY2_PORT, 0x02);
 	}
 
-	if (coregraph) {
-		hal_log_info("CIRRUS-CORE: output selected via reg03=%02Xh; "
-		             "0FACh untouched (reads %02Xh).",
+	if (gd54_coregraph) {
+		hal_log_info("CIRRUS: output selected via reg03=%02Xh; 0FACh untouched (reads %02Xh).",
 		             wab_read(WAB_REG_RELAY), inp(WAB_RELAY2_PORT));
-		hal_log_info("CIRRUS-CORE: visible screen cleared to black via %s.",
+		hal_log_info("CIRRUS: visible screen cleared to black via %s.",
 		             cdisp.fifo_only ? "CPU-source FIFO" :
 		                               "direct linear VRAM aperture");
 	} else
 		hal_log_info("CIRRUS: GD54xx output selected (reg03=%02Xh, 0FACh=%02Xh).",
 		             wab_read(WAB_REG_RELAY), inp(WAB_RELAY2_PORT));
 
-	cdisp.chip_name = cdisp.alpine ? "CL-GD5430/5440 (onboard/legacy)" :
-	                                 "CL-GD5428 (onboard/legacy)";
-	cdisp.path = coregraph ? CIRRUS_PATH_54_COREGRAPH :
-	                         CIRRUS_PATH_54_BANKED;
+	cdisp.chip_name = cdisp.alpine ? "CL-GD5430/5440" : "CL-GD5428";
+	cdisp.path = gd54_coregraph ? CIRRUS_PATH_COREGRAPH : CIRRUS_PATH_WAB;
+
 	return true;
 }
 
@@ -3199,15 +2713,21 @@ static int pci_bus, pci_dev, pci_fn;
 static bool ext_was_locked;
 
 /*
- * Nb10 is a PCI attachment, but its board-side gate is not the generic
- * PCI-laptop relay.  Keep the last output-producing DOS sequence as a
- * bootstrap: reg03=03h plus a pre-relay FIFO clear.  This is deliberately
- * not claimed to be the final byte-for-byte NT4 model-0Eh sequence; it is
- * the known-good visibility baseline from which the pure path can be
- * reduced again.
+ * Nb10 uses a fixed reconstruction of the NT4 first-enable path:
+ * two complete accepted model-0Eh SETs, direct 1MB-minus-one VRAM zero in
+ * each SET, then the display-DLL accelerator postlude.  FAA/FAB reg03=02h is
+ * the sole intentional DOS-only addition, because real-hardware T testing
+ * established that the DOS path otherwise has no visible signal.
  */
+#define NB10_NT4_MMIO_OFFSET      0x00DFFF00UL
+#define NB10_NT4_MMIO_LENGTH      0x00000100UL
+#define NB10_NT4_BLT_CONTROL      0x40
+
 static bool pci_nb10_board_active;
-static uint32_t pci_saved_command;
+static uint16_t pci_saved_command;
+static uint32_t pci_bar0_base;
+static volatile uint8_t *pci_nb10_mmio;
+static uint32_t pci_nb10_mmio_phys;
 
 /* Saved chip state (restored on cleanup). */
 static uint8_t sv_crtc[0x19];
@@ -3242,6 +2762,31 @@ pci_write32(int bus, int dev, int fn, int reg, uint32_t val)
 	      ((uint32_t)fn << 8) |
 	      ((uint32_t)reg & 0xfc));
 	outpd(PCI_CONFIG_DATA, val);
+}
+
+/* Access only the 16-bit PCI command register; do not echo W1C status bits. */
+static uint16_t
+pci_read_command16(int bus, int dev, int fn)
+{
+	outpd(PCI_CONFIG_ADDR,
+	      0x80000000UL |
+	      ((uint32_t)bus << 16) |
+	      ((uint32_t)dev << 11) |
+	      ((uint32_t)fn << 8) |
+	      0x04UL);
+	return (uint16_t)inpw(PCI_CONFIG_DATA);
+}
+
+static void
+pci_write_command16(int bus, int dev, int fn, uint16_t value)
+{
+	outpd(PCI_CONFIG_ADDR,
+	      0x80000000UL |
+	      ((uint32_t)bus << 16) |
+	      ((uint32_t)dev << 11) |
+	      ((uint32_t)fn << 8) |
+	      0x04UL);
+	outpw(PCI_CONFIG_DATA, value);
 }
 
 /* Scan the first buses, logging everything we pass by. */
@@ -3319,17 +2864,19 @@ pci_find_cirrus(int *obus, int *odev, int *ofn)
 static uint32_t
 pci_size_bar0(void)
 {
-	uint32_t cmd, orig, mask;
+	uint16_t command;
+	uint32_t orig, mask;
 
-	cmd = pci_read32(pci_bus, pci_dev, pci_fn, 0x04);
-	pci_write32(pci_bus, pci_dev, pci_fn, 0x04, cmd & ~0x2UL);
+	command = pci_read_command16(pci_bus, pci_dev, pci_fn);
+	pci_write_command16(pci_bus, pci_dev, pci_fn,
+	                    (uint16_t)(command & ~0x0002));
 
 	orig = pci_read32(pci_bus, pci_dev, pci_fn, 0x10);
 	pci_write32(pci_bus, pci_dev, pci_fn, 0x10, 0xffffffffUL);
 	mask = pci_read32(pci_bus, pci_dev, pci_fn, 0x10) & ~0xfUL;
 	pci_write32(pci_bus, pci_dev, pci_fn, 0x10, orig);
 
-	pci_write32(pci_bus, pci_dev, pci_fn, 0x04, cmd);
+	pci_write_command16(pci_bus, pci_dev, pci_fn, command);
 
 	return mask ? (~mask + 1) : 0;
 }
@@ -3382,24 +2929,6 @@ probe_regbase(void)
 	}
 
 	return false;
-}
-
-/* Dump the firmware-left register state before we touch anything. */
-static void
-dump_fw_regs(void)
-{
-	hal_log_info("CIRRUS: fw: SR07=%02Xh SR09=%02Xh SR0F=%02Xh "
-		     "SR14=%02Xh SR16=%02Xh SR17=%02Xh SR1F=%02Xh.",
-		     cl_seq_read(0x07), cl_seq_read(0x09),
-		     cl_seq_read(0x0f), cl_seq_read(0x14),
-		     cl_seq_read(0x16), cl_seq_read(0x17),
-		     cl_seq_read(0x1f));
-	hal_log_info("CIRRUS: fw: GR0B=%02Xh CR20=%02Xh CR27=%02Xh "
-		     "CR2C=%02Xh CR2D=%02Xh MISC=%02Xh HDR=%02Xh.",
-		     cl_gfx_read(0x0b), cl_crtc_read(0x20),
-		     cl_crtc_read(0x27), cl_crtc_read(0x2c),
-		     cl_crtc_read(0x2d), cl_misc_read(),
-		     cl_hidden_dac_read());
 }
 
 /* Query the LCD panel behind the 754x shadow registers. */
@@ -3710,11 +3239,13 @@ program_mode_754x(void)
 	/* Sequencer stream begins with SR00=01h synchronous reset. */
 	seq_stream(seq, nseq);
 
-	/* Exact RMW form used by the miniport. */
-	cl_seq_write(0x0f, (cl_seq_read(0x0f) & 0xdf) | 0x20);
+	/* Exact stream opcode: select SR0F, then RMW the data port only. */
+	outp(cdisp.io_3c0 + 0x04, 0x0f);
+	outp(cdisp.io_3c0 + 0x05,
+	     (inp(cdisp.io_3c0 + 0x05) & 0xdf) ^ 0x20);
 
 	/* Generic PCI laptops keep their historical early SR17 placement. */
-	if (!pci_nb10_active)
+	if (!pci_gd75_active)
 		cl_seq_write(0x17, (uint8_t)(cl_seq_read(0x17) | 0x44));
 
 	cl_misc_write(misc);
@@ -3732,12 +3263,15 @@ program_mode_754x(void)
 		outp(cdisp.io_3c0, m754x_atc[i]);
 	}
 	/* Nb10's board postlude owns the final AC-enable edge. */
-	if (!pci_nb10_active) {
+	if (!pci_gd75_active) {
 		(void)inp(cdisp.io_3da);
 		outp(cdisp.io_3c0, 0x20);
 	}
 
-	cl_hidden_dac_write(hdr);
+	if (pci_gd75_active)
+		cl_hidden_dac_write_nt4_stream(hdr);
+	else
+		cl_hidden_dac_write(hdr);
 	outp(cdisp.io_3c0 + 0x06, 0xff);
 
 	cl_gfx_write(0x09, 0x00);
@@ -3747,94 +3281,33 @@ program_mode_754x(void)
 	cl_gfx_write(0x0e, 0x00);
 	cdisp.cur_bank = 0;
 
-	if (!pci_nb10_active)
+	if (!pci_gd75_active)
 		cl_load_palette();
 }
 
-
 /*
- * Nb10 FAA/FAB reg03 test support.
+ * DOS-only Nb10 visibility shim.
  *
- * Use FAA/FAB explicitly.  wab_write() follows the currently selected WAB
- * IoVariant and must not be used for the independently enumerated Nb10.
- * No function in this block reads reg03.
+ * Use the fixed FAA/FAB pair explicitly; the independently enumerated GD7548
+ * is not governed by the currently selected WAB I/O variant.  Do not read the
+ * register and do not rewrite it between the two accepted hardware SETs.
  */
 static void
-nb10_reg03_write(const char *stage, uint8_t value)
+nb10_reg03_dos_shim_enable(void)
 {
 	outp(WAB_INDEX, WAB_REG_RELAY);
-	outp(WAB_DATA, value);
-	nb10_reg03_touched = true;
-	hal_log_info("CIRRUS-NB10: T=%d FAA/FAB reg03 %s write %02Xh.",
-	             nb10_reg03_test, stage, value);
+	outp(WAB_DATA, WAB_RELAY_VIDEO);       /* 02h: accelerator video only */
+	nb10_reg03_dos_shim_active = true;
 }
 
 static void
-nb10_reg03_configure(void)
+nb10_reg03_dos_shim_disable(void)
 {
-	const char *env;
-	char *endp;
-	long value;
-
-	/* Unset or invalid T defaults to the established bit1-only baseline. */
-	nb10_reg03_test = 2;
-	nb10_reg03_touched = false;
-
-	env = getenv("T");
-	if (env != NULL) {
-		endp = NULL;
-		value = strtol(env, &endp, 0);
-		if (endp != env && *endp == '\0' &&
-		    value >= 0 && value <= 3) {
-			nb10_reg03_test = (int)value;
-		} else {
-			hal_log_info("CIRRUS-NB10: invalid T=%s; using T=2.",
-			             env);
-		}
-	}
-
-	hal_log_info("CIRRUS-NB10: reg03 matrix T=%d: %s. "
-	             "FACh relay and 6Ah dance remain canonical.",
-	             nb10_reg03_test,
-	             nb10_reg03_test == 0 ?
-	                 "FAA/FAB reg03 read/write count is zero" :
-	             nb10_reg03_test == 1 ?
-	                 "early reg03=01h (bit0 only)" :
-	             nb10_reg03_test == 2 ?
-	                 "early reg03=02h (bit1 only)" :
-	                 "early reg03=03h (bit0+bit1 baseline)");
-}
-
-static void
-nb10_reg03_apply_enter(void)
-{
-	switch (nb10_reg03_test) {
-	case 1:
-		nb10_reg03_write("enter", 0x01);
-		break;
-	case 2:
-		nb10_reg03_write("enter", 0x02);
-		break;
-	case 3:
-		nb10_reg03_write("enter", 0x03);
-		break;
-	default:
-		/* T=0: strict no-touch. */
-		break;
-	}
-}
-
-static void
-nb10_reg03_apply_leave(void)
-{
-	/*
-	 * T=0 must not even perform an idempotent 00h write.  T=1..3 restore
-	 * the historical DOS exit value so their edge behavior remains visible.
-	 */
-	if (nb10_reg03_touched)
-		nb10_reg03_write("leave", 0x00);
-
-	nb10_reg03_touched = false;
+	if (!nb10_reg03_dos_shim_active)
+		return;
+	outp(WAB_INDEX, WAB_REG_RELAY);
+	outp(WAB_DATA, WAB_RELAY_GDC);         /* 00h */
+	nb10_reg03_dos_shim_active = false;
 }
 
 /* ---- Nb10 family-40h/model-0Eh board layer ----------------------------- */
@@ -3904,459 +3377,183 @@ nb10_attr_enable(void)
 	outp(cdisp.io_3c0, 0x20);
 }
 
-/* ---- Nb10 successful-SET black-dwell checkpoint (G/W) ------------------ */
+/* ---- Nb10 NT4 first-enable reconstruction ----------------------------- */
 
 /*
- * Busy-wait on the C runtime clock.  On the DOS target this advances from the
- * periodic system timer while the single task spins.  The loop deliberately
- * performs no VGA/NEC I/O, no FIFO write and no keyboard polling.
+ * CIRRUS.SYS byte-RMW form for sequencer registers: select the index once,
+ * read the data port, then write the data port only.
  */
-static bool
-nb10_passive_wait_seconds(int seconds)
+static void
+nb10_seq_rmw_sys(uint8_t index, uint8_t and_mask, uint8_t or_bits)
 {
-	clock_t start, now, span;
-	char message[256];
+	uint8_t value;
 
-	if (seconds <= 0)
-		return true;
-
-	start = clock();
-	if (start == (clock_t)-1) {
-		sprintf(message,
-		        "CIRRUS-NB10 G=%d: clock() is unavailable. Keep the "
-		        "screen black for at least %d seconds, then press one key.",
-		        nb10_modeset_checkpoint_test, seconds);
-		nb10_wait_key(message);
-		return true;
-	}
-	span = (clock_t)seconds * (clock_t)CLOCKS_PER_SEC;
-	do {
-		now = clock();
-		if (now == (clock_t)-1) {
-			sprintf(message,
-			        "CIRRUS-NB10 G=%d: clock() failed during the dwell. "
-			        "Wait until at least %d seconds have elapsed, then "
-			        "press one key.",
-			        nb10_modeset_checkpoint_test, seconds);
-			nb10_wait_key(message);
-			return true;
-		}
-	} while ((clock_t)(now - start) < span);
-	return true;
+	outp(cdisp.io_3c0 + 0x04, index);
+	value = (uint8_t)inp(cdisp.io_3c0 + 0x05);
+	outp(cdisp.io_3c0 + 0x05, (value & and_mask) | or_bits);
 }
 
 static bool
-nb10_modeset_black_checkpoint(int hardware_set)
+nb10_map_nt4_mmio(void)
 {
-	const char *request_name;
+	if (pci_nb10_mmio != NULL)
+		return true;
 
-	request_name = hardware_set == 1 ?
-	    "IOCTL request #2 / hardware SET #1" :
-	    "IOCTL request #3 / hardware SET #2";
+	pci_nb10_mmio_phys = pci_bar0_base + NB10_NT4_MMIO_OFFSET;
+	pci_nb10_mmio = (volatile uint8_t *)cl_map_physical(
+	    pci_nb10_mmio_phys, NB10_NT4_MMIO_LENGTH);
+	return pci_nb10_mmio != NULL;
+}
+
+static void
+nb10_release_nt4_mmio(void)
+{
+	if (pci_nb10_mmio == NULL)
+		return;
+	if (pci_nb10_mmio_phys >= 0x00100000UL &&
+	    !cl_unmap_physical((void *)pci_nb10_mmio))
+		hal_log_info("CIRRUS-NB10: warning: DPMI could not release NT4 MMIO "
+		             "mapping at %08lXh.",
+		             (unsigned long)pci_nb10_mmio_phys);
+	pci_nb10_mmio = NULL;
+	pci_nb10_mmio_phys = 0;
+}
+
+/*
+ * CIRRUS.SYS ZeroVideoMemory() calls VideoPortZeroMemory(base, vram_size-1)
+ * on model 0Eh.  The write width used inside VIDEOPRT.SYS is unknown; memset
+ * is the closest semantic equivalent available here.  The exact start,
+ * length and position in the SET sequence are preserved.
+ */
+static bool
+nb10_nt4_zero_video_memory(void)
+{
+	if (cdisp.fb == NULL || cdisp.vram_size < 2)
+		return false;
+	memset(cdisp.fb, 0, (size_t)(cdisp.vram_size - 1));
+	return true;
+}
+
+/*
+ * One accepted IOCTL_VIDEO_SET_CURRENT_MODE for family 40h/model 0Eh.
+ * Pass 1 includes the single DOS-only reg03=02h visibility shim at its
+ * historically verified point (after the 6Ah dance, before the AC preamble).
+ * Pass 2 deliberately inherits FACh=02h from pass 1 and never touches reg03.
+ */
+static bool
+nb10_nt4_hardware_set(bool first_set)
+{
+	unsigned long i;
+	uint32_t command_status;
 
 	/*
-	 * Start the timer immediately at the SET checkpoint.  Do not log or print
-	 * before the wait: even harmless console/file I/O would add an unmeasured
-	 * delay to W and make short phase samples less reproducible.
+	 * Exact miniport access: read the command/status dword at 04h, OR 03h
+	 * into AL, and write the whole dword back through CFC.
 	 */
-	if (!nb10_passive_wait_seconds(nb10_modeset_black_dwell_seconds))
-		return false;
-
-	hal_log_info("CIRRUS-NB10 G=%d: %s black dwell completed: %d seconds "
-	             "with SR12 open, FACh=02h and AC enabled; no BLT or "
-	             "display-register poll occurred during W.",
-	             nb10_modeset_checkpoint_test, request_name,
-	             nb10_modeset_black_dwell_seconds);
-
-	/* One write reveals the state reached during the black interval. */
-	if (cdisp.bpp == 8)
-		cl_load_palette();
-	cl_blt_reset();
-	if (!cl_blt_fifo_pattern_visible()) {
-		hal_log_info("CIRRUS-NB10 G=%d: one-shot reveal pattern failed.",
-		             nb10_modeset_checkpoint_test);
-		return false;
-	}
-
-	nb10_wait_key(
-	    hardware_set == 1 ?
-	    "CIRRUS-NB10 G=1: one static pattern was written after the black "
-	    "dwell following hardware SET #1. No further BLTs are running. "
-	    "Observe (a) its immediate pixel parity, (b) whether the reveal write "
-	    "made horizontal noise, and (c) whether the static image later cycles "
-	    "through 1px-missing/noise/pixel-perfect. Press one key to continue." :
-	    "CIRRUS-NB10 G=2: one static pattern was written after the black "
-	    "dwell following hardware SET #2. No further BLTs are running. "
-	    "Observe (a) its immediate pixel parity, (b) whether the reveal write "
-	    "made horizontal noise, and (c) whether the static image later cycles "
-	    "through 1px-missing/noise/pixel-perfect. Press one key to continue.");
-	return true;
-}
-
-/* ---- Nb10 NT4 first-enable double-SET (F) experiment -------------------- */
-
-/*
- * Execute only the SECOND successful SET_CURRENT_MODE observed during NT4's
- * first DrvEnableSurface path.  The caller has just completed the normal DOS
- * pass, so FACh is already 02h, AC is enabled and NEC is locked.
- *
- * Keep the critical interval free of diagnostics and user interaction: the
- * first operation is the second miniport prelude, and no log/readback occurs
- * until the complete second postlude has finished.  In particular this pass
- * never calls nb10_reg03_apply_enter(), so FAA/FAB indexed reg03 receives no
- * additional access.
- */
-static bool
-nb10_nt4_second_set(void)
-{
-	uint32_t cmd;
-	unsigned long i;
-
-	/* family-40h prelude: PCI decode, NEC unlock, routing dance, AC down. */
-	cmd = pci_read32(pci_bus, pci_dev, pci_fn, 0x04);
-	/* Avoid echoing write-one-to-clear PCI status bits in the upper word. */
+	command_status = pci_read32(pci_bus, pci_dev, pci_fn, 0x04);
 	pci_write32(pci_bus, pci_dev, pci_fn, 0x04,
-	            (cmd & 0x0000ffffUL) | 0x00000003UL);
+	            command_status | 0x00000003UL);
+
 	nb10_nec_unlock();
 	outp(PC98_GDC_MODE_PORT, 0x0e);
 	outp(VRAM_SW_PORT, 0x07);
 	outp(VRAM_SW_PORT, 0x8f);
 	outp(VRAM_SW_PORT, 0x06);
+
+	if (first_set)
+		nb10_reg03_dos_shim_enable();
+
 	nb10_attr_preamble();
 
-	/*
-	 * FACh remains 02h while this stream performs SR00=01h -> 03h and
-	 * restarts the GD7548 pixel stream.  This inherited state is the point of
-	 * F=1; do not lower FACh and do not touch FAA/FAB reg03 here.
-	 */
+	/* Exact recovered model-0Eh command stream and SYS post-stream updates. */
 	program_mode_754x();
-	cl_select_crtc(cl_misc_read());
-	cl_seq_write8(0x17, (uint8_t)(cl_seq_read(0x17) | 0x44));
-	cl_seq_write8(0x02, (uint8_t)(cl_seq_read(0x02) | 0x0f));
+	nb10_seq_rmw_sys(0x17, 0xff, 0x44);
 
-	/*
-	 * NT4 zeroes its mapped 1MB range here.  Retain the already verified DOS
-	 * CPU-source FIFO clear for this first ordering experiment, so the only
-	 * new variable is the second full mode set and its FACh carry state.
-	 */
-	cl_blt_reset();
-	if (!cl_blt_fifo_clear_visible()) {
+	/* ZeroVideoMemory() first enables all four sequencer planes. */
+	nb10_seq_rmw_sys(0x02, 0xff, 0x0f);
+	if (!nb10_nt4_zero_video_memory()) {
 		nb10_nec_lock();
 		return false;
 	}
 
-	/* Exact model-0Eh postlude order, including the idempotent FACh write. */
-	cl_seq_write8(0x12, (uint8_t)(cl_seq_read(0x12) & 0xbf));
+	/* Exact family-40h/model-0Eh postlude. */
+	nb10_seq_rmw_sys(0x12, 0xbf, 0x00);
 	outp(PCI_RELAY_PORT, 0x02);
 	for (i = 0; i < 200000UL; i++)
-		outp(PC98_WAIT_PORT, 0);
+		outp(PC98_WAIT_PORT, 0x00);
 	nb10_attr_enable();
-	outp(cdisp.io_3c0 + 0x06, 0xff);
 	nb10_nec_lock();
-
-	if (nb10_modeset_checkpoint_test == 2 &&
-	    !nb10_modeset_black_checkpoint(2))
-		return false;
-
-	hal_log_info("CIRRUS-NB10 F=1: NT4-style second full SET completed; "
-	             "FACh carried high across SR00 reset, reg03 untouched in "
-	             "pass 2, visible FIFO clear used (not NT4's direct 1MB zero). "
-	             "Final SR00=%02Xh SR12=%02Xh FACh=%02Xh GR31=%02Xh.",
-	             cl_seq_read(0x00), cl_seq_read(0x12),
-	             inp(PCI_RELAY_PORT), cl_gfx_read(0x31));
 	return true;
 }
 
-/* ---- Nb10 gate-cycle (E) experiment -------------------------------------- */
-
-static void
-nb10_fach_write_logged(const char *stage, uint8_t value)
-{
-	unsigned long i;
-	int readback;
-
-	outp(PCI_RELAY_PORT, value);
-	for (i = 0; i < 200000UL; i++)
-		outp(PC98_WAIT_PORT, 0);
-	readback = inp(PCI_RELAY_PORT);
-	hal_log_info("CIRRUS-NB10 E=%d %s: FACh write %02Xh, readback %02Xh%s.",
-	             nb10_gate_cycle_test, stage, value, readback,
-	             readback == value ? "" : " (MISMATCH: NEC lock may gate FACh)");
-}
-
 /*
- * Polled after every completed game-frame FIFO BLT.  The first call only
- * drains stale keystrokes and arms the trigger; any later keypress during
- * gameplay starts the cycle, freezing the current frame on screen (the
- * prompts block, so no further BLT is submitted until the cycle ends).
+ * cirrus.dll postlude after the second successful SET_CURRENT_MODE.
+ * QUERY_CURRENT_MODE between the GR writes and SR17 setup has no hardware
+ * side effect and is intentionally represented only by this ordering gap.
+ * The recovered 640x480 8/16/24bpp mode flags never have bit 80h set, so the
+ * optional second MMIO+40h write of 80h is not issued.
  */
-static void
-nb10_gate_cycle_poll(void)
+static bool
+nb10_nt4_display_dll_postlude(void)
 {
-	if (!pci_nb10_active || nb10_gate_cycle_test == 0 ||
-	    nb10_gate_cycle_done)
-		return;
+	uint8_t value;
 
-	if (!nb10_gate_cycle_armed) {
-		while (kbhit())
-			(void)getch();
-		nb10_gate_cycle_armed = true;
-		hal_log_info("CIRRUS-NB10 E=%d armed: press any key during "
-		             "gameplay once the 1+1 attractor is stable on "
-		             "real game content.", nb10_gate_cycle_test);
-		return;
-	}
+	if (pci_nb10_mmio == NULL)
+		return false;
 
-	if (!kbhit())
-		return;
-	(void)getch();
+	/* GR0B = (GR0B & 20h) | 04h, using the DLL's index/read/data order. */
+	outp(cdisp.io_3c0 + 0x0e, 0x0b);
+	value = (uint8_t)inp(cdisp.io_3c0 + 0x0f);
+	outp(cdisp.io_3c0 + 0x0f, (value & 0x20) | 0x04);
 
-	nb10_gate_cycle_done = true;
-	hal_log_info("CIRRUS-NB10 E=%d triggered; the current game frame "
-	             "stays on screen for the cycle.", nb10_gate_cycle_test);
+	/* DLL uses word OUTs: index 39h/38h with a zero data byte. */
+	cl_gfx_write(0x39, 0x00);
+	cl_gfx_write(0x38, 0x00);
 
-	switch (nb10_gate_cycle_test) {
-	case 1:
-		nb10_attr_preamble();
-		nb10_fach_write_logged("close", 0x00);
-		nb10_wait_key(
-		    "CIRRUS-NB10 E=1 stage 1: AC is disabled and FACh is 00h "
-		    "(both gates DOWN; the panel should show the 98-GDC side). "
-		    "Wait at least 5 seconds, then press Enter to reopen both.");
-		nb10_fach_write_logged("reopen", 0x02);
-		nb10_attr_enable();
-		nb10_wait_key(
-		    "CIRRUS-NB10 E=1 stage 2: both gates are UP again. If the "
-		    "image is IMMEDIATELY in the 1+1 attractor, the trained "
-		    "gear survived (closed dwell = pause). If it starts "
-		    "pixel-perfect and repeats the horizontal-noise "
-		    "calibration, the both-down dwell RESET the gear. "
-		    "Press Enter to continue.");
-		break;
-	case 2:
-		nb10_fach_write_logged("close", 0x00);
-		nb10_wait_key(
-		    "CIRRUS-NB10 E=2 stage 1: FACh is 00h, AC stays enabled "
-		    "(one gate still UP). Wait at least 5 seconds, then press "
-		    "Enter to restore FACh=02h.");
-		nb10_fach_write_logged("reopen", 0x02);
-		nb10_wait_key(
-		    "CIRRUS-NB10 E=2 stage 2: FACh is 02h again. Expected "
-		    "under the OR model: immediately in the attractor. A "
-		    "pixel-perfect restart here would contradict the OR "
-		    "model. Press Enter to continue.");
-		break;
-	default:
-		nb10_attr_preamble();
-		nb10_wait_key(
-		    "CIRRUS-NB10 E=3 stage 1: AC is disabled, FACh stays 02h "
-		    "(one gate still UP). Wait at least 5 seconds, then press "
-		    "Enter to re-enable AC.");
-		nb10_attr_enable();
-		nb10_wait_key(
-		    "CIRRUS-NB10 E=3 stage 2: AC is enabled again. Expected "
-		    "under the OR model: immediately in the attractor. A "
-		    "pixel-perfect restart here would contradict the OR "
-		    "model. Press Enter to continue.");
-		break;
-	}
+	/* QUERY_CURRENT_MODE occurs here in NT4; it only updates DLL software. */
+
+	/* Public MMIO path selected on model 0Eh: SR17 bit2 and BLT reset byte. */
+	cl_seq_write(0x17, (uint8_t)(cl_seq_read(0x17) | 0x04));
+	pci_nb10_mmio[NB10_NT4_BLT_CONTROL] = 0x04;
+	return true;
 }
 
 static bool
 nb10_known_output_enter(void)
 {
-	unsigned long i;
-
-	nb10_nec_unlock();
-	outp(PC98_GDC_MODE_PORT, 0x0e);
-	outp(VRAM_SW_PORT, 0x07);
-	outp(VRAM_SW_PORT, 0x8f);
-	outp(VRAM_SW_PORT, 0x06);
-
 	/*
-	 * Canonical model-0Eh ordering keeps the 6Ah dance, while T controls only
-	 * the optional FAA/FAB indexed reg03 write.  T=0 reaches this point with
-	 * zero reg03 reads/writes and remains no-touch through leave.
+	 * The miniport already owns a kernel mapping of BAR0+0C00000h before the
+	 * first SET; cdisp.fb is its DOS equivalent.  Map the separate family-40h
+	 * public MMIO page used later by cirrus.dll before starting the critical
+	 * two-SET interval.  No register diagnostic or user wait is inserted
+	 * between the accepted SETs.
 	 */
-	nb10_reg03_apply_enter();
-	nb10_attr_preamble();
+	if (!nb10_map_nt4_mmio()) {
+		hal_log_info("CIRRUS-NB10: cannot map NT4 public MMIO page at %08lXh.",
+		             (unsigned long)(pci_bar0_base + NB10_NT4_MMIO_OFFSET));
+		return false;
+	}
+
 	pci_nb10_board_active = true;
 
-	program_mode_754x();
-	cl_select_crtc(cl_misc_read());
-	cl_seq_write8(0x17, (uint8_t)(cl_seq_read(0x17) | 0x44));
-	cl_seq_write8(0x02, (uint8_t)(cl_seq_read(0x02) | 0x0f));
+	if (!nb10_nt4_hardware_set(true))
+		return false;
+	if (!nb10_nt4_hardware_set(false))
+		return false;
+	if (!nb10_nt4_display_dll_postlude())
+		return false;
 
-	/*
-	 * Use a static hardware pattern for C=1/2 and D=1/2.  It is fully
-	 * resident before either final gate edge, so the visible calibration
-	 * transition cannot be blamed on another CPU-source BLT.  The plain
-	 * baseline (C=0, D=0) preserves the normal black clear.
-	 */
-	cl_blt_reset();
-	if (nb10_gate_order_test == 0 && nb10_fach_ac_test == 0) {
-		if (!cl_blt_fifo_clear_visible()) {
-			nb10_nec_lock();
-			return false;
-		}
-	} else {
-		if (!cl_blt_fifo_pattern_visible()) {
-			nb10_nec_lock();
-			return false;
-		}
-	}
+	/* Strato's RGB332 palette setup corresponds to the OS palette phase. */
+	if (cdisp.bpp == 8)
+		cl_load_palette();
 
-	if (nb10_gate_order_test == 1) {
-		/*
-		 * C=1: the GD7548 stream is live, but both final output controls
-		 * remain hidden.  Waiting is deliberately passive: no status polling
-		 * and no further BLT are performed.
-		 */
-		cl_seq_write8(0x12,
-		              (uint8_t)(cl_seq_read(0x12) & 0xbf));
-		nb10_wait_key(
-		    "CIRRUS-NB10 C=1 stage 1: SR12 is OPEN, FACh is 00h, "
-		    "and AC is disabled. Wait at least 3 seconds, then press "
-		    "one key to expose the preloaded pattern.");
-
-		outp(PCI_RELAY_PORT, 0x02);
-		for (i = 0; i < 200000UL; i++)
-			outp(PC98_WAIT_PORT, 0);
-		nb10_attr_enable();
-		outp(cdisp.io_3c0 + 0x06, 0xff);
-		nb10_nec_lock();
-
-		if (cdisp.bpp == 8)
-			cl_load_palette();
-
-		nb10_wait_key(
-		    "CIRRUS-NB10 C=1 stage 2: pattern is now visible. "
-		    "Observe whether it starts already in the attractor, or "
-		    "starts pixel-perfect and then shows horizontal calibration "
-		    "noise. Press one key to continue to the game.");
-	} else if (nb10_gate_order_test == 2) {
-		/*
-		 * C=2: select the final relay and AC while the GD7548 stream is
-		 * closed.  The screen should remain black until SR12 is reopened.
-		 */
-		cl_seq_write8(0x12,
-		              (uint8_t)(cl_seq_read(0x12) | 0x40));
-		outp(PCI_RELAY_PORT, 0x02);
-		for (i = 0; i < 200000UL; i++)
-			outp(PC98_WAIT_PORT, 0);
-		nb10_attr_enable();
-		outp(cdisp.io_3c0 + 0x06, 0xff);
-		nb10_nec_lock();
-
-		if (cdisp.bpp == 8)
-			cl_load_palette();
-
-		nb10_wait_key(
-		    "CIRRUS-NB10 C=2 stage 1: FACh is 02h and AC is enabled, "
-		    "but SR12 is CLOSED. Wait at least 3 seconds, then press "
-		    "one key to reopen the GD7548 stream.");
-		cl_seq_write8(0x12,
-		              (uint8_t)(cl_seq_read(0x12) & 0xbf));
-		nb10_wait_key(
-		    "CIRRUS-NB10 C=2 stage 2: SR12 is now OPEN. Observe "
-		    "whether the pattern starts pixel-perfect and calibrates, "
-		    "or appears immediately in the attractor. Press one key "
-		    "to continue to the game.");
-	} else if (nb10_fach_ac_test == 1) {
-		/*
-		 * D=1: raise the relay alone.  The AC stays disabled, so the
-		 * panel should show blank/border content while any internal
-		 * calibration triggered by FACh runs to completion unseen.
-		 * The dwell is passive: no polling, no further BLT.
-		 */
-		cl_seq_write8(0x12,
-		              (uint8_t)(cl_seq_read(0x12) & 0xbf));
-		outp(PCI_RELAY_PORT, 0x02);
-		for (i = 0; i < 200000UL; i++)
-			outp(PC98_WAIT_PORT, 0);
-		hal_log_info("CIRRUS-NB10 D=1: FACh edge done (reads %02Xh); "
-		             "AC still disabled.", inp(PCI_RELAY_PORT));
-		nb10_wait_key(
-		    "CIRRUS-NB10 D=1 stage 1: SR12 is OPEN and FACh is 02h, "
-		    "but AC is disabled. Wait at least 3 seconds, then press "
-		    "one key to enable AC and expose the preloaded pattern.");
-
-		nb10_attr_enable();
-		outp(cdisp.io_3c0 + 0x06, 0xff);
-		nb10_nec_lock();
-
-		if (cdisp.bpp == 8)
-			cl_load_palette();
-
-		nb10_wait_key(
-		    "CIRRUS-NB10 D=1 stage 2: AC is now enabled. If the "
-		    "pattern is ALREADY in the 1+1 attractor, calibration ran "
-		    "during the FACh-only dwell (FACh is the trigger). If it "
-		    "starts pixel-perfect and then shows horizontal noise, the "
-		    "AC edge (or both gates together) is the trigger. Press "
-		    "one key to continue to the game.");
-	} else if (nb10_fach_ac_test == 2) {
-		/*
-		 * D=2: enable the AC alone.  FACh is intentionally never
-		 * written during the dwell - even an idempotent 00h write
-		 * would add an edge on the port under test - so the panel
-		 * keeps showing the 98-GDC side.  Its value is only read.
-		 */
-		cl_seq_write8(0x12,
-		              (uint8_t)(cl_seq_read(0x12) & 0xbf));
-		nb10_attr_enable();
-		outp(cdisp.io_3c0 + 0x06, 0xff);
-
-		if (cdisp.bpp == 8)
-			cl_load_palette();
-
-		hal_log_info("CIRRUS-NB10 D=2: AC edge done; FACh untouched "
-		             "(reads %02Xh).", inp(PCI_RELAY_PORT));
-		nb10_wait_key(
-		    "CIRRUS-NB10 D=2 stage 1: SR12 is OPEN and AC is enabled, "
-		    "but FACh has not been written. Wait at least 3 seconds, "
-		    "then press one key to switch FACh to 02h.");
-
-		outp(PCI_RELAY_PORT, 0x02);
-		for (i = 0; i < 200000UL; i++)
-			outp(PC98_WAIT_PORT, 0);
-		nb10_nec_lock();
-
-		nb10_wait_key(
-		    "CIRRUS-NB10 D=2 stage 2: FACh is now 02h. If the "
-		    "pattern is ALREADY in the 1+1 attractor, calibration ran "
-		    "during the AC-only dwell (AC enable is the trigger). If "
-		    "it starts pixel-perfect and then shows horizontal noise, "
-		    "the FACh edge (or both gates together) is the trigger. "
-		    "Press one key to continue to the game.");
-	} else {
-		/* C=0, D=0: current baseline order. */
-		cl_seq_write8(0x12,
-		              (uint8_t)(cl_seq_read(0x12) & 0xbf));
-		outp(PCI_RELAY_PORT, 0x02);
-		for (i = 0; i < 200000UL; i++)
-			outp(PC98_WAIT_PORT, 0);
-		nb10_attr_enable();
-		outp(cdisp.io_3c0 + 0x06, 0xff);
-		nb10_nec_lock();
-
-		if (nb10_modeset_checkpoint_test == 1 &&
-		    !nb10_modeset_black_checkpoint(1))
-			return false;
-
-		/*
-		 * F=1 starts the second full SET immediately: no key wait, no
-		 * diagnostic read and (for 8bpp) no palette load is inserted between
-		 * the first postlude and the second prelude.
-		 */
-		if (nb10_nt4_init_order_test == 1 &&
-		    !nb10_nt4_second_set())
-			return false;
-
-		if (cdisp.bpp == 8)
-			cl_load_palette();
-	}
-
+	hal_log_info("CIRRUS-NB10: NT4 first-enable replay complete: two full "
+	             "hardware SETs, each with direct %lu-byte zero; "
+	             "DOS-only reg03=02h written once; DLL MMIO postlude applied "
+	             "at %08lXh. No diagnostic register reads were inserted after "
+	             "the postlude.",
+	             (unsigned long)(cdisp.vram_size - 1),
+	             (unsigned long)pci_nb10_mmio_phys);
 	return true;
 }
 
@@ -4368,24 +3565,31 @@ nb10_known_output_leave(void)
 	if (!pci_nb10_board_active)
 		return;
 
+	/* CIRRUS.SYS mode 0 / IOCTL_VIDEO_RESET_DEVICE, model 0Eh. */
 	nb10_nec_unlock();
-	cl_blt_reset();
-	cl_seq_write8(0x12, (uint8_t)(cl_seq_read(0x12) | 0x40));
-	outp(PC98_WAIT_PORT, 0);
+	nb10_seq_rmw_sys(0x12, 0xff, 0x40);
+	outp(PC98_WAIT_PORT, 0x00);
 	outp(VRAM_SW_PORT, 0x07);
 	outp(VRAM_SW_PORT, 0x8e);
 	outp(VRAM_SW_PORT, 0x06);
-	nb10_reg03_apply_leave();
+
 	outp(PCI_RELAY_PORT, 0x00);
 	for (i = 0; i < 200000UL; i++)
-		outp(PC98_WAIT_PORT, 0);
+		outp(PC98_WAIT_PORT, 0x00);
 	outp(PC98_GDC_MODE_PORT, 0x0f);
+
+	/*
+	 * Undo the DOS-only shim only after NT4 has already returned 68h/FACh
+	 * to the GDC side.  Keep NEC unlocked for this one unverified fixed-
+	 * interface write, matching the known-safe DOS cleanup condition.
+	 */
+	nb10_reg03_dos_shim_disable();
 	nb10_nec_lock();
 	pci_nb10_board_active = false;
 }
 
 static bool
-cirrus75_init(int mode, int req_bpp)
+cirrus_pci_init(int mode, int req_bpp)
 {
 	uint32_t bar0, barsize, cmd;
 	int w, h, bpp;
@@ -4393,17 +3597,12 @@ cirrus75_init(int mode, int req_bpp)
 	if (!pci_find_cirrus(&pci_bus, &pci_dev, &pci_fn))
 		return false;
 
-	pci_nb10_active = (chip->dev == 0x0038);
+	pci_gd75_active = (chip->dev == 0x0038);
 	pci_nb10_board_active = false;
-	if (pci_nb10_active) {
-		nb10_reg03_configure();
-		nb10_sr12_configure();
-		nb10_gate_order_configure();
-		nb10_fach_ac_configure();
-		nb10_gate_cycle_configure();
-		nb10_nt4_init_order_configure();
-		nb10_modeset_checkpoint_configure();
-	}
+	nb10_reg03_dos_shim_active = false;
+	pci_nb10_mmio = NULL;
+	pci_nb10_mmio_phys = 0;
+	pci_bar0_base = 0;
 
 	hal_log_info("CIRRUS: %s found at PCI %d:%d.%d (dev ID %04Xh).",
 	             chip->name, pci_bus, pci_dev, pci_fn, chip->dev);
@@ -4424,39 +3623,60 @@ cirrus75_init(int mode, int req_bpp)
 	bar0 = pci_read32(pci_bus, pci_dev, pci_fn, 0x10);
 	barsize = pci_size_bar0();
 	cmd = pci_read32(pci_bus, pci_dev, pci_fn, 0x04);
-	pci_saved_command = cmd;
+	pci_saved_command = (uint16_t)(cmd & 0xffffUL);
 	hal_log_info("CIRRUS: BAR0=%08lXh (decode %luMB), cmd=%04lXh.",
 	             (unsigned long)bar0,
 	             (unsigned long)(barsize >> 20),
 	             (unsigned long)(cmd & 0xffff));
-	pci_write32(pci_bus, pci_dev, pci_fn, 0x04, cmd | 0x03);
+	pci_write_command16(pci_bus, pci_dev, pci_fn,
+	                    (uint16_t)((cmd & 0xffffUL) | 0x0003));
 	bar0 &= ~0xfUL;
-	if (bar0 == 0)
+	if (bar0 == 0) {
+		hal_log_info("CIRRUS: BAR0 has no usable memory base.");
+		pci_write_command16(pci_bus, pci_dev, pci_fn,
+		                    pci_saved_command);
+		pci_gd75_active = false;
 		return false;
+	}
+	pci_bar0_base = bar0;
 
 	cdisp.fb_phys = bar0 + chip->fb_offset;
 	cdisp.vram_size = PCI_FB_LENGTH;
 	cdisp.linear = true;
-	cdisp.fifo_capable = !chip->laptop || pci_nb10_active;
-	cdisp.fifo_only = pci_nb10_active ? true :
+	cdisp.fifo_capable = !chip->laptop || pci_gd75_active;
+	cdisp.fifo_only = pci_gd75_active ? true :
 	                    (cdisp.fifo_capable && gd54_fifo_requested);
 
-	cdisp.fb = (uint8_t *)cl_map_physical(cdisp.fb_phys,
-	                                      cdisp.fifo_only ? 0x10000UL :
-	                                                        cdisp.vram_size);
-	if (cdisp.fb == NULL)
+	cdisp.fb = (uint8_t *)cl_map_physical(
+	    cdisp.fb_phys,
+	    pci_gd75_active ? cdisp.vram_size :
+	    (cdisp.fifo_only ? 0x10000UL : cdisp.vram_size));
+	if (cdisp.fb == NULL) {
+		hal_log_info("CIRRUS: cannot map PCI host aperture at %08lXh.",
+		             (unsigned long)cdisp.fb_phys);
+		pci_write_command16(pci_bus, pci_dev, pci_fn,
+		                    pci_saved_command);
+		pci_gd75_active = false;
+		pci_bar0_base = 0;
 		return false;
+	}
 
 	if (!probe_regbase()) {
 		hal_log_info("CIRRUS: VGA registers not responding at native/relocated base.");
 		cl_release_fb_mapping();
+		pci_write_command16(pci_bus, pci_dev, pci_fn,
+		                    pci_saved_command);
+		pci_gd75_active = false;
+		pci_bar0_base = 0;
 		return false;
 	}
 
 	cdisp.crt27 = (uint8_t)cl_crtc_read(0x27);
 	save_state();
-	cl_seq_write(0x01, sv_sr[0x01] | 0x20);
-	probe_lcd();
+	if (!pci_gd75_active) {
+		cl_seq_write(0x01, sv_sr[0x01] | 0x20);
+		probe_lcd();
+	}
 
 	if (chip->laptop) {
 		bpp = (req_bpp == -1) ? chip->def_bpp : req_bpp;
@@ -4478,9 +3698,9 @@ cirrus75_init(int mode, int req_bpp)
 	else
 		cdisp.pitch = (uint32_t)w * (uint32_t)(bpp / 8);
 
-	if (pci_nb10_active) {
-		hal_log_info("CIRRUS-NB10: canonical 6Ah/FAC route with "
-		             "FAA/FAB reg03 selected independently by T.");
+	if (pci_gd75_active) {
+		hal_log_info("CIRRUS-NB10: fixed NT4 first-enable replay; "
+		             "FAA/FAB reg03=02h is retained only as the measured DOS visibility shim.");
 		if (!nb10_known_output_enter())
 			goto fail;
 	} else {
@@ -4506,7 +3726,7 @@ cirrus75_init(int mode, int req_bpp)
 	}
 
 	cdisp.chip_name = chip->name;
-	cdisp.path = CIRRUS_PATH_75;
+	cdisp.path = CIRRUS_PATH_PCI;
 	return true;
 
 fail:
@@ -4515,35 +3735,40 @@ fail:
 	restore_state();
 	if (ext_was_locked)
 		cl_seq_write(0x06, 0x0f);
-	pci_write32(pci_bus, pci_dev, pci_fn, 0x04, pci_saved_command);
+	pci_write_command16(pci_bus, pci_dev, pci_fn,
+	                    pci_saved_command);
+	nb10_release_nt4_mmio();
 	cl_release_fb_mapping();
-	pci_nb10_active = false;
-	nb10_sr12_test_done = false;
-	nb10_gate_cycle_done = false;
-	nb10_gate_cycle_armed = false;
-	nb10_modeset_checkpoint_test = 0;
+	pci_gd75_active = false;
+	pci_bar0_base = 0;
+	nb10_reg03_dos_shim_active = false;
 	return false;
 }
 
 static void
-cirrus75_cleanup(void)
+cirrus_pci_cleanup(void)
 {
-	cl_seq_write(0x01, 0x21);
-
-	if (pci_nb10_active)
+	/*
+	 * Nb10 first runs the recovered mode-0/RESET_DEVICE sequence without an
+	 * extra SR01 blanking write in front of it.  Other PCI paths retain the
+	 * historical generic blank-before-relay behavior.
+	 */
+	if (pci_gd75_active) {
 		nb10_known_output_leave();
-	else
+	} else {
+		cl_seq_write(0x01, 0x21);
 		relay_to_gdc();
+	}
 
 	restore_state();
 	if (ext_was_locked)
 		cl_seq_write(0x06, 0x0f);
-	pci_write32(pci_bus, pci_dev, pci_fn, 0x04, pci_saved_command);
+	pci_write_command16(pci_bus, pci_dev, pci_fn,
+	                    pci_saved_command);
+	nb10_release_nt4_mmio();
 	cl_release_fb_mapping();
-	pci_nb10_active = false;
+	pci_gd75_active = false;
 	pci_nb10_board_active = false;
-	nb10_sr12_test_done = false;
-	nb10_gate_cycle_done = false;
-	nb10_gate_cycle_armed = false;
-	nb10_modeset_checkpoint_test = 0;
+	pci_bar0_base = 0;
+	nb10_reg03_dos_shim_active = false;
 }

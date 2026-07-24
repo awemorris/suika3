@@ -137,7 +137,13 @@ pf_load_texture(
 		return false;
 
 	/* Load an image. */
-	if (strcmp(ext, ".jpg") == 0 ||
+	if (strcmp(ext, ".hcg") == 0 ||
+	    strcmp(ext, ".HCG") == 0) {
+		if (!hal_create_image_with_hcg((const uint8_t *)data, size, &tex_tbl[index].img)) {
+			hal_log_error(PF_TR("Cannot load an image \"%s\"."), fname);
+			return false;
+		}
+	} else if (strcmp(ext, ".jpg") == 0 ||
 	    strcmp(ext, ".JPG") == 0 ||
 	    strcmp(ext, ".jpeg") == 0 ||
 	    strcmp(ext, ".JPEG") == 0) {
@@ -553,7 +559,7 @@ pf_write_texture(
 		pf_log_error(PF_TR("Cannot open file \"%s\"."), file);
 		return false;
 	}
-	
+
 	if (!hal_write_image(tex_tbl[tex_id].img, wf)) {
 		pf_log_error(PF_TR("Cannot write file \"%s\"."), file);
 		hal_close_wfile(wf);
@@ -565,6 +571,32 @@ pf_write_texture(
 	return true;
 }
 
+/*
+ * Write a texture to a file. (HCG)
+ */
+PF_DLL
+bool
+pf_write_texture_hcg(
+	int tex_id,
+	const char *file)
+{
+	struct hal_wfile *wf;
+
+	if (!hal_open_wfile(file, &wf)) {
+		pf_log_error(PF_TR("Cannot open file \"%s\"."), file);
+		return false;
+	}
+
+	if (!hal_write_image_hcg(tex_tbl[tex_id].img, wf)) {
+		pf_log_error(PF_TR("Cannot write file \"%s\"."), file);
+		hal_close_wfile(wf);
+		return false;
+	}
+
+	hal_close_wfile(wf);
+
+	return true;
+}
 
 /*
  * Rendering

@@ -811,6 +811,8 @@ sb16_isr(void)
 {
 	int st;
 
+	old_isr();
+
 	/* Acknowledge the DSP interrupt(s). */
 	st = mixer_read(MIX_IRQ_STATUS);
 	if (st & 0x01)

@@ -75,6 +75,13 @@ char **hal_argv;
 /* Alpha blend table. */
 uint8_t alphatable[256][256];
 
+/* Timer interrupt handler. */
+#if defined(__WATCOMC__)
+static void (__interrupt __far *old_isr)(void);
+static void __interrupt __far timer_isr(void);
+#endif
+uint64_t tick;
+
 /* Forward Declaration */
 static void init_alphatable(void);
 static bool init_disp(void);
@@ -86,6 +93,8 @@ void hal_poll_sound(void);
 static void process_input(void);
 static void flip(void);
 static bool open_log_file(void);
+static void hook_irq(void);
+static void unhook_irq(void);
 
 int hal_main(int argc, char *argv[])
 {
@@ -163,6 +172,9 @@ int hal_main(int argc, char *argv[])
 	/* Create the alpha blending LUT. */
 	init_alphatable();
 
+	/* Start timer interrupt. */
+	hook_irq();
+
 	/* Game loop. */
 	while (1) {
 		sound_poll();
@@ -178,6 +190,9 @@ int hal_main(int argc, char *argv[])
 
 		flip();
 	}
+
+	/* Stop timer interrupt. */
+	unhook_irq();
 
 	/* Cleanup. */
 	cleanup_sound();
@@ -291,6 +306,66 @@ static void process_input(void)
 		hal_callback.on_key_release(HAL_KEY_RIGHT);
 	is_right_key_pressed = next_is_right_key_pressed;
 }
+
+static void
+hook_irq(void)
+{
+#if defined(__WATCOMC__)
+	uint16_t interval;
+
+	const unsigned int PIC0_IMR = 0x02;
+	const unsigned int TIMER_VEC = 0x08;
+	const unsigned int IRQ_BIT = 1;
+	const unsigned int PIT_CMD = 0x77;
+	const unsigned int PIT_DATA = 0x71;
+
+	/* Set the interrupt handler. */
+	old_isr = _dos_getvect(TIMER_VEC);
+	_dos_setvect(TIMER_VEC, timer_isr);
+
+	/* Unmask the IRQ in the PIC. */
+	_disable();
+	outp(PIC0_IMR, inp(PIC0_IMR) & ~IRQ_BIT);
+	_enable();
+
+	/*
+	 * Initialize the interval timer.
+	 *  - 1/60 sec (2457600 / 60 = 40960)
+	 */
+	interval = 49060;
+	outp(PIT_CMD, 0x34);
+	outp(PIT_DATA, interval & 0xff);
+	outp(PIT_DATA, interval >> 8);
+#endif
+}
+
+static void
+unhook_irq(void)
+{
+#if defined(__WATCOMC__)
+	const unsigned int PIC0_IMR = 0x02;
+	const unsigned int TIMER_VEC = 0x08;
+	const unsigned int IRQ_BIT = 1;
+
+	_dos_setvect(TIMER_VEC, old_isr);
+
+	/* Mmask the IRQ in the PIC. */
+	_disable();
+	outp(PIC0_IMR, inp(PIC0_IMR) | IRQ_BIT);
+	_enable();
+#endif
+}
+
+#if defined(__WATCOMC__)
+static void __interrupt
+__far timer_isr(void)
+{
+	old_isr();
+
+	tick++;
+}
+#endif
+
 
 /*
  * HAL
@@ -662,6 +737,7 @@ hal_render_image_3d_cross(
 
 static uint32_t get_time(void)
 {
+#if 0
 	union REGS r;
 	uint32_t tick;
 
@@ -672,6 +748,9 @@ static uint32_t get_time(void)
 	tick = (r.w.cx << 16) | r.w.dx;
 
 	return tick * 1000 / 32;
+#endif
+	
+	return tick * 1000 / 60;
 }
 
 void

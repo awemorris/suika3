@@ -927,6 +927,8 @@ pic_eoi_for_irq(int irq)
 static void __interrupt __far
 wss_isr(void)
 {
+	old_isr();
+
 	/*
 	 * Acknowledge the codec interrupt source.
 	 *

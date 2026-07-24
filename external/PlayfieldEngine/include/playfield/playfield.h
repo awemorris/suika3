@@ -367,11 +367,20 @@ pf_draw(
 	int y);
 
 /*
- * Write a texture to a file.
+ * Write a texture to a file. (PNG)
  */
 PF_DLL
 bool
 pf_write_texture(
+	int tex_id,
+	const char *file);
+
+/*
+ * Write a texture to a file. (HCG)
+ */
+PF_DLL
+bool
+pf_write_texture_hcg(
 	int tex_id,
 	const char *file);
 

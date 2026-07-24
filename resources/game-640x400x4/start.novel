@@ -6,4 +6,5 @@
 [text text="Meow..."]
 [text name="Cats" text="Meow! Meow! Meow!"]
 [text name="みどり" text="うわあぁぁ！！"]
+[bg file="images/bg/white.png" time="1.0"]
 [text name="みどり" text="PC98 テスト"]

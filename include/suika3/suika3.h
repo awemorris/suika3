@@ -1139,10 +1139,18 @@ s3_get_image_pixels(
 	struct s3_image *image);
 
 /*
- * Write an image to a file.
+ * Write an image to a file. (PNG)
  */
 bool
 s3_write_image(
+	struct s3_image *image,
+	const char *file);
+
+/*
+ * Write an image to a file. (HCG)
+ */
+bool
+s3_write_image_hcg(
 	struct s3_image *image,
 	const char *file);
 

@@ -484,7 +484,7 @@ s3_get_image_pixels(
 }
 
 /*
- * Write an image to a file.
+ * Write an image to a file. (PNG)
  */
 bool
 s3_write_image(
@@ -492,6 +492,20 @@ s3_write_image(
 	const char *file)
 {
 	if (!pf_write_texture(image->tex_id, file))
+		return false;
+
+	return true;
+}
+
+/*
+ * Write an image to a file. (HCG)
+ */
+bool
+s3_write_image_hcg(
+	struct s3_image *image,
+	const char *file)
+{
+	if (!pf_write_texture_hcg(image->tex_id, file))
 		return false;
 
 	return true;

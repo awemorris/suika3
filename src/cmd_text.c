@@ -434,6 +434,7 @@ blit_process(void)
 	/* If dimming is needed */
 	if (need_dimming) {
 		blit_dimming();
+
 		/* If not in auto/skip mode */
 		if (s3_is_in_command_repetition())
 			s3_stop_command_repetition();
@@ -815,6 +816,8 @@ clear_msgbox(void)
 		pen_x = msgbox_w - conf_msgbox_margin_right - conf_msgbox_font_size;
 		pen_y = conf_msgbox_margin_top;
 	}
+
+	s3_set_pen_position(pen_x, pen_y);
 }
 
 /* Initialize if in auto mode */
