@@ -452,8 +452,8 @@ if(   STRATO_TARGET_LINUX
    OR STRATO_TARGET_FREEBSD)
   set(STRATO_SOURCES
       src/image.c
-      src/hcg_decode.c
-      src/hcg_encode.c
+#      src/hcg_decode.c
+#      src/hcg_encode.c
       src/glyph.c
       src/wave.c
       src/stdfile.c
