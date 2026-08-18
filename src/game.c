@@ -377,8 +377,13 @@ s3i_on_game_update(void)
 	if (s3_is_gui_running()) {
 		bool is_gui_tag;
 
-		/* Check if this is a gui tag execution. (if not, it's a system GUI!) */
-		is_gui_tag = s3_is_in_command_repetition();
+		/*
+		 * Check if this is a gui tag execution. (if not, it's a system GUI!)
+		 * A system GUI opened from a command (e.g. the save GUI by the S key
+		 * during a text display) also runs while the command's repetition is
+		 * active, so the is_sys_gui flag distinguishes them.
+		 */
+		is_gui_tag = s3_is_in_command_repetition() && !s3_is_system_gui();
 
 		if (!s3i_run_gui_update()) {
 			/* Error: will stop the game after the next rendering. */
