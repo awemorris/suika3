@@ -521,6 +521,7 @@ s3i_cleanup_gui(void)
 
 	/* Initialize the flags. */
 	is_gui_running = false;
+	is_sys_gui = false;
 
 	/* Free button resources. */
 	for (i = 0; i < S3_BUTTON_LAYERS; i++) {
@@ -622,6 +623,16 @@ s3_check_right_after_sys_gui(void)
 	}
 
 	return false;
+}
+
+/*
+ * Check if the current GUI is a system GUI.
+ *  - Unlike s3_check_right_after_sys_gui(), this does not consume the flag.
+ */
+bool
+s3_is_system_gui(void)
+{
+	return is_sys_gui;
 }
 
 /*
