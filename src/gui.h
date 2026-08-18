@@ -62,4 +62,10 @@ s3i_run_gui_render(void);
 bool
 s3i_run_gui_postprocess(void);
 
+/*
+ * Check if the current GUI is a system GUI.
+ */
+bool 
+s3_is_system_gui(void);
+
 #endif
