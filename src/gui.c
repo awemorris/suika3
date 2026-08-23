@@ -521,7 +521,6 @@ s3i_cleanup_gui(void)
 
 	/* Initialize the flags. */
 	is_gui_running = false;
-	is_sys_gui = false;
 
 	/* Free button resources. */
 	for (i = 0; i < S3_BUTTON_LAYERS; i++) {

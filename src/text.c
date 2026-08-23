@@ -477,8 +477,12 @@ static bool isgraph_extended(const char **mbs, uint32_t *wc)
 	if (*wc >= 0x0370 && *wc <= 0x3ff)
 		return true;
 
-	/* If a Russian alphabet. */
-	if (*wc >= 0x410 && *wc <= 0x44f)
+	/* If a Cyrillic alphabet (includes ё/Ё and extended letters). */
+	if (*wc >= 0x0400 && *wc <= 0x04ff)
+		return true;
+	
+	/* Russian guillemets (treat «word» as one unit for wrapping). */
+	if (*wc == 0x00ab || *wc == 0x00bb) /* « » */
 		return true;
 
 	/* Not supported. */
