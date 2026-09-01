@@ -321,6 +321,8 @@ s3_execute_load_global(void)
 					break;
 				if (!s3_set_variable_string(key, sbuf))
 					break;
+				if (!s3_make_variable_global(key, true))
+					break;
 			}
 		}
 		if (i != count)
