@@ -158,11 +158,6 @@ s3i_tag_set(
 		/* Make the variable global or local. */
 		if (!s3_make_variable_global(name, is_global))
 			return false;
-		/* Save global variable. */
-		if (is_global && !s3i_is_load_in_progress()) {
-			if (!s3_execute_save_global())
-				return false;
-		}
 	}
 
 	/* Set the continue flag to run also the next tag. */
