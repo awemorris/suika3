@@ -234,6 +234,7 @@ expand_table(void)
 				new_tbl[j].value = tbl[i].value;
 				new_tbl[j].hash = tbl[i].hash;
 				new_tbl[j].len = tbl[i].len;
+				new_tbl[j].is_global = tbl[i].is_global;
 				break;
 			}
 		}

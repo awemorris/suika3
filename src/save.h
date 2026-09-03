@@ -65,4 +65,7 @@ s3i_cleanup_save(void);
 bool
 s3i_is_load_in_progress(void);
 
+bool
+s3_execute_save_global(void)
+
 #endif

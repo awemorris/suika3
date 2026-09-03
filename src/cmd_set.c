@@ -154,7 +154,7 @@ s3i_tag_set(
 	/* Check the global option. */
 	if (s3_check_tag_arg("global")) {
 		bool is_global = s3_get_tag_arg_int("global", false, -1);
-
+		
 		/* Make the variable global or local. */
 		if (!s3_make_variable_global(name, is_global))
 			return false;
