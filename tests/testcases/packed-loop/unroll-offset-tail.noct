@@ -1,0 +1,25 @@
+var off_in = Packed.uint16(12);
+var off_out = Packed.uint16(12);
+
+func offset16(input: rpackeduint16, output: rpackeduint16,
+              start: int, stop: int): void {
+    for (i in start..stop) {
+        output[i] = input[i - 1] + input[i] + input[i + 1];
+    }
+}
+
+func main() {
+    for (i in 0..12) {
+        off_in[i] = i + 10;
+    }
+    offset16(off_in, off_out, 2, 2);
+    print(off_out[2]);
+    offset16(off_in, off_out, 2, 3);
+    print(off_out[2]);
+    offset16(off_in, off_out, 2, 5);
+    print(off_out[4]);
+    offset16(off_in, off_out, 2, 6);
+    print(off_out[5]);
+    offset16(off_in, off_out, 2, 7);
+    print(off_out[6]);
+}

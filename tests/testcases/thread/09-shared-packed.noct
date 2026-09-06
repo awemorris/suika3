@@ -1,0 +1,31 @@
+// A packed array survives a deep copy through a shared value with its
+// element type and contents intact.
+
+func worker(shared) {
+    var snap = Thread.snapshotShared(shared);
+    var sum = 0;
+    for (i in 0..Packed.size(snap.buf)) {
+        sum = sum + snap.buf[i];
+    }
+    return sum;
+}
+
+func main() {
+    var buf = Packed.uint32(6);
+    for (i in 0..6) {
+        buf[i] = (i + 1) * 100000;
+    }
+
+    var shared = Thread.createShared({buf: buf});
+    var snap = Thread.snapshotShared(shared);
+    print(Packed.size(snap.buf));
+    print(Packed.type(snap.buf) == Packed.type(buf));
+    print(snap.buf[5]);
+
+    // The snapshot is a copy, not an alias.
+    snap.buf[0] = 1;
+    print(Thread.snapshotShared(shared).buf[0]);
+
+    var th = Thread.createThread(worker, shared);
+    print(Thread.joinThread(th));
+}

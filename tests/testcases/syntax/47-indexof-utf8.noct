@@ -1,0 +1,23 @@
+func main() {
+    // String.indexOf returns a character index, like charAt and
+    // substring, so the three can be combined on multibyte text.
+    var s = "あいu";
+    print(String.charCount(s));
+    print(String.indexOf(s, "u"));
+    print(String.indexOf(s, "い"));
+    print(String.substring(s, String.indexOf(s, "い"), 1));
+
+    // A header-splitting idiom on multibyte text.
+    var t = "名前: のくと\r\n\r\n本体";
+    var at = String.indexOf(t, "\r\n\r\n");
+    print(at);
+    print(String.substring(t, 0, at));
+    print(String.substring(t, at + 4, -1));
+
+    // ASCII cases.
+    print(String.indexOf("abc", "c"));
+    print(String.indexOf("abc", "abc"));
+    print(String.indexOf("abc", "d"));
+    print(String.indexOf("abc", ""));
+    print(String.indexOf("", "a"));
+}

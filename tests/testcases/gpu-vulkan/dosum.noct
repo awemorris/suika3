@@ -1,0 +1,25 @@
+__accel func reduce(
+    source: rpackedint32,
+    destination: rpackedint32,
+    n: int): void {
+    var sum: int = 0;
+    for (i in 0..n) {
+        sum += source[i];
+    }
+    for (j in 0..n) {
+        destination[j] = source[j] + sum;
+    }
+    destination[0] = sum;
+}
+
+func main() {
+    let source = Packed.int32(5);
+    let destination = Packed.int32(5);
+    for (i in 0..5) {
+        source[i] = i + 1;
+    }
+    reduce(source, destination, 5);
+    for (i in 0..5) {
+        print(destination[i]);
+    }
+}

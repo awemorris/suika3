@@ -1,0 +1,61 @@
+func dump(p, n) {
+    var s = "";
+    for (i in 0..n) {
+        s = s + p[i] + " ";
+    }
+    return s;
+}
+
+func main() {
+    // Copy between two buffers.
+    var a = Packed.uint8(8);
+    var b = Packed.uint8(8);
+    for (i in 0..8) {
+        a[i] = i + 1;
+    }
+    Packed.fill(b, 0, 8, 0);
+    print(Packed.copy(b, 2, a, 0, 4));
+    print(dump(b, 8));
+
+    // Overlapping move forward. (the gap-buffer case)
+    var c = Packed.uint8(8);
+    for (i in 0..8) {
+        c[i] = i + 1;
+    }
+    Packed.copy(c, 2, c, 0, 6);
+    print(dump(c, 8));
+
+    // Overlapping move backward.
+    var d = Packed.uint8(8);
+    for (i in 0..8) {
+        d[i] = i + 1;
+    }
+    Packed.copy(d, 0, d, 2, 6);
+    print(dump(d, 8));
+
+    // Fill.
+    var e = Packed.uint8(6);
+    Packed.fill(e, 0, 6, 0);
+    print(Packed.fill(e, 1, 3, 255));
+    print(dump(e, 6));
+
+    // Wider elements are indexed by element, not by byte.
+    var f = Packed.uint32(4);
+    var g = Packed.uint32(4);
+    Packed.fill(f, 0, 4, 0);
+    f[0] = 100000;
+    f[1] = 200000;
+    Packed.fill(g, 0, 4, 7);
+    Packed.copy(g, 2, f, 0, 2);
+    print(dump(g, 4));
+
+    // A zero count is a no-op.
+    print(Packed.copy(g, 0, f, 0, 0));
+    print(Packed.fill(g, 0, 0, 1));
+    print(dump(g, 4));
+
+    // Floats.
+    var h = Packed.float32(3);
+    Packed.fill(h, 0, 3, 1.5);
+    print(dump(h, 3));
+}

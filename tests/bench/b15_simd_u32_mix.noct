@@ -1,0 +1,25 @@
+// Synthetic two-source/one-destination packed integer mixing kernel.
+func mix(dst: rpackeduint32, a: rpackeduint32, b: rpackeduint32,
+         n: int, mask: int) {
+    for (i in 0..n) {
+        dst[i] = (((a[i] & 16711935) + ((b[i] >> 1) & 2139062143))
+                  ^ mask);
+    }
+}
+
+func main() {
+    var n = 1048576;
+    var a = Packed.uint32(n);
+    var b = Packed.uint32(n);
+    var dst = Packed.uint32(n);
+    for (i in 0..n) {
+        a[i] = (i * 2654435761) & 4294967295;
+        b[i] = (i * 2246822519) & 4294967295;
+    }
+    for (frame in 0..16) {
+        mix(dst, a, b, n, 1437226410);
+    }
+    print(dst[0]);
+    print(dst[12345]);
+    print(dst[1048575]);
+}

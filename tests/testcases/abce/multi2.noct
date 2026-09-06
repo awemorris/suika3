@@ -1,0 +1,21 @@
+// Multi-packed ABCE with mixed int bets: u8 + u32 sources into a u16
+// destination -- three packeds, three widths, one versioned loop.
+// Also exercises the affine offset shapes on different owners.
+func main() {
+    var n = 200;
+    var a8 = Packed.uint8(n);
+    var b32 = Packed.uint32(n);
+    var d16 = Packed.uint16(n);
+    for (i in 0..n) {
+        a8[i] = (i * 13) & 255;
+        b32[i] = i * 100000;
+    }
+    for (i in 1..n) {
+        d16[i] = (a8[i - 1] + b32[i] + a8[i]) & 65535;
+    }
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + d16[i];
+    }
+    print(sum);
+}

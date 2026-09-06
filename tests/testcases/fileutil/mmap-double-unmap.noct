@@ -1,0 +1,6 @@
+func main()
+{
+    let p = FileUtil.mmap8("mmap-data.bin", 0, 8, 1, 0);
+    FileUtil.munmap(p);
+    FileUtil.munmap(p);
+}

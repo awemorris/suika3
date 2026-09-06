@@ -1,0 +1,26 @@
+func worker(param) {
+    var total = 0;
+    for (i in 0..100) {
+        var obj = new Counter { start: param.base };
+        total = total + obj.add(i);
+    }
+    return total;
+}
+
+func main() {
+    Counter = class {
+        start: 0,
+        add: (this, x) => {
+            return this.start + x;
+        }
+    };
+    var ths = [];
+    for (t in 0..4) {
+        ths[t] = Thread.createThread(worker, {base: t});
+    }
+    var total = 0;
+    for (t in 0..4) {
+        total = total + Thread.joinThread(ths[t]);
+    }
+    print(total);
+}

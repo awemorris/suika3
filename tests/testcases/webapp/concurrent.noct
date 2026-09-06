@@ -1,0 +1,111 @@
+//
+// Concurrency test for the Noct web framework.
+//
+// Several client threads hammer one server while the garbage collector
+// runs underneath, so the object model has to survive a realistic
+// application workload rather than a synthetic loop.
+//
+
+func buildApp() {
+    var app = new WebApp { routes: [], headers: {} };
+
+    app.get("/ping", (req, res) => {
+        res.text("pong");
+    });
+
+    // Allocates on every request, which keeps the nursery churning.
+    app.get("/alloc/:n", (req, res) => {
+        var n = Int.from(req.params.n);
+        var acc = [];
+        for (i in 0..n) {
+            acc[i] = {index: i, label: "item" + i};
+        }
+        res.json({count: Array.size(acc), last: acc[n - 1].label});
+    });
+
+    app.get("/echo/:word", (req, res) => {
+        res.text(req.params.word);
+    });
+
+    return app;
+}
+
+func request(port, raw) {
+    var conn = HttpServer.connect("127.0.0.1", port);
+    HttpServer.send(conn, raw);
+    var reply = "";
+    while (true) {
+        var chunk = HttpServer.recv(conn, 4096);
+        if (chunk == "") {
+            break;
+        }
+        reply = reply + chunk;
+    }
+    HttpServer.close(conn);
+    return reply;
+}
+
+func bodyOf(reply) {
+    var at = String.indexOf(reply, "\r\n\r\n");
+    if (at < 0) {
+        return "";
+    }
+    return String.substring(reply, at + 4, -1);
+}
+
+func client_thread(param) {
+    var ok = 0;
+    for (i in 0..param.count) {
+        var word = param.tag + i;
+        var body = bodyOf(request(param.port, "GET /echo/" + word + " HTTP/1.1\r\nHost: x\r\n\r\n"));
+        if (body == word) {
+            ok = ok + 1;
+        }
+        Thread.incrementCounter(param.counter);
+    }
+    return ok;
+}
+
+func server_thread(param) {
+    var app = buildApp();
+    return app.serveOn(param.server, param.count);
+}
+
+func main() {
+    webappInit();
+
+    var port = 18202;
+    var clients = 4;
+    var perClient = 15;
+    var total = clients * perClient;
+
+    var server = HttpServer.listen("127.0.0.1", port);
+    var counter = Thread.createCounter();
+    var th = Thread.createThread(server_thread, {server: server, count: total});
+
+    var tags = ["w", "x", "y", "z"];
+    var workers = [];
+    for (i in 0..clients) {
+        workers[i] = Thread.createThread(client_thread, {
+            port: port,
+            count: perClient,
+            tag: tags[i],
+            counter: counter
+        });
+    }
+
+    var ok = 0;
+    for (i in 0..clients) {
+        ok = ok + Thread.joinThread(workers[i]);
+    }
+    print(ok);
+    print(Thread.getCounter(counter));
+    print(Thread.joinThread(th));
+
+    // The server survived; it still answers on the main thread.
+    var app = buildApp();
+    var res = app.dispatch(parseRequest("GET /alloc/50 HTTP/1.1\r\nHost: x\r\n\r\n"));
+    print(res.body);
+
+    HttpServer.close(server);
+}

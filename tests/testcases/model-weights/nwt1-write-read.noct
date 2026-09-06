@@ -1,0 +1,48 @@
+func main(args) {
+    var payload = Packed.uint8(8);
+    Packed.fill(payload, 0, 8, 0);
+    Binary.writeU32LE(payload, 0, 0x3f800000);
+    Binary.writeU32LE(payload, 4, 0xc0200000);
+
+    var modelBytes = Packed.uint8(5);
+    Packed.fromString(modelBytes, 0, "model");
+    var modelHash = Hash.sha256Bytes(modelBytes);
+    var payloadHash = Hash.sha256Bytes(payload);
+
+    var pack = Packed.uint8(200);
+    Packed.fill(pack, 0, 200, 0);
+    Packed.fromString(pack, 0, "NOCTWGT");
+    pack[7] = 0;
+    pack[8] = 1;
+    Binary.writeU32LE(pack, 12, 104);
+    Binary.writeU32LE(pack, 16, 0);
+    Binary.writeU32LE(pack, 20, 1);
+    Binary.writeU64LE(pack, 24, 40);
+    Binary.writeU64LE(pack, 32, 8);
+    Packed.copy(pack, 40, modelHash, 0, 32);
+    Packed.copy(pack, 72, payloadHash, 0, 32);
+
+    Binary.writeU32LE(pack, 104, 40);
+    pack[108] = 1;
+    pack[109] = 0;
+    pack[110] = 1;
+    pack[111] = 1;
+    Binary.writeU32LE(pack, 112, 0);
+    Binary.writeU64LE(pack, 116, 0);
+    Binary.writeU64LE(pack, 124, 8);
+    Binary.writeU64LE(pack, 132, 2);
+    pack[140] = 97;
+    Packed.copy(pack, 192, payload, 0, 8);
+
+    var file = File.open(args[0], "wb");
+    File.writeAll(file, pack, 0, 200);
+    File.close(file);
+
+    var handle = Weights.open(args[0], Hash.sha256(pack));
+    var tensor = Weights.loadFloat32(handle, 0, "a", [2]);
+    print(tensor[0]);
+    print(tensor[1]);
+    Weights.close(handle);
+    Weights.close(handle);
+    print(1);
+}

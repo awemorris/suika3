@@ -7,6 +7,12 @@ noct \- Noct programming language CLI
 [\fIfile\fR]
 .br
 .B noct
+[\fB--gpu\fR[=\fISELECTOR\fR]] \fIsource-file\fR
+.br
+.B noct
+\fB--gpu-list\fR
+.br
+.B noct
 \fB--compile\fR \fIfiles...\fR
 .br
 .B noct
@@ -28,10 +34,55 @@ runs the REPL.
 If no option is given and a file is provided,
 .B noct
 executes the program.
+.PP
+The
+.B __accel
+function annotation is an optimization hint. Its checked CPU body remains
+valid and runs when accelerator optimization is unavailable or declined.
+Accelerator-enabled builds choose platform backends automatically: Direct3D
+12 on Windows, Vulkan and OpenGL ES on Linux and FreeBSD, and Metal on macOS.
+The compiler uses a private, backend-specific
+.B __Accel
+package; there is no public
+.B Accel.*
+API.
+.PP
+CPU code may divide eligible loops into multiple synchronous GPU regions in
+one function. This means successive offload sessions on the selected device,
+not simultaneous use of multiple physical GPUs.
 .SH OPTIONS
 .TP
 .B --compile
 Compile one or more input source files into Noct bytecode files.
+.TP
+.B --gpu[=\fISELECTOR\fR]
+Enable accelerator optimization while running source.
+Without a selector, choose a default suitable device. Canonical selectors,
+as printed by
+.BR --gpu-list ,
+begin with
+.BR vulkan: ,
+.BR opengles: ,
+.BR d3d12: ,
+or
+.BR metal: .
+An exact unqualified device name is accepted only when it is unique across
+the available backends.
+.IP
+This option applies only to source execution, including source supplied with
+.BR -e .
+It cannot be used with a
+.B .nbc
+or
+.B .nap
+file,
+.BR --compile ,
+or
+.BR --app .
+.TP
+.B --gpu-list
+List suitable GPU devices and their canonical selectors, then exit. This
+option must be used by itself.
 .TP
 .B --ansic \fIout.c in_files...\fR
 Transpile the specified input source files into a single ANSI C source file

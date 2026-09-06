@@ -1,0 +1,30 @@
+func bump(dst: rpackeduint32, src: rpackeduint32, n: int) {
+    for (i in 0..n) {
+        dst[i] = src[i] + 1;
+    }
+}
+
+func dump(p, n) {
+    var s = "";
+    for (i in 0..n) {
+        s = s + p[i] + " ";
+    }
+    print(s);
+}
+
+func main() {
+    var a = Packed.uint32(8);
+    var b = Packed.uint32(8);
+    for (i in 0..8) {
+        a[i] = i;
+        b[i] = 0;
+    }
+
+    // Distinct backing ranges take the vector path.
+    bump(b, a, 8);
+    dump(b, 8);
+
+    // Violating the checked restrict hint remains defined and falls back.
+    bump(a, a, 8);
+    dump(a, 8);
+}

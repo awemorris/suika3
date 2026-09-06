@@ -1,0 +1,66 @@
+// Stage B lattice proofs (design 07 3.3 / 4.2).
+
+// Float locals proven through an assignment chain: fires.
+func fchain() {
+    var a = 1.5;
+    var b = a * 2.0;
+    var c = b - a;
+    print(c / a);
+    print(a < b);
+}
+
+// A local assigned float only in one branch keeps the int-0 seed
+// from its declaration: meet(INT, FLOAT) = UNKNOWN -> generic, and
+// output is identical either way.
+func branch(c: int) {
+    var x = 0;
+    if (c > 0) {
+        x = 1.5;
+    }
+    print(x + 1);
+}
+
+// Ranged-for counter := start pseudo-edge: the counter proves int in
+// a plain (non-ABCE) loop, so the body arithmetic is typed.
+func counter(n: int) {
+    var s = 0;
+    for (i in 0..n) {
+        s = s + i * 2;
+    }
+    print(s);
+}
+
+// CSE capture homes participate: (a+b) is captured at level 2 and
+// its home local proves int.
+func cap(a: int, b: int) {
+    var x = (a + b) * 2;
+    var y = (a + b) * 3;
+    print(x + y);
+}
+
+// A reassigned parameter LOSES its annotation proof (the entry check
+// only proves the entry value): everything here stays generic and
+// promotes exactly like level 0.
+func reassigned(a: int) {
+    a = 1.5;
+    print(a + 1);
+    print(a * 2);
+    print(a < 2);
+}
+
+// Unannotated parameters prove nothing.
+func unannot(a) {
+    print(a + 1);
+}
+
+func main() {
+    fchain();
+    branch(1);
+    branch(0 - 1);
+    counter(10);
+    cap(3, 4);
+    reassigned(7);
+    unannot(41);
+    unannot(0.5);
+    return 0;
+}

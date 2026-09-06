@@ -1,0 +1,5 @@
+require nativepkg;
+
+func main() {
+	print(native_package_value());
+}

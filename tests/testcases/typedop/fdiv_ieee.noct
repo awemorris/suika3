@@ -1,0 +1,54 @@
+// Design 07 Part 0: float/double division by zero is IEEE-total
+// (+/-inf, NaN), never a runtime error.  Integer division by zero
+// remains a runtime error (checked last: it aborts the script).
+//
+// Printing rule (07-typed-ops.md par.6): never print raw inf/NaN --
+// libc spellings differ per platform.  Classify in-script instead.
+
+// Note: the huge literal is kept on the LHS of each comparison so
+// this works for double arguments too (the comparison helpers lack a
+// src1=DOUBLE row today; float literals compare fine against double
+// RHS operands).
+func classify(x) {
+    if (x != x) {
+        return "nan";
+    }
+    if (340000000000000000000000000000000000000.0 < x) {
+        return "+inf";
+    }
+    if (-340000000000000000000000000000000000000.0 > x) {
+        return "-inf";
+    }
+    return "finite";
+}
+
+func main() {
+    var pz = 0.0;
+    var one = 1.0;
+    var mone = -1.0;
+    var i5 = 5;
+
+    // float-performed divisions: total.
+    print(classify(one / pz));      // +inf
+    print(classify(mone / pz));     // -inf
+    print(classify(pz / pz));       // nan
+    print(classify(i5 / pz));       // int / float0: +inf
+    print(classify(one / 0.0));     // literal divisor: +inf
+
+    // double-performed divisions: total.
+    print(classify(1.0lf / 0.0lf)); // +inf
+    print(classify(0.0lf / 0.0lf)); // nan
+    print(classify(one / 0.0lf));   // float / double0: +inf
+
+    // NaN compares false on every ordered comparison.
+    var nan = pz / pz;
+    if (nan < one)  { print("bad-lt");  } else { print("nan-lt-false");  }
+    if (nan > one)  { print("bad-gt");  } else { print("nan-gt-false");  }
+    if (nan <= nan) { print("bad-lte"); } else { print("nan-lte-false"); }
+    if (nan >= nan) { print("bad-gte"); } else { print("nan-gte-false"); }
+
+    // Integer division by zero: still a runtime error (aborts).
+    var z = 0;
+    print(i5 / z);
+    print("unreachable");
+}

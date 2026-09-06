@@ -1,0 +1,22 @@
+// Five distinct packeds in one loop: over ABCE_MAX_PACKED (4), so
+// the loop must stay unversioned -- output identical either way.
+func main() {
+    var n = 50;
+    var p0 = Packed.uint8(n);
+    var p1 = Packed.uint8(n);
+    var p2 = Packed.uint8(n);
+    var p3 = Packed.uint8(n);
+    var p4 = Packed.uint8(n);
+    for (i in 0..n) {
+        p0[i] = i & 255;
+        p1[i] = (i + 1) & 255;
+        p2[i] = (i + 2) & 255;
+        p3[i] = (i + 3) & 255;
+        p4[i] = (i + 4) & 255;
+    }
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + p0[i] + p1[i] + p2[i] + p3[i] + p4[i];
+    }
+    print(sum);
+}

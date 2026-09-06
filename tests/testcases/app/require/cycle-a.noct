@@ -1,0 +1,4 @@
+require cycle_b;
+
+func main() {
+}

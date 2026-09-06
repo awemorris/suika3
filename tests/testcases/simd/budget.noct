@@ -1,0 +1,36 @@
+// Deliberately over the 16-logical-vreg budget (a deep RHS tree): compile and
+// run identically at both levels, silently scalar.
+func main() {
+    var n = 12;
+    var p = Packed.uint32(n);
+    var q = Packed.uint32(n);
+    for (i in 0..n) {
+        p[i] = i + 1;
+    }
+    for (i in 0..n) {
+        var t0 = p[i];
+        var t1 = p[i] - t0;
+        var t2 = p[i] - t1;
+        var t3 = p[i] - t2;
+        var t4 = p[i] - t3;
+        var t5 = p[i] - t4;
+        var t6 = p[i] - t5;
+        var t7 = p[i] - t6;
+        var t8 = p[i] - t7;
+        var t9 = p[i] - t8;
+        var t10 = p[i] - t9;
+        var t11 = p[i] - t10;
+        var t12 = p[i] - t11;
+        var t13 = p[i] - t12;
+        var t14 = p[i] - t13;
+        var t15 = p[i] - t14;
+        var t16 = p[i] - t15;
+        var t17 = p[i] - t16;
+        q[i] = t17;
+    }
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + q[i];
+    }
+    print(sum);
+}

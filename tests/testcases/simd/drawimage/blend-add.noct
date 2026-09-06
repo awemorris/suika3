@@ -1,0 +1,36 @@
+// Essence of DRAW_IMAGE_ADD: source-alpha scaling and saturating RGB add.
+func blend_add(dst: rpackeduint32, src: rpackeduint32,
+               alpha: int, n: int): void {
+    let alpha_float = alpha / 65025.0;
+    for (i in 0..n) {
+        let dst_pix = dst[i];
+        let src_pix = src[i];
+        let src_a = Float.from((src_pix >> 24) & 0xff) * alpha_float;
+        var r = Int.from(Float.from((src_pix >> 16) & 0xff) * src_a) +
+                ((dst_pix >> 16) & 0xff);
+        var g = Int.from(Float.from((src_pix >> 8) & 0xff) * src_a) +
+                ((dst_pix >> 8) & 0xff);
+        var b = Int.from(Float.from(src_pix & 0xff) * src_a) +
+                (dst_pix & 0xff);
+        if (r > 255) { r = 255; }
+        if (g > 255) { g = 255; }
+        if (b > 255) { b = 255; }
+        dst[i] = (255 << 24) | (r << 16) | (g << 8) | b;
+    }
+}
+
+func main() {
+    let src = Packed.uint32(16);
+    let dst = Packed.uint32(16);
+    src[0] = 0xffc08040;
+    dst[0] = 0xff80c0e0;
+    blend_add(dst, src, 255, 16);
+    print(dst[0]);
+    print(dst[15]);
+
+    // Signed-clamp regression: negative alpha may produce a negative
+    // intermediate.  VMINS32X4 must not be replaced by unsigned min.
+    dst[0] = 0;
+    blend_add(dst, src, -255, 16);
+    print(dst[0]);
+}

@@ -1,0 +1,245 @@
+require emit_model;
+
+let ONNX_PACKAGE_VERSION = 1;
+let ONNX_PACKAGE_LIMIT = 536870912;
+
+func packageAlign(value, boundary, context) {
+    if (value < 0 || boundary <= 0 || value > ONNX_PACKAGE_LIMIT - boundary) {
+        normFail("Stage H " + context + " exceeds the package size limit.");
+    }
+    return ((value + boundary - 1) / boundary) * boundary;
+}
+
+func packageLinesBytes(lines) {
+    var total = 0L;
+    for (i in 0..Array.size(lines)) {
+        total = checkedAddPositive(total, String.byteLength(lines[i]) + 1,
+                                   "Stage H text artifact size");
+        if (total > ONNX_PACKAGE_LIMIT) {
+            normFail("Stage H text artifact exceeds the package size limit.");
+        }
+    }
+    var bytes = Packed.uint8(total);
+    var offset = 0;
+    for (i in 0..Array.size(lines)) {
+        var length = String.byteLength(lines[i]);
+        Packed.fromString(bytes, offset, lines[i]);
+        offset = offset + length;
+        bytes[offset] = 10;
+        offset = offset + 1;
+    }
+    return bytes;
+}
+
+func packageWriteBytes(path, bytes) {
+    var file = File.open(path, "wb");
+    File.writeAll(file, bytes, 0, Packed.size(bytes));
+    File.close(file);
+}
+
+func packageBuildWeights(graph, plan) {
+    var directoryBytes = 0L;
+    var payloadBytes = 0L;
+    for (i in 0..Array.size(plan.weights)) {
+        var weight = plan.weights[i];
+        var nameBytes = String.byteLength(weight.tensor.diagnosticName);
+        if (nameBytes <= 0 || nameBytes > 65535) {
+            normFail("Stage H NWT1 initializer name length is invalid.");
+        }
+        var rank = Array.size(weight.tensor.shape);
+        if (rank < 1 || rank > 8) {
+            normFail("Stage H NWT1 initializer rank is invalid.");
+        }
+        weight.entryBytes = packageAlign(28 + 8 * rank + nameBytes, 8,
+                                         "NWT1 directory entry");
+        weight.payloadOffset = packageAlign(payloadBytes, 64,
+                                            "NWT1 tensor alignment");
+        weight.byteLength = shapeElements(weight.tensor.shape,
+                                          "Stage H NWT1 tensor") * 4;
+        directoryBytes = checkedAddPositive(directoryBytes,
+                                             weight.entryBytes,
+                                             "NWT1 directory size");
+        payloadBytes = checkedAddPositive(weight.payloadOffset,
+                                           weight.byteLength,
+                                           "NWT1 payload size");
+    }
+    // Packed values cannot have zero length.  A weightless model therefore
+    // has one authenticated zero padding byte and no directory entries.
+    if (payloadBytes == 0) { payloadBytes = 1; }
+    var payload = Packed.uint8(payloadBytes);
+    for (i in 0..Array.size(plan.weights)) {
+        var payloadWeight = plan.weights[i];
+        for (j in 0..payloadWeight.tensor.sourceTensor.elements) {
+            Binary.writeU32LE(payload,
+                              payloadWeight.payloadOffset + j * 4,
+                              onnxTensorFloatBits(
+                                  payloadWeight.tensor.sourceTensor, j));
+        }
+    }
+    var payloadStart = packageAlign(104 + directoryBytes, 64,
+                                    "NWT1 payload section");
+    var packSize = checkedAddPositive(payloadStart, payloadBytes,
+                                      "NWT1 pack size");
+    if (packSize > ONNX_PACKAGE_LIMIT) {
+        normFail("Stage H NWT1 pack exceeds the 512 MiB limit.");
+    }
+    var pack = Packed.uint8(packSize);
+    Packed.fromString(pack, 0, "NOCTWGT");
+    pack[8] = 1;
+    pack[9] = 0;
+    pack[10] = 0;
+    pack[11] = 0;
+    Binary.writeU32LE(pack, 12, 104);
+    Binary.writeU32LE(pack, 16, 0);
+    Binary.writeU32LE(pack, 20, Array.size(plan.weights));
+    Binary.writeU64LE(pack, 24, directoryBytes);
+    Binary.writeU64LE(pack, 32, payloadBytes);
+    Packed.copy(pack, 40, Hash.sha256Bytes(graph.sourceBytes), 0, 32);
+    Packed.copy(pack, 72, Hash.sha256Bytes(payload), 0, 32);
+    var directoryOffset = 104;
+    for (i in 0..Array.size(plan.weights)) {
+        var directoryWeight = plan.weights[i];
+        var directoryNameBytes = String.byteLength(
+                                     directoryWeight.tensor.diagnosticName);
+        Binary.writeU32LE(pack, directoryOffset,
+                          directoryWeight.entryBytes);
+        pack[directoryOffset + 4] = directoryNameBytes % 256;
+        pack[directoryOffset + 5] = directoryNameBytes / 256;
+        pack[directoryOffset + 6] = 1;
+        pack[directoryOffset + 7] = Array.size(directoryWeight.tensor.shape);
+        Binary.writeU32LE(pack, directoryOffset + 8, 0);
+        Binary.writeU64LE(pack, directoryOffset + 12,
+                          directoryWeight.payloadOffset);
+        Binary.writeU64LE(pack, directoryOffset + 20,
+                          directoryWeight.byteLength);
+        for (j in 0..Array.size(directoryWeight.tensor.shape)) {
+            Binary.writeU64LE(pack, directoryOffset + 28 + j * 8,
+                              directoryWeight.tensor.shape[j]);
+        }
+        Packed.fromString(pack,
+                          directoryOffset + 28 +
+                          Array.size(directoryWeight.tensor.shape) * 8,
+                          directoryWeight.tensor.diagnosticName);
+        directoryOffset = directoryOffset + directoryWeight.entryBytes;
+    }
+    Packed.copy(pack, payloadStart, payload, 0, payloadBytes);
+    return { bytes: pack, sha256: Hash.sha256(pack),
+             payloadSha256: Hash.sha256(payload),
+             directoryBytes: directoryBytes, payloadBytes: payloadBytes };
+}
+
+func packageMainLines() {
+    return [
+        "require model;",
+        "",
+        "func main(args) {",
+        "    if (Array.size(args) != 3) { System.error(\"Usage: main MODEL.weights INPUT.f32le OUTPUT.f32le\"); }",
+        "    let info = modelInfo();",
+        "    let input = Binary.readFloat32LE(args[1], info[\"inputElements\"]);",
+        "    let output = Packed.float32(info[\"outputElements\"]);",
+        "    modelInitialize(args[0]);",
+        "    modelWarmup();",
+        "    modelInfer(input, output);",
+        "    Binary.writeFloat32LE(args[2], output);",
+        "    modelShutdown();",
+        "    print(\"model-ok target=gpu stage=\" + info[\"stage\"] + \" outputs=\" + info[\"outputElements\"]);",
+        "}"
+    ];
+}
+
+func packageManifestLines(graph, emitted, pack, modelHash, mainHash, emitMain) {
+    var lines = [];
+    sourceAppend(lines, "{");
+    sourceAppend(lines, "  \"manifest_version\": 1,");
+    sourceAppend(lines, "  \"converter\": \"onnx2noct-stage-h-v1\",");
+    sourceAppend(lines, "  \"source_model\": {\"sha256\": \"" +
+                 graph.sourceSha256 + "\", \"ir_version\": " +
+                 graph.irVersion + ", \"opset\": " + graph.opset +
+                 ", \"lock_id\": \"sha256:" + graph.sourceSha256 + "\"},");
+    sourceAppend(lines, "  \"weights\": {\"file\": \"model.weights\", \"sha256\": \"" +
+                 pack.sha256 + "\", \"payload_sha256\": \"" +
+                 pack.payloadSha256 + "\", \"entries\": " +
+                 Array.size(emitted.plan.weights) + "},");
+    var input = graph.tensors[graph.inputTensor];
+    var output = graph.tensors[graph.outputTensor];
+    sourceAppend(lines, "  \"input\": {\"dtype\": \"float32\", \"shape\": " +
+                 dumpArray(input.shape) + ", \"layout\": " +
+                 dumpEscape(input.layout) + ", \"elements\": " +
+                 emitted.plan.inputElements + ", \"bytes\": " +
+                 (emitted.plan.inputElements * 4) + "},");
+    sourceAppend(lines, "  \"output\": {\"dtype\": \"float32\", \"shape\": " +
+                 dumpArray(output.shape) + ", \"layout\": " +
+                 dumpEscape(output.layout) + ", \"elements\": " +
+                 emitted.plan.outputElements + ", \"bytes\": " +
+                 (emitted.plan.outputElements * 4) +
+                 ", \"meaning\": \"raw ONNX graph output\"},");
+    sourceAppend(lines, "  \"operators\": [");
+    for (i in 0..Array.size(graph.nodes)) {
+        var node = graph.nodes[i];
+        var suffix = ",";
+        if (i + 1 == Array.size(graph.nodes)) { suffix = ""; }
+        sourceAppend(lines, "    {\"id\": " + node.id +
+                     ", \"domain\": \"ai.onnx\", \"op\": " +
+                     dumpEscape(node.opType) + ", \"generation\": " +
+                     node.generation + ", \"family\": " +
+                     dumpEscape(node.family) + "}" + suffix);
+    }
+    sourceAppend(lines, "  ],");
+    sourceAppend(lines, "  \"kernels\": [");
+    for (i in 0..Array.size(emitted.registry.kernels)) {
+        var kernel = emitted.registry.kernels[i];
+        var kernelSuffix = ",";
+        if (i + 1 == Array.size(emitted.registry.kernels)) {
+            kernelSuffix = "";
+        }
+        sourceAppend(lines, "    {\"id\": " + kernel.id +
+                     ", \"family\": " + dumpEscape(kernel.family) +
+                     ", \"signature\": " + dumpEscape(kernel.signature) +
+                     ", \"groups\": " + kernel.launchGroups +
+                     ", \"block\": " + kernel.blockSize + "}" +
+                     kernelSuffix);
+    }
+    sourceAppend(lines, "  ],");
+    sourceAppend(lines, "  \"artifacts\": {");
+    sourceAppend(lines, "    \"gpu/model.noct\": \"" + modelHash + "\"," );
+    if (emitMain) {
+        sourceAppend(lines, "    \"gpu/main.noct\": \"" + mainHash + "\"," );
+    }
+    sourceAppend(lines, "    \"model.weights\": \"" + pack.sha256 + "\"");
+    sourceAppend(lines, "  },");
+    sourceAppend(lines, "  \"numeric_policy\": {\"pointwise_abs\": 1e-6, \"pointwise_rel\": 1e-6, \"contraction_abs\": 1e-4, \"contraction_rel\": 2e-5},");
+    sourceAppend(lines, "  \"backend\": {\"required\": \"OpenGL\", \"cpu_fallback\": false}");
+    sourceAppend(lines, "}");
+    return lines;
+}
+
+func emitStageHPackage(outputDirectory, graph, emitMain) {
+    // Resolve the complete plan before constructing the pack whose digest is
+    // embedded in the one published model source.
+    var preliminary = emitModelSource(graph, {
+        package: false, sourceHash: "", packHash: ""
+    });
+    var pack = packageBuildWeights(graph, preliminary.plan);
+    var emitted = emitModelSource(graph, {
+        package: true, sourceHash: graph.sourceSha256, packHash: pack.sha256
+    });
+    var modelBytes = packageLinesBytes(emitted.lines);
+    var mainLines = packageMainLines();
+    var mainBytes = packageLinesBytes(mainLines);
+    var mainHash = "";
+    if (emitMain) { mainHash = Hash.sha256(mainBytes); }
+    var manifestLines = packageManifestLines(
+        graph, emitted, pack, Hash.sha256(modelBytes), mainHash, emitMain);
+    var manifestBytes = packageLinesBytes(manifestLines);
+
+    FileUtil.makeDirectoryExclusive(outputDirectory);
+    FileUtil.makeDirectoryExclusive(outputDirectory + "/gpu");
+    packageWriteBytes(outputDirectory + "/model.weights", pack.bytes);
+    packageWriteBytes(outputDirectory + "/gpu/model.noct", modelBytes);
+    if (emitMain) {
+        packageWriteBytes(outputDirectory + "/gpu/main.noct", mainBytes);
+    }
+    // The manifest is the publication/commit marker and is written last.
+    packageWriteBytes(outputDirectory + "/manifest.json", manifestBytes);
+    return emitted;
+}

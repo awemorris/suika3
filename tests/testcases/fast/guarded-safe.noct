@@ -1,0 +1,15 @@
+__fast func guarded(data: rpackeduint32(100)): int {
+    var sum: int = 0;
+    for (i in 0..1000) {
+        if (i < 100) {
+            sum = sum + data[i];
+        }
+    }
+    return sum;
+}
+
+func main() {
+    var data = Packed.uint32(100);
+    data[99] = 7;
+    print(guarded(data));
+}

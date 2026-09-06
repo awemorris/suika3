@@ -13,14 +13,13 @@ def convert_to_gettext(input_file):
         if not lines or not lines[0].startswith('ID:'):
             continue
         
-        msgid = lines[0][3:].strip()
+        msgid = lines[0][3:];
         
         for line in lines[1:]:
             if ':' not in line:
                 continue
             lang, msgstr = line.split(':', 1)
             lang = lang.strip()
-            msgstr = msgstr.strip()
             
             if lang not in catalog:
                 catalog[lang] = []

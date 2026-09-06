@@ -1,0 +1,17 @@
+func main() {
+    // A match at the very end of the string must be found.
+    print(String.indexOf("abc", "c"));
+    print(String.indexOf("abc", "bc"));
+    print(String.indexOf("abc", "abc"));
+    print(String.indexOf("x\r\ny", "\ny"));
+
+    // A match at the start.
+    print(String.indexOf("abc", "a"));
+
+    // No match.
+    print(String.indexOf("abc", "d"));
+    print(String.indexOf("abc", "abcd"));
+
+    // An empty needle matches at zero.
+    print(String.indexOf("abc", ""));
+}

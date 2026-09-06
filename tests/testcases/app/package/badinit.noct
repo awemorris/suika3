@@ -1,0 +1,5 @@
+func package_init(value): void {
+}
+
+func badinit_main() {
+}

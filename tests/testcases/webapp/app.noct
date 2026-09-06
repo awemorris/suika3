@@ -1,0 +1,153 @@
+//
+// End-to-end test for the Noct web framework.
+//
+// A server thread runs the framework; the main thread drives it with
+// real HTTP requests over a loopback socket and checks the responses.
+//
+// Built by concatenating apps/webapp/framework.noct with this file,
+// so run it through tests/test.sh webapp rather than directly.
+//
+
+func buildApp() {
+    var app = new WebApp { routes: [], headers: {} };
+
+    app.get("/", (req, res) => {
+        res.text("root");
+    });
+
+    app.get("/hello", (req, res) => {
+        res.html("<h1>hi</h1>");
+    });
+
+    app.get("/user/:id", (req, res) => {
+        res.json({id: req.params.id});
+    });
+
+    app.get("/user/:id/posts/:postId", (req, res) => {
+        res.json({user: req.params.id, post: req.params.postId});
+    });
+
+    app.get("/search", (req, res) => {
+        var q = "";
+        if (Dict.hasKey(req.query, "q")) {
+            q = req.query["q"];
+        }
+        res.text("q=" + q);
+    });
+
+    app.post("/echo", (req, res) => {
+        res.setStatus(201);
+        res.text("body=" + req.body);
+    });
+
+    app.get("/boom", (req, res) => {
+        res.setStatus(500);
+        res.text("500 Internal Server Error");
+    });
+
+    return app;
+}
+
+func server_thread(param) {
+    var app = buildApp();
+    return app.serveOn(param.server, param.count);
+}
+
+// Send a raw request and return the whole response.
+func request(port, raw) {
+    var conn = HttpServer.connect("127.0.0.1", port);
+    HttpServer.send(conn, raw);
+    var reply = "";
+    while (true) {
+        var chunk = HttpServer.recv(conn, 4096);
+        if (chunk == "") {
+            break;
+        }
+        reply = reply + chunk;
+    }
+    HttpServer.close(conn);
+    return reply;
+}
+
+// Extract the status code from a response.
+func statusOf(reply) {
+    var at = String.indexOf(reply, " ");
+    if (at < 0) {
+        return 0;
+    }
+    return Int.from(String.substring(reply, at + 1, 3));
+}
+
+// Extract the body from a response.
+func bodyOf(reply) {
+    var at = String.indexOf(reply, "\r\n\r\n");
+    if (at < 0) {
+        return "";
+    }
+    return String.substring(reply, at + 4, -1);
+}
+
+// Does the response carry this header value?
+func hasHeader(reply, name, value) {
+    return String.indexOf(reply, name + ": " + value) >= 0;
+}
+
+func main() {
+    webappInit();
+
+    var port = 18201;
+    var count = 10;
+
+    // Bind before starting the thread so the client below cannot race
+    // ahead of the listener.
+    var server = HttpServer.listen("127.0.0.1", port);
+    var th = Thread.createThread(server_thread, {server: server, count: count});
+
+    // 1. Root route.
+    var r = request(port, "GET / HTTP/1.1\r\nHost: x\r\n\r\n");
+    print(statusOf(r));
+    print(bodyOf(r));
+
+    // 2. HTML content type.
+    r = request(port, "GET /hello HTTP/1.1\r\nHost: x\r\n\r\n");
+    print(bodyOf(r));
+    print(hasHeader(r, "Content-Type", "text/html; charset=utf-8"));
+
+    // 3. Path parameter.
+    r = request(port, "GET /user/42 HTTP/1.1\r\nHost: x\r\n\r\n");
+    print(bodyOf(r));
+
+    // 4. Two path parameters.
+    r = request(port, "GET /user/7/posts/99 HTTP/1.1\r\nHost: x\r\n\r\n");
+    print(bodyOf(r));
+
+    // 5. Query string with percent-encoding.
+    r = request(port, "GET /search?q=hello%20noct HTTP/1.1\r\nHost: x\r\n\r\n");
+    print(bodyOf(r));
+
+    // 6. POST with a body.
+    r = request(port, "POST /echo HTTP/1.1\r\nHost: x\r\nContent-Length: 5\r\n\r\nab cd");
+    print(statusOf(r));
+    print(bodyOf(r));
+
+    // 7. Unknown path is a 404.
+    r = request(port, "GET /nope HTTP/1.1\r\nHost: x\r\n\r\n");
+    print(statusOf(r));
+
+    // 8. Known path, wrong method is a 405.
+    r = request(port, "DELETE /hello HTTP/1.1\r\nHost: x\r\n\r\n");
+    print(statusOf(r));
+
+    // 9. An explicit 500.
+    r = request(port, "GET /boom HTTP/1.1\r\nHost: x\r\n\r\n");
+    print(statusOf(r));
+
+    // 10. HEAD is served by the GET route, without a body.
+    r = request(port, "HEAD /hello HTTP/1.1\r\nHost: x\r\n\r\n");
+    print(statusOf(r));
+    print("[" + bodyOf(r) + "]");
+    print(hasHeader(r, "Content-Length", "0"));
+
+    print(Thread.joinThread(th));
+    HttpServer.close(server);
+}

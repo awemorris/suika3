@@ -1,0 +1,28 @@
+__fast func add_one(dst: rpackeduint32(128), src: rpackeduint32(128)): void {
+    for (i in 0..128) {
+        dst[i] = src[i] + 1;
+    }
+}
+
+__fast func add_row(dst: rpackeduint32(4, 128), src: rpackeduint32(4, 128)): void {
+    for (i in 0..128) {
+        dst[2, i] = src[2, i] + 2;
+    }
+}
+
+func main() {
+    var src = Packed.uint32(128);
+    var dst = Packed.uint32(128);
+    src[0] = 4;
+    src[127] = 8;
+    add_one(dst, src);
+    print(dst[0]);
+    print(dst[127]);
+    var matrix_src = Packed.uint32(512);
+    var matrix_dst = Packed.uint32(512);
+    matrix_src[256] = 10;
+    matrix_src[383] = 20;
+    add_row(matrix_dst, matrix_src);
+    print(matrix_dst[256]);
+    print(matrix_dst[383]);
+}

@@ -1,0 +1,8 @@
+__fast func dynamic_zero(data: rpackeduint32(count), count: int): void {
+    return;
+}
+
+func main() {
+    var data = Packed.uint32(1);
+    dynamic_zero(data, 0);
+}

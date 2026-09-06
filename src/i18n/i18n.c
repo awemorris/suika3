@@ -12,12 +12,14 @@
 #if defined(NOCT_USE_TRANSLATION) && defined(NOCT_USE_LIBINTL)
 
 #include <noct/noct.h>
+#include <stdio.h>
 
 NOCT_DLL
 void
 noct_init_locale(void)
 {
-	bindtextdomain("libnoct", LOCALEDIR);
+	setlocale(LC_ALL, "");
+	bindtextdomain("libnoct", "/usr/local/share/locale");
 	bind_textdomain_codeset("libnoct", "UTF-8");
 }
 

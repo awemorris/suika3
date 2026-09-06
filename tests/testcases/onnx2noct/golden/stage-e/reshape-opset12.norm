@@ -1,0 +1,6 @@
+graph opset=12 tensors=3 nodes=1 input=t0 output=t2
+tensor t0 storage=0 role=input dtype=float32 name="x" safe=x_t0 shape=[1,6] stride=[6,1] offset=0 layout=NC producer=-1 consumers=[0] use=0:0
+tensor t1 storage=-1 role=initializer dtype=int64 name="shape" safe=shape_t1 shape=[3] stride=[1] offset=0 layout=C producer=-1 consumers=[0] use=0:0 constant_ints=[1,2,3]
+tensor t2 storage=0 role=output dtype=float32 name="y" safe=y_t2 shape=[1,2,3] stride=[6,3,1] offset=0 layout=C producer=0 consumers=[] use=1:1
+node n0 op=ai.onnx::Reshape@5 imported=12 family=reshape-view name="reshape" inputs=[0,1] outputs=[2] attrs=[]
+

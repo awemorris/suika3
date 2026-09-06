@@ -1,0 +1,9 @@
+__fast func consume(data: rpackeduint32(2, 3)): void {
+    data[0, 0] = 99;
+}
+
+func main() {
+    var data = Packed.uint32(5);
+    consume(data);
+    print(data[0]);
+}

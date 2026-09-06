@@ -1,0 +1,15 @@
+func gather_copy(dst: rpackeduint32, src: rpackeduint32,
+                 index: rpackeduint32, n: int): void {
+    for (i in 0..n) {
+        dst[i] = src[index[i]];
+    }
+}
+
+func main() {
+    let src = Packed.uint32(16);
+    let dst = Packed.uint32(16);
+    let index = Packed.uint32(16);
+    index[0] = 0;
+    index[1] = 16;
+    gather_copy(dst, src, index, 16);
+}

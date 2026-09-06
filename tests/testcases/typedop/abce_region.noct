@@ -1,0 +1,32 @@
+// Stage A (design 07 3.2): inside an ABCE-versioned fast loop every
+// local read is guard-proven int, so the body's arithmetic lowers to
+// typed ops with zero inference.  Output must equal level 0 exactly.
+
+func main() {
+    var n = 64;
+    var p = Packed.uint8(n);
+    var q = Packed.uint8(n);
+    var mul = 3;
+    var mask = 127;
+
+    for (i in 0..n) {
+        p[i] = (i * mul + 1) & mask;
+    }
+
+    var sum = 0;
+    for (i in 0..n) {
+        var v = p[i];
+        q[i] = (v >> 1) ^ (v & 15);
+        sum = sum + v;
+    }
+
+    print(sum);
+
+    var check = 0;
+    for (i in 0..n) {
+        check = check + q[i] * (i + 1);
+    }
+    print(check);
+
+    return 0;
+}

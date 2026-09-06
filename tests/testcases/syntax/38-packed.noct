@@ -1,0 +1,83 @@
+func main() {
+    var a = null;
+
+    print("[int8]");
+    a = Packed.int8(128);
+    print("len=" + Packed.size(a));
+    print("type=" + Packed.type(a));
+    for (i in 0..128)
+        a[i] = i - 10;
+    for (i in 0..128)
+        print(a[i]);
+
+    print("[int16]");
+    a = Packed.int16(128);
+    print("len=" + Packed.size(a));
+    print("type=" + Packed.type(a));
+    for (i in 0..128)
+        a[i] = i - 10;
+    for (i in 0..128)
+        print(a[i]);
+
+    print("[int32]");
+    a = Packed.int32(128);
+    print("len=" + Packed.size(a));
+    print("type=" + Packed.type(a));
+    for (i in 0..128)
+        a[i] = i - 10;
+    for (i in 0..128)
+        print(a[i]);
+
+    print("[int64]");
+    a = Packed.int64(128);
+    print("len=" + Packed.size(a));
+    print("type=" + Packed.type(a));
+    for (i in 0..128)
+        a[i] = i - 10;
+    for (i in 0..128)
+        print(a[i]);
+    for (i in 0..128)
+        a[i] = i - 10L;
+    for (i in 0..128)
+        print(a[i]);
+
+    print("[uint8]");
+    a = Packed.uint8(128);
+    print("len=" + Packed.size(a));
+    print("type=" + Packed.type(a));
+    for (i in 0..128)
+        a[i] = i - 10;
+    for (i in 0..128)
+        print(a[i]);
+
+    print("[uint16]");
+    a = Packed.uint16(128);
+    print("len=" + Packed.size(a));
+    print("type=" + Packed.type(a));
+    for (i in 0..128)
+        a[i] = i - 10;
+    for (i in 0..128)
+        print(a[i]);
+
+    print("[uint32]");
+    a = Packed.uint32(128);
+    print("len=" + Packed.size(a));
+    print("type=" + Packed.type(a));
+    for (i in 0..128)
+        a[i] = i - 10;
+    for (i in 0..128)
+        print(a[i]);
+
+    print("[uint64]");
+    a = Packed.uint64(128);
+    print("len=" + Packed.size(a));
+    print("type=" + Packed.type(a));
+    for (i in 0..128)
+        a[i] = i - 10;
+    for (i in 0..128)
+        print(a[i]);
+    for (i in 0..128)
+        a[i] = i - 10L;
+    for (i in 0..128)
+        print(a[i]);
+}

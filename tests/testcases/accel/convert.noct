@@ -1,0 +1,36 @@
+__accel func to_float(
+    input: rpackedint32_in,
+    output: rpackedfloat_out,
+    count: int
+): void {
+    for (i in 0..count) {
+        output[i] = Float.from(input[i]) * 0.5;
+    }
+}
+
+__accel func to_int(
+    input: rpackedfloat_in,
+    output: rpackedint32_out,
+    count: int
+): void {
+    for (i in 0..count) {
+        output[i] = Int.from(input[i]);
+    }
+}
+
+func main() {
+    let ints = Packed.int32(2);
+    let floats = Packed.float32(2);
+    let converted_ints = Packed.int32(2);
+    ints[0] = -3;
+    ints[1] = 4;
+    Accel.call(to_float, ints, floats, 2);
+    print(floats[0]);
+    print(floats[1]);
+
+    floats[0] = 2.75;
+    floats[1] = -3.25;
+    Accel.call(to_int, floats, converted_ints, 2);
+    print(converted_ints[0]);
+    print(converted_ints[1]);
+}

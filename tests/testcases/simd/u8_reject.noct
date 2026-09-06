@@ -1,0 +1,17 @@
+// uint8 bet: not an int32 loop, must stay scalar-versioned.
+func main() {
+    var n = 40;
+    var p = Packed.uint8(n);
+    for (i in 0..n) {
+        p[i] = (i * 3) & 255;
+    }
+    var q = Packed.uint8(n);
+    for (i in 0..n) {
+        q[i] = (p[i] + 1) & 255;
+    }
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + q[i];
+    }
+    print(sum);
+}

@@ -1,0 +1,3 @@
+__fast func app_fast_helper(data: rpackeduint32(2)): int {
+    return data[0] + 2;
+}

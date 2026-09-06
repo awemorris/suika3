@@ -1,0 +1,20 @@
+func server_thread(param) {
+    var conn = HttpServer.accept(param.server);
+    var got = HttpServer.recv(conn, 4096);
+    HttpServer.send(conn, "echo:" + got);
+    HttpServer.close(conn);
+    return got;
+}
+
+func main() {
+    var server = HttpServer.listen("127.0.0.1", 18101);
+    var th = Thread.createThread(server_thread, {server: server});
+
+    var conn = HttpServer.connect("127.0.0.1", 18101);
+    HttpServer.send(conn, "hello");
+    print(HttpServer.recv(conn, 4096));
+    HttpServer.close(conn);
+
+    print(Thread.joinThread(th));
+    HttpServer.close(server);
+}

@@ -1,0 +1,1287 @@
+// CIFAR-10 forward benchmark based on the network in the official PyTorch tutorial:
+// https://docs.pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html
+//
+// The topology is Conv5x5(3->6) -> ReLU -> MaxPool2x2 ->
+// Conv5x5(6->16) -> ReLU -> MaxPool2x2 -> 400->120->84->10.
+// Fixed dot products are expanded because the current raw __gpu func subset
+// intentionally has no source-level loop statement.
+
+__accel var cifar_input = Accel.float32(3072);
+__accel var cifar_conv1_w = Accel.float32(450);
+__accel var cifar_conv1_b = Accel.float32(6);
+__accel var cifar_conv1 = Accel.float32(4704);
+__accel var cifar_pool1 = Accel.float32(1176);
+__accel var cifar_conv2_w = Accel.float32(2400);
+__accel var cifar_conv2_b = Accel.float32(16);
+__accel var cifar_conv2 = Accel.float32(1600);
+__accel var cifar_pool2 = Accel.float32(400);
+__accel var cifar_fc1_w = Accel.float32(48000);
+__accel var cifar_fc1_b = Accel.float32(120);
+__accel var cifar_fc1 = Accel.float32(120);
+__accel var cifar_fc2_w = Accel.float32(10080);
+__accel var cifar_fc2_b = Accel.float32(84);
+__accel var cifar_fc2 = Accel.float32(84);
+__accel var cifar_fc3_w = Accel.float32(840);
+__accel var cifar_fc3_b = Accel.float32(10);
+__accel var cifar_logits = Accel.float32(10);
+
+var cifar_host_input = Packed.float32(3072);
+var cifar_host_conv1_w = Packed.float32(450);
+var cifar_host_conv1_b = Packed.float32(6);
+var cifar_host_conv1 = Packed.float32(4704);
+var cifar_host_pool1 = Packed.float32(1176);
+var cifar_host_conv2_w = Packed.float32(2400);
+var cifar_host_conv2_b = Packed.float32(16);
+var cifar_host_conv2 = Packed.float32(1600);
+var cifar_host_pool2 = Packed.float32(400);
+var cifar_host_fc1_w = Packed.float32(48000);
+var cifar_host_fc1_b = Packed.float32(120);
+var cifar_host_fc1 = Packed.float32(120);
+var cifar_host_fc2_w = Packed.float32(10080);
+var cifar_host_fc2_b = Packed.float32(84);
+var cifar_host_fc2 = Packed.float32(84);
+var cifar_host_fc3_w = Packed.float32(840);
+var cifar_host_fc3_b = Packed.float32(10);
+var cifar_host_logits = Packed.float32(10);
+
+func cifar_cpu_conv_relu(
+    input: rpackedfloat, weight: rpackedfloat, bias: rpackedfloat,
+    output: rpackedfloat, input_channels: int, input_size: int,
+    output_channels: int, output_size: int) {
+    for (i in 0..output_channels * output_size * output_size) {
+        let channel: int = i / (output_size * output_size);
+        let spatial: int = i % (output_size * output_size);
+        let y: int = spatial / output_size;
+        let x: int = spatial % output_size;
+        var sum: float = bias[channel];
+        for (input_channel in 0..input_channels) {
+            for (kernel_y in 0..5) {
+                for (kernel_x in 0..5) {
+                    let input_index: int = input_channel * input_size * input_size +
+                        (y + kernel_y) * input_size + x + kernel_x;
+                    let weight_index: int =
+                        ((channel * input_channels + input_channel) * 5 +
+                         kernel_y) * 5 + kernel_x;
+                    sum = sum + input[input_index] * weight[weight_index];
+                }
+            }
+        }
+        output[i] = 0.0;
+        if (sum > 0.0) {
+            output[i] = sum;
+        }
+    }
+}
+
+func cifar_cpu_max_pool2x2(
+    input: rpackedfloat, output: rpackedfloat,
+    channels: int, input_size: int, output_size: int) {
+    for (i in 0..channels * output_size * output_size) {
+        let channel: int = i / (output_size * output_size);
+        let spatial: int = i % (output_size * output_size);
+        let y: int = spatial / output_size;
+        let x: int = spatial % output_size;
+        let input_base: int = channel * input_size * input_size +
+            y * 2 * input_size + x * 2;
+        var maximum: float = input[input_base];
+        if (input[input_base + 1] > maximum) {
+            maximum = input[input_base + 1];
+        }
+        if (input[input_base + input_size] > maximum) {
+            maximum = input[input_base + input_size];
+        }
+        if (input[input_base + input_size + 1] > maximum) {
+            maximum = input[input_base + input_size + 1];
+        }
+        output[i] = maximum;
+    }
+}
+
+func cifar_cpu_dense(
+    input: rpackedfloat, weight: rpackedfloat, bias: rpackedfloat,
+    output: rpackedfloat, input_count: int, output_count: int, relu: int) {
+    for (i in 0..output_count) {
+        let base: int = i * input_count;
+        var sum: float = bias[i];
+        for (j in 0..input_count) {
+            sum = sum + input[j] * weight[base + j];
+        }
+        if (relu == 0) {
+            output[i] = sum;
+        }
+        if (relu != 0) {
+            output[i] = 0.0;
+            if (sum > 0.0) {
+                output[i] = sum;
+            }
+        }
+    }
+}
+
+__gpu func cifar_gpu_conv1_relu(
+    input: rpackedfloat_ptr, weight: rpackedfloat_ptr,
+    bias: rpackedfloat_ptr, output: rpackedfloat_ptr, count: int
+): void {
+    let i: int = globalIdx.x;
+    if (i < count) {
+        let channel: int = i / 784;
+        let spatial: int = i % 784;
+        let y: int = spatial / 28;
+        let x: int = spatial % 28;
+        let input_base: int = y * 32 + x;
+        let weight_base: int = channel * 75;
+        output[i] = bias[channel]
+            + input[input_base] * weight[weight_base]
+            + input[input_base + 1] * weight[weight_base + 1]
+            + input[input_base + 2] * weight[weight_base + 2]
+            + input[input_base + 3] * weight[weight_base + 3]
+            + input[input_base + 4] * weight[weight_base + 4]
+            + input[input_base + 32] * weight[weight_base + 5]
+            + input[input_base + 33] * weight[weight_base + 6]
+            + input[input_base + 34] * weight[weight_base + 7]
+            + input[input_base + 35] * weight[weight_base + 8]
+            + input[input_base + 36] * weight[weight_base + 9]
+            + input[input_base + 64] * weight[weight_base + 10]
+            + input[input_base + 65] * weight[weight_base + 11]
+            + input[input_base + 66] * weight[weight_base + 12]
+            + input[input_base + 67] * weight[weight_base + 13]
+            + input[input_base + 68] * weight[weight_base + 14]
+            + input[input_base + 96] * weight[weight_base + 15]
+            + input[input_base + 97] * weight[weight_base + 16]
+            + input[input_base + 98] * weight[weight_base + 17]
+            + input[input_base + 99] * weight[weight_base + 18]
+            + input[input_base + 100] * weight[weight_base + 19]
+            + input[input_base + 128] * weight[weight_base + 20]
+            + input[input_base + 129] * weight[weight_base + 21]
+            + input[input_base + 130] * weight[weight_base + 22]
+            + input[input_base + 131] * weight[weight_base + 23]
+            + input[input_base + 132] * weight[weight_base + 24]
+            + input[input_base + 1024] * weight[weight_base + 25]
+            + input[input_base + 1025] * weight[weight_base + 26]
+            + input[input_base + 1026] * weight[weight_base + 27]
+            + input[input_base + 1027] * weight[weight_base + 28]
+            + input[input_base + 1028] * weight[weight_base + 29]
+            + input[input_base + 1056] * weight[weight_base + 30]
+            + input[input_base + 1057] * weight[weight_base + 31]
+            + input[input_base + 1058] * weight[weight_base + 32]
+            + input[input_base + 1059] * weight[weight_base + 33]
+            + input[input_base + 1060] * weight[weight_base + 34]
+            + input[input_base + 1088] * weight[weight_base + 35]
+            + input[input_base + 1089] * weight[weight_base + 36]
+            + input[input_base + 1090] * weight[weight_base + 37]
+            + input[input_base + 1091] * weight[weight_base + 38]
+            + input[input_base + 1092] * weight[weight_base + 39]
+            + input[input_base + 1120] * weight[weight_base + 40]
+            + input[input_base + 1121] * weight[weight_base + 41]
+            + input[input_base + 1122] * weight[weight_base + 42]
+            + input[input_base + 1123] * weight[weight_base + 43]
+            + input[input_base + 1124] * weight[weight_base + 44]
+            + input[input_base + 1152] * weight[weight_base + 45]
+            + input[input_base + 1153] * weight[weight_base + 46]
+            + input[input_base + 1154] * weight[weight_base + 47]
+            + input[input_base + 1155] * weight[weight_base + 48]
+            + input[input_base + 1156] * weight[weight_base + 49]
+            + input[input_base + 2048] * weight[weight_base + 50]
+            + input[input_base + 2049] * weight[weight_base + 51]
+            + input[input_base + 2050] * weight[weight_base + 52]
+            + input[input_base + 2051] * weight[weight_base + 53]
+            + input[input_base + 2052] * weight[weight_base + 54]
+            + input[input_base + 2080] * weight[weight_base + 55]
+            + input[input_base + 2081] * weight[weight_base + 56]
+            + input[input_base + 2082] * weight[weight_base + 57]
+            + input[input_base + 2083] * weight[weight_base + 58]
+            + input[input_base + 2084] * weight[weight_base + 59]
+            + input[input_base + 2112] * weight[weight_base + 60]
+            + input[input_base + 2113] * weight[weight_base + 61]
+            + input[input_base + 2114] * weight[weight_base + 62]
+            + input[input_base + 2115] * weight[weight_base + 63]
+            + input[input_base + 2116] * weight[weight_base + 64]
+            + input[input_base + 2144] * weight[weight_base + 65]
+            + input[input_base + 2145] * weight[weight_base + 66]
+            + input[input_base + 2146] * weight[weight_base + 67]
+            + input[input_base + 2147] * weight[weight_base + 68]
+            + input[input_base + 2148] * weight[weight_base + 69]
+            + input[input_base + 2176] * weight[weight_base + 70]
+            + input[input_base + 2177] * weight[weight_base + 71]
+            + input[input_base + 2178] * weight[weight_base + 72]
+            + input[input_base + 2179] * weight[weight_base + 73]
+            + input[input_base + 2180] * weight[weight_base + 74]
+            ;
+        if (output[i] < 0.0) {
+            output[i] = 0.0;
+        }
+    }
+}
+
+__gpu func cifar_gpu_max_pool2x2(
+    input: rpackedfloat_ptr, output: rpackedfloat_ptr,
+    channels: int, input_size: int, output_size: int, count: int
+): void {
+    let i: int = globalIdx.x;
+    if (i < count) {
+        let channel: int = i / (output_size * output_size);
+        let spatial: int = i % (output_size * output_size);
+        let y: int = spatial / output_size;
+        let x: int = spatial % output_size;
+        let input_base: int = channel * input_size * input_size +
+            y * 2 * input_size + x * 2;
+        output[i] = input[input_base];
+        if (input[input_base + 1] > output[i]) {
+            output[i] = input[input_base + 1];
+        }
+        if (input[input_base + input_size] > output[i]) {
+            output[i] = input[input_base + input_size];
+        }
+        if (input[input_base + input_size + 1] > output[i]) {
+            output[i] = input[input_base + input_size + 1];
+        }
+    }
+}
+
+__gpu func cifar_gpu_conv2_relu(
+    input: rpackedfloat_ptr, weight: rpackedfloat_ptr,
+    bias: rpackedfloat_ptr, output: rpackedfloat_ptr, count: int
+): void {
+    let i: int = globalIdx.x;
+    if (i < count) {
+        let channel: int = i / 100;
+        let spatial: int = i % 100;
+        let y: int = spatial / 10;
+        let x: int = spatial % 10;
+        let input_base: int = y * 14 + x;
+        let weight_base: int = channel * 150;
+        output[i] = bias[channel];
+        output[i] = output[i]
+            + input[input_base] * weight[weight_base]
+            + input[input_base + 1] * weight[weight_base + 1]
+            + input[input_base + 2] * weight[weight_base + 2]
+            + input[input_base + 3] * weight[weight_base + 3]
+            + input[input_base + 4] * weight[weight_base + 4]
+            + input[input_base + 14] * weight[weight_base + 5]
+            + input[input_base + 15] * weight[weight_base + 6]
+            + input[input_base + 16] * weight[weight_base + 7]
+            + input[input_base + 17] * weight[weight_base + 8]
+            + input[input_base + 18] * weight[weight_base + 9]
+            + input[input_base + 28] * weight[weight_base + 10]
+            + input[input_base + 29] * weight[weight_base + 11]
+            + input[input_base + 30] * weight[weight_base + 12]
+            + input[input_base + 31] * weight[weight_base + 13]
+            + input[input_base + 32] * weight[weight_base + 14]
+            + input[input_base + 42] * weight[weight_base + 15]
+            + input[input_base + 43] * weight[weight_base + 16]
+            + input[input_base + 44] * weight[weight_base + 17]
+            + input[input_base + 45] * weight[weight_base + 18]
+            + input[input_base + 46] * weight[weight_base + 19]
+            + input[input_base + 56] * weight[weight_base + 20]
+            + input[input_base + 57] * weight[weight_base + 21]
+            + input[input_base + 58] * weight[weight_base + 22]
+            + input[input_base + 59] * weight[weight_base + 23]
+            ;
+        output[i] = output[i]
+            + input[input_base + 60] * weight[weight_base + 24]
+            + input[input_base + 196] * weight[weight_base + 25]
+            + input[input_base + 197] * weight[weight_base + 26]
+            + input[input_base + 198] * weight[weight_base + 27]
+            + input[input_base + 199] * weight[weight_base + 28]
+            + input[input_base + 200] * weight[weight_base + 29]
+            + input[input_base + 210] * weight[weight_base + 30]
+            + input[input_base + 211] * weight[weight_base + 31]
+            + input[input_base + 212] * weight[weight_base + 32]
+            + input[input_base + 213] * weight[weight_base + 33]
+            + input[input_base + 214] * weight[weight_base + 34]
+            + input[input_base + 224] * weight[weight_base + 35]
+            + input[input_base + 225] * weight[weight_base + 36]
+            + input[input_base + 226] * weight[weight_base + 37]
+            + input[input_base + 227] * weight[weight_base + 38]
+            + input[input_base + 228] * weight[weight_base + 39]
+            + input[input_base + 238] * weight[weight_base + 40]
+            + input[input_base + 239] * weight[weight_base + 41]
+            + input[input_base + 240] * weight[weight_base + 42]
+            + input[input_base + 241] * weight[weight_base + 43]
+            + input[input_base + 242] * weight[weight_base + 44]
+            + input[input_base + 252] * weight[weight_base + 45]
+            + input[input_base + 253] * weight[weight_base + 46]
+            + input[input_base + 254] * weight[weight_base + 47]
+            ;
+        output[i] = output[i]
+            + input[input_base + 255] * weight[weight_base + 48]
+            + input[input_base + 256] * weight[weight_base + 49]
+            + input[input_base + 392] * weight[weight_base + 50]
+            + input[input_base + 393] * weight[weight_base + 51]
+            + input[input_base + 394] * weight[weight_base + 52]
+            + input[input_base + 395] * weight[weight_base + 53]
+            + input[input_base + 396] * weight[weight_base + 54]
+            + input[input_base + 406] * weight[weight_base + 55]
+            + input[input_base + 407] * weight[weight_base + 56]
+            + input[input_base + 408] * weight[weight_base + 57]
+            + input[input_base + 409] * weight[weight_base + 58]
+            + input[input_base + 410] * weight[weight_base + 59]
+            + input[input_base + 420] * weight[weight_base + 60]
+            + input[input_base + 421] * weight[weight_base + 61]
+            + input[input_base + 422] * weight[weight_base + 62]
+            + input[input_base + 423] * weight[weight_base + 63]
+            + input[input_base + 424] * weight[weight_base + 64]
+            + input[input_base + 434] * weight[weight_base + 65]
+            + input[input_base + 435] * weight[weight_base + 66]
+            + input[input_base + 436] * weight[weight_base + 67]
+            + input[input_base + 437] * weight[weight_base + 68]
+            + input[input_base + 438] * weight[weight_base + 69]
+            + input[input_base + 448] * weight[weight_base + 70]
+            + input[input_base + 449] * weight[weight_base + 71]
+            ;
+        output[i] = output[i]
+            + input[input_base + 450] * weight[weight_base + 72]
+            + input[input_base + 451] * weight[weight_base + 73]
+            + input[input_base + 452] * weight[weight_base + 74]
+            + input[input_base + 588] * weight[weight_base + 75]
+            + input[input_base + 589] * weight[weight_base + 76]
+            + input[input_base + 590] * weight[weight_base + 77]
+            + input[input_base + 591] * weight[weight_base + 78]
+            + input[input_base + 592] * weight[weight_base + 79]
+            + input[input_base + 602] * weight[weight_base + 80]
+            + input[input_base + 603] * weight[weight_base + 81]
+            + input[input_base + 604] * weight[weight_base + 82]
+            + input[input_base + 605] * weight[weight_base + 83]
+            + input[input_base + 606] * weight[weight_base + 84]
+            + input[input_base + 616] * weight[weight_base + 85]
+            + input[input_base + 617] * weight[weight_base + 86]
+            + input[input_base + 618] * weight[weight_base + 87]
+            + input[input_base + 619] * weight[weight_base + 88]
+            + input[input_base + 620] * weight[weight_base + 89]
+            + input[input_base + 630] * weight[weight_base + 90]
+            + input[input_base + 631] * weight[weight_base + 91]
+            + input[input_base + 632] * weight[weight_base + 92]
+            + input[input_base + 633] * weight[weight_base + 93]
+            + input[input_base + 634] * weight[weight_base + 94]
+            + input[input_base + 644] * weight[weight_base + 95]
+            ;
+        output[i] = output[i]
+            + input[input_base + 645] * weight[weight_base + 96]
+            + input[input_base + 646] * weight[weight_base + 97]
+            + input[input_base + 647] * weight[weight_base + 98]
+            + input[input_base + 648] * weight[weight_base + 99]
+            + input[input_base + 784] * weight[weight_base + 100]
+            + input[input_base + 785] * weight[weight_base + 101]
+            + input[input_base + 786] * weight[weight_base + 102]
+            + input[input_base + 787] * weight[weight_base + 103]
+            + input[input_base + 788] * weight[weight_base + 104]
+            + input[input_base + 798] * weight[weight_base + 105]
+            + input[input_base + 799] * weight[weight_base + 106]
+            + input[input_base + 800] * weight[weight_base + 107]
+            + input[input_base + 801] * weight[weight_base + 108]
+            + input[input_base + 802] * weight[weight_base + 109]
+            + input[input_base + 812] * weight[weight_base + 110]
+            + input[input_base + 813] * weight[weight_base + 111]
+            + input[input_base + 814] * weight[weight_base + 112]
+            + input[input_base + 815] * weight[weight_base + 113]
+            + input[input_base + 816] * weight[weight_base + 114]
+            + input[input_base + 826] * weight[weight_base + 115]
+            + input[input_base + 827] * weight[weight_base + 116]
+            + input[input_base + 828] * weight[weight_base + 117]
+            + input[input_base + 829] * weight[weight_base + 118]
+            + input[input_base + 830] * weight[weight_base + 119]
+            ;
+        output[i] = output[i]
+            + input[input_base + 840] * weight[weight_base + 120]
+            + input[input_base + 841] * weight[weight_base + 121]
+            + input[input_base + 842] * weight[weight_base + 122]
+            + input[input_base + 843] * weight[weight_base + 123]
+            + input[input_base + 844] * weight[weight_base + 124]
+            + input[input_base + 980] * weight[weight_base + 125]
+            + input[input_base + 981] * weight[weight_base + 126]
+            + input[input_base + 982] * weight[weight_base + 127]
+            + input[input_base + 983] * weight[weight_base + 128]
+            + input[input_base + 984] * weight[weight_base + 129]
+            + input[input_base + 994] * weight[weight_base + 130]
+            + input[input_base + 995] * weight[weight_base + 131]
+            + input[input_base + 996] * weight[weight_base + 132]
+            + input[input_base + 997] * weight[weight_base + 133]
+            + input[input_base + 998] * weight[weight_base + 134]
+            + input[input_base + 1008] * weight[weight_base + 135]
+            + input[input_base + 1009] * weight[weight_base + 136]
+            + input[input_base + 1010] * weight[weight_base + 137]
+            + input[input_base + 1011] * weight[weight_base + 138]
+            + input[input_base + 1012] * weight[weight_base + 139]
+            + input[input_base + 1022] * weight[weight_base + 140]
+            + input[input_base + 1023] * weight[weight_base + 141]
+            + input[input_base + 1024] * weight[weight_base + 142]
+            + input[input_base + 1025] * weight[weight_base + 143]
+            ;
+        output[i] = output[i]
+            + input[input_base + 1026] * weight[weight_base + 144]
+            + input[input_base + 1036] * weight[weight_base + 145]
+            + input[input_base + 1037] * weight[weight_base + 146]
+            + input[input_base + 1038] * weight[weight_base + 147]
+            + input[input_base + 1039] * weight[weight_base + 148]
+            + input[input_base + 1040] * weight[weight_base + 149]
+            ;
+        if (output[i] < 0.0) {
+            output[i] = 0.0;
+        }
+    }
+}
+
+__gpu func cifar_gpu_fc1_relu(
+    input: rpackedfloat_ptr, weight: rpackedfloat_ptr,
+    bias: rpackedfloat_ptr, output: rpackedfloat_ptr, count: int
+): void {
+    let i: int = globalIdx.x;
+    if (i < count) {
+        let base: int = i * 400;
+        output[i] = bias[i];
+        output[i] = output[i]
+            + input[0] * weight[base]
+            + input[1] * weight[base + 1]
+            + input[2] * weight[base + 2]
+            + input[3] * weight[base + 3]
+            + input[4] * weight[base + 4]
+            + input[5] * weight[base + 5]
+            + input[6] * weight[base + 6]
+            + input[7] * weight[base + 7]
+            + input[8] * weight[base + 8]
+            + input[9] * weight[base + 9]
+            + input[10] * weight[base + 10]
+            + input[11] * weight[base + 11]
+            + input[12] * weight[base + 12]
+            + input[13] * weight[base + 13]
+            + input[14] * weight[base + 14]
+            + input[15] * weight[base + 15]
+            + input[16] * weight[base + 16]
+            + input[17] * weight[base + 17]
+            + input[18] * weight[base + 18]
+            + input[19] * weight[base + 19]
+            + input[20] * weight[base + 20]
+            + input[21] * weight[base + 21]
+            + input[22] * weight[base + 22]
+            + input[23] * weight[base + 23]
+            ;
+        output[i] = output[i]
+            + input[24] * weight[base + 24]
+            + input[25] * weight[base + 25]
+            + input[26] * weight[base + 26]
+            + input[27] * weight[base + 27]
+            + input[28] * weight[base + 28]
+            + input[29] * weight[base + 29]
+            + input[30] * weight[base + 30]
+            + input[31] * weight[base + 31]
+            + input[32] * weight[base + 32]
+            + input[33] * weight[base + 33]
+            + input[34] * weight[base + 34]
+            + input[35] * weight[base + 35]
+            + input[36] * weight[base + 36]
+            + input[37] * weight[base + 37]
+            + input[38] * weight[base + 38]
+            + input[39] * weight[base + 39]
+            + input[40] * weight[base + 40]
+            + input[41] * weight[base + 41]
+            + input[42] * weight[base + 42]
+            + input[43] * weight[base + 43]
+            + input[44] * weight[base + 44]
+            + input[45] * weight[base + 45]
+            + input[46] * weight[base + 46]
+            + input[47] * weight[base + 47]
+            ;
+        output[i] = output[i]
+            + input[48] * weight[base + 48]
+            + input[49] * weight[base + 49]
+            + input[50] * weight[base + 50]
+            + input[51] * weight[base + 51]
+            + input[52] * weight[base + 52]
+            + input[53] * weight[base + 53]
+            + input[54] * weight[base + 54]
+            + input[55] * weight[base + 55]
+            + input[56] * weight[base + 56]
+            + input[57] * weight[base + 57]
+            + input[58] * weight[base + 58]
+            + input[59] * weight[base + 59]
+            + input[60] * weight[base + 60]
+            + input[61] * weight[base + 61]
+            + input[62] * weight[base + 62]
+            + input[63] * weight[base + 63]
+            + input[64] * weight[base + 64]
+            + input[65] * weight[base + 65]
+            + input[66] * weight[base + 66]
+            + input[67] * weight[base + 67]
+            + input[68] * weight[base + 68]
+            + input[69] * weight[base + 69]
+            + input[70] * weight[base + 70]
+            + input[71] * weight[base + 71]
+            ;
+        output[i] = output[i]
+            + input[72] * weight[base + 72]
+            + input[73] * weight[base + 73]
+            + input[74] * weight[base + 74]
+            + input[75] * weight[base + 75]
+            + input[76] * weight[base + 76]
+            + input[77] * weight[base + 77]
+            + input[78] * weight[base + 78]
+            + input[79] * weight[base + 79]
+            + input[80] * weight[base + 80]
+            + input[81] * weight[base + 81]
+            + input[82] * weight[base + 82]
+            + input[83] * weight[base + 83]
+            + input[84] * weight[base + 84]
+            + input[85] * weight[base + 85]
+            + input[86] * weight[base + 86]
+            + input[87] * weight[base + 87]
+            + input[88] * weight[base + 88]
+            + input[89] * weight[base + 89]
+            + input[90] * weight[base + 90]
+            + input[91] * weight[base + 91]
+            + input[92] * weight[base + 92]
+            + input[93] * weight[base + 93]
+            + input[94] * weight[base + 94]
+            + input[95] * weight[base + 95]
+            ;
+        output[i] = output[i]
+            + input[96] * weight[base + 96]
+            + input[97] * weight[base + 97]
+            + input[98] * weight[base + 98]
+            + input[99] * weight[base + 99]
+            + input[100] * weight[base + 100]
+            + input[101] * weight[base + 101]
+            + input[102] * weight[base + 102]
+            + input[103] * weight[base + 103]
+            + input[104] * weight[base + 104]
+            + input[105] * weight[base + 105]
+            + input[106] * weight[base + 106]
+            + input[107] * weight[base + 107]
+            + input[108] * weight[base + 108]
+            + input[109] * weight[base + 109]
+            + input[110] * weight[base + 110]
+            + input[111] * weight[base + 111]
+            + input[112] * weight[base + 112]
+            + input[113] * weight[base + 113]
+            + input[114] * weight[base + 114]
+            + input[115] * weight[base + 115]
+            + input[116] * weight[base + 116]
+            + input[117] * weight[base + 117]
+            + input[118] * weight[base + 118]
+            + input[119] * weight[base + 119]
+            ;
+        output[i] = output[i]
+            + input[120] * weight[base + 120]
+            + input[121] * weight[base + 121]
+            + input[122] * weight[base + 122]
+            + input[123] * weight[base + 123]
+            + input[124] * weight[base + 124]
+            + input[125] * weight[base + 125]
+            + input[126] * weight[base + 126]
+            + input[127] * weight[base + 127]
+            + input[128] * weight[base + 128]
+            + input[129] * weight[base + 129]
+            + input[130] * weight[base + 130]
+            + input[131] * weight[base + 131]
+            + input[132] * weight[base + 132]
+            + input[133] * weight[base + 133]
+            + input[134] * weight[base + 134]
+            + input[135] * weight[base + 135]
+            + input[136] * weight[base + 136]
+            + input[137] * weight[base + 137]
+            + input[138] * weight[base + 138]
+            + input[139] * weight[base + 139]
+            + input[140] * weight[base + 140]
+            + input[141] * weight[base + 141]
+            + input[142] * weight[base + 142]
+            + input[143] * weight[base + 143]
+            ;
+        output[i] = output[i]
+            + input[144] * weight[base + 144]
+            + input[145] * weight[base + 145]
+            + input[146] * weight[base + 146]
+            + input[147] * weight[base + 147]
+            + input[148] * weight[base + 148]
+            + input[149] * weight[base + 149]
+            + input[150] * weight[base + 150]
+            + input[151] * weight[base + 151]
+            + input[152] * weight[base + 152]
+            + input[153] * weight[base + 153]
+            + input[154] * weight[base + 154]
+            + input[155] * weight[base + 155]
+            + input[156] * weight[base + 156]
+            + input[157] * weight[base + 157]
+            + input[158] * weight[base + 158]
+            + input[159] * weight[base + 159]
+            + input[160] * weight[base + 160]
+            + input[161] * weight[base + 161]
+            + input[162] * weight[base + 162]
+            + input[163] * weight[base + 163]
+            + input[164] * weight[base + 164]
+            + input[165] * weight[base + 165]
+            + input[166] * weight[base + 166]
+            + input[167] * weight[base + 167]
+            ;
+        output[i] = output[i]
+            + input[168] * weight[base + 168]
+            + input[169] * weight[base + 169]
+            + input[170] * weight[base + 170]
+            + input[171] * weight[base + 171]
+            + input[172] * weight[base + 172]
+            + input[173] * weight[base + 173]
+            + input[174] * weight[base + 174]
+            + input[175] * weight[base + 175]
+            + input[176] * weight[base + 176]
+            + input[177] * weight[base + 177]
+            + input[178] * weight[base + 178]
+            + input[179] * weight[base + 179]
+            + input[180] * weight[base + 180]
+            + input[181] * weight[base + 181]
+            + input[182] * weight[base + 182]
+            + input[183] * weight[base + 183]
+            + input[184] * weight[base + 184]
+            + input[185] * weight[base + 185]
+            + input[186] * weight[base + 186]
+            + input[187] * weight[base + 187]
+            + input[188] * weight[base + 188]
+            + input[189] * weight[base + 189]
+            + input[190] * weight[base + 190]
+            + input[191] * weight[base + 191]
+            ;
+        output[i] = output[i]
+            + input[192] * weight[base + 192]
+            + input[193] * weight[base + 193]
+            + input[194] * weight[base + 194]
+            + input[195] * weight[base + 195]
+            + input[196] * weight[base + 196]
+            + input[197] * weight[base + 197]
+            + input[198] * weight[base + 198]
+            + input[199] * weight[base + 199]
+            + input[200] * weight[base + 200]
+            + input[201] * weight[base + 201]
+            + input[202] * weight[base + 202]
+            + input[203] * weight[base + 203]
+            + input[204] * weight[base + 204]
+            + input[205] * weight[base + 205]
+            + input[206] * weight[base + 206]
+            + input[207] * weight[base + 207]
+            + input[208] * weight[base + 208]
+            + input[209] * weight[base + 209]
+            + input[210] * weight[base + 210]
+            + input[211] * weight[base + 211]
+            + input[212] * weight[base + 212]
+            + input[213] * weight[base + 213]
+            + input[214] * weight[base + 214]
+            + input[215] * weight[base + 215]
+            ;
+        output[i] = output[i]
+            + input[216] * weight[base + 216]
+            + input[217] * weight[base + 217]
+            + input[218] * weight[base + 218]
+            + input[219] * weight[base + 219]
+            + input[220] * weight[base + 220]
+            + input[221] * weight[base + 221]
+            + input[222] * weight[base + 222]
+            + input[223] * weight[base + 223]
+            + input[224] * weight[base + 224]
+            + input[225] * weight[base + 225]
+            + input[226] * weight[base + 226]
+            + input[227] * weight[base + 227]
+            + input[228] * weight[base + 228]
+            + input[229] * weight[base + 229]
+            + input[230] * weight[base + 230]
+            + input[231] * weight[base + 231]
+            + input[232] * weight[base + 232]
+            + input[233] * weight[base + 233]
+            + input[234] * weight[base + 234]
+            + input[235] * weight[base + 235]
+            + input[236] * weight[base + 236]
+            + input[237] * weight[base + 237]
+            + input[238] * weight[base + 238]
+            + input[239] * weight[base + 239]
+            ;
+        output[i] = output[i]
+            + input[240] * weight[base + 240]
+            + input[241] * weight[base + 241]
+            + input[242] * weight[base + 242]
+            + input[243] * weight[base + 243]
+            + input[244] * weight[base + 244]
+            + input[245] * weight[base + 245]
+            + input[246] * weight[base + 246]
+            + input[247] * weight[base + 247]
+            + input[248] * weight[base + 248]
+            + input[249] * weight[base + 249]
+            + input[250] * weight[base + 250]
+            + input[251] * weight[base + 251]
+            + input[252] * weight[base + 252]
+            + input[253] * weight[base + 253]
+            + input[254] * weight[base + 254]
+            + input[255] * weight[base + 255]
+            + input[256] * weight[base + 256]
+            + input[257] * weight[base + 257]
+            + input[258] * weight[base + 258]
+            + input[259] * weight[base + 259]
+            + input[260] * weight[base + 260]
+            + input[261] * weight[base + 261]
+            + input[262] * weight[base + 262]
+            + input[263] * weight[base + 263]
+            ;
+        output[i] = output[i]
+            + input[264] * weight[base + 264]
+            + input[265] * weight[base + 265]
+            + input[266] * weight[base + 266]
+            + input[267] * weight[base + 267]
+            + input[268] * weight[base + 268]
+            + input[269] * weight[base + 269]
+            + input[270] * weight[base + 270]
+            + input[271] * weight[base + 271]
+            + input[272] * weight[base + 272]
+            + input[273] * weight[base + 273]
+            + input[274] * weight[base + 274]
+            + input[275] * weight[base + 275]
+            + input[276] * weight[base + 276]
+            + input[277] * weight[base + 277]
+            + input[278] * weight[base + 278]
+            + input[279] * weight[base + 279]
+            + input[280] * weight[base + 280]
+            + input[281] * weight[base + 281]
+            + input[282] * weight[base + 282]
+            + input[283] * weight[base + 283]
+            + input[284] * weight[base + 284]
+            + input[285] * weight[base + 285]
+            + input[286] * weight[base + 286]
+            + input[287] * weight[base + 287]
+            ;
+        output[i] = output[i]
+            + input[288] * weight[base + 288]
+            + input[289] * weight[base + 289]
+            + input[290] * weight[base + 290]
+            + input[291] * weight[base + 291]
+            + input[292] * weight[base + 292]
+            + input[293] * weight[base + 293]
+            + input[294] * weight[base + 294]
+            + input[295] * weight[base + 295]
+            + input[296] * weight[base + 296]
+            + input[297] * weight[base + 297]
+            + input[298] * weight[base + 298]
+            + input[299] * weight[base + 299]
+            + input[300] * weight[base + 300]
+            + input[301] * weight[base + 301]
+            + input[302] * weight[base + 302]
+            + input[303] * weight[base + 303]
+            + input[304] * weight[base + 304]
+            + input[305] * weight[base + 305]
+            + input[306] * weight[base + 306]
+            + input[307] * weight[base + 307]
+            + input[308] * weight[base + 308]
+            + input[309] * weight[base + 309]
+            + input[310] * weight[base + 310]
+            + input[311] * weight[base + 311]
+            ;
+        output[i] = output[i]
+            + input[312] * weight[base + 312]
+            + input[313] * weight[base + 313]
+            + input[314] * weight[base + 314]
+            + input[315] * weight[base + 315]
+            + input[316] * weight[base + 316]
+            + input[317] * weight[base + 317]
+            + input[318] * weight[base + 318]
+            + input[319] * weight[base + 319]
+            + input[320] * weight[base + 320]
+            + input[321] * weight[base + 321]
+            + input[322] * weight[base + 322]
+            + input[323] * weight[base + 323]
+            + input[324] * weight[base + 324]
+            + input[325] * weight[base + 325]
+            + input[326] * weight[base + 326]
+            + input[327] * weight[base + 327]
+            + input[328] * weight[base + 328]
+            + input[329] * weight[base + 329]
+            + input[330] * weight[base + 330]
+            + input[331] * weight[base + 331]
+            + input[332] * weight[base + 332]
+            + input[333] * weight[base + 333]
+            + input[334] * weight[base + 334]
+            + input[335] * weight[base + 335]
+            ;
+        output[i] = output[i]
+            + input[336] * weight[base + 336]
+            + input[337] * weight[base + 337]
+            + input[338] * weight[base + 338]
+            + input[339] * weight[base + 339]
+            + input[340] * weight[base + 340]
+            + input[341] * weight[base + 341]
+            + input[342] * weight[base + 342]
+            + input[343] * weight[base + 343]
+            + input[344] * weight[base + 344]
+            + input[345] * weight[base + 345]
+            + input[346] * weight[base + 346]
+            + input[347] * weight[base + 347]
+            + input[348] * weight[base + 348]
+            + input[349] * weight[base + 349]
+            + input[350] * weight[base + 350]
+            + input[351] * weight[base + 351]
+            + input[352] * weight[base + 352]
+            + input[353] * weight[base + 353]
+            + input[354] * weight[base + 354]
+            + input[355] * weight[base + 355]
+            + input[356] * weight[base + 356]
+            + input[357] * weight[base + 357]
+            + input[358] * weight[base + 358]
+            + input[359] * weight[base + 359]
+            ;
+        output[i] = output[i]
+            + input[360] * weight[base + 360]
+            + input[361] * weight[base + 361]
+            + input[362] * weight[base + 362]
+            + input[363] * weight[base + 363]
+            + input[364] * weight[base + 364]
+            + input[365] * weight[base + 365]
+            + input[366] * weight[base + 366]
+            + input[367] * weight[base + 367]
+            + input[368] * weight[base + 368]
+            + input[369] * weight[base + 369]
+            + input[370] * weight[base + 370]
+            + input[371] * weight[base + 371]
+            + input[372] * weight[base + 372]
+            + input[373] * weight[base + 373]
+            + input[374] * weight[base + 374]
+            + input[375] * weight[base + 375]
+            + input[376] * weight[base + 376]
+            + input[377] * weight[base + 377]
+            + input[378] * weight[base + 378]
+            + input[379] * weight[base + 379]
+            + input[380] * weight[base + 380]
+            + input[381] * weight[base + 381]
+            + input[382] * weight[base + 382]
+            + input[383] * weight[base + 383]
+            ;
+        output[i] = output[i]
+            + input[384] * weight[base + 384]
+            + input[385] * weight[base + 385]
+            + input[386] * weight[base + 386]
+            + input[387] * weight[base + 387]
+            + input[388] * weight[base + 388]
+            + input[389] * weight[base + 389]
+            + input[390] * weight[base + 390]
+            + input[391] * weight[base + 391]
+            + input[392] * weight[base + 392]
+            + input[393] * weight[base + 393]
+            + input[394] * weight[base + 394]
+            + input[395] * weight[base + 395]
+            + input[396] * weight[base + 396]
+            + input[397] * weight[base + 397]
+            + input[398] * weight[base + 398]
+            + input[399] * weight[base + 399]
+            ;
+        if (output[i] < 0.0) {
+            output[i] = 0.0;
+        }
+    }
+}
+
+__gpu func cifar_gpu_fc2_relu(
+    input: rpackedfloat_ptr, weight: rpackedfloat_ptr,
+    bias: rpackedfloat_ptr, output: rpackedfloat_ptr, count: int
+): void {
+    let i: int = globalIdx.x;
+    if (i < count) {
+        let base: int = i * 120;
+        output[i] = bias[i];
+        output[i] = output[i]
+            + input[0] * weight[base]
+            + input[1] * weight[base + 1]
+            + input[2] * weight[base + 2]
+            + input[3] * weight[base + 3]
+            + input[4] * weight[base + 4]
+            + input[5] * weight[base + 5]
+            + input[6] * weight[base + 6]
+            + input[7] * weight[base + 7]
+            + input[8] * weight[base + 8]
+            + input[9] * weight[base + 9]
+            + input[10] * weight[base + 10]
+            + input[11] * weight[base + 11]
+            + input[12] * weight[base + 12]
+            + input[13] * weight[base + 13]
+            + input[14] * weight[base + 14]
+            + input[15] * weight[base + 15]
+            + input[16] * weight[base + 16]
+            + input[17] * weight[base + 17]
+            + input[18] * weight[base + 18]
+            + input[19] * weight[base + 19]
+            + input[20] * weight[base + 20]
+            + input[21] * weight[base + 21]
+            + input[22] * weight[base + 22]
+            + input[23] * weight[base + 23]
+            ;
+        output[i] = output[i]
+            + input[24] * weight[base + 24]
+            + input[25] * weight[base + 25]
+            + input[26] * weight[base + 26]
+            + input[27] * weight[base + 27]
+            + input[28] * weight[base + 28]
+            + input[29] * weight[base + 29]
+            + input[30] * weight[base + 30]
+            + input[31] * weight[base + 31]
+            + input[32] * weight[base + 32]
+            + input[33] * weight[base + 33]
+            + input[34] * weight[base + 34]
+            + input[35] * weight[base + 35]
+            + input[36] * weight[base + 36]
+            + input[37] * weight[base + 37]
+            + input[38] * weight[base + 38]
+            + input[39] * weight[base + 39]
+            + input[40] * weight[base + 40]
+            + input[41] * weight[base + 41]
+            + input[42] * weight[base + 42]
+            + input[43] * weight[base + 43]
+            + input[44] * weight[base + 44]
+            + input[45] * weight[base + 45]
+            + input[46] * weight[base + 46]
+            + input[47] * weight[base + 47]
+            ;
+        output[i] = output[i]
+            + input[48] * weight[base + 48]
+            + input[49] * weight[base + 49]
+            + input[50] * weight[base + 50]
+            + input[51] * weight[base + 51]
+            + input[52] * weight[base + 52]
+            + input[53] * weight[base + 53]
+            + input[54] * weight[base + 54]
+            + input[55] * weight[base + 55]
+            + input[56] * weight[base + 56]
+            + input[57] * weight[base + 57]
+            + input[58] * weight[base + 58]
+            + input[59] * weight[base + 59]
+            + input[60] * weight[base + 60]
+            + input[61] * weight[base + 61]
+            + input[62] * weight[base + 62]
+            + input[63] * weight[base + 63]
+            + input[64] * weight[base + 64]
+            + input[65] * weight[base + 65]
+            + input[66] * weight[base + 66]
+            + input[67] * weight[base + 67]
+            + input[68] * weight[base + 68]
+            + input[69] * weight[base + 69]
+            + input[70] * weight[base + 70]
+            + input[71] * weight[base + 71]
+            ;
+        output[i] = output[i]
+            + input[72] * weight[base + 72]
+            + input[73] * weight[base + 73]
+            + input[74] * weight[base + 74]
+            + input[75] * weight[base + 75]
+            + input[76] * weight[base + 76]
+            + input[77] * weight[base + 77]
+            + input[78] * weight[base + 78]
+            + input[79] * weight[base + 79]
+            + input[80] * weight[base + 80]
+            + input[81] * weight[base + 81]
+            + input[82] * weight[base + 82]
+            + input[83] * weight[base + 83]
+            + input[84] * weight[base + 84]
+            + input[85] * weight[base + 85]
+            + input[86] * weight[base + 86]
+            + input[87] * weight[base + 87]
+            + input[88] * weight[base + 88]
+            + input[89] * weight[base + 89]
+            + input[90] * weight[base + 90]
+            + input[91] * weight[base + 91]
+            + input[92] * weight[base + 92]
+            + input[93] * weight[base + 93]
+            + input[94] * weight[base + 94]
+            + input[95] * weight[base + 95]
+            ;
+        output[i] = output[i]
+            + input[96] * weight[base + 96]
+            + input[97] * weight[base + 97]
+            + input[98] * weight[base + 98]
+            + input[99] * weight[base + 99]
+            + input[100] * weight[base + 100]
+            + input[101] * weight[base + 101]
+            + input[102] * weight[base + 102]
+            + input[103] * weight[base + 103]
+            + input[104] * weight[base + 104]
+            + input[105] * weight[base + 105]
+            + input[106] * weight[base + 106]
+            + input[107] * weight[base + 107]
+            + input[108] * weight[base + 108]
+            + input[109] * weight[base + 109]
+            + input[110] * weight[base + 110]
+            + input[111] * weight[base + 111]
+            + input[112] * weight[base + 112]
+            + input[113] * weight[base + 113]
+            + input[114] * weight[base + 114]
+            + input[115] * weight[base + 115]
+            + input[116] * weight[base + 116]
+            + input[117] * weight[base + 117]
+            + input[118] * weight[base + 118]
+            + input[119] * weight[base + 119]
+            ;
+        if (output[i] < 0.0) {
+            output[i] = 0.0;
+        }
+    }
+}
+
+__gpu func cifar_gpu_fc3(
+    input: rpackedfloat_ptr, weight: rpackedfloat_ptr,
+    bias: rpackedfloat_ptr, output: rpackedfloat_ptr, count: int
+): void {
+    let i: int = globalIdx.x;
+    if (i < count) {
+        let base: int = i * 84;
+        output[i] = bias[i];
+        output[i] = output[i]
+            + input[0] * weight[base]
+            + input[1] * weight[base + 1]
+            + input[2] * weight[base + 2]
+            + input[3] * weight[base + 3]
+            + input[4] * weight[base + 4]
+            + input[5] * weight[base + 5]
+            + input[6] * weight[base + 6]
+            + input[7] * weight[base + 7]
+            + input[8] * weight[base + 8]
+            + input[9] * weight[base + 9]
+            + input[10] * weight[base + 10]
+            + input[11] * weight[base + 11]
+            + input[12] * weight[base + 12]
+            + input[13] * weight[base + 13]
+            + input[14] * weight[base + 14]
+            + input[15] * weight[base + 15]
+            + input[16] * weight[base + 16]
+            + input[17] * weight[base + 17]
+            + input[18] * weight[base + 18]
+            + input[19] * weight[base + 19]
+            + input[20] * weight[base + 20]
+            + input[21] * weight[base + 21]
+            + input[22] * weight[base + 22]
+            + input[23] * weight[base + 23]
+            ;
+        output[i] = output[i]
+            + input[24] * weight[base + 24]
+            + input[25] * weight[base + 25]
+            + input[26] * weight[base + 26]
+            + input[27] * weight[base + 27]
+            + input[28] * weight[base + 28]
+            + input[29] * weight[base + 29]
+            + input[30] * weight[base + 30]
+            + input[31] * weight[base + 31]
+            + input[32] * weight[base + 32]
+            + input[33] * weight[base + 33]
+            + input[34] * weight[base + 34]
+            + input[35] * weight[base + 35]
+            + input[36] * weight[base + 36]
+            + input[37] * weight[base + 37]
+            + input[38] * weight[base + 38]
+            + input[39] * weight[base + 39]
+            + input[40] * weight[base + 40]
+            + input[41] * weight[base + 41]
+            + input[42] * weight[base + 42]
+            + input[43] * weight[base + 43]
+            + input[44] * weight[base + 44]
+            + input[45] * weight[base + 45]
+            + input[46] * weight[base + 46]
+            + input[47] * weight[base + 47]
+            ;
+        output[i] = output[i]
+            + input[48] * weight[base + 48]
+            + input[49] * weight[base + 49]
+            + input[50] * weight[base + 50]
+            + input[51] * weight[base + 51]
+            + input[52] * weight[base + 52]
+            + input[53] * weight[base + 53]
+            + input[54] * weight[base + 54]
+            + input[55] * weight[base + 55]
+            + input[56] * weight[base + 56]
+            + input[57] * weight[base + 57]
+            + input[58] * weight[base + 58]
+            + input[59] * weight[base + 59]
+            + input[60] * weight[base + 60]
+            + input[61] * weight[base + 61]
+            + input[62] * weight[base + 62]
+            + input[63] * weight[base + 63]
+            + input[64] * weight[base + 64]
+            + input[65] * weight[base + 65]
+            + input[66] * weight[base + 66]
+            + input[67] * weight[base + 67]
+            + input[68] * weight[base + 68]
+            + input[69] * weight[base + 69]
+            + input[70] * weight[base + 70]
+            + input[71] * weight[base + 71]
+            ;
+        output[i] = output[i]
+            + input[72] * weight[base + 72]
+            + input[73] * weight[base + 73]
+            + input[74] * weight[base + 74]
+            + input[75] * weight[base + 75]
+            + input[76] * weight[base + 76]
+            + input[77] * weight[base + 77]
+            + input[78] * weight[base + 78]
+            + input[79] * weight[base + 79]
+            + input[80] * weight[base + 80]
+            + input[81] * weight[base + 81]
+            + input[82] * weight[base + 82]
+            + input[83] * weight[base + 83]
+            ;
+    }
+}
+
+func cifar_setup() {
+    for (i in 0..3072) {
+        cifar_host_input[i] = 1.0;
+    }
+    for (i in 0..6) {
+        cifar_host_conv1_w[i * 75 + 12] = 1.0;
+    }
+    for (i in 0..16) {
+        cifar_host_conv2_w[i * 150 + 12] = 1.0;
+    }
+    for (i in 0..120) {
+        cifar_host_fc1_w[i * 400] = 1.0;
+    }
+    for (i in 0..84) {
+        cifar_host_fc2_w[i * 120] = 1.0;
+    }
+    for (i in 0..10) {
+        cifar_host_fc3_w[i * 84] = 1.0;
+    }
+    cifar_host_fc3_b[0] = 0.0;
+    cifar_host_fc3_b[1] = 1.0;
+    cifar_host_fc3_b[2] = 2.0;
+    cifar_host_fc3_b[3] = 3.0;
+    cifar_host_fc3_b[4] = 4.0;
+    cifar_host_fc3_b[5] = 5.0;
+    cifar_host_fc3_b[6] = 6.0;
+    cifar_host_fc3_b[7] = 7.0;
+    cifar_host_fc3_b[8] = 8.0;
+    cifar_host_fc3_b[9] = 9.0;
+
+    Accel.copyToAccel(cifar_host_input, 0, cifar_input, 0, 12288);
+    Accel.copyToAccel(cifar_host_conv1_w, 0, cifar_conv1_w, 0, 1800);
+    Accel.copyToAccel(cifar_host_conv1_b, 0, cifar_conv1_b, 0, 24);
+    Accel.copyToAccel(cifar_host_conv2_w, 0, cifar_conv2_w, 0, 9600);
+    Accel.copyToAccel(cifar_host_conv2_b, 0, cifar_conv2_b, 0, 64);
+    Accel.copyToAccel(cifar_host_fc1_w, 0, cifar_fc1_w, 0, 192000);
+    Accel.copyToAccel(cifar_host_fc1_b, 0, cifar_fc1_b, 0, 480);
+    Accel.copyToAccel(cifar_host_fc2_w, 0, cifar_fc2_w, 0, 40320);
+    Accel.copyToAccel(cifar_host_fc2_b, 0, cifar_fc2_b, 0, 336);
+    Accel.copyToAccel(cifar_host_fc3_w, 0, cifar_fc3_w, 0, 3360);
+    Accel.copyToAccel(cifar_host_fc3_b, 0, cifar_fc3_b, 0, 40);
+}
+
+func cifar_cpu_forward(iterations: int) {
+    for (iteration in 0..iterations) {
+        cifar_cpu_conv_relu(cifar_host_input, cifar_host_conv1_w,
+            cifar_host_conv1_b, cifar_host_conv1, 3, 32, 6, 28);
+        cifar_cpu_max_pool2x2(cifar_host_conv1, cifar_host_pool1,
+            6, 28, 14);
+        cifar_cpu_conv_relu(cifar_host_pool1, cifar_host_conv2_w,
+            cifar_host_conv2_b, cifar_host_conv2, 6, 14, 16, 10);
+        cifar_cpu_max_pool2x2(cifar_host_conv2, cifar_host_pool2,
+            16, 10, 5);
+        cifar_cpu_dense(cifar_host_pool2, cifar_host_fc1_w,
+            cifar_host_fc1_b, cifar_host_fc1, 400, 120, 1);
+        cifar_cpu_dense(cifar_host_fc1, cifar_host_fc2_w,
+            cifar_host_fc2_b, cifar_host_fc2, 120, 84, 1);
+        cifar_cpu_dense(cifar_host_fc2, cifar_host_fc3_w,
+            cifar_host_fc3_b, cifar_host_logits, 84, 10, 0);
+    }
+}
+
+func cifar_gpu_forward(iterations: int) {
+    for (iteration in 0..iterations) {
+        cifar_gpu_conv1_relu<<<37, 128>>>(
+            cifar_input, cifar_conv1_w, cifar_conv1_b, cifar_conv1, 4704);
+        cifar_gpu_max_pool2x2<<<10, 128>>>(
+            cifar_conv1, cifar_pool1, 6, 28, 14, 1176);
+        cifar_gpu_conv2_relu<<<13, 128>>>(
+            cifar_pool1, cifar_conv2_w, cifar_conv2_b, cifar_conv2, 1600);
+        cifar_gpu_max_pool2x2<<<4, 128>>>(
+            cifar_conv2, cifar_pool2, 16, 10, 5, 400);
+        cifar_gpu_fc1_relu<<<1, 128>>>(
+            cifar_pool2, cifar_fc1_w, cifar_fc1_b, cifar_fc1, 120);
+        cifar_gpu_fc2_relu<<<1, 128>>>(
+            cifar_fc1, cifar_fc2_w, cifar_fc2_b, cifar_fc2, 84);
+        cifar_gpu_fc3<<<1, 128>>>(
+            cifar_fc2, cifar_fc3_w, cifar_fc3_b, cifar_logits, 10);
+    }
+}
+
+func cifar_verify_cpu() {
+    if (cifar_host_logits[0] != 1.0) {
+        return 0;
+    }
+    if (cifar_host_logits[1] != 2.0) {
+        return 0;
+    }
+    if (cifar_host_logits[2] != 3.0) {
+        return 0;
+    }
+    if (cifar_host_logits[3] != 4.0) {
+        return 0;
+    }
+    if (cifar_host_logits[4] != 5.0) {
+        return 0;
+    }
+    if (cifar_host_logits[5] != 6.0) {
+        return 0;
+    }
+    if (cifar_host_logits[6] != 7.0) {
+        return 0;
+    }
+    if (cifar_host_logits[7] != 8.0) {
+        return 0;
+    }
+    if (cifar_host_logits[8] != 9.0) {
+        return 0;
+    }
+    if (cifar_host_logits[9] != 10.0) {
+        return 0;
+    }
+    return 1;
+}
+
+func cifar_verify_gpu() {
+    Accel.copyFromAccel(cifar_logits, 0, cifar_host_logits, 0, 40);
+    if (cifar_host_logits[0] != 1.0) {
+        return 0;
+    }
+    if (cifar_host_logits[1] != 2.0) {
+        return 0;
+    }
+    if (cifar_host_logits[2] != 3.0) {
+        return 0;
+    }
+    if (cifar_host_logits[3] != 4.0) {
+        return 0;
+    }
+    if (cifar_host_logits[4] != 5.0) {
+        return 0;
+    }
+    if (cifar_host_logits[5] != 6.0) {
+        return 0;
+    }
+    if (cifar_host_logits[6] != 7.0) {
+        return 0;
+    }
+    if (cifar_host_logits[7] != 8.0) {
+        return 0;
+    }
+    if (cifar_host_logits[8] != 9.0) {
+        return 0;
+    }
+    if (cifar_host_logits[9] != 10.0) {
+        return 0;
+    }
+    return 1;
+}
+
+func main() {
+    cifar_setup();
+    cifar_cpu_forward(1);
+    cifar_gpu_forward(1);
+    if (cifar_verify_cpu() != 1 || cifar_verify_gpu() != 1) {
+        print("CIFAR-10 CNN verification failed");
+        return;
+    }
+    print(cifar_host_logits[0]);
+    print(cifar_host_logits[1]);
+    print(cifar_host_logits[2]);
+    print(cifar_host_logits[3]);
+    print(cifar_host_logits[4]);
+    print(cifar_host_logits[5]);
+    print(cifar_host_logits[6]);
+    print(cifar_host_logits[7]);
+    print(cifar_host_logits[8]);
+    print(cifar_host_logits[9]);
+}

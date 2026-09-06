@@ -1,0 +1,15 @@
+graph opset=12 tensors=7 nodes=6 input=t0 output=t6
+tensor t0 storage=0 role=input dtype=float32 name="x" safe=x_t0 shape=[1,2,3,4] stride=[24,12,4,1] offset=0 layout=NCHW producer=-1 consumers=[0] use=0:0
+tensor t1 storage=1 role=temporary dtype=float32 name="g" safe=g_t1 shape=[1,2,1,1] stride=[2,1,1,1] offset=0 layout=NCHW producer=0 consumers=[1] use=1:1
+tensor t2 storage=2 role=temporary dtype=float32 name="mean" safe=mean_t2 shape=[1,2,1] stride=[2,1,1] offset=0 layout=C producer=1 consumers=[2] use=2:2
+tensor t3 storage=3 role=temporary dtype=float32 name="max" safe=max_t3 shape=[1,2,1] stride=[2,1,1] offset=0 layout=C producer=2 consumers=[3] use=3:3
+tensor t4 storage=4 role=temporary dtype=float32 name="min" safe=min_t4 shape=[1,2,1] stride=[2,1,1] offset=0 layout=C producer=3 consumers=[4] use=4:4
+tensor t5 storage=5 role=temporary dtype=float32 name="softmax" safe=softmax_t5 shape=[1,2,1] stride=[2,1,1] offset=0 layout=C producer=4 consumers=[5] use=5:5
+tensor t6 storage=6 role=output dtype=float32 name="y" safe=y_t6 shape=[1,2,1] stride=[2,1,1] offset=0 layout=C producer=5 consumers=[] use=6:6
+node n0 op=ai.onnx::GlobalAveragePool@1 imported=12 family=global-average-pool name="" inputs=[0] outputs=[1] attrs=[]
+node n1 op=ai.onnx::ReduceMean@11 imported=12 family=reduce-static name="" inputs=[1] outputs=[2] attrs=[axes:ints=[3],keepdims:int=0]
+node n2 op=ai.onnx::ReduceMax@12 imported=12 family=reduce-static name="" inputs=[2] outputs=[3] attrs=[axes:ints=[2],keepdims:int=1]
+node n3 op=ai.onnx::ReduceMin@12 imported=12 family=reduce-static name="" inputs=[3] outputs=[4] attrs=[axes:ints=[2],keepdims:int=1]
+node n4 op=ai.onnx::Softmax@11 imported=12 family=softmax-stable name="" inputs=[4] outputs=[5] attrs=[axis:int=1,legacy_flatten_semantics:int=0]
+node n5 op=ai.onnx::LogSoftmax@11 imported=12 family=softmax-stable name="" inputs=[5] outputs=[6] attrs=[axis:int=1,legacy_flatten_semantics:int=0]
+

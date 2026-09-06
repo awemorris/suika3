@@ -1,0 +1,9 @@
+let global_value = 4;
+
+__fast func bad(x: int): int {
+    return x + global_value;
+}
+
+func main() {
+    print(bad(1));
+}

@@ -1,0 +1,23 @@
+// Typed-op benchmark, float kernel (design 07 §8): a dot-product
+// style loop on proven-float locals (Stage B lattice proofs).
+func kernel(n: int, step: float) {
+    var a = 0.5;
+    var b = 1.5;
+    var acc = 0.0;
+    for (i in 0..n) {
+        acc = acc + a * b;
+        a = a + step;
+        b = b - step;
+        if (a > 1000000.0) {
+            a = 0.5;
+        }
+    }
+    return acc;
+}
+
+func main() {
+    var r = kernel(5000000, 0.001);
+    // Print a coarse integer summary: float accumulation order is
+    // identical at both levels, but keep the golden robust anyway.
+    if (r > 0.0) { print("positive"); } else { print("non-positive"); }
+}

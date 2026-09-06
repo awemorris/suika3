@@ -1,8 +1,15 @@
 🌙 Noct Programming Language
 ============================
 
-`Noct` is a tiny yet mighty programming language for sandboxed scripting.
-Its syntax is lightweight, but its runtime is built for high-end performance.
+`Noct` is a tiny yet mighty programming language for:
+
+- Application integration such as sandboxed game scripting (ANSI C, no external dependencies)
+- Small systems such as embedded Linux in flash memory
+
+Its syntax is lightweight, but the runtime is built for high-end performance.
+
+- Automatic loop-vectorizing SIMD acceleration
+- Automatic loop-parallelizing GPU acceleration
 
 **Small enough to learn today, powerful enough to ship tomorrow!**
 
@@ -15,7 +22,14 @@ Its syntax is lightweight, but its runtime is built for high-end performance.
 Only about 200 KB — with a fast JIT compiler, a robust generational GC,
 and a clean C/JS-like syntax featuring a novel Dictionary-based OOP model.
 
-JIT execution is typically 2-10x faster than interpreter execution.
+- L0: 100KB with Interpreter
+- L1: 200KB with Interpreter + JIT 
+- L2: 400KB with Interpreter + JIT + Optimization
+- L3: 660KB with Interpreter + JIT + Optimization + SIMD
+- L4: 770KB with Interpreter + JIT + Optimization + SIMD + GPU
+
+The baseline JIT execution (L1) is typically 4-13x faster than interpreter execution (L0).
+SIMD (L3) and GPU (L4) optimizations are 100-350x faster than L0 in the image processing area.
 
 ### Portable
 
@@ -39,11 +53,19 @@ and
 [Suika3](https://github.com/awemorris/suika3),
 they integrate Noct with game-specific APIs and refer to it as Ray scripting.
 
+### High Performance Optimization
+
+Automatic SIMD vectorization backed by target-neutral loop, DOALL, and
+reduction analyses.
+
+Also, GPU parallelzation is available for Direct3D 12, OpenGL ES,
+Vulkan, and Metal.
+
 ---
 
 ## Status
 
-**Stable,** the current version is 1.0.x.
+**Stable,** the current version is 2.0.x.
 
 The core virtual machine is completed, and is already being used
 through integration with other projects.
@@ -53,6 +75,9 @@ through integration with other projects.
 
 - [Suika3](https://github.com/awemorris/suika3).
     - A visual novel engine for the mobile era.
+
+- [zedBSD](https://github.com/awemorris/zedBSD).
+    - A re-implemented modern BSD OS.
 
 The primary objective of this project, "embedded sandbox scripting",
 has been achieved. However, we are continuing to develop this software
@@ -69,10 +94,10 @@ Our current roadmap is:
 
 ## Platform Support
 
-### JIT Backends:
+### JIT Backends (optional):
 
 - x86, x86_64
-- ARMv5-7, Arm64
+- ARMv7, Arm64
 - RISC-V 32/64
 - PowerPC 32/64
 - MIPS 32/64
@@ -81,7 +106,7 @@ Our current roadmap is:
 
 - Desktop: Windows, macOS, Linux, FreeBSD
 - Mobile: iOS, Android, OpenHarmony
-- Exotic: Solaris 10/11, NetBSD, OpenBSD, Haiku
+- Exotic: zedBSD, Solaris 10/11, NetBSD, OpenBSD, Haiku
 - Retro: DPMI (DOS, OS/2, Windows 3.1-XP)
 - Consoles: Switch, PlayStation 4/5, Xbox Series X|S
 - Any POSIX compliant OS
@@ -89,6 +114,34 @@ Our current roadmap is:
 Note: On major smartphones and consoles, runtime code generation (JIT)
 is generally prohibited or tightly restricted by platform
 policies. Noct runs there with interpreter or AOT compilation.
+
+### Speedup
+
+Our JIT compiler achieves speedups of upto 300 times for SIMD and 50
+times for scalar CPU.
+
+A synthetic benchmark shows that our JIT compiler
+speeds up execution time by 4.1-13.5 times.
+
+```
+func main() {
+    var sum = 0;
+    for(i in 0..10000) {
+        for(j in 0..100000) {
+            sum = sum + 1;
+        }
+    }
+}
+```
+
+L1 Speedup:
+
+| CPU                     | Arch     | JIT (s) | Interpreter (s) | Scaling (JIT vs Interpreter) |
+|-------------------------|----------|---------|-----------------|------------------------------|
+| PowerPC 970FX           | ppc64    | 29.47   | 397.22          | 13.5x                        |
+| Ingenic JZ4770          | mips32   | 129.75  | 1447.36         | 11.2x                        |
+| Intel Core Ultra 5 228V | x86_64   | 5.93    | 34.95           | 5.9x                         |
+| Apple M5                | arm64    | 2.76    | 11.34           | 4.1x                         |
 
 ---
 
@@ -103,6 +156,7 @@ found together in scripting languages:
 - **Portable ANSI C** — No dependencies; runs everywhere.
 - **Tiny Footprint** — Runtime fits in ~200 KB.
 - **AOT Compilation** — Translate to C for JIT-restricted platforms. (e.g. iOS, Android)
+- **Easy HPC** — Automatic vectorization.
 
 While most languages compromise on at least one of these,  
 Noct delivers all without sacrificing clarity or speed.
@@ -183,15 +237,34 @@ to obtain the latest prebuilt binaries.
 
 ### Manually Build from Source
 
-Clone the repository, build it with CMake, and you’re ready to go:
+Clone the repository, build it with CMake, and you're ready to go:
 
 ```
-git clone https://github.com/awemorris/NoctLang.git noct
-cd noct
-cmake -B build .
-cmake --build build
-./build/noct
+git clone https://github.com/awemorris/NoctLang.git
+cd NoctLang
+cmake --preset static
+cd build-static
+make
+make install
 ```
+
+### Build for zedBSD
+
+The amd64 zedBSD target is a static cross build. Set the one required target
+root variable to an absolute zedBSD source-tree path, then use the matching
+configure and build presets:
+
+```sh
+export ZEDBSD_SOURCE_DIR=/absolute/path/to/zedBSD
+cmake --preset zedbsd
+cmake --build --preset zedbsd --parallel 16
+```
+
+The executable is written to `build-zedbsd/noct`. The target uses zedBSD's
+headers, startup objects, libc, and linker policy through the integration file
+owned by the zedBSD tree. Configure fails when `ZEDBSD_SOURCE_DIR` is absent or
+does not identify a complete integration tree; it never falls back to host
+headers or host libc.
 
 ### Run
 
@@ -202,21 +275,109 @@ noct script.noct
 
 To disable the JIT compiler:
 ```
-noct --disable-jit script.noct
+noct -j0 script.noct
 ```
 
-To forcibly enable the JIT compiler from the startup:
+JIT compilation is eager and enabled by default; `-j` states it explicitly:
 ```
-noct --force-jit script.noct
+noct -j script.noct
 ```
+
+To start the interactive REPL, run `noct` without a script. The reusable REPL
+session API for embedded hosts is documented in [docs/repl.md](docs/repl.md).
 
 ### Compile into Bytecode
 
-To compile a script into a bytecode file:
+To compile a script into a sibling `.nbc` bytecode file:
 
 ```
-noct --compile script.nb script.noct
+noct --compile script.noct
 ```
+
+The `.nbc` file contains the module's CPU bytecode and its declared `require`
+module-name list.  Required module bodies remain separate and are resolved by
+the host when the bytecode is loaded.  Noct continues to read legacy
+`Noct Bytecode 1.0` input, but the compiler writes `Noct Bytecode 1.1` and does
+not create new `.nb` files.
+
+To create one self-contained CPU application containing every root module and
+its transitive dependencies:
+
+```
+noct --compile --app --path=lib:vendor application.nap main.noct
+```
+
+A `.nap` application does not need source files, sidecar `.nbc` files, or a
+module resolver at run time.
+
+Source and `.nbc` files can load a module from the current directory or a
+colon-separated search path.  In each directory, `framework.noct` is preferred
+over `framework.nct`, which is preferred over `framework.nbc`:
+
+```noct
+require framework;
+
+func main() {
+	framework_main();
+}
+```
+
+```sh
+noct --path=lib:vendor main.noct
+```
+
+Required modules are loaded once, and their initializers run in dependency
+order. Module discovery is a CLI policy; embedded hosts choose their own source
+resolver through `NoctConfig.require_resolver`.
+
+### Optional GPU Optimization
+
+`__accel func` marks an ordinary CPU-executable function as a candidate for
+accelerator optimization.  Without `--gpu`, at `-O0`, in a build without the
+accelerator, or when a function is not eligible, its checked CPU body runs
+normally.  The annotation is an optimization hint, not a distinct function
+kind or a requirement that a backend accept the function.
+
+Build the optional accelerator with `-DNOCT_ENABLE_ACCEL=ON`.  One option
+selects the platform backends automatically: Windows uses Direct3D 12, Linux
+and FreeBSD build Vulkan and OpenGL ES, and macOS uses Metal.  List the
+available devices before selecting one if necessary:
+
+```
+noct --gpu-list
+noct --gpu program.noct
+noct --gpu=vulkan:EXACT_DEVICE_NAME program.noct
+```
+
+`--gpu` chooses the default suitable device.  The canonical selectors printed
+by `--gpu-list` begin with `vulkan:`, `opengles:`, `d3d12:`, or `metal:`.  An
+exact plain device name is accepted for compatibility only when it is unique
+across the available backends; use the qualified selector when a name is
+ambiguous.
+
+On Linux and FreeBSD, the accelerator component is the CLI-private shared
+library `libnoctaccel.so`; it is not a public accelerator ABI.
+
+`--gpu` is valid only when running source, including source supplied with
+`-e`.  It cannot be combined with `.nbc`, `.nap`, `--compile`, or `--app`.
+Source is the GPU distribution format: bytecode and app files contain neither
+GPU code nor backend metadata.
+
+After GPU execution has started, a GPU error terminates that invocation.  The
+removed CPU loop is not replayed after a partial or failed GPU execution.
+
+Eligible loop groups are executed synchronously.  CPU statements between two
+eligible groups end the first GPU session before the CPU statements run and
+start a new session for the later group.  Integer additive-zero reductions and
+some provably device-only local Packed buffers can be optimized; unsupported
+forms simply keep their ordinary CPU implementation.  These are multiple GPU
+regions within one function, not execution on multiple physical GPUs.
+Currently, reductions are limited to 32-bit wrapped addition from zero with
+an `int` or `u32` accumulator.  Device-only direct return, dirty subrange
+transfer, cross-region device persistence, and floating-point, minimum,
+maximum, or product reductions are not optimized.  The generated runtime calls
+use a private, backend-specific `__Accel` package.  There is no public
+`Accel.*` accelerator API.
 
 ### Compile into Emacs Lisp
 
@@ -226,11 +387,17 @@ To compile a script into an Emacs Lisp file:
 noct --elisp script.el script.noct
 ```
 
-### JIT Option
+### Optimization Options
 
 ```
-  --jit-threshold=N    ... call-count threshold for compilation
+  -O, -O[0-3], -O9     ... optimization preset (`-O` is the default)
+  -j, -j0              ... eager JIT (default), or interpreter only
 ```
+
+`-O` and `-O1` enable weak typing, typed operations and CSE. `-O2`
+adds ABCE/SIMD. `-O3` permits fused FMA semantics. `-O9` currently
+uses the same compiler optimization set as `-O3`; it does not select a
+parallel execution backend.
 
 ### Garbage Collection Options
 
@@ -287,6 +454,57 @@ func main() {
 }
 ```
 
+### Typed Array (Packed)
+
+```
+func main() {
+    // Allocate uint8.
+    // (Available Types: int8/int16/int32/int64/uint8/uint16/uint32/uint64/float32/float64)
+    var a = Packed.uint8(1024);
+
+    // Access via [] notation.
+    for(i in 0..Packed.size(a))
+        a[i] = i;
+}
+```
+
+### File I/O
+
+Text input.
+```
+func main() {
+    // Read the entire text.
+    var text = File.readText("text.txt");
+
+    // Read lines.
+    File.readForEachLine("text.txt", (line) => { print(line); });
+}
+```
+
+Text output.
+```
+func main() {
+    // Write a string.
+    File.writeText("text.txt", "aaa\nbbb");
+
+    // Write lines.
+    File.writeForEachLine("text.txt", ["aaa", "bbb"]);
+}
+```
+
+Binary file I/O.
+```
+var in_file = File.open("test1.bin", "r");
+var data = File.read(in_file, 100);  # data => uint8[]
+for (i in 0..100)
+    print(data[i]);
+File.close(in_file);
+
+var out_file = File.open("test2.bin", "w");
+File.write(out_file, data, 0, Packed.size(data));
+File.close(out_file);
+```
+
 ### Object-Oriented Model
 
 The object-oriented model in Noct is a lightweight variation of prototype-based OOP.
@@ -298,30 +516,30 @@ The object-oriented model in Noct is a lightweight variation of prototype-based 
 This design treats dictionaries as first-class objects, and the author refers to it as Dictionary-based OOP (D-OOP).
 
 ```
+// Base class definition. (A class is just a dictionary.)
+let Animal = class {
+    name: "Animal",
+    cry: (this) => {
+    }
+};
+
+// Subclass definition. (This is just a dictionary merging.)
+let Cat = extend Animal {
+    name: "Cat",
+    voice: "meow",
+    cry: (this) => {
+        print(this.name + " cries like " + this.voice);
+    }
+};
+
 func main() {
-    // Base class definition. (A class is just a dictionary.)
-    Animal = class {
-        name: "Animal",
-        cry: (this) => {
-        }
-    };
-
-    // Subclass definition. (This is just a dictionary merging.)
-    Cat = extend Animal {
-        name: "Cat",
-        voice: "meow",
-        cry: (this) => {
-            print(this.name + " cries like " + this.voice);
-        }
-    };
-
     // Instance generation. (This is just a dictionary merging.)
     var myCat = new Cat {
         voice: "neee"
     };
 
-    // This-call uses the "-> ()" syntax. (Equal to myCat.cry(myCat))
-    myCat->cry();
+    // This-call uses the ". ()" syntax.
+    myCat.cry();
 }
 ```
 
@@ -490,12 +708,49 @@ Our CI is running on GitHub Actions. Each push to the main branch
 triggers builds and binary releases, ensuring stability across
 supported platforms.
 
+### Testing Machines and Environments
+
+| Vendor          | Machine                    | Processor               | Architecture        | ABI             | OS                     | JIT     |
+|-----------------|----------------------------|-------------------------|---------------------|-----------------|------------------------|---------|
+| Apple           | MacBook Pro M5             | Apple M5                | Armv9               | arm64           | macOS 26               | OK      |
+|                 | MacBook Air                | Intel Core i5           | Intel64             | x86_64          | macOS 10.13            | OK      |
+|                 | PowerMac G5                | PowerPC G5 970FX        | PowerPC 64          | ppc64 (ELFv1)   | Debian forky           | OK      |
+|                 |                            |                         |                     | ppc32           | Debian forky           | OK      |
+| IBM             | Power8 S814                | Power8                  | Power8              | ppc64le (ELFv2) | Debian trixie          | OK      |
+| Fujitsu         | Primergy TX2550 M5         | Intel Xeon Gold 6130 x2 | Intel64 Skylake-SP  | x86_64          | Debian trixie          | OK      |
+|                 |                            |                         |                     | x86             | Debian trixie          | OK      |
+| Lenovo          | ThinkPad X9                | Intel Core Ultra 5 228V | Intel64 Lunar-Lake  | x64 (MS ABI)    | Windows 11             | OK      |
+|                 |                            |                         |                     | x86_64          | Debian trixie          | OK      |
+|                 | ThinkPad X260              | Intel Core i5-6500U     | Intel64 Skylake     | x86_64          | Solaris 11             | OK      |
+| Panasonic       | Let's Note LX6             | Intel Core i5-7200U     | Intel64 Kaby Lake   | x86_64          | Haiku                  | OK      |
+|                 | Let's Note SV8             | Intel Core i5-8250U     | Intel64 Coffee Lake | x86_64          | Windows 11             | OK      |
+| Dell            | Latitude 5330              | Intel Core i5-1240P     | Intel64 Alder Lake  | x86_64          | Debian trixie          | OK      |
+|                 | Latitude 5230              | Intel Core i5-1135G7    | Intel64 Tiger Lake  | x86_64          | FreeBSD 15             | OK      |
+| RPi             | Raspberry Pi 4B            | Broadcom BCM2711        | Arm Cortex-A72      | aarch64         | Raspberry Pi OS 64-bit | OK      |
+|                 |                            |                         |                     | armv7-eabihf    | Raspberry Pi OS 32-bit | OK      |
+|                 | Raspberry Pi Zero 2        | Broadcom RP3A0          | Arm Cortex-A53      | aarch64         | Raspberry Pi OS 64-bit | OK      |
+|                 |                            |                         |                     | armv7-eabihf    | Raspberry Pi OS 32-bit | OK      |
+| Anbernic        | RG350                      | Ingenic JZ4770          | MIPS32r2            | mipsel          | Debian forky           | OK      |
+| Cobalt Networks | Cobalt Qube 2800           | QED RM5231              | MIPS-IV             | mipseb          | NetBSD                 | OK      |
+| StarFive        | VisionFive 2               | JH7110                  | RISC-V RV64GC       | riscv64         | Debian Trixie          | OK      |
+| qemu            | qemu                       | RISC-V 32               | RV32GC              | riscv32         | qemu-user              | OK      |
+|                 |                            | 68040                   | 680x0               | m68k            | qemu-user              | N/A     |
+
+Now preparing...
+
+| Vendor          | Machine                    | Processor               | Architecture        | ABI             | OS                     |
+|-----------------|----------------------------|-------------------------|---------------------|-----------------|------------------------|
+| Apple           | Macintosh LC630            | Motorola 68040          | 680x0               | m68k            | Debian forky           |
+| Fujitsu         | SPARC Enterprise M3000     | SPARC64 VII+            | SPARC V9            | sparc64         | Solaris 10             |
+| Imagination     | MIPS Creator CI 40         | MIPS interAptive        | MIPS32r3            | mips            | Debian forky           |
+| Generic         | Loongson PC                | Loongson 3A4000         | MIPS64              | mips64          | Debian forky           |
+
 ---
 
 ## Documentation
 
 - [Syntax](docs/syntax.md)
-- [Standard API](docs/api.md)
+- [Library](docs/library.md)
 - [Native API](docs/napi.md)
 - [Virtual Machine Specification](docs/vmspec.md)
 

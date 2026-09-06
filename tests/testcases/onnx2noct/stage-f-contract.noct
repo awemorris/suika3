@@ -1,0 +1,33 @@
+require model;
+
+func main(args) {
+    if (Array.size(args) != 2) {
+        System.error("Usage: stage-f-contract CASE MODEL.weights");
+    }
+    var info = modelInfo();
+    var input = Packed.float32(info["inputElements"]);
+    var output = Packed.float32(info["outputElements"]);
+    if (args[0] == "uninitialized") {
+        modelInfer(input, output);
+    }
+    modelInitialize(args[1]);
+    if (args[0] == "double-initialize") {
+        modelInitialize(args[1]);
+    }
+    if (args[0] == "weights") {
+        modelShutdown();
+        modelInitialize("unexpected.weights");
+    }
+    if (args[0] == "short-input") {
+        input = Packed.float32(info["inputElements"] - 1);
+        modelInfer(input, output);
+    }
+    if (args[0] == "short-output") {
+        output = Packed.float32(info["outputElements"] - 1);
+        modelInfer(input, output);
+    }
+    if (args[0] == "alias") {
+        modelInfer(input, input);
+    }
+    System.error("Unknown Stage-F contract case.");
+}

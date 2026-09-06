@@ -1,0 +1,9 @@
+__fast func write_last(data: rpackeduint32(2, 3), value: int): int {
+    data[1, 2] = value;
+    return data[1, 2];
+}
+
+func main() {
+    var data = Packed.uint32(6);
+    print(write_last(data, 42));
+}

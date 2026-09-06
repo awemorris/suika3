@@ -1,0 +1,15 @@
+func sum_closed(p: packeduint32, count: int): int
+{
+    var sum = 0;
+    for (i in 0..count)
+        sum = sum + p[i];
+    return sum;
+}
+
+func main()
+{
+    let p = FileUtil.mmap32("mmap-data.bin", 0, 16, 1, 0);
+    let alias = p;
+    FileUtil.munmap(p);
+    print(sum_closed(alias, 4));
+}

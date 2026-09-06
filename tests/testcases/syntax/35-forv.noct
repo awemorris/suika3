@@ -1,0 +1,15 @@
+func main() {
+    bullets = [];
+    Array.push(bullets, {x: 100, y: 100, vy: -400});
+    GC.youngGC();
+    foo();
+}
+
+func foo() {
+    Array.push(bullets, {x: 100, y: 200, vy: -400});
+    print("bullets.length = " + Array.size(bullets));
+    var aliveBullets = [];
+    for (b in bullets) {
+        print(b);
+    }
+}

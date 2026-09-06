@@ -1,0 +1,13 @@
+__accel func reduce(
+    source: rpackedfloat,
+    destination: rpackedfloat,
+    n: int): void {
+    var sum: float = 0.0;
+    for (i in 0..n) {
+        sum += source[i];
+    }
+    destination[0] = sum;
+}
+
+func main() {
+}

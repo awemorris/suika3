@@ -1,0 +1,12 @@
+func main() {
+    var p = Packed.uint8(10);
+    var s = "x";
+    var sum = 0;
+    for (i in 0..10) {
+        sum = sum + p[i];
+        if (sum == 999) {
+            sum = sum + s;
+        }
+    }
+    print(sum);
+}

@@ -1,0 +1,146 @@
+{
+  "files": [
+    {
+      "byte_size": 24,
+      "path": "data/add-broadcast-opset12.input.f32le",
+      "sha256": "24ae2dfe8df57c1b80e54cef3d90ac3b417fd98973345a5f616bbc9a75dcc202"
+    },
+    {
+      "byte_size": 24,
+      "path": "data/add-broadcast-opset12.output.f32le",
+      "sha256": "fcf3a362a8ff9585fd5237e1a07d5fb9f22cbaa8548e346905c31bf95b6b678c"
+    },
+    {
+      "byte_size": 64,
+      "path": "data/conv2d-opset12.input.f32le",
+      "sha256": "994294717e9222764d03686b675546d724767d179b55b0a17aa99e024ac5b725"
+    },
+    {
+      "byte_size": 16,
+      "path": "data/conv2d-opset12.output.f32le",
+      "sha256": "11dc9f3efad5d85b4efa25a915e59a5b5cca1aa734bb0064aed695172c089c17"
+    },
+    {
+      "byte_size": 16,
+      "path": "data/identity-opset12.input.f32le",
+      "sha256": "449ebb247aab2ce20b6fb1e3c45a10d15ef363ee3259345f63476b7bf0629a30"
+    },
+    {
+      "byte_size": 16,
+      "path": "data/identity-opset12.output.f32le",
+      "sha256": "449ebb247aab2ce20b6fb1e3c45a10d15ef363ee3259345f63476b7bf0629a30"
+    },
+    {
+      "byte_size": 64,
+      "path": "data/maxpool-opset12.input.f32le",
+      "sha256": "39fd7be29c0e51fadcead4a28a753ba2641d338d4e9daa9969aab5d58d0be243"
+    },
+    {
+      "byte_size": 16,
+      "path": "data/maxpool-opset12.output.f32le",
+      "sha256": "70a9288a38b9426995f234d16ccff47f852a96b815a34a63bf8442d0f5434f4f"
+    },
+    {
+      "byte_size": 12288,
+      "path": "data/project-cifar-opset12.input.f32le",
+      "sha256": "83343ed0f6123c1b9be3da8f7d30468fb4a3c49efd0ec60439ce0bd703a49b4d"
+    },
+    {
+      "byte_size": 40,
+      "path": "data/project-cifar-opset12.output.f32le",
+      "sha256": "2769c6798e10055a1b1f462fe0723696ab4f399d18b24a7ce40b1b95d49907bf"
+    },
+    {
+      "byte_size": 24,
+      "path": "data/reduce-sum-opset12.input.f32le",
+      "sha256": "24ae2dfe8df57c1b80e54cef3d90ac3b417fd98973345a5f616bbc9a75dcc202"
+    },
+    {
+      "byte_size": 12,
+      "path": "data/reduce-sum-opset12.output.f32le",
+      "sha256": "8e72bdb7b2e1498f5e563221f91ed7e105de594777e1dd4a01eac65b6de8bca9"
+    },
+    {
+      "byte_size": 24,
+      "path": "data/reshape-opset12.input.f32le",
+      "sha256": "24ae2dfe8df57c1b80e54cef3d90ac3b417fd98973345a5f616bbc9a75dcc202"
+    },
+    {
+      "byte_size": 24,
+      "path": "data/reshape-opset12.output.f32le",
+      "sha256": "24ae2dfe8df57c1b80e54cef3d90ac3b417fd98973345a5f616bbc9a75dcc202"
+    },
+    {
+      "byte_size": 24,
+      "path": "data/sigmoid-opset12.input.f32le",
+      "sha256": "fd504b3104e3a0dccb0c7becff884192ac9c3022ae918516664ad228c7c49ca5"
+    },
+    {
+      "byte_size": 24,
+      "path": "data/sigmoid-opset12.output.f32le",
+      "sha256": "5f3cef85bbb5010f86fcd574f6b97cf5165f0e98aae733bf793bbe00c8c2e98a"
+    },
+    {
+      "byte_size": 172,
+      "path": "models/add-broadcast-opset12.onnx",
+      "sha256": "efa2172aeb1afcc9b5299843d9dc40920161b8bc4dc34734cfd00451e05886bb"
+    },
+    {
+      "byte_size": 296,
+      "path": "models/conv2d-opset12.onnx",
+      "sha256": "ea15b591c657c83ec879e304b164a99e030f771c4ad6dd6b2772ad1f6e8dba5b"
+    },
+    {
+      "byte_size": 191,
+      "path": "models/error-custom-domain-opset12.onnx",
+      "sha256": "767e2e24163bb81ddc2c40e0bdde9c7d3e17112949822f7ac7c053665ba40918"
+    },
+    {
+      "byte_size": 160,
+      "path": "models/error-dynamic-shape-opset12.onnx",
+      "sha256": "125da4e5b2121e74c7353822c52f7300210c165c18b749fd092e409644cc217a"
+    },
+    {
+      "byte_size": 208,
+      "path": "models/error-external-data-opset12.onnx",
+      "sha256": "ac1fd78de607d3023c60870dd9448fbb93e20e0df145c307eea7130d0283e4cc"
+    },
+    {
+      "byte_size": 138,
+      "path": "models/error-truncated-protobuf.onnx",
+      "sha256": "bb8497615bfeea0fa6a9c1b1e197849e746aff15f8956c653884f050be97a879"
+    },
+    {
+      "byte_size": 139,
+      "path": "models/identity-opset12.onnx",
+      "sha256": "810b51244504985d3588c7d1237ddba6559dffd2721dbb8b140580a7be99f597"
+    },
+    {
+      "byte_size": 191,
+      "path": "models/maxpool-opset12.onnx",
+      "sha256": "f229238d5aea3ac19c6a9643acee866fad7e392371fa6bc6a2d50a57e0d6ee3e"
+    },
+    {
+      "byte_size": 248967,
+      "path": "models/project-cifar-opset12.onnx",
+      "sha256": "919bf61c686a19c22404636db9003b1cbe651cf1fd01250500a1c2a3a72d64bf"
+    },
+    {
+      "byte_size": 178,
+      "path": "models/reduce-sum-opset12.onnx",
+      "sha256": "d859e6c0eff6bfc7fc6e6fed6a84918bbeb75cb18424cd5e55f3e8e224a9bab2"
+    },
+    {
+      "byte_size": 187,
+      "path": "models/reshape-opset12.onnx",
+      "sha256": "41bacc7df65859d78b105d2987a387b1f4ccf291fe7d8e4b488fe0d7ab41c24c"
+    },
+    {
+      "byte_size": 136,
+      "path": "models/sigmoid-opset12.onnx",
+      "sha256": "f24b72ebc4d5465b0646f93a5ab9c77895ebe936604b4d569bc9a25e29b0fdbb"
+    }
+  ],
+  "generator": "tests/testcases/onnx2noct/oracle/generate_fixtures.py",
+  "schema": 1
+}

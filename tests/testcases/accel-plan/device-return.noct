@@ -1,0 +1,13 @@
+__accel func create(source: rpackedint32, n: int): packedint32 {
+    let temporary: packedint32 = Packed.int32(n);
+    for (i in 0..n) {
+        temporary[i] = source[i] * 3;
+    }
+    for (j in 0..n) {
+        temporary[j] = temporary[j] + 1;
+    }
+    return temporary;
+}
+
+func main() {
+}

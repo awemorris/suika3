@@ -1,0 +1,13 @@
+func main() {
+    var d = { a: 1, b: 2 };
+    Dict.remove(d, "a");
+    print(Dict.size(d));
+    // Removing an absent key is a quiet no-op.
+    Dict.remove(d, "missing");
+    print(Dict.size(d));
+    Dict.remove(d, "b");
+    Dict.remove(d, "b");
+    print(Dict.size(d));
+    d.b = 5;
+    print(d.b);
+}

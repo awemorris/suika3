@@ -1,0 +1,25 @@
+func find(p, n, needle) {
+    for (i in 0..n) {
+        if (p[i] == needle) {
+            return i;
+        }
+    }
+    return 0 - 1;
+}
+func main() {
+    var n = 100;
+    var p = Packed.uint8(n);
+    for (i in 0..n) {
+        p[i] = i * 2 % 256;
+    }
+    print(find(p, n, 40));
+    print(find(p, n, 41));
+    var sum = 0;
+    for (i in 0..n) {
+        if (i == 50) {
+            break;
+        }
+        sum = sum + p[i];
+    }
+    print(sum);
+}

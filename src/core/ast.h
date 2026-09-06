@@ -45,6 +45,8 @@ enum ast_expr_type {
 	AST_EXPR_MOD,
 	AST_EXPR_AND,
 	AST_EXPR_OR,
+	AST_EXPR_LAND,
+	AST_EXPR_LOR,
 	AST_EXPR_XOR,
 	AST_EXPR_SHL,
 	AST_EXPR_SHR,
@@ -54,7 +56,6 @@ enum ast_expr_type {
 	AST_EXPR_SUBSCR,
 	AST_EXPR_DOT,
 	AST_EXPR_CALL,
-	AST_EXPR_THISCALL,
 	AST_EXPR_ARRAY,
 	AST_EXPR_DICT,
 	AST_EXPR_FUNC,
@@ -64,7 +65,9 @@ enum ast_expr_type {
 /* Term Type */
 enum ast_term_type {
 	AST_TERM_INT,
+	AST_TERM_LONG,
 	AST_TERM_FLOAT,
+	AST_TERM_DOUBLE,
 	AST_TERM_STRING,
 	AST_TERM_SYMBOL,
 	AST_TERM_EMPTY_ARRAY,
@@ -81,6 +84,13 @@ struct ast_stmt;
 struct ast_expr;
 struct ast_term;
 struct ast_arg_list;
+struct ast_require;
+
+/* A source module requested by a top-level require declaration. */
+struct ast_require {
+	char *name;
+	struct ast_require *next;
+};
 
 /* Function List */
 struct ast_func_list {
@@ -94,6 +104,19 @@ struct ast_func {
 
 	/* Parameter list. */
 	struct ast_param_list *param_list;
+
+	/* Optional return type annotation. */
+	char *return_type_name;
+
+	/* File-local functions are already mangled at AST construction time. */
+	bool is_static;
+	bool is_inline;
+
+	/* Statically constrained CPU function. */
+	bool is_fast;
+
+	/* Accelerator optimization hint. */
+	bool is_accel;
 
 	/* Statement list */
 	struct ast_stmt_list *stmt_list;
@@ -110,6 +133,10 @@ struct ast_param_list {
 /* AST Parameter */
 struct ast_param {
 	char *name;
+
+	/* Type annotation, or NULL. (Optimization hint; docs/design/02-typing.md) */
+	char *type_name;
+
 	struct ast_param *next;
 };
 
@@ -136,6 +163,11 @@ struct ast_stmt {
 			struct ast_expr *lhs;
 			struct ast_expr *rhs;
 			bool is_var;
+			bool is_let;
+			bool is_shared;
+
+			/* Type annotation, or NULL. */
+			char *type_name;
 		} assign;
 
 		/* If Block */
@@ -198,6 +230,7 @@ struct ast_stmt {
 		struct {
 			/* Return value expression. */
 			struct ast_expr *expr;
+			bool has_value;
 		} return_;
 	} val;
 
@@ -257,28 +290,22 @@ struct ast_expr {
 			struct ast_arg_list *arg_list;
 		} call;
 
-		/* This-Call Expression */
-		struct {
-			/* Object expression. */
-			struct ast_expr *obj;
-
-			/* Function name. */
-			char *func;
-
-			/* Argument list. */
-			struct ast_arg_list *arg_list;
-		} thiscall;
-
 		/* Array Literal Expression */
 		struct {
 			/* Element list. */
 			struct ast_arg_list *elem_list;
+
+			/* Compiler-owned list used by a multi-dimensional subscript. */
+			bool is_multi_index;
 		} array;
 
 		/* Dictionary Literal Expression */
 		struct {
 			/* Element list. */
 			struct ast_kv_list *kv_list;
+
+			/* Is a class literal? (frozen at creation) */
+			bool is_class;
 		} dict;
 
 		/* Anonymous Function Literal Expression */
@@ -297,6 +324,9 @@ struct ast_expr {
 
 			/* Initializer. */
 			struct ast_expr *init;
+
+			/* Is an extend? (result frozen) */
+			bool is_extend;
 		} new_;
 	} val;
 
@@ -324,7 +354,9 @@ struct ast_term {
 	union {
 		/* Value. */
 		int i;
+		int64_t l;
 		float f;
+		double lf;
 		char *s;
 		char *symbol;
 	} val;
@@ -364,6 +396,32 @@ ast_get_func_list(void);
  */
 const char *
 ast_get_file_name(void);
+
+/*
+ * Resolve a file-local source symbol, or return the original name.
+ */
+const char *
+ast_resolve_static_symbol(
+	const char *name);
+
+/*
+ * Get require count.
+ */
+uint32_t
+ast_get_require_count(void);
+
+/*
+ * Get a require name.
+ */
+const char *
+ast_get_require_name(
+	uint32_t index);
+
+/*
+ * Mangled package_init symbol, or NULL for a non-package compilation unit.
+ */
+const char *
+ast_get_package_init_name(void);
 
 /*
  * Get the error message.

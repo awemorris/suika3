@@ -1,0 +1,10 @@
+__accel func bump(data: rpackeduint32_ptr, count: int): void {
+    for (i in 0..count) {
+        data[i] = data[i] + 1;
+    }
+}
+
+func main() {
+    let host = Packed.uint32(1);
+    Accel.call(bump, host, 1);
+}

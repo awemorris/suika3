@@ -1,0 +1,23 @@
+func masked_copy(dst: rpackeduint32, src: rpackeduint32,
+                 rule: rpackeduint32, n: int): void {
+    for (i in 0..n) {
+        if ((rule[i] & 1) == 1) {
+            dst[i] = src[i];
+        }
+    }
+}
+
+func main() {
+    let src = Packed.uint32(16);
+    let dst = Packed.uint32(16);
+    let rule = Packed.uint32(16);
+    src[0] = 111;
+    src[1] = 222;
+    dst[0] = 333;
+    dst[1] = 444;
+    rule[0] = 1;
+    rule[1] = 0;
+    masked_copy(dst, src, rule, 16);
+    print(dst[0]);
+    print(dst[1]);
+}

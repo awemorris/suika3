@@ -1,0 +1,53 @@
+// DRAW_IMAGE_ALPHA regression for vector values that must remain live across
+// the backedge.  This is a supporting planner case, not a distinct kernel.
+func main() {
+    let dst = Packed.uint32(13);
+    let src = Packed.uint32(13);
+    init_pixels(dst, src);
+    blend_alpha_multigroup(dst, src, 128, 13);
+    for (i in 0..13) {
+        print(dst[i]);
+    }
+}
+
+// Untyped parameters keep setup out of the SIMD path under test.
+func init_pixels(dst, src) {
+    for (i in 0..13) {
+        dst[i] = (255 << 24) |
+            (((i * 17) & 255) << 16) |
+            (((i * 29) & 255) << 8) |
+            ((i * 43) & 255);
+        src[i] = (((i * 7) & 255) << 24) |
+            (((i * 11) & 255) << 16) |
+            (((i * 13) & 255) << 8) |
+            ((i * 19) & 255);
+    }
+}
+
+func blend_alpha_multigroup(dst: rpackeduint32, src: rpackeduint32,
+                            alpha: int, count: int) {
+    let alpha_float = alpha / 65025.0;
+    for (i in 0..count) {
+        let dst_pix = dst[i];
+        let src_pix = src[i];
+        let dst_r = (dst_pix >> 16) & 0xff;
+        let dst_g = (dst_pix >> 8) & 0xff;
+        let dst_b = dst_pix & 0xff;
+        let src_a = (src_pix >> 24) & 0xff;
+        let src_r = (src_pix >> 16) & 0xff;
+        let src_g = (src_pix >> 8) & 0xff;
+        let src_b = src_pix & 0xff;
+        let pix_a = Float.from(src_a) * alpha_float;
+        let pix_inv_a = 1.0 - pix_a;
+        let pix_r = Float.from(src_r) * pix_a +
+            Float.from(dst_r) * pix_inv_a;
+        let pix_g = Float.from(src_g) * pix_a +
+            Float.from(dst_g) * pix_inv_a;
+        let pix_b = Float.from(src_b) * pix_a +
+            Float.from(dst_b) * pix_inv_a;
+        dst[i] = (255 << 24) |
+            (Int.from(pix_r) << 16) |
+            (Int.from(pix_g) << 8) |
+            Int.from(pix_b);
+    }
+}

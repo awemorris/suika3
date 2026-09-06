@@ -1,0 +1,13 @@
+func main(args) {
+    let handle = Weights.open(args[0], args[1]);
+    var junk = [];
+    for (i in 0..4000) {
+        junk = [];
+        Array.push(junk, "weights-gc-" + i);
+    }
+    GC.compactGC();
+    let tensor = Weights.loadFloat32(handle, 0, "a", [2]);
+    print(tensor[0]);
+    print(tensor[1]);
+    Weights.close(handle);
+}

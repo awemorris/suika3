@@ -1,0 +1,9 @@
+func unchecked_sqrt(value) {
+    return value;
+}
+
+func main() {
+    let package = Global.get("$FastMath");
+    package.sqrt = unchecked_sqrt;
+    print("unreachable");
+}

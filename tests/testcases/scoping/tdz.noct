@@ -1,0 +1,7 @@
+func main() {
+    var ok = 1;
+    if (ok == 1) {
+        print(y);
+        var y = 1;
+    }
+}

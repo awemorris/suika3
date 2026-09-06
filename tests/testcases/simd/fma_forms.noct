@@ -1,0 +1,31 @@
+// O3 recognizes both a*b+c and a*b+c*d in FP32 vector loops.
+func form1(out: rpackedfloat, a: rpackedfloat,
+           scale: float, bias: float) {
+    for (i in 0..4) {
+        out[i] = a[i] * scale + bias;
+    }
+}
+
+func form2(out: rpackedfloat, a: rpackedfloat, b: rpackedfloat,
+           scale_a: float, scale_b: float) {
+    for (i in 0..4) {
+        out[i] = a[i] * scale_a + b[i] * scale_b;
+    }
+}
+
+func main() {
+    let out1 = Packed.float32(4);
+    let out2 = Packed.float32(4);
+    let a = Packed.float32(4);
+    let b = Packed.float32(4);
+
+    a[0] = 1.5; a[1] = -2.0; a[2] = 0.25; a[3] = 8.0;
+    b[0] = 0.25; b[1] = 1.0; b[2] = 2.0; b[3] = -3.0;
+
+    form1(out1, a, 2.0, 0.25);
+    form2(out2, a, b, 2.0, 4.0);
+    for (i in 0..4) {
+        print(out1[i]);
+        print(out2[i]);
+    }
+}

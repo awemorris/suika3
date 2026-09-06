@@ -1,0 +1,9 @@
+func main() {
+    var d = { k: 40, m: 2 };
+    var v = d.k + d.k;
+    print(v);
+    var w = d.k + d.m;
+    print(w);
+    var x = d.k + d.m;
+    print(x);
+}

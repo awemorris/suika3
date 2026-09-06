@@ -1,0 +1,13 @@
+// Reduction: the accumulator is read before written -- E6 reject.
+func main() {
+    var n = 25;
+    var p = Packed.uint32(n);
+    for (i in 0..n) {
+        p[i] = i + 1;
+    }
+    var s = 0;
+    for (i in 0..n) {
+        s = s + p[i];
+    }
+    print(s);
+}

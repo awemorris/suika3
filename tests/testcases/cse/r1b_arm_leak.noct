@@ -1,0 +1,16 @@
+func f(c, d) {
+    var x = 100;
+    if (c == 1) {
+        x = d.k;
+    } else {
+        var a = (x + 1) * 2;
+        var b = (d.k + 1) * 2;
+        print(a);
+        print(b);
+    }
+    return 0;
+}
+func main() {
+    f(0, { k: 5 });
+    f(1, { k: 9 });
+}

@@ -1,0 +1,22 @@
+__accel func two_steps(input: rpackeduint32_in,
+                     output: rpackeduint32_out,
+                     count: int): void {
+    for (i in 0..count) {
+        output[i] = input[i] + 1;
+    }
+    for (i in 0..count) {
+        output[i] = input[i] + 2;
+    }
+}
+
+func main() {
+    let input = Packed.uint32(3);
+    let output = Packed.uint32(3);
+    input[0] = 10;
+    input[1] = 20;
+    input[2] = 30;
+    Accel.call(two_steps, input, output, 3);
+    print(output[0]);
+    print(output[1]);
+    print(output[2]);
+}

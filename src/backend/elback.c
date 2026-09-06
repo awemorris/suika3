@@ -82,9 +82,115 @@ static bool elback_visit_dict_expr(struct hir_expr *expr);
 static bool elback_visit_new_expr(struct hir_expr *expr);
 static bool elback_visit_term(struct hir_term *term);
 static bool elback_put(const char *format, ...);
+static void elback_put_symbol(const char *name);
+static const char *elback_ns_lookup(struct hir_expr *callee);
 static bool elback_put_indent(void);
 static void elback_fatal(const char *msg, ...);
 static void elback_out_of_memory(void);
+
+/*
+ * Namespace map: "Base.member" -> target function name.
+ *
+ * Loaded from a file given as a "--ns-map=FILE" pseudo-input. A mapped
+ * namespace call is emitted as a direct call of the target, which is
+ * how Editor.gotoChar() becomes (goto-char ...).
+ */
+#define ELBACK_NS_MAX 512
+static char *elback_ns_from[ELBACK_NS_MAX];
+static char *elback_ns_to[ELBACK_NS_MAX];
+static int elback_ns_count;
+
+NOCT_DLL
+bool
+noct_elback_load_ns_map(
+	const char *fname)
+{
+	FILE *map_fp;
+	char line[256];
+
+	map_fp = fopen(fname, "rb");
+	if (map_fp == NULL) {
+		elback_fatal(N_TR("Cannot open file %s."), fname);
+		return false;
+	}
+	while (fgets(line, sizeof(line), map_fp) != NULL) {
+		char *tab, *nl;
+
+		if (line[0] == '#' || line[0] == '\n')
+			continue;
+		tab = strchr(line, '\t');
+		if (tab == NULL)
+			continue;
+		*tab = '\0';
+		nl = strchr(tab + 1, '\n');
+		if (nl != NULL)
+			*nl = '\0';
+		if (elback_ns_count >= ELBACK_NS_MAX)
+			break;
+		elback_ns_from[elback_ns_count] = strdup(line);
+		elback_ns_to[elback_ns_count] = strdup(tab + 1);
+		elback_ns_count++;
+	}
+	fclose(map_fp);
+	return true;
+}
+
+/*
+ * If the callee is a "Base.member" form present in the namespace map,
+ * return the mapped target name; otherwise NULL.
+ */
+static const char *
+elback_ns_lookup(
+	struct hir_expr *callee)
+{
+	char key[128];
+	struct hir_expr *obj;
+	int i;
+
+	if (callee->type != HIR_EXPR_DOT)
+		return NULL;
+	obj = callee->val.dot.obj;
+	if (obj->type != HIR_EXPR_TERM)
+		return NULL;
+	if (obj->val.term.term->type != HIR_TERM_SYMBOL)
+		return NULL;
+
+	snprintf(key, sizeof(key), "%s.%s",
+		 obj->val.term.term->val.symbol, callee->val.dot.symbol);
+	for (i = 0; i < elback_ns_count; i++) {
+		if (strcmp(elback_ns_from[i], key) == 0)
+			return elback_ns_to[i];
+	}
+	return NULL;
+}
+
+/*
+ * Print a symbol, sanitizing generated names.
+ *
+ * Anonymous functions are named "$anon.<path>.<n>" internally; the
+ * path makes the output machine-dependent and the characters are
+ * awkward in a defun name, so they become "noct--anon-..." forms.
+ */
+static void
+elback_put_symbol(
+	const char *name)
+{
+	if (name[0] != '$') {
+		elback_put("%s", name);
+		return;
+	}
+	elback_put("noct--");
+	name++;
+	while (*name != '\0') {
+		char c = *name;
+		if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+		    (c >= '0' && c <= '9'))
+			elback_put("%c", c);
+		else
+			elback_put("-");
+		name++;
+	}
+}
 
 /*
  * Start EL backend.
@@ -141,6 +247,11 @@ noct_elback_translate(
 		       ast_get_error_message());
 		return false;
 	}
+	if (ast_get_require_count() != 0) {
+		printf("%s", N_TR("Error: require is not supported by the Emacs Lisp transpiler.\n"));
+		ast_cleanup();
+		return false;
+	}
 
 	/* Transform AST to HIR. */
 	if (!hir_build()) {
@@ -158,6 +269,14 @@ noct_elback_translate(
 
 		/* Transform HIR to LIR (bytecode). */
 		hfunc = hir_get_function(i);
+		if (hfunc->val.func.is_fast) {
+			printf(
+				"%s",
+				N_TR("Error: __fast func is not supported by the Emacs Lisp transpiler.\n"));
+			hir_cleanup();
+			ast_cleanup();
+			return false;
+		}
 
 		/* Put a C function. */
 		if (!elback_translate_func(hfunc))
@@ -205,7 +324,9 @@ elback_translate_func(
 	}
 
 	/* Open defun. */
-	elback_put("(defun %s (", func->val.func.name);
+	elback_put("(defun ");
+	elback_put_symbol(func->val.func.name);
+	elback_put(" (");
 
 	/* Put the parameter list. */
 	for (i = 0; i < func->val.func.param_count; i++) {
@@ -259,12 +380,10 @@ elback_translate_func(
 	PUT(")\n");
 	indent--;	
 
-	/* Close the local variable list.*/
-	if (func->val.func.local != NULL) {
-		PUT_INDENT();
-		PUT(")\n");
-		indent--;
-	}
+	/* Close the local variable list. (The let is always opened.) */
+	PUT_INDENT();
+	PUT(")\n");
+	indent--;
 
 	/* Close defun. */
 	elback_put(")\n");
@@ -352,9 +471,10 @@ elback_visit_if_block(
 	assert(block->type == HIR_BLOCK_IF);
 
 	PUT_INDENT();
-	PUT("(if ");
+	PUT("(if (noct-truthy ");
 	if (!elback_visit_expr(block->val.if_.cond))
 		return false;
+	PUT(")");
 
 	/* Visit an inner block. */
 	PUT("\n");
@@ -601,11 +721,12 @@ elback_visit_while_block(
 	assert(block->type == HIR_BLOCK_WHILE);
 
 	PUT_INDENT();
-	PUT("(while ");
+	PUT("(while (noct-truthy ");
 
 	/* Put a condition. */
 	if (!elback_visit_expr(block->val.while_.cond))
 		return false;
+	PUT(")");
 	indent++;
 	PUT("\n");
 	PUT_INDENT();
@@ -732,6 +853,8 @@ elback_visit_expr(
 	case HIR_EXPR_MOD:
 	case HIR_EXPR_AND:
 	case HIR_EXPR_OR:
+	case HIR_EXPR_LAND:
+	case HIR_EXPR_LOR:
 	case HIR_EXPR_SUBSCR:
 		/* For the binary operators. */
 		if (!elback_visit_binary_expr(expr))
@@ -808,26 +931,31 @@ elback_visit_binary_expr(
 
 	/* Put the operator. */
 	switch (expr->type) {
+	/*
+	 * Comparisons, +, and the logical operators go through noct-*
+	 * runtime functions: they must return Noct's 1/0 (not t/nil),
+	 * handle strings, and keep + as concatenation.
+	 */
 	case HIR_EXPR_LT:
-		PUT("(< ");
+		PUT("(noct-lt ");
 		break;
 	case HIR_EXPR_LTE:
-		PUT("(<= ");
+		PUT("(noct-lte ");
 		break;
 	case HIR_EXPR_EQ:
-		PUT("(= ");
+		PUT("(noct-eq ");
 		break;
 	case HIR_EXPR_NEQ:
-		PUT("(not (= ");
+		PUT("(noct-neq ");
 		break;
 	case HIR_EXPR_GTE:
-		PUT("(>= ");
+		PUT("(noct-gte ");
 		break;
 	case HIR_EXPR_GT:
-		PUT("(> ");
+		PUT("(noct-gt ");
 		break;
 	case HIR_EXPR_PLUS:
-		PUT("(+ ");
+		PUT("(noct-add ");
 		break;
 	case HIR_EXPR_MINUS:
 		PUT("(- ");
@@ -839,13 +967,19 @@ elback_visit_binary_expr(
 		PUT("(/ ");
 		break;
 	case HIR_EXPR_MOD:
-		PUT("(% ");
+		PUT("(%% ");
 		break;
 	case HIR_EXPR_AND:
-		PUT("(and ");
+		PUT("(logand ");
 		break;
 	case HIR_EXPR_OR:
-		PUT("(or ");
+		PUT("(logior ");
+		break;
+	case HIR_EXPR_LAND:
+		PUT("(noct-and ");
+		break;
+	case HIR_EXPR_LOR:
+		PUT("(noct-or ");
 		break;
 	case HIR_EXPR_SUBSCR:
 		PUT("(noct-array ");
@@ -861,10 +995,6 @@ elback_visit_binary_expr(
 	PUT(" ");
 	if (!elback_visit_expr(expr->val.binary.expr[1]))
 		return false;
-
-	/* Add an extra ) for a not. */
-	if (expr->type == HIR_EXPR_NEQ)
-		PUT(")");
 
 	/* Close. */
 	PUT(")");
@@ -903,11 +1033,28 @@ elback_visit_call_expr(
 	assert(expr->val.call.arg_count < HIR_PARAM_SIZE);
 
 	arg_count = expr->val.call.arg_count;
-	
-	/* Put (func. */
-	PUT("(");
-	if (!elback_visit_expr(expr->val.call.func))
-		return false;
+
+	/*
+	 * Calling through a namespace dictionary: a mapped name becomes
+	 * a direct call, anything else goes through funcall, because
+	 * Emacs Lisp separates the function and value namespaces.
+	 */
+	{
+		const char *mapped = elback_ns_lookup(expr->val.call.func);
+
+		if (mapped != NULL) {
+			PUT1("(%s", mapped);
+		} else if (expr->val.call.func->type == HIR_EXPR_TERM &&
+			   expr->val.call.func->val.term.term->type == HIR_TERM_SYMBOL) {
+			/* A plain named call maps to a defun. */
+			PUT("(");
+			elback_put_symbol(expr->val.call.func->val.term.term->val.symbol);
+		} else {
+			PUT("(funcall ");
+			if (!elback_visit_expr(expr->val.call.func))
+				return false;
+		}
+	}
 
 	/* Put the arguments. */
 	for (i = 0; i < arg_count; i++) {
@@ -936,8 +1083,8 @@ elback_visit_thiscall_expr(
 
 	arg_count = expr->val.thiscall.arg_count;
 	
-	/* Put "((noct-dot obj func)". */
-	PUT("((noct-dot ");
+	/* Put "(funcall (noct-dot obj func) obj ...)". */
+	PUT("(funcall (noct-dot ");
 	if (!elback_visit_expr(expr->val.thiscall.obj))
 		return false;
 	PUT1(" %s)", expr->val.thiscall.func);
@@ -960,15 +1107,16 @@ static bool
 elback_visit_array_expr(
 	struct hir_expr *expr)
 {
-	uint32_t elem_count, i;
+	size_t elem_count, i;
 
 	assert(expr != NULL);
 	assert(expr->type == HIR_EXPR_ARRAY);
 	assert(expr->val.array.elem_count > 0);
 
 	elem_count = expr->val.array.elem_count;
-	
-	PUT("\'(");
+
+	/* Build a fresh list so the elements evaluate. */
+	PUT("(list ");
 
 	/* Put the elements. */
 	for (i = 0; i < elem_count; i++) {
@@ -989,28 +1137,31 @@ static bool
 elback_visit_dict_expr(
 	struct hir_expr *expr)
 {
-	uint32_t kv_count, i;
+	size_t kv_count, i;
 
 	assert(expr != NULL);
 	assert(expr->type == HIR_EXPR_DICT);
 	assert(expr->val.dict.kv_count > 0);
 
 	kv_count = expr->val.dict.kv_count;
-	
-	PUT("\'(");
+
+	/*
+	 * A quoted alist literal would be constant data; dictionaries
+	 * are mutable, so build fresh conses every time.
+	 */
+	PUT("(list");
 
 	/* Put the elements. */
 	for (i = 0; i < kv_count; i++) {
-		PUT1("(%s . ", expr->val.dict.key[i]);
+		PUT1(" (cons \'%s ", expr->val.dict.key[i]);
 
 		/* Visit the element. */
 		if (!elback_visit_expr(expr->val.dict.value[i]))
 			return false;
 
 		PUT(")");
-		if (i != kv_count - 1)
-			PUT(" ");
 	}
+	PUT(")");
 
 	return true;
 }
@@ -1027,7 +1178,7 @@ elback_visit_new_expr(
 
 	/* Put the elements. */
 	if (expr->val.new_.init != NULL) {
-		uint32_t i, kv_count = expr->val.new_.init->val.dict.kv_count;
+		size_t i, kv_count = expr->val.new_.init->val.dict.kv_count;
 		for (i = 0; i < kv_count; i++) {
 			PUT1("(%s . ", expr->val.new_.init->val.dict.key[i]);
 
@@ -1055,8 +1206,7 @@ elback_visit_term(
 
 	switch (term->type) {
 	case HIR_TERM_SYMBOL:
-		if (!elback_put(term->val.symbol))
-			return false;
+		elback_put_symbol(term->val.symbol);
 		break;
 	case HIR_TERM_INT:
 		if (!elback_put("%d", term->val.i))
@@ -1067,9 +1217,24 @@ elback_visit_term(
 			return false;
 		break;
 	case HIR_TERM_STRING:
-		if (!elback_put("\"%s\"", term->val.s))
-			return false;
+	{
+		/*
+		 * Emacs Lisp reads backslash escapes inside string
+		 * literals, so backslashes and quotes must be escaped
+		 * or patterns like \( would turn into a bare paren.
+		 */
+		const char *sp = term->val.s;
+		elback_put("\"");
+		while (*sp != '\0') {
+			if (*sp == '\\' || *sp == '\"')
+				elback_put("\\%c", *sp);
+			else
+				elback_put("%c", *sp);
+			sp++;
+		}
+		elback_put("\"");
 		break;
+	}
 	case HIR_TERM_EMPTY_ARRAY:
 		if (!elback_put("'()"))
 			return false;
@@ -1159,5 +1324,5 @@ elback_fatal(
 static void
 elback_out_of_memory(void)
 {
-	printf("Out of memory.\n");
+	printf(N_TR("Out of memory.\n"));
 }

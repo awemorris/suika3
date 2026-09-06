@@ -1,0 +1,143 @@
+require planner;
+
+let ONNX_STAGE_F_KERNEL_VERSION = 1;
+let ONNX_STAGE_F_BLOCK_SIZE = 64;
+let ONNX_STAGE_G1_CONV_VERSION = 1;
+let ONNX_STAGE_G2_CONTRACTION_VERSION = 1;
+let ONNX_STAGE_G3_POOL_VERSION = 1;
+let ONNX_STAGE_G4_CONCAT_VERSION = 1;
+let ONNX_STAGE_G5_REDUCE_VERSION = 1;
+let ONNX_STAGE_G6_BATCHNORM_VERSION = 1;
+
+func kernelTensorSignature(tensor) {
+    return "dtype=" + tensor.dtype + ";shape=" + dumpArray(tensor.shape) +
+           ";stride=" + dumpArray(tensor.stride) + ";offset=" + tensor.offset +
+           ";layout=" + tensor.layout;
+}
+
+func kernelStorageClasses(graph, inputIds) {
+    var classes = [];
+    var seen = {};
+    var nextClass = 0;
+    for (i in 0..Array.size(inputIds)) {
+        var storage = graph.tensors[inputIds[i]].storageId;
+        var key = "s" + storage;
+        if (!Dict.hasKey(seen, key)) {
+            seen[key] = nextClass;
+            nextClass = nextClass + 1;
+        }
+        Array.push(classes, seen[key]);
+    }
+    return classes;
+}
+
+func kernelSignature(plan, step) {
+    var graph = plan.graph;
+    var result = "stage-f-kernel/v" + ONNX_STAGE_F_KERNEL_VERSION +
+                 "|family=" + step.kind;
+    if (step.kind == "conv2d-reference") {
+        result = result + "|family-version=" + ONNX_STAGE_G1_CONV_VERSION;
+    }
+    if (step.kind == "gemm-rank2" || step.kind == "matmul-rank2") {
+        result = result + "|family-version=" + ONNX_STAGE_G2_CONTRACTION_VERSION;
+    }
+    if (step.kind == "max-pool2d" || step.kind == "average-pool2d" ||
+        step.kind == "global-average-pool") {
+        result = result + "|family-version=" + ONNX_STAGE_G3_POOL_VERSION;
+    }
+    if (step.kind == "concat-static") {
+        result = result + "|family-version=" + ONNX_STAGE_G4_CONCAT_VERSION;
+    }
+    if (step.kind == "reduce-static" || step.kind == "softmax-stable") {
+        result = result + "|family-version=" + ONNX_STAGE_G5_REDUCE_VERSION;
+    }
+    if (step.kind == "batch-normalization-inference") {
+        result = result + "|family-version=" + ONNX_STAGE_G6_BATCHNORM_VERSION;
+    }
+    if (step.nodeId >= 0) {
+        result = result + "|op=" + step.node.domain + "::" +
+                 step.node.opType + "@" + step.node.generation +
+                 "|attrs=" + dumpAttrs(step.node.attrs);
+    }
+    var classes = kernelStorageClasses(graph, step.inputs);
+    result = result + "|classes=" + dumpArray(classes);
+    for (i in 0..Array.size(step.inputs)) {
+        result = result + "|in" + i + "=" +
+                 kernelTensorSignature(graph.tensors[step.inputs[i]]);
+    }
+    result = result + "|out=float32;shape=" + dumpArray(step.outputShape) +
+             ";stride=" + dumpArray(contiguousStride(step.outputShape,
+                                                      "Stage F kernel output")) +
+             ";offset=0|block=" + ONNX_STAGE_F_BLOCK_SIZE;
+    return result;
+}
+
+func kernelUniqueInputStorages(graph, inputIds) {
+    var result = [];
+    var seen = {};
+    for (i in 0..Array.size(inputIds)) {
+        var storage = graph.tensors[inputIds[i]].storageId;
+        var key = "s" + storage;
+        if (!Dict.hasKey(seen, key)) {
+            seen[key] = true;
+            Array.push(result, storage);
+        }
+    }
+    return result;
+}
+
+func kernelInputParam(graph, inputIds, inputIndex) {
+    var target = graph.tensors[inputIds[inputIndex]].storageId;
+    var uniqueIndex = 0;
+    var seen = {};
+    for (i in 0..Array.size(inputIds)) {
+        var storage = graph.tensors[inputIds[i]].storageId;
+        var key = "s" + storage;
+        if (!Dict.hasKey(seen, key)) {
+            if (storage == target) { return "p" + uniqueIndex; }
+            seen[key] = true;
+            uniqueIndex = uniqueIndex + 1;
+        }
+    }
+    normFail("Stage F failed to bind a kernel input storage.");
+}
+
+func kernelIndexExpression(tensor, outputShape, flatName) {
+    var outputStride = contiguousStride(outputShape, "Stage F output indexing");
+    var outputRank = Array.size(outputShape);
+    var inputRank = Array.size(tensor.shape);
+    var shift = outputRank - inputRank;
+    if (shift < 0) { normFail("Stage F pointwise input rank exceeds output rank."); }
+    var expression = "" + tensor.offset;
+    for (i in 0..inputRank) {
+        if (tensor.shape[i] != 1 && tensor.stride[i] != 0) {
+            var outputAxis = shift + i;
+            var coordinate = flatName;
+            if (outputStride[outputAxis] != 1) {
+                coordinate = "(" + flatName + " / " + outputStride[outputAxis] + ")";
+            }
+            if (outputShape[outputAxis] != 1) {
+                coordinate = "(" + coordinate + " % " + outputShape[outputAxis] + ")";
+            }
+            expression = expression + " + " + coordinate + " * " + tensor.stride[i];
+        }
+    }
+    return "(" + expression + ")";
+}
+
+func kernelFamilyPrefix(kind) {
+    if (kind == "pointwise-unary") { return "k_pointwise_unary"; }
+    if (kind == "pointwise-binary") { return "k_pointwise_binary"; }
+    if (kind == "copy-strided") { return "k_copy_strided"; }
+    if (kind == "conv2d-reference") { return "k_conv2d_reference"; }
+    if (kind == "gemm-rank2") { return "k_gemm_reference"; }
+    if (kind == "matmul-rank2") { return "k_matmul_reference"; }
+    if (kind == "max-pool2d") { return "k_max_pool2d_reference"; }
+    if (kind == "average-pool2d") { return "k_average_pool2d_reference"; }
+    if (kind == "global-average-pool") { return "k_global_average_pool_reference"; }
+    if (kind == "concat-static") { return "k_concat_reference"; }
+    if (kind == "reduce-static") { return "k_reduce_reference"; }
+    if (kind == "softmax-stable") { return "k_softmax_reference"; }
+    if (kind == "batch-normalization-inference") { return "k_batchnorm_reference"; }
+    normFail("Stage F has no source prefix for kernel family '" + kind + "'.");
+}

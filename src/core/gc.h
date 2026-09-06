@@ -37,30 +37,33 @@
 #include "arena.h"
 
 /*
- * Region Size
+ * Region Size Defaults
  */
-#if defined(NOCT_TARGET_DOS4G)
+#if defined(NOCT_MEMORY_SMALL)
+/* Small configuration for DOS */
 #define RT_GC_DEFAULT_NURSERY_SIZE		(256 * 1024)
 #define RT_GC_DEFAULT_GRADUATE_SIZE		(64 * 1024)
 #define RT_GC_DEFAULT_TENURE_SIZE		(1 * 1024 * 1024)
 #elif defined(NOCT_TARGET_WASM)
+/* Mediam configuration for Wasm */
 #define RT_GC_DEFAULT_NURSERY_SIZE		(2 * 1024 * 1024)
 #define RT_GC_DEFAULT_GRADUATE_SIZE		(256 * 1024)
 #define RT_GC_DEFAULT_TENURE_SIZE		(64 * 1024 * 1024)
 #else
+/* Normal configuration for POSIX */
 #define RT_GC_DEFAULT_NURSERY_SIZE		(2 * 1024 * 1024)
 #define RT_GC_DEFAULT_GRADUATE_SIZE		(256 * 1024)
 #define RT_GC_DEFAULT_TENURE_SIZE		(256 * 1024 * 1024)
 #endif
 
 /*
- * Large Object Promotion Threshold - A new object that has a size
+ * Large Object Promotion Threshold: A new object that has a size
  * beyond this value will be allocated directly in the tenure region.
  */
 #define RT_GC_DEFAULT_LOP_THRESHOLD		(32 * 1024)
 
 /*
- * Survivor Promotion Threshold - A graduate object that survived the
+ * Survivor Promotion Threshold: A graduate object that survived the
  * young GC beyond this value will be promoted to the tenure region.
  */
 #define RT_GC_DEFAULT_PROMOTION_THRESHOLD	(2)
@@ -81,7 +84,17 @@ enum rt_gc_object_type {
 	RT_GC_TYPE_STRING,
 	RT_GC_TYPE_ARRAY,
 	RT_GC_TYPE_DICT,
+	RT_GC_TYPE_PACKED,
 	RT_GC_TYPE_FUNC,
+};
+
+/*
+ * GC Levels.
+ */
+enum gt_gc_level {
+	RT_GC_LEVEL_0,
+	RT_GC_LEVEL_1,
+	RT_GC_LEVEL_2,
 };
 
 /*
@@ -90,6 +103,11 @@ enum rt_gc_object_type {
 #define RT_GC_FREELIST_ALIGN		(sizeof(void *))
 #define RT_GC_FREELIST_USED_BIT		0x1
 #define RT_GC_FREELIST_SIZE_MASK	(~(size_t)1)
+
+/*
+ * Tenure bin count.
+ */
+#define RT_GC_TENURE_BIN_COUNT	24
 
 /*
  * Garbage Collector state structure that is embedded to struct rt_vm.
@@ -112,6 +130,10 @@ struct rt_gc_info {
 		char *end;
 	} tenure_freelist;
 
+	/* Tenure allocation state. */
+	char *tenure_frontier;
+	char *tenure_bins[RT_GC_TENURE_BIN_COUNT];
+
 	/* Linked list of objects in the nursery generation. */
 	struct rt_gc_object *nursery_list;
 
@@ -129,6 +151,16 @@ struct rt_gc_info {
 	uint32_t compact_count;
 	void **compact_before;
 	void **compact_after;
+
+	/* Explicit traversal worklist. */
+	struct rt_gc_object ***work;
+	size_t work_cap;
+	size_t work_top;
+
+	/* Objects promoted to tenure region during the current young collection. */
+	struct rt_gc_object **promoted;
+	size_t promoted_cap;
+	size_t promoted_top;
 };
 
 /*
@@ -152,8 +184,8 @@ struct rt_gc_object {
 	size_t size;
 
 	/*
-	 * Intrusive doubly-linked list for the corresponding
-	 * region's list (nursery, graduate, or tenure).
+	 * Intrusive doubly-linked list for the corresponding region's
+	 * list (nursery, graduate, or tenure).
 	 */
 	struct rt_gc_object *prev;
 	struct rt_gc_object *next;
@@ -165,7 +197,10 @@ struct rt_gc_object {
 	struct rt_gc_object *rem_next; 
 	bool rem_flg;
 
-	/* Mark bit used in mark-and-sweep GC for the tenure generation. */
+	/*
+	 * Mark bit used in mark-and-sweep GC for the tenure
+	 * generation.
+	 */
 	bool is_marked;
 
 	/* Promotion count. */
@@ -194,8 +229,11 @@ struct rt_array *rt_gc_alloc_array(struct rt_env *env, size_t size);
 /* Allocates a dictionary object in the appropriate region. */
 struct rt_dict *rt_gc_alloc_dict(struct rt_env *env, size_t size);
 
+/* Allocates a packed object in the appropriate region. */
+struct rt_packed *rt_gc_alloc_packed(struct rt_env *env, int type, size_t size, size_t elem_size, void *preallocated, void *native_pointer, void (*native_finalizer)(void *native_pointer));
+
 /* Write barrier: registers a container in the remember set if it references a young object. */
-void rt_gc_array_write_barrier(struct rt_env *env, struct rt_array *arr, uint32_t index, struct rt_value *val);
+void rt_gc_array_write_barrier(struct rt_env *env, struct rt_array *arr, size_t index, struct rt_value *val);
 
 /* Write barrier: registers a container in the remember set if it references a young object. */
 void rt_gc_dict_write_barrier(struct rt_env *env, struct rt_dict *dict, struct rt_value *val);

@@ -1,0 +1,23 @@
+__fast func read_bad_index(data: rpackeduint32(2, 2)): int {
+    var value: int = 0;
+
+    for (i in 0..1) {
+        for (j in 0..1) {
+            i = 1;
+            j = -1;
+            value = data[i, j];
+            break;
+        }
+        break;
+    }
+
+    return value;
+}
+
+func main() {
+    var data = Packed.uint32(4);
+
+    data[1] = 77;
+    print("entered counter-reassign-oob main");
+    print(read_bad_index(data));
+}

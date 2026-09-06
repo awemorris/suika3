@@ -1,0 +1,12 @@
+__fast func copy_one(input: rpackeduint32(1), output: rpackeduint32(1)): void {
+    output[0] = input[0];
+}
+
+func main() {
+    var input = Packed.uint32(1);
+    var output = Packed.uint32(1);
+    input[0] = 17;
+    copy_one(input, output);
+    print(input[0]);
+    print(output[0]);
+}

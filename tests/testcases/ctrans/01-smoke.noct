@@ -1,0 +1,38 @@
+func main() {
+    // Arithmetic and comparison.
+    var a = 6;
+    var b = 7;
+    print(a * b);
+    if (a < b) {
+        print("lt");
+    } else {
+        print("gte");
+    }
+
+    // While loop.
+    var i = 0;
+    var sum = 0;
+    while (i < 10) {
+        sum = sum + i;
+        i = i + 1;
+    }
+    print(sum);
+
+    // String concatenation.
+    print("hello, " + "world");
+
+    // Array.
+    var arr = [1, 2, 3];
+    print(arr[0] + arr[1] + arr[2]);
+
+    // Dictionary.
+    var d = {key: "value"};
+    print(d.key);
+
+    // Call with multiple parameters.
+    print(add(2, 3));
+}
+
+func add(x, y) {
+    return x + y;
+}

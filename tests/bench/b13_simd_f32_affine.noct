@@ -1,0 +1,23 @@
+// Synthetic FP32 image/signal transform.  Repetition amortizes Packed setup.
+func transform(dst: rpackedfloat, src: rpackedfloat, n: int,
+               scale: float) {
+    for (i in 0..n) {
+        var t = (src[i] + 1.0) * scale;
+        dst[i] = (t - 2.0) / 4.0;
+    }
+}
+
+func main() {
+    var n = 262144;
+    var src = Packed.float32(n);
+    var dst = Packed.float32(n);
+    for (i in 0..n) {
+        src[i] = (i & 1023) * 0.25;
+    }
+    for (frame in 0..256) {
+        transform(dst, src, n, 3.0);
+    }
+    print(dst[0]);
+    print(dst[12345]);
+    print(dst[262143]);
+}

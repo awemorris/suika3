@@ -1,0 +1,23 @@
+// Mixed i32/f32 conversions with both a vector group and scalar tail.
+func convert(dst: rpackeduint32, src: rpackeduint32, n: int) {
+    for (i in 0..n) {
+        dst[i] = Int.from(Float.from(src[i] & 255) * 0.5);
+    }
+}
+
+func main() {
+    let src = Packed.uint32(8);
+    let dst = Packed.uint32(8);
+    src[0] = 1;
+    src[1] = 2;
+    src[2] = 3;
+    src[3] = 4;
+    src[4] = 5;
+    src[5] = 6;
+    src[6] = 255;
+    src[7] = 42;
+    convert(dst, src, 8);
+    for (i in 0..8) {
+        print(dst[i]);
+    }
+}

@@ -1,0 +1,52 @@
+func main(args) {
+    let mode = args[0];
+    var bytes = Packed.uint8(16);
+    Packed.fill(bytes, 0, 16, 0);
+    if (mode == "varint-truncated") {
+        bytes[0] = 0x80;
+        Binary.readVarintUnsigned(bytes, 0, 1);
+    } else if (mode == "varint-wide") {
+        for (i in 0..9) { bytes[i] = 0xff; }
+        bytes[9] = 2;
+        Binary.readVarintUnsigned(bytes, 0, 10);
+    } else if (mode == "varint-overlong") {
+        bytes[0] = 0x80;
+        bytes[1] = 0;
+        Binary.readVarintUnsigned(bytes, 0, 2);
+    } else if (mode == "varint-eleven") {
+        for (i in 0..11) { bytes[i] = 0x80; }
+        Binary.readVarintUnsigned(bytes, 0, 11);
+    } else if (mode == "cursor-negative") {
+        Binary.readVarintUnsigned(bytes, -1, 1);
+    } else if (mode == "cursor-order") {
+        Binary.readVarintUnsigned(bytes, 2, 1);
+    } else if (mode == "fixed-bounds") {
+        Binary.readI64LE(bytes, 12);
+    } else if (mode == "u32-range") {
+        Binary.writeU32LE(bytes, 0, 4294967296);
+    } else if (mode == "hash-type") {
+        Hash.sha256("abc");
+    } else if (mode == "read-short") {
+        let file = File.open(args[1], "rb");
+        File.readExact(file, 4);
+    } else if (mode == "read-negative") {
+        let file = File.open(args[1], "rb");
+        File.readExact(file, -1);
+    } else if (mode == "file-closed") {
+        let file = File.open(args[1], "rb");
+        File.close(file);
+        File.readExact(file, 1);
+    } else if (mode == "write-range") {
+        let file = File.open(args[1], "wb");
+        File.writeAll(file, bytes, 15, 2);
+    } else if (mode == "float-short") {
+        Binary.readFloat32LE(args[1], 1);
+    } else if (mode == "float-trailing") {
+        Binary.readFloat32LE(args[1], 1);
+    } else if (mode == "float-count") {
+        Binary.readFloat32LE(args[1], 9223372036854775807);
+    } else if (mode == "directory-existing") {
+        FileUtil.makeDirectoryExclusive(args[1]);
+        FileUtil.makeDirectoryExclusive(args[1]);
+    }
+}

@@ -1,0 +1,34 @@
+// Essence shared by DRAW_IMAGE_GLYPH and DRAW_IMAGE_EMOJI.
+// The conditional output alpha is intentionally retained.
+func blend_glyph(dst: rpackeduint32, src: rpackeduint32,
+                 alpha: int, n: int): void {
+    let alpha_float = alpha / 65025.0;
+    for (i in 0..n) {
+        let dst_pix = dst[i];
+        let src_pix = src[i];
+        let src_a = Float.from((src_pix >> 24) & 0xff) * alpha_float;
+        let dst_a = 1.0 - src_a;
+        var out_a = (dst_pix >> 24) & 0xff;
+        if (src_a > dst_a) {
+            out_a = Int.from(src_a * 255.0);
+        }
+        let r = Float.from((src_pix >> 16) & 0xff) * src_a +
+                Float.from((dst_pix >> 16) & 0xff) * dst_a;
+        let g = Float.from((src_pix >> 8) & 0xff) * src_a +
+                Float.from((dst_pix >> 8) & 0xff) * dst_a;
+        let b = Float.from(src_pix & 0xff) * src_a +
+                Float.from(dst_pix & 0xff) * dst_a;
+        dst[i] = (out_a << 24) | (Int.from(r) << 16) |
+                 (Int.from(g) << 8) | Int.from(b);
+    }
+}
+
+func main() {
+    let src = Packed.uint32(16);
+    let dst = Packed.uint32(16);
+    src[0] = 0xf04080c0;
+    dst[0] = 0x4080a0c0;
+    blend_glyph(dst, src, 255, 16);
+    print(dst[0]);
+    print(dst[15]);
+}

@@ -1,0 +1,16 @@
+require middle;
+
+func graphapp_top_init() {
+	print("graphapp-init");
+	return 0;
+}
+
+var graphapp_marker = graphapp_top_init();
+
+func package_init(): void {
+	print("graphapp-package");
+}
+
+func graphapp_main(args) {
+	print(args[0]);
+}

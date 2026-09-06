@@ -1,0 +1,20 @@
+require model;
+
+func main(args) {
+    if (Array.size(args) != 4) {
+        System.error("Usage: model-benchmark WEIGHTS INPUT OUTPUT ITERATIONS");
+    }
+    var iterations = 0;
+    if (args[3] == "5") { iterations = 5; }
+    else if (args[3] != "0") {
+        System.error("Model benchmark iterations must be 0 or 5.");
+    }
+    var info = modelInfo();
+    var input = Binary.readFloat32LE(args[1], info["inputElements"]);
+    var output = Packed.float32(info["outputElements"]);
+    modelInitialize(args[0]);
+    modelWarmup();
+    for (i in 0..iterations) { modelInfer(input, output); }
+    Binary.writeFloat32LE(args[2], output);
+    modelShutdown();
+}

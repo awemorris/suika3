@@ -1,0 +1,1 @@
+scoping/param_redecl.noct:0: Error: Variable 'a' is already declared in this scope.

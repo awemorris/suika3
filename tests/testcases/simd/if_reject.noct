@@ -1,0 +1,22 @@
+// Control flow in the body: E2 reject (stays scalar-versioned).
+func main() {
+    var n = 30;
+    var p = Packed.uint32(n);
+    for (i in 0..n) {
+        p[i] = i * 5;
+    }
+    var q = Packed.uint32(n);
+    for (i in 0..n) {
+        var v = p[i];
+        if (v > 50) {
+            q[i] = v * 2;
+        } else {
+            q[i] = v;
+        }
+    }
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + q[i];
+    }
+    print(sum);
+}

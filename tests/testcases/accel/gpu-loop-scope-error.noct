@@ -1,0 +1,9 @@
+__gpu func invalid(output: rpackedint32_ptr): void {
+    for (i in 0..1) {
+        let temporary: int = i;
+    }
+    output[0] = temporary;
+}
+
+func main() {
+}

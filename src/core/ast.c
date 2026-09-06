@@ -24,11 +24,17 @@
 #define UNIMPLEMENTED		(0)
 
 /* Arena allocator size. */
-#if !defined(NOCT_TARGET_DOS4G)
-#define ARENA_SIZE		(4 * 1024 * 1024)
+#if !defined(NOCT_MEMORY_SMALL)
+#define ARENA_SIZE		(64 * 1024 * 1024)
 #else
 #define ARENA_SIZE		(512 * 1024)
 #endif
+
+/* Function flags passed by the parser. */
+#define AST_FUNC_STATIC 1
+#define AST_FUNC_INLINE 2
+#define AST_FUNC_FAST   4
+#define AST_FUNC_ACCEL  8
 
 /* List operation. */
 #define AST_ADD_TO_LAST(type, list, p)			\
@@ -46,8 +52,43 @@
 /* Constructed AST. */
 static struct ast_func_list *ast_func_list;
 
+/* Early declarations (also declared in the parser prologue). */
+struct ast_func *ast_accept_func(int flags, char *name, struct ast_param_list *param_list, char *return_type_name, struct ast_stmt_list *stmt_list);
+struct ast_func_list *ast_accept_func_list(struct ast_func_list *func_list, struct ast_func *func);
+struct ast_expr *ast_accept_term_expr(struct ast_term *term);
+struct ast_term *ast_accept_symbol_term(char *symbol);
+struct ast_term *ast_accept_str_term(char *str);
+struct ast_expr *ast_accept_call_expr(struct ast_expr *expr1, struct ast_arg_list *arg_list);
+char *ast_accept_type_extent_int(int64_t value);
+char *ast_accept_type_extent_list(char *list, char *extent);
+char *ast_accept_shaped_type(char *name, char *extents);
+struct ast_stmt *ast_accept_assign_stmt(int line, struct ast_expr *lhs, struct ast_expr *rhs, bool is_var, bool is_let);
+struct ast_expr *ast_accept_class_expr(struct ast_kv_list *kv_list);
+struct ast_stmt *ast_accept_expr_stmt(int line, struct ast_expr *expr);
+struct ast_stmt *ast_accept_return_stmt(int line, struct ast_expr *expr);
+struct ast_stmt_list *ast_accept_stmt_list(struct ast_stmt_list *stmt_list, struct ast_stmt *stmt);
+
+/* Top-level declarations, synthesized into $init.<file>. */
+static struct ast_stmt_list *ast_init_stmt_list;
+
+/* Top-level require declarations. */
+static struct ast_require *ast_require_list;
+static struct ast_require *ast_require_tail;
+static uint32_t ast_require_count;
+
+/* Implicitly file-local package initializer selected by @package paths. */
+static char *ast_package_init_name;
+
 /* File name. */
 static char *ast_file_name;
+
+struct ast_static_symbol {
+	char *source_name;
+	char *link_name;
+	struct ast_static_symbol *next;
+};
+static struct ast_static_symbol *ast_static_symbols;
+static struct ast_static_symbol *ast_declared_symbols;
 
 /*
  * Error position and message. (set by the parser)
@@ -75,6 +116,10 @@ static struct ast_stmt *ast_accept_xassign_stmt(int line, struct ast_expr *lhs, 
 static struct ast_stmt *ast_accept_plusplus_or_minusminus_stmt(int line, struct ast_expr *expr,int type);
 static struct ast_expr *ast_accept_binary_expr(struct ast_expr *expr1, struct ast_expr *expr2, int type);
 static struct ast_expr *ast_accept_unary_expr(struct ast_expr *e, int type);
+static void ast_out_of_memory(void);
+void *ast_malloc(size_t size);
+char *ast_strdup(const char *s);
+void ast_free(void *p);
 #if 0
 static void ast_free_func_list(struct ast_func_list *func_list);
 static void ast_free_func(struct ast_func *func);
@@ -87,6 +132,7 @@ static void ast_free_kv_list(struct ast_kv_list *kv_list);
 static void ast_free_kv(struct ast_kv *kv);
 static void ast_free_term(struct ast_term *term);
 #endif
+
 static struct ast_expr *ast_copy_expr(struct ast_expr *expr);
 static struct ast_term *ast_copy_term(struct ast_term *term);
 static struct ast_arg_list *ast_copy_arg_list(struct ast_arg_list *arg_list);
@@ -97,6 +143,78 @@ void *ast_malloc(size_t size);
 void *ast_realloc(void *p, size_t size);
 char *ast_strdup(const char *s);
 void ast_free(void *p);
+
+/*
+ * Builds one canonical integer extent spelling.
+ */
+char *
+ast_accept_type_extent_int(
+	int64_t value)
+{
+	char buf[32];
+	char *result;
+
+	snprintf(buf, sizeof(buf), "%" PRId64, value);
+	result = ast_strdup(buf);
+	if (result == NULL)
+		ast_out_of_memory();
+
+	return result;
+}
+
+/*
+ * Appends one extent to a canonical extent list.
+ */
+char *
+ast_accept_type_extent_list(
+	char *list,
+	char *extent)
+{
+	char *result;
+	size_t size;
+
+	size = strlen(list) + strlen(extent) + 2;
+	result = ast_malloc(size);
+	if (result == NULL) {
+		ast_free(list);
+		ast_free(extent);
+		ast_out_of_memory();
+		return NULL;
+	}
+
+	snprintf(result, size, "%s,%s", list, extent);
+	ast_free(list);
+	ast_free(extent);
+
+	return result;
+}
+
+/*
+ * Builds one canonical shaped type annotation.
+ */
+char *
+ast_accept_shaped_type(
+	char *name,
+	char *extents)
+{
+	char *result;
+	size_t size;
+
+	size = strlen(name) + strlen(extents) + 3;
+	result = ast_malloc(size);
+	if (result == NULL) {
+		ast_free(name);
+		ast_free(extents);
+		ast_out_of_memory();
+		return NULL;
+	}
+
+	snprintf(result, size, "%s(%s)", name, extents);
+	ast_free(name);
+	ast_free(extents);
+
+	return result;
+}
 
 /*
  * Build an AST from a script string.
@@ -117,14 +235,19 @@ ast_build(
 		return false;
 	}
 
-	/* Copy the file name. */
-	ast_file_name = ast_strdup(file_name);
-	if (ast_file_name == NULL) {
-		ast_out_of_memory();
-		return false;
-	}
+	/* Reset the per-compilation lists. */
+	ast_func_list = NULL;
+	ast_init_stmt_list = NULL;
+	ast_static_symbols = NULL;
+	ast_declared_symbols = NULL;
+	ast_require_list = NULL;
+	ast_require_tail = NULL;
+	ast_require_count = 0;
+	ast_package_init_name = NULL;
+	ast_error_message[0] = '\0';
 
 	/* Copy the file name. */
+
 	ast_file_name = ast_strdup(file_name);
 	if (ast_file_name == NULL)
 		return false;
@@ -138,7 +261,270 @@ ast_build(
 	}
 	ast_yylex_destroy(scanner);
 
+	/* A require-only module still needs a valid, empty compilation unit. */
+	if (ast_require_count != 0 && ast_func_list == NULL &&
+	    ast_init_stmt_list == NULL) {
+		ast_init_stmt_list = ast_accept_stmt_list(
+			NULL, ast_accept_return_stmt(0, NULL));
+		if (ast_init_stmt_list == NULL)
+			return false;
+	}
+
+	/* Synthesize the $init.<file> function from top-level decls. */
+	if (ast_init_stmt_list != NULL) {
+		struct ast_func *init_func;
+		char *init_name;
+		size_t len;
+
+		len = strlen(ast_file_name) + 16;
+		init_name = ast_malloc(len);
+		if (init_name == NULL) {
+			ast_out_of_memory();
+			return false;
+		}
+		snprintf(init_name, len, "$init.%s", ast_file_name);
+		init_func = ast_accept_func(0, init_name, NULL, NULL, ast_init_stmt_list);
+		if (init_func == NULL)
+			return false;
+		if (ast_accept_func_list(ast_func_list, init_func) == NULL)
+			return false;
+		ast_init_stmt_list = NULL;
+	}
+
 	return true;
+}
+
+bool
+ast_build_app_initializer(
+	const char *file_name,
+	const char *func_name,
+	const char *const *init_name,
+	uint32_t init_count)
+{
+	struct ast_stmt_list *stmt_list;
+	struct ast_func *func;
+	uint32_t i;
+
+	if (!arena_init(&ast_arena, ARENA_SIZE)) {
+		ast_out_of_memory();
+		return false;
+	}
+	ast_func_list = NULL;
+	ast_init_stmt_list = NULL;
+	ast_static_symbols = NULL;
+	ast_declared_symbols = NULL;
+	ast_require_list = NULL;
+	ast_require_tail = NULL;
+	ast_require_count = 0;
+	ast_package_init_name = NULL;
+	ast_error_message[0] = '\0';
+	ast_file_name = ast_strdup(file_name);
+	if (ast_file_name == NULL)
+		return false;
+	stmt_list = NULL;
+	for (i = 0; i < init_count; i++) {
+		struct ast_expr *callee;
+		struct ast_expr *call;
+		struct ast_stmt *stmt;
+
+		callee = ast_accept_term_expr(
+			ast_accept_symbol_term(ast_strdup(init_name[i])));
+		if (callee == NULL)
+			return false;
+		call = ast_accept_call_expr(callee, NULL);
+		stmt = ast_accept_expr_stmt(0, call);
+		stmt_list = ast_accept_stmt_list(stmt_list, stmt);
+		if (stmt_list == NULL)
+			return false;
+	}
+	stmt_list = ast_accept_stmt_list(stmt_list,
+					 ast_accept_return_stmt(0, NULL));
+	if (stmt_list == NULL)
+		return false;
+	func = ast_accept_func(0, ast_strdup(func_name), NULL,
+			       ast_strdup("void"), stmt_list);
+	if (func == NULL || ast_accept_func_list(NULL, func) == NULL)
+		return false;
+	return true;
+}
+
+static bool
+ast_file_name_is_relative(void)
+{
+	return ast_file_name[0] != '/' && ast_file_name[0] != '\\' &&
+	       !(ast_file_name[0] != '\0' && ast_file_name[1] == ':');
+}
+
+static char *
+ast_make_static_name(const char *name)
+{
+	static const char hex[] = "0123456789abcdef";
+	size_t file_len;
+	size_t name_len;
+	size_t i;
+	char *mangled;
+	char *p;
+
+	if (!ast_file_name_is_relative()) {
+		ast_printf(N_TR("static declarations require a relative source path."));
+		return NULL;
+	}
+	file_len = strlen(ast_file_name);
+	name_len = strlen(name);
+	mangled = ast_malloc(9 + file_len * 2 + 1 + name_len * 2 + 1);
+	if (mangled == NULL) {
+		ast_out_of_memory();
+		return NULL;
+	}
+	memcpy(mangled, "$static.", 8);
+	p = mangled + 8;
+	for (i = 0; i < file_len; i++) {
+		unsigned char c = (unsigned char)ast_file_name[i];
+		*p++ = hex[c >> 4];
+		*p++ = hex[c & 15];
+	}
+	*p++ = '.';
+	for (i = 0; i < name_len; i++) {
+		unsigned char c = (unsigned char)name[i];
+		*p++ = hex[c >> 4];
+		*p++ = hex[c & 15];
+	}
+	*p = '\0';
+	return mangled;
+}
+
+static char *
+ast_register_static_symbol(char *name)
+{
+	struct ast_static_symbol *entry;
+
+	for (entry = ast_static_symbols; entry != NULL; entry = entry->next) {
+		if (strcmp(entry->source_name, name) == 0) {
+			ast_printf(N_TR("Duplicate static declaration '%s'."), name);
+			return NULL;
+		}
+	}
+	entry = ast_malloc(sizeof(*entry));
+	if (entry == NULL) {
+		ast_out_of_memory();
+		return NULL;
+	}
+	memset(entry, 0, sizeof(*entry));
+	entry->source_name = name;
+	entry->link_name = ast_make_static_name(name);
+	if (entry->link_name == NULL)
+		return NULL;
+	entry->next = ast_static_symbols;
+	ast_static_symbols = entry;
+	return entry->link_name;
+}
+
+static bool
+ast_is_package_entry(void)
+{
+	const char *name;
+	const char *file;
+	const char *slash;
+	const char *dot;
+	size_t name_len;
+
+	if (ast_file_name == NULL || strncmp(ast_file_name, "@package/", 9) != 0)
+		return false;
+	name = ast_file_name + 9;
+	slash = strchr(name, '/');
+	if (slash == NULL || slash == name)
+		return false;
+	file = slash + 1;
+	dot = strrchr(file, '.');
+	if (dot == NULL ||
+	    (strcmp(dot, ".noct") != 0 && strcmp(dot, ".nct") != 0))
+		return false;
+	name_len = (size_t)(slash - name);
+	return (size_t)(dot - file) == name_len &&
+	       strncmp(name, file, name_len) == 0;
+}
+
+static bool
+ast_register_declared_symbol(char *name)
+{
+	struct ast_static_symbol *entry;
+
+	if (strncmp(name, "__noct_nap_", 11) == 0) {
+		ast_printf(N_TR("The '__noct_nap_' symbol prefix is reserved."));
+		return false;
+	}
+	for (entry = ast_declared_symbols; entry != NULL; entry = entry->next) {
+		if (strcmp(entry->source_name, name) == 0) {
+			ast_printf(N_TR("Duplicate top-level declaration '%s'."), name);
+			return false;
+		}
+	}
+	entry = ast_malloc(sizeof(*entry));
+	if (entry == NULL) {
+		ast_out_of_memory();
+		return false;
+	}
+	memset(entry, 0, sizeof(*entry));
+	entry->source_name = name;
+	entry->next = ast_declared_symbols;
+	ast_declared_symbols = entry;
+	return true;
+}
+
+const char *
+ast_resolve_static_symbol(const char *name)
+{
+	struct ast_static_symbol *entry;
+
+	for (entry = ast_static_symbols; entry != NULL; entry = entry->next) {
+		if (strcmp(entry->source_name, name) == 0)
+			return entry->link_name;
+	}
+	return name;
+}
+
+/* Record a top-level source dependency. */
+bool
+ast_accept_require(char *name)
+{
+	struct ast_require *req;
+	struct ast_require *p;
+
+	for (p = ast_require_list; p != NULL; p = p->next) {
+		if (strcmp(p->name, name) == 0)
+			return true;
+	}
+	req = ast_malloc(sizeof(*req));
+	if (req == NULL) {
+		ast_out_of_memory();
+		return false;
+	}
+	memset(req, 0, sizeof(*req));
+	req->name = name;
+	if (ast_require_tail != NULL)
+		ast_require_tail->next = req;
+	else
+		ast_require_list = req;
+	ast_require_tail = req;
+	ast_require_count++;
+	return true;
+}
+
+uint32_t
+ast_get_require_count(void)
+{
+	return ast_require_count;
+}
+
+const char *
+ast_get_require_name(uint32_t index)
+{
+	struct ast_require *req;
+
+	for (req = ast_require_list; req != NULL && index != 0;
+	     req = req->next)
+		index--;
+	return req != NULL ? req->name : NULL;
 }
 
 /*
@@ -201,6 +587,117 @@ ast_get_error_line(void)
 }
 
 
+/* Append a statement to the synthesized $init statement list. */
+static bool
+ast_append_init_stmt(struct ast_stmt *stmt)
+{
+	if (stmt == NULL)
+		return false;
+	if (ast_init_stmt_list == NULL) {
+		ast_init_stmt_list = ast_malloc(sizeof(struct ast_stmt_list));
+		if (ast_init_stmt_list == NULL) {
+			ast_out_of_memory();
+			return false;
+		}
+		memset(ast_init_stmt_list, 0, sizeof(struct ast_stmt_list));
+		ast_init_stmt_list->list = stmt;
+	} else {
+		AST_ADD_TO_LAST(struct ast_stmt, ast_init_stmt_list->list, stmt);
+	}
+	return true;
+}
+
+/* Build a "Global.markConst(\"name\")" expression statement. */
+static struct ast_stmt *
+ast_make_mark_const_stmt(int line, const char *name)
+{
+	struct ast_expr *fn;
+	struct ast_expr *arg;
+	struct ast_expr *call;
+	struct ast_arg_list *args;
+	struct ast_stmt *stmt;
+	char *name_dup;
+
+	fn = ast_accept_term_expr(ast_accept_symbol_term(ast_strdup("Global.markConst")));
+	name_dup = ast_strdup(name);
+	if (fn == NULL || name_dup == NULL)
+		return NULL;
+	arg = ast_accept_term_expr(ast_accept_str_term(name_dup));
+	if (arg == NULL)
+		return NULL;
+	args = ast_malloc(sizeof(struct ast_arg_list));
+	if (args == NULL) {
+		ast_out_of_memory();
+		return NULL;
+	}
+	memset(args, 0, sizeof(struct ast_arg_list));
+	args->list = arg;
+	call = ast_accept_call_expr(fn, args);
+	if (call == NULL)
+		return NULL;
+	stmt = ast_malloc(sizeof(struct ast_stmt));
+	if (stmt == NULL) {
+		ast_out_of_memory();
+		return NULL;
+	}
+	memset(stmt, 0, sizeof(struct ast_stmt));
+	stmt->type = AST_STMT_EXPR;
+	stmt->val.expr.expr = call;
+	stmt->line = line;
+	return stmt;
+}
+
+/*
+ * Called from the parser for a top-level "var"/"let" declaration.
+ * Lowered as a PLAIN assignment (creates a global at load time) plus,
+ * for let, a Global.markConst call.  See docs/design/03-class.md.
+ */
+bool
+ast_accept_toplevel_var(int line, char *name, struct ast_expr *rhs, bool is_let,
+			bool is_static)
+{
+	struct ast_expr *lhs;
+	struct ast_stmt *stmt;
+
+	if (!ast_register_declared_symbol(name))
+		return false;
+	if (is_static) {
+		name = ast_register_static_symbol(name);
+		if (name == NULL)
+			return false;
+	}
+	lhs = ast_accept_term_expr(ast_accept_symbol_term(name));
+	if (lhs == NULL)
+		return false;
+	stmt = ast_accept_assign_stmt(line, lhs, rhs, false, false);
+	if (stmt == NULL)
+		return false;
+	if (!ast_append_init_stmt(stmt))
+		return false;
+	if (is_let) {
+		if (!ast_append_init_stmt(ast_make_mark_const_stmt(line, name)))
+			return false;
+	}
+	return true;
+}
+
+/*
+ * Called from the parser for a top-level "class Name { ... }".
+ * Lowered as: Name = class { ... }; Global.markConst("Name");
+ */
+bool
+ast_accept_toplevel_class(int line, char *name, struct ast_kv_list *kv_list)
+{
+	struct ast_expr *cls;
+
+	cls = ast_accept_class_expr(kv_list);
+	if (cls == NULL)
+		return false;
+	if (!ast_accept_toplevel_var(line, name, cls, true, false))
+		return false;
+	return true;
+}
+
 /* Called from the parser when it accepted a func_list. */
 struct ast_func_list *
 ast_accept_func_list(
@@ -234,13 +731,40 @@ ast_accept_func_list(
 /* Called from the parser when it accepted a func. */
 struct ast_func *
 ast_accept_func(
+	int flags,
 	char *name,
 	struct ast_param_list *param_list,
+	char *return_type_name,
 	struct ast_stmt_list *stmt_list)
 {
 	struct ast_func *f;
+	bool is_package_init;
 
 	assert(name != NULL);
+	is_package_init = strcmp(name, "package_init") == 0 &&
+			  ast_is_package_entry();
+	if (is_package_init) {
+		if (param_list != NULL || return_type_name == NULL ||
+		    strcmp(return_type_name, "void") != 0) {
+			ast_printf(N_TR("package_init() must have no parameters and declare ': void'."));
+			return NULL;
+		}
+		flags |= AST_FUNC_STATIC;
+	}
+	if (!ast_register_declared_symbol(name))
+		return NULL;
+
+	if ((flags & AST_FUNC_INLINE) != 0 && (flags & AST_FUNC_STATIC) == 0) {
+		ast_printf(N_TR("__inline functions must also be static."));
+		return NULL;
+	}
+	if ((flags & AST_FUNC_STATIC) != 0) {
+		name = ast_register_static_symbol(name);
+		if (name == NULL)
+			return NULL;
+		if (is_package_init)
+			ast_package_init_name = name;
+	}
 
 	/* Allocate a func. */
 	f = ast_malloc(sizeof(struct ast_func));
@@ -251,9 +775,20 @@ ast_accept_func(
 	memset(f, 0, sizeof(struct ast_func));
 	f->name = name;
 	f->param_list = param_list;
+	f->return_type_name = return_type_name;
+	f->is_static = (flags & AST_FUNC_STATIC) != 0;
+	f->is_inline = (flags & AST_FUNC_INLINE) != 0;
+	f->is_fast = (flags & AST_FUNC_FAST) != 0;
+	f->is_accel = (flags & AST_FUNC_ACCEL) != 0;
 	f->stmt_list = stmt_list;
 
 	return f;
+}
+
+const char *
+ast_get_package_init_name(void)
+{
+	return ast_package_init_name;
 }
 
 /* Called from the parser when it accepted a param_list. */
@@ -290,6 +825,26 @@ ast_accept_param_list(
 	}
 
 	return param_list;
+}
+
+/* Called from the parser when it accepted an annotated parameter. */
+struct ast_param_list *
+ast_accept_param_list_typed(
+	struct ast_param_list *param_list,
+	char *name,
+	char *type_name)
+{
+	struct ast_param_list *l;
+	struct ast_param *p;
+
+	l = ast_accept_param_list(param_list, name);
+	if (l == NULL)
+		return NULL;
+	p = l->list;
+	while (p->next != NULL)
+		p = p->next;
+	p->type_name = type_name;
+	return l;
 }
 
 /* Called from the parser when it accepted a stmt_list. */
@@ -344,7 +899,8 @@ ast_accept_assign_stmt(
 	int line,
 	struct ast_expr *lhs,
 	struct ast_expr *rhs,
-	bool is_var)
+	bool is_var,
+	bool is_let)
 {
 	struct ast_stmt *stmt;
 
@@ -358,8 +914,28 @@ ast_accept_assign_stmt(
 	stmt->val.assign.lhs = lhs;
 	stmt->val.assign.rhs = rhs;
 	stmt->val.assign.is_var = is_var;
+	stmt->val.assign.is_let = is_let;
 	stmt->line = line;
 
+	return stmt;
+}
+
+/* Called from the parser when it accepted a typed assign_stmt. */
+struct ast_stmt *
+ast_accept_assign_stmt_typed(
+	int line,
+	struct ast_expr *lhs,
+	struct ast_expr *rhs,
+	bool is_var,
+	bool is_let,
+	char *type_name)
+{
+	struct ast_stmt *stmt;
+
+	stmt = ast_accept_assign_stmt(line, lhs, rhs, is_var, is_let);
+	if (stmt == NULL)
+		return NULL;
+	stmt->val.assign.type_name = type_name;
 	return stmt;
 }
 
@@ -524,7 +1100,7 @@ ast_accept_plusplus_or_minusminus_stmt(
 		return NULL;
 
 	rhs0 = ast_copy_expr(expr);
-	if (lhs == NULL)
+	if (rhs0 == NULL)
 		return NULL;
 
 	term = ast_malloc(sizeof(struct ast_term));
@@ -985,6 +1561,16 @@ ast_accept_return_stmt(
 	struct ast_stmt *stmt;
 	struct ast_term *term;
 
+	stmt = ast_malloc(sizeof(struct ast_stmt));
+	if (stmt == NULL) {
+		ast_out_of_memory();
+		return NULL;
+	}
+	memset(stmt, 0, sizeof(struct ast_stmt));
+	stmt->type = AST_STMT_RETURN;
+	stmt->val.return_.has_value = expr != NULL;
+	stmt->line = line;
+
 	if (expr == NULL) {
 		term = ast_malloc(sizeof(struct ast_term));
 		if (term == NULL) {
@@ -1005,15 +1591,7 @@ ast_accept_return_stmt(
 		expr->val.term.term = term;
 	}
 
-	stmt = ast_malloc(sizeof(struct ast_stmt));
-	if (stmt == NULL) {
-		ast_out_of_memory();
-		return NULL;
-	}
-	memset(stmt, 0, sizeof(struct ast_stmt));
-	stmt->type = AST_STMT_RETURN;
 	stmt->val.return_.expr = expr;
-	stmt->line = line;
 
 	return stmt;
 }
@@ -1183,6 +1761,22 @@ ast_accept_and_expr(
 	return ast_accept_binary_expr(expr1, expr2, AST_EXPR_AND);
 }
 
+struct ast_expr *
+ast_accept_land_expr(
+	struct ast_expr *expr1,
+	struct ast_expr *expr2)
+{
+	return ast_accept_binary_expr(expr1, expr2, AST_EXPR_LAND);
+}
+
+struct ast_expr *
+ast_accept_lor_expr(
+	struct ast_expr *expr1,
+	struct ast_expr *expr2)
+{
+	return ast_accept_binary_expr(expr1, expr2, AST_EXPR_LOR);
+}
+
 /* Called from the parser when it accepted a expr with a | or || operator. */
 struct ast_expr *
 ast_accept_or_expr(
@@ -1345,29 +1939,6 @@ ast_accept_call_expr(
 	return expr;
 }
 
-/* Called from the parser when it accepted a expr with a call() syntax. */
-struct ast_expr *
-ast_accept_thiscall_expr(
-	struct ast_expr *expr1,
-	char *symbol,
-	struct ast_arg_list *arg_list)
-{
-	struct ast_expr *expr;
-
-	expr = ast_malloc(sizeof(struct ast_expr));
-	if (expr == NULL) {
-		ast_out_of_memory();
-		return NULL;
-	}
-	memset(expr, 0, sizeof(struct ast_expr));
-	expr->type = AST_EXPR_THISCALL;
-	expr->val.thiscall.obj = expr1;
-	expr->val.thiscall.func = symbol;
-	expr->val.thiscall.arg_list = arg_list;
-
-	return expr;
-}
-
 /* Called from the parser when it accepted a expr with a array literal syntax. */
 struct ast_expr *
 ast_accept_array_expr(
@@ -1402,6 +1973,21 @@ ast_accept_dict_expr(
 	memset(expr, 0, sizeof(struct ast_expr));
 	expr->type = AST_EXPR_DICT;
 	expr->val.dict.kv_list = kv_list;
+
+	return expr;
+}
+
+/* Called from the parser when it accepted a class literal. */
+struct ast_expr *
+ast_accept_class_expr(
+	struct ast_kv_list *kv_list)
+{
+	struct ast_expr *expr;
+
+	expr = ast_accept_dict_expr(kv_list);
+	if (expr == NULL)
+		return NULL;
+	expr->val.dict.is_class = true;
 
 	return expr;
 }
@@ -1457,6 +2043,22 @@ ast_accept_new_expr(
 	expr->type = AST_EXPR_NEW;
 	expr->val.new_.cls = cls;
 	expr->val.new_.init = kvexpr;
+
+	return expr;
+}
+
+/* Called from the parser when it accepted an extend expression. */
+struct ast_expr *
+ast_accept_extend_expr(
+	char *cls,
+	struct ast_kv_list *kv_list)
+{
+	struct ast_expr *expr;
+
+	expr = ast_accept_new_expr(cls, kv_list);
+	if (expr == NULL)
+		return NULL;
+	expr->val.new_.is_extend = true;
 
 	return expr;
 }
@@ -1521,6 +2123,25 @@ ast_accept_int_term(
 	return term;
 }
 
+/* Called from the parser when it accepted a term with a long. */
+struct ast_term *
+ast_accept_long_term(
+	int64_t l)
+{
+	struct ast_term *term;
+
+	term = ast_malloc(sizeof(struct ast_term));
+	if (term == NULL) {
+		ast_out_of_memory();
+		return NULL;
+	}
+	memset(term, 0, sizeof(struct ast_term));
+	term->type = AST_TERM_LONG;
+	term->val.l = l;
+
+	return term;
+}
+
 /* Called from the parser when it accepted a term with a float. */
 struct ast_term *
 ast_accept_float_term(
@@ -1536,6 +2157,25 @@ ast_accept_float_term(
 	memset(term, 0, sizeof(struct ast_term));
 	term->type = AST_TERM_FLOAT;
 	term->val.f = f;
+
+	return term;
+}
+
+/* Called from the parser when it accepted a term with a double. */
+struct ast_term *
+ast_accept_double_term(
+	double lf)
+{
+	struct ast_term *term;
+
+	term = ast_malloc(sizeof(struct ast_term));
+	if (term == NULL) {
+		ast_out_of_memory();
+		return NULL;
+	}
+	memset(term, 0, sizeof(struct ast_term));
+	term->type = AST_TERM_DOUBLE;
+	term->val.lf = lf;
 
 	return term;
 }
@@ -1985,7 +2625,7 @@ ast_copy_expr(
 	assert(expr != NULL);
 
 	dst = ast_malloc(sizeof(struct ast_expr));
-	if (expr == NULL) {
+	if (dst == NULL) {
 		ast_out_of_memory();
 		return NULL;
 	}
@@ -2057,6 +2697,8 @@ ast_copy_expr(
 		}
 		break;
 	case AST_EXPR_ARRAY:
+		dst->val.array.is_multi_index =
+			expr->val.array.is_multi_index;
 		if (expr->val.array.elem_list != NULL) {
 			dst->val.array.elem_list = ast_copy_arg_list(expr->val.array.elem_list);
 			if (dst->val.array.elem_list == NULL)
@@ -2224,6 +2866,7 @@ ast_malloc(
 	void *ret;
 
 	ret = arena_alloc(&ast_arena, size);
+	assert((uintptr_t)ret % 8 == 0);
 	if (ret == NULL) {
 		ast_out_of_memory();
 		return NULL;

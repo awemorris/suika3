@@ -1,0 +1,122 @@
+require kernel_conv;
+
+func kernelContractionAttr(node, name) {
+    for (i in 0..Array.size(node.attrs)) {
+        if (node.attrs[i].name == name) { return node.attrs[i].value; }
+    }
+    planNodeFail(node, "normalized contraction is missing canonical attribute '" +
+                 name + "'.");
+}
+
+func kernelFloat32Bits(bits) {
+    if (bits < 0 || bits > 4294967295L) {
+        normFail("Stage G.2 received an invalid float32 bit pattern.");
+    }
+    return "Accel.float32FromBits(" + bits + ")";
+}
+
+func kernelValidateContraction(plan, step) {
+    var graph = plan.graph;
+    var a = graph.tensors[step.inputs[0]];
+    var b = graph.tensors[step.inputs[1]];
+    var output = graph.tensors[step.outputTensor];
+    if (Array.size(a.shape) != 2 || Array.size(b.shape) != 2 ||
+        Array.size(output.shape) != 2) {
+        planNodeFail(step.node, "Stage G.2 requires rank-2 A, B, and output tensors.");
+    }
+    if (a.offset < 0) {
+        planNodeFail(step.node, "Stage G.2 requires a nonnegative A offset.");
+    }
+    if (!isContiguousView(b) || b.offset != 0 || !b.isConstant) {
+        planNodeFail(step.node,
+                     "Stage G.2 requires contiguous offset-zero constant B.");
+    }
+    if (!isContiguousView(output) || output.offset != 0) {
+        planNodeFail(step.node, "Stage G.2 requires contiguous offset-zero output.");
+    }
+    if (step.kind == "gemm-rank2" && Array.size(step.inputs) == 3) {
+        var c = graph.tensors[step.inputs[2]];
+        if (!isContiguousView(c) || c.offset != 0 || !c.isConstant) {
+            planNodeFail(step.node,
+                         "Stage G.2 Gemm requires contiguous offset-zero constant C.");
+        }
+    }
+
+    var transA = 0;
+    var transB = 0;
+    var alpha = 0x3f800000;
+    var beta = 0x3f800000;
+    if (step.kind == "gemm-rank2") {
+        transA = kernelContractionAttr(step.node, "transA");
+        transB = kernelContractionAttr(step.node, "transB");
+        alpha = kernelContractionAttr(step.node, "alpha");
+        beta = kernelContractionAttr(step.node, "beta");
+    }
+    var m = a.shape[0];
+    var k = a.shape[1];
+    if (transA == 1) { m = a.shape[1]; k = a.shape[0]; }
+    var bk = b.shape[0];
+    var n = b.shape[1];
+    if (transB == 1) { bk = b.shape[1]; n = b.shape[0]; }
+    if (k != bk || output.shape[0] != m || output.shape[1] != n) {
+        planNodeFail(step.node, "Stage G.2 contraction shape metadata is inconsistent.");
+    }
+    return { a: a, b: b, output: output, m: m, n: n, k: k,
+             transA: transA, transB: transB, alpha: alpha, beta: beta };
+}
+
+func kernelEmitContraction(plan, step, name, signature) {
+    var checked = kernelValidateContraction(plan, step);
+    var aParam = kernelInputParam(plan.graph, step.inputs, 0);
+    var bParam = kernelInputParam(plan.graph, step.inputs, 1);
+    var hasC = step.kind == "gemm-rank2" && Array.size(step.inputs) == 3;
+    var cParam = "";
+    if (hasC) { cParam = kernelInputParam(plan.graph, step.inputs, 2); }
+    var uniqueStorages = kernelUniqueInputStorages(plan.graph, step.inputs);
+    var lines = [];
+    Array.push(lines, "// signature: " + signature);
+    Array.push(lines, "__gpu func " + name + "(");
+    for (i in 0..Array.size(uniqueStorages)) {
+        Array.push(lines, "    p" + i + ": rpackedfloat_ptr,");
+    }
+    Array.push(lines, "    out: rpackedfloat_ptr");
+    Array.push(lines, "): void {");
+    Array.push(lines, "    let i: int = globalIdx.x;");
+    var count = shapeElements(checked.output.shape, "Stage G.2 output");
+    Array.push(lines, "    if (i < " + count + ") {");
+    Array.push(lines, "        let row: int = i / " + checked.n + ";");
+    Array.push(lines, "        let col: int = i % " + checked.n + ";");
+    Array.push(lines, "        var sum: float = 0.0;");
+    Array.push(lines, "        for (kk in 0.." + checked.k + ") {");
+    var aIndex = checked.a.offset + " + row * " + checked.a.stride[0] +
+                 " + kk * " + checked.a.stride[1];
+    if (checked.transA == 1) {
+        aIndex = checked.a.offset + " + kk * " + checked.a.stride[0] +
+                 " + row * " + checked.a.stride[1];
+    }
+    var bIndex = checked.b.offset + " + kk * " + checked.b.stride[0] +
+                 " + col * " + checked.b.stride[1];
+    if (checked.transB == 1) {
+        bIndex = checked.b.offset + " + col * " + checked.b.stride[0] +
+                 " + kk * " + checked.b.stride[1];
+    }
+    Array.push(lines, "            let a_index: int = " + aIndex + ";");
+    Array.push(lines, "            let b_index: int = " + bIndex + ";");
+    Array.push(lines, "            sum = sum + " + aParam + "[a_index] * " +
+                      bParam + "[b_index];");
+    Array.push(lines, "        }");
+    var result = "sum";
+    if (step.kind == "gemm-rank2") {
+        result = kernelFloat32Bits(checked.alpha) + " * sum";
+        if (hasC) {
+            var c = plan.graph.tensors[step.inputs[2]];
+            var cIndex = kernelIndexExpression(c, checked.output.shape, "i");
+            result = result + " + " + kernelFloat32Bits(checked.beta) +
+                     " * " + cParam + "[" + cIndex + "]";
+        }
+    }
+    Array.push(lines, "        out[i] = " + result + ";");
+    Array.push(lines, "    }");
+    Array.push(lines, "}");
+    return lines;
+}

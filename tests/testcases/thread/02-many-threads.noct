@@ -1,0 +1,15 @@
+func worker(param) {
+    return param * 2;
+}
+
+func main() {
+    var ths = [];
+    for (t in 0..8) {
+        ths[t] = Thread.createThread(worker, t);
+    }
+    var total = 0;
+    for (t in 0..8) {
+        total = total + Thread.joinThread(ths[t]);
+    }
+    print(total);
+}

@@ -1,0 +1,47 @@
+var receiver_evaluations = 0;
+
+func receiver(obj) {
+    receiver_evaluations++;
+    return obj;
+}
+
+func old_method(this, x) {
+    return "old:" + (this.base + x);
+}
+
+func new_method(this, x) {
+    return "new:" + (this.base + x);
+}
+
+func replace_method(obj) {
+    obj.method = new_method;
+    return 5;
+}
+
+func main() {
+    var obj = {
+        base: 10,
+        method: old_method,
+        plain: (x) => { return x + 1; }
+    };
+
+    // A first parameter named exactly "this" receives the object.
+    print(obj.method(3));
+
+    // An ordinary member function receives only its explicit arguments.
+    print(obj.plain(3));
+
+    // Parentheses and a first-class function value break member association.
+    print((obj.method)(obj, 4));
+    var saved = obj.method;
+    print(saved(obj, 6));
+
+    // Resolve the callee before evaluating arguments.  replace_method()
+    // changes the member, but this call must still invoke old_method.
+    print(obj.method(replace_method(obj)));
+    print(obj.method(1));
+
+    // The receiver expression is evaluated exactly once.
+    print(receiver(obj).method(2));
+    print(receiver_evaluations);
+}

@@ -1,0 +1,14 @@
+func f(a: int, b: long, c: float, d: double, e: string, g: array, h: dict, p: packed, fn: func) {
+    print(a);
+    print(e);
+    print(g[0]);
+    print(h.k);
+    print(Packed.size(p));
+    return fn(7);
+}
+func twice(x: int) {
+    return x * 2;
+}
+func main() {
+    print(f(1, 2, 1.5, 2.5, "s", [9], { k: "v" }, Packed.uint8(4), twice));
+}

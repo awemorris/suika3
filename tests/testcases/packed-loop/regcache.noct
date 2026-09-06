@@ -1,0 +1,21 @@
+var input = Packed.uint32(17);
+var output = Packed.uint32(17);
+
+func kernel(input: rpackeduint32, output: rpackeduint32,
+            count: int): void {
+    for (i in 0..count) {
+        output[i] = ((((((input[i] ^ 90) + input[i]) * 3) /
+                       ((input[i] & 7) + 1)) + 1) & 16777215);
+    }
+}
+
+func main() {
+    for (i in 0..17) {
+        input[i] = i;
+    }
+    kernel(input, output, 17);
+    print(output[0]);
+    print(output[1]);
+    print(output[8]);
+    print(output[16]);
+}

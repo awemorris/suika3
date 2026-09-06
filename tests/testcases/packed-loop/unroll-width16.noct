@@ -1,0 +1,21 @@
+var u16a = Packed.uint16(13);
+var u16b = Packed.uint16(13);
+
+func unroll16(input: rpackeduint16, output: rpackeduint16,
+              start: int, stop: int): void {
+    for (i in start..stop) {
+        output[i] = ((input[i] + 7) ^ 85) & 65535;
+    }
+}
+
+func main() {
+    for (i in 0..13) {
+        u16a[i] = i * 3;
+    }
+    unroll16(u16a, u16b, 2, 11);
+    print(u16b[0]);
+    print(u16b[2]);
+    print(u16b[5]);
+    print(u16b[10]);
+    print(u16b[11]);
+}

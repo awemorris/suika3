@@ -1,0 +1,490 @@
+// Holoris -- a wireframe hologram falling-block game for zedBSD.
+//
+// The stage is a three-dimensional wire-frame well whose camera sways
+// slowly on its yaw axis, so the blocks read as floating holograms.
+// Landed blocks are filled with line patterns; the falling piece is a
+// bare wire cube.  Everything runs on BeUI alone: drawing through the
+// BeUI primitives, timing through BeUI.getMilliseconds/sleep, and input
+// through the BeUI.isKeyDown key state API (the buffered Keyboard queue
+// is only drained so typematic repeats never pile up).  Nothing here is
+// specific to the pre-boot environment: the same program runs wherever
+// BeUI has a backend, and its loops end when BeUI.poll() reports the
+// display closed, which is how a windowed host asks a program to quit.
+//
+// Controls: arrows move, Z/X or Up rotate, Space hard-drops, Esc quits.
+// "holoris test" fixes the camera and the piece sequence and records
+// lock states to HOLOLOCK.TXT for the QEMU test.
+
+func make_rgb(red, green, blue) {
+    return ((red & 0xff) << 16) | ((green & 0xff) << 8) | (blue & 0xff);
+}
+
+func makePieces() {
+    // 7 pieces x 4 rotation states x 4 cells x (col,row) offsets.
+    return [
+        // I
+        [[0, 1, 1, 1, 2, 1, 3, 1], [2, 0, 2, 1, 2, 2, 2, 3],
+         [0, 2, 1, 2, 2, 2, 3, 2], [1, 0, 1, 1, 1, 2, 1, 3]],
+        // O
+        [[1, 0, 2, 0, 1, 1, 2, 1], [1, 0, 2, 0, 1, 1, 2, 1],
+         [1, 0, 2, 0, 1, 1, 2, 1], [1, 0, 2, 0, 1, 1, 2, 1]],
+        // T
+        [[1, 0, 0, 1, 1, 1, 2, 1], [1, 0, 1, 1, 2, 1, 1, 2],
+         [0, 1, 1, 1, 2, 1, 1, 2], [1, 0, 0, 1, 1, 1, 1, 2]],
+        // S
+        [[1, 0, 2, 0, 0, 1, 1, 1], [1, 0, 1, 1, 2, 1, 2, 2],
+         [1, 1, 2, 1, 0, 2, 1, 2], [0, 0, 0, 1, 1, 1, 1, 2]],
+        // Z
+        [[0, 0, 1, 0, 1, 1, 2, 1], [2, 0, 1, 1, 2, 1, 1, 2],
+         [0, 1, 1, 1, 1, 2, 2, 2], [1, 0, 0, 1, 1, 1, 0, 2]],
+        // J
+        [[0, 0, 0, 1, 1, 1, 2, 1], [1, 0, 2, 0, 1, 1, 1, 2],
+         [0, 1, 1, 1, 2, 1, 2, 2], [1, 0, 1, 1, 0, 2, 1, 2]],
+        // L
+        [[2, 0, 0, 1, 1, 1, 2, 1], [1, 0, 1, 1, 1, 2, 2, 2],
+         [0, 1, 1, 1, 2, 1, 0, 2], [0, 0, 1, 0, 1, 1, 1, 2]]];
+}
+
+func pieceColor(type) {
+    // I cyan, O yellow, T magenta, S green, Z red, J white, L cyan.
+    var colors = [make_rgb(0x00, 0xff, 0xff),
+                  make_rgb(0xff, 0xff, 0x00),
+                  make_rgb(0xff, 0x00, 0xff),
+                  make_rgb(0x00, 0xff, 0x00),
+                  make_rgb(0xff, 0x00, 0x00),
+                  make_rgb(0xff, 0xff, 0xff),
+                  make_rgb(0x00, 0xff, 0xff)];
+    return colors[type];
+}
+
+func rand7(g) {
+    g.seed = (g.seed * 75 + 74) % 65537;
+    return g.seed % 7;
+}
+
+func hits(g, type, rot, col, row) {
+    var cells = g.pieces[type][rot];
+    for (i in 0..4) {
+        var c = col + cells[i * 2];
+        var r = row + cells[i * 2 + 1];
+        if (c < 0 || c >= 10 || r < 0 || r >= 20) { return 1; }
+        if (g.grid[r * 10 + c] != 0) { return 1; }
+    }
+    return 0;
+}
+
+func tryMove(g, dc, dr) {
+    if (hits(g, g.type, g.rot, g.col + dc, g.row + dr) == 0) {
+        g.col = g.col + dc;
+        g.row = g.row + dr;
+        g.dirty = 1;
+        return 1;
+    }
+    return 0;
+}
+
+func tryRotate(g, dir) {
+    var rot = (g.rot + dir + 4) % 4;
+    var kicks = [0, 0 - 1, 1, 0 - 2, 2];
+    for (i in 0..5) {
+        if (hits(g, g.type, rot, g.col + kicks[i], g.row) == 0) {
+            g.rot = rot;
+            g.col = g.col + kicks[i];
+            g.dirty = 1;
+            return 1;
+        }
+    }
+    return 0;
+}
+
+func spawn(g, now) {
+    g.type = g.next;
+    g.next = rand7(g);
+    g.rot = 0;
+    g.col = 3;
+    g.row = 0;
+    g.dropAt = now + g.gravity;
+    g.dirty = 1;
+    g.panelDirty = 1;
+    if (hits(g, g.type, g.rot, g.col, g.row) == 1) { g.over = 1; }
+}
+
+func clearLines(g) {
+    var cleared = 0;
+    var row = 19;
+    while (row >= 0) {
+        var full = 1;
+        for (c in 0..10) { if (g.grid[row * 10 + c] == 0) { full = 0; } }
+        if (full == 1) {
+            var r = row;
+            while (r > 0) {
+                for (c in 0..10) {
+                    g.grid[r * 10 + c] = g.grid[(r - 1) * 10 + c];
+                }
+                r = r - 1;
+            }
+            for (c in 0..10) { g.grid[c] = 0; }
+            cleared = cleared + 1;
+        } else {
+            row = row - 1;
+        }
+    }
+    if (cleared > 0) {
+        var points = [0, 100, 300, 500, 800];
+        g.score = g.score + points[cleared] * g.level;
+        g.lines = g.lines + cleared;
+        g.level = g.lines / 10 + 1;
+        g.gravity = 800 - (g.level - 1) * 70;
+        if (g.gravity < 100) { g.gravity = 100; }
+    }
+}
+
+func writeLockMarker(g) {
+    var minCol = 10;
+    var maxRow = 0 - 1;
+    var count = 0;
+    for (row in 0..20) {
+        for (col in 0..10) {
+            if (g.grid[row * 10 + col] != 0) {
+                count = count + 1;
+                if (col < minCol) { minCol = col; }
+                if (row > maxRow) { maxRow = row; }
+            }
+        }
+    }
+    FileUtil.writeText("HOLOLOCK.TXT", "lock " + g.locks + " " + count +
+                       " " + minCol + " " + maxRow);
+}
+
+func lock(g, now) {
+    var cells = g.pieces[g.type][g.rot];
+    for (i in 0..4) {
+        var c = g.col + cells[i * 2];
+        var r = g.row + cells[i * 2 + 1];
+        g.grid[r * 10 + c] = g.type + 1;
+    }
+    g.locks = g.locks + 1;
+    clearLines(g);
+    if (g.testMode == 1) {
+        // The QEMU test asserts the state of exactly one lock.
+        writeLockMarker(g);
+        g.over = 2;
+        return 0;
+    }
+    spawn(g, now);
+    return 0;
+}
+
+func handleInput(g, now) {
+    var left = BeUI.isKeyDown(Key.Left);
+    var right = BeUI.isKeyDown(Key.Right);
+    // Sideways movement uses delayed auto shift so a held key glides.
+    var dir = 0;
+    if (left == 1 && right == 0) { dir = 0 - 1; }
+    if (right == 1 && left == 0) { dir = 1; }
+    if (dir != g.hdir) {
+        g.hdir = dir;
+        if (dir != 0) {
+            tryMove(g, dir, 0);
+            g.hnext = now + 170;
+        }
+    } else if (dir != 0 && now >= g.hnext) {
+        tryMove(g, dir, 0);
+        g.hnext = now + 50;
+    }
+    g.soft = BeUI.isKeyDown(Key.Down);
+    // Rotation and the hard drop are edge triggered.
+    var cw = 0;
+    if (BeUI.isKeyDown(Key.Up) == 1 || BeUI.isKeyDown(g.keyX) == 1) {
+        cw = 1;
+    }
+    if (cw == 1 && g.pcw == 0) { tryRotate(g, 1); }
+    g.pcw = cw;
+    var ccw = BeUI.isKeyDown(g.keyZ);
+    if (ccw == 1 && g.pccw == 0) { tryRotate(g, 0 - 1); }
+    g.pccw = ccw;
+    var space = BeUI.isKeyDown(Key.Space);
+    if (space == 1 && g.pspace == 0) {
+        while (tryMove(g, 0, 1) == 1) { g.score = g.score + 2; }
+        g.dropAt = now;
+        g.panelDirty = 1;
+    }
+    g.pspace = space;
+    if (BeUI.isKeyDown(Key.Escape) == 1) { g.over = 2; }
+}
+
+func stepGravity(g, now) {
+    if (now < g.dropAt) { return 0; }
+    if (tryMove(g, 0, 1) == 0) {
+        lock(g, now);
+    } else if (g.soft == 1) {
+        g.score = g.score + 1;
+    }
+    var interval = g.gravity;
+    if (g.soft == 1 && interval > 50) { interval = 50; }
+    g.dropAt = now + interval;
+    return 1;
+}
+
+// ---------------------------------------------------------------------
+// Rendering.  The well is a lattice of 11 x 21 x 2 grid points; each
+// frame projects one x/scale pair per (column, depth) and every drawn
+// point derives from those, so the whole 3D transform is 22 rotations
+// and divisions per frame.
+
+func clampi(v, lo, hi) {
+    if (v < lo) { return lo; }
+    if (v > hi) { return hi; }
+    return v;
+}
+
+func iline(x0, y0, x1, y1, color) {
+    BeUI.line(clampi(Int.from(x0), 0, 639), clampi(Int.from(y0), 0, 399),
+              clampi(Int.from(x1), 0, 639), clampi(Int.from(y1), 0, 399),
+              color);
+}
+
+func project(g, theta) {
+    var c = Math.cos(theta);
+    var s = Math.sin(theta);
+    for (zi in 0..2) {
+        for (col in 0..11) {
+            var x = Float.from(col) - 5.0;
+            var z = Float.from(zi) - 0.5;
+            var k = 520.0 / ((z * c - x * s) + 30.0);
+            g.px[zi * 11 + col] = 240.0 + (x * c + z * s) * k;
+            g.sc[zi * 11 + col] = k;
+        }
+    }
+}
+
+func pxAt(g, col, zi) {
+    return g.px[zi * 11 + col];
+}
+
+func pyAt(g, col, row, zi) {
+    return 196.0 + (Float.from(row) - 10.0) * g.sc[zi * 11 + col];
+}
+
+func drawWell(g) {
+    var color = 0x00ffff;
+    for (zi in 0..2) {
+        var xa = pxAt(g, 0, zi);
+        var xb = pxAt(g, 10, zi);
+        var ya0 = pyAt(g, 0, 0, zi);
+        var yb0 = pyAt(g, 10, 0, zi);
+        var ya1 = pyAt(g, 0, 20, zi);
+        var yb1 = pyAt(g, 10, 20, zi);
+        iline(xa, ya0, xb, yb0, color);
+        iline(xa, ya1, xb, yb1, color);
+        iline(xa, ya0, xa, ya1, color);
+        iline(xb, yb0, xb, yb1, color);
+    }
+    iline(pxAt(g, 0, 0), pyAt(g, 0, 0, 0),
+          pxAt(g, 0, 1), pyAt(g, 0, 0, 1), color);
+    iline(pxAt(g, 10, 0), pyAt(g, 10, 0, 0),
+          pxAt(g, 10, 1), pyAt(g, 10, 0, 1), color);
+    iline(pxAt(g, 0, 0), pyAt(g, 0, 20, 0),
+          pxAt(g, 0, 1), pyAt(g, 0, 20, 1), color);
+    iline(pxAt(g, 10, 0), pyAt(g, 10, 20, 0),
+          pxAt(g, 10, 1), pyAt(g, 10, 20, 1), color);
+}
+
+// A landed cell: front-face outline plus a line-pattern fill whose
+// direction depends on the piece that dropped it.
+func drawCell(g, col, row, type) {
+    var color = pieceColor(type);
+    var x0 = pxAt(g, col, 0);
+    var y0 = pyAt(g, col, row, 0);
+    var x1 = pxAt(g, col + 1, 0);
+    var y1 = pyAt(g, col + 1, row, 0);
+    var x2 = pxAt(g, col + 1, 0);
+    var y2 = pyAt(g, col + 1, row + 1, 0);
+    var x3 = pxAt(g, col, 0);
+    var y3 = pyAt(g, col, row + 1, 0);
+    iline(x0, y0, x1, y1, color);
+    iline(x1, y1, x2, y2, color);
+    iline(x2, y2, x3, y3, color);
+    iline(x3, y3, x0, y0, color);
+    var style = type % 3;
+    if (style == 0) {
+        for (i in 1..4) {
+            var t = Float.from(i) * 0.25;
+            iline(x0 + (x3 - x0) * t, y0 + (y3 - y0) * t,
+                  x1 + (x2 - x1) * t, y1 + (y2 - y1) * t, color);
+        }
+    } else if (style == 1) {
+        for (i in 1..4) {
+            var t = Float.from(i) * 0.25;
+            iline(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t,
+                  x3 + (x2 - x3) * t, y3 + (y2 - y3) * t, color);
+        }
+    } else {
+        iline(x0, y0, x2, y2, color);
+        iline(x1, y1, x3, y3, color);
+    }
+}
+
+// The falling piece: a full wire cube per cell.
+func drawPieceCell(g, col, row) {
+    var color = 0xffffff;
+    var fx0 = pxAt(g, col, 0);
+    var fy0 = pyAt(g, col, row, 0);
+    var fx1 = pxAt(g, col + 1, 0);
+    var fy1 = pyAt(g, col + 1, row, 0);
+    var fy2 = pyAt(g, col + 1, row + 1, 0);
+    var fy3 = pyAt(g, col, row + 1, 0);
+    var bx0 = pxAt(g, col, 1);
+    var by0 = pyAt(g, col, row, 1);
+    var bx1 = pxAt(g, col + 1, 1);
+    var by1 = pyAt(g, col + 1, row, 1);
+    var by2 = pyAt(g, col + 1, row + 1, 1);
+    var by3 = pyAt(g, col, row + 1, 1);
+    iline(fx0, fy0, fx1, fy1, color);
+    iline(fx1, fy1, fx1, fy2, color);
+    iline(fx1, fy2, fx0, fy3, color);
+    iline(fx0, fy3, fx0, fy0, color);
+    iline(bx0, by0, bx1, by1, color);
+    iline(bx1, by1, bx1, by2, color);
+    iline(bx1, by2, bx0, by3, color);
+    iline(bx0, by3, bx0, by0, color);
+    iline(fx0, fy0, bx0, by0, color);
+    iline(fx1, fy1, bx1, by1, color);
+    iline(fx1, fy2, bx1, by2, color);
+    iline(fx0, fy3, bx0, by3, color);
+}
+
+func drawNext(g) {
+    BeUI.drawText("NEXT", 452, 210, 0x00ffff, 0x000000);
+    var cells = g.pieces[g.next][0];
+    var color = pieceColor(g.next);
+    for (i in 0..4) {
+        var x = 452 + cells[i * 2] * 16;
+        var y = 236 + cells[i * 2 + 1] * 16;
+        BeUI.line(x, y, x + 13, y, color);
+        BeUI.line(x + 13, y, x + 13, y + 13, color);
+        BeUI.line(x + 13, y + 13, x, y + 13, color);
+        BeUI.line(x, y + 13, x, y, color);
+    }
+}
+
+func drawPanel(g) {
+    BeUI.fill(400, 0, 240, 400, 0x000000);
+    BeUI.drawText("HOLORIS", 452, 36, 0x00ffff, 0x000000);
+    BeUI.drawText("ホロリス", 452, 58, 0xff00ff, 0x000000);
+    BeUI.drawText("SCORE  " + g.score, 436, 100, 0xffffff, 0x000000);
+    BeUI.drawText("LINES  " + g.lines, 436, 126, 0xffffff, 0x000000);
+    BeUI.drawText("LEVEL  " + g.level, 436, 152, 0xffffff, 0x000000);
+    drawNext(g);
+    BeUI.drawText("↑/Z/X : SPIN", 420, 320, 0x999999, 0x000000);
+    BeUI.drawText("SPACE : DROP", 420, 344, 0x999999, 0x000000);
+    BeUI.drawText("ESC   : QUIT", 420, 368, 0x999999, 0x000000);
+}
+
+func draw(g, theta) {
+    project(g, theta);
+    BeUI.fill(100, 0, 300, 400, 0x000000);
+    drawWell(g);
+    for (row in 0..20) {
+        for (col in 0..10) {
+            var type = g.grid[row * 10 + col];
+            if (type != 0) { drawCell(g, col, row, type - 1); }
+        }
+    }
+    if (g.over == 0) {
+        var cells = g.pieces[g.type][g.rot];
+        for (i in 0..4) {
+            drawPieceCell(g, g.col + cells[i * 2],
+                          g.row + cells[i * 2 + 1]);
+        }
+    }
+    if (g.panelDirty == 1) {
+        drawPanel(g);
+        g.panelDirty = 0;
+    }
+    BeUI.flush();
+}
+
+func main(args) {
+    var testMode = 0;
+    for (arg in args) {
+        if (arg == "test") { testMode = 1; }
+    }
+    if (BeUI.initWithHint(24) != 1) {
+        Console.print("Holoris: BeUI is unavailable.");
+        return 1;
+    }
+    var g = {};
+    g.pieces = makePieces();
+    g.grid = Array.make(200);
+    for (i in 0..200) { g.grid[i] = 0; }
+    g.px = Array.make(22);
+    g.sc = Array.make(22);
+    for (i in 0..22) {
+        g.px[i] = 0.0;
+        g.sc[i] = 0.0;
+    }
+    g.testMode = testMode;
+    g.seed = 7;
+    if (testMode == 0) { g.seed = BeUI.getMilliseconds() % 65536 + 1; }
+    g.score = 0;
+    g.lines = 0;
+    g.level = 1;
+    g.gravity = 800;
+    g.locks = 0;
+    g.over = 0;
+    g.dirty = 1;
+    g.panelDirty = 1;
+    g.hdir = 0;
+    g.hnext = 0;
+    g.soft = 0;
+    g.pcw = 0;
+    g.pccw = 0;
+    g.pspace = 0;
+    g.camStep = 0 - 1;
+    g.keyZ = String.charCodeAt("z", 0);
+    g.keyX = String.charCodeAt("x", 0);
+    BeUI.fill(0, 0, 640, 400, 0x000000);
+    g.next = rand7(g);
+    spawn(g, BeUI.getMilliseconds());
+    if (testMode == 1) {
+        FileUtil.writeText("HOLOTEST.TXT", "start " + g.type);
+    }
+    while (g.over == 0 && BeUI.poll() == 1) {
+        var now = BeUI.getMilliseconds();
+        handleInput(g, now);
+        if (g.over == 0) { stepGravity(g, now); }
+        var step = now / 100;
+        if (g.testMode == 1) { step = 0; }
+        if (step != g.camStep || g.dirty == 1) {
+            g.camStep = step;
+            var theta = 0.12;
+            if (g.testMode == 0) {
+                theta = 0.15 * Math.sin(Float.from(step) * 0.08);
+            }
+            draw(g, theta);
+            g.dirty = 0;
+        }
+        // BeUI.sleep also drains type-ahead so held keys never leak.
+        BeUI.sleep(8);
+    }
+    if (g.over == 1) {
+        BeUI.drawText("GAME OVER", 204, 188, 0xffffff, 0x000000);
+        BeUI.drawText("ENTER: EXIT", 196, 212, 0x999999, 0x000000);
+        BeUI.flush();
+        var waiting = 1;
+        while (waiting == 1 && BeUI.poll() == 1) {
+            if (BeUI.isKeyDown(Key.Enter) == 1 ||
+                BeUI.isKeyDown(Key.Escape) == 1) {
+                waiting = 0;
+            }
+            BeUI.sleep(50);
+        }
+    }
+    if (testMode == 1) {
+        FileUtil.writeText("HOLORES.TXT", "result " + g.locks + " " +
+                           g.score + " " + g.lines);
+    }
+    BeUI.close();
+    return 0;
+}

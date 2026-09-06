@@ -1,0 +1,11 @@
+func main() {
+    var cfg = { scale: { a: 3, b: 5 }, off: { u: 7, v: 11 } };
+    var acc = 0;
+    for (i in 0 .. 2000000) {
+        acc = acc + (cfg.scale.a * i + cfg.off.u)
+                  + (cfg.scale.a * i + cfg.off.u)
+                  + (cfg.scale.b + cfg.off.v)
+                  + (cfg.scale.b + cfg.off.v);
+    }
+    print(acc);
+}

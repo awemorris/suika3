@@ -19,19 +19,19 @@ jobs:
 
       - name: Build for x86
         run: |
-          cmake --preset windows-vs2022-x86
-          cmake --build --preset windows-vs2022-x86 --config Release --parallel
+          cmake --preset windows-vs2026-x86
+          cmake --build --preset windows-vs2026-x86 --config Release --parallel
 
       - name: Build for x64
         run: |
-          cmake --preset windows-vs2022-x64
-          cmake --build --preset windows-vs2022-x64 --config Release --parallel
-          cp out/build/windows-vs2022-x64/Release/noct.exe noct-win64.exe
+          cmake --preset windows-vs2026-x64
+          cmake --build --preset windows-vs2026-x64 --config Release --parallel
+          cp out/build/windows-vs2026-x64/Release/noct.exe noct-win64.exe
 
       - name: Build for arm64
         run: |
-          cmake --preset windows-vs2022-arm64
-          cmake --build --preset windows-vs2022-arm64 --config Release --parallel
+          cmake --preset windows-vs2026-arm64
+          cmake --build --preset windows-vs2026-arm64 --config Release --parallel
 
       - name: Build nuget
         run: |
@@ -45,12 +45,12 @@ jobs:
           mkdir build/native/lib/arm64
           cp include/noct/noct.h build/native/include/noct/
           cp include/noct/c89compat.h build/native/include/noct/
-          cp out/build/windows-vs2022-x86/Release/noct.lib  build/native/lib/x86/
-          cp out/build/windows-vs2022-x86/Release/noctapi.lib  build/native/lib/x86/
-          cp out/build/windows-vs2022-x64/Release/noct.lib  build/native/lib/x64/
-          cp out/build/windows-vs2022-x64/Release/noctapi.lib  build/native/lib/x64/
-          cp out/build/windows-vs2022-arm64/Release/noct.lib build/native/lib/arm64/
-          cp out/build/windows-vs2022-arm64/Release/noctapi.lib build/native/lib/arm64/
+          cp out/build/windows-vs2026-x86/Release/noct.lib build/native/lib/x86/
+          cp out/build/windows-vs2026-x86/Release/noctapi.lib build/native/lib/x86/
+          cp out/build/windows-vs2026-x64/Release/noct.lib build/native/lib/x64/
+          cp out/build/windows-vs2026-x64/Release/noctapi.lib build/native/lib/x64/
+          cp out/build/windows-vs2026-arm64/Release/noct.lib build/native/lib/arm64/
+          cp out/build/windows-vs2026-arm64/Release/noctapi.lib build/native/lib/arm64/
           cp resources/windows/Noct.nuspec ./
           nuget pack Noct.nuspec
 
@@ -60,7 +60,7 @@ jobs:
           name: windows
           path: |
             noct-win64.exe
-            Noct.1.0.0.nupkg
+            Noct.2.0.0.nupkg
           if-no-files-found: error
           retention-days: 7
 
@@ -126,7 +126,7 @@ jobs:
       - name: Download mingw-w64-11.0
         run: |
           echo "Downloaing mingw-w64-11.0."
-          wget -q https://noctvm.io/ci/mingw-w64-11.0.tar.bz2
+          wget -q https://github.com/awemorris/suika3/releases/download/CI-BASE/mingw-w64-11.0.tar.bz2
           tar xJf mingw-w64-11.0.tar.bz2
           echo "$PWD/mingw-w64-11.0/bin" >> $GITHUB_PATH
 
@@ -155,17 +155,21 @@ jobs:
 
       - name: Set up dependencies
         run: |
-          dnf -y install gcc make cmake
+          dnf -y install epel-release
+          dnf config-manager --set-enabled powertools
+          dnf -y install \
+            gcc \
+            make \
+            cmake \
+            python3 \
+            pkgconf-pkg-config \
+            SDL2-devel \
+            libglvnd-devel
 
       - name: Build static
         run: |
-          cmake --preset linux -G "Unix Makefiles"
-          cmake --build --preset linux --parallel
-
-      - name: Build shared
-        run: |
-          cmake --preset linux-debian
-          cmake --build --preset linux-debian --parallel
+          cmake --preset static
+          cmake --build --preset static --parallel
 
       - name: Build tar.gz
         run: |
@@ -177,12 +181,10 @@ jobs:
           mkdir -p out/share/man/man1
           cp include/noct/noct.h out/include/noct/
           cp include/noct/c89compat.h out/include/noct/
-          cp build-linux/libnoct.a out/lib/x86_64-linux-gnu/
-          cp build-linux/libnoctapi.a out/lib/x86_64-linux-gnu/
-          cp -d build-linux-debian/libnoct.so* out/lib/x86_64-linux-gnu/
-          cp -d build-linux-debian/libnoctapi.so out/lib/x86_64-linux-gnu/
-          cp build-linux/noct.pc out/lib/x86_64-linux-gnu/pkgconfig/
-          cp build-linux/noctapi.pc out/lib/x86_64-linux-gnu/pkgconfig/
+          cp build-static/libnoct.a out/lib/x86_64-linux-gnu/
+          cp build-static/libnoctapi.a out/lib/x86_64-linux-gnu/
+          cp build-static/noct.pc out/lib/x86_64-linux-gnu/pkgconfig/
+          cp build-static/noctapi.pc out/lib/x86_64-linux-gnu/pkgconfig/
           cp cmake/modules/FindNoct.cmake out/share/cmake/Modules/
           cp resources/man/noct.1.man out/share/man/man1/
           cd out
@@ -339,7 +341,7 @@ jobs:
       - name: Download OpenHarmony SDK
         run: |
           echo "Downloaing openharmony-native.tar.gz"
-          wget -q https://noctvm.io/ci/openharmony-native.tar.gz
+          wget -q https://github.com/awemorris/suika3/releases/download/CI-BASE/openharmony-native.tar.gz
           tar xzf openharmony-native.tar.gz
 
       - name: Build for OpenHarmony
@@ -499,7 +501,7 @@ jobs:
       - name: Configure OpenWatcom
         if: steps.cache-watcom.outputs.cache-hit != 'true'
         run: |
-          wget https://noctvm.io/ci/openwatcom-1.9.tar.gz
+          wget -q https://github.com/awemorris/suika3/releases/download/CI-BASE/openwatcom-1.9.tar.gz
           tar xzf openwatcom-1.9.tar.gz
 
       - name: Build
@@ -515,12 +517,17 @@ jobs:
           cmake --preset msdos
           cmake --build --preset msdos
           mv build-msdos/noct.exe noct-dos.exe
+          cmake --preset pc98
+          cmake --build --preset pc98
+          mv build-pc98/noct.exe noct-pc98.exe
 
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
           name: pc98
-          path: noct-dos.exe
+          path: |
+            noct-dos.exe
+            noct-pc98.exe
 
   release:
     name: Create GitHub Release
@@ -573,9 +580,40 @@ jobs:
         with:
           tag_name: nightly-${{ github.run_number }}
           name: Nightly Build ${{ github.run_number }}
+          prerelease: true
+
+          body: |
+            This is an automated nightly build. Not an official release.
+            
+            🌙 Noct Programming Language
+            ============================            
+            
+            Noct is a tiny yet mighty programming language for sandboxed scripting.
+            
+            - The runtime is a hardened by sandboxing for game and application-embedded scripting.
+            - It supports the JIT compilation for many architectures including x86, x86_64, ARMv5-7, Arm64, RISC-V 32/64, MIPS 32/64, and PowerPC 32/64.
+            - It even supports automatic GPU acceleration for Direct3D 12, OpenGL ES 3.0, and Metal GPUs.
+            
+            The AOT compiler translates a Noct program to an ANSI C or an Emacs Lisp source code for JIT-restricted platforms such as iOS.
+            
+            | OS          | File                           | Type             | Description                                  |
+            |-------------|--------------------------------|------------------|----------------------------------------------|
+            | Windows     | noct-win64.exe                 | Executable       | Windows 7+ x64                               |
+            | Windows     | noct-win32.exe                 | Executable       | Windows XP+ x86                              |
+            | Windows     | Noct.2.0.0.nupkg               | NuGet Package    | Visual Studio 2022+                          |
+            | Windows     | noct-mingw-w64.tar.gz          | Tarball          | MinGW-w64 (extract to /)                     |
+            | macOS/iOS   | Noct.xcframework.zip           | Xcode Framework  | macOS and iOS, Xcode                         |
+            | macOS       | noct-macos-universal.tar.gz    | Tarball          | macOS (extract to /usr/local)                |
+            | Linux       | noct-linux-x86_64.tar.gz       | Tarball          | Linux (extract to /usr/local)                |
+            | Android     | Noct.aar                       | Android AAR      | Android NDK                                  |
+            | OpenHarmony | noct-openharmony.tar.gz        | Tarball          | OpenHarmony (HarmonyOS NEXT)                 |
+            | Wasm        | noct-wasm.tar.gz               | Emscripten       | Wasm                                         |
+            | DOS         | noct-dos.exe                   | Executable       | DOS4GW: PC/AT                                |
+            | PC-9800     | noct-pc98.exe                  | Executable       | DOS4GW: PC-9800                              |
+
           files: |
             windows/noct-win64.exe
-            windows/Noct.1.0.0.nupkg
+            windows/Noct.2.0.0.nupkg
             mingw/noct-mingw-w64.tar.gz
             mingw/noct-win32.exe
             macos/Noct.xcframework.zip
@@ -585,30 +623,4 @@ jobs:
             wasm/noct-wasm.tar.gz
             unity/noct-unity.tar.gz
             pc98/noct-dos.exe
-          body: |
-            This is an automated nightly build. Not an official release.
-            
-            🌙 Noct Programming Language
-            ============================            
-            
-            Noct is a tiny yet mighty programming language for sandboxed scripting.
-            
-            The runtime is a hardened by sandboxing for game and application-embedded scripting,
-            and it includes the JIT compiler for many architectures including
-            x86, x86_64, ARMv5-7, Arm64, RISC-V 32/64, MIPS 32/64, and PowerPC 32/64.
-            
-            The AOT compiler translates a Noct program to an ANSI C or an Emacs Lisp source code for JIT-restricted platforms such as iOS.
-            
-            | OS          | File                           | Type             | Description                                  |
-            |-------------|--------------------------------|------------------|----------------------------------------------|
-            | Windows     | noct-win64.exe                 | Executable       | Windows 7+ x64                               |
-            | Windows     | noct-win32.exe                 | Executable       | Windows XP+ x86                              |
-            | Windows     | Noct.1.0.0.nupkg               | NuGet Package    | Visual Studio 2022+                          |
-            | Windows     | noct-mingw-w64.tar.gz          | Tarball          | MinGW-w64 (extract to /)                     |
-            | macOS/iOS   | Noct.xcframework.zip           | Xcode Framework  | macOS and iOS, Xcode                         |
-            | macOS       | noct-macos-universal.tar.gz    | Tarball          | macOS (extract to /usr/local)                |
-            | Linux       | noct-linux-x86_64.tar.gz       | Tarball          | Linux (extract to /usr/local)                |
-            | Android     | Noct.aar                       | Android AAR      | Android NDK                                  |
-            | OpenHarmony | noct-openharmony.tar.gz        | Tarball          | OpenHarmony (HarmonyOS NEXT)                 |
-            | Wasm        | noct-wasm.tar.gz               | Emscripten       | Wasm                                         |
-            | DOS         | noct-dos.exe                   | Executable       | DOS4GW: PC-9801, PC/AT, OS/2, Windows 3.1-XP |
+            pc98/noct-pc98.exe

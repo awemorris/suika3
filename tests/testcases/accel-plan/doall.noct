@@ -1,0 +1,22 @@
+__accel func transform(
+    source: rpackedint32,
+    destination: rpackedint32,
+    in_place: rpackeduint32,
+    float_source: rpackedfloat,
+    float_destination: rpackedfloat,
+    n: int,
+    scale: float): void {
+    for (i in 0..n) {
+        var next: int = source[i + 1] + 1;
+        destination[i] = next < 0;
+    }
+    for (j in 0..n) {
+        float_destination[j] = float_source[j] * scale;
+    }
+    for (k in 0..n) {
+        in_place[k] = in_place[k] + 1;
+    }
+}
+
+func main() {
+}

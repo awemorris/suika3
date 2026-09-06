@@ -1,0 +1,11 @@
+__accel func transform(
+    source: rpackedfloat,
+    destination: rpackedfloat,
+    n: int): void {
+    for (i in 0..n) {
+        destination[i] = -source[i];
+    }
+}
+
+func main() {
+}

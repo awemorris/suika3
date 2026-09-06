@@ -1,0 +1,43 @@
+// RGBA32 alpha blend, the design-06 flagship shape: one uint32
+// element per pixel, per-pixel source alpha, dst = blend(src, dst).
+//
+// NOTE (2026-08-10): with only design 07 implemented this loop gains
+// almost nothing at level 2 -- it reads TWO packeds, and ABCE still
+// versions single-packed loops only (design 06 Part A lifts that),
+// so there is no typed-int region and the loads stay generic
+// LOADARRAY.  This benchmark exists to track that gap: 06 Part A +
+// SIMD should move it dramatically.
+func blend(src, dst, n) {
+    for (p in 0..n) {
+        var s = src[p];
+        var d = dst[p];
+        var a = (s >> 24) & 255;
+        var na = 255 - a;
+        var sr = (s >> 16) & 255;
+        var sg = (s >> 8) & 255;
+        var sb = s & 255;
+        var dr = (d >> 16) & 255;
+        var dg = (d >> 8) & 255;
+        var db = d & 255;
+        var r = (sr * a + dr * na) / 255;
+        var g = (sg * a + dg * na) / 255;
+        var b = (sb * a + db * na) / 255;
+        dst[p] = (a << 24) | (r << 16) | (g << 8) | b;
+    }
+}
+
+func main() {
+    var n = 262144;
+    var src = Packed.uint32(n);
+    var dst = Packed.uint32(n);
+    for (i in 0..n) {
+        src[i] = ((i * 7919) & 255) << 24 | ((i * 104729) & 16777215);
+        dst[i] = (i * 65537) & 16777215;
+    }
+    for (frame in 0..8) {
+        blend(src, dst, n);
+    }
+    print(dst[0]);
+    print(dst[1000]);
+    print(dst[262143]);
+}

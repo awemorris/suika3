@@ -1,0 +1,5 @@
+graph opset=12 tensors=2 nodes=1 input=t0 output=t1
+tensor t0 storage=0 role=input dtype=float32 name="x" safe=x_t0 shape=[1,1,4,4] stride=[16,16,4,1] offset=0 layout=NCHW producer=-1 consumers=[0] use=0:0
+tensor t1 storage=1 role=output dtype=float32 name="y" safe=y_t1 shape=[1,1,2,2] stride=[4,4,2,1] offset=0 layout=NCHW producer=0 consumers=[] use=1:1
+node n0 op=ai.onnx::MaxPool@12 imported=12 family=max-pool2d name="pool" inputs=[0] outputs=[1] attrs=[auto_pad:string="NOTSET",ceil_mode:int=0,dilations:ints=[1,1],kernel_shape:ints=[2,2],pads:ints=[0,0,0,0],strides:ints=[2,2]]
+

@@ -1,0 +1,7 @@
+require onnx_ir;
+
+func main(args) {
+    var model = onnxReadFile(args[0]);
+    print(onnxStructuralSummary(model));
+}
+

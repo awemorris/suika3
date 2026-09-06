@@ -1,0 +1,17 @@
+__accel func reduce(
+    source: rpackedint32,
+    destination: rpackedint32,
+    n: int): void {
+    var temporary: packedint32 = Packed.int32(n);
+    var sum: int = 0;
+    for (i in 0..n) {
+        sum += source[i];
+    }
+    for (j in 0..n) {
+        temporary[j] = source[j] + sum;
+    }
+    destination[0] = sum;
+}
+
+func main() {
+}

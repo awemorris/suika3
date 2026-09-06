@@ -11,13 +11,16 @@
 
 #include "cli-main.h"
 
+#include <errno.h>
+#include <limits.h>
+
 #if defined(NOCT_TARGET_WINDOWS)
 #include <windows.h>
 #elif defined(NOCT_TARGET_POSIX) || defined(NOCT_TARGET_MACOS)
 #include <sys/stat.h>
 #include <dirent.h>
 #include <unistd.h>
-#elif defined(NOCT_TARGET_DOS4G)
+#elif defined(NOCT_TARGET_DOS)
 #include <dos.h>
 #include <sys/stat.h>
 #endif
@@ -36,8 +39,14 @@ int main(int argc, char *argv[])
 	noct_init_locale();
 #endif
 
-	if (argc <= 1)
+	if (argc <= 1) {
+#if defined(NOCT_USE_REPL)
 		return command_repl();
+#else
+		show_usage();
+		return 1;
+#endif
+	}
 
 	if (strcmp(argv[1], "--version") == 0) {
 		wide_printf("Noct " NOCT_VERSION "\n");
@@ -49,35 +58,28 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+#if defined(NOCT_USE_BCBACKEND)
 	if (strcmp(argv[1], "--compile") == 0)
 		return command_compile(argc, argv);
-	else if (strcmp(argv[1], "--ansic") == 0)
-		return command_transpile_c(argc, argv);
-	else if (strcmp(argv[1], "--elisp") == 0)
-		return command_transpile_elisp(argc, argv);
-	else
-		return command_run(argc, argv);
-}
-
-/*
- * Windows Main
- */
-#ifdef _WIN32
-int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLine, int nCmdShow)
-{
-    /* Dispatch to main(). */
-    int argc, i;
-    wchar_t **wargv = CommandLineToArgvW(GetCommandLineW(), &argc);
-    char **argv = malloc(sizeof(char *) * argc);
-    for (i = 0; i < argc; i++)
-    {
-        char tmp[1024];
-	WideCharToMultiByte(CP_ACP, 0, wargv[i], -1, tmp, sizeof(tmp) - 1, NULL, NULL);
-        argv[i] = strdup(tmp);
-    }
-    return main(argc, argv);
-}
 #endif
+
+#if defined(NOCT_USE_CBACKEND)
+	if (strcmp(argv[1], "--ansic") == 0)
+		return command_transpile_c(argc, argv);
+#endif
+
+#if defined(NOCT_USE_ELBACKEND)
+	if (strcmp(argv[1], "--elisp") == 0)
+		return command_transpile_elisp(argc, argv);
+#endif
+
+#if defined(NOCT_USE_SCMBACKEND)
+	if (strcmp(argv[1], "--scheme") == 0)
+		return command_transpile_scheme(argc, argv);
+#endif
+
+	return command_run(argc, argv);
+}
 
 /*
  * Show the usage message.
@@ -85,22 +87,67 @@ int WINAPI wWinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPWSTR lpCmdLi
 void show_usage(void)
 {
 	wide_printf(N_TR("Noct Programming Language\n"));
+	wide_printf(N_TR("Version %s\n"), NOCT_VERSION);
+	wide_printf("\n");
 	wide_printf(N_TR("Usage\n"));
-	wide_printf(N_TR("  noct <vm-options> <files>          ... run a program\n"));
-	wide_printf(N_TR("  noct --compile <in-files>          ... convert to bytecode files\n"));
-	wide_printf(N_TR("  noct --ansic <out-file> <in-files> ... convert to a C source file\n"));
-	wide_printf(N_TR("  noct --elisp <out-file> <in-files> ... convert to an Emacs Lisp source file\n"));
+	wide_printf(N_TR("  noct <vm-options> <files>           ... run a program\n"));
+#if defined(NOCT_USE_BCBACKEND)
+	wide_printf(N_TR("  noct --compile <in-files>           ... convert to bytecode files\n"));
+#endif
+#if defined(NOCT_USE_CBACKEND)
+	wide_printf(N_TR("  noct --ansic <out-file> <in-files>  ... convert to a C source file\n"));
+#endif
+#if defined(NOCT_USE_ELBACKEND)
+	wide_printf(N_TR("  noct --elisp <out-file> <in-files>  ... convert to an Emacs Lisp source file\n"));
+#endif
+#if defined(NOCT_USE_SCMBACKEND)
+	wide_printf(N_TR("  noct --scheme <out-file> <in-files> ... convert to an Scheme source file\n"));
+#endif
 	wide_printf("\n");
 	wide_printf(N_TR("vm-options:\n"));
-	wide_printf(N_TR("  --disable-jit        ... disable JIT\n"));
-	wide_printf(N_TR("  --force-jit          ... equivalent to --jit-threshold=0\n"));
-	wide_printf(N_TR("  --jit-threshold=N    ... call-count threshold for compilation\n"));
-	wide_printf(N_TR("  --optimize-level=N   ... optimize level (0/1)\n"));
+	wide_printf(N_TR("  -j, -j0              ... eager JIT (default), or interpreter only\n"));
+	wide_printf(N_TR("  -O, -O0..-O3, -O9    ... optimization preset\n"));
+	wide_printf(N_TR("  --simd-info          ... report successfully vectorized loops\n"));
+	wide_printf(N_TR("  --path=DIR1:DIR2     ... append source-module search paths\n"));
+	wide_printf(N_TR("  --gpu[=SELECTOR]     ... use GPU acceleration for source execution\n"));
+	wide_printf(N_TR("  --gpu-list           ... list suitable GPU device selectors\n"));
 	wide_printf(N_TR("  --gc-nursery-size=N  ... first GC space size in bytes\n"));
 	wide_printf(N_TR("  --gc-graduate-size=N ... second GC space size in bytes\n"));
 	wide_printf(N_TR("  --gc-tenure-size=N   ... final GC space size in bytes\n"));
 	wide_printf(N_TR("  --gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n"));
 	wide_printf("\n");
+}
+
+/*
+ * Parse an optimization-level option.
+ */
+enum cli_optimize_level_result
+parse_optimize_level_option(
+	const char *arg,
+	int *level,
+	bool *lineinfo)
+{
+	assert(arg != NULL);
+	assert(level != NULL);
+	assert(lineinfo != NULL);
+
+	if (arg[0] == '-' && arg[1] == 'O') {
+		if (arg[2] == '\0') {
+			*level = 1;
+			*lineinfo = true;
+			return CLI_OPTIMIZE_LEVEL_VALID;
+		}
+		if (((arg[2] >= '0' && arg[2] <= '3') || arg[2] == '9') &&
+		    arg[3] == '\0') {
+			*level = arg[2] - '0';
+			*lineinfo = arg[2] == '0';
+			return CLI_OPTIMIZE_LEVEL_VALID;
+		}
+		return CLI_OPTIMIZE_LEVEL_INVALID;
+	}
+	if (strncmp(arg, "--optimize-level", 16) == 0)
+		return CLI_OPTIMIZE_LEVEL_INVALID;
+	return CLI_OPTIMIZE_LEVEL_NOT_MATCHED;
 }
 
 /*
@@ -287,7 +334,7 @@ bool add_file(const char *fname, bool (*add_file_hook)(const char *))
 	}
 	else
 	{
-		wide_printf(N_TR("Adding file %s\n"), fname);
+		wide_printf(N_TR("Adding file %s.\n"), fname);
 		if (!add_file_hook(fname))
 			return false;
 	}
@@ -297,7 +344,7 @@ bool add_file(const char *fname, bool (*add_file_hook)(const char *))
 
 #endif
 
-#if defined(NOCT_TARGET_DOS4G)
+#if defined(NOCT_TARGET_DOS)
 
 #ifndef _A_SUBDIR
 #define _A_SUBDIR 0x10

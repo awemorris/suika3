@@ -1,0 +1,31 @@
+// Benchmark: vectorizable RGBA32 alpha blend over 1M pixels.
+// (Creation facts must be visible in the same function as the loop.)
+func main() {
+    var n = 1048576;
+    var src = Packed.uint32(n);
+    var dst = Packed.uint32(n);
+    for (i in 0..n) {
+        src[i] = ((i * 7919) & 255) << 24 | ((i * 104729) & 16777215);
+        dst[i] = (i * 65537) & 16777215;
+    }
+    for (frame in 0..16) {
+    for (p in 0..n) {
+        var s = src[p];
+        var d = dst[p];
+        var a = (s >> 24) & 255;
+        var na = 255 - a;
+        dst[p] = ((s >> 24) << 24)
+               | (((((s >> 16) & 255) * a + ((d >> 16) & 255) * na) >> 8) << 16)
+               | (((((s >> 8) & 255) * a + ((d >> 8) & 255) * na) >> 8) << 8)
+               | (((s & 255) * a + (d & 255) * na) >> 8);
+    }
+    }
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + (dst[i] & 65535) + ((dst[i] >> 16) & 65535);
+    }
+    print(sum);
+    print(dst[0]);
+    print(dst[50]);
+    print(dst[102]);
+}

@@ -10,17 +10,23 @@
  */
 
 #include <noct/noct.h>
+#include "runtime.h"
 #include "ast.h"
 #include "hir.h"
 #include "lir.h"
-#include "runtime.h"
-#include "intrinsics.h"
-#include "interpreter.h"
-#include "jit.h"
 #include "gc.h"
+#include "objectmodel.h"
+
+#if defined(NOCT_USE_JIT)
+#include "jit.h"
+#endif
 
 #if defined(NOCT_USE_MULTITHREAD)
 #include "atomic.h"
+#endif
+
+#if defined(NOCT_USE_OPTIMIZER)
+#include "fast.h"
 #endif
 
 #include <stdio.h>
@@ -30,28 +36,28 @@
 #include <time.h>
 #include <assert.h>
 
-/* False assertion */
+/* False assertions. */
 #define NOT_IMPLEMENTED		0
 #define NEVER_COME_HERE		0
 #define PINNED_VAR_NOT_FOUND	0
 
-/* Dictionary key. */
-#define IS_DICT_KEY_EMPTY(k)	(k.type == NOCT_VALUE_INT)
-#define IS_DICT_KEY_REMOVED(k)	(k.type == NOCT_VALUE_FLOAT)
-#define REMOVE_DICT_KEY(k)	do { k.type = NOCT_VALUE_FLOAT; } while (0)
-
 /* Forward declarations. */
 static void rt_free_func(struct rt_env *rt, struct rt_func *func);
-static bool rt_register_lir(struct rt_env *rt, struct lir_func *lir);
-static bool rt_register_bytecode_function(struct rt_env *rt, uint8_t *data, size_t size, uint32_t *pos, char *file_name);
-static const char *rt_read_bytecode_line(uint8_t *data, size_t size, uint32_t *pos);
+static bool rt_validate_lir(const struct lir_func *function);
+static void rt_set_error_file(struct rt_env *env, const char *file_name);
+static bool rt_register_lir(struct rt_env *env, const struct lir_func *lir);
+static void rt_cleanup_lir_array(uint32_t function_count, struct lir_func *function[]);
 static bool rt_enter_frame(struct rt_env *env, struct rt_func *func);
 static void rt_leave_frame(struct rt_env *env);
-static bool rt_expand_array(struct rt_env *env, struct rt_array *old_arr, struct rt_array **new_arr_pp, size_t size);
-static bool rt_expand_dict(struct rt_env *env, struct rt_dict *old_dict, struct rt_dict **new_dict_pp);
 static bool rt_init_global(struct rt_env *env);
 static void rt_cleanup_global(struct rt_env *env);
 static bool rt_expand_global(struct rt_env *env);
+#if defined(NOCT_USE_JIT)
+static void rt_report_jit_result(struct rt_func *func, bool success, const char *reason);
+static void rt_report_jit_lifecycle(const char *operation, bool success);
+static void rt_invalidate_jit_entries(struct rt_vm *vm);
+static bool rt_commit_jit(struct rt_env *env);
+#endif
 
 /*
  * Initialization
@@ -66,6 +72,9 @@ rt_create_vm(
 	struct rt_env **default_env,
 	struct rt_config *config)
 {
+	*vm = NULL;
+	*default_env = NULL;
+
 	/* Allocate a struct rt_vm. */
 	*vm = noct_malloc(sizeof(struct rt_vm));
 	if (*vm == NULL) {
@@ -90,7 +99,6 @@ rt_create_vm(
 	memset(*default_env, 0, sizeof(struct rt_env));
 	(*default_env)->vm = *vm;
 	(*vm)->env_list = *default_env;
-
 	/* Enter the initial stack frame. */
 	(*default_env)->cur_frame_index = 0;
 	(*default_env)->frame = &(*default_env)->frame_alloc[0];
@@ -98,10 +106,8 @@ rt_create_vm(
 	(*default_env)->frame->tmpvar_size = RT_TMPVAR_MAX;
 	memset((*default_env)->frame->tmpvar, 0, sizeof(struct rt_value) * RT_TMPVAR_MAX);
 
-#if defined(NOCT_USE_MULTITHREAD)
 	/* Initialize for GC. */
-	rt_gc_init_env(*default_env);
-#endif
+	om_init_env(*default_env);
 
 	/* Initialize the global variables. */
 	if (!rt_init_global(*default_env)) {
@@ -126,7 +132,6 @@ rt_create_vm(
 		noct_free(*vm);
 		return false;
 	}
-
 	return true;
 }
 
@@ -137,23 +142,22 @@ bool
 rt_destroy_vm(
 	struct rt_vm *vm)
 {
-	struct rt_env *env, *next_env;
-	struct rt_func *func, *next_func;
+	struct rt_env *env;
+	struct rt_env *next_env;
+	struct rt_func *func;
+	struct rt_func *next_func;
+	bool jit_cleanup_succeeded;
+
+	jit_cleanup_succeeded = true;
 
 	/* Free the JIT region. */
-	if (vm->config.jit_enable)
-		jit_free(vm->env_list);
+#if defined(NOCT_USE_JIT)
+	if (vm->config.jit_enable && !jit_free(vm->env_list))
+		jit_cleanup_succeeded = false;
+#endif
 
 	/* Free global variables. */
 	rt_cleanup_global(vm->env_list);
-
-	/* Free thread environments. */
-	env = vm->env_list;
-	while (env != NULL) {
-		next_env = env->next;
-		noct_free(env);
-		env = next_env;
-	}
 
 	/* Cleanup the garbage collector. */
 	rt_gc_cleanup(vm);
@@ -166,10 +170,22 @@ rt_destroy_vm(
 		func = next_func;
 	}
 
-	/* Free rt_env. */
+	/* Free thread environments. */
+	env = vm->env_list;
+	while (env != NULL) {
+		next_env = env->next;
+		noct_free(env);
+		env = next_env;
+	}
+
+#if defined(NOCT_USE_JIT)
+	if (vm->config.jit_enable)
+		rt_report_jit_lifecycle("destroy", jit_cleanup_succeeded);
+#endif
+
 	noct_free(vm);
 
-	return true;
+	return jit_cleanup_succeeded;
 }
 
 /* Free a function. */
@@ -184,6 +200,8 @@ rt_free_func(
 
 	noct_free(func->name);
 	func->name = NULL;
+
+	/* Release every possibly constructed parameter name. */
 	for (i = 0; i < NOCT_ARG_MAX; i++) {
 		if (func->param_name[i] != NULL) {
 			noct_free(func->param_name[i]);
@@ -192,47 +210,122 @@ rt_free_func(
 	}
 	noct_free(func->file_name);
 	noct_free(func->bytecode);
+#if defined(NOCT_USE_OPTIMIZER)
+	fast_info_free(func->fast_info);
+#endif
 
+#if defined(NOCT_USE_JIT)
 	if (func->jit_code != NULL)
 		func->jit_code = NULL;
+#endif
+
+	noct_free(func);
 }
 
-#if defined(NOCT_USE_MULTITHREAD)
 /*
- * Create an environment for the current thread.
+ * Create an environment for a secondary thread.
  */
+#if defined(NOCT_USE_MULTITHREAD)
 bool
 rt_create_thread_env(
 	struct rt_env *prev_env,
 	struct rt_env **new_env)
 {
+	struct rt_vm *vm;
 	struct rt_env *env;
 
-	/* Allocate a struct rt_env. */
-	env = noct_malloc(sizeof(struct rt_env));
+	vm = prev_env->vm;
+
+	/* Reuse a parked environment when possible. */
+	atomic_spin_lock(&vm->env_free_lock);
+	env = vm->env_free_list;
+	if (env != NULL)
+		vm->env_free_list = env->free_next;
+	atomic_spin_unlock(&vm->env_free_lock);
+
 	if (env == NULL) {
-		rt_out_of_memory(prev_env);
-		return false;
+		env = noct_calloc(1, sizeof(struct rt_env));
+		if (env == NULL) {
+			rt_out_of_memory(prev_env);
+			return false;
+		}
+		env->vm = vm;
+		env->cur_frame_index = 0;
+		env->frame = &env->frame_alloc[0];
+		env->frame->tmpvar = &env->frame->tmpvar_alloc[0];
+		env->frame->tmpvar_size = RT_TMPVAR_MAX;
+
+		atomic_spin_lock(&vm->env_free_lock);
+		env->next = vm->env_list;
+		vm->env_list = env;
+		atomic_spin_unlock(&vm->env_free_lock);
+	} else {
+		env->file_name[0] = '\0';
+		env->error_message[0] = '\0';
+		env->free_next = NULL;
 	}
-	memset(env, 0, sizeof(struct rt_env));
-	env->vm = prev_env->vm;
 
-	/* Link. */
-	env->next = prev_env->vm->env_list;
-	prev_env->vm->env_list = env;
+	/* Succeeded. The env is parked until rt_attach_thread_env(). */
+	*new_env = env;
 
-	/* Enter the initial stack frame. */
+	return true;
+}
+#endif
+
+/* Adopt an environment in the current thread. */
+#if defined(NOCT_USE_MULTITHREAD)
+void
+rt_attach_thread_env(
+	struct rt_env *env)
+{
+	om_init_env(env);
+}
+#endif
+
+/*
+ * Release an environment.
+ */
+#if defined(NOCT_USE_MULTITHREAD)
+void
+rt_release_thread_env(
+	struct rt_env *env)
+{
+	struct rt_vm *vm;
+
+	assert(env != NULL);
+
+	vm = env->vm;
+	atomic_spin_lock(&vm->env_free_lock);
+	env->free_next = vm->env_free_list;
+	vm->env_free_list = env;
+	atomic_spin_unlock(&vm->env_free_lock);
+}
+#endif
+
+/* Detach the current thread's environment for later reuse. */
+#if defined(NOCT_USE_MULTITHREAD)
+void
+rt_detach_thread_env(
+	struct rt_env *env)
+{
+	struct rt_vm *vm;
+
+	assert(env != NULL);
+
+	vm = env->vm;
 	env->cur_frame_index = 0;
 	env->frame = &env->frame_alloc[0];
 	env->frame->tmpvar = &env->frame->tmpvar_alloc[0];
 	env->frame->tmpvar_size = RT_TMPVAR_MAX;
+	env->frame->pinned_count = 0;
+	memset(env->frame->tmpvar_alloc, 0, sizeof(env->frame->tmpvar_alloc));
 
-	/* Initialize for GC. */
-	rt_gc_init_env(env);
+	om_enter_blocking(env);
 
-	/* Succeeded. */
-	*new_env = env;
-	return true;
+	atomic_spin_lock(&vm->env_free_lock);
+	env->free_next = vm->env_free_list;
+	vm->env_free_list = env;
+	atomic_spin_unlock(&vm->env_free_lock);
 }
 #endif
 
@@ -241,7 +334,11 @@ rt_create_thread_env(
  */
 
 /*
- * Register functions from a souce text.
+ * Register functions from one source text.
+ *
+ * This function deliberately does not resolve require declarations.  A host
+ * that owns a module system registers dependencies before registering this
+ * compilation unit.
  */
 bool
 rt_register_source(
@@ -249,141 +346,194 @@ rt_register_source(
 	const char *file_name,
 	const char *source_text)
 {
-	struct hir_block *hfunc;
-	struct lir_func *lfunc;
-	uint32_t i, func_count;
-	bool is_succeeded;
+	struct hir_block *hir_function;
+	struct lir_func *lir_function;
+	struct lir_func **function;
+	struct rt_value initializer_result;
+	const char *error_file;
+	const char *error_message;
+	uint32_t function_count;
+	uint32_t i;
+	int error_line;
 
-	is_succeeded = false;
-	do {
-		/* Do parse and build AST. */
-		if (!ast_build(file_name, source_text)) {
-			strncpy(env->file_name, ast_get_file_name(), sizeof(env->file_name) - 1);
-			env->line = ast_get_error_line();
-			rt_error(env, "%s", ast_get_error_message());
-			break;
-		}
+	/* Rejects an invalid source registration request. */
+	if (env == NULL ||
+	    file_name == NULL ||
+	    source_text == NULL)
+		return false;
 
-		/* Transform AST to HIR. */
-		if (!hir_build()) {
-			strncpy(env->file_name, hir_get_file_name(), sizeof(env->file_name) - 1);
-			env->line = hir_get_error_line();
-			rt_error(env, "%s", hir_get_error_message());
-			break;
-		}
+	/* Builds the source AST. */
+	if (!ast_build(file_name, source_text)) {
+		/* Captures the AST diagnostic before releasing its storage. */
+		error_file = ast_get_file_name();
+		error_message = ast_get_error_message();
+		error_line = ast_get_error_line();
 
-		/* For each function. */
-		func_count = hir_get_function_count();
-		for (i = 0; i < func_count; i++) {
-			/* Transform HIR to LIR (bytecode). */
-			hfunc = hir_get_function(i);
-			if (!lir_build(hfunc, &lfunc)) {
-				strncpy(env->file_name, lir_get_file_name(), sizeof(env->file_name) - 1);
-				env->line = lir_get_error_line();
-				rt_error(env, "%s", lir_get_error_message());
-				break;
-			}
+		/* Publishes the AST diagnostic to the runtime environment. */
+		rt_set_error_file(env, error_file);
+		env->line = error_line;
+		rt_error(env, N_TR("%s"), error_message);
 
-			/* Make a function object. */
-			if (!rt_register_lir(env, lfunc))
-				break;
+		/* Releases the failed AST construction. */
+		ast_cleanup();
+		return false;
+	}
 
-			/* Free a LIR. */
-			lir_cleanup(lfunc);
-		}
-		if (i != func_count)
-			break;
+	/* Builds the source HIR. */
+	if (!hir_build()) {
+		/* Captures the HIR diagnostic before releasing its storage. */
+		error_file = hir_get_file_name();
+		error_message = hir_get_error_message();
+		error_line = hir_get_error_line();
 
-		is_succeeded = true;
-	} while (0);
+		/* Publishes the HIR diagnostic to the runtime environment. */
+		rt_set_error_file(env, error_file);
+		env->line = error_line;
+		rt_error(env, N_TR("%s"), error_message);
 
-	/* Free intermediates. */
-	hir_cleanup();
+		/* Releases the failed HIR and its source AST. */
+		hir_cleanup();
+		ast_cleanup();
+		return false;
+	}
+
+	/* Releases the AST after HIR construction. */
 	ast_cleanup();
 
-	/* If failed. */
-	if (!is_succeeded)
-		return false;
-
-	/* Succeeded. */
-	return true;
-}
-
-/* Register a function from LIR. */
-static bool
-rt_register_lir(
-	struct rt_env *env,
-	struct lir_func *lir)
-{
-	struct rt_func *func;
-	struct rt_value global;
-	uint32_t i;
-
-	func = noct_malloc(sizeof(struct rt_func));
-	if (func == NULL) {
-		rt_out_of_memory(env);
-		return false;
-	}
-	memset(func, 0, sizeof(struct rt_func));
-
-	func->name = strdup(lir->func_name);
-	if (func->name == NULL) {
-		rt_out_of_memory(env);
-		return false;
-	}
-	func->param_count = lir->param_count;
-	for (i = 0; i < lir->param_count; i++) {
-		func->param_name[i] = strdup(lir->param_name[i]);
-		if (func->param_name[i] == NULL) {
+	/* Allocates the detached LIR function array. */
+	function_count = hir_get_function_count();
+	function = NULL;
+	if (function_count != 0) {
+		function = noct_calloc(
+			(size_t)function_count,
+			sizeof(*function));
+		if (function == NULL) {
 			rt_out_of_memory(env);
+			hir_cleanup();
 			return false;
 		}
 	}
-	func->bytecode_size = lir->bytecode_size;
-	if (func->bytecode_size != 0) {
-		func->bytecode = noct_malloc((size_t)lir->bytecode_size);
-		if (func->bytecode == NULL) {
-			rt_out_of_memory(env);
+
+	/* Configures LIR construction for this VM. */
+	lir_set_optimize_level(env->vm->config.optimize_level);
+	lir_set_lineinfo(env->vm->config.line_info);
+
+	/* Compiles the complete unit before publishing any function. */
+	for (i = 0; i < function_count; i++) {
+		hir_function = hir_get_function(i);
+
+		/* Optimizes the current HIR function. */
+		if (!hir_optimize_func(
+			hir_function,
+			env->vm->config.optimize_level,
+			env->vm->config.simd_info,
+#if defined(NOCT_USE_ACCEL)
+			(bool (*)(struct hir_block *, void *))
+				env->vm->accel_optimize_func,
+			env->vm->accel_optimize_userdata)) {
+#else
+			NULL,
+			NULL)) {
+#endif
+			/* Captures the optimizer diagnostic. */
+			error_file = hir_get_file_name();
+			error_message = hir_get_error_message();
+			error_line = hir_get_error_line();
+
+			/* Publishes the optimizer diagnostic. */
+			rt_set_error_file(env, error_file);
+			env->line = error_line;
+			rt_error(env, N_TR("%s"), error_message);
+
+			/* Releases the incomplete compilation unit. */
+			rt_cleanup_lir_array(function_count, function);
+			hir_cleanup();
 			return false;
 		}
-		memcpy(func->bytecode, lir->bytecode, (size_t)lir->bytecode_size);
+
+		/* Builds and detaches the current LIR function. */
+		lir_function = NULL;
+		if (!lir_build(hir_function, &lir_function)) {
+			/* Captures the LIR diagnostic. */
+			error_file = lir_get_file_name();
+			error_message = lir_get_error_message();
+			error_line = lir_get_error_line();
+
+			/* Publishes the LIR diagnostic. */
+			rt_set_error_file(env, error_file);
+			env->line = error_line;
+			rt_error(env, N_TR("%s"), error_message);
+
+			/* Releases the incomplete compilation unit. */
+			rt_cleanup_lir_array(function_count, function);
+			hir_cleanup();
+			return false;
+		}
+		function[i] = lir_function;
 	}
-	func->tmpvar_size = lir->tmpvar_size;
-	func->file_name = strdup(lir->file_name);
-	if (func->file_name == NULL) {
-		rt_out_of_memory(env);
-		return false;
-	}
 
-	/* Insert a global variable. */
-	global.type = NOCT_VALUE_FUNC;
-	global.val.func = func;
-	if (!rt_set_global(env, func->name, &global))
-		return false;
+	/* Releases HIR after every LIR function has been detached. */
+	hir_cleanup();
 
-	/* Do JIT compilation */
-	if (env->vm->config.jit_enable) {
-		if (env->vm->config.jit_threshold == 0) {
-			/* Write code. */
-			if (!jit_build(env, func)) {
-				/* -1 means JIT failed. */
-				func->call_count = -1;
-			}
-
-			/* Need to commit before call. */
-			env->vm->is_jit_dirty = true;
+	/* Validates every function before mutating the VM. */
+	for (i = 0; i < function_count; i++) {
+		if (!rt_validate_lir(function[i])) {
+			rt_error(env, N_TR("Invalid bytecode function descriptor."));
+			rt_cleanup_lir_array(function_count, function);
+			return false;
 		}
 	}
 
-	/* Link. */
-	func->next = env->vm->func_list;
-	env->vm->func_list = func;
+	/* Publishes every validated function in declaration order. */
+	for (i = 0; i < function_count; i++) {
+		if (!rt_register_lir(env, function[i])) {
+			rt_cleanup_lir_array(function_count, function);
+			return false;
+		}
+	}
 
+#if defined(NOCT_USE_JIT)
+	/* Commits all JIT code generated for this unit. */
+	if (!rt_commit_jit(env)) {
+		rt_cleanup_lir_array(function_count, function);
+		return false;
+	}
+#endif
+
+	/* Runs initializers after every function is visible. */
+	for (i = 0; i < function_count; i++) {
+		/* Skips ordinary functions. */
+		if (strncmp(function[i]->func_name, "$init.", 6) != 0)
+			continue;
+
+		/* Clears the initializer result slot. */
+		memset(&initializer_result, 0, sizeof(initializer_result));
+
+		/* Calls the current initializer. */
+		if (!rt_call_with_name(
+			env,
+			function[i]->func_name,
+			0,
+			NULL,
+			&initializer_result)) {
+			rt_cleanup_lir_array(function_count, function);
+			return false;
+		}
+	}
+
+	/* Releases all detached LIR functions. */
+	rt_cleanup_lir_array(function_count, function);
+
+	/* Reports a successful source registration. */
 	return true;
 }
 
 /*
- * Register functions from bytecode data.
+ * Register an inspected, file-independent array of LIR descriptors.
+ *
+ * Serialized containers are parsed by the owning host.  The data pointer
+ * here refers to a contiguous array of struct lir_func whose pointed-to
+ * storage remains valid for the duration of this call.
  */
 bool
 rt_register_bytecode(
@@ -391,208 +541,83 @@ rt_register_bytecode(
 	size_t size,
 	uint8_t *data)
 {
-	char *file_name;
-	const char *line;
-	uint32_t pos, func_count, i;
-	bool succeeded;
-
-	pos = 0;
-	file_name = NULL;
-	succeeded = false;
-	do {
-		/* Check "CScript Bytecode". */
-		line = rt_read_bytecode_line(data, size, &pos);
-		if (line == NULL || strcmp(line, "Noct Bytecode 1.0") != 0)
-			break;
-
-		/* Check "Source". */
-		line = rt_read_bytecode_line(data, size, &pos);
-		if (line == NULL || strcmp(line, "Source") != 0)
-			break;
-
-		/* Get a source file name. */
-		line = rt_read_bytecode_line(data, size, &pos);
-		if (line == NULL)
-			break;
-		file_name = strdup(line);
-		if (file_name == NULL)
-			break;
-
-		/* Check "Number Of Functions". */
-		line = rt_read_bytecode_line(data, size, &pos);
-		if (line == NULL || strcmp(line, "Number Of Functions") != 0)
-			break;
-
-		/* Get a number of functions. */
-		line = rt_read_bytecode_line(data, size, &pos);
-		if (line == NULL)
-			break;
-		func_count = (uint32_t)atoi(line);
-
-		/* Read functions. */
-		for (i = 0; i < func_count; i++) {
-			if (!rt_register_bytecode_function(env, data, size, &pos, file_name))
-				break;
-		}
-
-		succeeded = true;
-	} while (0);
-
-	if (file_name != NULL)
-		noct_free(file_name);
-
-	if (!succeeded) {
-		rt_error(env, N_TR("Failed to load bytecode."));
-		return false;
-	}
-
-	return true;
-}
-
-/* Register a function from bytecode file data. */
-static bool
-rt_register_bytecode_function(
-	struct rt_env *env,
-	uint8_t *data,
-	size_t size,
-	uint32_t *pos,
-	char *file_name)
-{
-	struct lir_func lfunc;
-	const char *line;
-	uint32_t i;
-	bool succeeded;
-
-	memset(&lfunc, 0, sizeof(lfunc));
-	lfunc.file_name = file_name;
-
-	succeeded = false;
-	do {
-		/* Check "Begin Function". */
-		line = rt_read_bytecode_line(data, size, pos);
-		if (line == NULL || strcmp(line, "Begin Function") != 0)
-			break;
-
-		/* Check "Name". */
-		line = rt_read_bytecode_line(data, size, pos);
-		if (line == NULL || strcmp(line, "Name") != 0)
-			break;
-
-		/* Get a function name. */
-		line = rt_read_bytecode_line(data, size, pos);
-		if (line == NULL)
-			break;
-		lfunc.func_name = strdup(line);
-		if (lfunc.func_name == NULL)
-			break;
-
-		/* Check "Parameters". */
-		line = rt_read_bytecode_line(data, size, pos);
-		if (line == NULL || strcmp(line, "Parameters") != 0)
-			break;
-
-		/* Get number of parameters. */
-		line = rt_read_bytecode_line(data, size, pos);
-		if (line == NULL)
-			break;
-		lfunc.param_count = (uint32_t)atoi(line);
-
-		/* Get parameters. */
-		for (i = 0; i < lfunc.param_count; i++) {
-			line = rt_read_bytecode_line(data, size, pos);
-			if (line == NULL)
-				break;
-			lfunc.param_name[i] = strdup(line);
-			if (lfunc.param_name[i] == NULL)
-				break;
-		}
-		if (i != lfunc.param_count)
-			break;
-
-		/* Check "Temporary Size". */
-		line = rt_read_bytecode_line(data, size, pos);
-		if (line == NULL || strcmp(line, "Temporary Size") != 0)
-			break;
-
-		/* Get a local size. */
-		line = rt_read_bytecode_line(data, size, pos);
-		if (line == NULL)
-			break;
-		lfunc.tmpvar_size = (uint32_t)atoi(line);
-
-		/* Check "Bytecode Size". */
-		line = rt_read_bytecode_line(data, size, pos);
-		if (line == NULL || strcmp(line, "Bytecode Size") != 0)
-			break;
-
-		/* Get a bytecode size. */
-		line = rt_read_bytecode_line(data, size, pos);
-		if (line == NULL)
-			break;
-		lfunc.bytecode_size = (uint32_t)atoi(line);
-
-		/* Load LIR. */
-		lfunc.bytecode = data + *pos;
-		if (!rt_register_lir(env, &lfunc))
-			break;
-
-		/* Check "End Function". */
-		(*pos) += lfunc.bytecode_size + 1;
-		line = rt_read_bytecode_line(data, size, pos);
-		if (line == NULL || strcmp(line, "End Function") != 0)
-			break;
-
-		succeeded = true;
-	} while (0);
-
-	if (lfunc.func_name != NULL)
-		noct_free(lfunc.func_name);
-
-	for (i = 0; i < NOCT_ARG_MAX; i++) {
-		if (lfunc.param_name[i] != NULL)
-			noct_free(lfunc.param_name[i]);
-	}
-
-	if (!succeeded) {
-		noct_error(env, N_TR("Failed to load bytecode data."));
-		return false;
-	}
-
-	return true;
-}
-
-/* Read a line from bytecode file data. */
-static const char *
-rt_read_bytecode_line(
-	uint8_t *data,
-	size_t size,
-	uint32_t *pos)
-{
-	static char line[1024];
+	const struct lir_func *function;
+	struct rt_value initializer_result;
+	size_t descriptor_count;
+	uint32_t function_count;
 	uint32_t i;
 
-	for (i = 0; i < sizeof(line); i++) {
-		if (*pos >= size)
-			return NULL;
+	/* Rejects missing bytecode registration data. */
+	if (env == NULL ||
+	    data == NULL ||
+	    size == 0)
+		return false;
 
-		line[i] = (char)data[*pos];
-		(*pos)++;
-		if (line[i] == '\n') {
-			line[i] = '\0';
-			return line;
+	/* Rejects a partial LIR descriptor. */
+	if (size % sizeof(struct lir_func) != 0)
+		return false;
+
+	/* Converts the descriptor count without truncation. */
+	descriptor_count = size / sizeof(struct lir_func);
+	function_count = (uint32_t)descriptor_count;
+	if ((size_t)function_count != descriptor_count)
+		return false;
+
+	/* Binds the borrowed descriptor array. */
+	function = (const struct lir_func *)(const void *)data;
+
+	/* Validates the complete unit before mutating the VM. */
+	for (i = 0; i < function_count; i++) {
+		if (!rt_validate_lir(&function[i])) {
+			rt_error(env, N_TR("Invalid bytecode function descriptor."));
+			return false;
 		}
 	}
-	return NULL;
+
+	/* Publishes every validated function in declaration order. */
+	for (i = 0; i < function_count; i++) {
+		if (!rt_register_lir(env, &function[i]))
+			return false;
+	}
+
+#if defined(NOCT_USE_JIT)
+	/* Commits all JIT code generated for this unit. */
+	if (!rt_commit_jit(env))
+		return false;
+#endif
+
+	/* Runs initializers after every function is visible. */
+	for (i = 0; i < function_count; i++) {
+		/* Skips ordinary functions. */
+		if (strncmp(function[i].func_name, "$init.", 6) != 0)
+			continue;
+
+		/* Clears the initializer result slot. */
+		memset(&initializer_result, 0, sizeof(initializer_result));
+
+		/* Calls the current initializer. */
+		if (!rt_call_with_name(
+			env,
+			function[i].func_name,
+			0,
+			NULL,
+			&initializer_result)) {
+			return false;
+		}
+	}
+
+	/* Reports a successful bytecode registration. */
+	return true;
 }
 
 /*
- * Register a native function.
+ * Registers one native function.
  */
 bool
 rt_register_cfunc(
 	struct rt_env *env,
 	const char *name,
-	uint32_t param_count,
+	size_t param_count,
 	const char *param_name[],
 	bool (*cfunc)(struct rt_env *env),
 	struct rt_func **ret_func)
@@ -601,37 +626,83 @@ rt_register_cfunc(
 	struct rt_value global;
 	uint32_t i;
 
-	func = noct_malloc(sizeof(struct rt_func));
+	/* Rejects an invalid native function registration. */
+	if (name == NULL ||
+	    name[0] == '\0' ||
+	    param_count > NOCT_ARG_MAX ||
+	    (param_count != 0 && param_name == NULL) ||
+	    cfunc == NULL) {
+		rt_error(env, N_TR("Invalid native function registration."));
+		return false;
+	}
+
+	/* Allocates the native function. */
+	func = noct_calloc(1, sizeof(*func));
 	if (func == NULL) {
 		rt_out_of_memory(env);
 		return false;
 	}
-	memset(func, 0, sizeof(struct rt_func));
 
-	func->name = strdup(name);
+	/* Copies the native function name. */
+	func->name = noct_strdup(name);
 	if (func->name == NULL) {
 		rt_out_of_memory(env);
+		rt_free_func(env, func);
 		return false;
 	}
+
+	/* Initializes the native function metadata. */
 	func->param_count = param_count;
+#if defined(NOCT_USE_OPTIMIZER)
+	func->return_type = -1;
+	func->return_packed_type = -1;
+
+	/* Initializes every optimizer contract slot as unannotated. */
+	for (i = 0; i < NOCT_ARG_MAX; i++) {
+		func->param_type[i] = -1;
+		func->param_packed_type[i] = -1;
+	}
+#endif
+
+	/* Copies and validates every native parameter name. */
 	for (i = 0; i < param_count; i++) {
-		func->param_name[i] = strdup(param_name[i]);
+		/* Rejects a missing parameter name. */
+		if (param_name[i] == NULL) {
+			rt_error(env, N_TR("Invalid native function parameter name."));
+			rt_free_func(env, func);
+			return false;
+		}
+
+		/* Copies the current parameter name. */
+		func->param_name[i] = noct_strdup(param_name[i]);
 		if (func->param_name[i] == NULL) {
 			rt_out_of_memory(env);
+			rt_free_func(env, func);
 			return false;
 		}
 	}
-	func->cfunc = cfunc;
-	func->tmpvar_size = param_count + 1;
 
+	/* Attaches the native callback. */
+	func->cfunc = cfunc;
+	func->tmpvar_size = (uint32_t)param_count + 1;
+
+	/* Publishes the native function as a global value. */
 	global.type = NOCT_VALUE_FUNC;
 	global.val.func = func;
-	if (!rt_set_global(env, name, &global))
+	if (!rt_set_global(env, func->name, &global)) {
+		rt_free_func(env, func);
 		return false;
+	}
 
+	/* Links the native function into the VM. */
+	func->next = env->vm->func_list;
+	env->vm->func_list = func;
+
+	/* Returns the registered function when requested. */
 	if (ret_func != NULL)
 		*ret_func = func;
 
+	/* Reports a successful native function registration. */
 	return true;
 }
 
@@ -659,16 +730,21 @@ rt_call_with_name(
 	do {
 		if (!rt_check_global(env, func_name))
 			break;
+
 		if (!rt_get_global(env, func_name, &global))
 			break;
+
 		if (global.type != NOCT_VALUE_FUNC)
 			break;
+
 		func_ok = true;
 	} while (0);
+
 	if (!func_ok) {
 		noct_error(env, N_TR("Cannot find function %s."), func_name);
 		return false;
 	}
+
 	func = global.val.func;
 
 	/* Call. */
@@ -692,69 +768,95 @@ rt_call(
 	char old_file_name[256];
 	uint32_t i;
 
-#if defined(NOCT_USE_MULTITHREAD)
-	/* Make a GC safe point. */
-	rt_gc_safepoint(env);
-#endif
-
-	/* Do JIT compilation if needed. */
-	if (env->vm->config.jit_enable &&
-	    func->jit_code == NULL &&
-	    func->call_count != -1) {
-		func->call_count++;
-		if (func->call_count == env->vm->config.jit_threshold) {
-			if (!jit_build(env, func)) {
-				/* -1 means JIT failed. */
-				func->call_count = -1;
-			}
-
-			/* Need to commit before call. */
-			env->vm->is_jit_dirty = true;
-		}
-	}
-
-	/* Commit JIT-compiled code for the first time compilation. */
-	if (env->vm->config.jit_enable && env->vm->is_jit_dirty) {
-		jit_commit(env);
-		env->vm->is_jit_dirty = false;
+	if (arg_count != func->param_count) {
+		noct_error(env, N_TR("%s(): Function arguments not match."), func->name);
+		return false;
 	}
 
 	/* Allocate a frame for this call. */
 	if (!rt_enter_frame(env, func))
 		return false;
 
-	/* Pass args. */
-	if (arg_count != func->param_count) {
-		noct_error(env, N_TR("%s(): Function arguments not match."), func->name);
-		return false;
-	}
+	env->frame->arg_count = arg_count;
+
+	/*
+	 * Every exit below must pop the frame. Leaving it behind would
+	 * keep its slots alive as GC roots after the values they refer
+	 * to are gone, and would leave the frame index out of step with
+	 * the real call depth.
+	 */
+
+	/* Pass the args. */
 	for (i = 0; i < arg_count; i++)
 		env->frame->tmpvar[i] = arg[i];
 
+#if defined(NOCT_USE_MULTITHREAD)
+	/* Make a safepoint. */
+	om_safepoint(env);
+#endif
+
+	/* Validate a fast entry only after its arguments are rooted. */
+#if defined(NOCT_USE_OPTIMIZER)
+	if (func->is_fast) {
+		if (!fast_check_runtime_call(env, func, arg_count)) {
+			rt_leave_frame(env);
+			return false;
+		}
+	}
+#endif
+
 	/* Run. */
 	if (func->cfunc != NULL) {
-		/* Call an intrinsic or an FFI function implemented in C. */
-		if (!func->cfunc(env))
+		/*
+		 * Call an intrinsic or an FFI function implemented in C.
+		 */
+		if (!func->cfunc(env)) {
+			rt_leave_frame(env);
 			return false;
+		}
 	} else {
-		/* Backup the old file name. */
+		/*
+		 * Call a Noct world function.
+		 */
+
+		/* Backup the old file name from the env. */
 		strncpy(old_file_name, env->file_name, sizeof(old_file_name) - 1);
 
-		/* Set the new file name. */
+		/* Copy the new file name to the env. */
 		strncpy(env->file_name, env->frame->func->file_name, sizeof(env->file_name) - 1);
 
+#if defined(NOCT_USE_JIT)
 		if (func->jit_code != NULL) {
-			/* Call a JIT-generated code. */
+			/*
+			 * The function has a JIT-generated code. Call it.
+			 */
+			if (getenv("NOCT_JIT_DEBUG") != NULL)
+				fprintf(stderr, "noct-jit: %s: native-entry\n",
+					func->name);
 			if (!func->jit_code(env)) {
-				/*printf("Returned from JIT code (false).\n");*/
+				/*
+				 * Native code returned false.
+				 * Restore the old file name and exit with false.
+				 */
+				strncpy(env->file_name, old_file_name, sizeof(env->file_name) - 1);
+				rt_leave_frame(env);
 				return false;
 			}
-			/*printf("Returned from JIT code (true).\n");*/
-			/*printf("%d: %d\n", env->frame->tmpvar[0].type, env->frame->tmpvar[0].val.i);*/
-		} else {
-			/* Call the bytecode interpreter. */
-			if (!rt_visit_bytecode(env, func))
+		} else
+#endif
+		{
+			/*
+			 * No JIT-generated code. Call the bytecode interpreter.
+			 */
+			if (!rt_visit_bytecode(env, func)) {
+				/*
+				 * Interpreter returned false.
+				 * Restore the old file name and exit with false.
+				 */
+				strncpy(env->file_name, old_file_name, sizeof(env->file_name) - 1);
+				rt_leave_frame(env);
 				return false;
+			}
 		}
 
 		/* Restore the old file name. */
@@ -764,12 +866,6 @@ rt_call(
 	/* Get a return value. */
 	if (ret != NULL)
 		*ret = env->frame->tmpvar[0];
-
-	/* Commit JIT-compiled code for dynamically imported inside the function. */
-	if (env->vm->config.jit_enable && env->vm->is_jit_dirty) {
-		jit_commit(env);
-		env->vm->is_jit_dirty = false;
-	}
 
 	/* Succeeded. */
 	rt_leave_frame(env);
@@ -785,10 +881,16 @@ rt_enter_frame(
 {
 	struct rt_frame *frame;
 
-	if (++env->cur_frame_index >= RT_FRAME_MAX) {
+	/*
+	 * Check before incrementing so the frame index stays valid when
+	 * the stack is full: the caller's error path still unwinds
+	 * against its own (unchanged) frame.
+	 */
+	if (env->cur_frame_index + 1 >= RT_FRAME_MAX) {
 		rt_error(env, N_TR("Stack overflow."));
 		return false;
 	}
+	env->cur_frame_index++;
 
 	frame = &env->frame_alloc[env->cur_frame_index];
 	env->frame = frame;
@@ -832,7 +934,7 @@ rt_make_string(
 	size_t len;
 	uint32_t hash;
 
-	len = strlen(data) + 1;
+	len = strlen(data) + 1; /* Including NUL. */
 	hash = 0;
 	if (!rt_make_string_with_hash(env, val, data, len, hash))
 		return false;
@@ -860,10 +962,14 @@ rt_make_string_with_hash(
 		return false;
 	}
 
+	/*
+	 * Here, this thread is "in-flight" and GC won't be executed
+	 * in other threads.
+	 */
+
 	/* Setup a value. */
 	val->type = NOCT_VALUE_STRING;
 	val->val.str = rts;
-	val->val.str->hash = hash;
 
 	return true;
 }
@@ -912,56 +1018,9 @@ rt_string_hash_and_len(
 	}
 }
 
-
-
 /*
  * Arrays and Dictionaries
  */
-
-#if !defined(NOCT_USE_MULTITHREAD)
-
-#define ACQUIRE_OBJ(obj, real_obj)							\
-	/* Get the newer reference. */							\
-	real_obj = (obj);								\
-	while (real_obj->newer != NULL)							\
-		real_obj = real_obj->newer;
-
-#define RELEASE_OBJ(real_obj)
-
-#else
-
-#define ACQUIRE_OBJ(obj, real_obj)								\
-	/* Acquire the array. */								\
-	while (1) {										\
-		/* Get the newer reference. */							\
-		real_obj = atomic_load_relaxed_ptr((void**)&(obj));				\
-		while (atomic_load_relaxed_ptr((void **)&real_obj->newer) != NULL)		\
-			real_obj = atomic_load_relaxed_ptr((void **)&real_obj->newer);		\
-												\
-		/* Try acquire. */								\
-		int old = atomic_fetch_add_acquire(&real_obj->counter, 1);			\
-		if (old == 0 && atomic_load_acquire_ptr((void **)&real_obj->newer) == NULL)	\
-			break;									\
-												\
-		/* Failed, release. */								\
-		atomic_fetch_sub_release(&real_obj->counter, 1);				\
-												\
-		/* Allow GC in other threads because they may cause GC. */			\
-		while (1) {									\
-			atomic_fetch_sub_release(&env->vm->in_flight_counter, 1);		\
-			while (atomic_load_acquire(&env->vm->gc_stw_counter) > 0)		\
-				cpu_relax();							\
-			atomic_fetch_add_acquire(&env->vm->in_flight_counter, 1);		\
-			if (atomic_load_acquire(&env->vm->gc_stw_counter) == 0)			\
-				break;								\
-		}										\
-	}
-
-#define RELEASE_OBJ(real_obj)									\
-	/* Failed, release. */									\
-	atomic_fetch_sub_release(&real_obj->counter, 1);
-
-#endif
 
 /*
  * Make an empty array.
@@ -971,19 +1030,9 @@ rt_make_empty_array(
 	struct rt_env *env,
 	struct rt_value *val)
 {
-	struct rt_array *arr;
-	const uint32_t START_SIZE = 16;
-
-	/* Allocate an array. */
-	arr = rt_gc_alloc_array(env, START_SIZE);
-	if (arr == NULL) {
-		rt_out_of_memory(env);
+	/* Delegate to the object model implementation. */
+	if (!om_make_array(env, val))
 		return false;
-	}
-
-	/* Setup a value. */
-	val->type = NOCT_VALUE_ARRAY;
-	val->val.arr = arr;
 
 	return true;
 }
@@ -994,23 +1043,12 @@ rt_make_empty_array(
 bool
 rt_get_array_size(
 	struct rt_env *env,
-	struct rt_array *arr,
-	uint32_t *size)
+	struct rt_value *arr,
+	size_t *size)
 {
-	struct rt_array *real_arr;
-
-	UNUSED_PARAMETER(env);
-
-	assert(env != NULL);
-	assert(arr != NULL);
-	assert(size != NULL);
-
-	ACQUIRE_OBJ(arr, real_arr);
-
-	/* Get the size. */
-	*size = (uint32_t)real_arr->size;
-
-	RELEASE_OBJ(real_arr);
+	/* Delegate to the object model implementation. */
+	if (!om_get_array_size(env, arr, size))
+		return false;
 
 	return true;
 }
@@ -1021,30 +1059,13 @@ rt_get_array_size(
 bool
 rt_get_array_elem(
 	struct rt_env *env,
-	struct rt_array *arr,
-	uint32_t index,
+	struct rt_value *arr,
+	size_t index,
 	struct rt_value *val)
 {
-	struct rt_array *real_arr;
-
-	assert(env != NULL);
-	assert(arr != NULL);
-	assert(val != NULL);
-
-	ACQUIRE_OBJ(arr, real_arr);
-
-	/* Check the array boundary. */
-	if (index >= real_arr->size) {
-		RELEASE_OBJ(real_arr);
-
-		rt_error(env, N_TR("Array index %d is out-of-range."), index);
+	/* Delegate to the object model implementation. */
+	if (!om_read_array(env, arr, index, val))
 		return false;
-	}
-
-	/* Load. */
-	*val = real_arr->table[index];
-
-	RELEASE_OBJ(real_arr);
 
 	return true;
 }
@@ -1055,61 +1076,14 @@ rt_get_array_elem(
 bool
 rt_set_array_elem(
 	struct rt_env *env,
-	struct rt_array **arr,
-	uint32_t index,
+	struct rt_value *arr,
+	size_t index,
 	NoctValue *val)
 {
-	struct rt_array *real_arr;
+	/* Delegate to the object model implementation. */
+	if (!om_write_array(env, arr, index, val))
+		return false;
 
-	assert(env != NULL);
-	assert(arr != NULL);
-	assert(*arr != NULL);
-	assert(val != NULL);
-
-	ACQUIRE_OBJ(*arr, real_arr);
-
-	/* Expand the array if needed.. */
-	if (index >= real_arr->alloc_size) {
-		struct rt_array *new_arr;
-
-		/* Reallocate an array. */
-		if (!rt_expand_array(env, real_arr, arr, index + 1)) {
-			RELEASE_OBJ(real_arr);
-			return false;
-		}
-
-		/* Get the new array which is only visible to this thread. */
-		new_arr = *arr;
-
-		/* Set the new size. */
-		new_arr->size = index + 1;
-
-		/* Store. */
-		new_arr->table[index] = *val;
-
-		/* GC: Write barrier for the remember set. */
-		if (val->type == NOCT_VALUE_STRING ||
-		    val->type == NOCT_VALUE_ARRAY ||
-		    val->type == NOCT_VALUE_DICT)
-			rt_gc_array_write_barrier(env, new_arr, index, val);
-
-		/* Publication is done by a release to the old array. */
-		RELEASE_OBJ(real_arr);
-		return true;
-	}
-
-	/* Store. */
-	real_arr->table[index] = *val;
-	if (index >= real_arr->size)
-		real_arr->size = index + 1;
-
-	/* GC: Write barrier for the remember set. */
-	if (val->type == NOCT_VALUE_STRING ||
-	    val->type == NOCT_VALUE_ARRAY ||
-	    val->type == NOCT_VALUE_DICT)
-		rt_gc_array_write_barrier(env, real_arr, index, val);
-
-	RELEASE_OBJ(real_arr);
 	return true;
 }
 
@@ -1119,92 +1093,12 @@ rt_set_array_elem(
 bool
 rt_resize_array(
 	struct rt_env *env,
-	struct rt_array **arr,
-	uint32_t size)
-{
-	struct rt_array *real_arr;
-
-	assert(env != NULL);
-	assert(arr != NULL);
-
-	ACQUIRE_OBJ(*arr, real_arr);
-
-	if (size > real_arr->alloc_size) {
-		struct rt_array *new_arr;
-
-		/* Reallocate an array. */
-		if (!rt_expand_array(env, real_arr, arr, size)) {
-			RELEASE_OBJ(real_arr);
-			return false;
-		}
-
-		/* Get the new array which is only visible to this thread.. */
-		new_arr = *arr;
-
-		/* Set the element count. */
-		new_arr->size = size;
-
-		/* Publication is done by a release to the old array. */
-		RELEASE_OBJ(real_arr);
-	} else {
-		/* Remove (zero-fill) the reminder. */
-		memset(&real_arr->table[size], 0, sizeof(struct rt_value) * (size_t)(real_arr->alloc_size - size));
-
-		/* Set the element count. */
-		real_arr->size = size;
-
-		RELEASE_OBJ(real_arr);
-	}
-
-	return true;
-}
-
-/* Expand an array. */
-static bool
-rt_expand_array(
-	struct rt_env *env,
-	struct rt_array *old_arr,
-	struct rt_array **new_arr_pp,
+	struct rt_value *arr,
 	size_t size)
 {
-	struct rt_array *new_arr;
-	size_t old_size;
-	uint32_t i;
-
-	assert(env != NULL);
-	assert(old_arr->newer == NULL);
-	assert(old_arr->alloc_size < size);
-
-	old_size = old_arr->alloc_size;
-
-	/* Get the next size. */
-	if (size < old_size * 2)
-		size = old_size * 2;
-	else
-		size = size * 2;
-
-	/* Allocate the new array. */
-	new_arr = rt_gc_alloc_array(env, size);
-	if (new_arr == NULL) {
-		rt_out_of_memory(env);
+	/* Delegate to the object model implementation. */
+	if (!om_resize_array(env, arr, size))
 		return false;
-	}
-
-	/* Copy the values with write barrier. */
-	new_arr->size = old_arr->size;
-	for (i = 0; i < old_arr->size; i++) {
-		/* Copy. */
-		new_arr->table[i] = old_arr->table[i];
-
-		/* Write barrier. */
-		rt_gc_array_write_barrier(env, new_arr, i, &new_arr->table[i]);
-	}
-	
-	/* Set the forwaring pointer. */
-	old_arr->newer = new_arr;
-
-	/* Set the result. */
-	*new_arr_pp = new_arr;
 
 	return true;
 }
@@ -1215,36 +1109,13 @@ rt_expand_array(
 bool
 rt_make_array_copy(
 	struct rt_env *env,
-	struct rt_array **dst,
-	struct rt_array *src)
+	struct rt_value *dst,
+	struct rt_value *src)
 {
-	struct rt_array *src_real;
-	uint32_t i;
-
-	assert(env != NULL);
-	assert(dst != NULL);
-	assert(src != NULL);
-
-	ACQUIRE_OBJ(src, src_real);
-
-	/* Allocate an array. */
-	*dst = rt_gc_alloc_array(env, src_real->size);
-	if (*dst == NULL) {
-		RELEASE_OBJ(src_real);
+	/* Delegate to the object model implementation. */
+	if (!om_copy_array(env, dst, src))
 		return false;
-	}
 
-	/* Copy the array with write-barrier. */
-	(*dst)->size = src_real->size;
-	for (i = 0; i < src_real->size; i++) {
-		/* Copy. */
-		(*dst)->table[i] = src_real->table[i];
-
-		/* Write barrier. */
-		rt_gc_array_write_barrier(env, *dst, i, &(*dst)->table[i]);
-	}
-
-	RELEASE_OBJ(src_real);
 	return true;
 }
 
@@ -1256,20 +1127,9 @@ rt_make_empty_dict(
 	struct rt_env *env,
 	struct rt_value *val)
 {
-	struct rt_dict *dict;
-
-	const uint32_t START_SIZE = 2;
-
-	/* Allocate a dictionary. */
-	dict = rt_gc_alloc_dict(env, START_SIZE);
-	if (dict == NULL) {
-		rt_out_of_memory(env);
+	/* Delegate to the object model implementation. */
+	if (!om_make_dict(env, val))
 		return false;
-	}
-
-	/* Setup a value. */
-	val->type = NOCT_VALUE_DICT;
-	val->val.dict = dict;
 
 	return true;
 }
@@ -1280,23 +1140,29 @@ rt_make_empty_dict(
 bool
 rt_get_dict_size(
 	struct rt_env *env,
-	struct rt_dict *dict,
-	uint32_t *size)
+	struct rt_value *dict,
+	size_t *size)
 {
-	struct rt_dict *real_dict;
+	/* Delegate to the object model implementation. */
+	if (!om_get_dict_size(env, dict, size))
+		return false;
 
-	UNUSED_PARAMETER(env);
+	return true;
+}
 
-	assert(env != NULL);
-	assert(dict != NULL);
-	assert(size != NULL);
+/*
+ * Get the allocation size of a dictionary.
+ */
+bool
+rt_get_dict_alloc_size(
+	struct rt_env *env,
+	struct rt_value *dict,
+	size_t *size)
+{
+	/* Delegate to the object model implementation. */
+	if (!om_get_dict_alloc_size(env, dict, size))
+		return false;
 
-	ACQUIRE_OBJ(dict, real_dict);
-
-	/* Get the size. */
-	*size = (uint32_t)real_dict->size;
-
-	RELEASE_OBJ(real_dict);
 	return true;
 }
 
@@ -1306,49 +1172,48 @@ rt_get_dict_size(
 bool
 rt_check_dict_key(
 	struct rt_env *env,
-	struct rt_dict *dict,
+	struct rt_value *dict,
+	struct rt_value *key,
+	bool *ret)
+{
+	/* Delegate to the object model implementation. */
+	if (!om_check_dict_key(env, dict, key, ret))
+		return false;
+
+	return true;
+}
+
+/*
+ * Checks if a key exists in a dictionary.
+ */
+bool
+rt_check_dict_key_cstr(
+	struct rt_env *env,
+	struct rt_value *dict,
 	const char *key,
 	bool *ret)
 {
-	struct rt_dict *real_dict;
-	size_t len;
-	uint32_t hash, i, index;
+	struct rt_value key_val;
 
-	UNUSED_PARAMETER(env);
+	key_val.type = NOCT_VALUE_INT;
+	key_val.val.i = 0;
+	if (env->frame != NULL)
+		rt_pin_local(env, &key_val);
+	else
+		rt_pin_global(env, &key_val);
 
-	ACQUIRE_OBJ(dict, real_dict);
+	if (!rt_make_string(env, &key_val, key))
+		return false;
 
-	len = strlen(key) + 1; /* +1 for NUL */
-	hash = rt_string_hash(key);
-	index = hash & ((uint32_t)real_dict->alloc_size - 1);
-
-	/* Search the key. */
-	for (i = index;
-	     i != ((index - 1 + (uint32_t)real_dict->alloc_size) & ((uint32_t)real_dict->alloc_size - 1));
-	     i = (i + 1) & ((uint32_t)real_dict->alloc_size - 1)) {
-		if (IS_DICT_KEY_REMOVED(real_dict->key[i]) ||
-		    IS_DICT_KEY_EMPTY(real_dict->key[i]))
-			continue;
-
-		/* Make a hash cache. */
-		if (real_dict->key[i].val.str->hash == 0)
-			real_dict->key[i].val.str->hash = rt_string_hash(real_dict->key[i].val.str->data);
-
-		if (real_dict->key[i].val.str->len == len &&
-		    real_dict->key[i].val.str->hash == hash &&
-		    strcmp(real_dict->key[i].val.str->data, key) == 0) {
-			/* Found. */
-			RELEASE_OBJ(real_dict);
-			*ret = true;
-			return true;
-		}
-	}
-
-	/* Not found. */
-	RELEASE_OBJ(real_dict);
-	*ret = false;
-
-	/* Note: this is not an error, so just return true. */
+	/* Delegate to the object model implementation. */
+	if (!om_check_dict_key(env, dict, &key_val, ret))
+		return false;
+		
+	if (env->frame != NULL)
+		rt_unpin_local(env, &key_val);
+	else
+		rt_unpin_global(env, &key_val);
+	
 	return true;
 }
 
@@ -1356,91 +1221,17 @@ rt_check_dict_key(
  * Get a dictionary key by index.
  */
 bool
-rt_get_dict_key_by_index(
+rt_get_dict_by_index(
 	struct rt_env *env,
-	struct rt_dict *dict,
-	uint32_t index,
-	struct rt_value *key)
-{
-	struct rt_dict *real_dict;
-	uint32_t count, i;
-
-	assert(env != NULL);
-	assert(dict != NULL);
-	assert(key != NULL);
-	
-	ACQUIRE_OBJ(dict, real_dict);
-
-	/* Check the boundary. */
-	if (index >= real_dict->size) {
-		RELEASE_OBJ(real_dict);
-
-		rt_error(env, N_TR("Dictionary index %d is out-of-range."), index);
-		return false;
-	}
-
-	count = 0;
-	for (i = 0; i < real_dict->alloc_size; i++) {
-		if (IS_DICT_KEY_REMOVED(real_dict->key[i]) ||
-		    IS_DICT_KEY_EMPTY(real_dict->key[i]))
-			continue;
-		if (count == index) {
-			/* Load the key. */
-			*key = real_dict->key[i];
-			RELEASE_OBJ(real_dict);
-			return true;
-		}
-		count++;
-	}
-
-	assert(NEVER_COME_HERE);
-	RELEASE_OBJ(real_dict);
-	return false;
-}
-
-/*
- * Get a dictionary value by index.
- */
-bool
-rt_get_dict_value_by_index(
-	struct rt_env *env,
-	struct rt_dict *dict,
-	uint32_t index,
+	struct rt_value *dict,
+	size_t index,
+	struct rt_value *key,
 	struct rt_value *val)
 {
-	struct rt_dict *real_dict;
-	uint32_t count, i;
-
-	assert(env != NULL);
-	assert(dict != NULL);
-	assert(val != NULL);
-	
-	ACQUIRE_OBJ(dict, real_dict);
-
-	/* Check the boundary. */
-	if (index >= real_dict->size) {
-		RELEASE_OBJ(real_dict);
-
-		rt_error(env, N_TR("Dictionary index %d is out-of-range."), index);
+	/* Delegate to the object model implementation. */
+	if (!om_read_dict_index(env, dict, index, key, val))
 		return false;
-	}
 
-	count = 0;
-	for (i = 0; i < real_dict->alloc_size; i++) {
-		if (IS_DICT_KEY_REMOVED(real_dict->key[i]) ||
-		    IS_DICT_KEY_EMPTY(real_dict->key[i]))
-			continue;
-		if (count == index) {
-			/* Load the value. */
-			*val = real_dict->value[i];
-			RELEASE_OBJ(real_dict);
-			return true;
-		}
-		count++;
-	}
-
-	assert(NEVER_COME_HERE);
-	RELEASE_OBJ(real_dict);
 	return true;
 }
 
@@ -1450,18 +1241,41 @@ rt_get_dict_value_by_index(
 bool
 rt_get_dict_elem(
 	struct rt_env *env,
-	struct rt_dict *dict,
+	struct rt_value *dict,
+	struct rt_value *key,
+	struct rt_value *val)
+{
+	/* Delegate to the object model implementation. */
+	if (!om_read_dict(env, dict, key, val))
+		return false;
+
+	return true;	
+}
+
+/*
+ * Retrieves the value by a key in a dictionary.
+ */
+bool
+rt_get_dict_elem_cstr(
+	struct rt_env *env,
+	struct rt_value *dict,
 	const char *key,
 	struct rt_value *val)
 {
 	size_t len;
-	uint32_t hash;
 
+	/* Including NUL. */
 	len = strlen(key) + 1;
-	hash = rt_string_hash(key);
-	if (!rt_get_dict_elem_with_hash(env, dict, key, len, hash, val))
-		return false;
 
+	/* Delegate to the object model implementation. */
+	if (!om_read_dict_with_hash(env,
+				    dict,
+				    key,
+				    len,
+				    rt_string_hash(key),
+				    val))
+		return false;
+		
 	return true;
 }
 
@@ -1471,50 +1285,17 @@ rt_get_dict_elem(
 bool
 rt_get_dict_elem_with_hash(
 	struct rt_env *env,
-	struct rt_dict *dict,
+	struct rt_value *dict,
 	const char *key,
 	size_t len,
 	uint32_t hash,
 	struct rt_value *val)
 {
-	struct rt_dict *real_dict;
-	uint32_t index, i;
+	/* Delegate to the object model implementation. */
+	if (!om_read_dict_with_hash(env, dict, key, len, hash, val))
+		return false;
 
-	assert(env != NULL);
-	assert(dict != NULL);
-	assert(key != NULL);
-	assert(val != NULL);
-	assert(hash != 0);
-
-	ACQUIRE_OBJ(dict, real_dict);
-
-	index = hash & (uint32_t)(real_dict->alloc_size - 1);
-	for (i = index;
-	     i != ((index - 1 + real_dict->alloc_size) & (real_dict->alloc_size - 1));
-	     i = (i + 1) & ((uint32_t)real_dict->alloc_size - 1)) {
-		if (IS_DICT_KEY_REMOVED(real_dict->key[i]))
-			continue;
-		if (IS_DICT_KEY_EMPTY(real_dict->key[i]))
-			break;
-
-		/* Make a hash cache. */
-		if (real_dict->key[i].val.str->hash == 0)
-			real_dict->key[i].val.str->hash = rt_string_hash(real_dict->key[i].val.str->data);
-		
-		if (real_dict->key[i].val.str->len == len &&
-		    real_dict->key[i].val.str->hash == hash &&
-		    strcmp(real_dict->key[i].val.str->data, key) == 0) {
-			/* Succeeded. */
-			*val = real_dict->value[i];
-			RELEASE_OBJ(real_dict);
-			return true;
-		}
-	}
-
-	/* Not found. */
-	RELEASE_OBJ(real_dict);
-	rt_error(env, N_TR("Dictionary key \"%s\" not found."), key);
-	return false;
+	return true;
 }
 
 /*
@@ -1523,171 +1304,65 @@ rt_get_dict_elem_with_hash(
 bool
 rt_set_dict_elem(
 	struct rt_env *env,
-	struct rt_dict **dict,
-	const char *key,
+	struct rt_value *dict,
+	struct rt_value *key,
 	struct rt_value *val)
 {
-	size_t len;
-	uint32_t hash;
-
-	len = strlen(key) + 1;	/* Including NUL. */
-	hash = rt_string_hash(key);
-	if (!rt_set_dict_elem_with_hash(env, dict, key, len, hash, val))
+	/* Delegate to the object model implementation. */
+	if (!om_write_dict(env, dict, key, val))
 		return false;
-
+		
 	return true;
 }
 
 /*
- * Stores a key-value-pair to a dictionary. (hash version)
+ * Stores a key-value-pair to a dictionary.
+ */
+bool
+rt_set_dict_elem_cstr(
+	struct rt_env *env,
+	struct rt_value *dict,
+	const char *key,
+	struct rt_value *val)
+{
+	size_t len;
+
+	/* Including NUL. */
+	len = strlen(key) + 1;
+
+	/* Delegate to the object model implementation. */
+	if (!om_write_dict_with_hash(env,
+				     dict,
+				     key,
+				     len,
+				     rt_string_hash(key),
+				     val))
+		return false;
+	
+	return true;
+}
+
+/*
+ * Stores a key-value-pair to a dictionary.
  */
 bool
 rt_set_dict_elem_with_hash(
 	struct rt_env *env,
-	struct rt_dict **dict,
+	struct rt_value *dict,
 	const char *key,
 	size_t len,
 	uint32_t hash,
 	struct rt_value *val)
 {
-	struct rt_dict *real_dict, *append_dict;
-	uint32_t index, i;
-
-	assert(env != NULL);
-	assert(dict != NULL);
-	assert(*dict != NULL);
-	assert(key != NULL);
-	assert(val != NULL);
-	assert(hash != 0);
-
-	ACQUIRE_OBJ(*dict, real_dict);
-
-	/* Search for the key to replace the value. */
-	index = hash & ((uint32_t)real_dict->alloc_size - 1);
-	for (i = index;
-	     i != ((index - 1 + real_dict->alloc_size) & (real_dict->alloc_size - 1));
-	     i = (i + 1) & ((uint32_t)real_dict->alloc_size - 1)) {
-		if (IS_DICT_KEY_REMOVED(real_dict->key[i]) ||
-		    IS_DICT_KEY_EMPTY(real_dict->key[i]))
-			break;
-
-		/* Make a hash cache. */
-		if (real_dict->key[i].val.str->hash == 0)
-			real_dict->key[i].val.str->hash = rt_string_hash(real_dict->key[i].val.str->data);
-
-		if (real_dict->key[i].val.str->len == len &&
-		    real_dict->key[i].val.str->hash == hash &&
-		    strcmp(real_dict->key[i].val.str->data, key) == 0) {
-			/* Found, replace the value. */
-			real_dict->value[i] = *val;
-			RELEASE_OBJ(real_dict);
-			return true;
-		}
-	}
-
-	/* Key doesn't exist. Add new one. */
-
-	/* Expand the size if 75% is used. */
-	if (real_dict->size >= real_dict->alloc_size / 4 * 3) {
-		/* Reallocate a dictionary. */
-		if (!rt_expand_dict(env, real_dict, dict)) {
-			RELEASE_OBJ(real_dict);
-			return false;
-		}
-
-		/* Get the new dictionary which is only visible to this thread until a publication. */
-		append_dict = *dict;
-	} else {
-		append_dict = real_dict;
-	}
-	assert(append_dict->size < append_dict->alloc_size);
-
-	/* Append. */
-	index = hash & ((uint32_t)append_dict->alloc_size - 1);
-	for (i = index;
-	     i != ((index - 1 + append_dict->alloc_size) & (append_dict->alloc_size - 1));
-	     i = (i + 1) & ((uint32_t)append_dict->alloc_size - 1)) {
-		if (IS_DICT_KEY_REMOVED(append_dict->key[i]) ||
-		    IS_DICT_KEY_EMPTY(append_dict->key[i])) {
-			/* Make a key value. */
-			if (!rt_make_string_with_hash(env, &append_dict->key[i], key, len, hash)) {
-				RELEASE_OBJ(real_dict);
-				return false;
-			}
-			append_dict->value[i] = *val;
-			break;
-		}
-	}
-	append_dict->size++;
-
-	/* GC: Write barrier for the remember set. */
-	if (val->type == NOCT_VALUE_STRING ||
-	    val->type == NOCT_VALUE_ARRAY ||
-	    val->type == NOCT_VALUE_DICT) {
-		rt_gc_dict_write_barrier(env, append_dict, &real_dict->key[real_dict->size]);
-		rt_gc_dict_write_barrier(env, append_dict, val);
-	}
-
-	/* Publication. (In case of expand, the new dictionaty will appear to other threads.) */
-	RELEASE_OBJ(real_dict);
-	return true;
-}
-
-/* Expand an array. */
-static bool
-rt_expand_dict(
-	struct rt_env *env,
-	struct rt_dict *old_dict,
-	struct rt_dict **new_dict_pp)
-{
-	struct rt_dict *new_dict;
-	size_t old_size, new_size;
-	uint32_t index, i, j;
-
-	assert(env != NULL);
-	assert(old_dict != NULL);
-	assert(old_dict->newer == NULL);
-	assert(new_dict_pp != NULL);
-
-	old_size = old_dict->alloc_size;
-	new_size = old_size * 2;
-
-	/* Allocate the new array. */
-	new_dict = rt_gc_alloc_dict(env, new_size);
-	if (new_dict == NULL) {
-		rt_out_of_memory(env);
+	/* Delegate to the object model implementation. */
+	if (!om_write_dict_with_hash(env,
+				     dict,
+				     key,
+				     len,
+				     hash,
+				     val))
 		return false;
-	}
-
-	/* Rehash. (Copy the values with write barrier.) */
-	for (i = 0; i < old_size; i++) {
-		if (IS_DICT_KEY_REMOVED(old_dict->key[i]) || IS_DICT_KEY_EMPTY(old_dict->key[i]))
-			continue;
-
-		index = rt_string_hash(old_dict->key[i].val.str->data) & ((uint32_t)new_dict->alloc_size - 1);
-		for (j = index;
-		     j != ((index - 1 + new_dict->alloc_size) & (new_dict->alloc_size - 1));
-		     j = (j + 1) & ((uint32_t)new_dict->alloc_size - 1)) {
-			if (IS_DICT_KEY_EMPTY(new_dict->key[j])) {
-				/* Copy the key and values. */
-				new_dict->key[j] = old_dict->key[i];
-				new_dict->value[j] = old_dict->value[i];
-
-				/* Write barrier. */
-				rt_gc_dict_write_barrier(env, new_dict, &new_dict->key[j]);
-				rt_gc_dict_write_barrier(env, new_dict, &new_dict->value[j]);
-				break;
-			}
-		}
-	}
-	new_dict->size = old_dict->size;
-
-	/* Set the forwarding pointer. */
-	old_dict->newer = new_dict;
-
-	/* Set the result */
-	*new_dict_pp = new_dict;
-
+	
 	return true;
 }
 
@@ -1697,15 +1372,11 @@ rt_expand_dict(
 bool
 rt_remove_dict_elem(
 	struct rt_env *env,
-	struct rt_dict *dict,
-	const char *key)
+	struct rt_value *dict,
+	struct rt_value *key)
 {
-	size_t len;
-	uint32_t hash;
-
-	len = strlen(key) + 1;	/* Including NUL. */
-	hash = rt_string_hash(key);
-	if (!rt_remove_dict_elem_with_hash(env, dict, key, len, hash))
+	/* Delegate to the object model implementation. */
+	if (!om_erase_dict_entry(env, dict, key))
 		return false;
 
 	return true;
@@ -1715,54 +1386,35 @@ rt_remove_dict_elem(
  * Remove a dictionary key. (hash version)
  */
 bool
-rt_remove_dict_elem_with_hash(
+rt_remove_dict_elem_cstr(
 	struct rt_env *env,
-	struct rt_dict *dict,
-	const char *key,
-	size_t len,
-	uint32_t hash)
+	struct rt_value *dict,
+	const char *key)
 {
-	struct rt_dict *real_dict;
-	uint32_t index, i;
+	struct rt_value key_val;
 
-	assert(env != NULL);
-	assert(dict != NULL);
-	assert(key != NULL);
-	assert(hash != 0);
+	key_val.type = NOCT_VALUE_INT;
+	key_val.val.i = 0;
+	if (env->frame != NULL)
+		rt_pin_local(env, &key_val);
+	else
+		rt_pin_global(env, &key_val);
 
-	ACQUIRE_OBJ(dict, real_dict);
-
-	/* Search for the key. */
-	index = hash & ((uint32_t)real_dict->alloc_size - 1);
-	for (i = index;
-	     i != ((index - 1 + real_dict->alloc_size) & (real_dict->alloc_size - 1));
-	     i = (i + 1) & ((uint32_t)real_dict->alloc_size - 1)) {
-		if (IS_DICT_KEY_REMOVED(real_dict->key[i]))
-			continue;
-		if (IS_DICT_KEY_EMPTY(real_dict->key[i]))
-			break;
-
-		/* Make a hash cache. */
-		if (real_dict->key[i].val.str->hash == 0)
-			real_dict->key[i].val.str->hash = rt_string_hash(real_dict->key[i].val.str->data);
-		
-		if (real_dict->key[i].val.str->len == len &&
-		    real_dict->key[i].val.str->hash == hash &&
-		    strcmp(real_dict->key[i].val.str->data, key) == 0) {
-			REMOVE_DICT_KEY(real_dict->key[i]);
-			real_dict->value[i].type = NOCT_VALUE_INT;
-			real_dict->value[i].val.i = 0;
-
-			/* Succeeded. */
-			RELEASE_OBJ(real_dict);
-			return true;
-		}
+	if (!rt_make_string(env, &key_val, key))
+		return false;
+	
+	/* Delegate to the object model implementation. */
+	if (!om_erase_dict_entry(env, dict, &key_val)) {
+		rt_unpin_global(env, &key_val);
+		return false;
 	}
-
-	/* Not found. */
-	RELEASE_OBJ(d);
-	rt_error(env, N_TR("Dictionary key \"%s\" not found."), key);
-	return false;
+		
+	if (env->frame != NULL)
+		rt_unpin_local(env, &key_val);
+	else
+		rt_unpin_global(env, &key_val);
+	
+	return true;
 }
 
 /*
@@ -1771,43 +1423,609 @@ rt_remove_dict_elem_with_hash(
 bool
 rt_make_dict_copy(
 	struct rt_env *env,
-	struct rt_dict **dst,
-	struct rt_dict *src)
+	struct rt_value *dst,
+	struct rt_value *src)
 {
-	struct rt_dict *d, *src_real;
-	int i;
+	/* Delegate to the object model implementation. */
+	if (!om_copy_dict(env, dst, src))
+		return false;
+
+	return true;
+}
+
+/*
+ * Merges a dictionary.
+ */
+bool
+rt_merge_dict(
+	struct rt_env *env,
+	struct rt_value *dst,
+	struct rt_value *src1,
+	struct rt_value *src2)
+{
+	/* Delegate to the object model implementation. */
+	if (!om_merge_dict(env, dst, src1, src2))
+		return false;
+
+	return true;
+}
+
+static struct rt_dict *
+rt_get_latest_dict(
+	struct rt_env *env,
+	struct rt_value *dict)
+{
+#if defined(NOCT_USE_MULTITHREAD)
+	struct rt_dict *real_dict;
+	struct rt_dict *next;
+
+	UNUSED_PARAMETER(env);
+
+	real_dict = atomic_load_acquire_ptr((void **)&dict->val.dict);
+	while ((next = atomic_load_acquire_ptr((void **)&real_dict->newer)) != NULL)
+		real_dict = next;
+
+	return real_dict;
+#else
+	struct rt_dict *real_dict;
+	struct rt_dict *next;
+
+	UNUSED_PARAMETER(env);
+
+	real_dict = dict->val.dict;
+	while ((next = real_dict->newer) != NULL)
+		real_dict = next;
+
+	return real_dict;
+#endif
+}
+
+/*
+ * Sets the native pointers to a dictionary.
+ */
+bool
+rt_set_dict_native_pointer(
+	struct rt_env *env,
+	struct rt_value *dict,
+	void *native_pointer,
+	void (*native_finalizer)(void *native_pointer))
+{
+	struct rt_dict *real_dict;
+
+	real_dict = rt_get_latest_dict(env, dict);
+
+	real_dict->native_pointer = native_pointer;
+	real_dict->native_finalizer = native_finalizer;
+
+	return true;
+}
+
+/*
+ * Gets the native pointer from a dictionary.
+ */
+bool
+rt_get_dict_native_pointer(
+	struct rt_env *env,
+	struct rt_value *dict,
+	void **native_pointer,
+	void (**native_finalizer)(void *native_pointer))
+{
+	struct rt_dict *real_dict;
+
+	real_dict = rt_get_latest_dict(env, dict);
+
+	*native_pointer = real_dict->native_pointer;
+	*native_finalizer = real_dict->native_finalizer;
+
+	return true;
+}
+
+/*
+ * Make a packed.
+ */
+bool
+rt_make_packed(
+	struct rt_env *env,
+	struct rt_value *val,
+	int type,
+	size_t size,
+	size_t elem_size,
+	void *preallocated,
+	void *native_pointer,
+	void (*native_finalizer)(void *native_pointer))
+{
+	struct rt_packed *packed;
 
 	assert(env != NULL);
-	assert(src != NULL);
-	assert(dst != NULL);
+	assert(val != NULL);
+	assert(size > 0);
+	assert(elem_size > 0);
+	assert((native_pointer == NULL) == (native_finalizer == NULL));
+	assert(preallocated != NULL || native_pointer == NULL);
 
-	ACQUIRE_OBJ(src, src_real);
-
-	/* Make a dictionary */
-	d = rt_gc_alloc_dict(env, src_real->alloc_size);
-	if (d == NULL) {
-		RELEASE_OBJ(src_real);
+	/* Allocate an array. */
+	packed = rt_gc_alloc_packed(env,
+				    type,
+				    size,
+				    elem_size,
+				    preallocated,
+				    native_pointer,
+				    native_finalizer);
+	if (packed == NULL) {
+		rt_out_of_memory(env);
 		return false;
 	}
 
-	/* Copy the array with write-barrier. */
-	d->size = src_real->size;
-	for (i = 0; i < (int)src_real->alloc_size; i++) {
-		if (!IS_DICT_KEY_REMOVED(src_real->key[i]) &&
-		    !IS_DICT_KEY_EMPTY(src_real->key[i])) {
-			/* Copy the key and value. */
-			d->key[i] = src_real->key[i];
-			d->value[i] = src_real->value[i];
+	/*
+	 * Here, this thread is "in-flight" and GC won't be executed
+	 * in other threads.
+	 */
 
-			/* Write barrier. */
-			rt_gc_dict_write_barrier(env, d, &d->key[i]);
-			rt_gc_dict_write_barrier(env, d, &d->value[i]);
-		}
+	/* Setup a value. */
+	val->type = NOCT_VALUE_PACKED;
+	val->val.packed = packed;
+
+	return true;
+}
+
+bool
+rt_get_packed_native_pointer(
+	struct rt_env *env,
+	struct rt_value *packed,
+	void **native_pointer,
+	void (**native_finalizer)(void *native_pointer))
+{
+	UNUSED_PARAMETER(env);
+
+	assert(packed != NULL);
+	assert(packed->type == NOCT_VALUE_PACKED);
+	assert(native_pointer != NULL);
+	assert(native_finalizer != NULL);
+
+	*native_pointer = packed->val.packed->native_pointer;
+	*native_finalizer = packed->val.packed->native_finalizer;
+	return true;
+}
+
+bool
+rt_finalize_packed(
+	struct rt_env *env,
+	struct rt_value *packed)
+{
+	struct rt_packed *p;
+	void *native_pointer;
+	void (*native_finalizer)(void *native_pointer);
+
+	assert(env != NULL);
+	assert(packed != NULL);
+	assert(packed->type == NOCT_VALUE_PACKED);
+
+	p = packed->val.packed;
+	assert(p != NULL);
+	if (p->native_finalizer == NULL)
+		return true;
+
+	native_pointer = p->native_pointer;
+	native_finalizer = p->native_finalizer;
+
+	p->native_pointer = NULL;
+	p->native_finalizer = NULL;
+	p->packed_buffer = NULL;
+	p->elem_size = 0;
+
+	native_finalizer(native_pointer);
+
+	return true;
+}
+
+/*
+ * Get the element type of a packed.
+ */
+bool
+rt_get_packed_type(
+	struct rt_env *env,
+	struct rt_value *packed,
+	int *type)
+{
+	assert(env != NULL);
+	assert(packed != NULL);
+	assert(packed->type == NOCT_VALUE_PACKED);
+	assert(packed->val.packed != NULL);
+	assert(type != NULL);
+	if (packed->val.packed->packed_buffer == NULL) {
+		rt_error(env, N_TR("Packed is unmapped."));
+		return false;
 	}
 
-	RELEASE_OBJ(src_real);
+	/* Get the type. */
+	*type = packed->val.packed->type;
 
-	*dst = d;
+	return true;
+}
+
+/*
+ * Get the element count of a packed.
+ */
+bool
+rt_get_packed_size(
+	struct rt_env *env,
+	struct rt_value *packed,
+	size_t *size)
+{
+	assert(env != NULL);
+	assert(packed != NULL);
+	assert(packed->type == NOCT_VALUE_PACKED);
+	assert(packed->val.packed != NULL);
+	assert(size != NULL);
+	if (packed->val.packed->packed_buffer == NULL) {
+		rt_error(env, N_TR("Packed is unmapped."));
+		return false;
+	}
+
+	/* Get the type. */
+	*size = packed->val.packed->elem_size;
+
+	return true;
+}
+
+/*
+ * Retrieves an int8 packed element.
+ */
+bool
+rt_get_packed_elem(
+	struct rt_env *env,
+	struct rt_value *packed,
+	size_t index,
+	struct rt_value *val)
+{
+	assert(env != NULL);
+	assert(packed != NULL);
+	assert(packed->type == NOCT_VALUE_PACKED);
+	assert(packed->val.packed != NULL);
+	assert(val != NULL);
+	if (packed->val.packed->packed_buffer == NULL) {
+		rt_error(env, N_TR("Packed is unmapped."));
+		return false;
+	}
+
+	if (index >= packed->val.packed->elem_size) {
+		rt_error(env, N_TR("Packed index %ld is out-of-range."), index);
+		return false;
+	}
+
+	switch (packed->val.packed->type) {
+	case NOCT_PACKED_INT8:
+		val->type = NOCT_VALUE_INT;
+		val->val.i = *((int8_t *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_UINT8:
+		val->type = NOCT_VALUE_INT;
+		val->val.i = *((uint8_t *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_INT16:
+		val->type = NOCT_VALUE_INT;
+		val->val.i = *((int16_t *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_UINT16:
+		val->type = NOCT_VALUE_INT;
+		val->val.i = *((uint16_t *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_INT32:
+		val->type = NOCT_VALUE_INT;
+		val->val.i = *((int32_t *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_UINT32:
+		val->type = NOCT_VALUE_INT;
+		val->val.i = (int32_t)*((uint32_t *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_INT64:
+		val->type = NOCT_VALUE_LONG;
+		val->val.l = (int64_t)*((int64_t *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_UINT64:
+		val->type = NOCT_VALUE_LONG;
+		val->val.l = (int64_t)*((uint64_t *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_FLOAT32:
+		val->type = NOCT_VALUE_FLOAT;
+		val->val.f = *((float *)(packed->val.packed->packed_buffer) + index);
+		break;
+	case NOCT_PACKED_FLOAT64:
+		val->type = NOCT_VALUE_DOUBLE;
+		val->val.lf = *((double *)(packed->val.packed->packed_buffer) + index);
+		break;
+	}
+
+	return true;
+}
+
+/*
+ * Stores an value to a packed.
+ */
+bool
+rt_set_packed_elem(
+	struct rt_env *env,
+	struct rt_value *packed,
+	size_t index,
+	struct rt_value *val)
+{
+	assert(env != NULL);
+	assert(packed != NULL);
+	assert(packed->type == NOCT_VALUE_PACKED);
+	assert(packed->val.packed != NULL);
+
+	assert(val != NULL);
+	if (packed->val.packed->packed_buffer == NULL) {
+		rt_error(env, N_TR("Packed is unmapped."));
+		return false;
+	}
+
+	if (index >= packed->val.packed->elem_size) {
+		rt_error(env, N_TR("Packed index %ld is out-of-range."), index);
+		return false;
+	}
+
+	switch (packed->val.packed->type) {
+	case NOCT_PACKED_INT8:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((int8_t *)packed->val.packed->packed_buffer + index) = (int8_t)(uint8_t)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((int8_t *)packed->val.packed->packed_buffer + index) = (int8_t)(uint8_t)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((int8_t *)packed->val.packed->packed_buffer + index) = (int8_t)(uint8_t)(int)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((int8_t *)packed->val.packed->packed_buffer + index) = (int8_t)(uint8_t)(int)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_UINT8:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((uint8_t *)packed->val.packed->packed_buffer + index) = (uint8_t)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((uint8_t *)packed->val.packed->packed_buffer + index) = (uint8_t)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((uint8_t *)packed->val.packed->packed_buffer + index) = (uint8_t)(int)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((uint8_t *)packed->val.packed->packed_buffer + index) = (uint8_t)(int)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_INT16:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((int16_t *)packed->val.packed->packed_buffer + index) = (int16_t)(uint16_t)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((int16_t *)packed->val.packed->packed_buffer + index) = (int16_t)(uint16_t)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((int16_t *)packed->val.packed->packed_buffer + index) = (int16_t)(uint16_t)(int)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((int16_t *)packed->val.packed->packed_buffer + index) = (int16_t)(uint16_t)(int)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_UINT16:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((uint16_t *)packed->val.packed->packed_buffer + index) = (uint16_t)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((uint16_t *)packed->val.packed->packed_buffer + index) = (uint16_t)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((uint16_t *)packed->val.packed->packed_buffer + index) = (uint16_t)(int)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((uint16_t *)packed->val.packed->packed_buffer + index) = (uint16_t)(int)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_INT32:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((int32_t *)packed->val.packed->packed_buffer + index) = (int32_t)(uint32_t)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((int32_t *)packed->val.packed->packed_buffer + index) = (int32_t)(uint32_t)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((int32_t *)packed->val.packed->packed_buffer + index) = (int32_t)(uint32_t)(int)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((int32_t *)packed->val.packed->packed_buffer + index) = (int32_t)(uint32_t)(int)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_UINT32:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((uint32_t *)packed->val.packed->packed_buffer + index) = (uint32_t)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((uint32_t *)packed->val.packed->packed_buffer + index) = (uint32_t)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((uint32_t *)packed->val.packed->packed_buffer + index) = (uint32_t)(int)val->val.f;
+ 			break;
+		case NOCT_VALUE_DOUBLE:
+			*((uint32_t *)packed->val.packed->packed_buffer + index) = (uint32_t)(int)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_INT64:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((int64_t *)packed->val.packed->packed_buffer + index) = (int64_t)(uint64_t)(uint32_t)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((int64_t *)packed->val.packed->packed_buffer + index) = (int64_t)(uint64_t)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((int64_t *)packed->val.packed->packed_buffer + index) = (int64_t)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((int64_t *)packed->val.packed->packed_buffer + index) = (int64_t)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_UINT64:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((uint64_t *)packed->val.packed->packed_buffer + index) = (uint64_t)(uint32_t)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((uint64_t *)packed->val.packed->packed_buffer + index) = (uint64_t)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((uint64_t *)packed->val.packed->packed_buffer + index) = (uint64_t)(int64_t)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((uint64_t *)packed->val.packed->packed_buffer + index) = (uint64_t)(int64_t)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_FLOAT32:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((float *)packed->val.packed->packed_buffer + index) = (float)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((float *)packed->val.packed->packed_buffer + index) = (float)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((float *)packed->val.packed->packed_buffer + index) = (float)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((float *)packed->val.packed->packed_buffer + index) = (float)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	case NOCT_PACKED_FLOAT64:
+		switch (val->type) {
+		case NOCT_VALUE_INT:
+			*((double *)packed->val.packed->packed_buffer + index) = (double)val->val.i;
+			break;
+		case NOCT_VALUE_LONG:
+			*((double *)packed->val.packed->packed_buffer + index) = (double)val->val.l;
+			break;
+		case NOCT_VALUE_FLOAT:
+			*((double *)packed->val.packed->packed_buffer + index) = (double)val->val.f;
+			break;
+		case NOCT_VALUE_DOUBLE:
+			*((double *)packed->val.packed->packed_buffer + index) = (double)val->val.lf;
+			break;
+		default:
+			rt_error(env, N_TR("Value is not a number."));
+			return false;
+		}
+		break;
+	default:
+		assert(0);
+		break;
+	}
+
+	return true;
+}
+
+/*
+ * Make a copy of a packed.
+ */
+bool
+rt_make_packed_copy(
+	struct rt_env *env,
+	struct rt_value *dst,
+	struct rt_value *src)
+{
+	struct rt_packed *dst_packed;
+	size_t size;
+
+	assert(env != NULL);
+	assert(dst != NULL);
+	assert(dst->type == NOCT_VALUE_PACKED);
+	assert(dst->val.packed != NULL);
+	assert(dst->val.packed->packed_buffer != NULL);
+	assert(src->type == NOCT_VALUE_PACKED);
+	assert(src->val.packed != NULL);
+	assert(src->val.packed->packed_buffer != NULL);
+
+	/* Determine the byte size. */
+	switch (src->val.packed->type) {
+	case NOCT_PACKED_INT8:
+	case NOCT_PACKED_UINT8:
+		size = src->val.packed->elem_size;
+		break;
+	case NOCT_PACKED_INT16:
+	case NOCT_PACKED_UINT16:
+		size = src->val.packed->elem_size * 2;
+		break;
+	case NOCT_PACKED_INT32:
+	case NOCT_PACKED_UINT32:
+	case NOCT_PACKED_FLOAT32:
+		size = src->val.packed->elem_size * 4;
+		break;
+	default:
+		size = src->val.packed->elem_size * 8;
+		break;
+	}
+
+	/* Allocate an array. */
+	dst_packed = rt_gc_alloc_packed(env,
+					 src->val.packed->type,
+					 size,
+					 src->val.packed->elem_size,
+					 NULL,
+					 NULL,
+					 NULL);
+	if (dst_packed == NULL)
+		return false;
+
+	/*
+	 * In this section, it is guaranteed that GC is not executed
+	 * in other threads because this thread is "in-flight" and
+	 * a GC execution waits for all threads become not in-flight.
+	 */
+
+	memcpy(dst_packed->packed_buffer, src->val.packed->packed_buffer, size);
+
+	dst->type = NOCT_VALUE_PACKED;
+	dst->val.packed = dst_packed;
 
 	return true;
 }
@@ -1823,16 +2041,22 @@ rt_make_dict_copy(
 
 #else
 
-#define ACQUIRE_GLOBAL()									\
-	while (1) {										\
-		int old = atomic_fetch_add_acquire(&env->vm->global_var_counter, 1);		\
-		if (old == 0)									\
-			break;									\
-		atomic_fetch_sub_release(&env->vm->global_var_counter, 1);			\
-	}
+#define ACQUIRE_GLOBAL()								\
+	do {										\
+		while (1) {							\
+			int old = atomic_fetch_add_acquire_int(			\
+				&env->vm->global_var_counter, 1);			\
+			if (old == 0)						\
+				break;							\
+			atomic_fetch_sub_release_int(				\
+				&env->vm->global_var_counter, 1);			\
+		}									\
+	} while (0)
 
-#define RELEASE_GLOBAL()									\
-	atomic_fetch_sub_release(&env->vm->global_var_counter, 1);
+#define RELEASE_GLOBAL()								\
+	do {										\
+		atomic_fetch_sub_release_int(&env->vm->global_var_counter, 1);	\
+	} while (0)
 
 #endif
 
@@ -1869,11 +2093,11 @@ rt_cleanup_global(
 
 	for (i = 0; i < env->vm->global_alloc_size; i++) {
 		if (env->vm->global[i].name != NULL) {
-			free(env->vm->global[i].name);
+			noct_free(env->vm->global[i].name);
 			env->vm->global[i].name = NULL;
 		}
 	}
-	free(env->vm->global);
+	noct_free(env->vm->global);
 	env->vm->global = NULL;
 }
 
@@ -1932,7 +2156,7 @@ rt_get_global(
 	size_t len;
 	uint32_t hash;
 
-	len = strlen(name) + 1;
+	len = strlen(name) + 1; /* Including NUL. */
 	hash = rt_string_hash(name);
 
 	if (!rt_get_global_with_hash(env, name, len, hash, val))
@@ -2003,6 +2227,30 @@ rt_set_global(
 	return true;
 }
 
+/* Mark an already-registered global binding immutable. */
+bool
+rt_mark_global_const(
+	struct rt_env *env,
+	const char *name)
+{
+	uint32_t i;
+
+	ACQUIRE_GLOBAL();
+	for (i = 0; i < env->vm->global_alloc_size; i++) {
+		if (env->vm->global[i].name == NULL ||
+		    env->vm->global[i].is_removed)
+			continue;
+		if (strcmp(env->vm->global[i].name, name) == 0) {
+			env->vm->global[i].is_const = true;
+			RELEASE_GLOBAL();
+			return true;
+		}
+	}
+	RELEASE_GLOBAL();
+	rt_error(env, N_TR("Symbol \"%s\" not found."), name);
+	return false;
+}
+
 /*
  * Set a global variable.
  */
@@ -2020,8 +2268,10 @@ rt_set_global_with_hash(
 
 	/* Reisze if 75% is used. */
 	if (env->vm->global_size >= env->vm->global_alloc_size / 4 * 3) {
-		if (!rt_expand_global(env))
+		if (!rt_expand_global(env)) {
+			RELEASE_GLOBAL();
 			return false;
+		}
 	}
 
 	/* Search a place to insert or overwrite. */
@@ -2033,7 +2283,7 @@ rt_set_global_with_hash(
 		if (env->vm->global[i].is_removed ||
 		    env->vm->global[i].name == NULL) {
 			/* Insert a new entry. */
-			env->vm->global[i].name = strdup(name);
+			env->vm->global[i].name = noct_strdup(name);
 			if (env->vm->global[i].name == NULL) {
 				RELEASE_GLOBAL();
 				rt_out_of_memory(env);
@@ -2053,6 +2303,12 @@ rt_set_global_with_hash(
 		if (env->vm->global[i].name_hash != hash)
 			continue;
 		if (strcmp(env->vm->global[i].name, name) == 0) {
+			/* Reject assignment to a constant (let) binding. */
+			if (env->vm->global[i].is_const) {
+				RELEASE_GLOBAL();
+				rt_error(env, N_TR("Cannot assign to constant \"%s\"."), name);
+				return false;
+			}
 			/* Overwrite the existing entry value. */
 			env->vm->global[i].val = *val;
 			RELEASE_GLOBAL();
@@ -2097,12 +2353,13 @@ rt_expand_global(
 				new_tbl[j].name_len = old_tbl[i].name_len;
 				new_tbl[j].name_hash = old_tbl[i].name_hash;
 				new_tbl[j].val = old_tbl[i].val;
+				new_tbl[j].is_const = old_tbl[i].is_const;
 				break;
 			}
 		}
 	}
 
-	free(old_tbl);
+	noct_free(old_tbl);
 	env->vm->global = new_tbl;
 	env->vm->global_alloc_size = new_size;
 
@@ -2110,7 +2367,7 @@ rt_expand_global(
 }
 
 /*
- * FFI Pin
+ * Pinning Native APIs
  */
 
 /*
@@ -2182,6 +2439,18 @@ rt_unpin_local(
 }
 
 /*
+ * Make a safepoint.
+ */
+bool
+rt_safepoint(
+	struct rt_env *env)
+{
+	om_safepoint(env);
+
+	return true;
+}
+
+/*
  * Error Handling
  */
 
@@ -2240,3 +2509,318 @@ rt_out_of_memory(
 {
 	noct_error(env, N_TR("Out of memory."));
 }
+
+/* Validate the runtime metadata required to register one LIR descriptor. */
+static bool
+rt_validate_lir(
+	const struct lir_func *function)
+{
+	uint32_t i;
+
+	/* Rejects a missing function name. */
+	if (function->func_name == NULL || function->func_name[0] == '\0')
+		return false;
+
+	/* Rejects a missing source file name. */
+	if (function->file_name == NULL)
+		return false;
+
+	/* Rejects a parameter count outside the runtime limits. */
+	if (function->param_count > LIR_PARAM_SIZE ||
+	    function->param_count > NOCT_ARG_MAX) {
+		return false;
+	}
+
+	/* Rejects a temporary count outside the runtime limits. */
+	if (function->tmpvar_size < function->param_count + 1 ||
+	    function->tmpvar_size > RT_TMPVAR_MAX) {
+		return false;
+	}
+
+	/* Rejects inconsistent bytecode storage metadata. */
+	if ((function->bytecode_size == 0) != (function->bytecode == NULL))
+		return false;
+
+	/* Requires every declared parameter to retain its source name. */
+	for (i = 0; i < function->param_count; i++) {
+		/* Rejects a missing parameter name. */
+		if (function->param_name[i] == NULL)
+			return false;
+	}
+
+	/* Rejects an initializer that expects arguments. */
+	if (strncmp(function->func_name, "$init.", 6) == 0 &&
+	    function->param_count != 0) {
+		return false;
+	}
+
+	/* Reports valid runtime metadata. */
+	return true;
+}
+
+/* Set the current error file without truncation ambiguity. */
+static void
+rt_set_error_file(
+	struct rt_env *env,
+	const char *file_name)
+{
+	/* Copies and terminates the current error file name. */
+	strncpy(env->file_name, file_name, sizeof(env->file_name) - 1);
+	env->file_name[sizeof(env->file_name) - 1] = '\0';
+}
+
+/* Register a function from LIR. */
+static bool
+rt_register_lir(
+	struct rt_env *env,
+	const struct lir_func *lir)
+{
+	struct rt_func *func;
+	struct rt_value global;
+	uint32_t i;
+
+	/* Allocates the runtime function. */
+	func = noct_calloc(1, sizeof(*func));
+	if (func == NULL) {
+		rt_out_of_memory(env);
+		return false;
+	}
+
+#if defined(NOCT_USE_OPTIMIZER)
+	/* Copies the optimizer-owned fast function metadata. */
+	func->is_fast = lir->is_fast;
+	func->fast_info = fast_info_clone(lir->fast_info);
+	if (lir->fast_info != NULL && func->fast_info == NULL) {
+		rt_out_of_memory(env);
+		rt_free_func(env, func);
+		return false;
+	}
+#endif
+
+	/* Copies the function name. */
+	func->name = noct_strdup(lir->func_name);
+	if (func->name == NULL) {
+		rt_out_of_memory(env);
+		rt_free_func(env, func);
+		return false;
+	}
+
+	/* Copies the parameter count. */
+	func->param_count = lir->param_count;
+
+#if defined(NOCT_USE_OPTIMIZER)
+	/* Initializes every parameter contract slot. */
+	for (i = 0; i < NOCT_ARG_MAX; i++) {
+		func->param_type[i] = -1;
+		func->param_packed_type[i] = -1;
+		func->param_restricted[i] = false;
+	}
+
+	/* Copies the declared parameter contracts. */
+	for (i = 0; i < lir->param_count; i++) {
+		func->param_type[i] = lir->param_type[i];
+		func->param_packed_type[i] = lir->param_packed_type[i];
+		func->param_restricted[i] = lir->param_restricted[i];
+	}
+
+	/* Copies the declared return contract. */
+	func->return_type = lir->return_type;
+	func->return_packed_type = lir->return_packed_type;
+	func->return_type_checked = lir->return_type_checked;
+#endif
+
+	/* Copies every parameter name. */
+	for (i = 0; i < lir->param_count; i++) {
+		func->param_name[i] = noct_strdup(lir->param_name[i]);
+		if (func->param_name[i] == NULL) {
+			rt_out_of_memory(env);
+			rt_free_func(env, func);
+			return false;
+		}
+	}
+
+	/* Allocates bytecode storage when the function has a body. */
+	func->bytecode_size = lir->bytecode_size;
+	if (func->bytecode_size != 0) {
+		func->bytecode = noct_malloc((size_t)lir->bytecode_size);
+		if (func->bytecode == NULL) {
+			rt_out_of_memory(env);
+			rt_free_func(env, func);
+			return false;
+		}
+
+		/* Copies the bytecode body. */
+		memcpy(func->bytecode, lir->bytecode, (size_t)lir->bytecode_size);
+	}
+
+	/* Copies the execution metadata. */
+	func->tmpvar_size = lir->tmpvar_size;
+#if defined(NOCT_USE_OPTIMIZER)
+	func->has_vector_ops = lir->has_vector_ops;
+	func->has_fma_ops = lir->has_fma_ops;
+#endif
+
+	/* Copies the source file name. */
+	func->file_name = noct_strdup(lir->file_name);
+	if (func->file_name == NULL) {
+		rt_out_of_memory(env);
+		rt_free_func(env, func);
+		return false;
+	}
+
+	/* Publishes the function as a global value. */
+	global.type = NOCT_VALUE_FUNC;
+	global.val.func = func;
+	if (!rt_set_global(env, func->name, &global)) {
+		rt_free_func(env, func);
+		return false;
+	}
+
+#if defined(NOCT_USE_JIT)
+	/* Generates optional native code for the function. */
+	if (env->vm->config.jit_enable) {
+		if (!jit_build(env, func)) {
+			/* Restores interpreter fallback after failed JIT generation. */
+			rt_report_jit_result(func, false, env->error_message);
+			func->jit_code = NULL;
+			func->call_count = -1;
+			env->error_message[0] = '\0';
+			env->line = 0;
+		} else {
+			/* Marks the generated code for unit-level publication. */
+			rt_report_jit_result(func, true, NULL);
+			env->vm->is_jit_dirty = true;
+		}
+	}
+#endif
+
+	/* Links the function into the VM. */
+	func->next = env->vm->func_list;
+	env->vm->func_list = func;
+
+	/* Reports a successful LIR registration. */
+	return true;
+}
+
+/* Releases every detached LIR function and its pointer array. */
+static void
+rt_cleanup_lir_array(
+	uint32_t function_count,
+	struct lir_func *function[])
+{
+	uint32_t i;
+
+	/* Releases every constructed LIR function. */
+	for (i = 0; i < function_count; i++) {
+		/* Skips an unconstructed array entry. */
+		if (function[i] == NULL)
+			continue;
+
+		lir_cleanup(function[i]);
+	}
+
+	/* Releases the pointer array. */
+	noct_free(function);
+}
+
+#if defined(NOCT_USE_JIT)
+/* Reports one JIT compilation result when diagnostics are enabled. */
+static void
+rt_report_jit_result(
+	struct rt_func *func,
+	bool success,
+	const char *reason)
+{
+	const char *debug;
+
+	/* Checks whether JIT diagnostics are enabled. */
+	debug = getenv("NOCT_JIT_DEBUG");
+	if (debug == NULL)
+		return;
+
+	/* Reports the compilation result. */
+	fprintf(
+		stderr,
+		"noct-jit: %s: %s",
+		func->name,
+		success ? "compiled" : "fallback");
+
+	/* Appends an available fallback reason. */
+	if (!success &&
+	    reason != NULL &&
+	    reason[0] != '\0') {
+		fprintf(stderr, " reason=%s", reason);
+	}
+
+	/* Terminates the diagnostic line. */
+	fputc('\n', stderr);
+}
+
+/* Reports one JIT lifecycle result when diagnostics are enabled. */
+static void
+rt_report_jit_lifecycle(
+	const char *operation,
+	bool success)
+{
+	const char *debug;
+
+	/* Checks whether JIT diagnostics are enabled. */
+	debug = getenv("NOCT_JIT_DEBUG");
+	if (debug == NULL)
+		return;
+
+	/* Reports the lifecycle result. */
+	fprintf(
+		stderr,
+		"noct-jit-lifecycle: %s status=%s\n",
+		operation,
+		success ? "ok" : "failed");
+}
+
+/* Invalidates every published JIT entry. */
+static void
+rt_invalidate_jit_entries(
+	struct rt_vm *vm)
+{
+	struct rt_func *func;
+
+	/* Invalidates every function in the VM. */
+	for (func = vm->func_list; func != NULL; func = func->next) {
+		func->jit_code = NULL;
+		func->call_count = -1;
+	}
+}
+
+/* Commits all pending JIT code. */
+static bool
+rt_commit_jit(
+	struct rt_env *env)
+{
+	bool commit_succeeded;
+
+	/* Skips a VM without pending JIT code. */
+	if (!env->vm->config.jit_enable || !env->vm->is_jit_dirty)
+		return true;
+
+	/* Commits the pending JIT code. */
+	commit_succeeded = jit_commit(env);
+	if (!commit_succeeded) {
+		/* Discards unusable JIT state after a failed commit. */
+		rt_invalidate_jit_entries(env->vm);
+		(void)jit_free(env);
+		env->vm->is_jit_dirty = false;
+
+		/* Reports the failed JIT publication. */
+		rt_error(env, N_TR("JIT memory protection failed."));
+		rt_report_jit_lifecycle("publish", false);
+		return false;
+	}
+
+	/* Clears and reports the committed JIT state. */
+	env->vm->is_jit_dirty = false;
+	rt_report_jit_lifecycle("publish", true);
+
+	/* Reports a successful JIT commit. */
+	return true;
+}
+#endif

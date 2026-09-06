@@ -2,9 +2,13 @@ set(CMAKE_SYSTEM_NAME      FreeBSD)
 set(CMAKE_SYSTEM_PROCESSOR x86_64)
 
 # Please update the following.
-set(CMAKE_C_COMPILER       "clang")
-set(CMAKE_AR               "llvm-ar")
-set(CMAKE_C_FLAGS          "-target x86_64-unknow-freebsd -ffreestanding -nostdinc -nostdlib -I${CMAKE_CURRENT_SOURCE_DIR}/resources/clang-include -O2 -g0")
+find_program(NOCT_PS5_CLANG NAMES clang clang-19 REQUIRED)
+find_program(NOCT_PS5_LLVM_AR NAMES llvm-ar llvm-ar-19 REQUIRED)
+find_program(NOCT_PS5_LLVM_RANLIB NAMES llvm-ranlib llvm-ranlib-19 REQUIRED)
+set(CMAKE_C_COMPILER       "${NOCT_PS5_CLANG}")
+set(CMAKE_AR               "${NOCT_PS5_LLVM_AR}")
+set(CMAKE_RANLIB           "${NOCT_PS5_LLVM_RANLIB}")
+set(CMAKE_C_FLAGS          "-target x86_64-unknown-freebsd -ffreestanding -nostdinc -nostdlib -I${CMAKE_CURRENT_SOURCE_DIR}/resources/clang-include -O2 -g0")
 
 # Magic
 set(CMAKE_C_FLAGS_INIT "" CACHE STRING "" FORCE)

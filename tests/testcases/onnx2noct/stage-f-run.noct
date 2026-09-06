@@ -1,0 +1,20 @@
+require model;
+
+func main(args) {
+    if (Array.size(args) != 2 && Array.size(args) != 3) {
+        System.error("Usage: stage-f-run [MODEL.weights] INPUT.f32le OUTPUT.f32le");
+    }
+    var argumentOffset = 0;
+    var weightsPath = "";
+    if (Array.size(args) == 3) { weightsPath = args[0]; argumentOffset = 1; }
+    var info = modelInfo();
+    var input = Binary.readFloat32LE(args[argumentOffset], info["inputElements"]);
+    var output = Packed.float32(info["outputElements"]);
+    modelInitialize(weightsPath);
+    modelWarmup();
+    modelInfer(input, output);
+    Binary.writeFloat32LE(args[argumentOffset + 1], output);
+    modelShutdown();
+    modelShutdown();
+    print("stage-f-ok kernels=" + info["kernels"]);
+}

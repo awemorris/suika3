@@ -6,6 +6,7 @@
  */
 
 #include "cli-main.h"
+#include "../backend/backend.h"
 
 /* Forward declaration. */
 static bool do_transpile_elisp(const char *out_file, int in_file_count, const char *in_file[]);
@@ -42,6 +43,12 @@ static bool do_transpile_elisp(const char *out_file, int in_file_count, const ch
 
 	/* For each input file or directory. */
 	for (i = 0; i < in_file_count; i++) {
+		/* A "--ns-map=FILE" pseudo-input loads the namespace map. */
+		if (strncmp(in_file[i], "--ns-map=", 9) == 0) {
+			if (!noct_elback_load_ns_map(in_file[i] + 9))
+				return false;
+			continue;
+		}
 		if (!add_file(in_file[i], add_file_hook_elisp))
 			return false;
 	}

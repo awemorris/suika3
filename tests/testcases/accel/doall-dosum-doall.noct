@@ -1,0 +1,30 @@
+__accel func add_square_sum(input: rpackeduint32_in,
+                          output: rpackeduint32_out,
+                          total_ptr: rpackeduint32_ptr,
+                          count: int): void {
+    let squared = Packed.uint32(count);
+    for (i in 0..count) {
+        squared[i] = input[i] * input[i];
+    }
+    var sum: u32 = 0;
+    for (i in 0..count) {
+        sum += squared[i];
+    }
+    total_ptr[0] = sum;
+    for (i in 0..count) {
+        output[i] = squared[i] + total_ptr[0];
+    }
+}
+
+__accel var total = Accel.uint32(1);
+
+func main() {
+    let input = Packed.uint32(65);
+    let output = Packed.uint32(65);
+    for (i in 0..65) {
+        input[i] = 1;
+    }
+    Accel.call(add_square_sum, input, output, total, 65);
+    print(output[0]);
+    print(output[64]);
+}

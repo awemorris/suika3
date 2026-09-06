@@ -1,0 +1,8 @@
+__fast func takes_uint32(data: rpackeduint32(2)): int {
+    return data[0];
+}
+
+func main() {
+    var data = Packed.int32(2);
+    print(takes_uint32(data));
+}

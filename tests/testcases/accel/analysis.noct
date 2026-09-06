@@ -1,0 +1,89 @@
+__accel func doall_distinct(src: rpackeduint32_in,
+                          dst: rpackeduint32_out,
+                          n: int): void {
+    for (i in 0..n) {
+        dst[i] = src[i] + 1;
+    }
+}
+
+__accel func doall_inplace(data: rpackeduint32_in,
+                         n: int): void {
+    for (i in 0..n) {
+        data[i] = data[i] + 1;
+    }
+}
+
+__accel func doall_shifted_distinct(src: rpackeduint32_in,
+                                  dst: rpackeduint32_out,
+                                  n: int): void {
+    for (i in 1..n) {
+        dst[i] = src[i - 1];
+    }
+}
+
+__accel func dependent_neighbor(data: rpackeduint32_in,
+                              n: int): void {
+    for (i in 1..n) {
+        data[i] = data[i - 1] + 1;
+    }
+}
+
+__accel func dependent_constant(data: rpackeduint32_in,
+                              n: int): void {
+    for (i in 0..n) {
+        data[0] = i;
+    }
+}
+
+__accel func dependent_scalar(src: rpackeduint32_in,
+                            dst: rpackeduint32_out,
+                            n: int): void {
+    var carry: int = 0;
+    for (i in 0..n) {
+        carry = carry + 1;
+        dst[i] = src[i] + carry;
+    }
+}
+
+__accel func unknown_index(src: rpackeduint32_in,
+                         dst: rpackeduint32_out,
+                         index: rpackeduint32_in,
+                         n: int): void {
+    for (i in 0..n) {
+        dst[i] = src[index[i]];
+    }
+}
+
+__accel func unknown_call(dst: rpackeduint32_out,
+                        n: int): void {
+    for (i in 0..n) {
+        dst[i] = random();
+    }
+}
+
+__accel func dosum_int(src: rpackedint32_in, n: int): void {
+    var sum: i32 = 0;
+    for (i in 0..n) {
+        sum = sum + src[i];
+    }
+    print(sum);
+}
+
+__accel func dosum_uint(src: rpackeduint32_in, n: int): void {
+    var sum: u32 = 0;
+    for (i in 0..n) {
+        sum += src[i];
+    }
+    print(sum);
+}
+
+__accel func dosum_float(src: rpackedfloat_in, n: int): void {
+    var sum: float = 0.0;
+    for (i in 0..n) {
+        sum = src[i] + sum;
+    }
+    print(sum);
+}
+
+func main() {
+}

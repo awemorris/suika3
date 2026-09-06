@@ -2,7 +2,9 @@
 
 /*
  * Noct Programming Language
- * Copyright (c) 2025, 2026, Awe Morris
+ * Copyright (C) 2025, 2026 Awe Morris
+ *
+ * SPDX-License-Identifier: Zlib
  */
 
 /*-
@@ -65,13 +67,13 @@ extern "C" {
 
 /* x86 */
 #define NOCT_ARCH_X86
-#define NOCT_ARCH_LE		/* Always LE */
+#define NOCT_ARCH_LE /* Always LE */
 
 #elif defined(__x86_64__) || defined(_M_X64)
 
 /* x86_64 */
 #define NOCT_ARCH_X86_64
-#define NOCT_ARCH_LE		/* Always LE */
+#define NOCT_ARCH_LE /* Always LE */
 
 #elif defined(__aarch64__) || defined(_M_ARM64)
 
@@ -79,9 +81,9 @@ extern "C" {
 #define NOCT_ARCH_ARM64
 
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define NOCT_ARCH_BE	/* Can be BE*/
+#define NOCT_ARCH_BE /* Can be BE*/
 #else
-#define NOCT_ARCH_LE	/* Default, always LE on MSVC */
+#define NOCT_ARCH_LE /* Default, always LE on MSVC */
 #endif
 
 #elif defined(__arm__)
@@ -90,9 +92,9 @@ extern "C" {
 #define NOCT_ARCH_ARM32
 
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define NOCT_ARCH_BE	/* Can be BE */
+#define NOCT_ARCH_BE /* Can be BE */
 #else
-#define NOCT_ARCH_LE	/* Default, always LE on MSVC */
+#define NOCT_ARCH_LE /* Default, always LE on MSVC */
 #endif
 
 #elif defined(_ARCH_PPC64)
@@ -101,9 +103,9 @@ extern "C" {
 #define NOCT_ARCH_PPC64
 
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define NOCT_ARCH_BE	/* Can be BE optionally */
+#define NOCT_ARCH_BE /* Can be BE optionally */
 #else
-#define NOCT_ARCH_LE	/* Default, no MSVC support */
+#define NOCT_ARCH_LE /* Default, no MSVC support */
 #endif
 
 #elif defined(_ARCH_PPC)
@@ -112,9 +114,9 @@ extern "C" {
 #define NOCT_ARCH_PPC32
 
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define NOCT_ARCH_LE	/* Can be LE optionally */
+#define NOCT_ARCH_LE /* Can be LE optionally */
 #else
-#define NOCT_ARCH_BE	/* Default, always BE on MSVC */
+#define NOCT_ARCH_BE /* Default, always BE on MSVC */
 #endif
 
 #elif defined(__mips64) || defined(__mips64__)
@@ -123,9 +125,9 @@ extern "C" {
 #define NOCT_ARCH_MIPS64
 
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define NOCT_ARCH_LE	/* Can be LE */
+#define NOCT_ARCH_LE /* Can be LE */
 #else
-#define NOCT_ARCH_BE	/* Default, no MSVC support */
+#define NOCT_ARCH_BE /* Default, no MSVC support */
 #endif
 
 #elif defined(__mips__)
@@ -134,9 +136,9 @@ extern "C" {
 #define NOCT_ARCH_MIPS32
 
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
-#define NOCT_ARCH_LE	/* Can be BE optionally */
+#define NOCT_ARCH_LE /* Can be BE optionally */
 #else
-#define NOCT_ARCH_BE	/* Default, always BE on MSVC */
+#define NOCT_ARCH_BE /* Default, always BE on MSVC */
 #endif
 
 #elif defined(__riscv) && (__riscv_xlen == 64)
@@ -145,9 +147,9 @@ extern "C" {
 #define NOCT_ARCH_RISCV64
 
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define NOCT_ARCH_BE	/* Can be BE optionally */
+#define NOCT_ARCH_BE /* Can be BE optionally */
 #else
-#define NOCT_ARCH_LE	/* Default, no MSVC support yet */
+#define NOCT_ARCH_LE /* Default, no MSVC support yet */
 #endif
 
 #elif defined(__riscv) && (__riscv_xlen == 32)
@@ -156,9 +158,9 @@ extern "C" {
 #define NOCT_ARCH_RISCV32
 
 #if defined(__BYTE_ORDER__) && __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-#define NOCT_ARCH_BE	/* Can be BE optionally */
+#define NOCT_ARCH_BE /* Can be BE optionally */
 #else
-#define NOCT_ARCH_LE	/* Default, no MSVC support yet */
+#define NOCT_ARCH_LE /* Default, no MSVC support yet */
 #endif
 
 #endif
@@ -167,54 +169,80 @@ extern "C" {
  * Here, we define two macros that indicates the target platform and
  * its characteristics.
  *
- * |Macro               |Platform              |Description                 |
- * |--------------------|----------------------|----------------------------|
- * |NOCT_TARGET_WINDOWS   |Windows               |                            |
- * |NOCT_TARGET_MACOS     |macOS                 |                            |
- * |NOCT_TARGET_LINUX     |Linux                 |Excluding Android           |
- * |NOCT_TARGET_IOS       |iOS                   |                            |
- * |NOCT_TARGET_ANDROID   |Android NDK           |                            |
- * |NOCT_TARGET_WASM      |Wasm                  |Emscripten                  |
- * |NOCT_TARGET_UNITY     |Unity                 |Gaming Consoles             |
- * |NOCT_TARGET_FREEBSD   |FreeBSD               |Excluding Gaming Consoles   |
- * |NOCT_TARGET_NETBSD    |NetBSD                |                            |
- * |NOCT_TARGET_OPENBSD   |OpenBSD               |                            |
- * |NOCT_TARGET_SOLARIS11 |Solaris               |                            |
- * |NOCT_TARGET_SOLARIS10 |Solaris               |                            |
- * |NOCT_TARGET_BEOS      |BeOS and Haiku        |                            |
- * |NOCT_TARGET_DOS4G     |DOS4G                 |                            |
+ * | Macro                 | Platform       | Description                 |
+ * |-----------------------|----------------|-----------------------------|
+ * | NOCT_TARGET_WINDOWS   | Windows        |                             |
+ * | NOCT_TARGET_MACOS     | macOS          |                             |
+ * | NOCT_TARGET_LINUX     | Linux          | Excluding Android           |
+ * | NOCT_TARGET_IOS       | iOS            |                             |
+ * | NOCT_TARGET_ANDROID   | Android NDK    |                             |
+ * | NOCT_TARGET_WASM      | Wasm           | Emscripten                  |
+ * | NOCT_TARGET_UNITY     | Unity          | Gaming Consoles             |
+ * | NOCT_TARGET_FREEBSD   | FreeBSD        | Excluding Gaming Consoles   |
+ * | NOCT_TARGET_NETBSD    | NetBSD         |                             |
+ * | NOCT_TARGET_OPENBSD   | OpenBSD        |                             |
+ * | NOCT_TARGET_SOLARIS11 | Solaris        |                             |
+ * | NOCT_TARGET_SOLARIS10 | Solaris        |                             |
+ * | NOCT_TARGET_BEOS      | BeOS and Haiku |                             |
+ * | NOCT_TARGET_DOS4G     | DOS4G          |                             |
+ * | NOCT_TARGET_PC98DOS   | PC-98 DOS      |                             |
+ * | NOCT_TARGET_PC98BE    | PC-98 BE       | Freestanding bootstrap env. |
+ * | NOCT_TARGET_ZEDBSD    | zedBSD         |                             |
  *
- * |Macro               |Description                     |
- * |--------------------|--------------------------------|
- * |NOCT_TARGET_POSIX     |Generic POSIX compliant systems |
+ * Additional:
+
+ * | Macro               | Description             |
+ * |---------------------|-------------------------|
+ * | NOCT_TARGET_POSIX   | POSIX compliant systems |
+ * | NOCT_TARGET_DOS     | DOS-based systems        |
  */
 
+/* Common DOS characteristics without conflating the machine targets. */
+#if (defined(NOCT_TARGET_DOS4G) || defined(NOCT_TARGET_PC98DOS)) &&           \
+    !defined(NOCT_TARGET_DOS)
+#define NOCT_TARGET_DOS
+#endif
+
 /* Windows */
-#if defined(_WIN32) && !defined(NOCT_USE_UNITY)
+#if defined(_WIN32) && !defined(NOCT_TARGET_UNITY)
 #define NOCT_TARGET_WINDOWS
 #endif
 
 /* macOS / iOS */
-#if !defined(NOCT_USE_UNITY)
+#if !defined(NOCT_TARGET_UNITY)
 #if defined(__GNUC__)
 #if defined(__APPLE__) && __has_include(<TargetConditionals.h>)
 #include <TargetConditionals.h>
 #if TARGET_OS_IPHONE
 #define NOCT_TARGET_IOS
+#ifndef NOCT_TARGET_POSIX
+#define NOCT_TARGET_POSIX
+#endif
 #elif TARGET_OS_OSX
 #define NOCT_TARGET_MACOS
+#ifndef NOCT_TARGET_POSIX
+#define NOCT_TARGET_POSIX
+#endif
 #endif
 #endif
 #endif
 #endif
 
+/* zedBSD */
+#if defined(__ZEDBSD__)
+#ifndef NOCT_TARGET_ZEDBSD
+#define NOCT_TARGET_ZEDBSD
+#endif
+#ifndef NOCT_TARGET_POSIX
+#define NOCT_TARGET_POSIX
+#endif
+#endif
+
 /* Linux (non-Android) */
-#if defined(__linux) && \
-        ( \
-                !defined(__ANDROID__) &&   \
-                !defined(HAL_TARGET_UNITY) && \
-                !defined(HAL_TARGET_OPENHARMONY) \
-	)
+#if defined(__linux) &&                                                        \
+    (!defined(__ANDROID__) && !defined(HAL_TARGET_UNITY) &&                    \
+     !defined(HAL_TARGET_OPENHARMONY) && !defined(NOCT_TARGET_PC98BE) &&       \
+     !defined(NOCT_TARGET_ZEDBSD))
 #define NOCT_TARGET_LINUX
 #ifndef NOCT_TARGET_POSIX
 #define NOCT_TARGET_POSIX
@@ -222,7 +250,7 @@ extern "C" {
 #endif
 
 /* FreeBSD */
-#if defined(__FreeBSD__) && !defined(NOCT_USE_UNITY)
+#if defined(__FreeBSD__) && !defined(NOCT_TARGET_UNITY)
 #define NOCT_TARGET_FREEBSD
 #ifndef NOCT_TARGET_POSIX
 #define NOCT_TARGET_POSIX
@@ -250,7 +278,7 @@ extern "C" {
 #endif
 
 /* SunOS/Solaris */
-#if defined(__sun) 
+#if defined(__sun)
 #if defined(__SunOS_5_11)
 #define NOCT_TARGET_SOLARIS11
 #else
@@ -274,25 +302,22 @@ extern "C" {
 /* BeOS / Haiku */
 #if defined(__BEOS__) || defined(__HAIKU__)
 #define NOCT_TARGET_BEOS
+#ifndef NOCT_TARGET_POSIX
+#define NOCT_TARGET_POSIX
+#endif
 #endif
 
 /* Error: No target detected. */
-#if !defined(NOCT_TARGET_WINDOWS) &&              \
-    !defined(NOCT_TARGET_MACOS) &&                \
-    !defined(NOCT_TARGET_LINUX) &&                \
-    !defined(NOCT_TARGET_FREEBSD) &&              \
-    !defined(NOCT_TARGET_NETBSD) &&               \
-    !defined(NOCT_TARGET_OPENBSD) &&              \
-    !defined(NOCT_TARGET_SOLARIS11) &&            \
-    !defined(NOCT_TARGET_SOLARIS10) &&            \
-    !defined(NOCT_TARGET_PIOSIX) &&               \
-    !defined(NOCT_TARGET_IOS) &&                  \
-    !defined(NOCT_TARGET_ANDROID) &&              \
-    !defined(NOCT_TARGET_OPENHARMONY) &&          \
-    !defined(NOCT_TARGET_WASM) &&                 \
-    !defined(NOCT_TARGET_BEOS) &&                 \
-    !defined(NOCT_TARGET_UNITY) &&                \
-    !defined(NOCT_TARGET_DOS4G)
+#if !defined(NOCT_TARGET_WINDOWS) && !defined(NOCT_TARGET_MACOS) &&            \
+    !defined(NOCT_TARGET_MACOS7) && !defined(NOCT_TARGET_LINUX) &&             \
+    !defined(NOCT_TARGET_FREEBSD) && !defined(NOCT_TARGET_NETBSD) &&           \
+    !defined(NOCT_TARGET_OPENBSD) && !defined(NOCT_TARGET_SOLARIS11) &&        \
+    !defined(NOCT_TARGET_SOLARIS10) && !defined(NOCT_TARGET_POSIX) &&          \
+    !defined(NOCT_TARGET_IOS) && !defined(NOCT_TARGET_ANDROID) &&              \
+    !defined(NOCT_TARGET_OPENHARMONY) && !defined(NOCT_TARGET_WASM) &&         \
+    !defined(NOCT_TARGET_BEOS) && !defined(NOCT_TARGET_UNITY) &&               \
+    !defined(NOCT_TARGET_DOS) && !defined(NOCT_TARGET_PC98BE) &&               \
+    !defined(NOCT_TARGET_ZEDBSD)
 #error "No target detected."
 #endif
 
@@ -302,7 +327,8 @@ extern "C" {
 #ifndef __cplusplus
 #if defined(HAVE_STDBOOL_H)
 #include <stdbool.h>
-#elif defined(_MSC_VER) || (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L)
+#elif defined(_MSC_VER) ||                                                     \
+    (defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L)
 #include <stdbool.h>
 #else
 #if !defined(bool) && !defined(BOOL_DEF)
@@ -316,7 +342,24 @@ enum { false = 0, true = 1 };
 /*
  * Definitions of the intN_t and uintN_t types.
  */
-#if defined(HAVE_STDINT_H)
+#if defined(__WATCOMC__)
+/* OpenWatcom 1.9 advertises C99, but including inttypes.h/stdint.h after
+ * standard headers diagnoses its own limit-macro spellings as redefinitions.
+ * Use the compiler's native integer types without those headers. */
+#ifndef INTN_DEF
+#define INTN_DEF
+typedef signed char int8_t;
+typedef signed short int16_t;
+typedef signed int int32_t;
+typedef signed long long int64_t;
+typedef long intptr_t;
+typedef unsigned char uint8_t;
+typedef unsigned short uint16_t;
+typedef unsigned int uint32_t;
+typedef unsigned long long uint64_t;
+typedef unsigned long uintptr_t;
+#endif
+#elif defined(HAVE_STDINT_H)
 #include <stdint.h>
 #elif defined(HAVE_INTTYPES_H)
 #include <inttypes.h>
@@ -349,23 +392,53 @@ typedef unsigned long uintptr_t;
 #endif
 #endif
 
+#if defined(HAVE_INTTYPES_H) && !defined(__WATCOMC__)
+#include <inttypes.h>
+#endif
+
+#include <limits.h>
+
+#if defined(__WATCOMC__)
+#ifndef INT32_MAX
+#define INT32_MAX ((int32_t)0x7fffffffL)
+#endif
+#ifndef INT32_MIN
+#define INT32_MIN (-INT32_MAX - 1L)
+#endif
+#ifndef INT64_MAX
+#define INT64_MAX ((int64_t)0x7fffffffffffffffLL)
+#endif
+#ifndef INT64_MIN
+#define INT64_MIN (-INT64_MAX - 1LL)
+#endif
+#ifndef UINT32_MAX
+#define UINT32_MAX ((uint32_t)0xffffffffUL)
+#endif
+#ifndef UINT64_MAX
+#define UINT64_MAX ((uint64_t)0xffffffffffffffffULL)
+#endif
+#ifndef SIZE_MAX
+#define SIZE_MAX ((size_t)-1)
+#endif
+#endif
+
 /*
  * Definition of the inline keyword.
  */
 #if !defined(INLINE)
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
-#define INLINE			inline		/* C99 standard */
+#define INLINE inline /* C99 standard */
 #elif defined(__GNUC__)
-#define INLINE			__inline__	/* GCC extension */
+#define INLINE __inline__ /* GCC extension */
 #elif defined(__xlc__)
-#define INLINE			__inline	/* IBM XLC extension */
+#define INLINE __inline /* IBM XLC extension */
 #elif defined(_MSC_VER)
-#define INLINE			__inline	/* MSVC extension */
+#define INLINE __inline /* MSVC extension */
 #elif defined(__WATCOMC__)
-#define INLINE			__inline	/* Watcom extension */
+#define INLINE __inline /* Watcom extension */
 #pragma warning 202 9
 #else
-#define INLINE					/* Not supported */
+#define INLINE /* Not supported */
 #endif
 #endif
 
@@ -374,23 +447,43 @@ typedef unsigned long uintptr_t;
  */
 #if !defined(RESTRICT)
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 199901L
-#define RESTRICT		restrict	/* C99 standard */
+#define RESTRICT restrict /* C99 standard */
 #elif defined(__GNUC__)
-#define RESTRICT		__restrict	/* GCC extension */
+#define RESTRICT __restrict /* GCC extension */
 #elif defined(_MSC_VER)
-#define RESTRICT		__restrict	/* MSVC extension */
+#define RESTRICT __restrict /* MSVC extension */
 #else
-#define RESTRICT				/* Not supported */
+#define RESTRICT /* Not supported */
 #endif
 #endif
 
 /*
  * Definition of the CDECL keyword
  */
-#if defined(NOCT_TARGET_DOS4G)
+#if !defined(CDECL)
+#if defined(NOCT_TARGET_DOS)
 #define CDECL __cdecl
 #else
 #define CDECL
+#endif
+#endif
+
+/*
+ * Definitions of PRId64 and SCNd64
+ */
+#if defined(__WATCOMC__)
+#ifndef PRId64
+#define PRId64 "lld"
+#endif
+#ifndef PRIx64
+#define PRIx64 "llx"
+#endif
+#ifndef SCNd64
+#define SCNd64 "lld"
+#endif
+#ifndef SCNx64
+#define SCNx64 "llx"
+#endif
 #endif
 
 /*
@@ -398,12 +491,12 @@ typedef unsigned long uintptr_t;
  */
 #if defined(NOCT_USE_DLL)
 #if defined(__GNUC__)
-#define NOCT_DLL		__attribute__((visibility("default")))
+#define NOCT_DLL __attribute__((visibility("default")))
 #elif defined(_MSC_VER)
 #if defined(DLL_IMPL)
-#define NOCT_DLL		__declspec(dllexport)
+#define NOCT_DLL __declspec(dllexport)
 #else
-#define NOCT_DLL		__declspec(dllimport)
+#define NOCT_DLL __declspec(dllimport)
 #endif
 #endif
 #else
@@ -419,7 +512,7 @@ typedef unsigned long uintptr_t;
  * Suppress unused warnings.
  */
 #ifndef UNUSED_PARAMETER
-#define UNUSED_PARAMETER(x)	(void)(x)
+#define UNUSED_PARAMETER(x) (void)(x)
 #endif
 
 /*
@@ -427,11 +520,11 @@ typedef unsigned long uintptr_t;
  */
 #ifndef U8
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
-#define U8(s)			u8##s		/* C23 standard */
+#define U8(s) u8##s /* C23 standard */
 #elif defined(__GNUC__) || defined(_MSC_VER)
-#define U8(s)			u8##s		/* GCC and MSVC extensions */
+#define U8(s) u8##s /* GCC and MSVC extensions */
 #else
-#define U8(s)			s		/* Not supported */
+#define U8(s) s /* Not supported */
 #endif
 #endif
 
@@ -441,11 +534,11 @@ typedef unsigned long uintptr_t;
  */
 #ifndef U32C
 #if defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L
-#define U32C(literal, unicode)	U##literal	/* C23 standard */
+#define U32C(literal, unicode) U##literal /* C23 standard */
 #elif defined(__GNUC__) || defined(_MSC_VER)
-#define U32C(literal, unicode)	U##literal	/* GCC and MSVC extensions */
+#define U32C(literal, unicode) U##literal /* GCC and MSVC extensions */
 #else
-#define U32C(literal, unicode)	(unicode)	/* C89 fallback */
+#define U32C(literal, unicode) (unicode) /* C89 fallback */
 #endif
 #endif
 
@@ -516,124 +609,144 @@ typedef unsigned long uintptr_t;
  */
 #if defined(NOCT_ARCH_LE)
 
-static INLINE uint64_t noct_host_to_le_64(uint64_t d) {
+static INLINE uint64_t
+noct_host_to_le_64(uint64_t d)
+{
 	return d;
 }
-static INLINE uint32_t noct_host_to_le_32(uint32_t d) {
+static INLINE uint32_t
+noct_host_to_le_32(uint32_t d)
+{
 	return d;
 }
-static INLINE uint16_t noct_host_to_le_16(uint16_t d) {
+static INLINE uint16_t
+noct_host_to_le_16(uint16_t d)
+{
 	return d;
 }
-static INLINE uint64_t noct_le_to_host_64(uint64_t d) {
+static INLINE uint64_t
+noct_le_to_host_64(uint64_t d)
+{
 	return d;
 }
-static INLINE uint32_t noct_le_to_host_32(uint32_t d) {
+static INLINE uint32_t
+noct_le_to_host_32(uint32_t d)
+{
 	return d;
 }
-static INLINE uint16_t noct_le_to_host_16(uint16_t d) {
+static INLINE uint16_t
+noct_le_to_host_16(uint16_t d)
+{
 	return d;
 }
-static INLINE uint64_t noct_be_to_host_64(uint64_t d) {
-	return ((d & 0xff) << 56) |
-		(((d >> 8) & 0xff) << 48) |
-		(((d >> 16) & 0xff) << 40) |
-		(((d >> 24) & 0xff) << 32) |
-		(((d >> 32) & 0xff) << 24) |
-		(((d >> 40) & 0xff) << 16) |
-		(((d >> 48) & 0xff) << 8) |
-		(((d >> 56) & 0xff));
+static INLINE uint64_t
+noct_be_to_host_64(uint64_t d)
+{
+	return ((d & 0xff) << 56) | (((d >> 8) & 0xff) << 48) |
+	       (((d >> 16) & 0xff) << 40) | (((d >> 24) & 0xff) << 32) |
+	       (((d >> 32) & 0xff) << 24) | (((d >> 40) & 0xff) << 16) |
+	       (((d >> 48) & 0xff) << 8) | (((d >> 56) & 0xff));
 }
-static INLINE uint32_t noct_be_to_host_32(uint32_t d) {
-	return ((d & 0xff) << 24) |
-		(((d >> 8) & 0xff) << 16) |
-		(((d >> 16) & 0xff) << 8) |
-		((d >> 24) & 0xff);
+static INLINE uint32_t
+noct_be_to_host_32(uint32_t d)
+{
+	return ((d & 0xff) << 24) | (((d >> 8) & 0xff) << 16) |
+	       (((d >> 16) & 0xff) << 8) | ((d >> 24) & 0xff);
 }
-static INLINE uint16_t noct_be_to_host_16(uint16_t d) {
-	return (uint16_t)(((uint32_t)(d & 0xff) << 8) |
-		          ((d >> 8) & 0xff));
+static INLINE uint16_t
+noct_be_to_host_16(uint16_t d)
+{
+	return (uint16_t)(((uint32_t)(d & 0xff) << 8) | ((d >> 8) & 0xff));
 }
-static INLINE uint64_t noct_host_to_be_64(uint64_t d) {
-	return ((d & 0xff) << 56) |
-		(((d >> 8) & 0xff) << 48) |
-		(((d >> 16) & 0xff) << 40) |
-		(((d >> 24) & 0xff) << 32) |
-		(((d >> 32) & 0xff) << 24) |
-		(((d >> 40) & 0xff) << 16) |
-		(((d >> 48) & 0xff) << 8) |
-		(((d >> 56) & 0xff));
+static INLINE uint64_t
+noct_host_to_be_64(uint64_t d)
+{
+	return ((d & 0xff) << 56) | (((d >> 8) & 0xff) << 48) |
+	       (((d >> 16) & 0xff) << 40) | (((d >> 24) & 0xff) << 32) |
+	       (((d >> 32) & 0xff) << 24) | (((d >> 40) & 0xff) << 16) |
+	       (((d >> 48) & 0xff) << 8) | (((d >> 56) & 0xff));
 }
-static INLINE uint32_t noct_host_to_be_32(uint32_t d) {
-	return ((d & 0xff) << 24) |
-		(((d >> 8) & 0xff) << 16) |
-		(((d >> 16) & 0xff) << 8) |
-		((d >> 24) & 0xff);
+static INLINE uint32_t
+noct_host_to_be_32(uint32_t d)
+{
+	return ((d & 0xff) << 24) | (((d >> 8) & 0xff) << 16) |
+	       (((d >> 16) & 0xff) << 8) | ((d >> 24) & 0xff);
 }
-static INLINE uint16_t noct_host_to_be_16(uint16_t d) {
-	return (uint16_t)(((uint32_t)(d & 0xff) << 8) |
-			  ((d >> 8) & 0xff));
+static INLINE uint16_t
+noct_host_to_be_16(uint16_t d)
+{
+	return (uint16_t)(((uint32_t)(d & 0xff) << 8) | ((d >> 8) & 0xff));
 }
 
 #else
 
-static INLINE uint64_t noct_host_to_be_64(uint64_t d) {
+static INLINE uint64_t
+noct_host_to_be_64(uint64_t d)
+{
 	return d;
 }
-static INLINE uint32_t noct_host_to_be_32(uint32_t d) {
+static INLINE uint32_t
+noct_host_to_be_32(uint32_t d)
+{
 	return d;
 }
-static INLINE uint16_t noct_host_to_be_16(uint16_t d) {
+static INLINE uint16_t
+noct_host_to_be_16(uint16_t d)
+{
 	return d;
 }
-static INLINE uint64_t noct_be_to_host_64(uint64_t d) {
+static INLINE uint64_t
+noct_be_to_host_64(uint64_t d)
+{
 	return d;
 }
-static INLINE uint32_t noct_be_to_host_32(uint32_t d) {
+static INLINE uint32_t
+noct_be_to_host_32(uint32_t d)
+{
 	return d;
 }
-static INLINE uint16_t noct_be_to_host_16(uint16_t d) {
+static INLINE uint16_t
+noct_be_to_host_16(uint16_t d)
+{
 	return d;
 }
-static INLINE uint64_t noct_le_to_host_64(uint64_t d) {
-	return ((d & 0xff) << 56) |
-		(((d >> 8) & 0xff) << 48) |
-		(((d >> 16) & 0xff) << 40) |
-		(((d >> 24) & 0xff) << 32) |
-		(((d >> 32) & 0xff) << 24) |
-		(((d >> 40) & 0xff) << 16) |
-		(((d >> 48) & 0xff) << 8) |
-		(((d >> 56) & 0xff));
+static INLINE uint64_t
+noct_le_to_host_64(uint64_t d)
+{
+	return ((d & 0xff) << 56) | (((d >> 8) & 0xff) << 48) |
+	       (((d >> 16) & 0xff) << 40) | (((d >> 24) & 0xff) << 32) |
+	       (((d >> 32) & 0xff) << 24) | (((d >> 40) & 0xff) << 16) |
+	       (((d >> 48) & 0xff) << 8) | (((d >> 56) & 0xff));
 }
-static INLINE uint32_t noct_le_to_host_32(uint32_t d) {
-	return ((d & 0xff) << 24) |
-		(((d >> 8) & 0xff) << 16) |
-		(((d >> 16) & 0xff) << 8) |
-		((d >> 24) & 0xff);
+static INLINE uint32_t
+noct_le_to_host_32(uint32_t d)
+{
+	return ((d & 0xff) << 24) | (((d >> 8) & 0xff) << 16) |
+	       (((d >> 16) & 0xff) << 8) | ((d >> 24) & 0xff);
 }
-static INLINE uint16_t noct_le_to_host_16(uint16_t d) {
-	return ((d & 0xff) << 8) |
-		((d >> 8) & 0xff);
+static INLINE uint16_t
+noct_le_to_host_16(uint16_t d)
+{
+	return ((d & 0xff) << 8) | ((d >> 8) & 0xff);
 }
-static INLINE uint64_t noct_host_to_le_64(uint64_t d) {
-	return ((d & 0xff) << 56) |
-		(((d >> 8) & 0xff) << 48) |
-		(((d >> 16) & 0xff) << 40) |
-		(((d >> 24) & 0xff) << 32) |
-		(((d >> 32) & 0xff) << 24) |
-		(((d >> 40) & 0xff) << 16) |
-		(((d >> 48) & 0xff) << 8) |
-		(((d >> 56) & 0xff));
+static INLINE uint64_t
+noct_host_to_le_64(uint64_t d)
+{
+	return ((d & 0xff) << 56) | (((d >> 8) & 0xff) << 48) |
+	       (((d >> 16) & 0xff) << 40) | (((d >> 24) & 0xff) << 32) |
+	       (((d >> 32) & 0xff) << 24) | (((d >> 40) & 0xff) << 16) |
+	       (((d >> 48) & 0xff) << 8) | (((d >> 56) & 0xff));
 }
-static INLINE uint32_t noct_host_to_le_32(uint32_t d) {
-	return ((d & 0xff) << 24) |
-		(((d >> 8) & 0xff) << 16) |
-		(((d >> 16) & 0xff) << 8) |
-		((d >> 24) & 0xff);
+static INLINE uint32_t
+noct_host_to_le_32(uint32_t d)
+{
+	return ((d & 0xff) << 24) | (((d >> 8) & 0xff) << 16) |
+	       (((d >> 16) & 0xff) << 8) | ((d >> 24) & 0xff);
 }
-static INLINE uint16_t noct_host_to_le_16(uint16_t d) {
-	return ((d & 0xff) << 8) |
-		((d >> 8) & 0xff);
+static INLINE uint16_t
+noct_host_to_le_16(uint16_t d)
+{
+	return ((d & 0xff) << 8) | ((d >> 8) & 0xff);
 }
 
 #endif
@@ -644,7 +757,7 @@ static INLINE uint16_t noct_host_to_le_16(uint16_t d) {
 #if defined(NOCT_USE_TRANSLATION) && !defined(NOCT_USE_LIBINTL)
 
 /* Translate messages. */
-#define N_TR(s)	noct_gettext(s)
+#define N_TR(s) noct_gettext(s)
 
 /* Translator. */
 const char *noct_gettext(const char *s);
@@ -658,7 +771,7 @@ const char *noct_gettext(const char *s);
 #else
 
 /* No translation. */
-#define N_TR(s)	(s)
+#define N_TR(s) (s)
 
 #endif
 

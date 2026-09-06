@@ -1,0 +1,7 @@
+func need_u32(p: packeduint32) {
+    print("entered");
+}
+
+func main() {
+    need_u32(Packed.uint8(1));
+}

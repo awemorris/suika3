@@ -1,0 +1,6 @@
+func f(s: string) {
+    return 1;
+}
+func main() {
+    print(f(42));
+}

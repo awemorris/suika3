@@ -1,0 +1,23 @@
+__accel func sum_values(input: rpackedfloat_in,
+                      output: rpackedfloat_out,
+                      count: int): void {
+    var sum: float = 0.0;
+    for (i in 0..count) {
+        sum += input[i];
+    }
+    output[0] = sum;
+}
+
+func main() {
+    let input = Packed.float32(5000);
+    let output = Packed.float32(1);
+    for (i in 0..5000) {
+        input[i] = 1.0;
+    }
+    Accel.call(sum_values, input, output, 5000);
+    print(output[0]);
+    Accel.call(sum_values, input, output, 1);
+    print(output[0]);
+    Accel.call(sum_values, input, output, 0);
+    print(output[0]);
+}

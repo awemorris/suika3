@@ -1,0 +1,31 @@
+// Comparison operand-type coverage: double on the LEFT side and
+// long with != (both were missing helper rows and raised
+// "Value is not a number or a string.").
+func main() {
+    var d = 2.5lf;
+    var l = 5000000000;
+
+    // double LHS vs every numeric RHS.
+    print(d > 1);
+    print(d > 1000000000000);
+    print(d > 2.4);
+    print(d > 2.6lf);
+    print(d < 3);
+    print(d <= 2.5lf);
+    print(d >= 9.9);
+
+    // long with != vs every numeric RHS.
+    print(l != 5);
+    print(l != 5000000000);
+    print(l != 0.5);
+    print(l != 2.5lf);
+    if (l != 4999999999) { print("ne"); } else { print("eq"); }
+
+    // long LHS with > must read the full 64-bit payload for every RHS type.
+    print(l > 2000000000);
+    print(l > 4000000000);
+    print(l > 4000000000.0);
+    print(l > 4000000000.0lf);
+
+    return 0;
+}

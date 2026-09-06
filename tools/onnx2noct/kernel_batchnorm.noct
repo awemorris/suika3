@@ -1,0 +1,46 @@
+require kernel_reduce;
+
+func kernelBatchNormEpsilon(node) {
+    for (i in 0..Array.size(node.attrs)) {
+        if (node.attrs[i].name == "epsilon") { return node.attrs[i].value; }
+    }
+    planNodeFail(node, "normalized BatchNormalization is missing epsilon.");
+}
+
+func kernelEmitBatchNorm(plan, step, name, signature) {
+    var graph = plan.graph;
+    var input = graph.tensors[step.inputs[0]];
+    var output = graph.tensors[step.outputTensor];
+    if (Array.size(input.shape) != 4 || !isContiguousView(input) ||
+        input.offset != 0 || input.layout != "NCHW" ||
+        !isContiguousView(output) || output.offset != 0) {
+        planNodeFail(step.node, "Stage G.6 BatchNorm requires contiguous offset-zero rank-4 NCHW tensors.");
+    }
+    for (j in 1..5) {
+        var parameter = graph.tensors[step.inputs[j]];
+        if (parameter.role != "initializer" || !isContiguousView(parameter) ||
+            parameter.offset != 0) {
+            planNodeFail(step.node, "Stage G.6 BatchNorm requires direct contiguous parameter initializers.");
+        }
+    }
+    var unique = kernelUniqueInputStorages(graph, step.inputs);
+    var lines = [];
+    Array.push(lines, "// signature: " + signature);
+    Array.push(lines, "__gpu func " + name + "(");
+    for (j in 0..Array.size(unique)) { Array.push(lines, "    p" + j + ": rpackedfloat_ptr,"); }
+    Array.push(lines, "    out: rpackedfloat_ptr"); Array.push(lines, "): void {");
+    Array.push(lines, "    let i: int = globalIdx.x;");
+    var count = shapeElements(output.shape, "Stage G.6 BatchNorm output");
+    var spatial = input.shape[2] * input.shape[3];
+    Array.push(lines, "    if (i < " + count + ") {");
+    Array.push(lines, "        let c: int = (i / " + spatial + ") % " + input.shape[1] + ";");
+    var x = kernelInputParam(graph, step.inputs, 0);
+    var scale = kernelInputParam(graph, step.inputs, 1);
+    var bias = kernelInputParam(graph, step.inputs, 2);
+    var mean = kernelInputParam(graph, step.inputs, 3);
+    var variance = kernelInputParam(graph, step.inputs, 4);
+    var epsilon = kernelFloat32Bits(kernelBatchNormEpsilon(step.node));
+    Array.push(lines, "        out[i] = " + scale + "[c] * (" + x + "[i] - " + mean +
+                      "[c]) / Accel.sqrt(" + variance + "[c] + " + epsilon + ") + " + bias + "[c];");
+    Array.push(lines, "    }"); Array.push(lines, "}"); return lines;
+}

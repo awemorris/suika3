@@ -1,0 +1,17 @@
+// In-place transform: same packed loaded and stored at the SAME
+// offset -- vectorizes (single base, one offset).
+func main() {
+    var n = 37;
+    var p = Packed.uint32(n);
+    for (i in 0..n) {
+        p[i] = i * 11;
+    }
+    for (i in 0..n) {
+        p[i] = (p[i] << 1) ^ (p[i] & 255);
+    }
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + p[i];
+    }
+    print(sum);
+}

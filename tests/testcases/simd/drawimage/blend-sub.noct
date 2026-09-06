@@ -1,0 +1,30 @@
+// Essence of DRAW_IMAGE_SUB: source-alpha scaling and saturating RGB subtract.
+func blend_sub(dst: rpackeduint32, src: rpackeduint32,
+               alpha: int, n: int): void {
+    let alpha_float = alpha / 65025.0;
+    for (i in 0..n) {
+        let dst_pix = dst[i];
+        let src_pix = src[i];
+        let src_a = Float.from((src_pix >> 24) & 0xff) * alpha_float;
+        var r = ((dst_pix >> 16) & 0xff) -
+                Int.from(Float.from((src_pix >> 16) & 0xff) * src_a);
+        var g = ((dst_pix >> 8) & 0xff) -
+                Int.from(Float.from((src_pix >> 8) & 0xff) * src_a);
+        var b = (dst_pix & 0xff) -
+                Int.from(Float.from(src_pix & 0xff) * src_a);
+        if (r < 0) { r = 0; }
+        if (g < 0) { g = 0; }
+        if (b < 0) { b = 0; }
+        dst[i] = (255 << 24) | (r << 16) | (g << 8) | b;
+    }
+}
+
+func main() {
+    let src = Packed.uint32(16);
+    let dst = Packed.uint32(16);
+    src[0] = 0xffc08040;
+    dst[0] = 0xff4080c0;
+    blend_sub(dst, src, 255, 16);
+    print(dst[0]);
+    print(dst[15]);
+}

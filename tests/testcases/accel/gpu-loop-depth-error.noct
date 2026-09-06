@@ -1,0 +1,23 @@
+__gpu func invalid(): void {
+    for (a in 0..1) {
+        for (b in 0..1) {
+            for (c in 0..1) {
+                for (d in 0..1) {
+                    for (e in 0..1) {
+                        for (f in 0..1) {
+                            for (g in 0..1) {
+                                for (h in 0..1) {
+                                    for (i in 0..1) {
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+func main() {
+}

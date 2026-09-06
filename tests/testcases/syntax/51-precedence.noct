@@ -1,0 +1,32 @@
+func main() {
+    // The whole table follows C, lowest to highest:
+    //   ||  &&  |  ^  &  ==/!=  rel  shift  +/-  * / %  unary
+
+    // One level per group, left associative.
+    print(2 * 3 / 2);          // (2*3)/2 = 3, not 2*(3/2)
+    print(10 - 4 + 2);         // (10-4)+2 = 8
+    print(16 >> 2 << 1);       // (16>>2)<<1 = 8
+    print(20 % 7 * 2);         // (20%7)*2 = 12
+
+    // Shift is below additive.
+    print(1 << 2 + 1);         // 1 << 3 = 8
+
+    // Bitwise is below equality.
+    print(7 & 3 == 3);         // 7 & (3==3) = 1
+    print(4 | 1 == 1);         // 4 | (1==1) = 5
+
+    // | < ^ < &.
+    print(1 | 2 ^ 3);          // 1 | (2^3) = 1
+    print(2 ^ 3 & 1);          // 2 ^ (3&1) = 3
+
+    // Equality is below relational.
+    print(1 < 2 == 1);         // (1<2) == 1 = 1
+
+    // Unary binds tightest.
+    print(!0 == 1);            // (!0) == 1 = 1
+    print(-2 * 3);             // (-2)*3 = -6
+    print(- -3);               // 3
+    var b = 10;
+    print(b == -1 || b == 10); // 1
+    print(!1 || 1);            // 1
+}

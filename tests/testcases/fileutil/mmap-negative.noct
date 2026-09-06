@@ -1,0 +1,4 @@
+func main()
+{
+    FileUtil.mmap8("mmap-data.bin", -1, 8, 1, 0);
+}

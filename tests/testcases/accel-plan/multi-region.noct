@@ -1,0 +1,19 @@
+__accel func transform(
+    source: rpackedint32,
+    destination: rpackedint32,
+    scratch: rpackedint32,
+    n: int): void {
+    for (i in 0..n) {
+        destination[i] = source[i] + 1;
+    }
+    for (j in 0..n) {
+        scratch[j] = destination[j] + 2;
+    }
+    var separator: int = n + 1;
+    for (k in 0..n) {
+        destination[k] = scratch[k] + 3;
+    }
+}
+
+func main() {
+}

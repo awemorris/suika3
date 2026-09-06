@@ -1,0 +1,129 @@
+require kernel_concat;
+
+func kernelReduceAttr(node, name) {
+    for (i in 0..Array.size(node.attrs)) {
+        if (node.attrs[i].name == name) { return node.attrs[i].value; }
+    }
+    planNodeFail(node, "normalized reduction is missing canonical attribute '" + name + "'.");
+}
+
+func kernelOutputCoordinate(outputShape, axis, flat) {
+    var stride = contiguousStride(outputShape, "Stage G.5 output coordinate");
+    var value = flat;
+    if (stride[axis] != 1) { value = "(" + flat + " / " + stride[axis] + ")"; }
+    if (outputShape[axis] != 1) { value = "(" + value + " % " + outputShape[axis] + ")"; }
+    return value;
+}
+
+func kernelEmitStaticReduce(plan, step, name, signature) {
+    var input = plan.graph.tensors[step.inputs[0]];
+    var output = plan.graph.tensors[step.outputTensor];
+    if (!isContiguousView(input) || input.offset != 0 ||
+        !isContiguousView(output) || output.offset != 0) {
+        planNodeFail(step.node, "Stage G.5 reduction requires contiguous offset-zero tensors.");
+    }
+    var axes = kernelReduceAttr(step.node, "axes");
+    var keepdims = kernelReduceAttr(step.node, "keepdims");
+    if (Array.size(axes) > 8) { planNodeFail(step.node, "Stage G.5 supports at most 8 reduced axes."); }
+    var selected = {};
+    var reduceCount = 1;
+    for (a in 0..Array.size(axes)) {
+        selected["a" + axes[a]] = true;
+        reduceCount = checkedMulPositive(reduceCount, input.shape[axes[a]], "Stage G.5 reduction count");
+    }
+    var inputIndex = "0";
+    var outputAxis = 0;
+    for (d in 0..Array.size(input.shape)) {
+        var coordinate = "";
+        if (Dict.hasKey(selected, "a" + d)) { coordinate = "r" + d; }
+        else {
+            coordinate = kernelOutputCoordinate(output.shape, outputAxis, "i");
+            outputAxis = outputAxis + 1;
+        }
+        if (keepdims == 1 && Dict.hasKey(selected, "a" + d)) {
+            outputAxis = outputAxis + 1;
+        }
+        inputIndex = inputIndex + " + " + coordinate + " * " + input.stride[d];
+    }
+    var lines = [];
+    Array.push(lines, "// signature: " + signature);
+    Array.push(lines, "__gpu func " + name + "(");
+    Array.push(lines, "    p0: rpackedfloat_ptr,");
+    Array.push(lines, "    out: rpackedfloat_ptr");
+    Array.push(lines, "): void {");
+    Array.push(lines, "    let i: int = globalIdx.x;");
+    var count = shapeElements(output.shape, "Stage G.5 reduction output");
+    Array.push(lines, "    if (i < " + count + ") {");
+    Array.push(lines, "        var value: float = 0.0;");
+    if (step.node.opType == "ReduceMax" || step.node.opType == "ReduceMin") {
+        Array.push(lines, "        var has_value: int = 0;");
+    }
+    for (a in 0..Array.size(axes)) {
+        var axis = axes[a];
+        Array.push(lines, "        for (r" + axis + " in 0.." + input.shape[axis] + ") {");
+    }
+    Array.push(lines, "            let candidate: float = p0[" + inputIndex + "];");
+    if (step.node.opType == "ReduceSum" || step.node.opType == "ReduceMean") {
+        Array.push(lines, "            value = value + candidate;");
+    } else {
+        Array.push(lines, "            if (has_value == 0) { value = candidate; has_value = 1; } else {");
+        Array.push(lines, "                if (candidate != candidate) { value = candidate; } else {");
+        Array.push(lines, "                    if (value == value) {");
+        var comparison = ">"; if (step.node.opType == "ReduceMin") { comparison = "<"; }
+        Array.push(lines, "                        if (candidate " + comparison + " value) { value = candidate; }");
+        Array.push(lines, "                    }");
+        Array.push(lines, "                }");
+        Array.push(lines, "            }");
+    }
+    for (a in 0..Array.size(axes)) { Array.push(lines, "        }"); }
+    if (step.node.opType == "ReduceMean") {
+        Array.push(lines, "        out[i] = value / " + reduceCount + ".0;");
+    } else { Array.push(lines, "        out[i] = value;"); }
+    Array.push(lines, "    }"); Array.push(lines, "}");
+    return lines;
+}
+
+func kernelEmitSoftmax(plan, step, name, signature) {
+    var input = plan.graph.tensors[step.inputs[0]];
+    var output = plan.graph.tensors[step.outputTensor];
+    if (!isContiguousView(input) || input.offset != 0 || !isContiguousView(output)) {
+        planNodeFail(step.node, "Stage G.5 Softmax requires contiguous offset-zero tensors.");
+    }
+    var axis = kernelReduceAttr(step.node, "axis");
+    var legacy = kernelReduceAttr(step.node, "legacy_flatten_semantics");
+    var inner = 1;
+    for (d in axis + 1..Array.size(input.shape)) { inner = inner * input.shape[d]; }
+    var group = input.shape[axis];
+    if (legacy == 1) { group = group * inner; inner = 1; }
+    var lines = [];
+    Array.push(lines, "// signature: " + signature);
+    Array.push(lines, "__gpu func " + name + "(");
+    Array.push(lines, "    p0: rpackedfloat_ptr,"); Array.push(lines, "    out: rpackedfloat_ptr");
+    Array.push(lines, "): void {"); Array.push(lines, "    let i: int = globalIdx.x;");
+    var count = shapeElements(output.shape, "Stage G.5 Softmax output");
+    Array.push(lines, "    if (i < " + count + ") {");
+    Array.push(lines, "        let base: int = (i / " + (group * inner) + ") * " +
+                      (group * inner) + " + (i % " + inner + ");");
+    Array.push(lines, "        var maximum: float = p0[base];");
+    Array.push(lines, "        for (k in 1.." + group + ") {");
+    Array.push(lines, "            let candidate: float = p0[base + k * " + inner + "];");
+    Array.push(lines, "            if (candidate > maximum) { maximum = candidate; }");
+    Array.push(lines, "        }");
+    Array.push(lines, "        var total: float = 0.0;");
+    Array.push(lines, "        for (k in 0.." + group + ") {");
+    Array.push(lines, "            total = total + Accel.exp(p0[base + k * " + inner + "] - maximum);");
+    Array.push(lines, "        }");
+    if (step.node.opType == "LogSoftmax") {
+        Array.push(lines, "        out[i] = p0[i] - maximum - Accel.log(total);");
+    } else {
+        Array.push(lines, "        out[i] = Accel.exp(p0[i] - maximum) / total;");
+    }
+    Array.push(lines, "    }"); Array.push(lines, "}"); return lines;
+}
+
+func kernelEmitReduce(plan, step, name, signature) {
+    if (step.kind == "softmax-stable") {
+        return kernelEmitSoftmax(plan, step, name, signature);
+    }
+    return kernelEmitStaticReduce(plan, step, name, signature);
+}

@@ -1,0 +1,30 @@
+func promotion_worker(payload) {
+    // Fetching gate is itself the first concurrent read of payload.  After
+    // every worker arrives, they concurrently perform the first read of the
+    // nested dictionary and array as well.
+    let gate = payload.gate;
+    Thread.incrementCounter(gate);
+    while (Thread.getCounter(gate) < payload.workers) {
+    }
+    return payload.dict.value + payload.array[0];
+}
+
+func main() {
+    let workers = 8;
+    let gate = Thread.createCounter();
+    let payload = {
+        gate: gate,
+        workers: workers,
+        dict: {value: 7},
+        array: [5]
+    };
+    var threads = [];
+    for (i in 0..workers) {
+        threads[i] = Thread.createThread(promotion_worker, payload);
+    }
+    var total = 0;
+    for (i in 0..workers) {
+        total = total + Thread.joinThread(threads[i]);
+    }
+    print(total);
+}

@@ -1,0 +1,19 @@
+__accel var device = Accel.uint32(4);
+
+__accel func prefix(data: rpackeduint32_ptr, count: int): void {
+    for (i in 0..count) {
+        if (i > 0) {
+            data[i] = data[i - 1] + 1;
+        } else {
+            data[i] = 1;
+        }
+    }
+}
+
+func main() {
+    let result = Packed.uint32(4);
+    Accel.call(prefix, device, 4);
+    Accel.copyFromAccel(device, 0, result, 0, 16);
+    print(result[0]);
+    print(result[3]);
+}

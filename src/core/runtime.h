@@ -13,12 +13,13 @@
 #define NOCT_RUNTIME_H
 
 #include <noct/noct.h>
+#include "fast.h"
 #include "gc.h"
 
 /*
  * Maximum number of the stack depth.
  */
-#define RT_FRAME_MAX		32
+#define RT_FRAME_MAX		512
 
 /*
  * Maximum number of the tmpvar in a stack.
@@ -31,6 +32,9 @@
 #define RT_GLOBAL_PIN_MAX	64
 #define RT_LOCAL_PIN_MAX	32
 
+/*
+ * Forward declaration.
+ */
 struct rt_vm;
 struct rt_env;
 struct rt_frame;
@@ -39,24 +43,48 @@ struct rt_object_header;
 struct rt_string;
 struct rt_array;
 struct rt_dict;
+struct rt_packed;
 struct rt_func;
 struct rt_bindglobal;
+struct rt_vm_finalizer;
+struct rt_required_source;
+struct rt_jit_slab;
 
 /*
  * String object.
  */
 struct rt_string {
+	/* GC object head. */
 	struct rt_gc_object head;
 
+	/* UTF-8 data. */
 	char *data;
-	size_t len;	/* Including the tail NUL character*/
+
+	/* Length including the tail NUL character. */
+	size_t len;
+
+	/* Hash. */
 	uint32_t hash;
+
+	/*
+	 * Character-index cache: cache_ofs is the byte offset of
+	 * character cache_index. Indexing a UTF-8 string by character
+	 * otherwise has to count from the front on every access, which
+	 * makes a loop that walks a string once cost O(n^2) -- painful
+	 * for anything that parses text. Strings are immutable, so the
+	 * pair stays true for the life of the object, and both members
+	 * are offsets rather than pointers so a GC move leaves them
+	 * valid. See rt_intrin_String_charAt().
+	 */
+	size_t cache_index;
+	size_t cache_ofs;
 };
 
 /*
  * Array object.
  */
 struct rt_array {
+	/* GC object head. */
 	struct rt_gc_object head;
 
 	/* Allocation size. */
@@ -72,8 +100,17 @@ struct rt_array {
 	struct rt_array *newer;
 
 #if defined(NOCT_USE_MULTITHREAD)
-	/* Atomic counter. */
-	int counter;
+	/* Creator thread. */
+	struct rt_env *creator;
+
+	/* Shared flag. */
+	int shared;
+
+	/* Write lock. */
+	int write_lock;
+
+	/* SeqLock */
+	int seqlock;
 #endif
 };
 
@@ -81,6 +118,7 @@ struct rt_array {
  * Dictionary object.
  */
 struct rt_dict {
+	/* GC object head. */
 	struct rt_gc_object head;
 
 	/* Allocation size. */
@@ -98,40 +136,145 @@ struct rt_dict {
 	/* Copy-On-Resize forwarding. (RCU-style) */
 	struct rt_dict *newer;
 
+	/* Frozen (read-only) flag; set by Dict.freeze / class literals. */
+	bool is_frozen;
+
+	/* Native object pointer. */
+	void *native_pointer;
+
+	/* Native object finalizer. */
+	void (*native_finalizer)(void *native_pointer);
+
 #if defined(NOCT_USE_MULTITHREAD)
-	/* Atomic counter. */
-	int counter;
+	/* Creator thread. */
+	struct rt_env *creator;
+
+	/* Shared flag. */
+	int shared;
+
+	/* Write lock. */
+	int write_lock;
+
+	/* SeqLock */
+	int seqlock;
 #endif
 };
 
-#define RT_DICT_KEY_REMOVED ((struct rt_value *)((intptr_t)-1))
+/*
+ * Packed (Buffer) object.
+ */
+struct rt_packed {
+	/* GC object head. */
+	struct rt_gc_object head;
+
+	/* Primitive type. */
+	int type;
+
+	/* Allocated size in bytes. (0 if using a preallocated buffer.) */
+	size_t size;
+
+	/* Element count. */
+	size_t elem_size;
+
+	/* Packed type. */
+	int packed_typed;
+
+	/* Buffer pointer. */
+	void *packed_buffer;
+
+	/* Native owner for an external buffer. */
+	void *native_pointer;
+
+	/* Native owner finalizer. */
+	void (*native_finalizer)(void *native_pointer);
+};
 
 /*
  * Function object.
  */
 struct rt_func {
+	/* GC object head. */
 	struct rt_gc_object head;
 
+	/* Function name. */
 	char *name;
-	uint32_t param_count;
+
+	/* Parameter count. */
+	size_t param_count;
+
+	/* Parameter names. */
 	char *param_name[NOCT_ARG_MAX];
 
-	char *file_name;
+	/* Function pointer. (if a cfunc) */
+	bool (*cfunc)(struct rt_env *env);
+	bool (*cfunc_with_data)(struct rt_env *env, void *userdata);
+	void *cfunc_userdata;
 
 	/* Bytecode for a function. (if not a cfunc) */
 	uint32_t bytecode_size;
 	uint8_t *bytecode;
 	uint32_t tmpvar_size;
 
-	/* JIT-generated code. */
-	bool (CDECL *jit_code)(struct rt_env *env);
-	int call_count;
-
-	/* Function pointer. (if a cfunc) */
-	bool (*cfunc)(struct rt_env *env);
+	/* File name. */
+	char *file_name;
 
 	/* Next. */
 	struct rt_func *next;
+
+	/*
+	 * JIT Extension
+	 */
+#if defined(NOCT_USE_JIT)
+	/* JIT-generated code. */
+	bool (CDECL *jit_code)(struct rt_env *env);
+	int call_count;
+#endif
+
+	/*
+	 * Parameter Type Annotation Extension
+	 */
+#if defined(NOCT_USE_OPTIMIZER)
+	/* NOCT_VALUE_* tag per param, or -1 = unannotated. */
+	int param_type[NOCT_ARG_MAX];
+
+	/* NOCT_PACKED_* element kind, or -1 = not typed packed. */
+	int param_packed_type[NOCT_ARG_MAX];
+
+	/* rpacked* source annotation. */
+	bool param_restricted[NOCT_ARG_MAX];
+#endif
+
+	/*
+	 * Return Type Annotation Extension
+	 */
+#if defined(NOCT_USE_OPTIMIZER)
+	/* Optional declared return type contract. */
+	int return_type;
+	int return_packed_type;
+	bool return_type_checked;
+#endif
+
+	/*
+	 * "__fast" Function Extension
+	 */
+#if defined(NOCT_USE_OPTIMIZER)
+	/* Statically constrained CPU function. */
+	bool is_fast;
+
+	/* __fast optimization info. */
+	void *fast_info;
+#endif
+
+	/*
+	 * SIMD Optimization
+	 */
+#if defined(NOCT_USE_OPTIMIZER)
+	/* ABI/prologue metadata: bytecode contains OP_V* instructions. */
+	bool has_vector_ops;
+
+	/* Bytecode contains OP_VFMAF32X4 and requires fused semantics. */
+	bool has_fma_ops;
+#endif
 };
 
 /*
@@ -150,6 +293,9 @@ struct rt_bindglobal {
 
 	/* Removed flag for linear search. */
 	bool is_removed;
+
+	/* Constant (let) binding flag. */
+	bool is_const;
 };
 
 /*
@@ -171,6 +317,7 @@ struct rt_frame {
 	 * Current running function.
 	 */
 	struct rt_func *func;
+	uint32_t arg_count;
 
 	/*
 	 * Pinned C local variables.
@@ -232,8 +379,42 @@ struct rt_env {
 	struct rt_env *next;
 
 #if defined(NOCT_USE_MULTITHREAD)
-	/* Atomic counter for GC. */
-	int gc_in_progress_counter;
+	/*
+	 * Detached env free list link.
+	 */
+	struct rt_env *free_next;
+
+	/*
+	 * Is this thread in-flight?
+	 */
+	bool is_in_flight;
+
+	/*
+	 * Is this thread raising STW request?
+	 */
+	bool is_stw_raised;
+
+	/*
+	 * Is this thread the STW executor?
+	 */
+	bool is_stw_executor;
+#endif
+
+	/*
+	 * SIMD scratch register file (docs/design/06-simd.md).  Raw
+	 * lane bytes; never holds references; never scanned by the GC;
+	 * content is dead outside a single vectorized strip region.
+	 * Byte order within a vreg is memory order (lane k of an i32x4
+	 * is bytes 4k..4k+3).  Indices 0..15 are program-visible.  All C
+	 * access goes through memcpy (no
+	 * alignment requirement).
+	 */
+#if defined(__GNUC__) || defined(__clang__)
+	uint8_t vreg[16][16] __attribute__((aligned(16)));
+#elif defined(_MSC_VER)
+	__declspec(align(16)) uint8_t vreg[16][16];
+#else
+	uint8_t vreg[16][16];
 #endif
 };
 
@@ -241,39 +422,98 @@ struct rt_env {
  * VM.
  */
 struct rt_vm {
-	/* Global symbols. */
-	uint32_t global_alloc_size;
-	uint32_t global_size;
-	struct rt_bindglobal *global;
+	/* Config. */
+	struct rt_config config;
+
+	/* Env list. */
+	struct rt_env *env_list;
 
 	/* Function list. */
 	struct rt_func *func_list;
 
+	/*
+	 * Global symbols.
+	 */
+	struct rt_bindglobal *global;
+	uint32_t global_alloc_size;
+	uint32_t global_size;
+
+	/*
+	 * GC
+	 */
+
 	/* GC. */
 	struct rt_gc_info gc;
-
-	/* Env list. */
-	struct rt_env *env_list;
 
 	/* Pinned C global variables. */
 	struct rt_value *pinned[RT_GLOBAL_PIN_MAX];
 	uint32_t pinned_count;
 
+	/* GC nest counter. */
+	int gc_in_progress_counter;
+
+	/* GC level. */
+	int gc_level;
+
+#if defined(NOCT_USE_JIT)
+	/* Per-VM JIT slabs.  Published pages are never made writable again. */
+	struct jit_slab *jit_slab_head;
+	struct jit_slab *jit_slab_tail;
+	struct jit_slab *jit_slab_current;
+
 	/* Is JIT code written and not commited? */
 	bool is_jit_dirty;
-
-	/* Config. */
-	struct rt_config config;
+#endif
 
 #if defined(NOCT_USE_MULTITHREAD)
-	/* In-flight counter for GC exclusion. */
+	/*
+	 * VM global lock.
+	 */
+	int vm_lock;
+
+	/*
+	 * Number of in-flight threads.
+	 *  - See objectmodel.c
+	 */
 	int in_flight_counter;
 
-	/* GC stop-the-world counter. */
-	int gc_stw_counter;
+	/*
+	 * STW requests.
+	 *  - Indicates the number of the threads that are raising requests.
+	 *  - See objectmodel.c
+	 */
+	int stw_request_counter;
 
-	/* Atomic counter for global variables. */
+	/*
+	 * STW executor lock.
+	 *  - Reading 0 by RMW means the thread is promoted to STW executor.
+	 *  - See objectmodel.c
+	 */
+	int stw_executor_lock;
+
+	/*
+	 * Lock for global variables.
+	 */
 	int global_var_counter;
+
+	/* Detached thread environments available for reuse. */
+	struct rt_env *env_free_list;
+	int env_free_lock;
+
+	/*
+	 * Spin lock for the heap allocator and the GC object lists.
+	 *  - Guards the nursery arena, the tenure freelist, and the
+	 *    nursery/tenure/remember-set lists against concurrent
+	 *    mutator allocations.
+	 *  - Never held across a GC or a safepoint park.
+	 */
+	int heap_lock;
+#endif
+
+#if defined(NOCT_USE_ACCEL)
+	/* Optional accelerator HIR optimizer attachment. */
+	bool (*accel_optimize_func)(void *func_block, void *userdata);
+	void *accel_optimize_userdata;
 #endif
 };
 
@@ -293,17 +533,32 @@ bool
 rt_destroy_vm(
 	struct rt_vm *vm);
 
-/* Create an environment for the current thread. */
+/* Create an environment for another thread. (Call while in-flight.) */
 bool
 rt_create_thread_env(
 	struct rt_env *prev_env,
 	struct rt_env **new_env);
 
+/* Adopt an environment in the current thread. */
+void
+rt_attach_thread_env(
+	struct rt_env *env);
+
+/* Release an environment that was created but never adopted. */
+void
+rt_release_thread_env(
+	struct rt_env *env);
+
+/* Detach the environment of the current thread for later reuse. */
+void
+rt_detach_thread_env(
+	struct rt_env *env);
+
 /*
  * Compilation
  */
 
-/* Register functions from a souce text. */
+/* Register functions from a source text. */
 bool
 rt_register_source(
 	struct rt_env *env,
@@ -322,7 +577,7 @@ bool
 rt_register_cfunc(
 	struct rt_env *env,
 	const char *name,
-	uint32_t param_count,
+	size_t param_count,
 	const char *param_name[],
 	bool (*cfunc)(struct rt_env *env),
 	struct rt_func **ret_func);
@@ -387,7 +642,7 @@ rt_string_hash_and_len(
 	uint32_t *len);
 
 /*
- * Array and Dictionary
+ * Array, Dictionary, and Packed
  */
 
 /* Make an empty array. */
@@ -400,38 +655,38 @@ rt_make_empty_array(
 bool
 rt_get_array_size(
 	struct rt_env *env,
-	struct rt_array *arr,
-	uint32_t *size);
+	struct rt_value *arr,
+	size_t *size);
 
 /* Retrieves an array element. */
 bool
 rt_get_array_elem(
 	struct rt_env *env,
-	struct rt_array *arr,
-	uint32_t index,
+	struct rt_value *arr,
+	size_t index,
 	struct rt_value *val);
 
 /* Stores an value to an array. */
 bool
 rt_set_array_elem(
 	struct rt_env *env,
-	struct rt_array **arr,
-	uint32_t index,
+	struct rt_value *arr,
+	size_t index,
 	struct rt_value *val);
 
 /* Resizes an array. */
 bool
 rt_resize_array(
 	struct rt_env *env,
-	struct rt_array **arr,
-	uint32_t size);
+	struct rt_value *arr,
+	size_t size);
 
 /* Make a shallow copy of an array. */
 bool
 rt_make_array_copy(
 	struct rt_env *env,
-	struct rt_array **dst,
-	struct rt_array *src);
+	struct rt_value *dst,
+	struct rt_value *src);
 
 /* Make an empty dictionary value. */
 bool
@@ -443,46 +698,62 @@ rt_make_empty_dict(
 bool
 rt_get_dict_size(
 	struct rt_env *env,
-	struct rt_dict *dict,
-	uint32_t *size);
+	struct rt_value *dict,
+	size_t *size);
+
+/* Get the allocation size of a dictionary. */
+bool
+rt_get_dict_alloc_size(
+	struct rt_env *env,
+	struct rt_value *dict,
+	size_t *size);
 
 /* Checks if a key exists in a dictionary. */
 bool
 rt_check_dict_key(
 	struct rt_env *env,
-	struct rt_dict *dict,
+	struct rt_value *dict,
+	struct rt_value *key,
+	bool *ret);
+
+/* Checks if a key exists in a dictionary. */
+bool
+rt_check_dict_key_cstr(
+	struct rt_env *env,
+	struct rt_value *dict,
 	const char *key,
 	bool *ret);
 
 /* Get a dictionary key by index. */
 bool
-rt_get_dict_key_by_index(
+rt_get_dict_by_index(
 	struct rt_env *env,
-	struct rt_dict *dict,
-	uint32_t index,
-	struct rt_value *key);
-
-/* Get a dictionary value by index. */
-bool
-rt_get_dict_value_by_index(
-	struct rt_env *env,
-	struct rt_dict *dict,
-	uint32_t index,
+	struct rt_value *dict,
+	size_t index,
+	struct rt_value *key,
 	struct rt_value *val);
 
 /* Retrieves the value by a key in a dictionary. */
 bool
 rt_get_dict_elem(
 	struct rt_env *env,
-	struct rt_dict *dict,
+	struct rt_value *dict,
+	struct rt_value *key,
+	struct rt_value *val);
+
+/* Retrieves the value by a key in a dictionary. */
+bool
+rt_get_dict_elem_cstr(
+	struct rt_env *env,
+	struct rt_value *dict,
 	const char *key,
 	struct rt_value *val);
 
-/* Retrieves the value by a key in a dictionary. (hash version) */
+/* Retrieves the value by a key in a dictionary. */
 bool
 rt_get_dict_elem_with_hash(
 	struct rt_env *env,
-	struct rt_dict *dict,
+	struct rt_value *dict,
 	const char *key,
 	size_t len,
 	uint32_t hash,
@@ -492,15 +763,23 @@ rt_get_dict_elem_with_hash(
 bool
 rt_set_dict_elem(
 	struct rt_env *env,
-	struct rt_dict **dict,
+	struct rt_value *dict,
+	struct rt_value *key,
+	struct rt_value *val);
+
+/* Stores a key-value-pair to a dictionary. */
+bool
+rt_set_dict_elem_cstr(
+	struct rt_env *env,
+	struct rt_value *dict,
 	const char *key,
 	struct rt_value *val);
 
-/* Stores a key-value-pair to a dictionary. (hash version) */
+/* Stores a key-value-pair to a dictionary. */
 bool
 rt_set_dict_elem_with_hash(
 	struct rt_env *env,
-	struct rt_dict **dict,
+	struct rt_value *dict,
 	const char *key,
 	size_t len,
 	uint32_t hash,
@@ -510,24 +789,107 @@ rt_set_dict_elem_with_hash(
 bool
 rt_remove_dict_elem(
 	struct rt_env *env,
-	struct rt_dict *dict,
-	const char *key);
+	struct rt_value *dict,
+	struct rt_value *key);
 
 /* Remove a dictionary key. (hash version) */
 bool
-rt_remove_dict_elem_with_hash(
+rt_remove_dict_elem_cstr(
 	struct rt_env *env,
-	struct rt_dict *dict,
-	const char *key,
-	size_t len,
-	uint32_t hash);
+	struct rt_value *dict,
+	const char *key);
 
 /* Make a shallow copy of a dictionary. */
 bool
 rt_make_dict_copy(
 	struct rt_env *env,
-	struct rt_dict **dst,
-	struct rt_dict *src);
+	struct rt_value *dst,
+	struct rt_value *src);
+
+/* Merges a dictionary. */
+bool
+rt_merge_dict(
+	struct rt_env *env,
+	struct rt_value *dst,
+	struct rt_value *src1,
+	struct rt_value *src2);
+
+/* Sets the native pointers to a dictionary. */
+bool
+rt_set_dict_native_pointer(
+	struct rt_env *env,
+	struct rt_value *dict,
+	void *native_pointer,
+	void (*native_finalizer)(void *native_pointer));
+
+/* Gets the native pointer from a dictionary. */
+bool
+rt_get_dict_native_pointer(
+	struct rt_env *env,
+	struct rt_value *dict,
+	void **native_pointer,
+	void (**native_finalizer)(void *native_pointer));
+
+/* Make a packed. */
+bool
+rt_make_packed(
+	struct rt_env *env,
+	struct rt_value *val,
+	int type,
+	size_t size,
+	size_t elem_size,
+	void *preallocated,
+	void *native_pointer,
+	void (*native_finalizer)(void *native_pointer));
+
+bool
+rt_get_packed_native_pointer(
+	struct rt_env *env,
+	struct rt_value *packed,
+	void **native_pointer,
+	void (**native_finalizer)(void *native_pointer));
+
+bool
+rt_finalize_packed(
+	struct rt_env *env,
+	struct rt_value *packed);
+
+/* Get the element type of a packed. */
+bool
+rt_get_packed_type(
+	struct rt_env *env,
+	struct rt_value *packed,
+	int *type);
+
+/* Get the element count of a packed. */
+bool
+rt_get_packed_size(
+	struct rt_env *env,
+	struct rt_value *packed,
+	size_t *size);
+
+/* Retrieves an int8 packed element. */
+bool
+rt_get_packed_elem(
+	struct rt_env *env,
+	struct rt_value *packed,
+	size_t index,
+	struct rt_value *val);
+
+/* Stores an value to a packed. */
+bool
+rt_set_packed_elem(
+	struct rt_env *env,
+	struct rt_value *packed,
+	size_t index,
+	struct rt_value *val);
+
+/* Make a copy of a packed. */
+bool
+rt_make_packed_copy(
+	struct rt_env *env,
+	struct rt_value *dst,
+	struct rt_value *src);
 
 /*
  * Global Variable
@@ -561,6 +923,12 @@ rt_set_global(
 	struct rt_env *env,
 	const char *name,
 	struct rt_value *val);
+
+/* Mark an existing global binding immutable. */
+bool
+rt_mark_global_const(
+	struct rt_env *env,
+	const char *name);
 
 /* Set a global variable. (hash version) */
 bool
@@ -599,6 +967,11 @@ rt_unpin_local(
 	struct rt_env *env,
 	struct rt_value *val);
 
+/* Make a safepoint. */
+bool
+rt_safepoint(
+	struct rt_env *env);
+
 /*
  * Error Handling
  */
@@ -629,5 +1002,22 @@ rt_error(
 void
 rt_out_of_memory(
 	struct rt_env *env);
+
+/*
+ * Interpreter
+ */
+
+/* Visit bytecode. */
+bool
+rt_visit_bytecode(struct rt_env *rt, struct rt_func *func);
+
+/*
+ * Intrinsics
+ */
+
+/* Register intrinsics. */
+bool
+rt_register_intrinsics(
+	struct rt_env *rt);
 
 #endif

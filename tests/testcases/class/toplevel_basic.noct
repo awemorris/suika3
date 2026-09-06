@@ -1,0 +1,12 @@
+class Point {
+    x: 0,
+    y: 0
+}
+var Origin = new Point {};
+let Name = "noct";
+func main() {
+    var p = new Point { x: 3, y: 4 };
+    print(p.x + p.y);
+    print(Origin.x);
+    print(Name);
+}

@@ -1,0 +1,43 @@
+func client_thread(param) {
+    var n = 0;
+    for (i in 0..param.count) {
+        var conn = HttpServer.connect("127.0.0.1", param.port);
+        HttpServer.send(conn, "req" + i);
+        var reply = HttpServer.recv(conn, 4096);
+        if (reply == "ok:req" + i) {
+            n = n + 1;
+        }
+        HttpServer.close(conn);
+    }
+    return n;
+}
+
+func main() {
+    var port = 18102;
+    var count = 20;
+
+    var server = HttpServer.listen("127.0.0.1", port);
+    var poller = HttpServer.createPoller();
+    HttpServer.addToPoller(poller, server, HttpServer.READ);
+    print(HttpServer.countPoller(poller));
+
+    var th = Thread.createThread(client_thread, {port: port, count: count});
+
+    var served = 0;
+    while (served < count) {
+        var ready = HttpServer.waitPoller(poller, 5000);
+        for (r in ready) {
+            var conn = HttpServer.accept(r.socket);
+            var got = HttpServer.recv(conn, 4096);
+            HttpServer.send(conn, "ok:" + got);
+            HttpServer.close(conn);
+            served = served + 1;
+        }
+    }
+    print(served);
+    print(Thread.joinThread(th));
+
+    HttpServer.removeFromPoller(poller, server);
+    print(HttpServer.countPoller(poller));
+    HttpServer.close(server);
+}

@@ -1,0 +1,11 @@
+__accel func transform(
+    source: packedint32,
+    destination: packedint32,
+    n: int): void {
+    for (i in 0..n) {
+        destination[i] = source[i] + 1;
+    }
+}
+
+func main() {
+}

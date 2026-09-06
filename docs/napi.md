@@ -18,7 +18,7 @@ implement a Native API function.
 NoctVM *vm;
 NoctEnv *env;
 
-static bool ffi_print(NoctEnv *env);
+static bool napi_print(NoctEnv *env);
 
 void call_noct(const char *file_name, const char *file_text)
 {
@@ -26,10 +26,13 @@ void call_noct(const char *file_name, const char *file_text)
     //  - An environment is a handle for a thread context.
     //  - All operations exclude VM construction and destruction are done
     //    through an environment.
-    noct_create_vm(&vm, &env);
+    NoctConfig config;
+    noct_set_default_config(&config);
+    if (!noct_create_vm(&vm, &env, &config))
+        return;
 
     // Install a Native API function "print(msg)" to the VM.
-    const char *param_name = {"msg"};
+    const char *param_name[] = {"msg"};
     noct_register_cfunc(env, "print", 1, param_name, napi_print, NULL);
 
     // Compile source and install compiled functions to the VM.
@@ -40,7 +43,7 @@ void call_noct(const char *file_name, const char *file_text)
     noct_enter_vm(env, "main", 0, NULL, &ret);
 
     // Destroy the runtime.
-    noct_destroy_vm(env);
+    noct_destroy_vm(vm);
 }
 
 // print(msg)
@@ -56,7 +59,7 @@ static bool napi_print(NoctEnv *env)
     // Get the parameter. This gets a "const char *" pointer via "s",
     // and the pointer is backed by "param" for avoiding GC to collect it.
     if (!noct_get_arg_check_string(env, 0, &param, &s)) {
-        noct_unpin_local(env, 1, &value);
+        noct_unpin_local(env, 1, &param);
         return false;
     }
 
@@ -64,7 +67,7 @@ static bool napi_print(NoctEnv *env)
     printf("%s\n", s);
 
     // Unpin a NoctValue.
-    noct_unpin_local(env, 1, &value);
+    noct_unpin_local(env, 1, &param);
 
     return true;
 }
@@ -81,6 +84,27 @@ The type `NoctVM *` indicates a virtual machine instance.
 The type `NoctEnv *` indicates a thread instance of a virtual machine.
 Most operations to virtual machines are done through `NoctEnv *` handles.
 
+### NoctConfig
+
+The type `NoctConfig` holds VM configuration. Initialize it with
+`noct_set_default_config()` before changing individual fields.
+
+The nullable `require_resolver` field assigns module-location policy to the
+embedding host:
+
+```
+char *(*require_resolver)(const char *module_name);
+```
+
+When source or standalone module bytecode declares `require name;`, the VM
+passes the logical name to this callback.  On success, the callback returns an
+exact path in a newly allocated `malloc()`/`strdup()`-compatible string.  The
+VM owns and frees that string.  The VM reads the returned artifact but does not
+normalize the path, add a suffix, choose a directory, or define a search
+order.  Returning `NULL`, or leaving the callback unset when requirements are
+present, makes the load fail.  A self-contained `.nap` uses its embedded
+bindings and does not call this resolver.
+
 ### NoctValue
 
 The type `NoctValue` represents a value in Noct.
@@ -89,12 +113,15 @@ A value has a type and it is one of the following:
 
 ```
 enum NoctValueType {
-	NOCT_VALUE_INT    = 0,
-	NOCT_VALUE_FLOAT  = 1,
-	NOCT_VALUE_STRING = 2,
-	NOCT_VALUE_ARRAY  = 3,
-	NOCT_VALUE_DICT   = 4,
-	NOCT_VALUE_FUNC   = 5,
+	NOCT_VALUE_INT     = 0,
+	NOCT_VALUE_FLOAT   = 1,
+	NOCT_VALUE_STRING  = 2,
+	NOCT_VALUE_ARRAY   = 3,
+	NOCT_VALUE_DICT    = 4,
+	NOCT_VALUE_LONG    = 5,
+	NOCT_VALUE_DOUBLE  = 6,
+	NOCT_VALUE_PACKED  = 7,
+	NOCT_VALUE_FUNC    = 8,
 };
 ```
 
@@ -121,11 +148,22 @@ slow on Linux due to the Spectre vulnerability mitigation.
 ```
 #define noct_malloc	malloc
 #define noct_calloc	calloc
+#define noct_realloc	realloc
 #define noct_strdup	strdup
 #define noct_free	free
 ```
 
 ## Core Functions
+
+### noct_set_default_config()
+
+This API fills a configuration structure with the current defaults.
+
+```
+void
+noct_set_default_config(
+	NoctConfig *config);
+```
 
 ### noct_create_vm()
 
@@ -138,7 +176,8 @@ Note that an environment is a per-thread handle for API calls.
 bool
 noct_create_vm(
 	NoctVM **vm,
-	NoctEnv **default_env);
+	NoctEnv **default_env,
+	NoctConfig *conf);
 ```
 
 ### noct_destroy_vm()
@@ -159,7 +198,7 @@ This API creates a thread-local environment (=context) for the current thread.
 ```
 bool
 noct_create_thread_env(
-	NoctEnv *prev_evm,
+	NoctEnv *prev_env,
 	NoctEnv **new_env);
 ```
 
@@ -179,7 +218,17 @@ noct_register_source(
 
 ### noct_register_bytecode()
 
-This API registers functions from compiled bytecode data.
+This API registers functions from a raw `Noct Bytecode 1.0`,
+`Noct Bytecode 1.1`, or `Noct App 1.0` payload.  Version 1.1 is the canonical
+`.nbc` format and records logical require names; version 1.0 remains readable
+as a module with no requirements.  An App payload contains the complete module
+closure and bindings, registers modules in dependency order, and runs each
+module initializer at most once.
+
+The buffer must begin with the format magic.  A shebang such as the executable
+prefix on a `.nap` is transport metadata and must be stripped by the host
+before calling this API.  `size` is the exact binary byte count; callers must
+not derive it with `strlen()` because function bytecode may contain NUL bytes.
 
 The given bytecode will be translated to machine code.
 
@@ -188,7 +237,7 @@ bool
 noct_register_bytecode(
 	NoctEnv *env,
 	uint8_t *data,
-	size_t size);
+	uint32_t size);
 ```
 
 ### noct_register_cfunc()
@@ -200,7 +249,7 @@ bool
 noct_register_cfunc(
 	NoctEnv *env,
 	const char *name,
-	int param_count,
+	size_t param_count,
 	const char *param_name[],
 	bool (*cfunc)(NoctEnv *env),
 	NoctFunc **ret_func);
@@ -219,7 +268,7 @@ bool
 noct_enter_vm(
 	NoctEnv *env,
 	const char *func_name,
-	int arg_count,
+	uint32_t arg_count,
 	NoctValue *arg,
 	NoctValue *ret);
 ```
@@ -269,7 +318,7 @@ bool
 noct_call(
 	NoctEnv *env,
 	NoctFunc *func,
-	int arg_count,
+	uint32_t arg_count,
 	NoctValue *arg,
 	NoctValue *ret);
 ```
@@ -455,7 +504,7 @@ bool
 noct_get_array_elem(
 	NoctEnv *env,
 	NoctValue *array,
-	int index,
+	size_t index,
 	NoctValue *val);
 ```
 
@@ -472,7 +521,7 @@ bool
 noct_set_array_elem(
 	NoctEnv *env,
 	NoctValue *array,
-	int index,
+	size_t index,
 	NoctValue *val);
 ```
 
@@ -488,7 +537,7 @@ bool
 noct_resize_array(
 	NoctEnv *env,
 	NoctValue *arr,
-	int size);
+	size_t size);
 ```
 
 ### noct_make_array_copy()
@@ -526,7 +575,7 @@ bool
 noct_get_dict_key_by_index(
 	NoctEnv *env,
 	NoctValue *dict,
-	int index,
+	size_t index,
 	NoctValue *key);
 ```
 
@@ -541,7 +590,7 @@ bool
 noct_get_dict_value_by_index(
 	NoctEnv *env,
 	NoctValue *dict,
-	int index,
+	size_t index,
 	NoctValue *val);
 ```
 
@@ -621,7 +670,7 @@ This API retrieves a function argument from the current stack frame.
 bool
 noct_get_arg(
 	NoctEnv *env,
-	int index,
+	uint32_t index,
 	NoctValue *val);
 ```
 
@@ -802,7 +851,7 @@ bool
 noct_get_array_elem_check_int(
 	NoctEnv *env,
 	NoctValue *array,
-	int index,
+	size_t index,
 	NoctValue *val,
 	int *i);
 ```
@@ -825,7 +874,7 @@ bool
 noct_get_array_elem_check_float(
 	NoctEnv *env,
 	NoctValue *array,
-	int index,
+	size_t index,
 	NoctValue *val,
 	float *f);
 ```
@@ -848,7 +897,7 @@ bool
 noct_get_array_elem_check_string(
 	NoctEnv *env,
 	NoctValue *array,
-	int index,
+	size_t index,
 	NoctValue *val,
 	const char **data);
 ```
@@ -871,7 +920,7 @@ bool
 noct_get_array_elem_check_array(
 	NoctEnv *env,
 	NoctValue *array,
-	int index,
+	size_t index,
 	NoctValue *val);
 ```
 
@@ -893,7 +942,7 @@ bool
 noct_get_array_elem_check_dict(
 	NoctEnv *env,
 	NoctValue *array,
-	int index,
+	size_t index,
 	NoctValue *val);
 ```
 
@@ -915,7 +964,7 @@ bool
 noct_get_array_elem_check_func(
 	NoctEnv *env,
 	NoctValue *array,
-	int index,
+	size_t index,
 	NoctValue *val,
 	NoctFunc **f);
 ```
@@ -938,7 +987,7 @@ bool
 noct_set_array_elem_make_int(
 	NoctEnv *env,
 	NoctValue *array,
-	int index,
+	size_t index,
 	NoctValue *val,
 	int i);
 ```
@@ -961,7 +1010,7 @@ bool
 noct_set_array_elem_make_float(
 	NoctEnv *env,
 	NoctValue *array,
-	int index,
+	size_t index,
 	NoctValue *val,
 	float f);
 ```
@@ -984,7 +1033,7 @@ bool
 noct_set_array_elem_make_string(
 	NoctEnv *env,
 	NoctValue *array,
-	int index,
+	size_t index,
 	NoctValue *val,
 	const char *data);
 ```
@@ -1194,7 +1243,7 @@ the value remains protected and stable.
 bool
 noct_get_arg_check_int(
 	NoctEnv *env,
-	int index,
+	uint32_t index,
 	NoctValue *val,
 	int *i);
 ```
@@ -1214,7 +1263,7 @@ the value remains protected and stable.
 bool
 noct_get_arg_check_float(
 	NoctEnv *env,
-	int index,
+	uint32_t index,
 	NoctValue *val,
 	float *f);
 ```
@@ -1234,7 +1283,7 @@ the value remains protected and stable.
 bool
 noct_get_arg_check_string(
 	NoctEnv *env,
-	int index,
+	uint32_t index,
 	NoctValue *val,
 	const char **data);
 ```
@@ -1248,7 +1297,7 @@ type checking.
 bool
 noct_get_arg_check_array(
 	NoctEnv *env,
-	int index,
+	uint32_t index,
 	NoctValue *val);
 ```
 
@@ -1261,7 +1310,7 @@ type checking.
 bool
 noct_get_arg_check_dict(
 	NoctEnv *env,
-	int index,
+	uint32_t index,
 	NoctValue *val);
 ```
 
@@ -1280,7 +1329,7 @@ the value remains protected and stable.
 bool
 noct_get_arg_check_func(
 	NoctEnv *env,
-	int index,
+	uint32_t index,
 	NoctValue *val,
 	NoctFunc **f);
 ```

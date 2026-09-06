@@ -1,0 +1,10 @@
+func main() {
+    Person = class {
+        name: "anon"
+    };
+    var p = new Person { name: "Jessie" };
+    print(p.name);
+    p.name = "Tom";
+    print(p.name);
+    Person.name = "broken";
+}

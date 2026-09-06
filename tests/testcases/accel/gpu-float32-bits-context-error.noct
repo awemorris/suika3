@@ -1,0 +1,7 @@
+func invalid() {
+    return Accel.float32FromBits(0);
+}
+
+func main() {
+    invalid();
+}

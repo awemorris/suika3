@@ -9,232 +9,283 @@
  * CLI: REPL Mode
  */
 
+#include <noct/noct.h>
 #include "cli-main.h"
+#include "repl.h"
 
-/* Forward declaration. */
+#include <errno.h>
+#include <signal.h>
+
+#define REPL_SOURCE_SIZE	32768
+#define REPL_LINE_SIZE		(REPL_SOURCE_SIZE + 2)
+
+enum repl_read_result {
+	REPL_READ_LINE,
+	REPL_READ_EOF,
+	REPL_READ_INTERRUPT,
+	REPL_READ_TOO_LONG,
+};
+
+static volatile sig_atomic_t repl_interrupted;
+
+#if defined(NOCT_TARGET_POSIX)
+static struct sigaction repl_old_action;
+#else
+static void (*repl_old_handler)(int);
+#endif
+static bool repl_handler_installed;
+
 static bool run_repl(void);
-static bool is_multiline_start(const char *text, bool *is_func);
-static bool accept_multiline(const char *text);
+static bool register_repl_libraries(NoctEnv *env);
+static void print_repl_error(NoctEnv *env);
+static enum repl_read_result read_repl_line(char *line, size_t size);
+static bool install_repl_interrupt_handler(void);
+static void restore_repl_interrupt_handler(void);
+static void repl_interrupt_handler(int signal_number);
 
-int command_repl(void)
+int
+command_repl(void)
 {
-	if (!run_repl())
-		return 1;
-
-	return 0;
+	return run_repl() ? 0 : 1;
 }
 
-static bool run_repl(void)
-{		
+static bool
+run_repl(void)
+{
 	NoctVM *vm;
 	NoctEnv *env;
+	NoctReplSession *session;
+	bool continuation;
+	bool success;
+
+	vm = NULL;
+	env = NULL;
+	session = NULL;
+	continuation = false;
+	success = false;
 
 	wide_printf(N_TR("Noct Programming Language\n"));
 	wide_printf(N_TR("Entering REPL mode.\n"));
-#if defined(NOCT_USE_JIT) &&                    \
-    (                                           \
-        defined(NOCT_ARCH_X86) ||               \
-        defined(NOCT_ARCH_X86_64) ||		\
-        defined(NOCT_ARCH_ARM32) ||             \
-        defined(NOCT_ARCH_ARM64) ||		\
-        defined(NOCT_ARCH_MIPS32) ||		\
-        defined(NOCT_ARCH_MIPS64) ||		\
-        defined(NOCT_ARCH_PPC32) ||		\
-        defined(NOCT_ARCH_PPC64) ||		\
-        defined(NOCT_ARCH_RISCV32) ||		\
-        defined(NOCT_ARCH_RISCV64)              \
-    )
-	wide_printf(N_TR("JIT compilation is enabled. Starting the fast VM...\n"));
+#if defined(NOCT_USE_JIT) &&                                                   \
+    (defined(NOCT_ARCH_X86) || defined(NOCT_ARCH_X86_64) ||                    \
+     defined(NOCT_ARCH_ARM32) || defined(NOCT_ARCH_ARM64) ||                   \
+     defined(NOCT_ARCH_MIPS32) || defined(NOCT_ARCH_MIPS64) ||                 \
+     defined(NOCT_ARCH_PPC32) || defined(NOCT_ARCH_PPC64) ||                   \
+     defined(NOCT_ARCH_RISCV32) || defined(NOCT_ARCH_RISCV64))
+	wide_printf(
+	    N_TR("JIT compilation is enabled. Starting the fast VM...\n"));
 #endif
 	wide_printf("\n");
 
-	/* Create a runtime. */
 	if (!noct_create_vm(&vm, &env, NULL)) {
 		wide_printf(N_TR("Out of memory.\n"));
-		return false;
+		goto cleanup;
 	}
-
-	/* Register libraries. */
-	if (!noct_register_api_math(env)) {
+	if (!register_repl_libraries(env)) {
 		wide_printf(N_TR("Out of memory.\n"));
-		return false;
+		goto cleanup;
 	}
-	if (!noct_register_api_system(env)) {
+
+	session = noct_repl_create(env, REPL_SOURCE_SIZE);
+	if (session == NULL) {
 		wide_printf(N_TR("Out of memory.\n"));
-		return false;
+		goto cleanup;
 	}
-	if (!noct_register_api_console(env)) {
-		wide_printf(N_TR("Out of memory.\n"));
-		return false;
-	}
-
-	/* Register FFI functions. */
-	if (!register_cli_cfunc(env)) {
-		wide_printf(N_TR("Out of memory.\n"));
-		return false;
+	if (!install_repl_interrupt_handler()) {
+		wide_printf(
+		    N_TR("Cannot install the REPL interrupt handler.\n"));
+		goto cleanup;
 	}
 
-	/* Prompt. */
-	while (1) {
-		char line[4096];
-		char entire[32768];
-		char *start;
-		bool is_func;
-		NoctValue ret, zero;
+	for (;;) {
+		char line[REPL_LINE_SIZE];
+		enum repl_read_result read_result;
+		enum NoctReplResult result;
 
-		memset(line, 0, sizeof(line));
-		memset(entire, 0, sizeof(entire));
-
-		/* Show the prompt and get an input. */
-		wide_printf("> ");
-		if (fgets(line, sizeof(line) - 1, stdin) == NULL)
+		if (repl_interrupted) {
+			wide_printf("\n");
+			noct_repl_submit(session, NULL);
 			break;
-
-		/* Check if it is multiple lines. */
-		if (!is_multiline_start(line, &is_func)) {
-			/* Single line. */
-
-			/* Make a function. */
-			strncpy(entire, "func repl() {", sizeof(entire) - 1);
-			strncat(entire, line, sizeof(entire) - 1);
-			strncat(entire, "; }", sizeof(entire) - 1);
-
-			/* Compile the source. */
-			if (!noct_register_source(env, "REPL", entire)) {
-				const char *file, *msg;
-				int line;
-				noct_get_error_file(env, &file);
-				noct_get_error_line(env, &line);
-				noct_get_error_message(env, &msg);
-				wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
-				continue;
-			}
-
-			/* Run the "repl()" function. */
-			if (!noct_enter_vm(env, "repl", 0, NULL, &ret)) {
-				const char *file, *msg;
-				int line;
-				noct_get_error_file(env, &file);
-				noct_get_error_line(env, &line);
-				noct_get_error_message(env, &msg);
-				wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
-				continue;
-			}
-		} else {
-			/* Multiple lines. */
-
-			/* Make a function if the block is not a function. */
-			if (!is_func)
-				strncpy(entire, "func repl() {", sizeof(entire) - 1);
-			else
-				strcpy(entire, "");
-			start = &entire[strlen(entire)];
-
-			/* Show the multiline prompt and get inputs until the block ends. */
-			strncat(entire, line, sizeof(entire) - 1);
-			while (!accept_multiline(start)) {
-				wide_printf(". ");
-				if (fgets(line, sizeof(line) - 1, stdin) == NULL)
-					break;
-				strncat(entire, line, sizeof(entire) - 1);
-			}
-
-			/* Terminate the synthetic function if the block is not a function. */
-			if (!is_func)
-				strncat(entire, "}", sizeof(entire) - 1);
-
-			/* Compile the source. */
-			if (!noct_register_source(env, "REPL", entire)) {
-				const char *file, *msg;
-				int line;
-				noct_get_error_file(env, &file);
-				noct_get_error_line(env, &line);
-				noct_get_error_message(env, &msg);
-				wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
-				continue;
-			}
-
-			/* If the block is not a function, run the synthetic function. */
-			if (!is_func) {
-				/* Run the "repl()" function. */
-				if (!noct_enter_vm(env, "repl", 0, NULL, &ret)) {
-					const char *file, *msg;
-					int line;
-					noct_get_error_file(env, &file);
-					noct_get_error_line(env, &line);
-					noct_get_error_message(env, &msg);
-					wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, msg);
-					continue;
-				}
-			}
 		}
 
-		/* Make the "repl()" function updatable. */
-		noct_make_int(env, &zero, 0);
-		if (!noct_set_global(env, "repl", &zero)) {
-			wide_printf(N_TR("Out of memory.\n"));
-			return false;
+		wide_printf(continuation ? ". " : "> ");
+		fflush(stdout);
+		read_result = read_repl_line(line, sizeof(line));
+		if (read_result == REPL_READ_INTERRUPT) {
+			wide_printf("\n");
+			noct_repl_submit(session, NULL);
+			break;
+		}
+		if (read_result == REPL_READ_EOF) {
+			noct_repl_submit(session, NULL);
+			break;
+		}
+		if (read_result == REPL_READ_TOO_LONG) {
+			wide_printf(N_TR("Input line is too long.\n"));
+			noct_repl_cancel(session);
+			continuation = false;
+			continue;
+		}
+
+		result = noct_repl_submit(session, line);
+		switch (result) {
+		case NOCT_REPL_READY:
+		case NOCT_REPL_EXECUTED:
+			continuation = false;
+			break;
+		case NOCT_REPL_NEED_MORE:
+			continuation = true;
+			break;
+		case NOCT_REPL_ERROR:
+			print_repl_error(env);
+			continuation = false;
+			break;
+		case NOCT_REPL_EXIT:
+			goto done;
+		default:
+			wide_printf(N_TR("Invalid REPL state.\n"));
+			goto cleanup;
 		}
 	}
 
-	/* Destroy the runtime. */
-	if (!noct_destroy_vm(vm))
-		return false;
+done:
+	success = true;
 
+cleanup:
+	restore_repl_interrupt_handler();
+	noct_repl_destroy(session);
+	if (vm != NULL && !noct_destroy_vm(vm))
+		success = false;
+	return success;
+}
+
+static bool
+register_repl_libraries(NoctEnv *env)
+{
+	if (!noct_register_api_system(env))
+		return false;
+	if (!noct_register_api_console(env))
+		return false;
+	if (!noct_register_api_file(env))
+		return false;
+	if (!noct_register_api_regex(env))
+		return false;
+#if defined(NOCT_USE_MULTITHREAD)
+	if (!noct_register_api_thread(env))
+		return false;
+#endif
+#if defined(NOCT_USE_HTTPSERVER)
+	if (!noct_register_api_httpserver(env))
+		return false;
+#endif
+#if defined(NOCT_USE_TERM)
+	if (!noct_register_api_term(env)) {
+		wide_printf(N_TR("Out of memory.\n"));
+		return false;
+	}
+#endif
+#if defined(NOCT_USE_BEUI)
+	if (!noct_register_api_beui(env)) {
+		wide_printf(N_TR("Out of memory.\n"));
+		return false;
+	}
+#endif
+	return register_cli_cfunc(env);
+}
+
+static void
+print_repl_error(NoctEnv *env)
+{
+	const char *file;
+	const char *message;
+	int line;
+
+	file = NULL;
+	message = NULL;
+	line = 0;
+	noct_get_error_file(env, &file);
+	noct_get_error_line(env, &line);
+	noct_get_error_message(env, &message);
+	if (message == NULL || message[0] == '\0')
+		message = N_TR("Unknown error.");
+	if (file != NULL && file[0] != '\0')
+		wide_printf(N_TR("%s:%d: Error: %s\n"), file, line, message);
+	else
+		wide_printf(N_TR("Error: %s\n"), message);
+}
+
+static enum repl_read_result
+read_repl_line(char *line, size_t size)
+{
+	int c;
+
+	errno = 0;
+	if (fgets(line, (int)size, stdin) != NULL) {
+		if (strchr(line, '\n') != NULL || feof(stdin))
+			return REPL_READ_LINE;
+
+		/* Discard the rest rather than executing a partial source line.
+		 */
+		do {
+			c = fgetc(stdin);
+		} while (c != '\n' && c != EOF && !repl_interrupted);
+		if (repl_interrupted || errno == EINTR) {
+			clearerr(stdin);
+			return REPL_READ_INTERRUPT;
+		}
+		return REPL_READ_TOO_LONG;
+	}
+	if (repl_interrupted || errno == EINTR) {
+		clearerr(stdin);
+		return REPL_READ_INTERRUPT;
+	}
+	return REPL_READ_EOF;
+}
+
+static bool
+install_repl_interrupt_handler(void)
+{
+	repl_interrupted = 0;
+#if defined(NOCT_TARGET_POSIX) || defined(NOCT_TARGET_MACOS)
+	{
+		struct sigaction action;
+
+		memset(&action, 0, sizeof(action));
+#if defined(NOCT_TARGET_ZEDBSD)
+		action.sa_handler = (uint64_t)(uintptr_t)repl_interrupt_handler;
+#else
+		action.sa_handler = repl_interrupt_handler;
+#endif
+		sigemptyset(&action.sa_mask);
+		if (sigaction(SIGINT, &action, &repl_old_action) != 0)
+			return false;
+	}
+#else
+	repl_old_handler = signal(SIGINT, repl_interrupt_handler);
+	if (repl_old_handler == SIG_ERR)
+		return false;
+#endif
+	repl_handler_installed = true;
 	return true;
 }
 
-/* Check for the start of the multiple line mode. */
-static bool is_multiline_start(const char *text, bool *is_func)
+static void
+restore_repl_interrupt_handler(void)
 {
-	const char *s;
-
-	s = text;
-	while (*s == ' ')
-		s++;
-
-	*is_func = false;
-	if (strncmp(s, "func", 4) == 0) {
-		if (s[4] == ' ' || s[4] == '\t' || s[4] == '\n' || s[4] == '(') {
-			*is_func = true;
-			return true;
-		}
-	}
-	if (strncmp(s, "if", 2) == 0) {
-		if (s[2] == ' ' || s[2] == '\t' || s[2] == '\n' || s[2] == '(')
-			return true;
-	}
-	if (strncmp(s, "for", 3) == 0) {
-		if (s[3] == ' ' || s[3] == '\t' || s[3] == '\n' || s[3] == '(')
-			return true;
-	}
-	if (strncmp(s, "while", 5) == 0) {
-		if (s[5] == ' ' || s[5] == '\t' || s[5] == '\n' || s[5] == '(')
-			return true;
-	}
-
-	return false;
+	if (!repl_handler_installed)
+		return;
+#if defined(NOCT_TARGET_POSIX) || defined(NOCT_TARGET_MACOS)
+	sigaction(SIGINT, &repl_old_action, NULL);
+#else
+	signal(SIGINT, repl_old_handler);
+#endif
+	repl_handler_installed = false;
+	repl_interrupted = 0;
 }
 
-/* Check for the end of the multiple line mode. */
-static bool accept_multiline(const char *text)
+static void
+repl_interrupt_handler(int signal_number)
 {
-	int open, close;
-	const char *s;
-
-	open = 0;
-	close = 0;
-	s = text;
-	while(*s) {
-		if (*s == '{')
-			open++;
-		else if (*s == '}')
-			close++;
-		s++;
-	}
-
-	if (open > 0 && open == close)
-		return true; /* Matched. */
-
-	return false;
+	(void)signal_number;
+	repl_interrupted = 1;
 }

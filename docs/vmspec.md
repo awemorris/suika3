@@ -186,32 +186,38 @@ by local variables (if any).
 
 ---
 
-# 3. Bytecode File Format
+# 3. Bytecode and Application File Formats
 
-A Noct bytecode file is a **text-based**, line-oriented format that
-encodes one or more function definitions. Each function is compiled
-separately and is automatically bound to a global variable with the
-same name as the function upon loading. This enables runtime lookup
-and invocation via the global symbol table.
+A Noct module bytecode file uses line-oriented textual metadata around raw
+binary function bodies.  The canonical filename extension is `.nbc`.  Each
+function is compiled separately and is bound to a global variable with the
+same link name when the module is loaded.
 
-## 3.1 Format Overview
+## 3.1 `Noct Bytecode 1.1`
 
-The file begins with a version header and source information, followed
-by one or more function blocks. Each function includes metadata and a
-binary bytecode payload.
+Version 1.1 adds the module's source-level `require` names to the module
+record.  Names are stored in declaration order; they are logical module names,
+not resolved paths or filenames.
 
 ```
-Noct Bytecode 1.0
+Noct Bytecode 1.1
 Source
-<FILE NAME>
+<LOGICAL SOURCE NAME>
+Number Of Requires
+<REQUIRE COUNT>
+<REQUIRE NAME 0>
+...
 Number Of Functions
 <FUNCTION COUNT>
 Begin Function
 Name
 <FUNCTION NAME>
+Source
+<FUNCTION SOURCE NAME>
 Parameters
 <PARAMETER COUNT>
 <PARAMETER NAME...>
+<OPTIONAL FUNCTION METADATA...>
 Temporary Size
 <TEMPORARY VARIABLE COUNT>
 Bytecode Size
@@ -220,19 +226,65 @@ Bytecode Size
 End Function
 ```
 
-## 3.2 Notes
+The bytecode compiler writes version 1.1.  The reader also accepts legacy
+`Noct Bytecode 1.0`; a 1.0 record has no require section and is interpreted as
+declaring zero requirements.  This is read-only compatibility: new `.nb`
+files are neither generated nor found by the CLI module resolver.
 
-- All section headers (e.g., `Begin Function`, `Name`, `Parameters`)  
-  are **case-sensitive** and must match exactly.
-- Parameter names are used only for **debugging purposes**; the VM  
-  does not use them at runtime.
-- `Bytecode Size` indicates the number of bytes to read as raw binary  
-  following the line.
-- `RAW BYTECODE` is not newline-terminated and may contain null bytes  
-  or non-printable characters.
-- The VM assumes all bytecode files are encoded in **UTF-8**.
-- Additional sections (e.g., metadata or debug information) may be  
-  supported in future versions.
+## 3.2 `Noct App 1.0`
+
+A `.nap` is a self-contained CPU application container.  On disk it normally
+starts with the exact executable transport prefix `#!/usr/bin/noct\n`, followed
+by this raw payload:
+
+```
+Noct App 1.0
+Number Of Modules
+<MODULE COUNT>
+Number Of Bindings
+<BINDING COUNT>
+<REQUIRE NAME 0>
+<MODULE INDEX 0>
+...
+Number Of Roots
+<ROOT COUNT>
+<ROOT MODULE INDEX 0>
+...
+Modules
+Module Bytecode Size
+<MODULE BYTE LENGTH 0>
+<EXACT Noct Bytecode 1.1 MODULE RECORD 0>
+...
+End App
+```
+
+Every embedded module is an independent, complete version 1.1 record with its
+own `Source`, require list, function metadata, and bytecode.  The binding table
+maps each logical require name to a zero-based module index, and the root list
+preserves the CLI's explicit root order.  Physical paths are not stored.
+
+The loader validates every module, binding, root, dependency, and function
+name before publishing VM state.  It then registers and initializes modules in
+dependency-first order.  There is no aggregate initializer, and a `.nap`
+never consults `require_resolver` or the filesystem for an embedded
+dependency.
+
+## 3.3 Common Rules
+
+- Section headers are case-sensitive and must match exactly.
+- Text metadata is UTF-8 and LF-terminated.  Metadata lines cannot contain
+  NUL or CR bytes.
+- Parameter names are used for debugging; the VM does not use them to bind
+  arguments at run time.
+- `Bytecode Size` and `Module Bytecode Size` are exact byte counts.  Raw
+  bytecode may contain NUL and other non-printable bytes and is not located by
+  delimiter scanning.
+- Trailing data after a complete module or `End App` is invalid.
+- The public bytecode registration API receives a raw Bytecode or App payload.
+  A host that reads an executable `.nap` strips its shebang before
+  registration.
+- `.nbc` and `.nap` contain CPU bytecode only.  They contain no accelerator
+  IR, shader source, GPU object, device descriptor, or accelerator opcode.
 
 ---
 
@@ -676,13 +728,14 @@ the NoctVM architecture.
 - Reserved opcodes must not be emitted or interpreted.
 - This ensures forward compatibility for potential new instructions.
 
-### 9.2 Modules
+### 9.2 Modules and Resolution
 
-- The current version does **not support modules**.
-- However, the file format and symbol system are designed to  
-  accommodate future modularity.
-- Future extensions may introduce module namespacing and import/export  
-  metadata.
+- Version 1.1 module records contain logical require names but no search-path
+  policy or physical filenames.
+- A host resolves each required name to an exact module artifact.  This policy
+  is outside the VM; the CLI implements it with `--path`.
+- An App 1.0 container carries a complete logical binding table, so its module
+  closure is loaded without a host resolver.
 
 ### 9.3 Exceptions
 
@@ -697,6 +750,13 @@ the NoctVM architecture.
 ---
 
 ## 10. Appendix: Opcode List
+
+Accelerator optimization does not extend this opcode table.  It is a
+source-only optimization performed by an explicitly selected runtime backend.
+The optimizer rewrites eligible HIR into ordinary calls to private native
+helpers; the interpreter and JIT execute those calls without accelerator-aware
+instructions.  Bytecode and application writers do not run this pass, so
+`.nbc` and `.nap` contain the ordinary CPU body and no GPU artifacts.
 
 | Mnemonic            | Opcode | Description                               |
 |---------------------|--------|-------------------------------------------|
@@ -728,8 +788,8 @@ the NoctVM architecture.
 | `LOADARRAY`         | 0x19   | Load value from array or dictionary       |
 | `STOREARRAY`        | 0x1A   | Store value to array or dictionary        |
 | `LEN`               | 0x1B   | Get length of string/array/dictionary     |
-| `GETDICTKEYBYINDEX` | 0x1C | Get dictionary key at index          |
-| `GETDICTVALBYINDEX` | 0x1D | Get dictionary value at index        |
+| `GETDICTKEYBYINDEX` | 0x1C   | Get dictionary key at index               |
+| `GETDICTVALBYINDEX` | 0x1D   | Get dictionary value at index             |
 | `STOREDOT`          | 0x1E   | Store dictionary value by field name      |
 | `LOADDOT`           | 0x1F   | Load dictionary value by field name       |
 | `STORESYMBOL`       | 0x20   | Store value in global symbol              |
@@ -741,3 +801,58 @@ the NoctVM architecture.
 | `JMPIFFALSE`        | 0x26   | Jump if false                             |
 | `JMPIFEQ`           | 0x27   | Jump if EQI result is false               |
 | `LINEINFO`          | 0x28   | Annotate line number for debugging        |
+
+# Fast function metadata
+
+Function kinds are compact: 0 is a normal function and 1 is a CPU-executable
+`__fast func`.  Omitting `Function Kind` retains the legacy meaning of kind 0.
+A fast function writes both of the following sections before `Temporary Size`:
+
+```
+Function Kind
+1
+Fast Signature
+1
+1
+<PARAMETER COUNT>
+<RETURN TYPE>
+<PARAMETER CONTRACTS...>
+```
+
+The first Fast Signature value is the format version; the current version is
+1.  The second value is the valid marker and must also be 1.  The parameter
+count must equal the function's `Parameters` count.  One parameter contract is
+then written for each formal in declaration order:
+
+```
+<VALUE TYPE>
+<PACKED ELEMENT TYPE>
+<RESTRICTED: 0 OR 1>
+<RANK>
+<EXTENT DESCRIPTORS...>
+```
+
+A primitive parameter has rank 0 and no extent descriptors.  A shaped Packed
+parameter has rank 1 through 8 and stores exactly that many descriptors, so the
+signature does not reserve extent slots for primitive parameters or unused
+axes.  Each descriptor is two lines: extent kind 1 followed by a signed
+constant, or extent kind 2 followed by the zero-based index of the `int` or
+`long` parameter that supplies the extent.
+
+The restricted bit records a programmer-supplied non-aliasing contract.  It is
+available to the optimizer but does not request a runtime alias check.  Runtime
+entry still checks primitive value tags, Packed element kinds, positive dynamic
+extents, non-overflowing shape products, and exact Packed element counts.
+
+A fast artifact also writes `Parameter Types` when it has parameters and always
+writes `Return Type`, including return type -2 for `void`.  Its ordinary value
+type, Packed element type, restricted, and return type metadata must agree with
+the Fast Signature exactly.
+
+The loader rejects kind values above 1, a fast function without a Fast
+Signature, a normal function with a Fast Signature, duplicate sections, an
+unknown signature version, a parameter-count mismatch, an invalid rank or
+extent descriptor, and otherwise inconsistent signature data.  Existing
+normal bytecode without either section remains valid.  Fast functions use the
+ordinary VM instruction set; this metadata does not introduce a fast-specific
+opcode.

@@ -1,0 +1,59 @@
+func main() {
+    // continue in a ranged for
+    var a = 0;
+    for (i in 0..5) {
+        if (i == 2) { continue; }
+        a = a + 1;
+    }
+    print(a);
+
+    // continue in a while
+    var i = 0;
+    var b = 0;
+    while (i < 5) {
+        i = i + 1;
+        if (i == 2) { continue; }
+        b = b + 1;
+    }
+    print(b);
+
+    // continue in a for-each-value
+    var c = 0;
+    for (v in [1, 2, 3, 4, 5]) {
+        if (v == 3) { continue; }
+        c = c + v;
+    }
+    print(c);
+
+    // continue in a for-each-key-value
+    var d = 0;
+    for (k, v in {a: 1, b: 2, c: 3}) {
+        if (k == "b") { continue; }
+        d = d + v;
+    }
+    print(d);
+
+    // continue in a for nested in a while
+    var p = 0;
+    var e = 0;
+    while (p < 2) {
+        for (j in 0..5) {
+            if (j == 2) { continue; }
+            e = e + 1;
+        }
+        p = p + 1;
+    }
+    print(e);
+
+    // continue in a while nested in a for
+    var f = 0;
+    for (j in 0..2) {
+        var q = 0;
+        while (q < 5) {
+            q = q + 1;
+            if (q == 2) { continue; }
+            f = f + 1;
+        }
+    }
+    print(f);
+}

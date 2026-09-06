@@ -1,0 +1,38 @@
+// Essence of DRAW_IMAGE_3D_ALPHA: affine nearest-neighbor texture sampling.
+// Clipping is assumed to have happened before this loop; tx/ty remain carried.
+func blend_3d_alpha(dst: rpackeduint32, src: rpackeduint32,
+                    n: int, src_width: int,
+                    tx_start: float, ty_start: float,
+                    tx_inc: float, ty_inc: float,
+                    alpha: int): void {
+    let alpha_float = alpha / 65025.0;
+    var tx = tx_start;
+    var ty = ty_start;
+    for (i in 0..n) {
+        let src_index = Int.from(ty) * src_width + Int.from(tx);
+        let src_pix = src[src_index];
+        let dst_pix = dst[i];
+        let src_a = Float.from((src_pix >> 24) & 0xff) * alpha_float;
+        let dst_a = 1.0 - src_a;
+        let r = Float.from((src_pix >> 16) & 0xff) * src_a +
+                Float.from((dst_pix >> 16) & 0xff) * dst_a;
+        let g = Float.from((src_pix >> 8) & 0xff) * src_a +
+                Float.from((dst_pix >> 8) & 0xff) * dst_a;
+        let b = Float.from(src_pix & 0xff) * src_a +
+                Float.from(dst_pix & 0xff) * dst_a;
+        dst[i] = (255 << 24) | (Int.from(r) << 16) |
+                 (Int.from(g) << 8) | Int.from(b);
+        tx = tx + tx_inc;
+        ty = ty + ty_inc;
+    }
+}
+
+func main() {
+    let src = Packed.uint32(64);
+    let dst = Packed.uint32(16);
+    src[0] = 0xff204060;
+    src[3] = 0xff6080a0;
+    blend_3d_alpha(dst, src, 4, 8, 0.0, 0.0, 1.0, 0.0, 192);
+    print(dst[0]);
+    print(dst[3]);
+}

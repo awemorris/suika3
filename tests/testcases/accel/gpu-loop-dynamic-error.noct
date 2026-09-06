@@ -1,0 +1,7 @@
+__gpu func invalid(n: int): void {
+    for (i in 0..n) {
+    }
+}
+
+func main() {
+}

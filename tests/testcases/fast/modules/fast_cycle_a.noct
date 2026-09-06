@@ -1,0 +1,5 @@
+require fast_cycle_b;
+
+__fast func cycle_a(value: int): int {
+    return cycle_b(value);
+}

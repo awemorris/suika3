@@ -1,0 +1,11 @@
+func main() {
+    var arr = [10, 20, 30];
+    var i = 1;
+    var j = 2;
+    var s = arr[i] + arr[i];
+    print(s);
+    var t = arr[i] + arr[j];
+    print(t);
+    var u = arr[j] + arr[j];
+    print(u);
+}

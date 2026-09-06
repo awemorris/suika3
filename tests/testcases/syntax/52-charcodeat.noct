@@ -1,0 +1,10 @@
+func main() {
+    print(String.charCodeAt("A", 0));
+    print(String.charCodeAt("abc", 2));
+    print(String.charCodeAt("あ", 0));
+    print(String.charCodeAt("日本", 1));
+    print(String.charCodeAt("", 0));
+    print(String.charCodeAt("x", 5));
+    // Round trip with String.chr.
+    print(String.chr(String.charCodeAt("𠀋", 0)) == "𠀋");
+}

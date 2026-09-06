@@ -1,0 +1,21 @@
+__accel func reduce(
+    source: rpackedint32,
+    destination: rpackedint32,
+    n: int): void {
+    var first_sum: int = 0;
+    for (i in 0..n) {
+        first_sum += source[i];
+    }
+    var second_sum: int = 0;
+    for (j in 0..n) {
+        second_sum += source[j] + 1;
+    }
+    for (k in 0..n) {
+        destination[k] = source[k] + first_sum + second_sum;
+    }
+    destination[0] = first_sum;
+    destination[1] = second_sum;
+}
+
+func main() {
+}
