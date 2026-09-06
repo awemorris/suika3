@@ -51,9 +51,10 @@ option(PLAYFIELD_ENABLE_SHARED           "Build a dynamic library"              
 option(PLAYFIELD_ENABLE_OBJECT           "Build an object library"                    OFF)
 option(PLAYFIELD_ENABLE_BIN              "Build an executable"                        OFF)
 option(PLAYFIELD_ENABLE_DIST             "Link shared libraries"                      OFF)
-option(PLAYFIELD_ENABLE_DIST_CONSERVATIVE "Link shared libraries"                      OFF)
+option(PLAYFIELD_ENABLE_DIST_CONSERVATIVE "Link shared libraries"                     OFF)
 option(PLAYFIELD_ENABLE_INSTALL          "Install library and header files"           OFF)
 option(PLAYFIELD_ENABLE_JIT              "Enable JIT"                                 OFF)
+option(PLAYFIELD_ENABLE_OPTIMIZER        "Enable optimizer"                           OFF)
 option(PLAYFIELD_ENABLE_I18N             "Enable translation"                         OFF)
 option(PLAYFIELD_ENABLE_I18N_LIBINTL     "Enable gettext"                             OFF)
 option(PLAYFIELD_ENABLE_PACK             "Enable packager"                            OFF)
@@ -208,6 +209,11 @@ if(NOT PLAYFIELD_ENABLE_DIST)
   # JIT
   if(PLAYFIELD_ENABLE_JIT)
     set(NOCT_ENABLE_JIT ON)
+  endif()
+
+  # Optimizer
+  if(PLAYFIELD_ENABLE_OPTIMIZER)
+    set(NOCT_ENABLE_OPTIMIZER ON)
   endif()
 
   # API
@@ -925,8 +931,7 @@ if(PLAYFIELD_ENABLE_BCC)
     PRIVATE
     include
     external/StratoHAL/include
-    external/NoctLang/src/core
-    external/NoctLang/src/backend
+    external/NoctLang/src
   )
 
   if(NOT PLAYFIELD_ENABLE_DIST)
@@ -962,8 +967,7 @@ if(PLAYFIELD_ENABLE_AOTC)
     PRIVATE
     include
     external/StratoHAL/include
-    external/NoctLang/src/core
-    external/NoctLang/src/backend
+    external/NoctLang/src
   )
 
   if(NOT PLAYFIELD_ENABLE_DIST)

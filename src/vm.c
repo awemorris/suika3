@@ -107,8 +107,6 @@ pfi_create_vm(
 	noct_init_locale();
 #endif
 
-	config.jit_threshold = 0;
-
 #if defined(PF_USE_UNSAFE)
 	if (!parse_cli_options())
 		return false;

@@ -33,6 +33,7 @@
 
 #include <playfield/playfield.h>
 #include <noct/noct.h>
+#include "backend/backend.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -113,6 +114,8 @@ int command_aot(int argc, char *argv[])
 static bool do_transpile_c(const char *out_file, int in_file_count, const char *in_file[])
 {
 	int i;
+
+	noct_cback_set_optimize_level(2);
 
 	/* Initialize the backend. */
 	if (!noct_cback_start(out_file))

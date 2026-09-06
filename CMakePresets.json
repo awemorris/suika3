@@ -13,6 +13,7 @@
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
                 "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
                 "PLAYFIELD_ENABLE_I18N":      "ON",
                 "PLAYFIELD_ENABLE_BIN":       "ON",
                 "PLAYFIELD_ENABLE_PACK":      "ON",
@@ -35,6 +36,7 @@
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
                 "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
                 "PLAYFIELD_ENABLE_I18N":      "ON",
                 "PLAYFIELD_ENABLE_BIN":       "ON",
                 "PLAYFIELD_ENABLE_PACK":      "ON",
@@ -57,6 +59,7 @@
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
                 "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
                 "PLAYFIELD_ENABLE_I18N":      "ON",
                 "PLAYFIELD_ENABLE_BIN":       "ON",
                 "PLAYFIELD_ENABLE_PACK":      "ON",
@@ -80,6 +83,7 @@
             "cacheVariables": {
                 "PLAYFIELD_TARGET_GDK_WINDOWS": "ON",
                 "PLAYFIELD_ENABLE_JIT":         "OFF",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
                 "PLAYFIELD_ENABLE_I18N":        "OFF",
                 "PLAYFIELD_ENABLE_PACK":        "OFF",
                 "PLAYFIELD_ENABLE_BCC":         "OFF",
@@ -101,6 +105,7 @@
             "cacheVariables": {
                 "PLAYFIELD_TARGET_GDK_WINDOWS": "ON",
                 "PLAYFIELD_ENABLE_JIT":         "OFF",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
                 "PLAYFIELD_ENABLE_I18N":        "OFF",
                 "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "OFF",
@@ -126,6 +131,7 @@
                 "CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION": "10.0",
                 "PLAYFIELD_TARGET_UWP":                     "ON",
                 "PLAYFIELD_ENABLE_JIT":                     "OFF",
+                "PLAYFIELD_ENABLE_OPTIMIZER":               "ON",
                 "PLAYFIELD_ENABLE_I18N":                    "OFF",
                 "PLAYFIELD_ENABLE_BIN":                     "ON",
                 "PLAYFIELD_ENABLE_PACK":                    "OFF",
@@ -147,6 +153,7 @@
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
                 "PLAYFIELD_ENABLE_JIT":         "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
                 "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
@@ -169,6 +176,7 @@
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
                 "PLAYFIELD_ENABLE_JIT":         "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
                 "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
@@ -191,6 +199,7 @@
             "binaryDir":      "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
                 "PLAYFIELD_ENABLE_JIT":         "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
                 "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
@@ -216,6 +225,7 @@
                 "CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION": "10.0",
                 "PLAYFIELD_TARGET_UWP":                     "ON",
                 "PLAYFIELD_ENABLE_JIT":                     "OFF",
+                "PLAYFIELD_ENABLE_OPTIMIZER":               "ON",
                 "PLAYFIELD_ENABLE_I18N":                    "OFF",
                 "PLAYFIELD_ENABLE_BIN":                     "ON",
                 "PLAYFIELD_ENABLE_PACK":                    "OFF",
@@ -238,6 +248,7 @@
             "cacheVariables": {
                 "PLAYFIELD_TARGET_GDK_WINDOWS": "ON",
                 "PLAYFIELD_ENABLE_JIT":         "OFF",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
                 "PLAYFIELD_ENABLE_I18N":        "OFF",
                 "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "OFF",
@@ -260,6 +271,7 @@
             "cacheVariables": {
                 "PLAYFIELD_TARGET_GDK_XBOX_XS": "ON",
                 "PLAYFIELD_ENABLE_JIT":         "OFF",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
                 "PLAYFIELD_ENABLE_I18N":        "OFF",
                 "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "OFF",
@@ -283,6 +295,7 @@
                 "PLAYFIELD_TARGET_WINDOWS":    "ON",
                 "PLAYFIELD_ENABLE_INSTALL":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
                 "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
@@ -302,6 +315,7 @@
                 "PLAYFIELD_TARGET_WINDOWS":    "ON",
                 "PLAYFIELD_ENABLE_INSTALL":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
                 "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
@@ -320,6 +334,7 @@
                 "CMAKE_BUILD_TYPE":            "Release",
                 "PLAYFIELD_TARGET_WINDOWS95":  "ON",
                 "PLAYFIELD_ENABLE_JIT":        "OFF",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON",
                 "PLAYFIELD_ENABLE_I18N":       "OFF",
                 "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
@@ -339,6 +354,7 @@
                 "PLAYFIELD_TARGET_WINDOWS":    "ON",
                 "PLAYFIELD_ENABLE_INSTALL":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
                 "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
@@ -359,6 +375,7 @@
                 "CMAKE_OSX_ARCHITECTURES":     "x86_64;arm64",
                 "PLAYFIELD_TARGET_MACOS":      "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
                 "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
@@ -379,6 +396,7 @@
                 "PLAYFIELD_TARGET_MACOS_CLI":  "ON",
                 "PLAYFIELD_ENABLE_INSTALL":    "ON",
                 "PLAYFIELD_ENABLE_JIT":        "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
                 "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_CONSOLE":    "ON",
@@ -393,15 +411,16 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":         "Release",
-                "PLAYFIELD_TARGET_LINUX":   "ON",
-                "PLAYFIELD_ENABLE_INSTALL": "ON",
-                "PLAYFIELD_ENABLE_JIT":     "ON",
-                "PLAYFIELD_ENABLE_BIN":     "ON",
-                "PLAYFIELD_ENABLE_I18N":    "ON",
-                "PLAYFIELD_ENABLE_PACK":    "ON",
-                "PLAYFIELD_ENABLE_BCC":     "ON",
-                "PLAYFIELD_ENABLE_AOTC":    "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_LINUX":     "ON",
+                "PLAYFIELD_ENABLE_INSTALL":   "ON",
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON"
             }
         },
         {
@@ -410,15 +429,16 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-debug",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":         "Debug",
-                "PLAYFIELD_TARGET_LINUX":   "ON",
-                "PLAYFIELD_ENABLE_INSTALL": "ON",
-                "PLAYFIELD_ENABLE_JIT":     "ON",
-                "PLAYFIELD_ENABLE_BIN":     "ON",
-                "PLAYFIELD_ENABLE_I18N":    "ON",
-                "PLAYFIELD_ENABLE_PACK":    "ON",
-                "PLAYFIELD_ENABLE_BCC":     "ON",
-                "PLAYFIELD_ENABLE_AOTC":    "ON"
+                "CMAKE_BUILD_TYPE":           "Debug",
+                "PLAYFIELD_TARGET_LINUX":     "ON",
+                "PLAYFIELD_ENABLE_INSTALL":   "ON",
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON"
             }
         },
         {
@@ -433,6 +453,7 @@
                 "PLAYFIELD_ENABLE_DIST":         "ON",
                 "PLAYFIELD_ENABLE_INSTALL":      "ON",
                 "PLAYFIELD_ENABLE_JIT":          "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":    "ON",
                 "PLAYFIELD_ENABLE_BIN":          "ON",
                 "PLAYFIELD_ENABLE_I18N":         "ON",
                 "PLAYFIELD_ENABLE_I18N_LIBINTL": "ON",
@@ -448,14 +469,15 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-linux-x11",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":       "Release",
-                "PLAYFIELD_TARGET_LINUX": "ON",
-                "PLAYFIELD_ENABLE_JIT":   "ON",
-                "PLAYFIELD_ENABLE_BIN":   "ON",
-                "PLAYFIELD_ENABLE_I18N":  "ON",
-                "PLAYFIELD_ENABLE_PACK":  "ON",
-                "PLAYFIELD_ENABLE_BCC":   "ON",
-                "PLAYFIELD_ENABLE_AOTC":  "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_LINUX":     "ON",
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON"
             }
         },
         {
@@ -467,6 +489,7 @@
                 "CMAKE_BUILD_TYPE":               "Release",
                 "PLAYFIELD_TARGET_LINUX_WAYLAND": "ON",
                 "PLAYFIELD_ENABLE_JIT":           "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":     "ON",
                 "PLAYFIELD_ENABLE_I18N":          "ON",
                 "PLAYFIELD_ENABLE_BIN":           "ON",
                 "PLAYFIELD_ENABLE_PACK":          "ON",
@@ -483,6 +506,7 @@
                 "CMAKE_BUILD_TYPE":           "Release",
                 "PLAYFIELD_TARGET_LINUX_GBM": "ON",
                 "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
                 "PLAYFIELD_ENABLE_I18N":      "ON",
                 "PLAYFIELD_ENABLE_BIN":       "ON",
                 "PLAYFIELD_ENABLE_PACK":      "ON",
@@ -499,6 +523,7 @@
                 "CMAKE_BUILD_TYPE":           "Release",
                 "PLAYFIELD_TARGET_LINUX_GBM": "ON",
                 "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
                 "PLAYFIELD_ENABLE_I18N":      "ON",
                 "PLAYFIELD_ENABLE_BIN":       "ON",
                 "PLAYFIELD_ENABLE_PACK":      "ON",
@@ -515,6 +540,7 @@
                 "CMAKE_BUILD_TYPE":             "Release",
                 "PLAYFIELD_TARGET_LINUX_FBDEV": "ON",
                 "PLAYFIELD_ENABLE_JIT":         "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
                 "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
@@ -531,6 +557,7 @@
                 "CMAKE_BUILD_TYPE":               "Release",
                 "PLAYFIELD_TARGET_LINUX_X11SOFT": "ON",
                 "PLAYFIELD_ENABLE_JIT":           "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":     "ON",
                 "PLAYFIELD_ENABLE_I18N":          "ON",
                 "PLAYFIELD_ENABLE_BIN":           "ON",
                 "PLAYFIELD_ENABLE_PACK":          "ON",
@@ -545,9 +572,10 @@
             "binaryDir":      "${sourceDir}/build-ios-device",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/ios-device.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":         "Release",
-                "PLAYFIELD_TARGET_IOS":     "ON",
-                "PLAYFIELD_ENABLE_STATIC":  "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_IOS":       "ON",
+                "PLAYFIELD_ENABLE_STATIC":    "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
             }
         },
         {
@@ -557,9 +585,10 @@
             "binaryDir":      "${sourceDir}/build-ios-simulator",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/ios-simulator.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":         "Release",
-                "PLAYFIELD_TARGET_IOS":     "ON",
-                "PLAYFIELD_ENABLE_STATIC":  "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_IOS":       "ON",
+                "PLAYFIELD_ENABLE_STATIC":    "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
             }
         },
         {
@@ -569,13 +598,14 @@
             "binaryDir":      "${sourceDir}/build-android-x86",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":          "Release",
-                "CMAKE_SHARED_LINKER_FLAGS": "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
-                "ANDROID_PLATFORM":          "30",
-                "ANDROID_ABI":               "x86",
-                "PLAYFIELD_TARGET_ANDROID":  "ON",
-                "PLAYFIELD_ENABLE_STATIC":   "ON",
-                "PLAYFIELD_ENABLE_APPMAIN":  "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "CMAKE_SHARED_LINKER_FLAGS":  "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
+                "ANDROID_PLATFORM":           "30",
+                "ANDROID_ABI":                "x86",
+                "PLAYFIELD_TARGET_ANDROID":   "ON",
+                "PLAYFIELD_ENABLE_STATIC":    "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
             }
         },
         {
@@ -585,13 +615,14 @@
             "binaryDir":      "${sourceDir}/build-android-x86_64",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":          "Release",
-                "CMAKE_SHARED_LINKER_FLAGS": "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
-                "ANDROID_PLATFORM":          "30",
-                "ANDROID_ABI":               "x86_64",
-                "PLAYFIELD_TARGET_ANDROID":  "ON",
-                "PLAYFIELD_ENABLE_STATIC":   "ON",
-                "PLAYFIELD_ENABLE_APPMAIN":  "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "CMAKE_SHARED_LINKER_FLAGS":  "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
+                "ANDROID_PLATFORM":           "30",
+                "ANDROID_ABI":                "x86_64",
+                "PLAYFIELD_TARGET_ANDROID":   "ON",
+                "PLAYFIELD_ENABLE_STATIC":    "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
             }
         },
         {
@@ -601,13 +632,14 @@
             "binaryDir":      "${sourceDir}/build-android-armv7",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":          "Release",
-                "CMAKE_SHARED_LINKER_FLAGS": "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
-                "ANDROID_PLATFORM":          "30",
-                "ANDROID_ABI":               "armeabi-v7a",
-                "PLAYFIELD_TARGET_ANDROID":  "ON",
-                "PLAYFIELD_ENABLE_STATIC":   "ON",
-                "PLAYFIELD_ENABLE_APPMAIN":  "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "CMAKE_SHARED_LINKER_FLAGS":  "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
+                "ANDROID_PLATFORM":           "30",
+                "ANDROID_ABI":                "armeabi-v7a",
+                "PLAYFIELD_TARGET_ANDROID":   "ON",
+                "PLAYFIELD_ENABLE_STATIC":    "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
             }
         },
         {
@@ -617,13 +649,14 @@
             "binaryDir":      "${sourceDir}/build-android-arm64",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":          "Release",
-                "CMAKE_SHARED_LINKER_FLAGS": "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
-                "ANDROID_PLATFORM":          "30",
-                "ANDROID_ABI":               "arm64-v8a",
-                "PLAYFIELD_TARGET_ANDROID":  "ON",
-                "PLAYFIELD_ENABLE_STATIC":   "ON",
-                "PLAYFIELD_ENABLE_APPMAIN":  "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "CMAKE_SHARED_LINKER_FLAGS":  "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
+                "ANDROID_PLATFORM":           "30",
+                "ANDROID_ABI":                "arm64-v8a",
+                "PLAYFIELD_TARGET_ANDROID":   "ON",
+                "PLAYFIELD_ENABLE_STATIC":    "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
             }
         },
         {
@@ -633,13 +666,14 @@
             "binaryDir":      "${sourceDir}/build-android-riscv64",
             "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":          "Release",
-                "CMAKE_SHARED_LINKER_FLAGS": "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
-                "ANDROID_PLATFORM":          "30",
-                "ANDROID_ABI":               "riscv64",
-                "PLAYFIELD_TARGET_ANDROID":  "ON",
-                "PLAYFIELD_ENABLE_STATIC":   "ON",
-                "PLAYFIELD_ENABLE_APPMAIN":  "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "CMAKE_SHARED_LINKER_FLAGS":  "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
+                "ANDROID_PLATFORM":           "30",
+                "ANDROID_ABI":                "riscv64",
+                "PLAYFIELD_TARGET_ANDROID":   "ON",
+                "PLAYFIELD_ENABLE_STATIC":    "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
             }
         },
         {
@@ -649,12 +683,13 @@
             "binaryDir":      "${sourceDir}/build-openharmony-x86_64",
             "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":            "Release",
+                "CMAKE_BUILD_TYPE":             "Release",
                 "OHOS_PLATFORM_LEVEL":          "12",
                 "OHOS_ARCH":                    "x86_64",
                 "PLAYFIELD_TARGET_OPENHARMONY": "ON",
                 "PLAYFIELD_ENABLE_STATIC":      "ON",
-                "PLAYFIELD_ENABLE_APPMAIN":     "ON"
+                "PLAYFIELD_ENABLE_APPMAIN":     "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON"
             }
         },
         {
@@ -669,7 +704,8 @@
                 "OHOS_ARCH":                    "arm64-v8a",
                 "PLAYFIELD_TARGET_OPENHARMONY": "ON",
                 "PLAYFIELD_ENABLE_STATIC":      "ON",
-                "PLAYFIELD_ENABLE_APPMAIN":     "ON"
+                "PLAYFIELD_ENABLE_APPMAIN":     "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON"
             }
         },
         {
@@ -684,7 +720,8 @@
                 "OHOS_ARCH":                    "armeabi-v7a",
                 "PLAYFIELD_TARGET_OPENHARMONY": "ON",
                 "PLAYFIELD_ENABLE_STATIC":      "ON",
-                "PLAYFIELD_ENABLE_APPMAIN":     "ON"
+                "PLAYFIELD_ENABLE_APPMAIN":     "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON"
             }
         },
         {
@@ -694,9 +731,10 @@
             "binaryDir":      "${sourceDir}/build-wasm",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/wasm.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "PLAYFIELD_TARGET_WASM": "ON",
-                "PLAYFIELD_ENABLE_BIN":  "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_WASM":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
             }
         },
         {
@@ -707,7 +745,8 @@
             "toolchainFile":  "${sourceDir}/cmake/toolchains/wasm.cmake",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":            "Release",
-                "PLAYFIELD_TARGET_WASM_LOCAL": "ON"
+                "PLAYFIELD_TARGET_WASM_LOCAL": "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON"
             }
         },
         {
@@ -717,10 +756,11 @@
             "binaryDir":      "${sourceDir}/build-unity-win64",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-win64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":         "Release",
-                "PLAYFIELD_TARGET_UNITY":   "ON",
-                "PLAYFIELD_ENABLE_SHARED":  "ON",
-                "PLAYFIELD_ENABLE_APPMAIN": "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_UNITY":     "ON",
+                "PLAYFIELD_ENABLE_SHARED":    "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
             }
         },
         {
@@ -730,10 +770,11 @@
             "binaryDir":      "${sourceDir}/build-unity-winarm64",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-winarm64.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":         "Release",
-                "PLAYFIELD_TARGET_UNITY":   "ON",
-                "PLAYFIELD_ENABLE_SHARED":  "ON",
-                "PLAYFIELD_ENABLE_APPMAIN": "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_UNITY":     "ON",
+                "PLAYFIELD_ENABLE_SHARED":    "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
             }
         },
         {
@@ -747,7 +788,8 @@
                 "PLAYFIELD_TARGET_UNITY":        "ON",
                 "PLAYFIELD_TARGET_UNITY_SWITCH": "ON",
                 "PLAYFIELD_ENABLE_STATIC":       "ON",
-                "PLAYFIELD_ENABLE_APPMAIN":      "ON"
+                "PLAYFIELD_ENABLE_APPMAIN":      "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":    "ON"
             }
         },
         {
@@ -761,7 +803,8 @@
                 "PLAYFIELD_TARGET_UNITY":     "ON",
                 "PLAYFIELD_TARGET_UNITY_PS5": "ON",
                 "PLAYFIELD_ENABLE_STATIC":    "ON",
-                "PLAYFIELD_ENABLE_APPMAIN":   "ON"
+                "PLAYFIELD_ENABLE_APPMAIN":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
             }
         },
         {
@@ -775,7 +818,8 @@
                 "PLAYFIELD_TARGET_UNITY":      "ON",
                 "PLAYFIELD_TARGET_UNITY_XBOX": "ON",
                 "PLAYFIELD_ENABLE_STATIC":     "ON",
-                "PLAYFIELD_ENABLE_APPMAIN":    "ON"
+                "PLAYFIELD_ENABLE_APPMAIN":    "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON"
             }
         },
         {
@@ -784,14 +828,15 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-freebsd",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":         "Release",
-                "PLAYFIELD_TARGET_FREEBSD": "ON",
-                "PLAYFIELD_ENABLE_JIT":     "ON",
-                "PLAYFIELD_ENABLE_I18N":    "ON",
-                "PLAYFIELD_ENABLE_BIN":     "ON",
-                "PLAYFIELD_ENABLE_PACK":    "ON",
-                "PLAYFIELD_ENABLE_BCC":     "ON",
-                "PLAYFIELD_ENABLE_AOTC":    "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_FREEBSD":   "ON",
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
             }
         },
         {
@@ -803,6 +848,7 @@
                 "CMAKE_BUILD_TYPE":             "Release",
                 "PLAYFIELD_TARGET_FREEBSD_X11": "ON",
                 "PLAYFIELD_ENABLE_JIT":         "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
                 "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
@@ -819,6 +865,7 @@
                 "CMAKE_BUILD_TYPE":                  "Release",
                 "PLAYFIELD_TARGET_FREEBSD_WALYLAND": "ON",
                 "PLAYFIELD_ENABLE_JIT":              "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":        "ON",
                 "PLAYFIELD_ENABLE_I18N":             "ON",
                 "PLAYFIELD_ENABLE_BIN":              "ON",
                 "PLAYFIELD_ENABLE_PACK":             "ON",
@@ -835,6 +882,7 @@
                 "CMAKE_BUILD_TYPE":                  "Release",
                 "PLAYFIELD_TARGET_FREEBSD_X11SOFT":  "ON",
                 "PLAYFIELD_ENABLE_JIT":              "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":        "ON",
                 "PLAYFIELD_ENABLE_I18N":             "ON",
                 "PLAYFIELD_ENABLE_BIN":              "ON",
                 "PLAYFIELD_ENABLE_PACK":             "ON",
@@ -850,6 +898,7 @@
             "cacheVariables": {
                 "PLAYFIELD_TARGET_NETBSD": "ON",
                 "PLAYFIELD_ENABLE_JIT":    "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":        "ON",
                 "PLAYFIELD_ENABLE_I18N":   "ON",
                 "PLAYFIELD_ENABLE_BIN":    "ON",
                 "PLAYFIELD_ENABLE_PACK":   "ON",
@@ -866,6 +915,7 @@
                 "CMAKE_BUILD_TYPE":                 "Release",
                 "PLAYFIELD_TARGET_NETBSD_X11SOFT":  "ON",
                 "PLAYFIELD_ENABLE_JIT":             "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":       "ON",
                 "PLAYFIELD_ENABLE_I18N":            "ON",
                 "PLAYFIELD_ENABLE_BIN":             "ON",
                 "PLAYFIELD_ENABLE_PACK":            "ON",
@@ -879,13 +929,14 @@
             "generator":      "Ninja",
             "binaryDir":      "${sourceDir}/build-openbsd",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":         "Release",
-                "PLAYFIELD_TARGET_OPENBSD": "ON",
-                "PLAYFIELD_ENABLE_I18N":    "ON",
-                "PLAYFIELD_ENABLE_BIN":     "ON",
-                "PLAYFIELD_ENABLE_PACK":    "ON",
-                "PLAYFIELD_ENABLE_BCC":     "ON",
-                "PLAYFIELD_ENABLE_AOTC":    "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_OPENBSD":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON"
             }
         },
         {
@@ -896,6 +947,7 @@
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE":                 "Release",
                 "PLAYFIELD_TARGET_OPENBSD_X11SOFT": "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":       "ON",
                 "PLAYFIELD_ENABLE_I18N":            "ON",
                 "PLAYFIELD_ENABLE_BIN":             "ON",
                 "PLAYFIELD_ENABLE_PACK":            "ON",
@@ -913,6 +965,7 @@
                 "CMAKE_C_COMPILER":            "cc",
                 "CMAKE_CXX_COMPILER":          "CC",
                 "PLAYFIELD_TARGET_SOLARIS11":  "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON",
                 "PLAYFIELD_ENABLE_I18N":       "ON",
                 "PLAYFIELD_ENABLE_BIN":        "ON",
                 "PLAYFIELD_ENABLE_PACK":       "ON",
@@ -930,6 +983,7 @@
                 "CMAKE_C_COMPILER":           "cc",
                 "CMAKE_CXX_COMPILER":         "CC",
                 "PLAYFIELD_TARGET_SOLARIS11": "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
                 "PLAYFIELD_ENABLE_I18N":      "ON",
                 "PLAYFIELD_ENABLE_BIN":       "ON",
                 "PLAYFIELD_ENABLE_PACK":      "ON",
@@ -947,6 +1001,7 @@
                 "CMAKE_C_COMPILER":             "xlc",
                 "CMAKE_CXX_COMPILER":           "xlc++",
                 "PLAYFIELD_TARGET_GENERICUNIX": "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
                 "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
@@ -964,6 +1019,7 @@
                 "CMAKE_C_COMPILER":             "cc",
                 "CMAKE_CXX_COMPILER":           "aCC",
                 "PLAYFIELD_TARGET_GENERICUNIX": "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
                 "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
@@ -981,6 +1037,7 @@
                 "CMAKE_C_COMPILER":             "cc",
                 "CMAKE_CXX_COMPILER":           "c++",
                 "PLAYFIELD_TARGET_GENERICUNIX": "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
                 "PLAYFIELD_ENABLE_I18N":        "ON",
                 "PLAYFIELD_ENABLE_BIN":         "ON",
                 "PLAYFIELD_ENABLE_PACK":        "ON",
@@ -994,15 +1051,16 @@
             "generator":      "Unix Makefiles",
             "binaryDir":      "${sourceDir}/build-haiku",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":       "Release",
-                "CMAKE_C_COMPILER":       "gcc",
-                "CMAKE_CXX_COMPILER":     "g++",
-                "PLAYFIELD_TARGET_HAIKU": "ON",
-                "PLAYFIELD_ENABLE_I18N":  "ON",
-                "PLAYFIELD_ENABLE_BIN":   "ON",
-                "PLAYFIELD_ENABLE_PACK":  "ON",
-                "PLAYFIELD_ENABLE_BCC":   "ON",
-                "PLAYFIELD_ENABLE_AOTC":  "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "CMAKE_C_COMPILER":           "gcc",
+                "CMAKE_CXX_COMPILER":         "g++",
+                "PLAYFIELD_TARGET_HAIKU":     "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON"
             }
         },
         {
@@ -1012,10 +1070,11 @@
             "binaryDir":      "${sourceDir}/build-pc98",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/openwatcom-dos4gw.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "PLAYFIELD_TARGET_PC98": "ON",
-                "PLAYFIELD_ENABLE_JIT":  "ON",
-                "PLAYFIELD_ENABLE_BIN":  "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_PC98":      "ON",
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON"
 	    }
         },
         {
@@ -1025,10 +1084,11 @@
             "binaryDir":      "${sourceDir}/build-pcat",
             "toolchainFile":  "${sourceDir}/cmake/toolchains/openwatcom-dos4gw.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE":      "Release",
-                "PLAYFIELD_TARGET_PCAT": "ON",
-                "PLAYFIELD_ENABLE_JIT":  "ON",
-                "PLAYFIELD_ENABLE_BIN":  "ON"
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_PCAT":      "ON",
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON"
 	    }
         }
     ],

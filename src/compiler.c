@@ -33,6 +33,7 @@
 
 #include <playfield/playfield.h>
 #include <noct/noct.h>
+#include "backend/backend.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -104,6 +105,8 @@ static void show_usage(int argc, char *argv[])
 static int command_compile(int argc, char *argv[])
 {
 	int i;
+
+	noct_cback_set_optimize_level(2);
 
 	/* For each argument file. */
 	for (i = 1; i < argc; i++) {
