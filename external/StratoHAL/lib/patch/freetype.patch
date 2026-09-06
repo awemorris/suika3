@@ -1,2 +1,0 @@
-149d148
-< #        define fdopen(fd,mode) NULL /* No fdopen() */
