@@ -55,8 +55,7 @@ jobs:
           cp include/playfield/c89compat.h build/native/include/playfield/
           cp external/NoctLang/include/noct/noct.h build/native/include/noct/
           cp external/NoctLang/include/noct/c89compat.h build/native/include/noct/
-          cp external/NoctLang/include/noct/aot.h build/native/include/noct/
-          cp external/NoctLang/include/noct/backend.h build/native/include/noct/
+          cp external/NoctLang/include/noct/executor.h build/native/include/noct/
           cp external/StratoHAL/include/strato/strato.h build/native/include/strato/
           cp external/StratoHAL/include/strato/c89compat.h build/native/include/strato/
           cp out/build/windows-vs2026-x86/Release/playfield.lib  build/native/lib/x86/
@@ -123,8 +122,7 @@ jobs:
           cp include/playfield/c89compat.h out/i686-w64-mingw32/include/playfield/
           cp external/NoctLang/include/noct/noct.h out/i686-w64-mingw32/include/noct/
           cp external/NoctLang/include/noct/c89compat.h out/i686-w64-mingw32/include/noct/
-          cp external/NoctLang/include/noct/aot.h out/i686-w64-mingw32/include/noct/
-          cp external/NoctLang/include/noct/backend.h out/i686-w64-mingw32/include/noct/
+          cp external/NoctLang/include/noct/executor.h out/i686-w64-mingw32/include/noct/
           cp external/StratoHAL/include/strato/strato.h out/i686-w64-mingw32/include/strato/
           cp external/StratoHAL/include/strato/c89compat.h out/i686-w64-mingw32/include/strato/
           cp build-mingw-x86/libplayfield.a out/i686-w64-mingw32/lib/
@@ -146,8 +144,7 @@ jobs:
           cp include/playfield/c89compat.h out/x86_64-w64-mingw32/include/playfield/
           cp external/NoctLang/include/noct/noct.h out/x86_64-w64-mingw32/include/noct/
           cp external/NoctLang/include/noct/c89compat.h out/x86_64-w64-mingw32/include/noct/
-          cp external/NoctLang/include/noct/aot.h out/x86_64-w64-mingw32/include/noct/
-          cp external/NoctLang/include/noct/backend.h out/x86_64-w64-mingw32/include/noct/
+          cp external/NoctLang/include/noct/executor.h out/x86_64-w64-mingw32/include/noct/
           cp external/StratoHAL/include/strato/strato.h out/x86_64-w64-mingw32/include/strato/
           cp external/StratoHAL/include/strato/c89compat.h out/x86_64-w64-mingw32/include/strato/
           cp build-mingw-x86_64/libplayfield.a out/x86_64-w64-mingw32/lib/
@@ -264,8 +261,7 @@ jobs:
           cp include/playfield/c89compat.h out/include/playfield/
           cp external/NoctLang/include/noct/noct.h out/include/noct/
           cp external/NoctLang/include/noct/c89compat.h out/include/noct/
-          cp external/NoctLang/include/noct/aot.h out/include/noct/
-          cp external/NoctLang/include/noct/backend.h out/include/noct/
+          cp external/NoctLang/include/noct/executor.h out/include/noct/
           cp external/StratoHAL/include/strato/strato.h out/include/strato/
           cp external/StratoHAL/include/strato/c89compat.h out/include/strato/
           cp build-macos-cli/libplayfield.a out/lib/
@@ -364,8 +360,7 @@ jobs:
           cp include/playfield/c89compat.h out/include/playfield/
           cp external/NoctLang/include/noct/noct.h out/include/noct/
           cp external/NoctLang/include/noct/c89compat.h out/include/noct/
-          cp external/NoctLang/include/noct/aot.h out/include/noct/
-          cp external/NoctLang/include/noct/backend.h out/include/noct/
+          cp external/NoctLang/include/noct/executor.h out/include/noct/
           cp external/StratoHAL/include/strato/strato.h out/include/strato/
           cp external/StratoHAL/include/strato/c89compat.h out/include/strato/
           cp build-linux/libplayfield.a out/lib/x86_64-linux-gnu/
@@ -572,8 +567,7 @@ jobs:
           cp include/playfield/c89compat.h out/include/playfield/
           cp external/NoctLang/include/noct/noct.h out/include/noct/
           cp external/NoctLang/include/noct/c89compat.h out/include/noct/
-          cp external/NoctLang/include/noct/aot.h out/include/noct/
-          cp external/NoctLang/include/noct/backend.h out/include/noct/
+          cp external/NoctLang/include/noct/executor.h out/include/noct/
           cp external/StratoHAL/include/strato/strato.h out/include/strato/
           cp external/StratoHAL/include/strato/c89compat.h out/include/strato/
           cp build-wasm/libplayfield.a out/lib/
