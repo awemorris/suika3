@@ -41,6 +41,12 @@ static int nWindowHeight;
 BOOL GDIInitialize(HWND hWnd, int nWidth, int nHeight)
 {
 	uint32_t *masks;
+	hal_pixel_t *pixels;
+    struct {
+        BITMAPINFOHEADER bmiHeader;
+        uint32_t         bmiColors[3]; // マスク3つ分の領域を確保
+    } bi;
+	//BITMAPINFO bi;
 
 	hMainWnd = hWnd;
 
@@ -49,9 +55,14 @@ BOOL GDIInitialize(HWND hWnd, int nWidth, int nHeight)
 
 	// Get a device context for the window.
 	hWndDC = GetDC(hMainWnd);
+	hBitmapDC = CreateCompatibleDC(NULL);
+	if(hBitmapDC == NULL)
+	{
+		hal_log_error("CreateCompatibleDC() failed.");
+		return FALSE;
+	}
 
-	// Create a device conetxt for RGBA32 bitmap.
-	BITMAPINFO bi;
+	// Create a backing bitmap.
 	memset(&bi, 0, sizeof(BITMAPINFO));
 	bi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
 	bi.bmiHeader.biWidth = (LONG)nWidth;
@@ -63,15 +74,13 @@ BOOL GDIInitialize(HWND hWnd, int nWidth, int nHeight)
 	masks[0] = 0x00ff0000; // Red mask
 	masks[1] = 0x0000ff00; // Green mask
 	masks[2] = 0x000000ff; // Blue mask
-	hBitmapDC = CreateCompatibleDC(NULL);
-	if(hBitmapDC == NULL)
-		return FALSE;
-
-	// Create a backing bitmap.
-	hal_pixel_t *pixels = NULL;
-	hBitmap = CreateDIBSection(hBitmapDC, &bi, DIB_RGB_COLORS, (VOID **)&pixels, NULL, 0);
+	pixels = NULL;
+	hBitmap = CreateDIBSection(hBitmapDC, (BITMAPINFO *)&bi, DIB_RGB_COLORS, (VOID **)&pixels, NULL, 0);
 	if(hBitmap == NULL || pixels == NULL)
+	{
+		hal_log_error("CreateDIBSection() failed.");
 		return FALSE;
+	}
 	SelectObject(hBitmapDC, hBitmap);
 
 	// Create a image.

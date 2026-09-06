@@ -3,24 +3,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Out of memory."
-msgstr "Memoria insuficiente."
-
-msgid "Cannot open file \"%s\"."
-msgstr "No se puede abrir el archivo \"%s\"."
-
-msgid "Cannot read file \"%s\"."
-msgstr "No se puede leer el archivo \"%s\"."
-
 msgid "No startup file."
 msgstr "No hay archivo de inicio."
-
-msgid "The app is crashed."
-msgstr "La aplicación se ha bloqueado."
 
 msgid "Failed to initialize the sound."
 msgstr "Error al inicializar el sonido."
 
 msgid "Failed to initialize the graphics."
 msgstr "Error al inicializar los gráficos."
+
+msgid "Out of memory."
+msgstr "Memoria insuficiente."
+
+msgid "The app is crashed."
+msgstr "La aplicación se ha bloqueado."
 

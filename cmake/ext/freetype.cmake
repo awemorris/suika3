@@ -1,43 +1,6 @@
-# Extract library archive.
-file(ARCHIVE_EXTRACT
-  INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/freetype-2.13.3.tar.gz
-  DESTINATION ${CMAKE_BINARY_DIR}
-)
-
-# Rename it to "freetype".
-file(GLOB LIBPNG_EXTRACTED_DIR ${CMAKE_BINARY_DIR}/freetype-*)
-file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/freetype)
-file(RENAME ${LIBPNG_EXTRACTED_DIR} ${CMAKE_BINARY_DIR}/freetype)
-
-file(WRITE
-  ${CMAKE_BINARY_DIR}/freetype/include/freetype/config/ftmodule.h
-"
-#ifdef FT_USE_MODULE
-FT_USE_MODULE( FT_Driver_ClassRec, tt_driver_class )
-FT_USE_MODULE( FT_Driver_ClassRec, cff_driver_class )
-FT_USE_MODULE( FT_Module_Class, sfnt_module_class )
-FT_USE_MODULE( FT_Module_Class, psaux_module_class )
-FT_USE_MODULE( FT_Module_Class, psnames_module_class )
-FT_USE_MODULE( FT_Module_Class, pshinter_module_class )
-FT_USE_MODULE( FT_Renderer_Class, ft_smooth_renderer_class )
-#endif
-"
-)
-
-# Disable gzip
-file(READ
-  ${CMAKE_BINARY_DIR}/freetype/include/freetype/config/ftoption.h
-  FTOPTION_H
-)
-string(REPLACE
-  "#define FT_CONFIG_OPTION_USE_ZLIB"
-  "/* #undef FT_CONFIG_OPTION_USE_ZLIB */"
-  FTOPTION_H
-  "${FTOPTION_H}"
-)
-file(WRITE
-  ${CMAKE_BINARY_DIR}/freetype/include/freetype/config/ftoption.h
-  "${FTOPTION_H}"
+file(
+  COPY        ${CMAKE_CURRENT_SOURCE_DIR}/lib/external/freetype-2.13.3/
+  DESTINATION ${CMAKE_BINARY_DIR}/freetype
 )
 
 # Source list.
@@ -51,15 +14,30 @@ add_library(freetype OBJECT
   ${CMAKE_BINARY_DIR}/freetype/src/base/ftstroke.c
   ${CMAKE_BINARY_DIR}/freetype/src/base/ftmm.c
   ${CMAKE_BINARY_DIR}/freetype/src/base/ftdebug.c
+  ${CMAKE_BINARY_DIR}/freetype/src/bdf/bdf.c
+  ${CMAKE_BINARY_DIR}/freetype/src/bzip2/ftbzip2.c
   ${CMAKE_BINARY_DIR}/freetype/src/cache/ftcache.c
   ${CMAKE_BINARY_DIR}/freetype/src/cff/cff.c
+  ${CMAKE_BINARY_DIR}/freetype/src/cid/type1cid.c
   ${CMAKE_BINARY_DIR}/freetype/src/otvalid/otvalid.c
+  ${CMAKE_BINARY_DIR}/freetype/src/pfr/pfr.c
   ${CMAKE_BINARY_DIR}/freetype/src/psaux/psaux.c
   ${CMAKE_BINARY_DIR}/freetype/src/pshinter/pshinter.c
   ${CMAKE_BINARY_DIR}/freetype/src/psnames/psnames.c
+  ${CMAKE_BINARY_DIR}/freetype/src/raster/raster.c
+  ${CMAKE_BINARY_DIR}/freetype/src/sdf/sdf.c
   ${CMAKE_BINARY_DIR}/freetype/src/sfnt/sfnt.c
   ${CMAKE_BINARY_DIR}/freetype/src/smooth/smooth.c
+  ${CMAKE_BINARY_DIR}/freetype/src/svg/svg.c
   ${CMAKE_BINARY_DIR}/freetype/src/truetype/truetype.c
+  ${CMAKE_BINARY_DIR}/freetype/src/winfonts/winfnt.c
+  ${CMAKE_BINARY_DIR}/freetype/src/lzw/ftlzw.c
+  ${CMAKE_BINARY_DIR}/freetype/src/pcf/pcf.c
+  ${CMAKE_BINARY_DIR}/freetype/src/autofit/autofit.c
+  ${CMAKE_BINARY_DIR}/freetype/src/type1/type1.c
+  ${CMAKE_BINARY_DIR}/freetype/src/type42/type42.c
+  ${CMAKE_BINARY_DIR}/freetype/src/svg/svg.c
+  ${CMAKE_BINARY_DIR}/freetype/src/gzip/ftgzip.c
 )
 
 target_include_directories(freetype PUBLIC
@@ -69,12 +47,19 @@ set(FREETYPE_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/freetype/include)
 
 target_compile_definitions(freetype PRIVATE
   FT2_BUILD_LIBRARY
+  FT_CONFIG_OPTION_SYSTEM_ZLIB
   ft_memcpy=memcpy
 )
 
 if(MSVC)
   target_compile_options(freetype PUBLIC /utf-8)
 endif()
+
+target_link_libraries(freetype PRIVATE
+  brotlidec
+  brotlicommon
+  z
+)
 
 # Suppress compilation errors.
 if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")

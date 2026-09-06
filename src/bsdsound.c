@@ -28,7 +28,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__SunOS)
+#if defined(__FreeBSD__) || defined(__NetBSD__) || defined(__OpenBSD__) || defined(__SunOS) || defined(__sun)
 
 #include <strato/strato.h>
 

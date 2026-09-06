@@ -19,21 +19,21 @@ jobs:
 
       - name: x86
         run: |
-          cmake --preset windows-vs2022-x86
-          cmake --build --preset windows-vs2022-x86 --config Release --parallel
-          cp out/build/windows-vs2022-x86/Release/strato.lib strato-x86.lib
+          cmake --preset windows-vs2026-x86
+          cmake --build --preset windows-vs2026-x86 --config Release --parallel
+          cp out/build/windows-vs2026-x86/Release/strato.lib strato-x86.lib
 
       - name: x64
         run: |
-          cmake --preset windows-vs2022-x64
-          cmake --build --preset windows-vs2022-x64 --config Release --parallel
-          cp out/build/windows-vs2022-x64/Release/strato.lib strato-x64.lib
+          cmake --preset windows-vs2026-x64
+          cmake --build --preset windows-vs2026-x64 --config Release --parallel
+          cp out/build/windows-vs2026-x64/Release/strato.lib strato-x64.lib
 
       - name: arm64
         run: |
-          cmake --preset windows-vs2022-arm64
-          cmake --build --preset windows-vs2022-arm64 --config Release --parallel
-          cp out/build/windows-vs2022-arm64/Release/strato.lib strato-arm64.lib
+          cmake --preset windows-vs2026-arm64
+          cmake --build --preset windows-vs2026-arm64 --config Release --parallel
+          cp out/build/windows-vs2026-arm64/Release/strato.lib strato-arm64.lib
 
       - name: Build nuget
         run: |
@@ -47,9 +47,9 @@ jobs:
           mkdir build/native/lib/arm64
           cp include/strato/strato.h build/native/include/strato/
           cp include/strato/c89compat.h build/native/include/strato/
-          cp out/build/windows-vs2022-x86/Release/strato.lib  build/native/lib/x86/
-          cp out/build/windows-vs2022-x64/Release/strato.lib  build/native/lib/x64/
-          cp out/build/windows-vs2022-arm64/Release/strato.lib build/native/lib/arm64/
+          cp out/build/windows-vs2026-x86/Release/strato.lib  build/native/lib/x86/
+          cp out/build/windows-vs2026-x64/Release/strato.lib  build/native/lib/x64/
+          cp out/build/windows-vs2026-arm64/Release/strato.lib build/native/lib/arm64/
           cp resources/windows/StratoHAL.nuspec ./
           nuget pack StratoHAL.nuspec
 
@@ -200,7 +200,7 @@ jobs:
           sudo apt-get install -y \
               git cmake ninja-build build-essential libasound2-dev \
               zlib1g-dev libpng-dev libjpeg-dev libwebp-dev libogg-dev \
-              libvorbis-dev libfreetype-dev libgstreamer1.0-dev \
+              libvorbisidec-dev libfreetype-dev libgstreamer1.0-dev \
               libgstreamer-plugins-base1.0-dev libx11-dev libxpm-dev \
               libwayland-dev wayland-protocols libegl1-mesa-dev libegl-dev \
               libgles-dev libwayland-client0 libwayland-egl1 libdecor-0-dev
@@ -333,7 +333,7 @@ jobs:
       - name: Download OpenHarmony SDK
         run: |
           echo "Downloaing openharmony-native.tar.gz"
-          wget -q https://noctvm.io/ci/openharmony-native.tar.gz
+          wget -q https://github.com/awemorris/suika3/releases/download/CI-BASE/openharmony-native.tar.gz
           tar xzf openharmony-native.tar.gz
 
       - name: Build for OpenHarmony
@@ -494,7 +494,7 @@ jobs:
       - name: Configure OpenWatcom
         if: steps.cache-watcom.outputs.cache-hit != 'true'
         run: |
-          wget https://noctvm.io/ci/openwatcom-1.9.tar.gz
+          wget -q https://github.com/awemorris/suika3/releases/download/CI-BASE/openwatcom-1.9.tar.gz
           tar xzf openwatcom-1.9.tar.gz
 
       - name: Build
@@ -518,14 +518,69 @@ jobs:
           cp include/strato/c89compat.h out/include/strato/
           cp build-pc98/strato.lib out/lib/
           cd out
-          jlha a ../strato-pc98.lzh *
+          jlha a ../strato-dos-pc98.lzh *
           cd ..
 
       - name: Upload binary
         uses: actions/upload-artifact@v4
         with:
           name: pc98
-          path: strato-pc98.lzh
+          path: strato-dos-pc98.lzh
+
+  build-pcat:
+    name: Build for PC-AT
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake jlha-utils
+
+      - name: Cache Watcom
+        id: cache-watcom
+        uses: actions/cache@v4
+        with:
+          path: openwatcom-1.9
+          key: openwatcom-1.9
+
+      - name: Configure OpenWatcom
+        if: steps.cache-watcom.outputs.cache-hit != 'true'
+        run: |
+          wget -q https://github.com/awemorris/suika3/releases/download/CI-BASE/openwatcom-1.9.tar.gz
+          tar xzf openwatcom-1.9.tar.gz
+
+      - name: Build
+        run: |
+          export WATCOM="$PWD/openwatcom-1.9"
+          export INCLUDE="$WATCOM/h"
+          export EDPATH="$WATCOM/eddat"
+          export PATH="$WATCOM/binl:$WATCOM/binw:$PATH"
+          echo "$WATCOM"
+          ls -lha "$WATCOM/binl"
+          command -v wcl386 || true
+          command -v wlink || true
+          cmake --preset pcat
+          cmake --build --preset pcat
+
+      - name: Make ZIP
+        run: |
+          mkdir -p out/include/strato
+          mkdir -p out/lib
+          cp include/strato/strato.h out/include/strato/
+          cp include/strato/c89compat.h out/include/strato/
+          cp build-pcat/strato.lib out/lib/
+          cd out
+          zip -r ../strato-dos-pcat.zip *
+          cd ..
+
+      - name: Upload binary
+        uses: actions/upload-artifact@v4
+        with:
+          name: pcat
+          path: strato-dos-pcat.zip
 
   release:
     name: Create GitHub Release
@@ -539,6 +594,7 @@ jobs:
       - build-openharmony
       - build-unity
       - build-pc98
+      - build-pcat
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -612,6 +668,8 @@ jobs:
         with:
           tag_name: nightly-${{ env.DATE }}-${{ env.SHORT_SHA }}
           name: StratoHAL-${{ env.DATE }}-${{ env.SHORT_SHA }}
+          prerelease: true
+
           body: |
             StratoHAL 🌍🚀
             ==============
@@ -620,17 +678,18 @@ jobs:
 
             This is an automated nightly build. Not an official release.
             
-            | OS          | File                             | Type             | Description                                  |
-            |-------------|----------------------------------|------------------|----------------------------------------------|
-            | Windows     | StratoHAL.1.0.0.nupkg            | NuGet Package    | Visual Studio 2022+                          |
-            | Windows     | strato-mingw-w64.tar.gz          | Tarball          | MinGW-w64                                    |
-            | macOS/iOS   | StratoHAL.xcframework.zip        | Xcode Framework  | macOS and iOS, Xcode                         |
-            | macOS       | strato-macos-universal.tar.gz    | Tarball          | macOS (extract to /usr/local)                |
-            | Linux       | strato-linux-x86_64.tar.gz       | Tarball          | Linux (extract to /usr/local)                |
-            | Android     | StratoHAL.aar                    | AAR              | Android NDK                                  |
-            | Wasm        | strato-wasm.tar.gz               | Tarball          | Emscripten                                   |
-            | OpenHarmony | strato-openharmony.tar.gz        | Tarball          | OpenHarmony (HarmonyOS NEXT)                 |
-            | PC-9801     | strato-pc98.lzh                  | Library          | PC-9801 MS-DOS DOS4GW                        |
+            | OS             | File                             | Type             | Description                            |
+            |----------------|----------------------------------|------------------|----------------------------------------|
+            | Windows        | StratoHAL.1.0.0.nupkg            | NuGet Package    | Visual Studio 2022+                    |
+            | Windows        | strato-mingw-w64.tar.gz          | Tarball          | MinGW-w64                              |
+            | macOS/iOS      | StratoHAL.xcframework.zip        | Xcode Framework  | macOS and iOS, Xcode                   |
+            | macOS          | strato-macos-universal.tar.gz    | Tarball          | macOS (extract to /usr/local)          |
+            | Linux          | strato-linux-x86_64.tar.gz       | Tarball          | Linux (extract to /usr/local)          |
+            | Android        | StratoHAL.aar                    | AAR              | Android NDK                            |
+            | Wasm           | strato-wasm.tar.gz               | Tarball          | Emscripten                             |
+            | OpenHarmony    | strato-openharmony.tar.gz        | Tarball          | OpenHarmony (HarmonyOS NEXT)           |
+            | MS-DOS PC-9801 | strato-dos-pc98.lzh              | LHA              | OpenWatcom, DOS4GW, GDC 640x400 4-bpp  |
+            | MS-DOS PC/AT   | strato-dos-pcat.zip              | ZIP              | OpenWatcom, DOS4GW, VGA 640x480 4-bpp  |
 
           files: |
             windows/StratoHAL.1.0.0.nupkg
@@ -641,4 +700,5 @@ jobs:
             android/StratoHAL.aar
             wasm/strato-wasm.tar.gz
             openharmony/strato-openharmony.tar.gz
-            pc98/strato-pc98.lzh
+            pc98/strato-dos-pc98.lzh
+            pcat/strato-dos-pcat.zip

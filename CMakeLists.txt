@@ -8,7 +8,8 @@ project(StratoHAL VERSION 1.0 LANGUAGES C)
 # Target
 option(STRATO_TARGET_WINDOWS          "Build for Windows 2000 or later"         OFF)
 option(STRATO_TARGET_WINDOWS95        "Build for Windows 95/98/Me"              OFF)
-option(STRATO_TARGET_MACOS            "Build for macOS"                         OFF)
+option(STRATO_TARGET_MACOS            "Build for macOS (Mac OS X or later)"     OFF)
+option(STRATO_TARGET_MACOS7           "Build for MacOS 7"                       OFF)
 option(STRATO_TARGET_LINUX            "Build for Linux (Wayland/X11 Dual)"      OFF)
 option(STRATO_TARGET_LINUX_X11        "Build for Linux (Wayland, OpenGL)"       OFF)
 option(STRATO_TARGET_LINUX_WAYLAND    "Build for Linux (Wayland, OpenGL)"       OFF)
@@ -37,6 +38,7 @@ option(STRATO_TARGET_UWP              "Build for UWP"                           
 option(STRATO_TARGET_GDK_WINDOWS      "Build for GDK for Desktop"               OFF)
 option(STRATO_TARGET_GDK_XBOX_XS      "Build for GDK for Xbox Series X|S"       OFF)
 option(STRATO_TARGET_PC98             "Build for PC-9800 series"                OFF)
+option(STRATO_TARGET_PCAT             "Build for IBM PC/AT compatible"          OFF)
 
 # Options
 option(STRATO_ENABLE_OBJECT           "Build an object library"                 OFF)
@@ -60,7 +62,7 @@ option(STRATO_ENABLE_PORTAL           "Enable XDG Portal"                       
 if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_WINDOWS95
    OR STRATO_TARGET_MACOS
-   OR STRATO_TARGET_MACOS_LIB
+   OR STRATO_TARGET_MACOS7
    OR STRATO_TARGET_LINUX
    OR STRATO_TARGET_LINUX_X11
    OR STRATO_TARGET_LINUX_WAYLAND
@@ -89,6 +91,7 @@ if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_GDK_WINDOWS
    OR STRATO_TARGET_GDK_XBOX_XS
    OR STRATO_TARGET_PC98
+   OR STRATO_TARGET_PCAT
 )
   # A target and options are manually specified.
 else()
@@ -212,20 +215,33 @@ if(STRATO_ENABLE_DIST)
   find_package(JPEG REQUIRED)
   find_package(WebP REQUIRED)
   find_package(Ogg REQUIRED)
-  find_package(Vorbis MODULE REQUIRED)
+  #find_package(Vorbis MODULE REQUIRED)
+  find_package(Tremor MODULE REQUIRED)    # Instead of libvorbis, use libvorbisidec
   find_package(Freetype REQUIRED)
   find_package(ZLIB REQUIRED)
 else()
   # Build the dependencies statically.
-  include(cmake/ext/zlib.cmake)
-  include(cmake/ext/libpng.cmake)
-  if(NOT STRATO_TARGET_PC98)
-    include(cmake/ext/jpeg.cmake)
-    include(cmake/ext/libwebp.cmake)
+  if(STRATO_TARGET_PC98 OR STRATO_TARGET_PCAT)
+    include(cmake/ext/zlib.cmake)
+    include(cmake/ext/libpng.cmake)
     include(cmake/ext/libogg.cmake)
-    include(cmake/ext/libvorbis.cmake)
+    #include(cmake/ext/jpeg.cmake)        # Very slow, don't use
+    #include(cmake/ext/libwebp.cmake)     # Can't be compiled on OpenWatcom
+    #include(cmake/ext/libvorbis.cmake)   # Very slow, don't use
+    include(cmake/ext/tremor.cmake)       # Instead of libvorbis, use libvorbisidec
+    include(cmake/ext/freetype.cmake)
+  else()
+    include(cmake/ext/zlib.cmake)
+    include(cmake/ext/libpng.cmake)
+    include(cmake/ext/jpeg.cmake)
+    if(NOT CMAKE_C_COMPILER_ID MATCHES "Watcom")
+      include(cmake/ext/libwebp.cmake)
+    endif()
+    include(cmake/ext/libogg.cmake)
+    #include(cmake/ext/libvorbis.cmake)   # Replaced by Tremor
+    include(cmake/ext/tremor.cmake)       # Instead of libvorbis, use libvorbisidec
+    include(cmake/ext/freetype.cmake)
   endif()
-  include(cmake/ext/freetype.cmake)
 endif()
 
 # libX11
@@ -352,6 +368,26 @@ if(STRATO_TARGET_WINDOWS)
   enable_language(CXX)
   set(CMAKE_CXX_STANDARD 11)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
+  if(NOT CMAKE_C_COMPILER_ID MATCHES "Watcom")
+    set(SRC_D3D9RENDER   src/d3d9render.cc)
+    set(SRC_D3D11RENDER  src/d3d11render.cc)
+    set(SRC_D3D12RENDER  src/d3d12render.cc)
+    set(SRC_DSOUND       src/dsound.c)
+    set(SRC_MFVIDEO      src/mfvideo.cc)
+    set(SRC_DSVIDEO      src/dsvideo.cc)
+    set(SRC_DIGAMEPAD    src/digamepad.cc)
+    set(SRC_XIGAMEPAD    src/xigamepad.c)
+    set(MFVIDEO_FLAGS    HAL_USE_MFVIDEO)
+    set(DSVIDEO_FLAGS    HAL_USE_DSVIDEO)
+    set(DINPUT_FLAGS     HAL_USE_DINPUT)
+    set(XINPUT_FLAGS     HAL_USE_XINPUT)
+  else()
+    set(SRC_DSOUND       src/nosound.c)
+    set(D3D9_FLAGS       HAL_NOD3D9)
+    set(D3D11_FLAGS      HAL_NOD3D11)
+    set(D3D12_FLAGS      HAL_NOD3D12)
+  endif()
+
   set(STRATO_SOURCES
     src/image.c
     src/glyph.c
@@ -359,15 +395,15 @@ if(STRATO_TARGET_WINDOWS)
     src/stdfile.c
     src/winmain.c
     src/d3drender.c
-    src/d3d9render.cc
-    src/d3d11render.cc
-    src/d3d12render.cc
+    ${SRC_D3D9RENDER}
+    ${SRC_D3D11RENDER}
+    ${SRC_D3D12RENDER}
     src/gdirender.c
-    src/dsound.c
-    src/mfvideo.cc
-    src/dsvideo.cc
-    src/digamepad.cc
-    src/xigamepad.c
+    ${SRC_DSOUND}
+    ${SRC_MFVIDEO}
+    ${SRC_DSVIDEO}
+    ${SRC_DIGAMEPAD}
+    ${SRC_XIGAMEPAD}
   )
 endif()
 if(STRATO_TARGET_WINDOWS95)
@@ -393,6 +429,7 @@ endif()
 # macOS
 if(STRATO_TARGET_MACOS)
   enable_language(OBJC)
+  enable_language(CXX)
   set(STRATO_SOURCES
     src/image.c
     src/glyph.c
@@ -641,14 +678,43 @@ if(STRATO_TARGET_UWP)
   )
 endif()
 
+# MacOS 7
+if(STRATO_TARGET_MACOS7)
+  set(STRATO_SOURCES
+    src/image.c
+    src/glyph.c
+    src/wave.c
+    src/stdfile.c
+    src/macmain.c
+    src/nosound.c
+  )
+endif()
+
 # PC-9800
 if(STRATO_TARGET_PC98)
+  set(STRATO_SOURCES
+      src/image.c
+      src/wave.c
+      src/stdfile.c
+      src/98main.c
+      # src/glyph.c            # FreeType2
+      src/98glyph.c            # PC98 font
+      src/98disp_gdc.c         # GDC 640x400x4
+      src/98disp_cirrus.c      # VGA Cirrus Logic
+      src/98disp_trident.c     # VGA Trident
+      src/98sound_sb16.c       # PCM Sound Blaster 16
+      src/98sound_wss.c        # PCM 118/Mate-X/WSS
+    )
+endif()
+
+# PC-AT
+if(STRATO_TARGET_PCAT)
   set(STRATO_SOURCES
       src/image.c
       src/glyph.c
       src/wave.c
       src/stdfile.c
-      src/98main.c
+      src/atmain.c
     )
 endif()
 
@@ -661,23 +727,35 @@ endif()
 
 # Deps (merge third-party library objects into the target)
 if(NOT STRATO_ENABLE_DIST)
-  if(NOT STRATO_TARGET_PC98)
+  if(STRATO_TARGET_PC98 OR STRATO_TARGET_PCAT)
     set(STRATO_DEPS
+      $<TARGET_OBJECTS:png>
+      $<TARGET_OBJECTS:freetype>
+      $<TARGET_OBJECTS:tremor>
+      $<TARGET_OBJECTS:ogg>
+      $<TARGET_OBJECTS:z>
+    )
+  else()
+    if(NOT CMAKE_C_COMPILER_ID MATCHES "Watcom")
+      set(STRATO_DEPS
         $<TARGET_OBJECTS:png>
         $<TARGET_OBJECTS:jpeg>
         $<TARGET_OBJECTS:webp>
-        $<TARGET_OBJECTS:vorbisfile>
-        $<TARGET_OBJECTS:vorbis>
+        $<TARGET_OBJECTS:tremor>
         $<TARGET_OBJECTS:ogg>
         $<TARGET_OBJECTS:freetype>
         $<TARGET_OBJECTS:z>
-    )
-  else()
-    set(STRATO_DEPS
+      )
+    else()
+      set(STRATO_DEPS
         $<TARGET_OBJECTS:png>
+        $<TARGET_OBJECTS:jpeg>
+        $<TARGET_OBJECTS:tremor>
+        $<TARGET_OBJECTS:ogg>
         $<TARGET_OBJECTS:freetype>
         $<TARGET_OBJECTS:z>
-    )
+      )
+    endif()
   endif()
 endif()
 
@@ -723,7 +801,8 @@ target_include_directories(strato PRIVATE ${PNG_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${JPEG_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${WEBP_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${OGG_INCLUDE_DIRS})
-target_include_directories(strato PRIVATE ${VORBIS_INCLUDE_DIRS})
+#target_include_directories(strato PRIVATE ${VORBIS_INCLUDE_DIRS})
+target_include_directories(strato PRIVATE ${TREMOR_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${FREETYPE_INCLUDE_DIRS})
 target_include_directories(strato PRIVATE ${ZLIB_INCLUDE_DIRS})
 
@@ -753,7 +832,25 @@ if(   STRATO_TARGET_WINDOWS
    OR STRATO_TARGET_GDK_XBOX_XS)
   add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
 
-  target_compile_definitions(strato PRIVATE HAL_USE_MFVIDEO HAL_USE_DSVIDEO)
+  target_compile_definitions(
+    strato
+    PRIVATE
+    ${MFVIDEO_FLAGS}
+    ${DSVIDEO_FLAGS}
+    ${D3D9_FLAGS}
+    ${D3D11_FLAGS}
+    ${D3D12_FLAGS}
+    ${DINPUT_FLAGS}
+    ${XINPUT_FLAGS}
+  )
+
+  if(CMAKE_C_COMPILER_ID MATCHES "Watcom")
+    target_compile_definitions(strato
+      PUBLIC
+      PNGCAPI=__watcall
+      HAL_OPENWATCOM
+    )
+  endif()
 
   target_include_directories(
     strato
@@ -765,9 +862,9 @@ if(   STRATO_TARGET_WINDOWS
 
   # DX12 header
   if(STRATO_TARGET_WINDOWS OR STRATO_TARGET_WINDOWS95)
-    file(ARCHIVE_EXTRACT
-      INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/dx12headers.tar.gz
-      DESTINATION ${CMAKE_BINARY_DIR}
+    file(
+      COPY        ${CMAKE_CURRENT_SOURCE_DIR}/lib/external/dx12headers/
+      DESTINATION ${CMAKE_BINARY_DIR}/dx12headers
     )
   endif()
 endif()
@@ -887,9 +984,19 @@ if(STRATO_TARGET_UNITY)
   endif()
 endif()
 
+# MacOS 7
+if(STRATO_TARGET_MACOS7)
+  target_compile_definitions(strato PUBLIC HAL_TARGET_MACOS7)
+endif()
+
 # PC98
 if(STRATO_TARGET_PC98)
   target_compile_definitions(strato PUBLIC HAL_TARGET_PC98)
+endif()
+
+# PC/AT
+if(STRATO_TARGET_PCAT)
+  target_compile_definitions(strato PUBLIC HAL_TARGET_PCAT)
 endif()
 
 # GLES
@@ -934,9 +1041,9 @@ endif()
 if(STRATO_TARGET_UWP)
   add_compile_definitions(_CRT_SECURE_NO_WARNINGS)
   target_compile_definitions(strato PRIVATE HAL_TARGET_UWP)
-  file(ARCHIVE_EXTRACT
-    INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/dx12headers.tar.gz
-    DESTINATION ${CMAKE_BINARY_DIR}
+  file(
+    COPY        ${CMAKE_CURRENT_SOURCE_DIR}/lib/external/dx12headers
+    DESTINATION ${CMAKE_BINARY_DIR}/dx12headers
   )
 endif()
 
@@ -1032,8 +1139,9 @@ if(STRATO_ENABLE_SHARED OR STRATO_ENABLE_DIST)
     ${PNG_LIBRARIES}
     ${JPEG_LIBRARIES}
     ${WEBP_LIBRARIES}
-    ${VORBIS_LIBRARY}
-    ${VORBISFILE_LIBRARY}
+#   ${VORBIS_LIBRARY}
+#   ${VORBISFILE_LIBRARY}
+    ${TREMOR_LIBRARY}
     ${OGG_LIBRARY}
     ${FREETYPE_LIBRARY}
     ${ZLIB_LIBRARIES}
@@ -1309,6 +1417,10 @@ if(STRATO_ENABLE_PACK)
   set_target_properties(stratopack PROPERTIES 
     VERSION 1.0.0
     SOVERSION 1
+  )
+  set_target_properties(strato PROPERTIES
+    C_VISIBILITY_PRESET hidden
+    VISIBILITY_INLINES_HIDDEN ON
   )
   target_include_directories(stratopack PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 endif()

@@ -99,8 +99,9 @@ static Pixmap icon = BadAlloc;
 static Pixmap icon_mask = BadAlloc;
 static Atom delete_message = BadAlloc;
 static XImage *ximage;
+static bool is_server_big_endian;
 
-/* Image. */
+/* Image */
 static struct hal_image *back_image;
 static uint8_t *low_bpp_pixels;
 
@@ -123,7 +124,13 @@ static bool is_gst_skippable;
 /* Icon */
 extern char *icon_xpm[35];
 
-/* Images. */
+/* Callback */
+struct hal_callback hal_callback;
+HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
+
+/* argc/argv */
+HAL_DLL int hal_argc;
+HAL_DLL char **hal_argv;
 
 /* forward declaration */
 static void init_locale(void);
@@ -162,23 +169,26 @@ static void event_resize(XEvent *event);
  * Main
  */
 int
-main(
+hal_main(
 	int argc,
 	char *argv[])
 {
+	hal_argc = argc;
+	hal_argv = argv;
+
 	/* Initialize HAL. */
 	if (!init_hal(argc, argv))
 		return 1;
 
 	/* Do a start callback. */
-	if (!hal_callback_on_event_start())
+	if (!hal_callback.on_start())
 		return 1;
 
 	/* Run game loop. */
 	run_game_loop();
 
 	/* Do a stop callback.. */
-	hal_callback_on_event_stop();
+	hal_callback.on_stop();
 
 	/* Cleanup HAL. */
 	cleanup_hal();
@@ -233,7 +243,7 @@ static bool init_hal(int argc, char *argv[])
 		return false;
 
 	/* Do a boot callback. */
-	if (!hal_callback_on_event_boot(&window_title, &screen_width, &screen_height))
+	if (!hal_bootstrap_ptr(&window_title, &screen_width, &screen_height, &hal_callback))
 		return false;
 
 	/* Initialize the sound HAL. */
@@ -334,6 +344,9 @@ bool init_x11_graphics(void)
 			free(pixels);
 			return false;
 		}
+
+		if (ximage->red_mask == 0xff000000)
+			is_server_big_endian = true;
 
 		colormap = XCreateColormap(display, root, vi.visual, AllocNone);
 		if (colormap == None) {
@@ -881,13 +894,27 @@ run_frame(void)
 		}
 
 		/* Call a frame event. */
-		cont = hal_callback_on_event_frame();
+		cont = hal_callback.on_update();
+		hal_callback.on_render();
 	}
 
 	/* Flip. */
 	if (flip) {
 		/* Quantize the back image if bpp != 32. */
-		if (bpp == 16) {
+#if defined(HAL_ARCH_BE)
+		if (bpp == 32 && !is_server_big_endian) {
+#else
+		if (bpp == 32 && is_server_big_endian) {
+#endif
+			int x, y;
+			hal_pixel_t *src = (hal_pixel_t *)back_image->pixels;
+			for (y = 0; y < screen_height; y++) {
+				for (x = 0; x < screen_width; x++) {
+					*src = hal_host_to_le_32(*src);
+					src++;
+				}
+			}
+		} else if (bpp == 16) {
 			int x, y;
 			hal_pixel_t *src = (hal_pixel_t *)back_image->pixels;
 			for (y = 0; y < screen_height; y++) {
@@ -974,14 +1001,14 @@ draw_video_frame(void)
 
 	/* Draw. */
 	hal_draw_image_3d_alpha(back_image,
-				dst_x,
-				dst_y,
-				dst_x + dst_width,
-				dst_y,
-				dst_x,
-				dst_y + dst_height,
-				dst_x + dst_width,
-				dst_y + dst_height,
+				(float)dst_x,
+				(float)dst_y,
+				(float)(dst_x + dst_width),
+				(float)dst_y,
+				(float)dst_x,
+				(float)(dst_y + dst_height),
+				(float)(dst_x + dst_width),
+				(float)(dst_y + dst_height),
 				video_image,
 				0,
 				0,
@@ -1092,7 +1119,7 @@ event_key_press(
 		return;
 
 	/* Call an event handler. */
-	hal_callback_on_event_key_press(key);
+	hal_callback.on_key_press(key);
 }
 
 /* Process a KeyRelease event. */
@@ -1120,7 +1147,7 @@ event_key_release(
 		return;
 
 	/* Call an event handler. */
-	hal_callback_on_event_key_release(key);
+	hal_callback.on_key_release(key);
 }
 
 /* Convert 'KeySym' to 'enum key_code'. */
@@ -1175,56 +1202,82 @@ get_key_code(
 	case XK_Right:
 		return HAL_KEY_RIGHT;
 	case XK_A:
+	case XK_a:
 		return HAL_KEY_A;
 	case XK_B:
+	case XK_b:
 		return HAL_KEY_B;
 	case XK_C:
+	case XK_c:
 		return HAL_KEY_C;
 	case XK_D:
+	case XK_d:
 		return HAL_KEY_D;
 	case XK_E:
+	case XK_e:
 		return HAL_KEY_E;
 	case XK_F:
+	case XK_f:
 		return HAL_KEY_F;
 	case XK_G:
+	case XK_g:
 		return HAL_KEY_G;
 	case XK_H:
+	case XK_h:
 		return HAL_KEY_H;
 	case XK_I:
+	case XK_i:
 		return HAL_KEY_I;
 	case XK_J:
+	case XK_j:
 		return HAL_KEY_J;
 	case XK_K:
+	case XK_k:
 		return HAL_KEY_K;
 	case XK_L:
+	case XK_l:
 		return HAL_KEY_L;
 	case XK_M:
+	case XK_m:
 		return HAL_KEY_M;
 	case XK_N:
+	case XK_n:
 		return HAL_KEY_N;
 	case XK_O:
+	case XK_o:
 		return HAL_KEY_O;
 	case XK_P:
+	case XK_p:
 		return HAL_KEY_P;
 	case XK_Q:
+	case XK_q:
 		return HAL_KEY_Q;
 	case XK_R:
+	case XK_r:
 		return HAL_KEY_R;
 	case XK_S:
+	case XK_s:
 		return HAL_KEY_S;
 	case XK_T:
+	case XK_t:
 		return HAL_KEY_T;
 	case XK_U:
+	case XK_u:
 		return HAL_KEY_U;
 	case XK_V:
+	case XK_v:
 		return HAL_KEY_V;
 	case XK_W:
+	case XK_w:
 		return HAL_KEY_W;
 	case XK_X:
+	case XK_x:
 		return HAL_KEY_X;
 	case XK_Y:
+	case XK_y:
 		return HAL_KEY_Y;
 	case XK_Z:
+	case XK_z:
 		return HAL_KEY_Z;
 	case XK_1:
 		return HAL_KEY_1;
@@ -1284,24 +1337,24 @@ event_button_press(
 	/* See the button type and dispatch. */
 	switch (event->xbutton.button) {
 	case Button1:
-		hal_callback_on_event_mouse_press(
+		hal_callback.on_mouse_press(
 			HAL_MOUSE_LEFT,
 			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
 			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
 		break;
 	case Button3:
-		hal_callback_on_event_mouse_press(
+		hal_callback.on_mouse_press(
 			HAL_MOUSE_RIGHT,
 			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
 			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
 		break;
 	case Button4:
-		hal_callback_on_event_key_press(HAL_KEY_UP);
-		hal_callback_on_event_key_release(HAL_KEY_UP);
+		hal_callback.on_key_press(HAL_KEY_UP);
+		hal_callback.on_key_release(HAL_KEY_UP);
 		break;
 	case Button5:
-		hal_callback_on_event_key_press(HAL_KEY_DOWN);
-		hal_callback_on_event_key_release(HAL_KEY_DOWN);
+		hal_callback.on_key_press(HAL_KEY_DOWN);
+		hal_callback.on_key_release(HAL_KEY_DOWN);
 		break;
 	default:
 		break;
@@ -1316,13 +1369,13 @@ event_button_release(
 	/* See the button type and dispatch. */
 	switch (event->xbutton.button) {
 	case Button1:
-		hal_callback_on_event_mouse_release(
+		hal_callback.on_mouse_release(
 			HAL_MOUSE_LEFT,
 			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
 			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
 		break;
 	case Button3:
-		hal_callback_on_event_mouse_release(
+		hal_callback.on_mouse_release(
 			HAL_MOUSE_RIGHT,
 			(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
 			(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
@@ -1334,7 +1387,7 @@ event_button_release(
 static void event_motion_notify(XEvent *event)
 {
 	/* Call an event handler. */
-	hal_callback_on_event_mouse_move(
+	hal_callback.on_mouse_move(
 		(int)((float)(event->xbutton.x - mouse_ofs_x) * mouse_scale),
 		(int)((float)(event->xbutton.y - mouse_ofs_y) * mouse_scale));
 }
@@ -1819,10 +1872,10 @@ hal_render_image_cross(
 	hal_draw_image_cross(back_image,
 			     src1_img,
 			     src2_img,
-			     src1_left,
-			     src1_top,
-			     src2_left,
-			     src2_top,
+			     (int)src1_left,
+			     (int)src1_top,
+			     (int)src2_left,
+			     (int)src2_top,
 			     alpha);
 }
 

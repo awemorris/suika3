@@ -1,11 +1,7 @@
-file(ARCHIVE_EXTRACT
-  INPUT       ${CMAKE_CURRENT_SOURCE_DIR}/lib/archive/libpng-1.6.43.tar.gz
-  DESTINATION ${CMAKE_BINARY_DIR}
+file(
+  COPY        ${CMAKE_CURRENT_SOURCE_DIR}/lib/external/libpng-1.6.43/
+  DESTINATION ${CMAKE_BINARY_DIR}/libpng
 )
-
-file(GLOB LIBPNG_EXTRACTED_DIR ${CMAKE_BINARY_DIR}/libpng-*)
-file(REMOVE_RECURSE ${CMAKE_BINARY_DIR}/libpng)
-file(RENAME ${LIBPNG_EXTRACTED_DIR} ${CMAKE_BINARY_DIR}/libpng)
 
 file(
   COPY        ${CMAKE_BINARY_DIR}/libpng/scripts/pnglibconf.h.prebuilt
@@ -15,6 +11,11 @@ file(RENAME
   ${CMAKE_BINARY_DIR}/libpng/pnglibconf.h.prebuilt
   ${CMAKE_BINARY_DIR}/libpng/pnglibconf.h
 )
+file(READ ${CMAKE_BINARY_DIR}/libpng/pnglibconf.h PNGCONF)
+string(REPLACE "#define PNG_CONSOLE_IO_SUPPORTED"  "" PNGCONF "${PNGCONF}")
+string(REPLACE "#define PNG_STDIO_SUPPORTED" "" PNGCONF "${PNGCONF}")
+string(REPLACE "#define PNG_SIMPLIFIED_WRITE_SUPPORTED" "" PNGCONF "${PNGCONF}")
+file(WRITE ${CMAKE_BINARY_DIR}/libpng/pnglibconf.h "${PNGCONF}")
 
 file(GLOB LIBPNG_HEADERS ${CMAKE_BINARY_DIR}/libpng/*.h)
 file(
@@ -27,32 +28,46 @@ add_library(png OBJECT
   ${CMAKE_BINARY_DIR}/libpng/pngread.c
   ${CMAKE_BINARY_DIR}/libpng/pngrutil.c
   ${CMAKE_BINARY_DIR}/libpng/pngtrans.c
-  ${CMAKE_BINARY_DIR}/libpng/pngwtran.c
   ${CMAKE_BINARY_DIR}/libpng/png.c
   ${CMAKE_BINARY_DIR}/libpng/pngmem.c
   ${CMAKE_BINARY_DIR}/libpng/pngrio.c
   ${CMAKE_BINARY_DIR}/libpng/pngset.c
-  ${CMAKE_BINARY_DIR}/libpng/pngwio.c
-  ${CMAKE_BINARY_DIR}/libpng/pngwutil.c
   ${CMAKE_BINARY_DIR}/libpng/pngerror.c
   ${CMAKE_BINARY_DIR}/libpng/pngpread.c
   ${CMAKE_BINARY_DIR}/libpng/pngrtran.c
-  ${CMAKE_BINARY_DIR}/libpng/pngwrite.c
   ${CMAKE_BINARY_DIR}/libpng/arm/arm_init.c
   ${CMAKE_BINARY_DIR}/libpng/arm/filter_neon_intrinsics.c
   ${CMAKE_BINARY_DIR}/libpng/arm/filter_neon.S
   ${CMAKE_BINARY_DIR}/libpng/arm/palette_neon_intrinsics.c
   ${CMAKE_BINARY_DIR}/libpng/intel/intel_init.c
   ${CMAKE_BINARY_DIR}/libpng/intel/filter_sse2_intrinsics.c
+  ${CMAKE_BINARY_DIR}/libpng/pngwrite.c
+  ${CMAKE_BINARY_DIR}/libpng/pngwutil.c
+  ${CMAKE_BINARY_DIR}/libpng/pngwtran.c
+  ${CMAKE_BINARY_DIR}/libpng/pngwio.c
 )
 
 target_include_directories(png PRIVATE ${CMAKE_BINARY_DIR}/libpng)
 target_include_directories(png PUBLIC  ${CMAKE_BINARY_DIR}/libpng)
 set(PNG_INCLUDE_DIRS ${CMAKE_BINARY_DIR}/libpng)
 
-target_link_libraries(png PRIVATE z)
+target_compile_definitions(png
+  PUBLIC
+  _XOPEN_SOURCE=600
+  __EXTENSIONS__
+  PNG_NO_SIMPLIFIED_WRITE_SUPPORTED
+  PNG_NO_CONSOLE_IO
+  PNG_NO_STDIO
+)
 
-target_compile_definitions(png PUBLIC _XOPEN_SOURCE=600)
+if(CMAKE_C_COMPILER_ID MATCHES "Watcom")
+  target_compile_definitions(png
+    PUBLIC
+    PNGCAPI=__watcall
+  )
+endif()
+
+target_link_libraries(png PRIVATE z)
 
 # Suppress compilation errors.
 if(CMAKE_C_COMPILER_ID MATCHES "GNU|Clang")

@@ -43,6 +43,10 @@
  */
 
 #include <strato/strato.h>
+
+#if defined(HAL_TARGET_PC98)
+void hal_poll_sound(void);
+#endif
 #include "stdfile.h"
 
 #include <stdio.h>
@@ -88,7 +92,11 @@ static const uint64_t NEXT_MASK2 = 0xfcbfaff8f2f4f3f0;
  */
 
 /* Maximum entries in a package. */
+#if defined(HAL_TARGET_PC98) || defined(HAL_TARGET_PCTA)
+#define ENTRY_SIZE		(1024)
+#else
 #define ENTRY_SIZE		(65536)
+#endif
 
 /* File name length for an entry. */
 #define FILE_NAME_SIZE		(256)
@@ -163,7 +171,7 @@ bool
 init_file(void)
 {
 #if defined(HAL_TARGET_WINDOWS) && defined(HAL_USE_CONSOLE)
-	/* suika3-debug.exe does not use the package file. */
+	/* suika3-console.exe does not use the package file. */
 	return true;
 #else
 	FILE *fp;
@@ -205,6 +213,9 @@ init_file(void)
 		fclose(fp);
 		return false;
 	}
+#if !defined(HAL_TARGET_WASM)
+	entry_count = hal_le_to_host_64(entry_count);
+#endif
 	if (entry_count > ENTRY_SIZE) {
 		hal_log_error("Corrupted package file.");
 		fclose(fp);
@@ -222,6 +233,10 @@ init_file(void)
 			break;
 		if (fread(&entry[i].offset, sizeof(uint64_t), 1, fp) < 1)
 			break;
+#if !defined(HAL_TARGET_WASM)
+		entry[i].size = hal_le_to_host_64(entry[i].size);
+		entry[i].offset = hal_le_to_host_64(entry[i].offset);
+#endif
 	}
 	if (i != entry_count) {
 		hal_log_error("Package file corrupted.");
@@ -493,6 +508,16 @@ hal_read_rfile(
 	assert(f != NULL);
 	assert(f->fp != NULL);
 
+#if defined(HAL_TARGET_PC98)
+	/*
+	 * Asset loading (PNG decode) never passes through the drawing loops,
+	 * so on a slow machine the sound buffer starves while an image is
+	 * being loaded.  Give it a chance here too.  hal_poll_sound() has a
+	 * reentrancy guard, so the ogg reads issued from inside it are safe.
+	 */
+	hal_poll_sound();
+#endif
+
 	if (f->is_packaged) {
 		/*
 		 * For the case f points to a package entry.
@@ -548,7 +573,12 @@ get_rfile_u64(
 	if (ret != 8)
 		return false;
 
+#if !defined(HAL_TARGET_WASM)
 	*data = hal_le_to_host_64(val);
+#else
+	*data = val;
+#endif
+
 	return true;
 }
 
@@ -568,7 +598,12 @@ hal_get_rfile_u32(
 	if (ret != 4)
 		return false;
 
+#if !defined(HAL_TARGET_WASM)
 	*data = hal_le_to_host_32(val);
+#else
+	*data = val;
+#endif
+
 	return true;
 }
 
@@ -588,7 +623,12 @@ hal_get_rfile_u16(
 	if (ret != 2)
 		return false;
 
+#if !defined(HAL_TARGET_WASM)
 	*data = hal_le_to_host_16(val);
+#else
+	*data = val;
+#endif
+
 	return true;
 }
 
@@ -609,6 +649,7 @@ hal_get_rfile_u8(
 		return false;
 
 	*data = val;
+
 	return true;
 }
 
@@ -824,6 +865,8 @@ hal_open_wfile(
 #else
 	(*wf)->fp = fopen(path, "wb");
 #endif
+#elif defined(HAL_TARGET_PC98) || defined(HAL_TARGET_PCAT)
+	(*wf)->fp = fopen(path, "wb");
 #else
 	(*wf)->fp = fopen(path, "w");
 #endif
@@ -883,6 +926,32 @@ hal_write_wfile(
 	}
 
 	*ret = total;
+	return true;
+}
+
+/*
+ * Write bytes to a write file stream.
+ */
+bool
+hal_write_wfile_plain(
+	struct hal_wfile *wf,
+	const void *buf,
+	size_t size,
+	size_t *ret)
+{
+	size_t out;
+
+	assert(wf != NULL);
+	assert(wf->fp != NULL);
+
+	/* Write the block to the stream. */
+	out = fwrite(buf, 1, size, wf->fp);
+	if (out != size) {
+		*ret = out;
+		return true;
+	}
+
+	*ret = out;
 	return true;
 }
 

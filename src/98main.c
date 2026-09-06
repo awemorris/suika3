@@ -31,6 +31,7 @@
 /* HAL */
 #include <strato/strato.h>	/* Public Interface */
 #include "stdfile.h"		/* Standard C File Implementation */
+#include "98disp.h"
 
 /* Standard C */
 #include <stdio.h>
@@ -46,31 +47,19 @@
 #include <conio.h>
 #include <i86.h>
 
-/* VRAM Address */
-#define GVRAM_B		0x000A8000UL
-#define GVRAM_R		0x000B0000UL
-#define GVRAM_G		0x000B8000UL
-#define GVRAM_I		0x000E0000UL
-#define TVRAM_TEXT	0x000A0000UL
-#define TVRAM_ATTR	0x000A2000UL
-
-/* Screen Size */
-#define SCREEN_WIDTH	640
-#define SCREEN_HEIGHT	400
-#define LINE_BYTES	(640 / 8)
-
 /* Log */
 #define LOG_FILE	"log.txt"
 
+/* Command Line Options */
+static int requested_bpp;
+
 /* Game Info */
 static char *game_title;
-static int game_width;
-static int game_height;
+int game_width;
+int game_height;
 
 /* Screen */
-static struct hal_image *back_image;
-static bool is_8bpp;
-static uint8_t *fb;
+struct hal_image *back_image;
 
 /* Log */
 static FILE *log_fp;
@@ -79,180 +68,139 @@ static FILE *log_fp;
 static struct hal_callback hal_callback;
 HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
 
+/* argc/argv */
+int hal_argc;
+char **hal_argv;
+
+/* Alpha blend table. */
+uint8_t alphatable[256][256];
+
 /* Forward Declaration */
-static void init_vram(void);
-static void cleanup_vram(void);
+static void init_alphatable(void);
+static bool init_disp(void);
+static void cleanup_disp(void);
+static bool init_sound(void);
+static void cleanup_sound(void);
+static void sound_poll(void);
+void hal_poll_sound(void);
 static void process_input(void);
 static void flip(void);
 static bool open_log_file(void);
 
 int hal_main(int argc, char *argv[])
 {
+	hal_argc = argc;
+	hal_argv = argv;
+
 	printf("\n"
 	       "Suika3 Game Engine for PC-9801\n"
 	       "Copyright (c) 2026 Awe Morris\n");
 
+	/* Default BPP = 4. */
+	requested_bpp = 4;
+
+	/* Parse command line arguments. */
 	if (argc >= 2) {
 		if (strcmp(argv[1], "--version") == 0) {
 			printf("Version 2026.05\n");
 			return 0;
 		}
+		if (strcmp(argv[1], "-24") == 0) {
+			requested_bpp = 24;
+			hal_argc = 1;
+		}
+		if (strcmp(argv[1], "-16") == 0) {
+			requested_bpp = 16;
+			hal_argc = 1;
+		}
+		if (strcmp(argv[1], "-8") == 0) {
+			requested_bpp = 8;
+			hal_argc = 1;
+		}
+		if (strcmp(argv[1], "-4") == 0) {
+			requested_bpp = 4;
+			hal_argc = 1;
+		}
 	}
 
+	/* Initialize the file. (Mount the assets.arc file if exists.) */
 	if (!init_file()) {
-		printf("Failed to initialize the file system.\n");
+		hal_log_error("Failed to initialize the file system.\n");
 		return 1;
 	}
 
+	/* Call setup() in the script. */
 	if (!hal_bootstrap_ptr(
 		    &game_title,
 		    &game_width,
 		    &game_height,
-		    &hal_callback)) {
-		printf("Error on boot.\n");
+		    &hal_callback))
+		return 1;
+
+	/* Initialize the sound. */
+	if (!init_sound()) {
+		/* Ignore if no sound card. */
+	}
+
+	/* Initialize the display. */
+	if (!init_disp()) {
+		/* Error: screen is not available. */
 		return 1;
 	}
 
+	/* Create a backing image. */
 	if (!hal_create_image(game_width, game_height, &back_image)) {
 		printf("Error on creating image.\n");
 		return 1;
 	}
 
+	/* Call start() in the script. */
 	if (!hal_callback.on_start()) {
 		printf("Error on start.\n");
 		return 1;
 	}
 
-	init_vram();
+	/* Create the alpha blending LUT. */
+	init_alphatable();
 
+	/* Game loop. */
 	while (1) {
+		sound_poll();
+
 		process_input();
 
 		hal_clear_image(back_image, 0);
 
 		if (!hal_callback.on_update())
 			break;
+
 		hal_callback.on_render();
 
 		flip();
 	}
 
-	cleanup_vram();
+	/* Cleanup. */
+	cleanup_sound();
+	cleanup_disp();
 
 	return 0;
 }
 
-/* Initialize G-VRAM. */
 static void
-init_vram(void)
+init_alphatable(void)
 {
-	volatile uint16_t *text, *attr;
-	union REGS r;
-	int i;
+	int a, b;
 
-	/*
-	 * Set CRT display mode and G-VRAM areas.
-	 *  - 640x400 4-bpp
-	 *  - INT 18h, AH=42h, CH=C0h
-	 */
-	r.w.ax = 0x4200; 
-	r.h.ch = 192; 
-	int386(0x18, &r, &r);
-
-	outp(0x6a, 1);
-
-	/* Hide Text VRAM. */
-	text = (volatile uint16_t *)TVRAM_TEXT;
-	attr = (volatile uint16_t *)TVRAM_ATTR;
-	for (i = 0; i < 80 * 25; i++) {
-		text[i] = 0x0000;
-		attr[i] = 0x0000;
-	}
-
-	/*
-	 * Start displaying G-VRAM.
-	 *  - INT 18h, AH=40h
-	 */
-	r.w.ax = 0x4000;
-	int386(0x18, &r, &r);
-}
-
-/* Cleanup G-VRAM. */
-static void
-cleanup_vram(void)
-{
-	union REGS r;
-
-	/*
-	 * Stop displaying G-VRAM.
-	 *  - INT 18h, AH=41h
-	 */
-	r.w.ax = 0x4100;
-	int386(0x18, &r, &r);
-}
-
-static void flip(void)
-{
-	volatile unsigned char *vram_b;
-	volatile unsigned char *vram_r;
-	volatile unsigned char *vram_g;
-	volatile unsigned char *vram_i;
-	volatile uint32_t *pixels;
-	int x, y, bit;
-	int src_index;
-	int dst_index;
-
-	vram_b = (volatile unsigned char *)GVRAM_B;
-	vram_r = (volatile unsigned char *)GVRAM_R;
-	vram_g = (volatile unsigned char *)GVRAM_G;
-	vram_i = (volatile unsigned char *)GVRAM_I;
-	pixels = back_image->pixels;
-
-	for (y = 0; y < SCREEN_HEIGHT; y++) {
-		if (y >= game_height)
-			break;
-
-		for (x = 0; x < LINE_BYTES; x++) {
-			unsigned char pb = 0;
-			unsigned char pr = 0;
-			unsigned char pg = 0;
-			unsigned char pi = 0;
-
-			if (x >= game_width >> 3)
-				break;
-
-			for (bit = 0; bit < 8; bit++) {
-				int sx = x * 8 + bit;
-				uint32_t pix;
-				unsigned char r, g, b;
-				unsigned char mask;
-
-				pix = pixels[y * SCREEN_WIDTH + sx];
-				r = pix & 0xff;
-				g = (pix >> 8) & 0xff;
-				b = (pix >> 16) & 0xff;
-
-				mask = (unsigned char)(0x80 >> bit);
-
-				if (b >= 200)
-					pb |= mask;
-				if (g >= 200)
-					pg |= mask;
-				if (r >= 200)
-					pr |= mask;
-				if ((r | g | b) >= 128)
-					pi |= mask;
-			}
-
-			dst_index = y * LINE_BYTES + x;
-
-			vram_b[dst_index] = pb;
-			vram_r[dst_index] = pr;
-			vram_g[dst_index] = pg;
-			vram_i[dst_index] = pi;
+	for (a = 0; a < 256; a++) {
+		for (b = 0; b < 256; b++) {
+			alphatable[a][b] = (uint8_t)(int)(((float)a / 255.0f) * ((float)b / 255.0f) * 255.0f);
 		}
 	}
 }
+
+/*
+ * Input
+ */
 
 static void process_input(void)
 {
@@ -270,7 +218,7 @@ static void process_input(void)
 	bool next_is_right_key_pressed = false;
 
 	while (1) {
-		int ch, keycode;
+		int ch;
 
 		if (!kbhit())
 			break;
@@ -300,7 +248,7 @@ static void process_input(void)
 				next_is_left_key_pressed = true;
 				break;
 			case 0x100 | 0x4d:
-				next_is_up_key_pressed = true;
+				next_is_right_key_pressed = true;
 				break;
 			}
 			break;
@@ -919,38 +867,229 @@ hal_set_continuous_swipe_enabled(
 	UNUSED_PARAMETER(is_enabled);
 }
 
+/*
+ * Missing C99
+ */
+
+double rint(double x)
+{
+	return floor(x + 0.5);
+}
+
+/*
+ * Display
+ */
+
+#define DISP_GDC	0
+#define DISP_CIRRUS	1
+#define DISP_TRIDENT	2
+
+static int disp_driver;
+
+static bool
+init_disp(void)
+{
+	/*
+	 * If no bpp option is specified or 8/16/24-bpp option is
+	 * specified, try initializing the SVGA chip.
+	 */
+	if (requested_bpp == -1 || requested_bpp == 8 ||
+	    requested_bpp == 16 || requested_bpp == 24) {
+		if (cirrus_init_disp(DISP_640X480, requested_bpp)) {
+			disp_driver = DISP_CIRRUS;
+			return true;
+		}
+
+		if (trident_init_disp(DISP_640X480, requested_bpp)) {
+			disp_driver = DISP_TRIDENT;
+			return true;
+		}
+
+	}
+
+	/*
+	 * TODO: If 8-bpp option is specified, try initializing
+	 * PEGC 8-bpp.
+	 */
+
+	/*
+	 * If no bpp option is specified or 4-bpp option is specified,
+	 * try initializing GDC 4-bpp.
+	 */
+	if (requested_bpp == -1 || requested_bpp == 4) {
+		if (gdc_init_disp()) {
+			disp_driver = DISP_GDC;
+			return true;
+		}
+	}
+
+	/* Failed. */
+	return false;
+}
+
+static void
+cleanup_disp(void)
+{
+	if (disp_driver == DISP_CIRRUS)
+		cirrus_cleanup_disp();
+
+	if (disp_driver == DISP_TRIDENT)
+		trident_cleanup_disp();
+
+	gdc_cleanup_disp();
+}
+
+static void
+flip(void)
+{
+	switch (disp_driver) {
+	case DISP_GDC:
+		gdc_flip();
+		break;
+	case DISP_CIRRUS:
+		cirrus_flip();
+		break;
+	case DISP_TRIDENT:
+		trident_flip();
+		break;
+	}
+}
+
+/*
+ * Sound
+ */
+
+#define SOUND_NONE	0
+#define SOUND_SB16	1
+#define SOUND_WSS	2
+
+static int sound_driver;
+
+bool sb16_init_sound(void);
+void sb16_cleanup_sound(void);
+void sb16_sound_poll(void);
+bool sb16_play_sound(int n, struct hal_wave *w);
+bool sb16_stop_sound(int n);
+bool sb16_set_sound_volume(int n, float vol);
+bool sb16_is_sound_finished(int n);
+
+bool wss_init_sound(void);
+void wss_cleanup_sound(void);
+void wss_sound_poll(void);
+bool wss_play_sound(int n, struct hal_wave *w);
+bool wss_stop_sound(int n);
+bool wss_set_sound_volume(int n, float vol);
+bool wss_is_sound_finished(int n);
+
+static bool
+init_sound(void)
+{
+	if (sb16_init_sound()) {
+		sound_driver = SOUND_SB16;
+		return true;
+	}
+
+	if (wss_init_sound()) {
+		sound_driver = SOUND_WSS;
+		return true;
+	}
+
+	hal_log_info("No supported sound card found.");
+
+	return false;
+}
+
+static void
+cleanup_sound(void)
+{
+	if (sound_driver == SOUND_SB16)
+		sb16_cleanup_sound();
+	else if (sound_driver == SOUND_WSS)
+		wss_cleanup_sound();
+}
+
+/*
+ * Sound buffer refill is driven from the main loop only (sound_poll()).
+ * On a slow machine one iteration of the main loop can take several seconds,
+ * while one half of the WSS/SB16 DMA buffer is only 1.024 s of audio.  The
+ * ISR then flips the half before the app ever gets a chance to refill it, and
+ * the stale half is played again.  Giving the long scanning loops a chance to
+ * poll fixes it: hal_poll_sound() returns immediately unless fill_pending is
+ * set, so the per-row cost is negligible.
+ */
+void
+hal_poll_sound(void)
+{
+	/*
+	 * Reentrancy guard: hal_poll_sound() is also called from
+	 * hal_read_rfile(), and sound_poll() itself reads the ogg stream
+	 * through hal_read_rfile().  Without the guard we would recurse.
+	 */
+	static bool inside = false;
+
+	if (inside)
+		return;
+
+	inside = true;
+	sound_poll();
+	inside = false;
+}
+
+static void
+sound_poll(void)
+{
+	if (sound_driver == SOUND_SB16)
+		sb16_sound_poll();
+	else if (sound_driver == SOUND_WSS)
+		wss_sound_poll();
+}
+
 bool
 hal_play_sound(
-	int stream,		/* A sound stream index */
-	struct hal_wave *w)	/* [IN] A sound object, ownership will be delegated to the callee */
+	int n,
+	struct hal_wave *w)
 {
-	UNUSED_PARAMETER(stream);
-	UNUSED_PARAMETER(w);
+	if (sound_driver == SOUND_SB16)
+		return sb16_play_sound(n, w);
+	else if (sound_driver == SOUND_WSS)
+		return wss_play_sound(n, w);
+
 	return true;
 }
 
 bool
 hal_stop_sound(
-	int stream)
+	int n)
 {
-	UNUSED_PARAMETER(stream);
+	if (sound_driver == SOUND_SB16)
+		return sb16_stop_sound(n);
+	else if (sound_driver == SOUND_WSS)
+		return wss_stop_sound(n);
+
 	return true;
 }
 
 bool
 hal_set_sound_volume(
-	int stream,
+	int n,
 	float vol)
 {
-	UNUSED_PARAMETER(stream);
-	UNUSED_PARAMETER(vol);
+	if (sound_driver == SOUND_SB16)
+		return sb16_set_sound_volume(n, vol);
+	else if (sound_driver == SOUND_WSS)
+		return wss_set_sound_volume(n, vol);
+
 	return true;
 }
 
 bool
 hal_is_sound_finished(
-	int stream)
+	int n)
 {
-	UNUSED_PARAMETER(stream);
+	if (sound_driver == SOUND_SB16)
+		return sb16_is_sound_finished(n);
+	else if (sound_driver == SOUND_WSS)
+		return wss_is_sound_finished(n);
+
 	return true;
 }

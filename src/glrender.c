@@ -1643,7 +1643,7 @@ update_texture_if_needed(
 	if (img->context == reinit_count && !is_after_reinit && !img->need_upload)
 		return;
 
-	if (img->context == reinit_count || is_after_reinit || img->texture == NULL) {
+	if (img->context != reinit_count || is_after_reinit || img->texture == NULL) {
 		glGenTextures(1, &id);
 		img->texture = (void *)(intptr_t)(id + 1);
 	} else {

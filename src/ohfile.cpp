@@ -349,6 +349,19 @@ hal_write_wfile(
 }
 
 //
+// Write to a file output stream.
+//
+bool
+hal_write_wfile_plain(
+	struct hal_wfile *wf,
+	const void *buf,
+	size_t size,
+	size_t *ret)
+{
+	return hal_write_wfile_plain(wf, buf, size, ret);
+}
+
+//
 // Close a file output stream.
 //
 void

@@ -3,7 +3,9 @@ Shader "NoctVM/MeltShader"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _RuleTex ("Texture", 2D) = "white" {}
+        _RuleTex ("Rule Texture", 2D) = "white" {}
+        _Softness ("Softness", Range(0, 0.25)) = 0.04
+        _Invert ("Invert", Float) = 0
     }
 
     SubShader
@@ -17,7 +19,8 @@ Shader "NoctVM/MeltShader"
 
         LOD 100
         ZWrite Off
-        //ZTest Always
+        ZTest Always
+        Cull Off
         Blend SrcAlpha OneMinusSrcAlpha
         BlendOp Add
 
@@ -27,26 +30,26 @@ Shader "NoctVM/MeltShader"
             #pragma vertex vert
             #pragma fragment frag
 
+            sampler2D _MainTex;
+            sampler2D _RuleTex;
+            float _Softness;
+            float _Invert;
+
             struct appdata
             {
                 float4 vertex : POSITION;
                 float2 uv : TEXCOORD0;
-                float4 color : COLOR;
+                float4 color : COLOR; // color.a = progress / 255
             };
 
             struct v2f
             {
-                float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
+                float2 uv : TEXCOORD0;
                 float4 color : COLOR;
             };
 
-            sampler2D _MainTex;
-            sampler2D _RuleTex;
-            float4 _MainTex_ST;
-            float4 _RuleTex_ST;
-
-            v2f vert (appdata v)
+            v2f vert(appdata v)
             {
                 v2f o;
                 o.vertex = v.vertex;
@@ -55,12 +58,19 @@ Shader "NoctVM/MeltShader"
                 return o;
             }
 
-            float4 frag (v2f i) : SV_Target
+            half4 frag(v2f i) : SV_Target
             {
-                float4 col1 = tex2D(_MainTex, i.uv);
-                float4 col2 = tex2D(_RuleTex, i.uv);
-                col1.a = clamp((1.0 - col2.b) + (i.color.a * 2.0 - 1.0), 0.0, 1.0);
-                return col1;
+                half4 src = tex2D(_MainTex, i.uv);
+                half4 rule = tex2D(_RuleTex, i.uv);
+                float progress = saturate(i.color.a);
+                float softness = max(_Softness, 0.0001);
+                float r = rule.r;
+                float mask = smoothstep(progress - softness, progress + softness, r);
+                if (_Invert > 0.5)
+                    mask = 1.0 - mask;
+                src.rgb *= mask;
+                src.a *= mask;
+                return src;
             }
             ENDCG
         }

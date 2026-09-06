@@ -139,6 +139,10 @@ static struct pollfd ev_fds[EV_DEV_MAX];
 static int mouse_x;
 static int mouse_y;
 
+/* Callback */
+struct hal_callback hal_callback;
+HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
+
 /* forward declaration */
 static void init_locale(void);
 static bool init_hal(int argc, char *argv[]);
@@ -167,7 +171,7 @@ static void process_event(int index);
  * Main
  */
 int
-main(
+hal_main(
 	int argc,
 	char *argv[])
 {
@@ -176,14 +180,14 @@ main(
 		return 1;
 
 	/* Do a start callback. */
-	if (!hal_callback_on_event_start())
+	if (!hal_callback.on_start())
 		return 1;
 
 	/* Run game loop. */
 	run_game_loop();
 
 	/* Do a stop callback.. */
-	hal_callback_on_event_stop();
+	hal_callback.on_stop();
 
 	/* Cleanup HAL. */
 	cleanup_hal();
@@ -241,9 +245,10 @@ init_hal(
 		return false;
 
 	/* Do a boot callback. */
-	if (!hal_callback_on_event_boot(&window_title,
-					&screen_width,
-					&screen_height))
+	if (!hal_bootstrap_ptr(&window_title,
+			       &screen_width,
+			       &screen_height,
+			       &hal_callback))
 		return false;
 
 	/* Initialize the sound HAL. */
@@ -579,7 +584,8 @@ run_frame(void)
 		opengl_start_rendering();
 
 		/* Call a frame event. */
-		cont = hal_callback_on_event_frame();
+		cont = hal_callback.on_update();
+		hal_callback.on_render();
 
 		/* End rendering. */
 		opengl_end_rendering();
@@ -592,7 +598,8 @@ run_frame(void)
 		render_video_frame();
 
 		/* Call a frame event. */
-		cont = hal_callback_on_event_frame();
+		cont = hal_callback.on_update();
+		hal_callback.on_render();
 
 		/* If the playback is finished. */
 		if (!gstplay_is_playing()) {
@@ -835,58 +842,58 @@ process_event(
 		mouse_y = mouse_y < 0 ? 0 : mouse_y;
 		mouse_x = mouse_x > screen_width ? screen_width : mouse_x;
 		mouse_y = mouse_y > screen_height ? screen_height : mouse_y;
-		hal_callback_on_event_mouse_move(mouse_x, mouse_y);
+		hal_callback.on_mouse_move(mouse_x, mouse_y);
 	} else if (e.type == EV_KEY) {
 		if (e.code == BTN_LEFT) {
 			if (e.value == 1)
-				hal_callback_on_event_mouse_press(HAL_MOUSE_LEFT, mouse_x, mouse_y);
+				hal_callback.on_mouse_press(HAL_MOUSE_LEFT, mouse_x, mouse_y);
 			else
-				hal_callback_on_event_mouse_release(HAL_MOUSE_LEFT, mouse_x, mouse_y);
-		} else if (e.code == BTN)RIGHT) {
+				hal_callback.on_mouse_release(HAL_MOUSE_LEFT, mouse_x, mouse_y);
+		} else if (e.code == BTN_RIGHT) {
 			if (e.value == 1)
-				hal_callback_on_event_mouse_press(HAL_MOUSE_RIGHT, mouse_x, mouse_y);
+				hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, mouse_x, mouse_y);
 			else
-				hal_callback_on_event_mouse_release(HAL_MOUSE_RIGHT, mouse_x, mouse_y);
+				hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, mouse_x, mouse_y);
 		} else if (e.code == KEY_ENTER || e.code == KEY_KPENTER) {
 			if (e.value != 0)
-				hal_callback_on_event_key_press(HAL_KEY_RETURN);
+				hal_callback.on_key_press(HAL_KEY_RETURN);
 			else
-				hal_callback_on_event_key_release(HAL_KEY_RETURN);
+				hal_callback.on_key_release(HAL_KEY_RETURN);
 		} else if (e.code == KEY_LEFT) {
 			if (e.value != 0)
-				hal_callback_on_event_key_press(HAL_KEY_LEFT);
+				hal_callback.on_key_press(HAL_KEY_LEFT);
 			else
-				hal_callback_on_event_key_release(HAL_KEY_LEFT);
+				hal_callback.on_key_release(HAL_KEY_LEFT);
 		} else if (e.code == KEY_RIGHT) {
 			if (e.value != 0)
-				hal_callback_on_event_key_press(HAL_KEY_RIGHT);
+				hal_callback.on_key_press(HAL_KEY_RIGHT);
 			else
-				hal_callback_on_event_key_release(HAL_KEY_RIGHT);
+				hal_callback.on_key_release(HAL_KEY_RIGHT);
 		} else if (e.code == KEY_UP) {
 			if (e.value != 0)
-				hal_callback_on_event_key_press(HAL_KEY_UP);
+				hal_callback.on_key_press(HAL_KEY_UP);
 			else
-				hal_callback_on_event_key_release(HAL_KEY_UP);
+				hal_callback.on_key_release(HAL_KEY_UP);
 		} else if (e.code == KEY_DOWN) {
 			if (e.value != 0)
-				hal_callback_on_event_key_press(HAL_KEY_DOWN);
+				hal_callback.on_key_press(HAL_KEY_DOWN);
 			else
-				hal_callback_on_event_key_release(HAL_KEY_DOWN);
+				hal_callback.on_key_release(HAL_KEY_DOWN);
 		} else if (e.code == KEY_LEFTCTRL || e.code == KEY_RIGHTCTRL) {
 			if (e.value != 0)
-				hal_callback_on_event_key_press(HAL_KEY_CONTROL);
+				hal_callback.on_key_press(HAL_KEY_CONTROL);
 			else
-				hal_callback_on_event_key_release(HAL_KEY_CONTROL);
+				hal_callback.on_key_release(HAL_KEY_CONTROL);
 		} else if (e.code == KEY_ESC) {
 			if (e.value != 0)
-				hal_callback_on_event_key_press(HAL_KEY_ESCAPE);
+				hal_callback.on_key_press(HAL_KEY_ESCAPE);
 			else
-				hal_callback_on_event_key_release(HAL_KEY_ESCAPE);
+				hal_callback.on_key_release(HAL_KEY_ESCAPE);
 		} else if (e.code == KEY_SPACE) {
 			if (e.value != 0)
-				hal_callback_on_event_key_press(HAL_KEY_SPACE);
+				hal_callback.on_key_press(HAL_KEY_SPACE);
 			else
-				hal_callback_on_event_key_release(HAL_KEY_SPACE);
+				hal_callback.on_key_release(HAL_KEY_SPACE);
 		}
 	}
 }

@@ -914,8 +914,7 @@ draw_glyph_func(
 					);
 			}
 
-			*dst_ptr++ = hal_make_pixel_fast(
-				pix_a, pix_r, pix_g, pix_b);
+			*dst_ptr++ = hal_make_pixel_fast(pix_a, pix_r, pix_g, pix_b);
 		}
 		dst_ptr += image_width - font_real_width;
 		src_ptr += font_width - font_real_width;

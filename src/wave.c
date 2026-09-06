@@ -28,15 +28,20 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#if !defined(HAL_TARGET_PC98)
-
 #include <strato/strato.h>
 
 #include <stdlib.h>
 #include <string.h>
 #include <assert.h>
 
-/* Ignore conversion problem in vorbisfile.h */
+
+#include <tremor/ivorbiscodec.h>
+#include <tremor/ivorbisfile.h>
+
+#define USE_TREMOR
+
+/* libvorbis */
+#if 0
 #if defined(__llvm__)
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wshorten-64-to-32"
@@ -50,6 +55,7 @@
 #pragma GCC diagnostic pop
 #else
 #include <vorbis/vorbisfile.h>
+#endif
 #endif
 
 #define SAMPLING_RATE	(44100)
@@ -111,12 +117,14 @@ hal_create_wave_from_file(
 	const size_t LOOPSTART_LEN = strlen(LOOPSTART);
 	const size_t LOOPLENGTH_LEN = strlen(LOOPLENGTH);
 
+#ifndef USE_TREMOR
 	UNUSED_PARAMETER(OV_CALLBACKS_STREAMONLY_NOCLOSE);
 	UNUSED_PARAMETER(OV_CALLBACKS_STREAMONLY);
 	UNUSED_PARAMETER(OV_CALLBACKS_STREAMONLY);
 	UNUSED_PARAMETER(OV_CALLBACKS_NOCLOSE);
 	UNUSED_PARAMETER(OV_CALLBACKS_NOCLOSE);
 	UNUSED_PARAMETER(OV_CALLBACKS_DEFAULT);
+#endif
 
 	/* Alloc a wave struct. */
 	*w = malloc(sizeof(struct hal_wave));
@@ -143,6 +151,11 @@ hal_create_wave_from_file(
 
 	/* TODO: Check sampling rate and channel count by using ov_info(). */
 	vi = ov_info(&(*w)->ovf, -1);
+	if (vi == NULL) {
+		free(*w);
+		*w = NULL;
+		return false;
+	}
 	(*w)->monaural = vi->channels == 1 ? true : false;
 
 	/* Alloc a wave struct. */
@@ -346,7 +359,11 @@ get_wave_samples_monaural(
 			read_bytes = (long)(w->loop_start + w->loop_length) * 2 - w->consumed_bytes;
 			loop_end = true;
 		}
+#ifndef USE_TREMOR
 		ret_bytes = ov_read(&w->ovf, (char *)mbuf, (int)read_bytes, 0, 2, 1, &bitstream);
+#else
+		ret_bytes = ov_read(&w->ovf, (char *)mbuf, (int)read_bytes, &bitstream);
+#endif
 		if (ret_bytes == 0 || (loop_end && ret_bytes == read_bytes)) {
 			/* End-of-stream. */
 			if ((w->loop && (w->times == -1 || w->times > 0)) || loop_end) {
@@ -408,7 +425,11 @@ get_wave_samples_stereo(
 			read_bytes = (long)(w->loop_start + w->loop_length) * 4 - w->consumed_bytes;
 			loop_end = true;
 		}
+#ifndef USE_TREMOR
 		ret_bytes = ov_read(&w->ovf, (char *)(buf + retain), (int)read_bytes, 0, 2, 1, &bitstream);
+#else
+		ret_bytes = ov_read(&w->ovf, (char *)(buf + retain), (int)read_bytes, &bitstream);
+#endif
 		if (ret_bytes == 0 || (loop_end && ret_bytes == read_bytes)) {
 			/* End-of-stream. */
 			if ((w->loop && (w->times == -1 || w->times > 0)) || loop_end) {
@@ -455,13 +476,11 @@ skip_if_needed(
 	while (remain_samples > 0) {
 		get_samples = remain_samples > 1024 ? 1024 : remain_samples;
 
-		ret_bytes = ov_read(&w->ovf,
-				    (char *)buf,
-				    (int)get_samples * sample_bytes,
-				    0,
-				    2,
-				    1,
-				    &bitstream);
+#ifndef USE_TREMOR
+		ret_bytes = ov_read(&w->ovf, (char *)buf, (int)get_samples * sample_bytes, 0, 2, 1, &bitstream);
+#else
+		ret_bytes = ov_read(&w->ovf, (char *)buf, (int)get_samples * sample_bytes, &bitstream);
+#endif
 		if (ret_bytes <= 0)
 			break;
 
@@ -471,60 +490,3 @@ skip_if_needed(
 	w->do_skip = false;
 	w->consumed_bytes = (long)w->loop_start * sample_bytes;
 }
-
-#else
-
-#include <strato/strato.h>
-
-struct hal_wave {
-	int dummy;
-} dummy_wave;
-
-
-bool
-hal_create_wave_from_file(
-	const char *fname,
-	bool loop,
-	struct hal_wave **w)
-{
-	UNUSED_PARAMETER(fname);
-	UNUSED_PARAMETER(loop);
-
-	*w = &dummy_wave;
-
-	return true;
-}
-
-void
-hal_set_wave_repeat_times(
-	struct hal_wave *w,
-	int n)
-{
-	UNUSED_PARAMETER(w);
-	UNUSED_PARAMETER(n);
-}
-
-void
-hal_destroy_wave(
-	struct hal_wave *w)
-{
-	UNUSED_PARAMETER(w);
-}
-
-bool
-hal_is_wave_eos(
-	struct hal_wave *w)
-{
-	return true;
-}
-
-int
-hal_get_wave_samples(
-	struct hal_wave *w,
-	uint32_t *buf,
-	int samples)
-{
-	return 0;
-}
-
-#endif

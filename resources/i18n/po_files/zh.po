@@ -3,24 +3,18 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "Out of memory."
-msgstr "内存不足。"
-
-msgid "Cannot open file \"%s\"."
-msgstr "无法打开文件 \"%s\"。"
-
-msgid "Cannot read file \"%s\"."
-msgstr "无法读取文件 \"%s\"。"
-
 msgid "No startup file."
 msgstr "没有启动文件。"
-
-msgid "The app is crashed."
-msgstr "应用程序已崩溃。"
 
 msgid "Failed to initialize the sound."
 msgstr "声音初始化失败。"
 
 msgid "Failed to initialize the graphics."
 msgstr "图形初始化失败。"
+
+msgid "Out of memory."
+msgstr "内存不足。"
+
+msgid "The app is crashed."
+msgstr "应用程序已崩溃。"
 

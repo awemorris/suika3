@@ -1,12 +1,13 @@
 StratoHAL
 =========
 
-`StratoHAL` is a highly portable hardware abstraction layer (HAL) for
-game applications.
+`StratoHAL (libstrato)` is a highly portable hardware abstraction
+layer (HAL) for game applications.
 
 `StratoHAL` provides:
 
-- Built-in platform initialization, game loop, and event callback mechanisms.
+- Built-in platform initialization, game loop, and event callback
+  mechanisms.
 - API for 2D graphics, audio, and input.
 - GPU acceleration as well as software rendering.
 
@@ -51,6 +52,8 @@ devices and older computers before the GPU era.
 | Solaris 10                  | X11 x software rendering                                                | /dev/audio               | X11                                                                      |
 | Solaris 11                  | X11 x software rendering                                                | /dev/dsp (OSS)           | X11                                                                      |
 | Haiku OS                    | Haiku native + software rendering                                       | Haiku native             | Haiku native                                                             |
+| MS-DOS PC-98                | GDC 640x400 16-colors                                                   | None                     | Keyboard                                                                 |
+| MS-DOS PC/AT                | VGA 640x480 16-colors                                                   | None                     | Keyboard                                                                 |
 
 ## About the Name
 
@@ -58,103 +61,54 @@ devices and older computers before the GPU era.
 
 ## Usage
 
-`StratoHAL` runs the built-in main loop. It calls back the user
-application via the callback functions. User application must
-implement the following.
+Graphic and audio APIs are self-described in
+[include/strato/strato.h](include/strato/strato.h).
+
+Examples are found in [Playfield Engine](https://github.com/awemorris/PlayfieldEngine).
 
 ```
-#include <stratohal/stratohal.h>
+#include <strato/strato.h>
 
+static char window_title[] = "Hello";
 static bool need_exit;
 
-/*
- * Called back when the app boots to determine the window title, width, and height.
- */
-bool hal_callback_on_event_boot(char **title, int *width, int *height)
-{
-        *title = strdup("Hello");
-	*width = 640;
-	*height = 480;
-}
-
-/*
- * Called back when the game start.
- */
-bool hal_callback_on_event_start(void)
+static bool on_start(void)
 {
         return true;
 }
 
-/*
- * Called back when the game stops.
- */
-void hal_callback_on_event_stop(void)
-{
-}
-
-/*
- * Called back every frame.
- */
-bool hal_callback_on_event_frame(void)
+static bool on_update(void)
 {
         if (need_exit)
-            return false;
+                return false;
 
-        return true;
+	return true;
 }
 
-/*
- * Called back when an input happened.
- */
-void hal_callback_on_event_mouse_press(int button, int x, int y)
+static void on_render(void)
+{
+}
+
+static void on_mouse_press(int button, int x, int y)
 {
         if (button == HAL_MOUSE_LEFT)
                 need_exit = true;
 }
 
-void hal_callback_on_event_mouse_release(int button, int x, int y)
+bool hal_bootstrap(char **title, int *width, int *height, struct hal_callback *cb)
 {
+
+	*title = window_title;
+	*width = 640;
+	*height = 480;
+
+	cb->on_start = on_start;
+	cb->on_update = on_update;
+	cb->on_render = on_render;
+	cb->on_mouse_press = on_mouse_press;
+
+	return true;
 }
 
-void hal_callback_on_event_key_press(int key)
-{
-        if (key == HAL_KEY_RETURN ||
-            key == HAL_KEY_GAMEPAD_A)
-                need_exit = true;
-}
-
-void hal_callback_on_event_key_release(int key)
-{
-}
-
-void hal_callback_on_event_mouse_move(int x, int y)
-{
-}
-
-void hal_callback_on_event_analog_input(int input, int val)
-{
-        float v = 0.0f;
-
-        if (input == HAL_ANALOG_X1)
-                val = v;
-
-        // Do something.
-}
-
-void hal_callback_on_event_touch_cancel(void)
-{
-}
-
-void hal_callback_on_event_swipe_down(void)
-{
-}
-
-void hal_callback_on_event_swipe_up(void)
-{
-}
+HAL_DEFINE_MAIN()
 ```
-
-Graphic and audio APIs are self-described in
-[include/stratohal/stratohal.h](include/stratohal/stratohal.h).
-
-Examples are found in [Playfield Engine](https://github.com/awemorris/PlayfieldEngine).

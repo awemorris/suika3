@@ -205,115 +205,151 @@ static void initGamepad(void)
             UNUSED_PARAMETER(button);
             UNUSED_PARAMETER(value);
             if (pressed) {
-                hal_callback.on_key_press(HAL_KEY_GAMEPAD_UP);
-                hal_callback.on_key_release(HAL_KEY_GAMEPAD_DOWN);
+                if (hal_callback.on_key_press != NULL)
+                    hal_callback.on_key_press(HAL_KEY_GAMEPAD_UP);
+                if (hal_callback.on_key_release != NULL)
+                    hal_callback.on_key_release(HAL_KEY_GAMEPAD_DOWN);
             } else {
-                hal_callback.on_key_release(HAL_KEY_GAMEPAD_UP);
+                if (hal_callback.on_key_release != NULL)
+                    hal_callback.on_key_release(HAL_KEY_GAMEPAD_UP);
             }
         };
         controller.extendedGamepad.dpad.down.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
             UNUSED_PARAMETER(button);
             UNUSED_PARAMETER(value);
             if (pressed) {
-                hal_callback.on_key_press(HAL_KEY_GAMEPAD_DOWN);
-                hal_callback.on_key_release(HAL_KEY_GAMEPAD_UP);
+                if (hal_callback.on_key_press != NULL)
+                    hal_callback.on_key_press(HAL_KEY_GAMEPAD_DOWN);
+                if (hal_callback.on_key_release != NULL)
+                    hal_callback.on_key_release(HAL_KEY_GAMEPAD_UP);
             } else {
-                hal_callback.on_key_release(HAL_KEY_GAMEPAD_DOWN);
+                if (hal_callback.on_key_release != NULL)
+                    hal_callback.on_key_release(HAL_KEY_GAMEPAD_DOWN);
             }
         };
         controller.extendedGamepad.dpad.left.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
             UNUSED_PARAMETER(button);
             UNUSED_PARAMETER(value);
             if (pressed) {
-                hal_callback.on_key_press(HAL_KEY_GAMEPAD_LEFT);
-                hal_callback.on_key_release(HAL_KEY_GAMEPAD_RIGHT);
+                if (hal_callback.on_key_press != NULL)
+                    hal_callback.on_key_press(HAL_KEY_GAMEPAD_LEFT);
+                if (hal_callback.on_key_release != NULL)
+                    hal_callback.on_key_release(HAL_KEY_GAMEPAD_RIGHT);
             } else {
-                hal_callback.on_key_release(HAL_KEY_GAMEPAD_LEFT);
+                if (hal_callback.on_key_release != NULL)
+                    hal_callback.on_key_release(HAL_KEY_GAMEPAD_LEFT);
             }
         };
         controller.extendedGamepad.dpad.right.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
             UNUSED_PARAMETER(button);
             UNUSED_PARAMETER(value);
             if (pressed) {
-                hal_callback.on_key_press(HAL_KEY_GAMEPAD_RIGHT);
-                hal_callback.on_key_release(HAL_KEY_GAMEPAD_LEFT);
+                if (hal_callback.on_key_press != NULL)
+                    hal_callback.on_key_press(HAL_KEY_GAMEPAD_RIGHT);
+                if (hal_callback.on_key_release != NULL)
+                    hal_callback.on_key_release(HAL_KEY_GAMEPAD_LEFT);
             } else {
-                hal_callback.on_key_release(HAL_KEY_GAMEPAD_RIGHT);
+                if (hal_callback.on_key_release != NULL)
+                    hal_callback.on_key_release(HAL_KEY_GAMEPAD_RIGHT);
             }
         };
         controller.extendedGamepad.buttonA.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
             UNUSED_PARAMETER(button);
             UNUSED_PARAMETER(value);
-            if (pressed) 
-                hal_callback.on_key_press(HAL_KEY_GAMEPAD_A);
-            else
-                hal_callback.on_key_release(HAL_KEY_GAMEPAD_A); 
+            if (pressed) {
+                if (hal_callback.on_key_press != NULL)
+                    hal_callback.on_key_press(HAL_KEY_GAMEPAD_A);
+            } else {
+                if (hal_callback.on_key_release != NULL)
+                    hal_callback.on_key_release(HAL_KEY_GAMEPAD_A);
+            }
         };
         controller.extendedGamepad.buttonB.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
             UNUSED_PARAMETER(button);
             UNUSED_PARAMETER(value);
-            if (pressed)
-                hal_callback.on_key_press(HAL_KEY_GAMEPAD_B);
-            else
-                hal_callback.on_key_release(HAL_KEY_GAMEPAD_B);
+            if (pressed) {
+                if (hal_callback.on_key_press != NULL)
+                    hal_callback.on_key_press(HAL_KEY_GAMEPAD_B);
+            } else {
+                if (hal_callback.on_key_release != NULL)
+                    hal_callback.on_key_release(HAL_KEY_GAMEPAD_B);
+            }
         };
         controller.extendedGamepad.buttonX.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
             UNUSED_PARAMETER(button);
             UNUSED_PARAMETER(value);
-            if (pressed)
-                hal_callback.on_key_press(HAL_KEY_GAMEPAD_X);
-            else
-                hal_callback.on_key_release(HAL_KEY_GAMEPAD_X);
+            if (pressed) {
+                if (hal_callback.on_key_press != NULL)
+                    hal_callback.on_key_press(HAL_KEY_GAMEPAD_X);
+            } else {
+                if (hal_callback.on_key_release != NULL)
+                    hal_callback.on_key_release(HAL_KEY_GAMEPAD_X);
+            }
         };
         controller.extendedGamepad.buttonY.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
             UNUSED_PARAMETER(button);
             UNUSED_PARAMETER(value);
-            if (pressed)
-                hal_callback.on_key_press(HAL_KEY_GAMEPAD_Y);
-            else
-                hal_callback.on_key_release(HAL_KEY_GAMEPAD_Y);
+            if (pressed) {
+                if (hal_callback.on_key_press != NULL)
+                    hal_callback.on_key_press(HAL_KEY_GAMEPAD_Y);
+            } else {
+                if (hal_callback.on_key_release != NULL)
+                    hal_callback.on_key_release(HAL_KEY_GAMEPAD_Y);
+            }
         };
         controller.extendedGamepad.leftShoulder.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
             UNUSED_PARAMETER(button);
             UNUSED_PARAMETER(value);
-            if (pressed)
-                hal_callback.on_key_press(HAL_KEY_GAMEPAD_L);
-            else
-                hal_callback.on_key_release(HAL_KEY_GAMEPAD_L);
+            if (pressed) {
+                if (hal_callback.on_key_press != NULL)
+                    hal_callback.on_key_press(HAL_KEY_GAMEPAD_L);
+            } else {
+                if (hal_callback.on_key_release != NULL)
+                    hal_callback.on_key_release(HAL_KEY_GAMEPAD_L);
+            }
         };
         controller.extendedGamepad.rightShoulder.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
             UNUSED_PARAMETER(button);
             UNUSED_PARAMETER(value);
-            if (pressed)
-                hal_callback.on_key_press(HAL_KEY_GAMEPAD_R);
-            else
-                hal_callback.on_key_release(HAL_KEY_GAMEPAD_R);
+            if (pressed) {
+                if (hal_callback.on_key_press != NULL)
+                    hal_callback.on_key_press(HAL_KEY_GAMEPAD_R);
+            } else {
+                if (hal_callback.on_key_release != NULL)
+                    hal_callback.on_key_release(HAL_KEY_GAMEPAD_R);
+            }
         };
         controller.extendedGamepad.leftThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput *axis, float value) {
             UNUSED_PARAMETER(axis);
-            hal_callback.on_analog_input(HAL_ANALOG_X1, (int)(value * 32767));
+            if (hal_callback.on_analog_input != NULL)
+                hal_callback.on_analog_input(HAL_ANALOG_X1, (int)(value * 32767));
         };
         controller.extendedGamepad.leftThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput *axis, float value) {
             UNUSED_PARAMETER(axis);
-            hal_callback.on_analog_input(HAL_ANALOG_Y1, (int)(value * 32767));
+            if (hal_callback.on_analog_input != NULL)
+                hal_callback.on_analog_input(HAL_ANALOG_Y1, (int)(value * 32767));
         };
         controller.extendedGamepad.rightThumbstick.xAxis.valueChangedHandler = ^(GCControllerAxisInput *axis, float value) {
             UNUSED_PARAMETER(axis);
-            hal_callback.on_analog_input(HAL_ANALOG_X2, (int)(value * 32767));
+            if (hal_callback.on_analog_input != NULL)
+                hal_callback.on_analog_input(HAL_ANALOG_X2, (int)(value * 32767));
         };
         controller.extendedGamepad.rightThumbstick.yAxis.valueChangedHandler = ^(GCControllerAxisInput *axis, float value) {
             UNUSED_PARAMETER(axis);
-            hal_callback.on_analog_input(HAL_ANALOG_Y2, (int)(value * 32767));
+            if (hal_callback.on_analog_input != NULL)
+                hal_callback.on_analog_input(HAL_ANALOG_Y2, (int)(value * 32767));
         };
         controller.extendedGamepad.leftTrigger.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
             UNUSED_PARAMETER(button);
             UNUSED_PARAMETER(pressed);
-            hal_callback.on_analog_input(HAL_ANALOG_L, (int)(value * 32767));
+            if (hal_callback.on_analog_input != NULL)
+                hal_callback.on_analog_input(HAL_ANALOG_L, (int)(value * 32767));
         };
         controller.extendedGamepad.rightTrigger.valueChangedHandler = ^(GCControllerButtonInput *button, float value, BOOL pressed) {
             UNUSED_PARAMETER(button);
             UNUSED_PARAMETER(pressed);
-            hal_callback.on_analog_input(HAL_ANALOG_R, (int)(value * 32767));
+            if (hal_callback.on_analog_input != NULL)
+                hal_callback.on_analog_input(HAL_ANALOG_R, (int)(value * 32767));
         };
     }];
     [GCController startWirelessControllerDiscoveryWithCompletionHandler:^{
@@ -483,7 +519,8 @@ static void initGamepad(void)
     _touchStartY = (int)((touchLocation.y - self.top) * self.scale);
     _touchLastY = _touchStartY;
 
-    hal_callback.on_mouse_press(HAL_MOUSE_LEFT, _touchStartX, _touchStartY);
+    if (hal_callback.on_mouse_press != NULL)
+        hal_callback.on_mouse_press(HAL_MOUSE_LEFT, _touchStartX, _touchStartY);
 }
 
 // Called when touched moved.
@@ -499,14 +536,15 @@ static void initGamepad(void)
 	_touchLastY = touchY;
     if (isContinuousSwipeEnabled) {
         if (deltaY > 0 && deltaY < FLICK_Y_DISTANCE) {
-            hal_callback.on_key_press(HAL_KEY_DOWN);
-            hal_callback.on_key_release(HAL_KEY_DOWN);
+            if (hal_callback.on_mouse_wheel != NULL)
+                hal_callback.on_mouse_wheel(deltaY, 0);
             return;
         }
     }
 
 	// Emulate a mouse move.
-    hal_callback.on_mouse_move((int)touchX, (int)touchY);
+    if (hal_callback.on_mouse_move != NULL)
+        hal_callback.on_mouse_move((int)touchX, (int)touchY);
 }
 
 // Called when touches ended.
@@ -522,12 +560,16 @@ static void initGamepad(void)
 	const int FLICK_Y_DISTANCE = 50;
 	int deltaY = touchEndY - _touchStartY;
 	if (deltaY > FLICK_Y_DISTANCE) {
-        hal_callback.on_touch_cancel();
-        hal_callback.on_swipe_down(0, 0);
+        if (hal_callback.on_touch_cancel != NULL)
+            hal_callback.on_touch_cancel();
+        if (hal_callback.on_swipe_down != NULL)
+            hal_callback.on_swipe_down(0, 0);
         return;
 	} else if (deltaY < -FLICK_Y_DISTANCE) {
-        hal_callback.on_touch_cancel();
-        hal_callback.on_swipe_up(0, 0);
+        if (hal_callback.on_touch_cancel != NULL)
+            hal_callback.on_touch_cancel();
+        if (hal_callback.on_swipe_up != NULL)
+            hal_callback.on_swipe_up(0, 0);
         return;
     }
 
@@ -536,9 +578,12 @@ static void initGamepad(void)
     if ([[event allTouches] count] == 1 &&
         abs(touchEndX - _touchStartX) < FINGER_DISTANCE &&
 	    abs(touchEndY - _touchStartY) < FINGER_DISTANCE) {
-        hal_callback.on_touch_cancel();
-        hal_callback.on_mouse_press(HAL_MOUSE_LEFT, touchEndX, touchEndY);
-        hal_callback.on_mouse_release(HAL_MOUSE_LEFT, touchEndX, touchEndY);
+        if (hal_callback.on_touch_cancel != NULL)
+            hal_callback.on_touch_cancel();
+        if (hal_callback.on_mouse_press != NULL)
+            hal_callback.on_mouse_press(HAL_MOUSE_LEFT, touchEndX, touchEndY);
+        if (hal_callback.on_mouse_release != NULL)
+            hal_callback.on_mouse_release(HAL_MOUSE_LEFT, touchEndX, touchEndY);
         return;
     }
 
@@ -546,14 +591,18 @@ static void initGamepad(void)
     if ([[event allTouches] count] == 2 &&
         abs(touchEndX - _touchStartX) < FINGER_DISTANCE &&
         abs(touchEndY - _touchStartY) < FINGER_DISTANCE) {
-        hal_callback.on_touch_cancel();
-        hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, touchEndX, touchEndY);
-        hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, touchEndX, touchEndY);
+        if (hal_callback.on_touch_cancel != NULL)
+            hal_callback.on_touch_cancel();
+        if (hal_callback.on_mouse_press != NULL)
+            hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, touchEndX, touchEndY);
+        if (hal_callback.on_mouse_release != NULL)
+            hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, touchEndX, touchEndY);
         return;
     }
 
     // Cancel the touch move.
-    hal_callback.on_touch_cancel();
+    if (hal_callback.on_touch_cancel != NULL)
+        hal_callback.on_touch_cancel();
 }
 
 @end

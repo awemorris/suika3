@@ -50,12 +50,8 @@
 static GstElement * pipeline;
 static GstElement *vsink;
 static GstElement *vconv;
-static guintptr video_window_handle;
 static _Bool is_eos;
 static struct hal_image *image;
-
-static GstBusSyncReply
-bus_sync_handler (GstBus * bus, GstMessage * message, gpointer user_data);
 
 static void
 cb_new_pad (GstElement *element, GstPad *pad, gpointer data);
@@ -163,25 +159,6 @@ cb_new_pad(GstElement *element, GstPad *pad, gpointer data)
 
 cleanup:
   gst_caps_unref(caps);
-}
-
-static GstBusSyncReply
-bus_sync_handler (GstBus * bus, GstMessage * message, gpointer user_data)
-{
-  (void)bus;
-  (void)user_data;
-
-  if (!gst_is_video_overlay_prepare_window_handle_message (message))
-    return GST_BUS_PASS;
-
-  if (video_window_handle != 0) {
-    gst_video_overlay_set_window_handle (
-      GST_VIDEO_OVERLAY (GST_MESSAGE_SRC (message)),
-      video_window_handle);
-  }
-
-  gst_message_unref (message);
-  return GST_BUS_DROP;
 }
 
 static gboolean
@@ -299,7 +276,7 @@ gstplay_loop_iteration(void)
   buffer = gst_sample_get_buffer(sample);
   if (gst_buffer_map(buffer, &map, GST_MAP_READ)) {
     for (y = 0; y < height; y++)
-      memcpy(image->pixels + y * width, (const unsigned char *)map.data + y * stride, width * 4);
+      memcpy(image->pixels + y * width, (const unsigned char *)map.data + y * stride, (size_t)width * 4);
     hal_notify_image_update(image);
     gst_buffer_unmap(buffer, &map);
   }

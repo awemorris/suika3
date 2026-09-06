@@ -554,8 +554,8 @@ cb_touchmove(
 	touch_last_y = touchEvent->touches[0].targetY;
 	if (is_continuous_swipe_enabled) {
 		if (delta_y > 0 && delta_y < FLICK_Y_DISTANCE) {
-			hal_callback.on_key_press(HAL_KEY_DOWN);
-			hal_callback.on_key_release(HAL_KEY_DOWN);
+			if (hal_callback.on_mouse_wheel != NULL)
+				hal_callback.on_mouse_wheel(delta_y, 0);
 			return EM_TRUE;
 		}
 	}
@@ -567,7 +567,8 @@ cb_touchmove(
 	y = (int)((double)touchEvent->touches[0].targetY / scale);
 
 	/* Process as a mouse move. (even if it's a touch start) */
-	hal_callback.on_mouse_move(x, y);
+	if (hal_callback.on_mouse_move != NULL)
+		hal_callback.on_mouse_move(x, y);
 
 	return EM_TRUE;
 }
@@ -586,12 +587,16 @@ cb_touchend(
 
 	delta_y = touchEvent->touches[0].targetY - touch_start_y;
 	if (delta_y > FLICK_Y_DISTANCE) {
-		hal_callback.on_touch_cancel();
-		hal_callback.on_swipe_down(0, 0);
+		if (hal_callback.on_touch_cancel != NULL)
+			hal_callback.on_touch_cancel();
+		if (hal_callback.on_swipe_down != NULL)
+			hal_callback.on_swipe_down(0, 0);
 		return EM_TRUE;
 	} else if (delta_y < -FLICK_Y_DISTANCE) {
-		hal_callback.on_touch_cancel();
-		hal_callback.on_swipe_up(0, 0);
+		if (hal_callback.on_touch_cancel != NULL)
+			hal_callback.on_touch_cancel();
+		if (hal_callback.on_swipe_up != NULL)
+			hal_callback.on_swipe_up(0, 0);
 		return EM_TRUE;
 	}
 
@@ -610,22 +615,29 @@ cb_touchend(
 	if (touchEvent->numTouches == 1 &&
 	    abs(touchEvent->touches[0].targetX - touch_start_x) < FINGER_DISTANCE &&
 	    abs(touchEvent->touches[0].targetY - touch_start_y) < FINGER_DISTANCE) {
-		hal_callback.on_touch_cancel();
-		hal_callback.on_mouse_press(HAL_MOUSE_LEFT, x, y);
-		hal_callback.on_mouse_release(HAL_MOUSE_LEFT, x, y);
+		if (hal_callback.on_touch_cancel != NULL)
+			hal_callback.on_touch_cancel();
+		if (hal_callback.on_mouse_press != NULL)
+			hal_callback.on_mouse_press(HAL_MOUSE_LEFT, x, y);
+		if (hal_callback.on_mouse_release != NULL)
+			hal_callback.on_mouse_release(HAL_MOUSE_LEFT, x, y);
 		return EM_TRUE;
 	}
 
 	/* Process as a right click if two-figer. */
 	if (touchEvent->numTouches == 2) {
-		hal_callback.on_touch_cancel();
-		hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, x, y);
-		hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, x, y);
+		if (hal_callback.on_touch_cancel != NULL)
+			hal_callback.on_touch_cancel();
+		if (hal_callback.on_mouse_press != NULL)
+			hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, x, y);
+		if (hal_callback.on_mouse_release != NULL)
+			hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, x, y);
 		return EM_TRUE;
 	}
 
 	/* Otherwise, just cancel a touch move. */
-	hal_callback.on_touch_cancel();
+	if (hal_callback.on_touch_cancel != NULL)
+		hal_callback.on_touch_cancel();
 
 	return EM_TRUE;
 }
@@ -638,7 +650,8 @@ cb_touchcancel(
 	void *userData)
 {
 	/* FIXME: When is this called? */
-	hal_callback.on_touch_cancel();
+	if (hal_callback.on_touch_cancel != NULL)
+		hal_callback.on_touch_cancel();
 	return EM_TRUE;
 }
 
@@ -667,7 +680,8 @@ EMSCRIPTEN_KEEPALIVE
 void
 mouseLeave(void)
 {
-	hal_callback.on_touch_cancel();
+	if (hal_callback.on_touch_cancel != NULL)
+		hal_callback.on_touch_cancel();
 }
 
 /*

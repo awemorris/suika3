@@ -28,7 +28,7 @@
  * 3. This notice may not be removed or altered from any source distribution.
  */
 
-#undef NO_SOUND
+#define NO_SOUND
 
 /* HAL */
 extern "C" {
@@ -67,9 +67,13 @@ static char *window_title;
 static int window_width;
 static int window_height;
 static bool is_started;
-staticBSoundPlayer *sound_player[HAL_SOUND_TRACKS];
+static BSoundPlayer *sound_player[HAL_SOUND_TRACKS];
 static struct hal_wave *wave[HAL_SOUND_TRACKS];
 static bool is_finished[HAL_SOUND_TRACKS];
+
+/* argc/argv */
+int hal_argc;
+char **hal_argv;
 
 /* HAL callback. */
 struct hal_callback hal_callback;
@@ -108,7 +112,7 @@ public:
 		if (!is_started)
 			return;
 
-		hal_callback_on_event_mouse_move((int)where.x, (int)where.y);
+		hal_callback.on_mouse_move((int)where.x, (int)where.y);
 	}
 
 	void MouseDown(BPoint where) override
@@ -116,16 +120,18 @@ public:
 		if (!is_started)
 			return;
 
-		hal_callback_on_event_mouse_move((int)where.x, (int)where.y);
+		hal_callback.on_mouse_move((int)where.x, (int)where.y);
 
 		uint32 buttons = 0;
 		if (Window()->CurrentMessage() &&
 		    Window()->CurrentMessage()->FindInt32("buttons", (int32*)&buttons) == B_OK) {
-			if (buttons & B_PRIMARY_MOUSE_BUTTON)
-				hal_callback_on_event_mouse_press(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
-			if (buttons & B_SECONDARY_MOUSE_BUTTON)
-				hal_callback_on_event_mouse_press(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
-			last_buttons = buttons;
+			if (buttons & B_PRIMARY_MOUSE_BUTTON) {
+				hal_callback.on_mouse_press(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
+				last_buttons = B_PRIMARY_MOUSE_BUTTON;
+			} else if (buttons & B_SECONDARY_MOUSE_BUTTON) {
+				hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
+				last_buttons = B_SECONDARY_MOUSE_BUTTON;
+			}
 		}
 	}
 
@@ -134,10 +140,11 @@ public:
 		if (!is_started)
 			return;
 
-		hal_callback_on_event_mouse_move((int)where.x, (int)where.y);
-
-		hal_callback_on_event_mouse_release(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
-		hal_callback_on_event_mouse_release(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
+		hal_callback.on_mouse_move((int)where.x, (int)where.y);
+		if (last_buttons & B_PRIMARY_MOUSE_BUTTON)
+			hal_callback.on_mouse_release(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
+		if (last_buttons & B_SECONDARY_MOUSE_BUTTON)
+			hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
 	}
 
 	void KeyDown(const char* bytes, int32 numBytes) override
@@ -208,7 +215,7 @@ public:
 	{
 		if (!init_file())
 			exit(1);
-		if (!hal_bootstrap(&window_title, &window_width, &window_height, &hal_callback))
+		if (!hal_bootstrap_ptr(&window_title, &window_width, &window_height, &hal_callback))
 			exit(1);
 
 		NoctWindow *window = new NoctWindow(window_title, window_width, window_height);
@@ -224,21 +231,24 @@ public:
 		}
 #endif
 
-		if (!hal_callback_on_event_start())
+		if (!hal_callback.on_start())
 			exit(1);
 
 		is_started = true;
 	}
 };
 
+extern "C" {
+
 int hal_main(int argc, char *argv[])
 {
+	hal_argc = argc;
+	hal_argv = argv;
+
 	NoctApplication app;
 	app.Run();
 	return 0;
 }
-
-extern "C" {
 
 void
 hal_notify_image_update(
@@ -485,6 +495,26 @@ hal_render_image_melt(
 }
 
 void
+hal_render_image_cross(
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	float src1_left,
+	float src1_top,
+	float src2_left,
+	float src2_top,
+	int alpha)
+{
+	hal_draw_image_cross(image,
+			     src1_img,
+			     src2_img,
+			     src1_left,
+			     src1_top,
+			     src2_left,
+			     src2_top,
+			     alpha);
+}
+
+void
 hal_render_image_3d_normal(
 	float x1,			/* x1 */
 	float y1,			/* y1 */
@@ -618,6 +648,50 @@ hal_render_image_3d_dim(
 			      src_width,
 			      src_height,
 			      alpha);
+}
+
+void
+hal_render_image_3d_cross(
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	float src1_x1,
+	float src1_y1,
+	float src1_x2,
+	float src1_y2,
+	float src1_x3,
+	float src1_y3,
+	float src1_x4,
+	float src1_y4,
+	float src2_x1,
+	float src2_y1,
+	float src2_x2,
+	float src2_y2,
+	float src2_x3,
+	float src2_y3,
+	float src2_x4,
+	float src2_y4,
+	int alpha)
+{
+	hal_draw_image_3d_cross(image,
+				src1_img,
+				src2_img,
+				src1_x1,
+				src1_y1,
+				src1_x2,
+				src1_y2,
+				src1_x3,
+				src1_y3,
+				src1_x4,
+				src1_y4,
+				src2_x1,
+				src2_y1,
+				src2_x2,
+				src2_y2,
+				src2_x3,
+				src2_y3,
+				src2_x4,
+				src2_y4,
+				alpha);
 }
 
 void

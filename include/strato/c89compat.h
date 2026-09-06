@@ -154,6 +154,18 @@ extern "C" {
 #define HAL_ARCH_LE	/* Default, no MSVC support yet */
 #endif
 
+#elif defined(__sparc) && defined(__arch64__)
+
+/* SPARC 64bit */
+#define HAL_ARCH_SPARC64
+#define HAL_ARCH_BE
+
+#elif defined(__m68k__)
+
+/* m68k */
+#define HAL_ARCH_M68K
+#define HAL_ARCH_BE
+
 #endif
 
 /*
@@ -289,6 +301,7 @@ extern "C" {
 /* Error: No target detected. */
 #if !defined(HAL_TARGET_WINDOWS) &&              \
     !defined(HAL_TARGET_MACOS) &&                \
+    !defined(HAL_TARGET_MACOS7) &&                \
     !defined(HAL_TARGET_LINUX) &&                \
     !defined(HAL_TARGET_FREEBSD) &&              \
     !defined(HAL_TARGET_NETBSD) &&               \
@@ -396,7 +409,7 @@ typedef unsigned long long uint64_t;
 /*
  * Definition of the CDECL keyword
  */
-#ifndef CDECL
+#if !defined(CDECL)
 #if defined(STRATO_TARGET_PC98) || defined(STRATO_TARGET_PCAT)
 #define CDECL __cdecl
 #else
@@ -487,6 +500,7 @@ typedef unsigned long long uint64_t;
  * Math
  */
 #if defined(__WATCOMC__)
+#include <math.h>
 #if !defined(lroundf)
 #define lroundf round
 static INLINE double round(double x)

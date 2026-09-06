@@ -53,6 +53,17 @@
 #include <io.h>				/* _access() */
 #include <locale.h>			/* setlocale() */
 
+
+#ifndef SM_CXVIRTUALSCREEN
+#define SM_CXVIRTUALSCREEN	78
+#endif
+#ifndef SM_CYVIRTUALSCREEN
+#define SM_CYVIRTUALSCREEN	79
+#endif
+#ifndef SM_CMONITORS
+#define SM_CMONITORS		80
+#endif
+
 /* A macro to check whether a file exists. */
 #define FILE_EXISTS(fname)	(_access(fname, 0) != -1)
 
@@ -207,6 +218,12 @@ struct hal_callback hal_callback;
 HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
 
 /*
+ * Command Line Arguments
+ */
+int hal_argc;
+char **hal_argv;
+
+/*
  * Forward Declaration
  */
 
@@ -214,6 +231,7 @@ HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct 
 static void SIGSEGV_Handler(int n);
 static BOOL InitApp(HINSTANCE hInstance, int nCmdShow);
 static void CleanupApp(void);
+static BOOL CopyCommandArgs(void);
 static BOOL InitWindow(HINSTANCE hInstance, int nCmdShow);
 static void GameLoop(void);
 static BOOL RunFrame(void);
@@ -330,19 +348,9 @@ InitApp(
 	check_cpuid();
 #endif
 
-#if 0
-	/* Check files. */
-	bFileOK = FALSE;
-	if (FILE_EXISTS(STARTUP_FILE))
-		bFileOK = TRUE;
-	else if (FILE_EXISTS(PACKAGE_FILE))
-		bFileOK = TRUE;
-	if (!bFileOK)
-	{
-		log_error(HAL_TR("No startup file."));
+	/* Copy command line arguments. */
+	if (!CopyCommandArgs())
 		return FALSE;
-	}
-#endif
 
 	/* Initialize the file HAL. */
 	if (!init_file())
@@ -368,6 +376,7 @@ InitApp(
 	if (rcClient.right != nWindowWidth || rcClient.bottom != nWindowHeight)
 		UpdateScreenOffsetAndScale(rcClient.right, rcClient.bottom);
 
+#if defined(HAL_USE_DSVIDEO)
 	/* Initialize the sound HAL. */
 	if (!DSInitialize(hWndMain))
 	{
@@ -375,25 +384,37 @@ InitApp(
 
 		/* Fall-thru. */
 	}
+#endif
 
+#if defined(HAL_USE_DINPUT)
 	/* Initialize the joystick HAL. */
 	DInputInitialize(hInstance, hWndMain);
+#endif
 
 	/* Init video. */
 #if defined(HAL_ARCH_X86_64) || defined(HAL_ARCH_ARM64)
 	/* On 64-bit environments, DirectShow does not work properly. So, we use Media Foundation if available. */
+#if defined(HAL_USE_MFVIDEO)
 	if (MFVInit())
 		bMFVEnabled = TRUE;
+#endif
 #elif defined(HAL_USE_MFVIDEO)
 	/* On 32-bit environments, we first try using Media Foundation, and if it fails, we try using DirectShow. */
+#if defined(HAL_USE_MFVIDEO)
 	if (MFVInit())
 		bMFVEnabled = TRUE;
-	else if (DShowInit())
-		bDShowEnabled = TRUE;
-#else
-	/* On 32-bit environments, we first try using Media Foundation, and if it fails, we try using DirectShow. */
+	else
+#endif
+#if defined(HAL_USE_DSVIDEO)
 	if (DShowInit())
 		bDShowEnabled = TRUE;
+#endif
+#else
+	/* On 32-bit environments, we first try using Media Foundation, and if it fails, we try using DirectShow. */
+#if defined(HAL_USE_DSVIDEO)
+	if (DShowInit())
+		bDShowEnabled = TRUE;
+#endif
 #endif
 
 	return TRUE;
@@ -403,18 +424,58 @@ InitApp(
 static void
 CleanupApp(void)
 {
+#ifdef HAL_USE_DINPUT
 	/* Cleanup the joystick HAL. */
     DInputCleanup();
+#endif
 
 	/* Cleanup the graphics HAL. */
 	D3DCleanup();
 
+#ifdef HAL_USE_DSVIDEO
 	/* Cleanup the sound HAL. */
 	DSCleanup();
+#endif
 
 	/* Close the log file if opened. */
 	if(pLogFile != NULL)
 		fclose(pLogFile);
+}
+
+/* Parse command line arguments. */
+static BOOL
+CopyCommandArgs(VOID)
+{
+	int i;
+
+	hal_argc = __argc;
+
+	/* Allocate the table. */
+	hal_argv = malloc(sizeof(const char *) * __argc);
+	if (hal_argv == NULL)
+		return FALSE;
+
+	for (i = 0; i < __argc; i++) {
+		const wchar_t *wstr;
+		char *u8str;
+		DWORD size;
+
+		wstr = __wargv[i];
+
+		size = WideCharToMultiByte(CP_UTF8, 0, wstr, -1, NULL, 0, NULL, NULL);
+		if (size <= 0)
+			return FALSE;
+
+		u8str = malloc(size);
+		if (u8str == NULL)
+			return FALSE;
+
+		WideCharToMultiByte(CP_UTF8, 0, wstr, -1, u8str, size, NULL, NULL);
+
+		hal_argv[i] = u8str;
+	}
+
+	return TRUE;
 }
 
 /* Create a window. */
@@ -654,8 +715,12 @@ RunFrame(void)
 		return TRUE;
 
 	/* Update the gamepad input. */
+#ifdef HAL_USE_DINPUT
 	DInputUpdate();
+#endif
+#ifdef HAL_USE_XINPUT
 	XInputUpdate();
+#endif
 
 	/* If a video is showing. */
 	if(bVideoMode && IsVideoPlaying())
@@ -904,66 +969,74 @@ WndProcRender(
 	case WM_LBUTTONDOWN:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_press(
-				HAL_MOUSE_LEFT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_press != NULL)
+			{
+				hal_callback.on_mouse_press(
+					HAL_MOUSE_LEFT,
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_LBUTTONUP:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_release(
-				HAL_MOUSE_LEFT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_release != NULL)
+			{
+				hal_callback.on_mouse_release(
+					HAL_MOUSE_LEFT,
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_RBUTTONDOWN:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_press(
-				HAL_MOUSE_RIGHT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_press != NULL)
+			{
+				hal_callback.on_mouse_press(
+					HAL_MOUSE_RIGHT,
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_RBUTTONUP:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_release(
-				HAL_MOUSE_RIGHT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_release != NULL)
+			{
+				hal_callback.on_mouse_release(
+					HAL_MOUSE_RIGHT,
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_MOUSEMOVE:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_move(
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_move != NULL)
+			{
+				hal_callback.on_mouse_move(
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_MOUSEWHEEL:
 		if (bRunning)
 		{
-			if((int)(short)HIWORD(wParam) > 0)
-			{
-				hal_callback.on_key_press(HAL_KEY_UP);
-				hal_callback.on_key_release(HAL_KEY_UP);
-			}
-			else if((int)(short)HIWORD(wParam) < 0)
-			{
-				hal_callback.on_key_press(HAL_KEY_DOWN);
-				hal_callback.on_key_release(HAL_KEY_DOWN);
-			}
+			if (hal_callback.on_mouse_wheel != NULL)
+				hal_callback.on_mouse_wheel((int)(short)HIWORD(wParam), 0);
 		}
 		return 0;
 	case WM_KILLFOCUS:
 		if (bRunning)
 		{
-			hal_callback.on_key_release(HAL_KEY_CONTROL);
+			if (hal_callback.on_key_release != NULL)
+				hal_callback.on_key_release(HAL_KEY_CONTROL);
 		}
 		return 0;
 	default:
@@ -996,66 +1069,74 @@ WndProcVideo(
 	case WM_LBUTTONDOWN:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_press(
-				HAL_MOUSE_LEFT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_press != NULL)
+			{
+				hal_callback.on_mouse_press(
+					HAL_MOUSE_LEFT,
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_LBUTTONUP:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_release(
-				HAL_MOUSE_LEFT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_release != NULL)
+			{
+				hal_callback.on_mouse_release(
+					HAL_MOUSE_LEFT,
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_RBUTTONDOWN:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_press(
-				HAL_MOUSE_RIGHT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_press != NULL)
+			{
+				hal_callback.on_mouse_press(
+					HAL_MOUSE_RIGHT,
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_RBUTTONUP:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_release(
-				HAL_MOUSE_RIGHT,
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_release != NULL)
+			{
+				hal_callback.on_mouse_release(
+					HAL_MOUSE_RIGHT,
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_MOUSEMOVE:
 		if (bRunning)
 		{
-			hal_callback.on_mouse_move(
-				(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
-				(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			if (hal_callback.on_mouse_move != NULL)
+			{
+				hal_callback.on_mouse_move(
+					(int)((float)(LOWORD(lParam) - nViewportOffsetX) / fMouseScale),
+					(int)((float)(HIWORD(lParam) - nViewportOffsetY) / fMouseScale));
+			}
 		}
 		return 0;
 	case WM_MOUSEWHEEL:
 		if (bRunning)
 		{
-			if((int)(short)HIWORD(wParam) > 0)
-			{
-				hal_callback.on_key_press(HAL_KEY_UP);
-				hal_callback.on_key_release(HAL_KEY_UP);
-			}
-			else if((int)(short)HIWORD(wParam) < 0)
-			{
-				hal_callback.on_key_press(HAL_KEY_DOWN);
-				hal_callback.on_key_release(HAL_KEY_DOWN);
-			}
+			if (hal_callback.on_mouse_wheel != NULL)
+				hal_callback.on_mouse_wheel((int)(short)HIWORD(wParam), 0);
 		}
 		return 0;
 	case WM_KILLFOCUS:
 		if (bRunning)
 		{
-			hal_callback.on_key_release(HAL_KEY_CONTROL);
+			if (hal_callback.on_key_release != NULL)
+				hal_callback.on_key_release(HAL_KEY_CONTROL);
 		}
 		return 0;
 	default:
@@ -1349,14 +1430,16 @@ OnSize(void)
 
 	if(bNeedFullScreen)
 	{
+#if defined(_UNICODE) && !defined(HAL_OPENWATCOM)
 		HMONITOR monitor;
 		MONITORINFOEX minfo;
+#endif
 
 		bNeedFullScreen = FALSE;
 		bNeedWindowed = FALSE;
 		bFullScreen = TRUE;
 
-#ifdef _UNICODE
+#if defined(_UNICODE) && !defined(HAL_OPENWATCOM)
 		monitor = MonitorFromWindow(hWndMain, MONITOR_DEFAULTTONEAREST);
 		minfo.cbSize = sizeof(MONITORINFOEX);
 		GetMonitorInfo(monitor, (LPMONITORINFO)&minfo);
@@ -1624,6 +1707,7 @@ PlayVideo(
 		return TRUE;
 	}
 #endif
+#ifdef HAL_USE_DSVIDEO
 	if (bDShowEnabled)
 	{
 		if (!DShowPlayVideo(hWndVideo, pszFileName, nViewportOffsetX, nViewportOffsetY, nViewportWidth, nViewportHeight))
@@ -1636,6 +1720,7 @@ PlayVideo(
 		bVideoMode = TRUE;
 		return TRUE;
 	}
+#endif
 
 	/* No video support. */
 	bVideoMode = FALSE;
@@ -1657,8 +1742,10 @@ StopVideo(VOID)
 				MFVStopVideo();
 			else
 #endif
+#ifdef HAL_USE_DSVIDEO
 			if (bDShowEnabled)
 				DShowStopVideo();
+#endif
 
 			ShowWindow(hWndRender, SW_SHOW);
 			ShowWindow(hWndVideo, SW_HIDE);
@@ -1694,6 +1781,7 @@ IsVideoPlaying(VOID)
 	}
 	else
 #endif
+#ifdef HAL_USE_DSVIDEO
 	if (bDShowEnabled)
 	{
 		if (!DShowIsVideoPlaying())
@@ -1708,6 +1796,7 @@ IsVideoPlaying(VOID)
 		}
 		return TRUE;
 	}
+#endif
 	return FALSE;
 }
 
@@ -1720,8 +1809,10 @@ ProcessVideoEvents(VOID)
 		MFVProcessEvents();
 	else
 #endif
+#ifdef HAL_USE_DSVIDEO
 	if (bDShowEnabled)
 		DShowProcessEvents();
+#endif
 }
 
 /* Do event processing for WM_GRAPHNOTIFY. */
@@ -1730,6 +1821,7 @@ ProcessGraphNotify(VOID)
 {
 	if (bDShowEnabled)
 	{
+#ifdef HAL_USE_DSVIDEO
 		if (!DShowProcessEvents())
 		{
 			bVideoMode = FALSE;
@@ -1739,6 +1831,7 @@ ProcessGraphNotify(VOID)
 			UpdateWindow(hWndRender);
 			UpdateWindow(hWndVideo);
 		}
+#endif
 	}
 }
 
@@ -2136,7 +2229,7 @@ hal_play_video(
 		free(path);
 		return FALSE;
 	}
-		
+
 	free(path);
 	return TRUE;
 }
