@@ -1,0 +1,13 @@
++inf
+-inf
+nan
++inf
++inf
++inf
+nan
++inf
+nan-lt-false
+nan-gt-false
+nan-lte-false
+nan-gte-false
+:0: Error: Division by zero.

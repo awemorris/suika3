@@ -1,0 +1,21 @@
+__accel var device = Accel.uint32(4);
+
+__accel func bump(data: rpackeduint32_ptr, count: int): void {
+    for (i in 0..count) {
+        data[i] = data[i] + 1;
+    }
+}
+
+func main() {
+    let source = Packed.uint32(4);
+    let result = Packed.uint32(4);
+    source[0] = 10;
+    source[1] = 20;
+    source[2] = 30;
+    source[3] = 40;
+    Accel.copyToAccel(source, 0, device, 0, 16);
+    Accel.call(bump, device, 4);
+    Accel.copyFromAccel(device, 0, result, 0, 16);
+    print(result[0]);
+    print(result[3]);
+}

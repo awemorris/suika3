@@ -1,0 +1,24 @@
+__accel func transform(
+    source: rpackedint32,
+    destination: rpackedint32,
+    empty_count: int,
+    n: int): void {
+    for (i in 0..empty_count) {
+        destination[i + 100] = source[i];
+    }
+    for (j in 0..n) {
+        destination[j] = source[j] + 1;
+    }
+}
+
+func main() {
+    let source = Packed.int32(4);
+    let destination = Packed.int32(4);
+    for (i in 0..4) {
+        source[i] = i;
+    }
+    transform(source, destination, 0, 4);
+    for (i in 0..4) {
+        print(destination[i]);
+    }
+}

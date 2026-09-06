@@ -1,0 +1,30 @@
+func worker(param) {
+    var sum = 0;
+    for (i in 0..100) {
+        var d = {};
+        for (j in 0..20) {
+            d["k" + j] = [j, j + 1, "v" + j];
+        }
+        if (i % 10 == 0) {
+            GC.youngGC();
+        }
+        sum = sum + d.k5[0];
+    }
+    return sum;
+}
+
+func main() {
+    var ths = [];
+    for (t in 0..4) {
+        ths[t] = Thread.createThread(worker, t);
+    }
+    for (i in 0..20) {
+        GC.oldGC();
+        GC.compactGC();
+    }
+    var total = 0;
+    for (t in 0..4) {
+        total = total + Thread.joinThread(ths[t]);
+    }
+    print(total);
+}

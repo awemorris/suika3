@@ -1,0 +1,4 @@
+func main() {
+    Float.from = Int.from;
+    print("unreachable");
+}

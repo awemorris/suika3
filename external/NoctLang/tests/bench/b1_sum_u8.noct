@@ -1,0 +1,10 @@
+func main() {
+    var n = 20000000;
+    var p = Packed.uint8(n);
+    Packed.fill(p, 0, n, 7);
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + p[i];
+    }
+    print(sum);
+}

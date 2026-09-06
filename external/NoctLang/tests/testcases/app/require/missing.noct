@@ -1,0 +1,4 @@
+require absent_module;
+
+func main() {
+}

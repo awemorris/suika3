@@ -1,0 +1,36 @@
+__accel func select_bias(
+    input: rpackeduint32_in,
+    output: rpackeduint32_out,
+    count: int,
+    low: int,
+    high: int,
+    bias: int
+): void {
+    for (i in 0..count) {
+        if (input[i] > high) {
+            output[i] = input[i] + 100;
+        } else if (input[i] > low) {
+            if (input[i] == 5) {
+                output[i] = input[i] + bias;
+            } else {
+                output[i] = input[i] + bias + 1;
+            }
+        } else {
+            output[i] = 0;
+        }
+    }
+}
+
+func main() {
+    let input = Packed.uint32(4);
+    let output = Packed.uint32(4);
+    input[0] = 2;
+    input[1] = 7;
+    input[2] = 5;
+    input[3] = 9;
+    Accel.call(select_bias, input, output, 4, 4, 8, 10);
+    print(output[0]);
+    print(output[1]);
+    print(output[2]);
+    print(output[3]);
+}

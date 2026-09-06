@@ -1,0 +1,10 @@
+static let value = 2;
+var initialized = initialize_second();
+
+static func local(): int { return value; }
+func from_b(): int { return local(); }
+
+func initialize_second(): int {
+    order = order + "B";
+    return 1;
+}

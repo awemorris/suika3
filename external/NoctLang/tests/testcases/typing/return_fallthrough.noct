@@ -1,0 +1,7 @@
+func fallthrough(value): int {
+    value + 1;
+}
+
+func main() {
+    print(fallthrough("wrong"));
+}

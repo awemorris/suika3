@@ -1,0 +1,1 @@
+func from_a(): int { return 99; }

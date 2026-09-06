@@ -1,0 +1,28 @@
+// A returned container literal must not clobber the parameter slots
+// it still reads ($return shares tmpvar 0 with parameter 0).
+func mkDict(name) {
+    return { name: name, extra: 5 };
+}
+
+func mkArr(p) {
+    return [p, p + 1, "x"];
+}
+
+func nested(v) {
+    return { inner: { val: v }, list: [v] };
+}
+
+func main() {
+    var d = mkDict("hello");
+    print(d.name);
+    print(d.extra);
+
+    var a = mkArr(7);
+    print(a[0]);
+    print(a[1]);
+    print(a[2]);
+
+    var n = nested(9);
+    print(n.inner.val);
+    print(n.list[0]);
+}

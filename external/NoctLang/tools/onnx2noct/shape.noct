@@ -1,0 +1,162 @@
+let ONNX_LONG_MAX = 9223372036854775807L;
+let ONNX_MAX_NORMALIZED_RANK = 8;
+let ONNX_MAX_NORMALIZED_ELEMENTS = 2147483647;
+
+func normFail(message) {
+    System.error("ONNX normalize: " + message);
+}
+
+func shapeCopy(shape) {
+    return Array.copy(shape);
+}
+
+func shapeEqual(a, b) {
+    if (Array.size(a) != Array.size(b)) { return false; }
+    for (i in 0..Array.size(a)) {
+        if (a[i] != b[i]) { return false; }
+    }
+    return true;
+}
+
+func checkedAddPositive(a, b, context) {
+    if (a < 0 || b < 0 || a > ONNX_LONG_MAX - b) {
+        normFail(context + " overflows signed 64-bit addition.");
+    }
+    return a + b;
+}
+
+func checkedMulPositive(a, b, context) {
+    if (a < 0 || b < 0 || (b != 0 && a > ONNX_LONG_MAX / b)) {
+        normFail(context + " overflows signed 64-bit multiplication.");
+    }
+    return a * b;
+}
+
+func shapeElements(shape, context) {
+    if (Array.size(shape) < 1 || Array.size(shape) > ONNX_MAX_NORMALIZED_RANK) {
+        normFail(context + " rank must be from one through eight.");
+    }
+    var product = 1L;
+    for (i in 0..Array.size(shape)) {
+        if (shape[i] <= 0) {
+            normFail(context + " has a nonpositive dimension.");
+        }
+        product = checkedMulPositive(product, shape[i], context + " element count");
+        if (product > ONNX_MAX_NORMALIZED_ELEMENTS) {
+            normFail(context + " element count exceeds INT_MAX.");
+        }
+    }
+    return product;
+}
+
+func contiguousStride(shape, context) {
+    shapeElements(shape, context);
+    var result = [];
+    var running = 1L;
+    for (i in 0..Array.size(shape)) { Array.push(result, 0L); }
+    var i = Array.size(shape) - 1;
+    while (i >= 0) {
+        result[i] = running;
+        running = checkedMulPositive(running, shape[i], context + " stride");
+        i = i - 1;
+    }
+    return result;
+}
+
+func isContiguousView(tensor) {
+    var expected = contiguousStride(tensor.shape, "contiguity check");
+    if (Array.size(expected) != Array.size(tensor.stride)) { return false; }
+    for (i in 0..Array.size(expected)) {
+        if (expected[i] != tensor.stride[i]) { return false; }
+    }
+    return true;
+}
+
+func defaultLayout(shape) {
+    if (Array.size(shape) == 2) { return "NC"; }
+    if (Array.size(shape) == 4) { return "NCHW"; }
+    return "C";
+}
+
+func reachableEnd(shape, stride, offset, context) {
+    if (offset < 0 || Array.size(shape) != Array.size(stride)) {
+        normFail(context + " has an invalid strided view.");
+    }
+    var last = offset;
+    for (i in 0..Array.size(shape)) {
+        if (stride[i] < 0) { normFail(context + " has a negative stride."); }
+        var extent = checkedMulPositive(shape[i] - 1, stride[i],
+                                        context + " reachable interval");
+        last = checkedAddPositive(last, extent,
+                                  context + " reachable interval");
+    }
+    return checkedAddPositive(last, 1, context + " reachable interval");
+}
+
+func normalizeAxis(axis, rank, allowEnd, context) {
+    var upper = rank - 1;
+    if (allowEnd) { upper = rank; }
+    var result = axis;
+    var negativeBase = rank;
+    if (allowEnd) { negativeBase = rank + 1; }
+    if (result < 0) { result = result + negativeBase; }
+    if (result < 0 || result > upper) {
+        normFail(context + " axis " + axis + " is out of range for rank " + rank + ".");
+    }
+    return result;
+}
+
+func normalizeAxes(axes, rank, outputRank, context) {
+    var result = [];
+    var seen = {};
+    for (i in 0..Array.size(axes)) {
+        var axis = axes[i];
+        if (axis < 0) { axis = axis + outputRank; }
+        if (axis < 0 || axis >= outputRank) {
+            normFail(context + " axis " + axes[i] + " is out of range.");
+        }
+        if (Dict.hasKey(seen, "a" + axis)) {
+            normFail(context + " contains duplicate axis " + axis + ".");
+        }
+        seen["a" + axis] = true;
+        Array.push(result, axis);
+    }
+    return result;
+}
+
+func broadcastShape(a, b, context) {
+    var rank = Array.size(a);
+    if (Array.size(b) > rank) { rank = Array.size(b); }
+    if (rank < 1 || rank > ONNX_MAX_NORMALIZED_RANK) {
+        normFail(context + " broadcast rank is unsupported.");
+    }
+    var result = [];
+    for (i in 0..rank) { Array.push(result, 1L); }
+    for (i in 0..rank) {
+        var ai = Array.size(a) - rank + i;
+        var bi = Array.size(b) - rank + i;
+        var av = 1L;
+        var bv = 1L;
+        if (ai >= 0) { av = a[ai]; }
+        if (bi >= 0) { bv = b[bi]; }
+        if (av != bv && av != 1 && bv != 1) {
+            normFail(context + " has incompatible broadcast dimensions " +
+                     av + " and " + bv + ".");
+        }
+        result[i] = av;
+        if (bv > result[i]) { result[i] = bv; }
+    }
+    shapeElements(result, context + " broadcast result");
+    return result;
+}
+
+func productRange(shape, begin, end, context) {
+    var product = 1L;
+    for (i in begin..end) {
+        product = checkedMulPositive(product, shape[i], context);
+        if (product > ONNX_MAX_NORMALIZED_ELEMENTS) {
+            normFail(context + " exceeds INT_MAX.");
+        }
+    }
+    return product;
+}

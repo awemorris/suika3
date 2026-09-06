@@ -1,0 +1,14 @@
+__accel func reduce(
+    source: rpackedint32,
+    destination: rpackedint32,
+    n: int): void {
+    var sum: int = 0;
+    var separator: int = n + 1;
+    for (i in 0..n) {
+        sum += source[i];
+    }
+    destination[0] = sum + separator;
+}
+
+func main() {
+}

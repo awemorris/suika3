@@ -1,0 +1,7 @@
+func package_init(): void {
+	System.loadDLL("good");
+}
+
+func native_package_value() {
+	return dynlib_value();
+}

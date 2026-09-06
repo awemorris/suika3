@@ -1,0 +1,21 @@
+func main() {
+    var n = 1000;
+    var p = Packed.uint16(n);
+    for (i in 0..n) {
+        p[i] = (i * 131) % 65536;
+    }
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + p[i];
+    }
+    print(sum);
+    var q = Packed.int16(64);
+    for (i in 0..64) {
+        q[i] = 0 - i;
+    }
+    var s2 = 0;
+    for (i in 0..64) {
+        s2 = s2 + q[i];
+    }
+    print(s2);
+}

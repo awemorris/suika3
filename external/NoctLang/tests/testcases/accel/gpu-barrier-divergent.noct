@@ -1,0 +1,8 @@
+__gpu func invalid(): void {
+    if (threadIdx.x == 0) {
+        syncthreads();
+    }
+}
+
+func main() {
+}

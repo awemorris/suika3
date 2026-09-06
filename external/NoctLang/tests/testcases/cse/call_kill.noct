@@ -1,0 +1,12 @@
+func mut() {
+    G.x = 99;
+    return 0;
+}
+func main() {
+    G = { x: 1 };
+    var a = G.x + G.x;
+    print(a);
+    mut();
+    var b = G.x + G.x;
+    print(b);
+}

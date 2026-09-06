@@ -1,0 +1,29 @@
+// Scalar Packed-loop unroll benchmark. uint16 deliberately remains outside
+// the current i32/f32 SIMD grammar, so -O2 can exercise factor-4 PLOOP.
+
+var pu_input = Packed.uint16(4194304);
+var pu_output = Packed.uint16(4194304);
+
+func pu_kernel(input: rpackeduint16, output: rpackeduint16,
+               count: int): void {
+    for (i in 0..count) {
+        output[i] = ((input[i] + 7) ^ 85) & 65535;
+    }
+}
+
+func pu_setup(): void {
+    for (i in 0..4194304) {
+        pu_input[i] = i;
+    }
+}
+
+func pu_run(): void {
+    pu_kernel(pu_input, pu_output, 4194304);
+}
+
+func pu_verify(): int {
+    if (pu_output[0] != 82) { return 0; }
+    if (pu_output[1] != 93) { return 0; }
+    if (pu_output[4194303] != 83) { return 0; }
+    return 1;
+}

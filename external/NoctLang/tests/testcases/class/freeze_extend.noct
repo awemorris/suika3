@@ -1,0 +1,16 @@
+func main() {
+    Animal = class {
+        name: "Animal",
+        cry: (this) => {
+            print(this.name);
+        }
+    };
+    Cat = extend Animal {
+        name: "Cat"
+    };
+    var c = new Cat { name: "Tama" };
+    c.cry();
+    c.name = "Mike";
+    c.cry();
+    Cat.name = "broken";
+}

@@ -1,0 +1,18 @@
+func add(a: int, b: int): int {
+    return a + b;
+}
+
+func message(): string {
+    return "typed return";
+}
+
+func identity(p: packeduint32): packeduint32 {
+    return p;
+}
+
+func main() {
+    let p = Packed.uint32(1);
+    print(add(20, 22));
+    print(message());
+    identity(p);
+}

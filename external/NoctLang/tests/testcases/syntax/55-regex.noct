@@ -1,0 +1,39 @@
+func emit(m) {
+    if (Type.of(m) != "dict") {
+        print("nomatch");
+        return 0;
+    }
+    var s = m.start + "-" + m.end;
+    for (g in m.groups) {
+        s = s + " (" + g.start + "," + g.end + ")";
+    }
+    print(s);
+    return 0;
+}
+
+func main() {
+    emit(Regex.search("fox", "the fox and fox", 0));
+    emit(Regex.search("fox", "the fox and fox", 5));
+    emit(Regex.search("cat", "the fox", 0));
+    emit(Regex.search("[a-c]+", "zzabcz", 0));
+    emit(Regex.search("\\d{2,3}", "x12345y", 0));
+    emit(Regex.search("^b.r$", "foo\nbar\nbaz", 0));
+    emit(Regex.search("\\bword\\b", "a word here", 0));
+    emit(Regex.search("[^a-z ]+", "ab CD ef", 0));
+    emit(Regex.search("(f(o+)x|cat)", "a foox here", 0));
+    emit(Regex.search("(a)?(b)", "b", 0));
+    emit(Regex.search("<.*>", "<a><b>", 0));
+    emit(Regex.search("<.*?>", "<a><b>", 0));
+    emit(Regex.search("日+", "あ日日日本", 0));
+    emit(Regex.search("[ぁ-ん]+", "漢字かなカナ", 0));
+    emit(Regex.search("a|", "b", 0));
+    emit(Regex.search("(?:ab)+c", "ababc", 0));
+    print(Regex.matches("a+b*", "aaabb"));
+    print(Regex.matches("a+b*", "aaabbc"));
+    print(Regex.matches("(ab)+", "ababab"));
+    print(Regex.replaceAll("(\\w+)@(\\w+)", "bob@host sue@box", "$2:$1"));
+    print(Regex.replaceAll("o", "foo boo", "0"));
+    print(Regex.replaceAll("^", "a\nb", ">"));
+    print(Regex.replaceAll("\\s+", "a  b   c", " "));
+    print(Regex.replaceAll("x*", "ab", "-"));
+}

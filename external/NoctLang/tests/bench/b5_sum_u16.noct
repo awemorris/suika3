@@ -1,0 +1,12 @@
+func main() {
+    var n = 10000000;
+    var p = Packed.uint16(n);
+    for (i in 0..n) {
+        p[i] = i % 60000;
+    }
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + p[i];
+    }
+    print(sum);
+}

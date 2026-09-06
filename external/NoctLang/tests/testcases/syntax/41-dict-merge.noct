@@ -1,0 +1,27 @@
+func main() {
+    // Override: the second dictionary wins.
+    var a = {x: 1};
+    var b = Dict.merge(a, {x: 2});
+    print(b.x);
+    print(Dict.size(b));
+
+    // Disjoint keys: all entries must survive.
+    var m = Dict.merge({a: 1, b: 2}, {c: 3, d: 4});
+    print(Dict.size(m));
+    print(m.a);
+    print(m.b);
+    print(m.c);
+    print(m.d);
+
+    // Merge result used as a merge source. (small alloc_size path)
+    var base = Dict.merge({name: "Animal", voice: "none"}, {name: "Cat", voice: "meow"});
+    var inst = Dict.merge(base, {voice: "neee"});
+    print(inst.name);
+    print(inst.voice);
+    print(Dict.size(inst));
+
+    // Chained merges keep sizes accurate.
+    var big = Dict.merge(Dict.merge({p: 1, q: 2}, {r: 3, s: 4}), {t: 5});
+    print(Dict.size(big));
+    print(big.p + big.q + big.r + big.s + big.t);
+}

@@ -1,0 +1,11 @@
+func choose(flag: int): int {
+    if (flag) {
+        return 10;
+    }
+    return 20;
+}
+
+func main() {
+    print(choose(1));
+    print(choose(0));
+}

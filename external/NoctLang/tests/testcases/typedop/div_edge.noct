@@ -1,0 +1,15 @@
+// Integer division edges.  x / 0 is still a runtime error (Part 0
+// changed only float/double-performed divisions).  At -O1 and above a
+// proven-int variable or {0,-1}-literal divisor uses a checked typed op;
+// -O0 remains the generic reference path.
+
+func f(a: int, b: int) {
+    print(a / b);        // variable divisor: generic
+    print(a % b);        // variable divisor: generic
+    print(a / 0);        // 0-literal divisor: stays generic; runtime error
+}
+
+func main() {
+    f(100, 7);
+    return 0;
+}

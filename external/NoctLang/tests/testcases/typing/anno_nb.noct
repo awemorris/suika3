@@ -1,0 +1,6 @@
+func f(s: string) {
+    return s + "!";
+}
+func main() {
+    print(f("ok"));
+}

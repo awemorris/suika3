@@ -1,0 +1,5 @@
+graph opset=12 tensors=2 nodes=1 input=t0 output=t1
+tensor t0 storage=0 role=input dtype=float32 name="1 weird/名" safe=_1_weird___t0 shape=[1,2,3] stride=[6,3,1] offset=0 layout=C producer=-1 consumers=[0] use=0:0
+tensor t1 storage=0 role=output dtype=float32 name="out \"x\"" safe=out__x__t1 shape=[1,3,2] stride=[6,1,3] offset=0 layout=STRIDED producer=0 consumers=[] use=1:1
+node n0 op=ai.onnx::Transpose@1 imported=12 family=transpose-view name="" inputs=[0] outputs=[1] attrs=[perm:ints=[0,2,1]]
+

@@ -1,0 +1,13 @@
+func main() {
+    var d = { k: 3 };
+    var x = 0;
+    var g = d.k * 4 + 1;
+    if (d.k == 0) {
+        x = d.k * 4;
+    } else if (x + 1 == g) {
+        print("wrong-branch");
+    } else {
+        print("correct-branch");
+    }
+    print(g);
+}

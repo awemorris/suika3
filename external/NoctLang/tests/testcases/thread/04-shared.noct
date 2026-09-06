@@ -1,0 +1,20 @@
+func producer(shared) {
+    for (i in 0..1000) {
+        Thread.updateShared(shared, {a: i, b: i * 2});
+    }
+    return 0;
+}
+
+func main() {
+    var s = Thread.createShared({a: 0, b: 0});
+    var th = Thread.createThread(producer, s);
+    var bad = 0;
+    for (j in 0..1000) {
+        var snap = Thread.snapshotShared(s);
+        if (snap.b != snap.a * 2) {
+            bad = bad + 1;
+        }
+    }
+    Thread.joinThread(th);
+    print(bad);
+}

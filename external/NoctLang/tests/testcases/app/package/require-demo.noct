@@ -1,0 +1,11 @@
+require demo;
+
+func invoke_hidden_package_init() {
+	package_init();
+}
+
+func main() {
+	print(package_state);
+	let result = System.pcall(invoke_hidden_package_init, 0, 0);
+	print(result.ok);
+}

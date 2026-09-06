@@ -1,0 +1,855 @@
+require protobuf;
+require onnx_schema;
+
+let ONNX_MAX_GRAPH_NODES = 100000;
+let ONNX_MAX_INITIALIZERS = 100000;
+let ONNX_MAX_ATTRIBUTES = 256;
+let ONNX_MAX_RANK = 8;
+let ONNX_MAX_ELEMENTS = 2147483647;
+
+func onnxRequire(condition, cursor, message) {
+    if (!condition) {
+        pbFail(cursor, message);
+    }
+}
+
+func onnxRequireName(value, cursor, kind) {
+    if (value == "") {
+        pbFail(cursor, kind + " name must not be empty.");
+    }
+}
+
+func onnxReadRepeatedVarint(cursor, wire, target, signed, fieldName) {
+    if (wire == 0) {
+        if (signed) {
+            Array.push(target, pbReadSignedVarint(cursor));
+        } else {
+            Array.push(target, pbReadVarint(cursor));
+        }
+        return;
+    }
+    if (wire != 2) {
+        pbFail(cursor, fieldName + " must be varint or packed varint.");
+    }
+    var child = pbReadSlice(cursor, fieldName);
+    while (child.pos < child.limit) {
+        if (signed) {
+            Array.push(target, pbReadSignedVarint(child));
+        } else {
+            Array.push(target, pbReadVarint(child));
+        }
+    }
+    pbFinish(child, fieldName);
+}
+
+func onnxReadRepeatedFixed32(cursor, wire, target, fieldName) {
+    if (wire == 5) {
+        Array.push(target, pbReadFixed32(cursor, fieldName));
+        return;
+    }
+    if (wire != 2) {
+        pbFail(cursor, fieldName + " must be fixed32 or packed fixed32.");
+    }
+    var child = pbReadSlice(cursor, fieldName);
+    if ((child.limit - child.pos) % 4 != 0) {
+        pbFail(child, fieldName + " packed byte count is not divisible by four.");
+    }
+    while (child.pos < child.limit) {
+        Array.push(target, pbReadFixed32(child, fieldName));
+    }
+    pbFinish(child, fieldName);
+}
+
+func onnxReadRepeatedFixed64(cursor, wire, target, fieldName) {
+    if (wire == 1) {
+        Array.push(target, pbReadFixed64(cursor, fieldName));
+        return;
+    }
+    if (wire != 2) {
+        pbFail(cursor, fieldName + " must be fixed64 or packed fixed64.");
+    }
+    var child = pbReadSlice(cursor, fieldName);
+    if ((child.limit - child.pos) % 8 != 0) {
+        pbFail(child, fieldName + " packed byte count is not divisible by eight.");
+    }
+    while (child.pos < child.limit) {
+        Array.push(target, pbReadFixed64(child, fieldName));
+    }
+    pbFinish(child, fieldName);
+}
+
+func onnxSetTensorStorage(tensor, storage, cursor) {
+    if (tensor.storage == "") {
+        tensor.storage = storage;
+    } else if (tensor.storage != storage) {
+        pbFail(cursor, "TensorProto has competing data fields " +
+               tensor.storage + " and " + storage + ".");
+    }
+}
+
+func onnxReadDimension(cursor) {
+    pbCountObject(cursor, "Dimension");
+    var result = { hasValue: false, value: 0, hasParam: false, param: "" };
+    while (cursor.pos < cursor.limit) {
+        var key = pbReadKey(cursor);
+        if (key.field == ONNX_DIM_VALUE) {
+            pbExpectWire(cursor, key, 0, "Dimension.dim_value");
+            if (result.hasValue) { pbFail(cursor, "duplicate Dimension.dim_value."); }
+            result.value = pbReadSignedVarint(cursor);
+            result.hasValue = true;
+        } else if (key.field == ONNX_DIM_PARAM) {
+            pbExpectWire(cursor, key, 2, "Dimension.dim_param");
+            if (result.hasParam) { pbFail(cursor, "duplicate Dimension.dim_param."); }
+            result.param = pbReadString(cursor, "Dimension.dim_param");
+            result.hasParam = true;
+        } else {
+            pbSkipField(cursor, key.wire, "unknown Dimension field");
+        }
+    }
+    if (result.hasValue && result.hasParam) {
+        pbFail(cursor, "Dimension has both dim_value and dim_param.");
+    }
+    if (!result.hasValue && !result.hasParam) {
+        pbFail(cursor, "Dimension has neither dim_value nor dim_param.");
+    }
+    return result;
+}
+
+func onnxReadShape(cursor) {
+    pbCountObject(cursor, "TensorShapeProto");
+    var result = [];
+    while (cursor.pos < cursor.limit) {
+        var key = pbReadKey(cursor);
+        if (key.field == ONNX_SHAPE_DIM) {
+            pbExpectWire(cursor, key, 2, "TensorShapeProto.dim");
+            var child = pbReadChild(cursor, "TensorShapeProto.dim");
+            Array.push(result, onnxReadDimension(child));
+            pbFinish(child, "Dimension");
+            if (Array.size(result) > ONNX_MAX_RANK) {
+                pbFail(cursor, "tensor rank exceeds eight.");
+            }
+        } else {
+            pbSkipField(cursor, key.wire, "unknown TensorShapeProto field");
+        }
+    }
+    return result;
+}
+
+func onnxReadTensorType(cursor) {
+    pbCountObject(cursor, "TypeProto.Tensor");
+    var result = { hasElemType: false, elemType: 0, hasShape: false, shape: [] };
+    while (cursor.pos < cursor.limit) {
+        var key = pbReadKey(cursor);
+        if (key.field == ONNX_TENSOR_TYPE_ELEM_TYPE) {
+            pbExpectWire(cursor, key, 0, "TypeProto.Tensor.elem_type");
+            if (result.hasElemType) { pbFail(cursor, "duplicate tensor elem_type."); }
+            result.elemType = pbReadVarint(cursor);
+            result.hasElemType = true;
+        } else if (key.field == ONNX_TENSOR_TYPE_SHAPE) {
+            pbExpectWire(cursor, key, 2, "TypeProto.Tensor.shape");
+            if (result.hasShape) { pbFail(cursor, "duplicate tensor shape."); }
+            var child = pbReadChild(cursor, "TypeProto.Tensor.shape");
+            result.shape = onnxReadShape(child);
+            result.hasShape = true;
+            pbFinish(child, "TensorShapeProto");
+        } else {
+            pbSkipField(cursor, key.wire, "unknown tensor type field");
+        }
+    }
+    return result;
+}
+
+func onnxReadType(cursor) {
+    pbCountObject(cursor, "TypeProto");
+    var result = { hasTensor: false, tensor: 0, unsupported: false };
+    while (cursor.pos < cursor.limit) {
+        var key = pbReadKey(cursor);
+        if (key.field == ONNX_TYPE_TENSOR_TYPE) {
+            pbExpectWire(cursor, key, 2, "TypeProto.tensor_type");
+            if (result.hasTensor) { pbFail(cursor, "duplicate TypeProto.tensor_type."); }
+            var child = pbReadChild(cursor, "TypeProto.tensor_type");
+            result.tensor = onnxReadTensorType(child);
+            result.hasTensor = true;
+            pbFinish(child, "TypeProto.Tensor");
+        } else if (key.field == ONNX_TYPE_SEQUENCE_TYPE ||
+                   key.field == ONNX_TYPE_MAP_TYPE ||
+                   key.field == ONNX_TYPE_OPAQUE_TYPE ||
+                   key.field == ONNX_TYPE_SPARSE_TENSOR_TYPE ||
+                   key.field == ONNX_TYPE_OPTIONAL_TYPE) {
+            result.unsupported = true;
+            pbSkipField(cursor, key.wire, "unsupported TypeProto field");
+        } else {
+            // denotation and future metadata do not change the value kind.
+            pbSkipField(cursor, key.wire, "unknown TypeProto field");
+        }
+    }
+    return result;
+}
+
+func onnxReadValueInfo(cursor) {
+    pbCountObject(cursor, "ValueInfoProto");
+    var result = { name: "", hasName: false, type: 0, hasType: false };
+    while (cursor.pos < cursor.limit) {
+        var key = pbReadKey(cursor);
+        if (key.field == ONNX_VALUE_INFO_NAME) {
+            pbExpectWire(cursor, key, 2, "ValueInfoProto.name");
+            if (result.hasName) { pbFail(cursor, "duplicate ValueInfoProto.name."); }
+            result.name = pbReadString(cursor, "ValueInfoProto.name");
+            result.hasName = true;
+        } else if (key.field == ONNX_VALUE_INFO_TYPE) {
+            pbExpectWire(cursor, key, 2, "ValueInfoProto.type");
+            if (result.hasType) { pbFail(cursor, "duplicate ValueInfoProto.type."); }
+            var child = pbReadChild(cursor, "ValueInfoProto.type");
+            result.type = onnxReadType(child);
+            result.hasType = true;
+            pbFinish(child, "TypeProto");
+        } else {
+            pbSkipField(cursor, key.wire, "unknown ValueInfoProto field");
+        }
+    }
+    return result;
+}
+
+func onnxReadTensor(cursor) {
+    pbCountObject(cursor, "TensorProto");
+    var result = {
+        dims: [], dataType: 0, hasDataType: false, name: "", hasName: false,
+        storage: "", floatData: [], floatElementCount: 0,
+        int32Values: [], int64Values: [],
+        raw: 0, rawSeen: false, segment: false, external: false,
+        dataLocation: 0, hasDataLocation: false
+    };
+    while (cursor.pos < cursor.limit) {
+        var key = pbReadKey(cursor);
+        if (key.field == ONNX_TENSOR_DIMS) {
+            onnxReadRepeatedVarint(cursor, key.wire, result.dims, true,
+                                   "TensorProto.dims");
+            if (Array.size(result.dims) > ONNX_MAX_RANK) {
+                pbFail(cursor, "TensorProto rank exceeds eight.");
+            }
+        } else if (key.field == ONNX_TENSOR_DATA_TYPE) {
+            pbExpectWire(cursor, key, 0, "TensorProto.data_type");
+            if (result.hasDataType) { pbFail(cursor, "duplicate TensorProto.data_type."); }
+            result.dataType = pbReadVarint(cursor);
+            result.hasDataType = true;
+        } else if (key.field == ONNX_TENSOR_SEGMENT) {
+            result.segment = true;
+            pbSkipField(cursor, key.wire, "TensorProto.segment");
+        } else if (key.field == ONNX_TENSOR_FLOAT_DATA) {
+            onnxSetTensorStorage(result, "float_data", cursor);
+            if (key.wire == 5) {
+                pbNeed(cursor, 4, "TensorProto.float_data");
+                Array.push(result.floatData,
+                           { bytes: cursor.bytes, offset: cursor.pos,
+                             length: 4, elements: 1 });
+                cursor.pos = cursor.pos + 4;
+                result.floatElementCount = result.floatElementCount + 1;
+            } else if (key.wire == 2) {
+                var floatView = pbReadBytesView(cursor, "TensorProto.float_data");
+                if (floatView.length % 4 != 0) {
+                    pbFail(cursor, "TensorProto.float_data packed byte count is not divisible by four.");
+                }
+                floatView.elements = floatView.length / 4;
+                Array.push(result.floatData, floatView);
+                result.floatElementCount = result.floatElementCount +
+                                           floatView.elements;
+            } else {
+                pbFail(cursor, "TensorProto.float_data must be fixed32 or packed fixed32.");
+            }
+        } else if (key.field == ONNX_TENSOR_INT32_DATA) {
+            onnxSetTensorStorage(result, "int32_data", cursor);
+            onnxReadRepeatedVarint(cursor, key.wire, result.int32Values, true,
+                                   "TensorProto.int32_data");
+        } else if (key.field == ONNX_TENSOR_STRING_DATA) {
+            onnxSetTensorStorage(result, "string_data", cursor);
+            pbExpectWire(cursor, key, 2, "TensorProto.string_data");
+            var unusedString = pbReadBytesView(cursor, "TensorProto.string_data");
+        } else if (key.field == ONNX_TENSOR_INT64_DATA) {
+            onnxSetTensorStorage(result, "int64_data", cursor);
+            onnxReadRepeatedVarint(cursor, key.wire, result.int64Values, true,
+                                   "TensorProto.int64_data");
+        } else if (key.field == ONNX_TENSOR_NAME) {
+            pbExpectWire(cursor, key, 2, "TensorProto.name");
+            if (result.hasName) { pbFail(cursor, "duplicate TensorProto.name."); }
+            result.name = pbReadString(cursor, "TensorProto.name");
+            result.hasName = true;
+        } else if (key.field == ONNX_TENSOR_RAW_DATA) {
+            pbExpectWire(cursor, key, 2, "TensorProto.raw_data");
+            if (result.rawSeen) { pbFail(cursor, "duplicate TensorProto.raw_data."); }
+            onnxSetTensorStorage(result, "raw_data", cursor);
+            result.raw = pbReadBytesView(cursor, "TensorProto.raw_data");
+            result.rawSeen = true;
+        } else if (key.field == ONNX_TENSOR_DOUBLE_DATA) {
+            onnxSetTensorStorage(result, "double_data", cursor);
+            onnxReadRepeatedFixed64(cursor, key.wire, [], "TensorProto.double_data");
+        } else if (key.field == ONNX_TENSOR_UINT64_DATA) {
+            onnxSetTensorStorage(result, "uint64_data", cursor);
+            onnxReadRepeatedVarint(cursor, key.wire, [], false,
+                                   "TensorProto.uint64_data");
+        } else if (key.field == ONNX_TENSOR_EXTERNAL_DATA) {
+            result.external = true;
+            pbExpectWire(cursor, key, 2, "TensorProto.external_data");
+            var externalEntry = pbReadChild(cursor, "TensorProto.external_data");
+            externalEntry.pos = externalEntry.limit;
+        } else if (key.field == ONNX_TENSOR_DATA_LOCATION) {
+            pbExpectWire(cursor, key, 0, "TensorProto.data_location");
+            if (result.hasDataLocation) { pbFail(cursor, "duplicate data_location."); }
+            result.dataLocation = pbReadVarint(cursor);
+            result.hasDataLocation = true;
+        } else {
+            pbSkipField(cursor, key.wire, "unknown TensorProto field");
+        }
+    }
+    return result;
+}
+
+func onnxReadAttribute(cursor) {
+    pbCountObject(cursor, "AttributeProto");
+    var result = {
+        name: "", hasName: false, type: 0, hasType: false,
+        hasF: false, fBits: 0, hasI: false, i: 0, hasS: false, s: 0,
+        tensor: 0, hasTensor: false, floats: [], ints: [], strings: [],
+        tensors: [], hasGraph: false, unsupportedPayload: false
+    };
+    while (cursor.pos < cursor.limit) {
+        var key = pbReadKey(cursor);
+        if (key.field == ONNX_ATTRIBUTE_NAME) {
+            pbExpectWire(cursor, key, 2, "AttributeProto.name");
+            if (result.hasName) { pbFail(cursor, "duplicate AttributeProto.name."); }
+            result.name = pbReadString(cursor, "AttributeProto.name");
+            result.hasName = true;
+        } else if (key.field == ONNX_ATTRIBUTE_F) {
+            pbExpectWire(cursor, key, 5, "AttributeProto.f");
+            if (result.hasF) { pbFail(cursor, "duplicate AttributeProto.f."); }
+            result.fBits = pbReadFixed32(cursor, "AttributeProto.f");
+            result.hasF = true;
+        } else if (key.field == ONNX_ATTRIBUTE_I) {
+            pbExpectWire(cursor, key, 0, "AttributeProto.i");
+            if (result.hasI) { pbFail(cursor, "duplicate AttributeProto.i."); }
+            result.i = pbReadSignedVarint(cursor);
+            result.hasI = true;
+        } else if (key.field == ONNX_ATTRIBUTE_S) {
+            pbExpectWire(cursor, key, 2, "AttributeProto.s");
+            if (result.hasS) { pbFail(cursor, "duplicate AttributeProto.s."); }
+            result.s = pbReadBytesView(cursor, "AttributeProto.s");
+            if (result.s.length > PB_MAX_STRING_BYTES) {
+                pbFail(cursor, "AttributeProto.s exceeds 1 MiB.");
+            }
+            result.hasS = true;
+        } else if (key.field == ONNX_ATTRIBUTE_T) {
+            pbExpectWire(cursor, key, 2, "AttributeProto.t");
+            if (result.hasTensor) { pbFail(cursor, "duplicate AttributeProto.t."); }
+            var tensorChild = pbReadChild(cursor, "AttributeProto.t");
+            result.tensor = onnxReadTensor(tensorChild);
+            result.hasTensor = true;
+            pbFinish(tensorChild, "TensorProto");
+        } else if (key.field == ONNX_ATTRIBUTE_G ||
+                   key.field == ONNX_ATTRIBUTE_GRAPHS) {
+            result.hasGraph = true;
+            pbSkipField(cursor, key.wire, "AttributeProto graph field");
+        } else if (key.field == ONNX_ATTRIBUTE_FLOATS) {
+            onnxReadRepeatedFixed32(cursor, key.wire, result.floats,
+                                    "AttributeProto.floats");
+        } else if (key.field == ONNX_ATTRIBUTE_INTS) {
+            onnxReadRepeatedVarint(cursor, key.wire, result.ints, true,
+                                   "AttributeProto.ints");
+        } else if (key.field == ONNX_ATTRIBUTE_STRINGS) {
+            pbExpectWire(cursor, key, 2, "AttributeProto.strings");
+            var stringView = pbReadBytesView(cursor, "AttributeProto.strings");
+            if (stringView.length > PB_MAX_STRING_BYTES) {
+                pbFail(cursor, "AttributeProto.strings item exceeds 1 MiB.");
+            }
+            Array.push(result.strings, stringView);
+        } else if (key.field == ONNX_ATTRIBUTE_TENSORS) {
+            pbExpectWire(cursor, key, 2, "AttributeProto.tensors");
+            var tensorsChild = pbReadChild(cursor, "AttributeProto.tensors");
+            Array.push(result.tensors, onnxReadTensor(tensorsChild));
+            pbFinish(tensorsChild, "TensorProto");
+        } else if (key.field == ONNX_ATTRIBUTE_TYPE) {
+            pbExpectWire(cursor, key, 0, "AttributeProto.type");
+            if (result.hasType) { pbFail(cursor, "duplicate AttributeProto.type."); }
+            result.type = pbReadVarint(cursor);
+            result.hasType = true;
+        } else if (key.field == ONNX_ATTRIBUTE_REF_ATTR_NAME ||
+                   key.field == ONNX_ATTRIBUTE_SPARSE_TENSOR ||
+                   key.field == ONNX_ATTRIBUTE_SPARSE_TENSORS ||
+                   key.field == ONNX_ATTRIBUTE_TP ||
+                   key.field == ONNX_ATTRIBUTE_TYPE_PROTOS) {
+            result.unsupportedPayload = true;
+            pbSkipField(cursor, key.wire, "unsupported AttributeProto field");
+        } else {
+            pbSkipField(cursor, key.wire, "unknown AttributeProto field");
+        }
+    }
+    return result;
+}
+
+func onnxReadNode(cursor) {
+    pbCountObject(cursor, "NodeProto");
+    var result = {
+        inputs: [], outputs: [], name: "", hasName: false,
+        opType: "", hasOpType: false, domain: "", hasDomain: false,
+        attributes: []
+    };
+    while (cursor.pos < cursor.limit) {
+        var key = pbReadKey(cursor);
+        if (key.field == ONNX_NODE_INPUT) {
+            pbExpectWire(cursor, key, 2, "NodeProto.input");
+            Array.push(result.inputs, pbReadString(cursor, "NodeProto.input"));
+        } else if (key.field == ONNX_NODE_OUTPUT) {
+            pbExpectWire(cursor, key, 2, "NodeProto.output");
+            Array.push(result.outputs, pbReadString(cursor, "NodeProto.output"));
+        } else if (key.field == ONNX_NODE_NAME) {
+            pbExpectWire(cursor, key, 2, "NodeProto.name");
+            if (result.hasName) { pbFail(cursor, "duplicate NodeProto.name."); }
+            result.name = pbReadString(cursor, "NodeProto.name");
+            result.hasName = true;
+        } else if (key.field == ONNX_NODE_OP_TYPE) {
+            pbExpectWire(cursor, key, 2, "NodeProto.op_type");
+            if (result.hasOpType) { pbFail(cursor, "duplicate NodeProto.op_type."); }
+            result.opType = pbReadString(cursor, "NodeProto.op_type");
+            result.hasOpType = true;
+        } else if (key.field == ONNX_NODE_ATTRIBUTE) {
+            pbExpectWire(cursor, key, 2, "NodeProto.attribute");
+            var child = pbReadChild(cursor, "NodeProto.attribute");
+            Array.push(result.attributes, onnxReadAttribute(child));
+            pbFinish(child, "AttributeProto");
+            if (Array.size(result.attributes) > ONNX_MAX_ATTRIBUTES) {
+                pbFail(cursor, "node has more than 256 attributes.");
+            }
+        } else if (key.field == ONNX_NODE_DOMAIN) {
+            pbExpectWire(cursor, key, 2, "NodeProto.domain");
+            if (result.hasDomain) { pbFail(cursor, "duplicate NodeProto.domain."); }
+            result.domain = pbReadString(cursor, "NodeProto.domain");
+            result.hasDomain = true;
+        } else {
+            pbSkipField(cursor, key.wire, "unknown NodeProto field");
+        }
+    }
+    return result;
+}
+
+func onnxReadOpset(cursor) {
+    pbCountObject(cursor, "OperatorSetIdProto");
+    var result = { domain: "", hasDomain: false, version: 0, hasVersion: false };
+    while (cursor.pos < cursor.limit) {
+        var key = pbReadKey(cursor);
+        if (key.field == ONNX_OPSET_DOMAIN) {
+            pbExpectWire(cursor, key, 2, "OperatorSetIdProto.domain");
+            if (result.hasDomain) { pbFail(cursor, "duplicate opset domain."); }
+            result.domain = pbReadString(cursor, "OperatorSetIdProto.domain");
+            result.hasDomain = true;
+        } else if (key.field == ONNX_OPSET_VERSION) {
+            pbExpectWire(cursor, key, 0, "OperatorSetIdProto.version");
+            if (result.hasVersion) { pbFail(cursor, "duplicate opset version."); }
+            result.version = pbReadSignedVarint(cursor);
+            result.hasVersion = true;
+        } else {
+            pbSkipField(cursor, key.wire, "unknown OperatorSetIdProto field");
+        }
+    }
+    return result;
+}
+
+func onnxReadGraph(cursor) {
+    pbCountObject(cursor, "GraphProto");
+    var result = {
+        nodes: [], initializers: [], inputs: [], outputs: [], valueInfo: [],
+        sparseInitializer: false
+    };
+    while (cursor.pos < cursor.limit) {
+        var key = pbReadKey(cursor);
+        if (key.field == ONNX_GRAPH_NODE) {
+            pbExpectWire(cursor, key, 2, "GraphProto.node");
+            var nodeChild = pbReadChild(cursor, "GraphProto.node");
+            Array.push(result.nodes, onnxReadNode(nodeChild));
+            pbFinish(nodeChild, "NodeProto");
+            if (Array.size(result.nodes) > ONNX_MAX_GRAPH_NODES) {
+                pbFail(cursor, "graph node limit exceeded.");
+            }
+        } else if (key.field == ONNX_GRAPH_INITIALIZER) {
+            pbExpectWire(cursor, key, 2, "GraphProto.initializer");
+            var tensorChild = pbReadChild(cursor, "GraphProto.initializer");
+            Array.push(result.initializers, onnxReadTensor(tensorChild));
+            pbFinish(tensorChild, "TensorProto");
+            if (Array.size(result.initializers) > ONNX_MAX_INITIALIZERS) {
+                pbFail(cursor, "initializer limit exceeded.");
+            }
+        } else if (key.field == ONNX_GRAPH_INPUT ||
+                   key.field == ONNX_GRAPH_OUTPUT ||
+                   key.field == ONNX_GRAPH_VALUE_INFO) {
+            pbExpectWire(cursor, key, 2, "GraphProto value info");
+            var valueChild = pbReadChild(cursor, "GraphProto value info");
+            var value = onnxReadValueInfo(valueChild);
+            pbFinish(valueChild, "ValueInfoProto");
+            if (key.field == ONNX_GRAPH_INPUT) {
+                Array.push(result.inputs, value);
+            } else if (key.field == ONNX_GRAPH_OUTPUT) {
+                Array.push(result.outputs, value);
+            } else {
+                Array.push(result.valueInfo, value);
+            }
+        } else if (key.field == ONNX_GRAPH_SPARSE_INITIALIZER) {
+            result.sparseInitializer = true;
+            pbSkipField(cursor, key.wire, "GraphProto.sparse_initializer");
+        } else {
+            pbSkipField(cursor, key.wire, "unknown GraphProto field");
+        }
+    }
+    return result;
+}
+
+func onnxReadModelBytes(bytes) {
+    var cursor = pbNewRoot(bytes);
+    pbCountObject(cursor, "ModelProto");
+    var result = {
+        irVersion: 0, hasIrVersion: false, graph: 0, graphCount: 0,
+        opsets: [], trainingInfo: false, functions: false,
+        byteSize: Packed.size(bytes), sourceBytes: bytes
+    };
+    while (cursor.pos < cursor.limit) {
+        var key = pbReadKey(cursor);
+        if (key.field == ONNX_MODEL_IR_VERSION) {
+            pbExpectWire(cursor, key, 0, "ModelProto.ir_version");
+            if (result.hasIrVersion) { pbFail(cursor, "duplicate ModelProto.ir_version."); }
+            result.irVersion = pbReadSignedVarint(cursor);
+            result.hasIrVersion = true;
+        } else if (key.field == ONNX_MODEL_GRAPH) {
+            pbExpectWire(cursor, key, 2, "ModelProto.graph");
+            result.graphCount = result.graphCount + 1;
+            if (result.graphCount > 1) { pbFail(cursor, "ModelProto has multiple graphs."); }
+            var graphChild = pbReadChild(cursor, "ModelProto.graph");
+            result.graph = onnxReadGraph(graphChild);
+            pbFinish(graphChild, "GraphProto");
+        } else if (key.field == ONNX_MODEL_OPSET_IMPORT) {
+            pbExpectWire(cursor, key, 2, "ModelProto.opset_import");
+            var opsetChild = pbReadChild(cursor, "ModelProto.opset_import");
+            Array.push(result.opsets, onnxReadOpset(opsetChild));
+            pbFinish(opsetChild, "OperatorSetIdProto");
+        } else if (key.field == ONNX_MODEL_TRAINING_INFO) {
+            result.trainingInfo = true;
+            pbSkipField(cursor, key.wire, "ModelProto.training_info");
+        } else if (key.field == ONNX_MODEL_FUNCTIONS) {
+            result.functions = true;
+            pbSkipField(cursor, key.wire, "ModelProto.functions");
+        } else {
+            pbSkipField(cursor, key.wire, "unknown ModelProto field");
+        }
+    }
+    pbFinish(cursor, "ModelProto");
+    return onnxValidateModel(result, cursor);
+}
+
+func onnxReadFile(path) {
+    var size = FileUtil.getFileSize(path);
+    if (size <= 0) {
+        System.error("ONNX: file is empty or has invalid size: " + path);
+    }
+    if (size > PB_MAX_FILE_BYTES) {
+        System.error("ONNX: file exceeds the 512 MiB limit: " + path);
+    }
+    var file = File.open(path, "rb");
+    var bytes = File.readExact(file, size);
+    File.close(file);
+    return onnxReadModelBytes(bytes);
+}
+
+func onnxCheckedShape(shape, cursor, context) {
+    if (Array.size(shape) < 1 || Array.size(shape) > ONNX_MAX_RANK) {
+        pbFail(cursor, context + " rank must be from one through eight.");
+    }
+    var dims = [];
+    var product = 1L;
+    for (i in 0..Array.size(shape)) {
+        var dim = shape[i];
+        if (dim.hasParam) {
+            pbFail(cursor, context + " has symbolic dimension '" + dim.param + "'.");
+        }
+        if (!dim.hasValue || dim.value <= 0) {
+            pbFail(cursor, context + " has a dynamic or nonpositive dimension.");
+        }
+        if (product > ONNX_MAX_ELEMENTS / dim.value) {
+            pbFail(cursor, context + " element count exceeds INT_MAX.");
+        }
+        product = product * dim.value;
+        Array.push(dims, dim.value);
+    }
+    return { dims: dims, elements: product };
+}
+
+func onnxValidateValueInfo(value, cursor, context, requireFloat) {
+    if (!value.hasName) { pbFail(cursor, context + " is missing name."); }
+    onnxRequireName(value.name, cursor, context);
+    if (!value.hasType || value.type.unsupported || !value.type.hasTensor) {
+        pbFail(cursor, context + " must have tensor_type.");
+    }
+    var tensorType = value.type.tensor;
+    if (!tensorType.hasElemType || !tensorType.hasShape) {
+        pbFail(cursor, context + " must declare element type and shape.");
+    }
+    if (requireFloat && tensorType.elemType != ONNX_DATA_FLOAT) {
+        pbFail(cursor, context + " must be float32.");
+    }
+    if (!requireFloat && tensorType.elemType != ONNX_DATA_FLOAT) {
+        pbFail(cursor, context + " declares a runtime non-float tensor.");
+    }
+    var checked = onnxCheckedShape(tensorType.shape, cursor, context);
+    return { name: value.name, elemType: tensorType.elemType,
+             shape: checked.dims, elements: checked.elements };
+}
+
+func onnxValidateTensor(tensor, cursor, context, requireName) {
+    if (requireName) {
+        if (!tensor.hasName) { pbFail(cursor, context + " is missing name."); }
+        onnxRequireName(tensor.name, cursor, context);
+    }
+    if (!tensor.hasDataType) { pbFail(cursor, context + " is missing data_type."); }
+    if (tensor.segment) { pbFail(cursor, context + " uses unsupported segments."); }
+    if (tensor.external || (tensor.hasDataLocation && tensor.dataLocation != 0)) {
+        pbFail(cursor, context + " uses unsupported external data.");
+    }
+    var shape = [];
+    for (i in 0..Array.size(tensor.dims)) {
+        Array.push(shape, { hasValue: true, value: tensor.dims[i],
+                            hasParam: false, param: "" });
+    }
+    var checked = onnxCheckedShape(shape, cursor, context);
+    var expectedBytes = 0L;
+    if (tensor.dataType == ONNX_DATA_FLOAT || tensor.dataType == ONNX_DATA_INT32) {
+        expectedBytes = checked.elements * 4;
+    } else if (tensor.dataType == ONNX_DATA_INT64) {
+        expectedBytes = checked.elements * 8;
+    } else {
+        pbFail(cursor, context + " has unsupported data type " + tensor.dataType + ".");
+    }
+    if (tensor.storage == "raw_data") {
+        if (tensor.raw.length != expectedBytes) {
+            pbFail(cursor, context + " raw_data byte count mismatch.");
+        }
+        if (tensor.dataType == ONNX_DATA_INT32) {
+            for (i in 0..checked.elements) {
+                var bits = Binary.readU32LE(tensor.raw.bytes,
+                                             tensor.raw.offset + i * 4);
+                if (bits >= 2147483648L) { bits = bits - 4294967296L; }
+                Array.push(tensor.int32Values, bits);
+            }
+        } else if (tensor.dataType == ONNX_DATA_INT64) {
+            for (i in 0..checked.elements) {
+                Array.push(tensor.int64Values,
+                           Binary.readI64LE(tensor.raw.bytes,
+                                            tensor.raw.offset + i * 8));
+            }
+        }
+    } else if (tensor.dataType == ONNX_DATA_FLOAT &&
+               tensor.storage == "float_data") {
+        if (tensor.floatElementCount != checked.elements) {
+            pbFail(cursor, context + " float_data element count mismatch.");
+        }
+    } else if (tensor.dataType == ONNX_DATA_INT32 &&
+               tensor.storage == "int32_data") {
+        if (Array.size(tensor.int32Values) != checked.elements) {
+            pbFail(cursor, context + " int32_data element count mismatch.");
+        }
+        for (i in 0..Array.size(tensor.int32Values)) {
+            var value = tensor.int32Values[i];
+            if (value < (0L - 2147483647L - 1L) || value > 2147483647L) {
+                pbFail(cursor, context + " int32_data value is out of range.");
+            }
+        }
+    } else if (tensor.dataType == ONNX_DATA_INT64 &&
+               tensor.storage == "int64_data") {
+        if (Array.size(tensor.int64Values) != checked.elements) {
+            pbFail(cursor, context + " int64_data element count mismatch.");
+        }
+    } else {
+        pbFail(cursor, context + " data field does not match its data type.");
+    }
+    tensor.elements = checked.elements;
+    return tensor;
+}
+
+// Return the exact IEEE-754 bits without materializing a large float_data
+// initializer as millions of boxed Noct values.
+func onnxTensorFloatBits(tensor, index) {
+    if (index < 0 || index >= tensor.elements ||
+        tensor.dataType != ONNX_DATA_FLOAT) {
+        System.error("ONNX: float initializer index is out of range.");
+    }
+    if (tensor.storage == "raw_data") {
+        return Binary.readU32LE(tensor.raw.bytes, tensor.raw.offset + index * 4);
+    }
+    if (tensor.storage == "float_data") {
+        var remaining = index;
+        for (i in 0..Array.size(tensor.floatData)) {
+            var chunk = tensor.floatData[i];
+            if (remaining < chunk.elements) {
+                return Binary.readU32LE(chunk.bytes,
+                                        chunk.offset + remaining * 4);
+            }
+            remaining = remaining - chunk.elements;
+        }
+    }
+    System.error("ONNX: float initializer has no readable data field.");
+}
+
+func onnxValidateModel(model, cursor) {
+    if (!model.hasIrVersion || model.irVersion <= 0) {
+        pbFail(cursor, "ModelProto requires a positive ir_version.");
+    }
+    if (model.graphCount != 1) {
+        pbFail(cursor, "ModelProto requires exactly one graph.");
+    }
+    if (model.trainingInfo) { pbFail(cursor, "training_info is unsupported."); }
+    if (model.functions) { pbFail(cursor, "FunctionProto is unsupported."); }
+    if (model.graph.sparseInitializer) {
+        pbFail(cursor, "sparse_initializer is unsupported.");
+    }
+
+    var defaultOpset = 0;
+    for (i in 0..Array.size(model.opsets)) {
+        var opset = model.opsets[i];
+        if (!opset.hasVersion || opset.version <= 0) {
+            pbFail(cursor, "opset import requires a positive version.");
+        }
+        if (opset.domain != "" && opset.domain != "ai.onnx") {
+            pbFail(cursor, "custom opset domain '" + opset.domain + "' is unsupported.");
+        }
+        if (defaultOpset != 0) {
+            pbFail(cursor, "duplicate default-domain opset import.");
+        }
+        defaultOpset = opset.version;
+    }
+    if (defaultOpset != 7 && defaultOpset != 8 && defaultOpset != 12) {
+        pbFail(cursor, "default-domain opset must be exactly 7, 8, or 12.");
+    }
+    model.defaultOpset = defaultOpset;
+
+    var initializerNames = {};
+    for (i in 0..Array.size(model.graph.initializers)) {
+        var tensor = model.graph.initializers[i];
+        onnxValidateTensor(tensor, cursor, "initializer[" + i + "]", true);
+        if (Dict.hasKey(initializerNames, tensor.name)) {
+            pbFail(cursor, "duplicate initializer name '" + tensor.name + "'.");
+        }
+        initializerNames[tensor.name] = true;
+    }
+
+    var inputNames = {};
+    var available = {};
+    var realInputs = [];
+    for (i in 0..Array.size(model.graph.inputs)) {
+        var input = model.graph.inputs[i];
+        if (!input.hasName) { pbFail(cursor, "graph input is missing name."); }
+        onnxRequireName(input.name, cursor, "graph input");
+        if (Dict.hasKey(inputNames, input.name)) {
+            pbFail(cursor, "duplicate graph input name '" + input.name + "'.");
+        }
+        inputNames[input.name] = true;
+        if (!Dict.hasKey(initializerNames, input.name)) {
+            Array.push(realInputs,
+                       onnxValidateValueInfo(input, cursor, "graph input", true));
+            available[input.name] = true;
+        }
+    }
+    if (Array.size(realInputs) != 1) {
+        pbFail(cursor, "graph requires exactly one non-initializer input.");
+    }
+    if (realInputs[0].shape[0] != 1) {
+        pbFail(cursor, "graph input batch dimension must be one.");
+    }
+    for (i in 0..Array.size(model.graph.initializers)) {
+        available[model.graph.initializers[i].name] = true;
+    }
+
+    for (i in 0..Array.size(model.graph.nodes)) {
+        var node = model.graph.nodes[i];
+        if (!node.hasOpType || node.opType == "") {
+            pbFail(cursor, "node[" + i + "] requires a nonempty op_type.");
+        }
+        if (node.domain != "" && node.domain != "ai.onnx") {
+            pbFail(cursor, "node[" + i + "] uses custom domain '" +
+                   node.domain + "'.");
+        }
+        var attributeNames = {};
+        for (j in 0..Array.size(node.attributes)) {
+            var attribute = node.attributes[j];
+            if (!attribute.hasName || attribute.name == "") {
+                pbFail(cursor, "node[" + i + "] has an unnamed attribute.");
+            }
+            if (Dict.hasKey(attributeNames, attribute.name)) {
+                pbFail(cursor, "node[" + i + "] has duplicate attribute '" +
+                       attribute.name + "'.");
+            }
+            attributeNames[attribute.name] = true;
+            if (attribute.hasGraph) {
+                pbFail(cursor, "node[" + i + "] contains unsupported control-flow graph data.");
+            }
+            if (attribute.hasTensor) {
+                onnxValidateTensor(attribute.tensor, cursor,
+                                   "node[" + i + "] tensor attribute", false);
+            }
+            for (k in 0..Array.size(attribute.tensors)) {
+                onnxValidateTensor(attribute.tensors[k], cursor,
+                                   "node[" + i + "] tensor-list attribute", false);
+            }
+        }
+        for (j in 0..Array.size(node.inputs)) {
+            var name = node.inputs[j];
+            if (name != "" && !Dict.hasKey(available, name)) {
+                pbFail(cursor, "node[" + i + "] input '" + name +
+                       "' is missing or not produced earlier.");
+            }
+        }
+        if (Array.size(node.outputs) == 0) {
+            pbFail(cursor, "node[" + i + "] has no outputs.");
+        }
+        for (j in 0..Array.size(node.outputs)) {
+            var name = node.outputs[j];
+            if (name != "") {
+                onnxRequireName(name, cursor, "node output");
+                if (Dict.hasKey(available, name)) {
+                    pbFail(cursor, "duplicate value or node output name '" + name + "'.");
+                }
+                available[name] = true;
+            }
+        }
+    }
+
+    var internalInfoNames = {};
+    for (i in 0..Array.size(model.graph.valueInfo)) {
+        var info = model.graph.valueInfo[i];
+        var checkedInfo = onnxValidateValueInfo(info, cursor, "value_info", false);
+        if (Dict.hasKey(internalInfoNames, checkedInfo.name)) {
+            pbFail(cursor, "duplicate value_info name '" + checkedInfo.name + "'.");
+        }
+        if (!Dict.hasKey(available, checkedInfo.name)) {
+            pbFail(cursor, "value_info names an undefined value '" +
+                   checkedInfo.name + "'.");
+        }
+        internalInfoNames[checkedInfo.name] = true;
+    }
+
+    if (Array.size(model.graph.outputs) != 1) {
+        pbFail(cursor, "graph requires exactly one output.");
+    }
+    var output = onnxValidateValueInfo(model.graph.outputs[0], cursor,
+                                       "graph output", true);
+    if (!Dict.hasKey(available, output.name)) {
+        pbFail(cursor, "graph output '" + output.name + "' is undefined.");
+    }
+    if (output.shape[0] != 1) {
+        pbFail(cursor, "graph output batch dimension must be one.");
+    }
+    model.input = realInputs[0];
+    model.output = output;
+    return model;
+}
+
+func onnxStructuralSummary(model) {
+    return "ir=" + model.irVersion +
+           " opset=" + model.defaultOpset +
+           " nodes=" + Array.size(model.graph.nodes) +
+           " initializers=" + Array.size(model.graph.initializers) +
+           " input=" + model.input.name +
+           " output=" + model.output.name;
+}

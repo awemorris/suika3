@@ -1,0 +1,1 @@
+scoping/let_reassign.noct:3: Error: Cannot assign to 'let' variable 'a'.

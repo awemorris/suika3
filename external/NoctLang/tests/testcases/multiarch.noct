@@ -1,0 +1,169 @@
+//
+// Unit Test for JIT Porting
+//
+
+func main() {
+    // Define an architecture list.
+    var arch_list = [
+        {name: "i386",    toolchain: "qemu-i386-toolchain.cmake",    qemu: "qemu-i386-static",     cc: "i686-linux-gnu-gcc"},
+        {name: "x86_64",  toolchain: "qemu-x86_64-toolchain.cmake",  qemu: "qemu-x86_64-static",   cc: "x86_64-linux-gnu-gcc"},
+        {name: "arm32",   toolchain: "qemu-arm32-toolchain.cmake",   qemu: "qemu-armhf-static",    cc: "arm-linux-gnueabihf-gcc"},
+        {name: "arm64",   toolchain: "qemu-arm64-toolchain.cmake",   qemu: "qemu-aarch64-static",  cc: "aarch64-linux-gnu-gcc"},
+        {name: "riscv32", toolchain: "qemu-riscv32-toolchain.cmake", qemu: "qemu-riscv32-static",  cc: "riscv32-unknown-linux-gnu-gcc"},
+        {name: "riscv64", toolchain: "qemu-riscv64-toolchain.cmake", qemu: "qemu-riscv64-static",  cc: "riscv64-linux-gnu-gcc"},
+        {name: "ppc32",   toolchain: "qemu-ppc32-toolchain.cmake",   qemu: "qemu-ppc-static",      cc: "powerpc-linux-gnu-gcc"},
+        {name: "ppc64",   toolchain: "qemu-ppc64-toolchain.cmake",   qemu: "qemu-ppc64el-static",  cc: "powerpc64le-linux-gnu-gcc"},
+        {name: "mips32",  toolchain: "qemu-mips32-toolchain.cmake",  qemu: "qemu-mips-static",     cc: "mips-linux-gnu-gcc"},
+        {name: "mips64",  toolchain: "qemu-mips64-toolchain.cmake",  qemu: "qemu-mips64-static",   cc: "mips64-linux-gnuabi64-gcc"}
+    ];
+
+    // Run arch tests.
+    var success = 1;
+    for (arch in arch_list) {
+        if (arch_test(arch.name, arch.toolchain, arch.qemu, arch.cc) == 0) {
+            success = 0;
+        }
+    }
+
+    if (success) {
+        print("All available multi-architecture tests passed.");
+        return 0;
+    }
+    return 1;
+}
+
+func arch_test(name, toolchain, qemu, cc) {
+    // Print a header.
+    print("[" + name + "]");
+
+    // A cross libc/toolchain is not distributed for every QEMU target on
+    // every host.  Missing targets are reported explicitly rather than
+    // turning the available-architecture regression suite red.
+    if (System.shell("command -v " + cc + " >/dev/null 2>&1") != 0) {
+        print("Skipped (compiler not found: " + cc + ").");
+        return 1;
+    }
+
+    // Build a binary for a specified architecture.
+    if (System.shell("cd ../.. && " +
+                     "cmake -B build-" + name + " . -DCMAKE_TOOLCHAIN_FILE=cmake/toolchains/" + toolchain + " -DNOCT_ENABLE_CLI=ON -DNOCT_ENABLE_JIT=ON -DNOCT_ENABLE_API=ON -DNOCT_ENABLE_API_SYSTEM=ON -DNOCT_ENABLE_API_CONSOLE=ON -DNOCT_ENABLE_API_FILE=ON && " +
+                     "cmake --build build-" + name + " --parallel") != 0) {
+        print("Build failed.");
+        return 0;
+    }
+
+    // Copy a binary.
+    if (System.shell("cp ../../build-" + name + "/noct ./noct-arch") != 0) {
+        print("Copy failed.");
+        return 0;
+    }
+
+    // Testcase list.
+    testcase = [
+        "syntax/01-assign.noct",
+        "syntax/02-call.noct",
+        "syntax/03-string.noct",
+        "syntax/04-array.noct",
+        "syntax/05-dictionary.noct",
+        "syntax/06-for.noct",
+        "syntax/07-lambda.noct",
+        "syntax/08-double-loop.noct",
+        "syntax/09-call-in-loop.noct",
+        "syntax/10-if-elif-else.noct",
+        "syntax/11-if-cond.noct",
+        "syntax/12-elif-chain.noct",
+        "syntax/13-call-args.noct",
+        "syntax/14-ret-val.noct",
+        "syntax/15-while.noct",
+        "syntax/16-unary.noct",
+        "syntax/17-return.noct",
+        "syntax/18-break.noct",
+        "syntax/19-continue.noct",
+        "syntax/20-return-dict.noct",
+        "syntax/21-global-dict-key.noct",
+        "syntax/22-large-dict.noct",
+        "syntax/23-array-resize.noct",
+        "syntax/24-intrin.noct",
+        "syntax/25-new.noct",
+        "syntax/26-empty-class.noct",
+        "syntax/27-plusminusassign.noct",
+        "syntax/28-plusplusminusminus.noct",
+        "syntax/29-charat.noct",
+        "syntax/30-hex.noct",
+        "syntax/31-logical.noct",
+        "syntax/32-charat.noct",
+        "syntax/33-abs.noct",
+        "syntax/34-substring.noct",
+        "syntax/35-forv.noct",
+        "syntax/36-dict-gc.noct",
+        "syntax/37-if-if-else.noct",
+        "syntax/38-packed.noct"
+    ];
+
+    // Run tests without JIT.
+    print("Interpreter...");
+    for(file in testcase) {
+        if (!run_testcase(qemu, "-j0", file)) {
+            return 0;
+	}
+    }
+
+    // Run tests with JIT.
+    print("JIT...");
+    for(file in testcase) {
+        if (!run_testcase(qemu, "-j", file)) {
+	    return 0;
+	}
+    }
+
+    // These optimized bytecode images were produced by the host compiler.
+    // Cross binaries do not link the optimizer, so successful execution also
+    // proves that vector metadata/opcodes survive bytecode persistence.  Copy
+    // covers OP_INC(step=4)/OP_SUBJNZ; add covers signed VMINS32X4/VMAXS32X4.
+    if (!run_testcase(qemu, "-j",
+                      "simd/drawimage/blend-copy.nb")) {
+        return 0;
+    }
+    if (!run_testcase(qemu, "-j",
+                      "simd/drawimage/blend-add.nb")) {
+        return 0;
+    }
+
+    // Width-1 Packed-loop metadata is also persisted.  Backends without a
+    // native register-cache tier must consume the hint as a semantic no-op.
+    if (!run_testcase(qemu, "-j", "packed-loop/regcache.nb")) {
+        return 0;
+    }
+
+    // Persisted factor-4 scalar Packed bytecode must execute everywhere.
+    // Only x86_64/ARM64 may consume its PBASE displacement metadata; other
+    // JITs and interpreters use the expanded portable instructions.
+    if (!run_testcase(qemu, "-j", "packed-loop/unroll-width16.nb")) {
+        return 0;
+    }
+
+    return 1;
+}
+
+func run_testcase(qemu, option, file) {
+    print("Running " + file + " ... ");
+
+    // Run a testcase.
+    if (System.shell(qemu + " ./noct-arch " + option + " " + file + " > out") != 0) {
+        print("Run failed.");
+        return 0;
+    }
+
+    // Compare the result and the correct answer.
+    if (System.shell("diff " + file + ".out out") != 0) {
+        print("Diff.");
+        return 0;
+    }
+	
+    // Remove a temporary file.
+    if (System.shell("rm -f out") != 0) {
+        return 0;
+    }
+
+    return 1;
+}

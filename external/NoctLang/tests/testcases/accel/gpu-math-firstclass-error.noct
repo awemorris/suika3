@@ -1,0 +1,6 @@
+__gpu func invalid(x: float): void {
+    let operation: float = Accel.sigmoid;
+}
+
+func main() {
+}

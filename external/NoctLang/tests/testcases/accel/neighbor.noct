@@ -1,0 +1,27 @@
+__accel func shift_right(
+    input: rpackeduint32_in,
+    output: rpackeduint32_out,
+    count: int
+): void {
+    for (i in 0..count) {
+        if (i > 0) {
+            output[i] = input[i - 1];
+        } else {
+            output[i] = input[i];
+        }
+    }
+}
+
+func main() {
+    let input = Packed.uint32(4);
+    let output = Packed.uint32(4);
+    input[0] = 3;
+    input[1] = 6;
+    input[2] = 9;
+    input[3] = 12;
+    Accel.call(shift_right, input, output, 4);
+    print(output[0]);
+    print(output[1]);
+    print(output[2]);
+    print(output[3]);
+}

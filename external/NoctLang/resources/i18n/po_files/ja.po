@@ -1,0 +1,2987 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "  --gc-graduate-size=N ... second GC space size in bytes\n"
+msgstr "  --gc-graduate-size=N ... 第 2 GC 領域のサイズ（バイト単位）\n"
+
+msgid "  --gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n"
+msgstr "  --gc-lop-threshold=N ... N バイトを超えるオブジェクトを最終 GC 領域へ移動\n"
+
+msgid "  --gc-nursery-size=N  ... first GC space size in bytes\n"
+msgstr "  --gc-nursery-size=N  ... 第 1 GC 領域のサイズ（バイト単位）\n"
+
+msgid "  --gc-tenure-size=N   ... final GC space size in bytes\n"
+msgstr "  --gc-tenure-size=N   ... 最終 GC 領域のサイズ（バイト単位）\n"
+
+msgid "  --gpu-list           ... list suitable GPU device selectors\n"
+msgstr "  --gpu-list           ... 適切なGPUデバイスセレクターを一覧表示\n"
+
+msgid "  --gpu[=SELECTOR]     ... use GPU acceleration for source execution\n"
+msgstr "  --gpu[=SELECTOR]     ... ソースコードの実行にGPUアクセラレーションを使用\n"
+
+msgid "  --path=DIR1:DIR2     ... append source-module search paths\n"
+msgstr "  --path=DIR1:DIR2     ... ソースモジュールの検索パスを追加\n"
+
+msgid "  --simd-info          ... report successfully vectorized loops\n"
+msgstr "  --simd-info          ... 正常にベクトル化されたループを報告\n"
+
+msgid "  -O, -O0..-O3, -O9    ... optimization preset\n"
+msgstr "  -O, -O0..-O3, -O9    ... 最適化プリセット\n"
+
+msgid "  -j, -j0              ... eager JIT (default), or interpreter only\n"
+msgstr "  -j, -j0              ... 先行JITコンパイル（デフォルト）、またはインタプリタのみ\n"
+
+msgid "  noct --ansic <out-file> <in-files>  ... convert to a C source file\n"
+msgstr "  noct --ansic <出力> <入力...>       ... C ソースに変換します\n"
+
+msgid "  noct --compile <in-files>           ... convert to bytecode files\n"
+msgstr "  noct --compile <入力...>            ... バイトコードに変換します\n"
+
+msgid "  noct --elisp <out-file> <in-files>  ... convert to an Emacs Lisp source file\n"
+msgstr "  noct --elisp <出力> <入力...>       ... Emacs Lisp ソースに変換します\n"
+
+msgid "  noct --scheme <out-file> <in-files> ... convert to an Scheme source file\n"
+msgstr "  noct --scheme <出力> <入力...>      ... Scheme ソースに変換します\n"
+
+msgid "  noct <vm-options> <files>           ... run a program\n"
+msgstr "  noct <vm-options> <入力...>         ... プログラムを実行します\n"
+
+msgid "%s"
+msgstr "%s"
+
+msgid "%s\n"
+msgstr "%s\n"
+
+msgid "%s accelerator %s."
+msgstr "%sアクセラレータ%s。"
+
+msgid "%s accelerator %s: %s"
+msgstr "%sアクセラレータ%s: %s"
+
+msgid "%s accelerator context is detached."
+msgstr "%sアクセラレータのコンテキストが切り離されています。"
+
+msgid "%s accelerator program changed during begin."
+msgstr "開始処理中に%sアクセラレータのプログラムが変更されました。"
+
+msgid "%s accelerator program is not published."
+msgstr "%sアクセラレータのプログラムが公開されていません。"
+
+msgid "%s accelerator session changed during dispatch."
+msgstr "ディスパッチ中に%sアクセラレータのセッションが変更されました。"
+
+msgid "%s accelerator session changed during finish."
+msgstr "完了処理中に%sアクセラレータのセッションが変更されました。"
+
+msgid "%s accelerator session changed while publishing results."
+msgstr "結果の公開中に%sアクセラレータのセッションが変更されました。"
+
+msgid "%s failed."
+msgstr "%sに失敗しました。"
+
+msgid "%s is unavailable."
+msgstr "%sは利用できません。"
+
+msgid "%s() is not defined\n"
+msgstr "%s()が定義されていません\n"
+
+msgid "%s() must have zero or one parameter\n"
+msgstr "%s()には0個または1個のパラメータが必要です\n"
+
+msgid "%s(): Function arguments not match."
+msgstr "%s(): 関数の引数が一致しません。"
+
+msgid "%s(): argument type mismatch (expected %s)."
+msgstr "%s(): 引数の型が一致しません（%s が必要です）。"
+
+msgid "%s(): local type mismatch (expected %s)."
+msgstr "%s(): ローカル変数の型が一致しません（%s が必要です）。"
+
+msgid "%s(): return type mismatch (expected %s)."
+msgstr "%s(): 戻り値の型が一致しません（%s が必要です）。"
+
+msgid "%s: Out of memory while parsing."
+msgstr "%s: メモリが足りません。"
+
+msgid "%s:%d: Error: %s\n"
+msgstr "%s:%d: エラー: %s\n"
+
+msgid "--gpu-list may be specified only once.\n"
+msgstr "--gpu-list は一度だけ指定できます。\n"
+
+msgid "--gpu-list must be used by itself.\n"
+msgstr "--gpu-list は単独で使用する必要があります。\n"
+
+msgid "A __fast array index must be int or long."
+msgstr "__fast 配列のインデックスは int または long である必要があります。"
+
+msgid "A __fast assignment requires an exact type match."
+msgstr "__fast 代入では型が完全に一致する必要があります。"
+
+msgid "A __fast assignment target must be a typed local."
+msgstr "__fast 代入の対象は型付きローカル変数である必要があります。"
+
+msgid "A __fast binary intrinsic requires operands of the same type."
+msgstr "__fast の二項組み込み関数ではオペランドの型が同じである必要があります。"
+
+msgid "A __fast binary operation requires equal primitive operand types."
+msgstr "__fast の二項演算ではオペランドのプリミティブ型が同一である必要があります。"
+
+msgid "A __fast condition must have type int."
+msgstr "__fast 条件の型は int である必要があります。"
+
+msgid "A __fast expression is too deeply nested."
+msgstr "__fast 式のネストが深すぎます。"
+
+msgid "A __fast func may call only a direct __fast function or intrinsic."
+msgstr "__fast func は直接の __fast 関数または組み込み関数のみ呼び出せます。"
+
+msgid "A __fast func must declare its return type."
+msgstr "__fast func は戻り値の型を宣言する必要があります。"
+
+msgid "A __fast func parameter must be primitive or shaped rpacked."
+msgstr "__fast func のパラメータはプリミティブ型または形状付き rpacked である必要があります。"
+
+msgid "A __fast func return type must be void, int, long, float, or double."
+msgstr "__fast func の戻り値の型は void、int、long、float、double のいずれかである必要があります。"
+
+msgid "A __fast func supports only ranged for loops."
+msgstr "__fast func は範囲指定の for ループのみサポートします。"
+
+msgid "A __fast function name conflicts with a compiler intrinsic."
+msgstr "__fast 関数名がコンパイラの組み込み関数と競合しています。"
+
+msgid "A __fast integer operation requires int or long."
+msgstr "__fast の整数演算には int または long が必要です。"
+
+msgid "A __fast intrinsic requires a statically typed numeric argument."
+msgstr "__fast 組み込み関数には静的に型付けされた数値引数が必要です。"
+
+msgid "A __fast logical operand must have type int."
+msgstr "__fast の論理オペランドの型は int である必要があります。"
+
+msgid "A __fast numeric intrinsic requires numeric arguments."
+msgstr "__fast の数値組み込み関数には数値引数が必要です。"
+
+msgid "A __fast packed access is provably out of bounds."
+msgstr "__fast の packed アクセスは明らかに境界外です。"
+
+msgid "A __fast packed store requires an exact element type match."
+msgstr "__fast の packed への格納では要素型が完全に一致する必要があります。"
+
+msgid "A __fast parameter shape has more than 8 dimensions."
+msgstr "__fast パラメータの形状が 8 次元を超えています。"
+
+msgid "A __fast ranged loop requires matching int or long bounds."
+msgstr "__fast の範囲ループでは境界の型がともに int または long で一致する必要があります。"
+
+msgid "A __fast return value does not match its declared type."
+msgstr "__fast の戻り値が宣言された型と一致しません。"
+
+msgid "A __fast shape extent must be int or long."
+msgstr "__fast 形状の次元サイズは int または long である必要があります。"
+
+msgid "A __fast shape extent must be positive."
+msgstr "__fast 形状の次元サイズは正である必要があります。"
+
+msgid "A __fast subscript base must be a shaped rpacked parameter."
+msgstr "__fast 添字の基底は形状付き rpacked パラメータである必要があります。"
+
+msgid "A __fast transcendental intrinsic requires float or double."
+msgstr "__fast の超越組み込み関数には float または double が必要です。"
+
+msgid "A __fast unary operand must be primitive."
+msgstr "__fast の単項オペランドはプリミティブ型である必要があります。"
+
+msgid "A binary __fast intrinsic requires operands of the same type."
+msgstr "二項 __fast 組み込み関数ではオペランドの型が同じである必要があります。"
+
+msgid "A direct __fast call argument does not match the callee type."
+msgstr "直接 __fast 呼び出しの引数が呼び出し先の型と一致しません。"
+
+msgid "A direct __fast call has the wrong argument count."
+msgstr "直接 __fast 呼び出しの引数の数が正しくありません。"
+
+msgid "A direct __fast call packed argument has the wrong element type."
+msgstr "直接 __fast 呼び出しの packed 引数の要素型が正しくありません。"
+
+msgid "A direct __fast call packed argument must be a parameter."
+msgstr "直接 __fast 呼び出しの packed 引数はパラメータである必要があります。"
+
+msgid "A direct __fast call packed shape does not match the callee view."
+msgstr "直接 __fast 呼び出しの packed 形状が呼び出し先のビューと一致しません。"
+
+msgid "A direct __fast call packed shape rank does not match."
+msgstr "直接 __fast 呼び出しの packed 形状の次元数が一致しません。"
+
+msgid "A dynamic __fast shape extent must name an int or long parameter."
+msgstr "__fast の動的な形状の次元サイズは int または long パラメータを指定する必要があります。"
+
+msgid "A function return type cannot have a shape."
+msgstr "関数の戻り値の型に形状を指定することはできません。"
+
+msgid "A local used inside __fast func must have an exact primitive type."
+msgstr "__fast func 内で使用するローカル変数は厳密なプリミティブ型を持つ必要があります。"
+
+msgid "A multi-dimensional subscript requires a directly named shaped parameter."
+msgstr "多次元の添字には直接名前を指定した形状付きパラメータが必要です。"
+
+msgid "A non-void __fast func must return a value."
+msgstr "void 以外の __fast func は値を返す必要があります。"
+
+msgid "A primitive __fast parameter cannot have a shape."
+msgstr "プリミティブ型の __fast パラメータに形状を指定することはできません。"
+
+msgid "A primitive __fast parameter must use int, long, float, or double exactly."
+msgstr "プリミティブ型の __fast パラメータには厳密に int、long、float、double のいずれかを使用する必要があります。"
+
+msgid "A restricted packed __fast parameter requires an exact shape."
+msgstr "制限付き packed __fast パラメータには厳密な形状が必要です。"
+
+msgid "A restricted packed type is only valid for a parameter."
+msgstr "制限付き packed 型はパラメータにのみ使用できます。"
+
+msgid "A shaped __fast parameter must be a Packed type."
+msgstr "形状付き __fast パラメータは Packed 型である必要があります。"
+
+msgid "A transcendental __fast intrinsic requires float or double."
+msgstr "超越 __fast 組み込み関数には float または double が必要です。"
+
+msgid "A typed function must return a value."
+msgstr "型付き関数は値を返す必要があります。"
+
+msgid "A void function cannot return a value."
+msgstr "void 関数は値を返せません。"
+
+msgid "Accelerator Packed argument is missing."
+msgstr "アクセラレータの Packed 引数がありません。"
+
+msgid "Accelerator Packed element type does not match."
+msgstr "アクセラレータの Packed 要素型が一致しません。"
+
+msgid "Accelerator VM and environment do not match."
+msgstr "アクセラレータの VM と環境が一致しません。"
+
+msgid "Accelerator access has an invalid effect."
+msgstr "アクセラレータアクセスの効果が無効です。"
+
+msgid "Accelerator access has no buffer binding."
+msgstr "アクセラレータアクセスにバッファのバインディングがありません。"
+
+msgid "Accelerator access references an unknown buffer."
+msgstr "アクセラレータアクセスが不明なバッファを参照しています。"
+
+msgid "Accelerator argument count changed."
+msgstr "アクセラレータの引数の数が変更されました。"
+
+msgid "Accelerator argument count is too large."
+msgstr "アクセラレータの引数の数が多すぎます。"
+
+msgid "Accelerator backend failed to prepare a program."
+msgstr "アクセラレータのバックエンドがプログラムを準備できませんでした。"
+
+msgid "Accelerator backend returned no program."
+msgstr "アクセラレータのバックエンドからプログラムが返されませんでした。"
+
+msgid "Accelerator buffer access is out of range."
+msgstr "アクセラレータのバッファアクセスが範囲外です。"
+
+msgid "Accelerator buffer has no required range."
+msgstr "アクセラレータのバッファに必要な範囲がありません。"
+
+msgid "Accelerator buffer has no runtime argument slot."
+msgstr "アクセラレータのバッファに実行環境引数のスロットがありません。"
+
+msgid "Accelerator buffer range overflowed."
+msgstr "アクセラレータのバッファ範囲がオーバーフローしました。"
+
+msgid "Accelerator buffer size overflowed."
+msgstr "アクセラレータのバッファサイズがオーバーフローしました。"
+
+msgid "Accelerator context is unavailable."
+msgstr "アクセラレータのコンテキストを使用できません。"
+
+msgid "Accelerator context reference limit reached."
+msgstr "アクセラレータのコンテキスト参照の上限に達しました。"
+
+msgid "Accelerator device buffer is read before definition."
+msgstr "アクセラレータのデバイスバッファが定義前に読み取られています。"
+
+msgid "Accelerator device buffer size is not positive."
+msgstr "アクセラレータのデバイスバッファサイズが正ではありません。"
+
+msgid "Accelerator device buffer size is too large."
+msgstr "アクセラレータのデバイスバッファサイズが大きすぎます。"
+
+msgid "Accelerator device buffer size overflowed."
+msgstr "アクセラレータのデバイスバッファサイズがオーバーフローしました。"
+
+msgid "Accelerator device-list visitor failed."
+msgstr "アクセラレータのデバイスリストビジターが失敗しました。"
+
+msgid "Accelerator dispatch range is too large."
+msgstr "アクセラレータのディスパッチ範囲が大きすぎます。"
+
+msgid "Accelerator function is not registered in the HIR table."
+msgstr "アクセラレータ関数が HIR テーブルに登録されていません。"
+
+msgid "Accelerator load has no buffer binding."
+msgstr "アクセラレータのロードにバッファのバインディングがありません。"
+
+msgid "Accelerator local name collision."
+msgstr "アクセラレータのローカル変数名が競合しています。"
+
+msgid "Accelerator local name is too long."
+msgstr "アクセラレータのローカル変数名が長すぎます。"
+
+msgid "Accelerator loop start overflowed."
+msgstr "アクセラレータのループ開始値がオーバーフローしました。"
+
+msgid "Accelerator output argument is missing."
+msgstr "アクセラレータの出力引数がありません。"
+
+msgid "Accelerator output size changed."
+msgstr "アクセラレータの出力サイズが変更されました。"
+
+msgid "Accelerator output snapshot is missing."
+msgstr "アクセラレータの出力スナップショットがありません。"
+
+msgid "Accelerator output type changed."
+msgstr "アクセラレータの出力型が変更されました。"
+
+msgid "Accelerator plan does not match live HIR."
+msgstr "アクセラレータのプランが現在の HIR と一致しません。"
+
+msgid "Accelerator program validation failed."
+msgstr "アクセラレータのプログラム検証に失敗しました。"
+
+msgid "Accelerator reduction has no result entry."
+msgstr "アクセラレータのリダクションに結果エントリがありません。"
+
+msgid "Accelerator scalar argument is missing."
+msgstr "アクセラレータのスカラー引数がありません。"
+
+msgid "Accelerator scalar metadata is too large."
+msgstr "アクセラレータのスカラーメタデータが大きすぎます。"
+
+msgid "Accelerator scalar result argument is missing."
+msgstr "アクセラレータのスカラー結果引数がありません。"
+
+msgid "Accelerator scalar result has no local."
+msgstr "アクセラレータのスカラー結果にローカル変数がありません。"
+
+msgid "Accelerator scalar result identity changed."
+msgstr "アクセラレータのスカラー結果の識別情報が変更されました。"
+
+msgid "Accelerator scalar result is not available."
+msgstr "アクセラレータのスカラー結果を使用できません。"
+
+msgid "Accelerator scalar result metadata is missing."
+msgstr "アクセラレータのスカラー結果メタデータがありません。"
+
+msgid "Accelerator scalar result metadata is too large."
+msgstr "アクセラレータのスカラー結果メタデータが大きすぎます。"
+
+msgid "Accelerator store has no buffer binding."
+msgstr "アクセラレータのストアにバッファのバインディングがありません。"
+
+msgid "Accelerator trip count overflowed."
+msgstr "アクセラレータの反復回数がオーバーフローしました。"
+
+msgid "Adding file %s.\n"
+msgstr "ファイル %s を追加しています。\n"
+
+msgid "An accelerator is already attached to this VM."
+msgstr "この VM には既にアクセラレータが接続されています。"
+
+msgid "An active Vulkan buffer has no storage."
+msgstr "アクティブな Vulkan バッファにストレージがありません。"
+
+msgid "An inactive Vulkan buffer requested a transfer."
+msgstr "非アクティブな Vulkan バッファが転送を要求しました。"
+
+msgid "Application container cannot be used as a module: %s"
+msgstr "アプリケーションコンテナをモジュールとして使用できません: %s"
+
+msgid "Application contains an unreachable module."
+msgstr "アプリケーションに到達不能なモジュールが含まれています。"
+
+msgid "Application output %s collides with input %s.\n"
+msgstr "アプリケーションの出力 %s が入力 %s と競合しています。\n"
+
+msgid "Argument (%d: %s) is not a dictionary."
+msgstr "引数 (%d: %s) が辞書ではありません。"
+
+msgid "Argument (%d: %s) is not a double."
+msgstr "引数 (%d: %s) が double ではありません。"
+
+msgid "Argument (%d: %s) is not a float."
+msgstr "引数 (%d: %s) が浮動小数点数ではありません。"
+
+msgid "Argument (%d: %s) is not a function."
+msgstr "引数 (%d: %s) が関数ではありません。"
+
+msgid "Argument (%d: %s) is not a long."
+msgstr "引数 (%d: %s) が long ではありません。"
+
+msgid "Argument (%d: %s) is not a packed of type %s."
+msgstr "引数（%d: %s）は型 %s の packed ではありません。"
+
+msgid "Argument (%d: %s) is not a packed."
+msgstr "引数（%d: %s）は packed ではありません。"
+
+msgid "Argument (%d: %s) is not a string."
+msgstr "引数（%d: %s）は文字列ではありません。"
+
+msgid "Argument (%d: %s) is not an array."
+msgstr "引数 (%d: %s) が配列ではありません。"
+
+msgid "Argument (%d: %s) is not an int."
+msgstr "引数 (%d: %s) が int ではありません。"
+
+msgid "Argument (%d: %s) is not an integer."
+msgstr "引数 (%d: %s) が整数ではありません。"
+
+msgid "Array index %ld is out-of-range."
+msgstr "配列のインデックス %ld が範囲外です。"
+
+msgid "BeUI is not open."
+msgstr "BeUI が開いていません。"
+
+msgid "BeUI.destroyImage received an invalid handle."
+msgstr "BeUI.destroyImage が無効なハンドルを受け取りました。"
+
+msgid "BeUI.drawImage failed."
+msgstr "BeUI.drawImage に失敗しました。"
+
+msgid "BeUI.drawImagePattern failed."
+msgstr "BeUI.drawImagePattern に失敗しました。"
+
+msgid "BeUI.drawImagePattern received an invalid argument."
+msgstr "BeUI.drawImagePattern が無効な引数を受け取りました。"
+
+msgid "BeUI.drawImageRegion failed."
+msgstr "BeUI.drawImageRegion に失敗しました。"
+
+msgid "BeUI.drawText failed."
+msgstr "BeUI.drawText に失敗しました。"
+
+msgid "BeUI.drawText received an invalid argument."
+msgstr "BeUI.drawText が無効な引数を受け取りました。"
+
+msgid "BeUI.fill failed."
+msgstr "BeUI.fill に失敗しました。"
+
+msgid "BeUI.fill received an invalid argument."
+msgstr "BeUI.fill が無効な引数を受け取りました。"
+
+msgid "BeUI.flush failed."
+msgstr "BeUI.flush に失敗しました。"
+
+msgid "BeUI.getImageHeight received an invalid handle."
+msgstr "BeUI.getImageHeight が無効なハンドルを受け取りました。"
+
+msgid "BeUI.getImageWidth received an invalid handle."
+msgstr "BeUI.getImageWidth が無効なハンドルを受け取りました。"
+
+msgid "BeUI.getMilliseconds is unavailable."
+msgstr "BeUI.getMilliseconds を使用できません。"
+
+msgid "BeUI.initWithHint expects 8 or 24 bits per pixel."
+msgstr "BeUI.initWithHint にはピクセルあたり 8 または 24 ビットが必要です。"
+
+msgid "BeUI.isKeyDown received an invalid argument."
+msgstr "BeUI.isKeyDown が無効な引数を受け取りました。"
+
+msgid "BeUI.line failed."
+msgstr "BeUI.line に失敗しました。"
+
+msgid "BeUI.line received an invalid argument."
+msgstr "BeUI.line が無効な引数を受け取りました。"
+
+msgid "BeUI.loadImage expects a byte array."
+msgstr "BeUI.loadImage にはバイト配列が必要です。"
+
+msgid "BeUI.loadImage received an unsupported image."
+msgstr "BeUI.loadImage がサポートされていない画像を受け取りました。"
+
+msgid "BeUI.patternFill failed."
+msgstr "BeUI.patternFill に失敗しました。"
+
+msgid "BeUI.patternFill received an invalid argument."
+msgstr "BeUI.patternFill が無効な引数を受け取りました。"
+
+msgid "BeUI.sleep is unavailable."
+msgstr "BeUI.sleep を使用できません。"
+
+msgid "BeUI.sleep received an invalid argument."
+msgstr "BeUI.sleep が無効な引数を受け取りました。"
+
+msgid "Branch target not found."
+msgstr "分岐先がみつかりません。"
+
+msgid "Branch target too far."
+msgstr "分岐先が遠すぎます。"
+
+msgid "Broken bytecode."
+msgstr "バイトコードが壊れています。"
+
+msgid "Bytecode input is not recompiled: %s"
+msgstr "バイトコード入力は再コンパイルされません: %s"
+
+msgid "Bytecode input is not recompiled: %s\n"
+msgstr "バイトコード入力は再コンパイルされません: %s\n"
+
+msgid "Bytecode is too large."
+msgstr "バイトコードが大きすぎます。"
+
+msgid "Bytecode module is too large: %s"
+msgstr "バイトコードモジュールが大きすぎます: %s"
+
+msgid "Bytecode program is too large.\n"
+msgstr "バイトコードプログラムが大きすぎます。\n"
+
+msgid "Call to non-fast function '%s' is not allowed inside __fast func."
+msgstr "__fast ではない関数 '%s' を __fast func 内で呼び出すことはできません。"
+
+msgid "Cannot accept a connection."
+msgstr "接続を受け入れられません。"
+
+msgid "Cannot allocate application output path.\n"
+msgstr "アプリケーションの出力パスを割り当てられません。\n"
+
+msgid "Cannot allocate bytecode output paths.\n"
+msgstr "バイトコードの出力パスを割り当てられません。\n"
+
+msgid "Cannot allocate output path for %s.\n"
+msgstr "%s の出力パスを割り当てられません。\n"
+
+msgid "Cannot assign to 'let' variable '%s'."
+msgstr "'let' 変数 '%s' には代入できません。"
+
+msgid "Cannot assign to constant \"%s\"."
+msgstr "定数 \"%s\" には代入できません。"
+
+msgid "Cannot bind to %s:%d. (%s)"
+msgstr "%s:%d にバインドできません。（%s）"
+
+msgid "Cannot change the socket mode."
+msgstr "ソケットモードを変更できません。"
+
+msgid "Cannot close file %s."
+msgstr "ファイル %s を閉じられません。"
+
+msgid "Cannot collect bytecode link names from %s."
+msgstr "%s からバイトコードのリンク名を収集できません。"
+
+msgid "Cannot collect bytecode prototypes from %s."
+msgstr "%s からバイトコードのプロトタイプを収集できません。"
+
+msgid "Cannot connect to %s:%d."
+msgstr "%s:%d に接続できません。"
+
+msgid "Cannot copy this value type."
+msgstr "この値の型はコピーできません。"
+
+msgid "Cannot create a mutex."
+msgstr "ミューテックスを作成できません。"
+
+msgid "Cannot create a thread."
+msgstr "スレッドを作成できません。"
+
+msgid "Cannot create application %s.\n"
+msgstr "アプリケーション %s を作成できません。\n"
+
+msgid "Cannot create file mapping (Windows error %lu)."
+msgstr "ファイルマッピングを作成できません（Windows エラー %lu）。"
+
+msgid "Cannot create output directory %s."
+msgstr "出力ディレクトリ %s を作成できません。"
+
+msgid "Cannot derive a portable source name for %s."
+msgstr "%s の移植可能なソース名を導出できません。"
+
+msgid "Cannot determine file size."
+msgstr "ファイルサイズを特定できません。"
+
+msgid "Cannot determine mapped file size (Windows error %lu)."
+msgstr "マッピングされたファイルのサイズを特定できません（Windows エラー %lu）。"
+
+msgid "Cannot determine mapped file size: %s"
+msgstr "マッピングされたファイルのサイズを特定できません: %s"
+
+msgid "Cannot determine the file mapping allocation granularity."
+msgstr "ファイルマッピングの割り当て粒度を特定できません。"
+
+msgid "Cannot determine the file mapping page size."
+msgstr "ファイルマッピングのページサイズを特定できません。"
+
+msgid "Cannot find %s.\n"
+msgstr "%sがみつかりません。\n"
+
+msgid "Cannot find function %s."
+msgstr "関数%sがみつかりません。"
+
+msgid "Cannot flush file mapping (Windows error %lu)."
+msgstr "ファイルマッピングをフラッシュできません（Windows エラー %lu）。"
+
+msgid "Cannot flush file mapping: %s"
+msgstr "ファイルマッピングをフラッシュできません: %s"
+
+msgid "Cannot flush mapped file (Windows error %lu)."
+msgstr "マッピングされたファイルをフラッシュできません（Windows エラー %lu）。"
+
+msgid "Cannot initialize the socket library."
+msgstr "ソケットライブラリを初期化できません。"
+
+msgid "Cannot inspect source module %s."
+msgstr "ソースコードモジュール %s を検査できません。"
+
+msgid "Cannot install the REPL interrupt handler.\n"
+msgstr "REPL の割り込みハンドラをインストールできません。\n"
+
+msgid "Cannot listen on %s:%d."
+msgstr "%s:%d で待ち受けできません。"
+
+msgid "Cannot map file %s: %s"
+msgstr "ファイル %s をマッピングできません: %s"
+
+msgid "Cannot map file view (Windows error %lu)."
+msgstr "ファイルビューをマッピングできません（Windows エラー %lu）。"
+
+msgid "Cannot open file %s for mapping: %s"
+msgstr "ファイル %s をマッピング用に開けません: %s"
+
+msgid "Cannot open file %s."
+msgstr "ファイル%sを開けません。"
+
+msgid "Cannot open file %s.\n"
+msgstr "ファイル%sを開けません。\n"
+
+msgid "Cannot open file for mapping (Windows error %lu)."
+msgstr "ファイルをマッピング用に開けません（Windows エラー %lu）。"
+
+msgid "Cannot open module %s."
+msgstr "モジュール %s を開けません。"
+
+msgid "Cannot read file %s."
+msgstr "ファイル %s を読み取れません。"
+
+msgid "Cannot read file %s.\n"
+msgstr "ファイル%sを読み込めません。\n"
+
+msgid "Cannot read module %s."
+msgstr "モジュール %s を読み取れません。"
+
+msgid "Cannot receive from the connection."
+msgstr "接続から受信できません。"
+
+msgid "Cannot resolve required module '%s'."
+msgstr "必要なモジュール '%s' を解決できません。"
+
+msgid "Cannot resolve the address %s."
+msgstr "アドレス %s を解決できません。"
+
+msgid "Cannot send to the connection."
+msgstr "接続に送信できません。"
+
+msgid "Cannot unmap file mapping: %s"
+msgstr "ファイルマッピングを解除できません: %s"
+
+msgid "Cannot unmap file view (Windows error %lu)."
+msgstr "ファイルビューのマッピングを解除できません（Windows エラー %lu）。"
+
+msgid "Cannot wait for socket events."
+msgstr "ソケットイベントを待機できません。"
+
+msgid "Cannot write file %s."
+msgstr "ファイル %s に書き込めません。"
+
+msgid "Character class too large."
+msgstr "文字クラスが大きすぎます。"
+
+msgid "Circular require involving %s."
+msgstr "%s が関与する循環 require です。"
+
+msgid "Code too big."
+msgstr "コードが大きすぎます。"
+
+msgid "Condition is not a number."
+msgstr "条件が数値ではありません。"
+
+msgid "CreateProcess() failed."
+msgstr "CreateProcess() に失敗しました。"
+
+msgid "Decimal integer literal is too large."
+msgstr "10 進整数リテラルが大きすぎます。"
+
+msgid "Detached accelerator context."
+msgstr "アクセラレータのコンテキストが切断されています。"
+
+msgid "Dictionary index %ld is out-of-range."
+msgstr "辞書のインデックス %ld は範囲外です。"
+
+msgid "Dictionary is frozen."
+msgstr "辞書は凍結されています。"
+
+msgid "Dictionary key \"%s\" not found."
+msgstr "辞書のキー \"%s\" がみつかりません。"
+
+msgid "Direct or mutually recursive __fast calls are not supported."
+msgstr "直接または相互再帰する __fast 呼び出しはサポートされていません。"
+
+msgid "Direct3D 12 buffer extent mismatch"
+msgstr "Direct3D 12 バッファの次元サイズが一致しません"
+
+msgid "Direct3D 12 buffer is not word aligned"
+msgstr "Direct3D 12 バッファがワード境界にアラインされていません"
+
+msgid "Direct3D 12 buffer is too large for one UAV"
+msgstr "Direct3D 12 バッファが 1 個の UAV には大きすぎます"
+
+msgid "Direct3D 12 buffer metadata changed"
+msgstr "Direct3D 12 バッファのメタデータが変更されました"
+
+msgid "Direct3D 12 buffer metadata does not match the program"
+msgstr "Direct3D 12 バッファのメタデータがプログラムと一致しません"
+
+msgid "Direct3D 12 buffer size overflow"
+msgstr "Direct3D 12 バッファサイズのオーバーフロー"
+
+msgid "Direct3D 12 buffer table mismatch"
+msgstr "Direct3D 12 バッファテーブルが一致しません"
+
+msgid "Direct3D 12 dispatch exceeds 65535 workgroups"
+msgstr "Direct3D 12 ディスパッチが 65535 ワークグループを超えています"
+
+msgid "Direct3D 12 execution is not recording"
+msgstr "Direct3D 12 の実行は記録中ではありません"
+
+msgid "Direct3D 12 fence counter overflowed"
+msgstr "Direct3D 12 のフェンスカウンタがオーバーフローしました"
+
+msgid "Direct3D 12 output table mismatch"
+msgstr "Direct3D 12 出力テーブルが一致しません"
+
+msgid "Direct3D 12 result byte count overflow"
+msgstr "Direct3D 12 結果のバイト数がオーバーフローしました"
+
+msgid "Direct3D 12 result table changed"
+msgstr "Direct3D 12 結果テーブルが変更されました"
+
+msgid "Direct3D 12 result table mismatch"
+msgstr "Direct3D 12 結果テーブルが一致しません"
+
+msgid "Direct3D 12 scalar byte count overflow"
+msgstr "Direct3D 12 スカラーのバイト数がオーバーフローしました"
+
+msgid "Direct3D 12 scalar table mismatch"
+msgstr "Direct3D 12 スカラーテーブルが一致しません"
+
+msgid "Direct3D 12 scalar table overflow"
+msgstr "Direct3D 12 スカラーテーブルがオーバーフローしました"
+
+msgid "Direct3D 12 supports only 32-bit buffers"
+msgstr "Direct3D 12 は 32 ビットバッファのみサポートします"
+
+msgid "Directory path must not be empty."
+msgstr "ディレクトリパスを空にすることはできません。"
+
+msgid "Division by zero."
+msgstr "ゼロによる除算です。"
+
+msgid "Duplicate Noct App input: %s"
+msgstr "Noct App 入力が重複しています: %s"
+
+msgid "Duplicate accelerator region index."
+msgstr "アクセラレータのリージョンインデックスが重複しています。"
+
+msgid "Duplicate accelerator scalar result argument."
+msgstr "アクセラレータのスカラー結果引数が重複しています。"
+
+msgid "Duplicate input module path: %s"
+msgstr "入力モジュールのパスが重複しています: %s"
+
+msgid "Duplicate logical source name for %s."
+msgstr "%s の論理ソース名が重複しています。"
+
+msgid "Duplicate public symbol \"%s\" (Duplicate function in module closure)."
+msgstr "公開シンボル \"%s\" が重複しています（モジュールクロージャ内の関数が重複しています）。"
+
+msgid "Duplicate static declaration '%s'."
+msgstr "static 宣言 '%s' が重複しています。"
+
+msgid "Duplicate top-level declaration '%s'."
+msgstr "トップレベル宣言 '%s' が重複しています。"
+
+msgid "Element %d is not a dictionary."
+msgstr "%d 番目の要素が辞書ではありません。"
+
+msgid "Element %d is not a double."
+msgstr "%d 番目の要素が double ではありません。"
+
+msgid "Element %d is not a float."
+msgstr "%d 番目の要素が浮動小数点数ではありません。"
+
+msgid "Element %d is not a function."
+msgstr "%d 番目の要素が関数ではありません。"
+
+msgid "Element %d is not a long."
+msgstr "%d 番目の要素が long ではありません。"
+
+msgid "Element %d is not a string."
+msgstr "%d 番目の要素が文字列ではありません。"
+
+msgid "Element %d is not an array."
+msgstr "%d 番目の要素が配列ではありません。"
+
+msgid "Element %d is not an int."
+msgstr "%d 番目の要素が int ではありません。"
+
+msgid "Empty accelerator function plan."
+msgstr "アクセラレータ関数プランが空です。"
+
+msgid "Empty accelerator region program."
+msgstr "アクセラレータリージョンプログラムが空です。"
+
+msgid "Empty array."
+msgstr "配列が空です。"
+
+msgid "Entering REPL mode.\n"
+msgstr "REPLモードに入ります。\n"
+
+msgid "Error: %s\n"
+msgstr "エラー: %s\n"
+
+msgid "Error: %s:%d: %s\n"
+msgstr "エラー: %s:%d: %s\n"
+
+msgid "Error: Cannot assemble application records.\n"
+msgstr "エラー: アプリケーションレコードをアセンブルできません。\n"
+
+msgid "Error: Cannot prepare application module %s.\n"
+msgstr "エラー: アプリケーションモジュール %s を準備できません。\n"
+
+msgid "Error: Invalid application at byte %lu: %s\n"
+msgstr "エラー: バイト %lu に無効なアプリケーションがあります: %s\n"
+
+msgid "Error: Invalid application source name.\n"
+msgstr "エラー: アプリケーションのソース名が無効です。\n"
+
+msgid "Error: Invalid bytecode source name.\n"
+msgstr "エラー: バイトコードのソース名が無効です。\n"
+
+msgid "Error: __fast func is not supported by the Emacs Lisp transpiler.\n"
+msgstr "エラー: Emacs Lispトランスパイラは__fast funcをサポートしていません。\n"
+
+msgid "Error: __fast func is not supported by the Scheme transpiler.\n"
+msgstr "エラー: Schemeトランスパイラは__fast funcをサポートしていません。\n"
+
+msgid "Error: require is not supported by the C transpiler.\n"
+msgstr "エラー: Cトランスパイラはrequireをサポートしていません。\n"
+
+msgid "Error: require is not supported by the Emacs Lisp transpiler.\n"
+msgstr "エラー: Emacs Lispトランスパイラはrequireをサポートしていません。\n"
+
+msgid "Error: require is not supported by the Scheme transpiler.\n"
+msgstr "エラー: Schemeトランスパイラはrequireをサポートしていません。\n"
+
+msgid "Every __fast func parameter requires a type annotation."
+msgstr "__fast funcの各パラメータには型注釈が必要です。"
+
+msgid "Every local in a __fast func requires an exact primitive type annotation."
+msgstr "__fast funcの各ローカル変数には正確なプリミティブ型注釈が必要です。"
+
+msgid "Every reachable path of a non-void __fast func must return a value."
+msgstr "void以外を返す__fast funcの到達可能な各パスは値を返す必要があります。"
+
+msgid "Exact read byte count must be positive."
+msgstr "正確な読み取りバイト数は正である必要があります。"
+
+msgid "Exceeded the maximum argument count."
+msgstr "引数が多すぎます。"
+
+msgid "Exceeded the maximum parameter count."
+msgstr "パラメータの最大数を超えました。"
+
+msgid "Exception target too far."
+msgstr "例外ターゲットが遠すぎます。"
+
+msgid "Executable bytecode wrapper cannot be required: %s"
+msgstr "実行可能バイトコードラッパーをrequireできません: %s"
+
+msgid "Failed to acquire the OpenGL ES compiler context."
+msgstr "OpenGL ESコンパイラコンテキストを取得できませんでした。"
+
+msgid "Failed to allocate Vulkan descriptor sets."
+msgstr "Vulkanディスクリプタセットを割り当てられませんでした。"
+
+msgid "Failed to allocate a Vulkan command buffer."
+msgstr "Vulkanコマンドバッファを割り当てられませんでした。"
+
+msgid "Failed to allocate an OpenGL ES buffer name."
+msgstr "OpenGL ESバッファ名を割り当てられませんでした。"
+
+msgid "Failed to analyze accelerator loop."
+msgstr "アクセラレータループを解析できませんでした。"
+
+msgid "Failed to begin a Vulkan command buffer."
+msgstr "Vulkanコマンドバッファを開始できませんでした。"
+
+msgid "Failed to classify accelerator loop."
+msgstr "アクセラレータループを分類できませんでした。"
+
+msgid "Failed to classify accelerator reduction."
+msgstr "アクセラレータリダクションを分類できませんでした。"
+
+msgid "Failed to compile a Direct3D 12 compute shader."
+msgstr "Direct3D 12コンピュートシェーダーをコンパイルできませんでした。"
+
+msgid "Failed to compile an OpenGL ES compute shader."
+msgstr "OpenGL ESコンピュートシェーダーをコンパイルできませんでした。"
+
+msgid "Failed to create a Direct3D 12 compute pipeline."
+msgstr "Direct3D 12コンピュートパイプラインを作成できませんでした。"
+
+msgid "Failed to create a Direct3D 12 root signature."
+msgstr "Direct3D 12ルートシグネチャを作成できませんでした。"
+
+msgid "Failed to create a Vulkan 1.2 instance."
+msgstr "Vulkan 1.2インスタンスを作成できませんでした。"
+
+msgid "Failed to create a Vulkan command pool."
+msgstr "Vulkanコマンドプールを作成できませんでした。"
+
+msgid "Failed to create a Vulkan completion fence."
+msgstr "Vulkan完了フェンスを作成できませんでした。"
+
+msgid "Failed to create a Vulkan compute pipeline."
+msgstr "Vulkanコンピュートパイプラインを作成できませんでした。"
+
+msgid "Failed to create a Vulkan data buffer."
+msgstr "Vulkanデータバッファを作成できませんでした。"
+
+msgid "Failed to create a Vulkan descriptor layout."
+msgstr "Vulkanディスクリプタレイアウトを作成できませんでした。"
+
+msgid "Failed to create a Vulkan pipeline layout."
+msgstr "Vulkanパイプラインレイアウトを作成できませんでした。"
+
+msgid "Failed to create a Vulkan shader module."
+msgstr "Vulkanシェーダーモジュールを作成できませんでした。"
+
+msgid "Failed to create an OpenGL ES compute program."
+msgstr "OpenGL ESコンピュートプログラムを作成できませんでした。"
+
+msgid "Failed to create an OpenGL ES compute shader."
+msgstr "OpenGL ESコンピュートシェーダーを作成できませんでした。"
+
+msgid "Failed to create the Direct3D 12 DXGI factory."
+msgstr "Direct3D 12 DXGIファクトリを作成できませんでした。"
+
+msgid "Failed to create the Direct3D 12 compute queue."
+msgstr "Direct3D 12コンピュートキューを作成できませんでした。"
+
+msgid "Failed to create the Direct3D 12 queue fence."
+msgstr "Direct3D 12キューフェンスを作成できませんでした。"
+
+msgid "Failed to create the Vulkan descriptor pool."
+msgstr "Vulkanディスクリプタプールを作成できませんでした。"
+
+msgid "Failed to create the Vulkan scalar buffer."
+msgstr "Vulkanスカラーバッファを作成できませんでした。"
+
+msgid "Failed to create the Vulkan scalar-result buffer."
+msgstr "Vulkanスカラー結果バッファを作成できませんでした。"
+
+msgid "Failed to create the selected Direct3D 12 device."
+msgstr "選択したDirect3D 12デバイスを作成できませんでした。"
+
+msgid "Failed to create the selected Vulkan compute device."
+msgstr "選択したVulkanコンピュートデバイスを作成できませんでした。"
+
+msgid "Failed to enumerate Vulkan physical devices."
+msgstr "Vulkan物理デバイスを列挙できませんでした。"
+
+msgid "Failed to expand the CS segment limit.\n"
+msgstr "CSセグメントの上限を拡張できませんでした。\n"
+
+msgid "Failed to finish the Vulkan command buffer."
+msgstr "Vulkanコマンドバッファを完了できませんでした。"
+
+msgid "Failed to flush Vulkan data-buffer memory."
+msgstr "Vulkanデータバッファメモリをフラッシュできませんでした。"
+
+msgid "Failed to flush Vulkan scalar memory."
+msgstr "Vulkanスカラーメモリをフラッシュできませんでした。"
+
+msgid "Failed to flush Vulkan scalar-result memory."
+msgstr "Vulkanスカラー結果メモリをフラッシュできませんでした。"
+
+msgid "Failed to generate an OpenGL ES compute shader."
+msgstr "OpenGL ESコンピュートシェーダーを生成できませんでした。"
+
+msgid "Failed to initialize a headless OpenGL ES 3.1 context."
+msgstr "ヘッドレスOpenGL ES 3.1コンテキストを初期化できませんでした。"
+
+msgid "Failed to initialize the Direct3D 12 queue mutex."
+msgstr "Direct3D 12キューミューテックスを初期化できませんでした。"
+
+msgid "Failed to initialize the OpenGL ES context mutex."
+msgstr "OpenGL ESコンテキストミューテックスを初期化できませんでした。"
+
+msgid "Failed to initialize the Vulkan queue mutex."
+msgstr "Vulkanキューミューテックスを初期化できませんでした。"
+
+msgid "Failed to invalidate Vulkan output memory."
+msgstr "Vulkan出力メモリを無効化できませんでした。"
+
+msgid "Failed to invalidate Vulkan scalar-result memory."
+msgstr "Vulkanスカラー結果メモリを無効化できませんでした。"
+
+msgid "Failed to link an OpenGL ES compute program."
+msgstr "OpenGL ESコンピュートプログラムをリンクできませんでした。"
+
+msgid "Failed to lock accelerator rewrite commit."
+msgstr "アクセラレータ書き換えコミットをロックできませんでした。"
+
+msgid "Failed to make the OpenGL ES context current."
+msgstr "OpenGL ESコンテキストをカレントにできませんでした。"
+
+msgid "Failed to map an OpenGL ES output buffer."
+msgstr "OpenGL ES出力バッファをマッピングできませんでした。"
+
+msgid "Failed to map the OpenGL ES result buffer."
+msgstr "OpenGL ES結果バッファをマッピングできませんでした。"
+
+msgid "Failed to normalize accelerator index."
+msgstr "アクセラレータインデックスを正規化できませんでした。"
+
+msgid "Failed to open file \"%s\".\n"
+msgstr "ファイル「%s」を開けませんでした。\n"
+
+msgid "Failed to query the Vulkan loader version."
+msgstr "Vulkanローダーのバージョンを照会できませんでした。"
+
+msgid "Failed to release the OpenGL ES compiler context."
+msgstr "OpenGL ESコンパイラコンテキストを解放できませんでした。"
+
+msgid "Failed to release the OpenGL ES context."
+msgstr "OpenGL ESコンテキストを解放できませんでした。"
+
+msgid "Failed to reserve accelerator programs."
+msgstr "アクセラレータプログラム用の領域を予約できませんでした。"
+
+msgid "Failed to serialize a Direct3D 12 root signature."
+msgstr "Direct3D 12ルートシグネチャをシリアライズできませんでした。"
+
+msgid "File close error."
+msgstr "ファイルのクローズエラーです。"
+
+msgid "File handle belongs to a different VM."
+msgstr "ファイルハンドルは別のVMに属しています。"
+
+msgid "File handle is invalid."
+msgstr "ファイルハンドルが無効です。"
+
+msgid "File handle kind mismatch."
+msgstr "ファイルハンドルの種類が一致しません。"
+
+msgid "File is closed."
+msgstr "ファイルは閉じられています。"
+
+msgid "File mapping is not supported on this platform."
+msgstr "このプラットフォームではファイルマッピングがサポートされていません。"
+
+msgid "File mapping must allow reading or writing."
+msgstr "ファイルマッピングでは読み取りまたは書き込みを許可する必要があります。"
+
+msgid "File mapping offset and size must be integers."
+msgstr "ファイルマッピングのオフセットとサイズは整数である必要があります。"
+
+msgid "File mapping offset and size must not be negative."
+msgstr "ファイルマッピングのオフセットとサイズを負にすることはできません。"
+
+msgid "File mapping offset is too large."
+msgstr "ファイルマッピングのオフセットが大きすぎます。"
+
+msgid "File mapping permissions must be 0 or 1."
+msgstr "ファイルマッピングの権限は0または1である必要があります。"
+
+msgid "File mapping range exceeds the file size."
+msgstr "ファイルマッピングの範囲がファイルサイズを超えています。"
+
+msgid "File mapping range is not aligned to the element size."
+msgstr "ファイルマッピングの範囲が要素サイズにアラインされていません。"
+
+msgid "File mapping range is too large."
+msgstr "ファイルマッピングの範囲が大きすぎます。"
+
+msgid "File mapping size is too large."
+msgstr "ファイルマッピングのサイズが大きすぎます。"
+
+msgid "File mapping size must be greater than zero."
+msgstr "ファイルマッピングのサイズは0より大きい必要があります。"
+
+msgid "File read error."
+msgstr "ファイルの読み取りエラーです。"
+
+msgid "File seek error."
+msgstr "ファイルのシークエラーです。"
+
+msgid "File tell error."
+msgstr "ファイル位置の取得エラーです。"
+
+msgid "File write error."
+msgstr "ファイルの書き込みエラーです。"
+
+msgid "File.writeAll range is out-of-bounds."
+msgstr "File.writeAllの範囲が境界外です。"
+
+msgid "Fill value is not a number."
+msgstr "フィル値が数値ではありません。"
+
+msgid "GPU acceleration is available only when running Noct source.\n"
+msgstr "GPUアクセラレーションはNoctソースコードの実行時にのみ使用できます。\n"
+
+msgid "GPU acceleration is not available in this build.\n"
+msgstr "このビルドではGPUアクセラレーションを使用できません。\n"
+
+msgid "GPU acceleration may be selected only once.\n"
+msgstr "GPUアクセラレーションは一度だけ選択できます。\n"
+
+msgid "GPU device name must not be empty.\n"
+msgstr "GPUデバイス名を空にすることはできません。\n"
+
+msgid "GPU enumeration failed.\n"
+msgstr "GPUの列挙に失敗しました。\n"
+
+msgid "GPU enumeration failed: %s\n"
+msgstr "GPUの列挙に失敗しました: %s\n"
+
+msgid "Generated Vulkan SPIR-V is invalid:\x20"
+msgstr "生成されたVulkan SPIR-Vが無効です:\x20"
+
+msgid "Generated accelerator IR failed validation."
+msgstr "生成されたアクセラレータIRの検証に失敗しました。"
+
+msgid "Global symbol '%s' is not available inside __fast func."
+msgstr "グローバルシンボル'%s'は__fast func内では使用できません。"
+
+msgid "Inactive OpenGL ES buffers cannot request host transfers."
+msgstr "非アクティブなOpenGL ESバッファはホスト転送を要求できません。"
+
+msgid "Incompatible duplicate __fast prototype '%s'."
+msgstr "重複する__fastプロトタイプ'%s'に互換性がありません。"
+
+msgid "Incomplete Vulkan enumeration function table."
+msgstr "Vulkan列挙関数テーブルが不完全です。"
+
+msgid "Incomplete Vulkan function table."
+msgstr "Vulkan関数テーブルが不完全です。"
+
+msgid "Inconsistent optimization levels for one HIR module."
+msgstr "1つのHIRモジュールに対する最適化レベルが一貫していません。"
+
+msgid "Index out of bounds."
+msgstr "インデックスが境界外です。"
+
+msgid "Input line is too long.\n"
+msgstr "入力行が長すぎます。\n"
+
+msgid "Inputs %s and %s map to the same output %s.\n"
+msgstr "入力%sと%sが同じ出力%sにマッピングされています。\n"
+
+msgid "Invalid --path option.\n"
+msgstr "--pathオプションが無効です。\n"
+
+msgid "Invalid Direct3D 12 program preparation request."
+msgstr "Direct3D 12プログラム準備要求が無効です。"
+
+msgid "Invalid GPU device name.\n"
+msgstr "GPUデバイス名が無効です。\n"
+
+msgid "Invalid OpenGL ES device list."
+msgstr "OpenGL ESデバイスリストが無効です。"
+
+msgid "Invalid OpenGL ES dispatch limit request."
+msgstr "OpenGL ESディスパッチ上限要求が無効です。"
+
+msgid "Invalid OpenGL ES execution request."
+msgstr "OpenGL ES実行要求が無効です。"
+
+msgid "Invalid OpenGL ES execution."
+msgstr "OpenGL ES実行が無効です。"
+
+msgid "Invalid OpenGL ES finish request."
+msgstr "OpenGL ES完了要求が無効です。"
+
+msgid "Invalid OpenGL ES kernel index."
+msgstr "OpenGL ESカーネルインデックスが無効です。"
+
+msgid "Invalid OpenGL ES program preparation request."
+msgstr "OpenGL ESプログラム準備要求が無効です。"
+
+msgid "Invalid REPL state.\n"
+msgstr "REPLの状態が無効です。\n"
+
+msgid "Invalid Vulkan device list."
+msgstr "Vulkanデバイスリストが無効です。"
+
+msgid "Invalid Vulkan dispatch limit request."
+msgstr "Vulkanディスパッチ上限要求が無効です。"
+
+msgid "Invalid Vulkan execution request."
+msgstr "Vulkan実行要求が無効です。"
+
+msgid "Invalid Vulkan execution."
+msgstr "Vulkan実行が無効です。"
+
+msgid "Invalid Vulkan finish request."
+msgstr "Vulkan完了要求が無効です。"
+
+msgid "Invalid Vulkan kernel index."
+msgstr "Vulkanカーネルインデックスが無効です。"
+
+msgid "Invalid Vulkan program preparation request."
+msgstr "Vulkanプログラム準備要求が無効です。"
+
+msgid "Invalid Vulkan shader compiler input."
+msgstr "Vulkanシェーダーコンパイラの入力が無効です。"
+
+msgid "Invalid __fast function prototype."
+msgstr "__fast関数プロトタイプが無効です。"
+
+msgid "Invalid __fast function signature for '%s'."
+msgstr "'%s'の__fast関数シグネチャが無効です。"
+
+msgid "Invalid __fast function signature."
+msgstr "__fast関数シグネチャが無効です。"
+
+msgid "Invalid __fast loop counter."
+msgstr "__fastループカウンターが無効です。"
+
+msgid "Invalid __fast parameter shape."
+msgstr "__fastパラメータの形状が無効です。"
+
+msgid "Invalid __fast parameter type."
+msgstr "__fastパラメータの型が無効です。"
+
+msgid "Invalid __fast shape extent."
+msgstr "__fast形状の次元サイズが無効です。"
+
+msgid "Invalid __fast signature metadata."
+msgstr "__fastシグネチャのメタデータが無効です。"
+
+msgid "Invalid accelerator argument slots."
+msgstr "アクセラレータ引数スロットが無効です。"
+
+msgid "Invalid accelerator backend status."
+msgstr "アクセラレータバックエンドの状態が無効です。"
+
+msgid "Invalid accelerator budget function."
+msgstr "アクセラレータ予算関数が無効です。"
+
+msgid "Invalid accelerator buffer binding."
+msgstr "アクセラレータバッファのバインディングが無効です。"
+
+msgid "Invalid accelerator buffer index type."
+msgstr "アクセラレータバッファのインデックス型が無効です。"
+
+msgid "Invalid accelerator buffer slot."
+msgstr "アクセラレータバッファのスロットが無効です。"
+
+msgid "Invalid accelerator comparison HIR."
+msgstr "アクセラレータ比較HIRが無効です。"
+
+msgid "Invalid accelerator compiler result."
+msgstr "アクセラレータコンパイラの結果が無効です。"
+
+msgid "Invalid accelerator decline reason."
+msgstr "アクセラレータの拒否理由が無効です。"
+
+msgid "Invalid accelerator device-list request."
+msgstr "アクセラレータデバイスリスト要求が無効です。"
+
+msgid "Invalid accelerator device-local buffer."
+msgstr "アクセラレータのデバイスローカルバッファが無効です。"
+
+msgid "Invalid accelerator device-local declaration."
+msgstr "アクセラレータのデバイスローカル宣言が無効です。"
+
+msgid "Invalid accelerator device-local transfer."
+msgstr "アクセラレータのデバイスローカル転送が無効です。"
+
+msgid "Invalid accelerator function HIR."
+msgstr "アクセラレータ関数HIRが無効です。"
+
+msgid "Invalid accelerator function metadata."
+msgstr "アクセラレータ関数のメタデータが無効です。"
+
+msgid "Invalid accelerator index arithmetic."
+msgstr "アクセラレータのインデックス演算が無効です。"
+
+msgid "Invalid accelerator kernel buffer type."
+msgstr "アクセラレータカーネルのバッファ型が無効です。"
+
+msgid "Invalid accelerator kernel index."
+msgstr "アクセラレータカーネルのインデックスが無効です。"
+
+msgid "Invalid accelerator local count."
+msgstr "アクセラレータのローカル変数数が無効です。"
+
+msgid "Invalid accelerator local list."
+msgstr "アクセラレータのローカル変数リストが無効です。"
+
+msgid "Invalid accelerator parameter count."
+msgstr "アクセラレータのパラメータ数が無効です。"
+
+msgid "Invalid accelerator parameter metadata."
+msgstr "アクセラレータパラメータのメタデータが無効です。"
+
+msgid "Invalid accelerator program ID."
+msgstr "アクセラレータプログラムIDが無効です。"
+
+msgid "Invalid accelerator program identifier."
+msgstr "アクセラレータプログラム識別子が無効です。"
+
+msgid "Invalid accelerator program reached the Direct3D 12 backend."
+msgstr "無効なアクセラレータプログラムがDirect3D 12バックエンドに到達しました。"
+
+msgid "Invalid accelerator program reached the OpenGL ES backend."
+msgstr "無効なアクセラレータプログラムがOpenGL ESバックエンドに到達しました。"
+
+msgid "Invalid accelerator program reached the Vulkan backend."
+msgstr "無効なアクセラレータプログラムがVulkanバックエンドに到達しました。"
+
+msgid "Invalid accelerator reduction metadata."
+msgstr "アクセラレータリダクションのメタデータが無効です。"
+
+msgid "Invalid accelerator reduction result entry."
+msgstr "アクセラレータリダクションの結果エントリが無効です。"
+
+msgid "Invalid accelerator reduction value type."
+msgstr "アクセラレータリダクションの値型が無効です。"
+
+msgid "Invalid accelerator region plan."
+msgstr "アクセラレータリージョンプランが無効です。"
+
+msgid "Invalid accelerator rewrite function."
+msgstr "アクセラレータ書き換え関数が無効です。"
+
+msgid "Invalid accelerator scalar binding."
+msgstr "アクセラレータスカラーのバインディングが無効です。"
+
+msgid "Invalid accelerator scalar result binding."
+msgstr "アクセラレータスカラー結果のバインディングが無効です。"
+
+msgid "Invalid accelerator scalar result metadata."
+msgstr "アクセラレータスカラー結果のメタデータが無効です。"
+
+msgid "Invalid accelerator scalar result."
+msgstr "アクセラレータスカラー結果が無効です。"
+
+msgid "Invalid accelerator scalar type."
+msgstr "アクセラレータスカラー型が無効です。"
+
+msgid "Invalid accelerator scalar-result slot."
+msgstr "アクセラレータスカラー結果スロットが無効です。"
+
+msgid "Invalid accelerator scratch budget."
+msgstr "アクセラレータスクラッチ予算が無効です。"
+
+msgid "Invalid accelerator session."
+msgstr "アクセラレータセッションが無効です。"
+
+msgid "Invalid application dependency graph."
+msgstr "アプリケーション依存関係グラフが無効です。"
+
+msgid "Invalid bytecode function descriptor."
+msgstr "バイトコード関数ディスクリプタが無効です。"
+
+msgid "Invalid character range."
+msgstr "文字範囲が無効です。"
+
+msgid "Invalid codepoint."
+msgstr "コードポイントが無効です。"
+
+msgid "Invalid constant __fast shape extent."
+msgstr "__fast形状の定数次元サイズが無効です。"
+
+msgid "Invalid dynamic __fast shape extent."
+msgstr "__fast形状の動的次元サイズが無効です。"
+
+msgid "Invalid empty __fast shape extent."
+msgstr "__fast形状の空の次元サイズが無効です。"
+
+msgid "Invalid event flags."
+msgstr "イベントフラグが無効です。"
+
+msgid "Invalid function parameter metadata."
+msgstr "関数パラメータのメタデータが無効です。"
+
+msgid "Invalid function prototype."
+msgstr "関数プロトタイプが無効です。"
+
+msgid "Invalid handle."
+msgstr "ハンドルが無効です。"
+
+msgid "Invalid input module path."
+msgstr "入力モジュールのパスが無効です。"
+
+msgid "Invalid input module."
+msgstr "入力モジュールが無効です。"
+
+msgid "Invalid module path option %s.\n"
+msgstr "モジュールパスオプション%sが無効です。\n"
+
+msgid "Invalid native function parameter name."
+msgstr "ネイティブ関数のパラメータ名が無効です。"
+
+msgid "Invalid native function registration."
+msgstr "ネイティブ関数の登録が無効です。"
+
+msgid "Invalid optimize-level option %s.\n"
+msgstr "最適化レベルオプション%sが無効です。\n"
+
+msgid "Invalid or incomplete %s accelerator finish."
+msgstr "%sアクセラレータの完了処理が無効または不完全です。"
+
+msgid "Invalid or out-of-order %s accelerator dispatch."
+msgstr "%sアクセラレータのディスパッチが無効または順序外です。"
+
+msgid "Invalid private accelerator package."
+msgstr "アクセラレータのプライベートパッケージが無効です。"
+
+msgid "Invalid selected Direct3D 12 device."
+msgstr "選択したDirect3D 12デバイスが無効です。"
+
+msgid "Invalid selected OpenGL ES device."
+msgstr "選択したOpenGL ESデバイスが無効です。"
+
+msgid "Invalid selected Vulkan device."
+msgstr "選択したVulkanデバイスが無効です。"
+
+msgid "Invalid shaped type annotation."
+msgstr "形状付き型注釈が無効です。"
+
+msgid "Invalid shift amount."
+msgstr "シフト量が無効です。"
+
+msgid "JIT bytecode analysis table is too large."
+msgstr "JITバイトコード解析テーブルが大きすぎます。"
+
+msgid "JIT bytecode is too large."
+msgstr "JITバイトコードが大きすぎます。"
+
+msgid "JIT compilation is enabled. Starting the fast VM...\n"
+msgstr "JIT コンパイルが有効です。高速仮想マシンを開始します...\n"
+
+msgid "JIT memory protection failed."
+msgstr "JITメモリ保護に失敗しました。"
+
+msgid "JIT temporary-variable table is too large."
+msgstr "JIT一時変数テーブルが大きすぎます。"
+
+msgid "LHS is not a symbol or an array element."
+msgstr "左辺がシンボルか配列要素ではありません。"
+
+msgid "LHS is not a term or an array element."
+msgstr "左辺が項か配列要素ではありません。"
+
+msgid "LIR: Out of memory error."
+msgstr "LIR: メモリが足りません。"
+
+msgid "Legacy 1.0 bytecode cannot be embedded in an application: %s"
+msgstr "レガシー1.0バイトコードをアプリケーションに埋め込むことはできません: %s"
+
+msgid "Local initializer or assignment does not match its declared type."
+msgstr "ローカル変数の初期化子または代入が宣言された型と一致しません。"
+
+msgid "Malformed accelerator HIR block."
+msgstr "アクセラレータHIRブロックの形式が不正です。"
+
+msgid "Malformed accelerator HIR expression."
+msgstr "アクセラレータHIR式の形式が不正です。"
+
+msgid "Malformed accelerator HIR statement."
+msgstr "アクセラレータHIR文の形式が不正です。"
+
+msgid "Malformed accelerator HIR term."
+msgstr "アクセラレータHIR項の形式が不正です。"
+
+msgid "Malformed accelerator array expression."
+msgstr "アクセラレータ配列式の形式が不正です。"
+
+msgid "Malformed accelerator assignment target."
+msgstr "アクセラレータ代入ターゲットの形式が不正です。"
+
+msgid "Malformed accelerator call expression."
+msgstr "アクセラレータ呼び出し式の形式が不正です。"
+
+msgid "Malformed accelerator collection loop."
+msgstr "アクセラレータコレクションループの形式が不正です。"
+
+msgid "Malformed accelerator dictionary expression."
+msgstr "アクセラレータ辞書式の形式が不正です。"
+
+msgid "Malformed accelerator expression HIR."
+msgstr "アクセラレータ式のHIRが不正です。"
+
+msgid "Malformed accelerator function control flow."
+msgstr "アクセラレータ関数の制御フローが不正です。"
+
+msgid "Malformed accelerator loop body."
+msgstr "アクセラレータのループ本体が不正です。"
+
+msgid "Malformed accelerator member call."
+msgstr "アクセラレータのメンバー呼び出しが不正です。"
+
+msgid "Malformed accelerator new expression."
+msgstr "アクセラレータのnew式が不正です。"
+
+msgid "Malformed accelerator ranged loop."
+msgstr "アクセラレータの範囲ループが不正です。"
+
+msgid "Malformed accelerator region control flow."
+msgstr "アクセラレータリージョンの制御フローが不正です。"
+
+msgid "Malformed accelerator string term."
+msgstr "アクセラレータの文字列項が不正です。"
+
+msgid "Malformed accelerator symbol HIR."
+msgstr "アクセラレータシンボルのHIRが不正です。"
+
+msgid "Malformed accelerator symbol term."
+msgstr "アクセラレータのシンボル項が不正です。"
+
+msgid "Malformed accelerator term HIR."
+msgstr "アクセラレータ項のHIRが不正です。"
+
+msgid "Malformed accelerator type test."
+msgstr "アクセラレータの型テストが不正です。"
+
+msgid "Malformed accelerator while loop."
+msgstr "アクセラレータのwhileループが不正です。"
+
+msgid "Malformed application container."
+msgstr "アプリケーションコンテナが不正です。"
+
+msgid "Memory mapping failed."
+msgstr "メモリマップに失敗しました。"
+
+msgid "Missing OpenGL ES buffer descriptors."
+msgstr "OpenGL ESバッファのディスクリプタがありません。"
+
+msgid "Missing OpenGL ES download snapshot."
+msgstr "OpenGL ESダウンロードのスナップショットがありません。"
+
+msgid "Missing OpenGL ES execution output."
+msgstr "OpenGL ES実行の出力がありません。"
+
+msgid "Missing OpenGL ES finish buffers."
+msgstr "OpenGL ES完了バッファがありません。"
+
+msgid "Missing OpenGL ES finish result words."
+msgstr "OpenGL ES完了結果ワードがありません。"
+
+msgid "Missing OpenGL ES output snapshot."
+msgstr "OpenGL ES出力のスナップショットがありません。"
+
+msgid "Missing OpenGL ES prepared program."
+msgstr "準備済みのOpenGL ESプログラムがありません。"
+
+msgid "Missing OpenGL ES result buffer."
+msgstr "OpenGL ES結果バッファがありません。"
+
+msgid "Missing OpenGL ES result words."
+msgstr "OpenGL ES結果ワードがありません。"
+
+msgid "Missing OpenGL ES scalar words."
+msgstr "OpenGL ESスカラーワードがありません。"
+
+msgid "Missing OpenGL ES upload snapshot."
+msgstr "OpenGL ESアップロードのスナップショットがありません。"
+
+msgid "Missing Vulkan buffer descriptors."
+msgstr "Vulkanバッファのディスクリプタがありません。"
+
+msgid "Missing Vulkan buffer snapshot."
+msgstr "Vulkanバッファのスナップショットがありません。"
+
+msgid "Missing Vulkan execution output."
+msgstr "Vulkan実行の出力がありません。"
+
+msgid "Missing Vulkan finish buffers."
+msgstr "Vulkan完了バッファがありません。"
+
+msgid "Missing Vulkan output snapshot."
+msgstr "Vulkan出力のスナップショットがありません。"
+
+msgid "Missing Vulkan prepared program."
+msgstr "準備済みのVulkanプログラムがありません。"
+
+msgid "Missing Vulkan scalar words."
+msgstr "Vulkanスカラーワードがありません。"
+
+msgid "Missing Vulkan scalar-result destination."
+msgstr "Vulkanスカラー結果の格納先がありません。"
+
+msgid "Missing Vulkan scalar-result identities."
+msgstr "Vulkanスカラー結果のIDがありません。"
+
+msgid "Missing accelerator context."
+msgstr "アクセラレータのコンテキストがありません。"
+
+msgid "Missing accelerator function plan."
+msgstr "アクセラレータ関数のプランがありません。"
+
+msgid "Missing accelerator registry reservation."
+msgstr "アクセラレータレジストリの予約がありません。"
+
+msgid "Multi-dimensional subscripts are valid only inside __fast func."
+msgstr "多次元の添字は__fast func内でのみ有効です。"
+
+msgid "Multiple initializers in module: %s"
+msgstr "モジュールに複数の初期化子があります: %s"
+
+msgid "NUL byte in source program.\n"
+msgstr "ソースプログラムにNULバイトがあります。\n"
+
+msgid "NUL in source module: %s"
+msgstr "ソースモジュールにNULがあります: %s"
+
+msgid "No Vulkan physical device is available."
+msgstr "利用可能なVulkan物理デバイスがありません。"
+
+msgid "No accelerator backend could enumerate devices."
+msgstr "デバイスを列挙できるアクセラレータバックエンドがありません。"
+
+msgid "No input module was specified."
+msgstr "入力モジュールが指定されていません。"
+
+msgid "No resolver is available for required module '%s'."
+msgstr "必要なモジュール'%s'に使用できるリゾルバがありません。"
+
+msgid "No suitable GPU device is available."
+msgstr "利用可能な適切なGPUデバイスがありません。"
+
+msgid "No suitable GPU device is available.\n"
+msgstr "利用可能な適切なGPUデバイスがありません。\n"
+
+msgid "No suitable OpenGL ES 3.1 compute device is available."
+msgstr "利用可能な適切なOpenGL ES 3.1コンピュートデバイスがありません。"
+
+msgid "No suitable Vulkan 1.2 compute device is available."
+msgstr "利用可能な適切なVulkan 1.2コンピュートデバイスがありません。"
+
+msgid "Noct Programming Language\n"
+msgstr "Noct プログラミング言語\n"
+
+msgid "Nondeterministic accelerator kernel index."
+msgstr "アクセラレータカーネルのインデックスが非決定的です。"
+
+msgid "Nondeterministic accelerator scalar binding."
+msgstr "アクセラレータのスカラーバインディングが非決定的です。"
+
+msgid "Nondeterministic accelerator scalar result."
+msgstr "アクセラレータのスカラー結果が非決定的です。"
+
+msgid "Not a dictionary."
+msgstr "辞書ではありません。"
+
+msgid "Not a function."
+msgstr "関数ではありません。"
+
+msgid "Not a packed."
+msgstr "packed ではありません。"
+
+msgid "Not an array or a dictionary."
+msgstr "配列でも辞書でもありません。"
+
+msgid "Not an array."
+msgstr "配列ではありません。"
+
+msgid "Offset is out-of-range."
+msgstr "オフセットが範囲外です。"
+
+msgid "Only numeric literals are available inside __fast func."
+msgstr "__fast func内では数値リテラルのみ使用できます。"
+
+msgid "OpenGL ES active dispatch sequence is incomplete."
+msgstr "OpenGL ESのアクティブなディスパッチシーケンスが不完全です。"
+
+msgid "OpenGL ES buffer exceeds the device storage-block limit."
+msgstr "OpenGL ESバッファがデバイスのストレージブロック上限を超えています。"
+
+msgid "OpenGL ES buffer extent metadata is inconsistent."
+msgstr "OpenGL ESバッファの次元サイズメタデータが一貫していません。"
+
+msgid "OpenGL ES buffer metadata does not match the prepared program."
+msgstr "OpenGL ESバッファのメタデータが準備済みのプログラムと一致しません。"
+
+msgid "OpenGL ES buffer size is not representable."
+msgstr "OpenGL ESバッファのサイズを表現できません。"
+
+msgid "OpenGL ES buffer table does not match the prepared program."
+msgstr "OpenGL ESバッファテーブルが準備済みのプログラムと一致しません。"
+
+msgid "OpenGL ES compute shader source is too large."
+msgstr "OpenGL ESコンピュートシェーダーのソースコードが大きすぎます。"
+
+msgid "OpenGL ES dispatch exceeds the device workgroup-count limit."
+msgstr "OpenGL ESディスパッチがデバイスのワークグループ数上限を超えています。"
+
+msgid "OpenGL ES dispatch range changed after execution creation."
+msgstr "OpenGL ESディスパッチ範囲が実行の作成後に変更されました。"
+
+msgid "OpenGL ES dispatch range is missing from the scalar block."
+msgstr "スカラーブロックにOpenGL ESディスパッチ範囲がありません。"
+
+msgid "OpenGL ES execution has no active dispatch."
+msgstr "OpenGL ES実行にアクティブなディスパッチがありません。"
+
+msgid "OpenGL ES execution was already finished."
+msgstr "OpenGL ES実行はすでに完了しています。"
+
+msgid "OpenGL ES finish buffer table changed."
+msgstr "OpenGL ES完了バッファテーブルが変更されました。"
+
+msgid "OpenGL ES finish result table changed."
+msgstr "OpenGL ES完了結果テーブルが変更されました。"
+
+msgid "OpenGL ES kernels were dispatched out of order."
+msgstr "OpenGL ESカーネルが順序どおりにディスパッチされませんでした。"
+
+msgid "OpenGL ES output buffer activity changed."
+msgstr "OpenGL ES出力バッファのアクティビティが変更されました。"
+
+msgid "OpenGL ES output buffer became invalid while unmapping."
+msgstr "OpenGL ES出力バッファがマッピング解除中に無効になりました。"
+
+msgid "OpenGL ES output buffer element type changed."
+msgstr "OpenGL ES出力バッファの要素型が変更されました。"
+
+msgid "OpenGL ES output buffer element width changed."
+msgstr "OpenGL ES出力バッファの要素幅が変更されました。"
+
+msgid "OpenGL ES output buffer extent changed."
+msgstr "OpenGL ES出力バッファの次元サイズが変更されました。"
+
+msgid "OpenGL ES output buffer origin changed."
+msgstr "OpenGL ES出力バッファの原点が変更されました。"
+
+msgid "OpenGL ES output buffer size changed."
+msgstr "OpenGL ES出力バッファのサイズが変更されました。"
+
+msgid "OpenGL ES output buffer slot changed."
+msgstr "OpenGL ES出力バッファのスロットが変更されました。"
+
+msgid "OpenGL ES output size is not representable."
+msgstr "OpenGL ES出力のサイズを表現できません。"
+
+msgid "OpenGL ES output transfer plan changed."
+msgstr "OpenGL ES出力の転送プランが変更されました。"
+
+msgid "OpenGL ES output upload plan changed."
+msgstr "OpenGL ES出力のアップロードプランが変更されました。"
+
+msgid "OpenGL ES received an empty active dispatch."
+msgstr "OpenGL ESが空のアクティブなディスパッチを受信しました。"
+
+msgid "OpenGL ES received too many active dispatches."
+msgstr "OpenGL ESが受信したアクティブなディスパッチが多すぎます。"
+
+msgid "OpenGL ES reported an error while preparing a compute program."
+msgstr "OpenGL ESがコンピュートプログラムの準備中にエラーを報告しました。"
+
+msgid "OpenGL ES result block does not match the prepared program."
+msgstr "OpenGL ES結果ブロックが準備済みのプログラムと一致しません。"
+
+msgid "OpenGL ES result block exceeds the device storage-block limit."
+msgstr "OpenGL ES結果ブロックがデバイスのストレージブロック上限を超えています。"
+
+msgid "OpenGL ES result block size overflowed."
+msgstr "OpenGL ES結果ブロックのサイズがオーバーフローしました。"
+
+msgid "OpenGL ES result buffer became invalid while unmapping."
+msgstr "OpenGL ES結果バッファがマッピング解除中に無効になりました。"
+
+msgid "OpenGL ES result size is not representable."
+msgstr "OpenGL ES結果のサイズを表現できません。"
+
+msgid "OpenGL ES scalar block does not match the prepared program."
+msgstr "OpenGL ESスカラーブロックが準備済みのプログラムと一致しません。"
+
+msgid "OpenGL ES scalar block exceeds the device storage-block limit."
+msgstr "OpenGL ESスカラーブロックがデバイスのストレージブロック上限を超えています。"
+
+msgid "OpenGL ES scalar block size overflowed."
+msgstr "OpenGL ESスカラーブロックのサイズがオーバーフローしました。"
+
+msgid "OpenGL ES supports only 32-bit accelerator buffers."
+msgstr "OpenGL ESは32ビットのアクセラレータバッファのみをサポートします。"
+
+msgid "Out of memory building module graph."
+msgstr "モジュールグラフの構築中にメモリ不足になりました。"
+
+msgid "Out of memory inspecting application."
+msgstr "アプリケーションの検査中にメモリ不足になりました。"
+
+msgid "Out of memory reading module %s."
+msgstr "モジュール%sの読み取り中にメモリ不足になりました。"
+
+msgid "Out of memory validating module graph."
+msgstr "モジュールグラフの検証中にメモリ不足になりました。"
+
+msgid "Out of memory while allocating accelerator kernel."
+msgstr "アクセラレータカーネルの割り当て中にメモリ不足になりました。"
+
+msgid "Out of memory while building __fast signature."
+msgstr "__fastシグネチャの構築中にメモリ不足になりました。"
+
+msgid "Out of memory while building accelerator IR."
+msgstr "アクセラレータIRの構築中にメモリ不足になりました。"
+
+msgid "Out of memory while copying OpenGL ES scalar metadata."
+msgstr "OpenGL ESスカラーメタデータのコピー中にメモリ不足になりました。"
+
+msgid "Out of memory while creating OpenGL ES buffers."
+msgstr "OpenGL ESバッファの作成中にメモリ不足になりました。"
+
+msgid "Out of memory while creating Vulkan buffers."
+msgstr "Vulkanバッファの作成中にメモリ不足になりました。"
+
+msgid "Out of memory while creating Vulkan descriptor sets."
+msgstr "Vulkanディスクリプタセットの作成中にメモリ不足になりました。"
+
+msgid "Out of memory while creating a Vulkan execution."
+msgstr "Vulkan実行の作成中にメモリ不足になりました。"
+
+msgid "Out of memory while creating an OpenGL ES execution."
+msgstr "OpenGL ES実行の作成中にメモリ不足になりました。"
+
+msgid "Out of memory while enumerating OpenGL ES devices."
+msgstr "OpenGL ESデバイスの列挙中にメモリ不足になりました。"
+
+msgid "Out of memory while enumerating Vulkan devices."
+msgstr "Vulkanデバイスの列挙中にメモリ不足になりました。"
+
+msgid "Out of memory while planning accelerator function."
+msgstr "アクセラレータ関数の計画中にメモリ不足になりました。"
+
+msgid "Out of memory while planning accelerator region."
+msgstr "アクセラレータリージョンの計画中にメモリ不足になりました。"
+
+msgid "Out of memory while recording accelerator buffer."
+msgstr "アクセラレータバッファの記録中にメモリ不足になりました。"
+
+msgid "Out of memory while recording accelerator kernel."
+msgstr "アクセラレータカーネルの記録中にメモリ不足になりました。"
+
+msgid "Out of memory while recording accelerator range."
+msgstr "アクセラレータ範囲の記録中にメモリ不足になりました。"
+
+msgid "Out of memory while recording accelerator region."
+msgstr "アクセラレータリージョンの記録中にメモリ不足になりました。"
+
+msgid "Out of memory while recording accelerator scalar result."
+msgstr "アクセラレータのスカラー結果の記録中にメモリ不足になりました。"
+
+msgid "Out of memory while recording accelerator scalar."
+msgstr "アクセラレータスカラーの記録中にメモリ不足になりました。"
+
+msgid "Out of memory while storing Vulkan descriptor sets."
+msgstr "Vulkanディスクリプタセットの保存中にメモリ不足になりました。"
+
+msgid "Out of memory while writing Vulkan descriptors."
+msgstr "Vulkanディスクリプタの書き込み中にメモリ不足になりました。"
+
+msgid "Out of memory."
+msgstr "メモリが足りません。"
+
+msgid "Out of memory.\n"
+msgstr "メモリが足りません。\n"
+
+msgid "Out-of-memory."
+msgstr "メモリ不足です。"
+
+msgid "Output %s for input %s collides with input %s.\n"
+msgstr "入力%sの出力%sが入力%sと競合します。\n"
+
+msgid "Output directory already exists."
+msgstr "出力ディレクトリはすでに存在します。"
+
+msgid "Packed destination range is out-of-bounds."
+msgstr "Packedの格納先範囲が境界外です。"
+
+msgid "Packed element type must be a byte."
+msgstr "Packedの要素型はバイトである必要があります。"
+
+msgid "Packed element types do not match."
+msgstr "Packedの要素型が一致しません。"
+
+msgid "Packed index %ld is out-of-range."
+msgstr "Packedのインデックス%ldが範囲外です。"
+
+msgid "Packed is not a file mapping."
+msgstr "Packedはファイルマッピングではありません。"
+
+msgid "Packed is unmapped."
+msgstr "Packedはマッピングされていません。"
+
+msgid "Packed size is 0."
+msgstr "packed のサイズが 0 です。"
+
+msgid "Packed size is too large."
+msgstr "packed のサイズが大きすぎます。"
+
+msgid "Packed source range is out-of-bounds."
+msgstr "Packedのソース範囲が境界外です。"
+
+msgid "Port number is out-of-range."
+msgstr "ポート番号が範囲外です。"
+
+msgid "Private accelerator package is detached."
+msgstr "アクセラレータのプライベートパッケージが切り離されています。"
+
+msgid "REPL input has unmatched delimiters."
+msgstr "REPL入力に対応しない区切り記号があります。"
+
+msgid "REPL input is too large."
+msgstr "REPL入力が大きすぎます。"
+
+msgid "Read length must be greater than zero."
+msgstr "読み取り長は0より大きい必要があります。"
+
+msgid "Receive size is out-of-range."
+msgstr "受信サイズが範囲外です。"
+
+msgid "Regex error: %s"
+msgstr "正規表現エラー: %s"
+
+msgid "Regex too complex."
+msgstr "正規表現が複雑すぎます。"
+
+msgid "Regex too large."
+msgstr "正規表現が大きすぎます。"
+
+msgid "RelaxedPrecision present"
+msgstr "RelaxedPrecisionあり"
+
+msgid "Return operand does not match the declared type."
+msgstr "戻りオペランドが宣言された型と一致しません。"
+
+msgid "SIMD FMA: vreg stack overflow."
+msgstr "SIMD FMA: vregスタックがオーバーフローしました。"
+
+msgid "SIMD: ranked cache dependency plan exceeded vreg budget."
+msgstr "SIMD: ランク付けされたキャッシュ依存関係プランがvreg予算を超えました。"
+
+msgid "SIMD: too many temps."
+msgstr "SIMD: 一時値が多すぎます。"
+
+msgid "SIMD: unexpected vector expression."
+msgstr "SIMD: 予期しないベクトル式です。"
+
+msgid "SIMD: unplanned term."
+msgstr "SIMD: 計画されていない項です。"
+
+msgid "SIMD: vreg budget exceeded."
+msgstr "SIMD: vreg予算を超えました。"
+
+msgid "SIMD: vreg stack overflow."
+msgstr "SIMD: vregスタックがオーバーフローしました。"
+
+msgid "SUBJNZ operand is not an integer."
+msgstr "SUBJNZのオペランドが整数ではありません。"
+
+msgid "Searching directory %s.\n"
+msgstr "ディレクトリ%sを検索中です。\n"
+
+msgid "Shaped parameter types are valid only on __fast func."
+msgstr "形状付きのパラメータ型は__fast funcでのみ有効です。"
+
+msgid "Shared value is nested too deeply."
+msgstr "共有値のネストが深すぎます。"
+
+msgid "Skipping empty directory %s.\n"
+msgstr "空のディレクトリ%sをスキップしています。\n"
+
+msgid "Socket is already closed."
+msgstr "ソケットはすでに閉じています。"
+
+msgid "Socket is already registered to a poller."
+msgstr "ソケットはすでにポーラーに登録されています。"
+
+msgid "Socket is not registered to this poller."
+msgstr "ソケットはこのポーラーに登録されていません。"
+
+msgid "Socket is registered to a poller. Remove it first."
+msgstr "ソケットはポーラーに登録されています。先に削除してください。"
+
+msgid "Specify a command.\n"
+msgstr "コマンドを指定してください。\n"
+
+msgid "Stack overflow."
+msgstr "スタックオーバーフローです。"
+
+msgid "Stack underflow."
+msgstr "スタックアンダーフローです。"
+
+msgid "String is too long."
+msgstr "文字列が長すぎます。"
+
+msgid "Subscript is negative."
+msgstr "添字が負の値です。"
+
+msgid "Subscript not a string."
+msgstr "添字が文字列ではありません。"
+
+msgid "Subscript not an integer."
+msgstr "添字が整数ではありません。"
+
+msgid "Symbol \"%s\" not found."
+msgstr "シンボル \"%s\" がみつかりません。"
+
+msgid "System.import() accepts source files only."
+msgstr "System.import()はソースファイルのみ受け付けます。"
+
+msgid "The '__noct_nap_' symbol prefix is reserved."
+msgstr "シンボル接頭辞'__noct_nap_'は予約されています。"
+
+msgid "The --app option may be specified only once.\n"
+msgstr "オプション--appは一度だけ指定できます。\n"
+
+msgid "The Vulkan accelerator device is unavailable."
+msgstr "Vulkanアクセラレータデバイスは利用できません。"
+
+msgid "The Vulkan loader did not expose Vulkan 1.2 physical-device properties."
+msgstr "VulkanローダーがVulkan 1.2の物理デバイスプロパティを公開しませんでした。"
+
+msgid "The number of indices does not match the __fast parameter rank."
+msgstr "インデックス数が__fastパラメータの次元数と一致しません。"
+
+msgid "The requested GPU device was not found."
+msgstr "要求されたGPUデバイスが見つかりません。"
+
+msgid "The requested GPU name is ambiguous; use a backend-qualified selector."
+msgstr "要求されたGPU名が曖昧です。バックエンドで修飾されたセレクタを使用してください。"
+
+msgid "The selected Direct3D 12 device is unavailable."
+msgstr "選択したDirect3D 12デバイスは利用できません。"
+
+msgid "The selected GPU backend is unavailable."
+msgstr "選択したGPUバックエンドは利用できません。"
+
+msgid "The selected OpenGL ES device is no longer available."
+msgstr "選択したOpenGL ESデバイスは利用できなくなりました。"
+
+msgid "The selected Vulkan compute queue is unavailable."
+msgstr "選択したVulkanコンピュートキューは利用できません。"
+
+msgid "This expression is not available inside __fast func."
+msgstr "この式は__fast func内では使用できません。"
+
+msgid "Thread error: %s"
+msgstr "スレッドエラー: %s"
+
+msgid "Thread is already joined."
+msgstr "スレッドはすでにjoinされています。"
+
+msgid "Too big code."
+msgstr "コードが大きすぎます。"
+
+msgid "Too many __fast parameters."
+msgstr "__fastパラメータが多すぎます。"
+
+msgid "Too many accelerator locals."
+msgstr "アクセラレータのローカル変数が多すぎます。"
+
+msgid "Too many anonymous functions."
+msgstr "無名関数が多すぎます。"
+
+msgid "Too many capture groups."
+msgstr "キャプチャグループが多すぎます。"
+
+msgid "Too many character classes."
+msgstr "文字クラスが多すぎます。"
+
+msgid "Too many direct __fast call edges."
+msgstr "直接__fast呼び出しのエッジが多すぎます。"
+
+msgid "Too many function parameters."
+msgstr "関数パラメータが多すぎます。"
+
+msgid "Too many function prototypes in the require graph."
+msgstr "requireグラフ内の関数プロトタイプが多すぎます。"
+
+msgid "Too many functions or function parameters.\n"
+msgstr "関数または関数パラメータが多すぎます。\n"
+
+msgid "Too many functions."
+msgstr "関数が多すぎます。"
+
+msgid "Too many jumps."
+msgstr "ジャンプが多すぎます。"
+
+msgid "Too many local variables."
+msgstr "ローカル変数が多すぎます。"
+
+msgid "Too many parameters."
+msgstr "パラメータが多すぎます。"
+
+msgid "Too many pinned global variables."
+msgstr "固定されたグローバル変数が多すぎます。"
+
+msgid "Too many pinned local variables."
+msgstr "固定されたローカル変数が多すぎます。"
+
+msgid "Unexpected OpenGL ES finish result words."
+msgstr "予期しないOpenGL ES完了結果ワードです。"
+
+msgid "Unexpected OpenGL ES result words."
+msgstr "予期しないOpenGL ES結果ワードです。"
+
+msgid "Unexpected Vulkan scalar-result destination."
+msgstr "予期しないVulkanスカラー結果の格納先です。"
+
+msgid "Unexpected Vulkan scalar-result identities."
+msgstr "予期しないVulkanスカラー結果のIDです。"
+
+msgid "Unexpected end of file."
+msgstr "予期しないファイル終端です。"
+
+msgid "Unknown __fast numeric intrinsic."
+msgstr "不明な__fast数値組み込み関数です。"
+
+msgid "Unknown error."
+msgstr "不明なエラーです。"
+
+msgid "Unknown opcode %d at pc=%d."
+msgstr "pc=%dに不明なオペコード%dがあります。"
+
+msgid "Unknown opcode."
+msgstr "不明なオペコードです。"
+
+msgid "Unknown option %s.\n"
+msgstr "不明なオプション%s\n"
+
+msgid "Unknown type name '%s'."
+msgstr "不明な型名'%s'です。"
+
+msgid "Unmatched parenthesis."
+msgstr "対応しない括弧があります。"
+
+msgid "Unsupported (?...) construct."
+msgstr "(?...)構文はサポートされていません。"
+
+msgid "Unsupported assignment target inside __fast func."
+msgstr "__fast func内の代入先はサポートされていません。"
+
+msgid "Unsupported block in __fast func."
+msgstr "__fast func内のブロックはサポートされていません。"
+
+msgid "Unsupported file mode."
+msgstr "サポートされていないファイルモードです。"
+
+msgid "Unsupported instruction reached the Vulkan shader generator."
+msgstr "サポートされていない命令がVulkanシェーダージェネレータに到達しました。"
+
+msgid "Unsupported or malformed application version.\n"
+msgstr "サポートされていないか不正なアプリケーションバージョンです。\n"
+
+msgid "Unsupported or malformed application version: %s"
+msgstr "サポートされていないか不正なアプリケーションバージョンです: %s"
+
+msgid "Unsupported or malformed bytecode version.\n"
+msgstr "サポートされていないか不正なバイトコードバージョンです。\n"
+
+msgid "Unsupported or malformed bytecode version: %s"
+msgstr "サポートされていないか不正なバイトコードバージョンです: %s"
+
+msgid "Unsupported packed element type in __fast func."
+msgstr "__fast func内のpacked要素型はサポートされていません。"
+
+msgid "Unterminated character class."
+msgstr "文字クラスが終了していません。"
+
+msgid "Usage\n"
+msgstr "使い方\n"
+
+msgid "Value for key %s is not a dictionary."
+msgstr "キー %s に対応する値が辞書ではありません。"
+
+msgid "Value for key %s is not a double."
+msgstr "キー %s に対応する値が double ではありません。"
+
+msgid "Value for key %s is not a float."
+msgstr "キー %s に対応する値が浮動小数点数ではありません。"
+
+msgid "Value for key %s is not a function."
+msgstr "キー %s に対応する値が関数ではありません。"
+
+msgid "Value for key %s is not a long."
+msgstr "キー %s に対応する値が long ではありません。"
+
+msgid "Value for key %s is not a string."
+msgstr "キー %s に対応する値が文字列ではありません。"
+
+msgid "Value for key %s is not an array."
+msgstr "キー %s に対応する値が配列ではありません。"
+
+msgid "Value for key %s is not an int."
+msgstr "キー %s に対応する値が int ではありません。"
+
+msgid "Value is not a float."
+msgstr "値が浮動小数点数ではありません。"
+
+msgid "Value is not a function."
+msgstr "値が関数ではありません。"
+
+msgid "Value is not a long."
+msgstr "値が long ではありません。"
+
+msgid "Value is not a number or a string."
+msgstr "値が数か文字列ではありません。"
+
+msgid "Value is not a number."
+msgstr "値が数ではありません。"
+
+msgid "Value is not a packed."
+msgstr "値はpackedではありません。"
+
+msgid "Value is not a string, an array, or a dictionary."
+msgstr "値が文字列、配列、辞書ではありません。"
+
+msgid "Value is not a string."
+msgstr "値が文字列ではありません。"
+
+msgid "Value is not an array."
+msgstr "値が配列ではありません。"
+
+msgid "Value is not an int."
+msgstr "値が int ではありません。"
+
+msgid "Value is not an integer."
+msgstr "値が整数ではありません。"
+
+msgid "Value is out of range for int."
+msgstr "値がintの範囲外です。"
+
+msgid "Value is out of range for long."
+msgstr "値がlongの範囲外です。"
+
+msgid "Variable '%s' is already declared in this scope."
+msgstr "変数'%s'はこのスコープですでに宣言されています。"
+
+msgid "Variable '%s' is used before its declaration."
+msgstr "変数'%s'が宣言前に使用されています。"
+
+msgid "Version %s\n"
+msgstr "バージョン %s\n"
+
+msgid "Vulkan 1.2 is required, but the loader only exposes Vulkan 1.0."
+msgstr "Vulkan 1.2が必要ですが、ローダーはVulkan 1.0のみを公開しています。"
+
+msgid "Vulkan 1.2 or newer is required."
+msgstr "Vulkan 1.2以降が必要です。"
+
+msgid "Vulkan accelerator submission failed."
+msgstr "Vulkanアクセラレータのサブミットに失敗しました。"
+
+msgid "Vulkan active kernel has an inactive data buffer."
+msgstr "アクティブなVulkanカーネルに非アクティブなデータバッファがあります。"
+
+msgid "Vulkan buffer exceeds the device storage-buffer limit."
+msgstr "Vulkanバッファがデバイスのストレージバッファ上限を超えています。"
+
+msgid "Vulkan buffer extent is inconsistent."
+msgstr "Vulkanバッファの次元サイズが一貫していません。"
+
+msgid "Vulkan buffer metadata changed after planning."
+msgstr "Vulkanバッファのメタデータが計画後に変更されました。"
+
+msgid "Vulkan buffer table does not match the prepared program."
+msgstr "Vulkanバッファテーブルが準備済みのプログラムと一致しません。"
+
+msgid "Vulkan device '%s' was not found."
+msgstr "Vulkanデバイス'%s'が見つかりません。"
+
+msgid "Vulkan device name '%s' is ambiguous."
+msgstr "Vulkanデバイス名'%s'が曖昧です。"
+
+msgid "Vulkan dispatch exceeds the device workgroup-count limit."
+msgstr "Vulkanディスパッチがデバイスのワークグループ数上限を超えています。"
+
+msgid "Vulkan dispatch range changed after execution creation."
+msgstr "Vulkanディスパッチ範囲が実行の作成後に変更されました。"
+
+msgid "Vulkan dispatch range is missing from the scalar block."
+msgstr "スカラーブロックにVulkanディスパッチ範囲がありません。"
+
+msgid "Vulkan execution has no recording command buffer."
+msgstr "Vulkan実行に記録中のコマンドバッファがありません。"
+
+msgid "Vulkan execution was already submitted."
+msgstr "Vulkan実行はすでにサブミットされています。"
+
+msgid "Vulkan finish buffer table changed."
+msgstr "Vulkan完了バッファテーブルが変更されました。"
+
+msgid "Vulkan kernels were dispatched out of order."
+msgstr "Vulkanカーネルが順序どおりにディスパッチされませんでした。"
+
+msgid "Vulkan output transfer plan changed."
+msgstr "Vulkan出力転送プランが変更されました。"
+
+msgid "Vulkan output was requested before completion."
+msgstr "完了前にVulkan出力が要求されました。"
+
+msgid "Vulkan received an empty active dispatch."
+msgstr "Vulkanが空のアクティブなディスパッチを受け取りました。"
+
+msgid "Vulkan result block does not match the prepared program."
+msgstr "Vulkan結果ブロックが準備済みプログラムと一致しません。"
+
+msgid "Vulkan result block exceeds the device storage-buffer limit."
+msgstr "Vulkan結果ブロックがデバイスストレージバッファの上限を超えています。"
+
+msgid "Vulkan scalar block does not match the prepared program."
+msgstr "Vulkanスカラーブロックが準備済みプログラムと一致しません。"
+
+msgid "Vulkan scalar block exceeds the device storage-buffer limit."
+msgstr "Vulkanスカラーブロックがデバイスストレージバッファの上限を超えています。"
+
+msgid "Vulkan scalar-result identity changed."
+msgstr "Vulkanスカラー結果の識別情報が変更されました。"
+
+msgid "Vulkan scalar-result table changed."
+msgstr "Vulkanスカラー結果テーブルが変更されました。"
+
+msgid "Vulkan shader assembler returned malformed SPIR-V."
+msgstr "Vulkanシェーダーアセンブラが不正なSPIR-Vを返しました。"
+
+msgid "Vulkan shader assembler returned no result."
+msgstr "Vulkanシェーダーアセンブラから結果が返されませんでした。"
+
+msgid "Vulkan shader assembly failed:\x20"
+msgstr "Vulkanシェーダーのアセンブルに失敗しました:\x20"
+
+msgid "Vulkan supports only 32-bit accelerator buffers."
+msgstr "Vulkanは32ビットのアクセラレータバッファのみをサポートします。"
+
+msgid "Write-only file mappings are not supported."
+msgstr "書き込み専用のファイルマッピングはサポートされていません。"
+
+msgid "Wrong number of arguments for __fast intrinsic."
+msgstr "組み込み関数__fastの引数の数が正しくありません。"
+
+msgid "__fast call '%s': argument %u does not match the exact shape."
+msgstr "__fast呼び出し「%s」: 引数%uが正確な形状と一致しません。"
+
+msgid "__fast call '%s': argument %u has the wrong packed element type."
+msgstr "__fast呼び出し「%s」: 引数%uのpacked要素型が正しくありません。"
+
+msgid "__fast call '%s': argument %u has the wrong primitive type."
+msgstr "__fast呼び出し「%s」: 引数%uのプリミティブ型が正しくありません。"
+
+msgid "__fast call '%s': shape element count overflow."
+msgstr "__fast呼び出し「%s」: 形状の要素数がオーバーフローしました。"
+
+msgid "__fast call '%s': shape extents must be positive."
+msgstr "__fast呼び出し「%s」: 形状の次元サイズは正である必要があります。"
+
+msgid "__fast call: argument does not match the exact shape."
+msgstr "__fast呼び出し: 引数が正確な形状と一致しません。"
+
+msgid "__fast call: argument has the wrong packed element type."
+msgstr "__fast呼び出し: 引数のpacked要素型が正しくありません。"
+
+msgid "__fast call: shape element count overflow."
+msgstr "__fast呼び出し: 形状の要素数がオーバーフローしました。"
+
+msgid "__fast call: shape extents must be positive."
+msgstr "__fast呼び出し: 形状の次元サイズは正である必要があります。"
+
+msgid "__fast row-major index overflow."
+msgstr "__fastの行優先インデックスがオーバーフローしました。"
+
+msgid "__fast shape extent is too large."
+msgstr "__fastの形状の次元サイズが大きすぎます。"
+
+msgid "__inline functions must also be static."
+msgstr "__inline関数はstaticでもある必要があります。"
+
+msgid "argument has two binding types"
+msgstr "引数に2つのバインディング型があります"
+
+msgid "atan2() requires float or double operands."
+msgstr "atan2()にはfloatまたはdoubleのオペランドが必要です。"
+
+msgid "buffer binding limit exceeded"
+msgstr "バッファのバインディング上限を超えました"
+
+msgid "chdir() failed.\n"
+msgstr "chdir()に失敗しました。\n"
+
+msgid "continue appeared outside loop."
+msgstr "continue文がループの外で使用されました。"
+
+msgid "device buffer escapes its GPU session"
+msgstr "デバイスバッファがそのGPUセッション外にエスケープしています"
+
+msgid "device buffer has a host argument slot"
+msgstr "デバイスバッファにホスト引数スロットがあります"
+
+msgid "device buffer has no later consumer"
+msgstr "デバイスバッファに後続のコンシューマーがありません"
+
+msgid "device buffer has no producer kernel"
+msgstr "デバイスバッファにプロデューサーカーネルがありません"
+
+msgid "device buffer requires host materialization"
+msgstr "デバイスバッファをホスト側で実体化する必要があります"
+
+msgid "device producer does not cover its extent"
+msgstr "デバイスプロデューサーがその次元サイズを網羅していません"
+
+msgid "device producer does not start at zero"
+msgstr "デバイスプロデューサーがゼロから開始していません"
+
+msgid "device producer has an invalid trip difference"
+msgstr "デバイスプロデューサーの反復差分が無効です"
+
+msgid "device producer has an invalid trip expression"
+msgstr "デバイスプロデューサーの反復式が無効です"
+
+msgid "device producer has multiple invocation indices"
+msgstr "デバイスプロデューサーに複数の呼び出しインデックスがあります"
+
+msgid "device producer index is not exact"
+msgstr "デバイスプロデューサーのインデックスが正確ではありません"
+
+msgid "device producer is not a full definition"
+msgstr "デバイスプロデューサーが完全な定義ではありません"
+
+msgid "device producer range is not exact"
+msgstr "デバイスプロデューサーの範囲が正確ではありません"
+
+msgid "device producer reads before definition"
+msgstr "デバイスプロデューサーが定義前に読み取っています"
+
+msgid "device producer store is not unique"
+msgstr "デバイスプロデューサーのストアが一意ではありません"
+
+msgid "device-only Direct3D 12 buffer has a host argument"
+msgstr "デバイス専用Direct3D 12バッファにホスト引数があります"
+
+msgid "duplicate buffer argument slot"
+msgstr "バッファ引数スロットが重複しています"
+
+msgid "duplicate device binding"
+msgstr "デバイスのバインディングが重複しています"
+
+msgid "duplicate runtime argument slot"
+msgstr "実行環境引数スロットが重複しています"
+
+msgid "duplicate scalar argument slot"
+msgstr "スカラー引数スロットが重複しています"
+
+msgid "duplicate scalar result argument slot"
+msgstr "スカラー結果引数スロットが重複しています"
+
+msgid "else appeared after else."
+msgstr "else文がelse文の後ろで使用されました。"
+
+msgid "else-if appeared after else."
+msgstr "else if文がelse文の後ろで使用されました。"
+
+msgid "else-if block appeared without if block."
+msgstr "else if文がifブロックの後ろ以外で使用されました。"
+
+msgid "empty Direct3D 12 dispatch reached the backend"
+msgstr "空のDirect3D 12ディスパッチがバックエンドに到達しました"
+
+msgid "empty Direct3D 12 execution has an active buffer"
+msgstr "空のDirect3D 12実行にアクティブなバッファがあります"
+
+msgid "empty accelerator region"
+msgstr "空のアクセラレータリージョン"
+
+msgid "execvp() failed for %s.\n"
+msgstr "%sのexecvp()に失敗しました。\n"
+
+msgid "failed to close a Direct3D 12 command list"
+msgstr "Direct3D 12コマンドリストを閉じられませんでした"
+
+msgid "failed to convert a DXGI adapter name"
+msgstr "DXGIアダプター名を変換できませんでした"
+
+msgid "failed to create a Direct3D 12 buffer"
+msgstr "Direct3D 12バッファを作成できませんでした"
+
+msgid "failed to create a Direct3D 12 command allocator"
+msgstr "Direct3D 12コマンドアロケータを作成できませんでした"
+
+msgid "failed to create a Direct3D 12 command list"
+msgstr "Direct3D 12コマンドリストを作成できませんでした"
+
+msgid "failed to create a Direct3D 12 descriptor heap"
+msgstr "Direct3D 12ディスクリプタヒープを作成できませんでした"
+
+msgid "failed to create an execution"
+msgstr "実行を作成できませんでした"
+
+msgid "failed to create the DXGI factory"
+msgstr "DXGIファクトリを作成できませんでした"
+
+msgid "failed to dispatch a kernel"
+msgstr "カーネルをディスパッチできませんでした"
+
+msgid "failed to drain the Direct3D 12 queue submission"
+msgstr "Direct3D 12キューへの送信をドレインできませんでした"
+
+msgid "failed to enumerate DXGI adapters"
+msgstr "DXGIアダプターを列挙できませんでした"
+
+msgid "failed to finish an execution"
+msgstr "実行を完了できませんでした"
+
+msgid "failed to map a Direct3D 12 readback buffer"
+msgstr "Direct3D 12リードバックバッファをマッピングできませんでした"
+
+msgid "failed to map a Direct3D 12 result buffer"
+msgstr "Direct3D 12結果バッファをマッピングできませんでした"
+
+msgid "failed to map a Direct3D 12 upload buffer"
+msgstr "Direct3D 12アップロードバッファをマッピングできませんでした"
+
+msgid "failed to signal the Direct3D 12 queue fence"
+msgstr "Direct3D 12キューフェンスをシグナルできませんでした"
+
+msgid "float contraction is not prohibited"
+msgstr "floatの縮約が禁止されていません"
+
+msgid "float result exceeds bound"
+msgstr "float結果が上限を超えています"
+
+msgid "fork() failed."
+msgstr "fork()に失敗しました。"
+
+msgid "host Direct3D 12 buffer is missing its argument"
+msgstr "Direct3D 12ホストバッファに引数がありません"
+
+msgid "host buffer is not host visible"
+msgstr "ホストバッファがホストから参照できません"
+
+msgid "inactive Direct3D 12 buffer requests a transfer"
+msgstr "非アクティブなDirect3D 12バッファが転送を要求しています"
+
+msgid "incomplete Direct3D 12 execution objects"
+msgstr "Direct3D 12実行オブジェクトが不完全です"
+
+msgid "incomplete Direct3D 12 kernel objects"
+msgstr "Direct3D 12カーネルオブジェクトが不完全です"
+
+msgid "incomplete Direct3D 12 prepared program"
+msgstr "準備済みDirect3D 12プログラムが不完全です"
+
+msgid "incorrect value count"
+msgstr "値の数が正しくありません"
+
+msgid "instruction limit exceeded"
+msgstr "命令の上限を超えました"
+
+msgid "invalid Direct3D 12 buffer origin"
+msgstr "Direct3D 12バッファの生成元が無効です"
+
+msgid "invalid Direct3D 12 device list"
+msgstr "Direct3D 12デバイスリストが無効です"
+
+msgid "invalid Direct3D 12 device-only buffer"
+msgstr "デバイス専用Direct3D 12バッファが無効です"
+
+msgid "invalid Direct3D 12 execution request"
+msgstr "Direct3D 12実行要求が無効です"
+
+msgid "invalid Direct3D 12 kernel index"
+msgstr "Direct3D 12カーネルインデックスが無効です"
+
+msgid "invalid ID bound"
+msgstr "IDの上限が無効です"
+
+msgid "invalid active Direct3D 12 execution"
+msgstr "アクティブなDirect3D 12実行が無効です"
+
+msgid "invalid backend payload owner"
+msgstr "バックエンドペイロードの所有者が無効です"
+
+msgid "invalid binary size expression"
+msgstr "二項サイズ式が無効です"
+
+msgid "invalid buffer argument slot"
+msgstr "バッファ引数スロットが無効です"
+
+msgid "invalid buffer byte range"
+msgstr "バッファのバイト範囲が無効です"
+
+msgid "invalid buffer element kind"
+msgstr "バッファ要素の種類が無効です"
+
+msgid "invalid buffer element width"
+msgstr "バッファ要素の幅が無効です"
+
+msgid "invalid buffer range end"
+msgstr "バッファ範囲の終端が無効です"
+
+msgid "invalid buffer range start"
+msgstr "バッファ範囲の始端が無効です"
+
+msgid "invalid buffer value type"
+msgstr "バッファ値の型が無効です"
+
+msgid "invalid device buffer byte extent"
+msgstr "デバイスバッファのバイト次元サイズが無効です"
+
+msgid "invalid device buffer extent"
+msgstr "デバイスバッファの次元サイズが無効です"
+
+msgid "invalid empty Direct3D 12 execution state"
+msgstr "空のDirect3D 12実行状態が無効です"
+
+msgid "invalid instruction"
+msgstr "命令が無効です"
+
+msgid "invalid instruction length"
+msgstr "命令長が無効です"
+
+msgid "invalid instruction result type"
+msgstr "命令の結果型が無効です"
+
+msgid "invalid kernel buffer range end"
+msgstr "カーネルバッファ範囲の終端が無効です"
+
+msgid "invalid kernel buffer range start"
+msgstr "カーネルバッファ範囲の始端が無効です"
+
+msgid "invalid kernel start"
+msgstr "カーネルの開始位置が無効です"
+
+msgid "invalid kernel stop"
+msgstr "カーネルの停止位置が無効です"
+
+msgid "invalid kernel trip"
+msgstr "カーネルの反復が無効です"
+
+msgid "invalid local buffer argument slot"
+msgstr "ローカルバッファ引数スロットが無効です"
+
+msgid "invalid loop block id"
+msgstr "ループブロックのidが無効です"
+
+msgid "invalid region block id"
+msgstr "リージョンブロックのidが無効です"
+
+msgid "invalid scalar argument slot"
+msgstr "スカラー引数スロットが無効です"
+
+msgid "invalid scalar result argument slot"
+msgstr "スカラー結果引数スロットが無効です"
+
+msgid "invalid scalar result identity"
+msgstr "スカラー結果の識別情報が無効です"
+
+msgid "invalid scalar result producer"
+msgstr "スカラー結果のプロデューサーが無効です"
+
+msgid "invalid scalar result type"
+msgstr "スカラー結果の型が無効です"
+
+msgid "invalid scalar type"
+msgstr "スカラー型が無効です"
+
+msgid "invalid shader kernel index"
+msgstr "シェーダーカーネルインデックスが無効です"
+
+msgid "invalid size multiplication"
+msgstr "サイズの乗算が無効です"
+
+msgid "invalid size opcode"
+msgstr "サイズオペコードが無効です"
+
+msgid "invalid size scalar reference"
+msgstr "サイズスカラー参照が無効です"
+
+msgid "invalid zero-clamped size expression"
+msgstr "ゼロクランプされたサイズ式が無効です"
+
+msgid "kernel buffer table mismatch"
+msgstr "カーネルバッファテーブルが一致しません"
+
+msgid "kernel buffer type mismatch"
+msgstr "カーネルバッファの型が一致しません"
+
+msgid "kernel limit exceeded"
+msgstr "カーネルの上限を超えました"
+
+msgid "kernel scalar table mismatch"
+msgstr "カーネルスカラーテーブルが一致しません"
+
+msgid "missing Direct3D 12 buffer metadata"
+msgstr "Direct3D 12バッファのメタデータがありません"
+
+msgid "missing Direct3D 12 buffer snapshot"
+msgstr "Direct3D 12バッファのスナップショットがありません"
+
+msgid "missing Direct3D 12 buffer table"
+msgstr "Direct3D 12バッファテーブルがありません"
+
+msgid "missing Direct3D 12 download snapshot"
+msgstr "Direct3D 12ダウンロードスナップショットがありません"
+
+msgid "missing Direct3D 12 execution"
+msgstr "Direct3D 12実行がありません"
+
+msgid "missing Direct3D 12 execution output"
+msgstr "Direct3D 12実行の出力がありません"
+
+msgid "missing Direct3D 12 output table"
+msgstr "Direct3D 12出力テーブルがありません"
+
+msgid "missing Direct3D 12 program"
+msgstr "Direct3D 12プログラムがありません"
+
+msgid "missing Direct3D 12 readback buffer"
+msgstr "Direct3D 12リードバックバッファがありません"
+
+msgid "missing Direct3D 12 result resources"
+msgstr "Direct3D 12結果リソースがありません"
+
+msgid "missing Direct3D 12 result words"
+msgstr "Direct3D 12結果ワードがありません"
+
+msgid "missing Direct3D 12 scalar words"
+msgstr "Direct3D 12スカラーワードがありません"
+
+msgid "missing Direct3D 12 upload snapshot"
+msgstr "Direct3D 12アップロードスナップショットがありません"
+
+msgid "missing accelerator kernel table"
+msgstr "アクセラレータカーネルテーブルがありません"
+
+msgid "missing accelerator program"
+msgstr "アクセラレータプログラムがありません"
+
+msgid "missing buffer name"
+msgstr "バッファ名がありません"
+
+msgid "missing buffer table"
+msgstr "バッファテーブルがありません"
+
+msgid "missing compute entry contract"
+msgstr "コンピュートエントリのコントラクトがありません"
+
+msgid "missing function name"
+msgstr "関数名がありません"
+
+msgid "missing instruction table"
+msgstr "命令テーブルがありません"
+
+msgid "missing kernel name"
+msgstr "カーネル名がありません"
+
+msgid "missing kernel table"
+msgstr "カーネルテーブルがありません"
+
+msgid "missing scalar name"
+msgstr "スカラー名がありません"
+
+msgid "missing scalar result name"
+msgstr "スカラー結果名がありません"
+
+msgid "missing scalar result table"
+msgstr "スカラー結果テーブルがありません"
+
+msgid "missing scalar table"
+msgstr "スカラーテーブルがありません"
+
+msgid "missing shader output"
+msgstr "シェーダー出力がありません"
+
+msgid "missing size expression table"
+msgstr "サイズ式テーブルがありません"
+
+msgid "missing source name"
+msgstr "ソース名がありません"
+
+msgid "missing strict Float32 contract"
+msgstr "厳密なFloat32コントラクトがありません"
+
+msgid "missing typed kernel"
+msgstr "型付きカーネルがありません"
+
+msgid "missing typed shader kernel"
+msgstr "型付きシェーダーカーネルがありません"
+
+msgid "negative size constant"
+msgstr "負のサイズ定数"
+
+msgid "nonconstant integer divisor"
+msgstr "非定数の整数除数"
+
+msgid "nonconstant shift count"
+msgstr "非定数のシフト数"
+
+msgid "nondeterministic buffer binding"
+msgstr "非決定的なバッファのバインディング"
+
+msgid "nondeterministic kernel index"
+msgstr "非決定的なカーネルインデックス"
+
+msgid "nondeterministic scalar result entry"
+msgstr "非決定的なスカラー結果エントリ"
+
+msgid "nondeterministic shader kernel index"
+msgstr "非決定的なシェーダーカーネルインデックス"
+
+msgid "noninteger size scalar"
+msgstr "非整数のサイズスカラー"
+
+msgid "nonpositive device buffer extent"
+msgstr "正でないデバイスバッファの次元サイズ"
+
+msgid "nonpositive integer divisor"
+msgstr "正でない整数除数"
+
+msgid "null kernel"
+msgstr "nullカーネル"
+
+msgid "null program"
+msgstr "nullプログラム"
+
+msgid "out of memory creating Direct3D 12 buffer metadata"
+msgstr "Direct3D 12バッファのメタデータ作成中にメモリ不足になりました"
+
+msgid "out of memory creating a Direct3D 12 execution"
+msgstr "Direct3D 12実行の作成中にメモリ不足になりました"
+
+msgid "out of memory retaining Direct3D 12 kernels"
+msgstr "Direct3D 12カーネルの保持中にメモリ不足になりました"
+
+msgid "out of memory while generating shader source"
+msgstr "シェーダーのソースコード生成中にメモリ不足になりました"
+
+msgid "out of memory while recording DXGI adapters"
+msgstr "DXGIアダプターの記録中にメモリ不足になりました"
+
+msgid "package_init() must have no parameters and declare ': void'."
+msgstr "package_init()にはパラメータを指定せず、': void'を宣言する必要があります。"
+
+msgid "parameter count limit exceeded"
+msgstr "パラメータ数の上限を超えました"
+
+msgid "rejected a dispatch range"
+msgstr "ディスパッチ範囲が拒否されました"
+
+msgid "scalar binding limit exceeded"
+msgstr "スカラーのバインディング上限を超えました"
+
+msgid "scalar result collides with buffer input"
+msgstr "スカラー結果がバッファ入力と競合しています"
+
+msgid "scalar result collides with scalar input"
+msgstr "スカラー結果がスカラー入力と競合しています"
+
+msgid "scalar result consumer metadata mismatch"
+msgstr "スカラー結果のコンシューマーメタデータが一致しません"
+
+msgid "scalar result has a foreign producer"
+msgstr "スカラー結果に外部のプロデューサーがあります"
+
+msgid "scalar result limit exceeded"
+msgstr "スカラー結果の上限を超えました"
+
+msgid "scalar result load precedes its producer"
+msgstr "スカラー結果のロードがそのプロデューサーより前にあります"
+
+msgid "scalar result producer is not unique"
+msgstr "スカラー結果のプロデューサーが一意ではありません"
+
+msgid "scalar result reference out of range"
+msgstr "スカラー結果の参照が範囲外です"
+
+msgid "shader buffer table mismatch"
+msgstr "シェーダーバッファテーブルが一致しません"
+
+msgid "shader scalar table mismatch"
+msgstr "シェーダースカラーテーブルが一致しません"
+
+msgid "shader source fragment exceeded its limit"
+msgstr "シェーダーのソースコード断片が上限を超えました"
+
+msgid "shift count out of range"
+msgstr "シフト数が範囲外です"
+
+msgid "short module"
+msgstr "モジュールが短すぎます"
+
+msgid "size expression limit exceeded"
+msgstr "サイズ式の上限を超えました"
+
+msgid "sparse runtime argument namespace"
+msgstr "実行環境引数の名前空間が疎です"
+
+msgid "static declarations require a relative source path."
+msgstr "static宣言には相対ソースコードパスが必要です。"
+
+msgid "the Direct3D 12 device was removed"
+msgstr "Direct3D 12デバイスが削除されました"
+
+msgid "unexpected Direct3D 12 buffer snapshot"
+msgstr "予期しないDirect3D 12バッファスナップショットです"
+
+msgid "unexpected Direct3D 12 result words"
+msgstr "予期しないDirect3D 12結果ワードです"
+
+msgid "unimplemented expr: %d\n"
+msgstr "未実装のexpr: %d\n"
+
+msgid "unknown assembler failure"
+msgstr "不明なアセンブラエラー"
+
+msgid "unsupported buffer origin"
+msgstr "サポートされていないバッファ生成元"
+
+msgid "unsupported device buffer extent"
+msgstr "サポートされていないデバイスバッファの次元サイズ"
+
+msgid "unsupported shader source dialect"
+msgstr "サポートされていないシェーダーソースコード方言"
+
+msgid "unsupported typed shader instruction"
+msgstr "サポートされていない型付きシェーダー命令"
+
+msgid "unused kernel has a buffer range"
+msgstr "未使用のカーネルにバッファ範囲があります"
+
+msgid "validator allocation failed"
+msgstr "バリデータの割り当てに失敗しました"
+
+msgid "value limit exceeded"
+msgstr "値の上限を超えました"
+
+msgid "var is specified without a single symbol."
+msgstr "varが変数名以外に指定されました。"
+
+msgid "vm-options:\n"
+msgstr "VMオプション:\n"
+
+msgid "wrong SPIR-V version"
+msgstr "SPIR-Vのバージョンが正しくありません"
+
+msgid "wrong magic"
+msgstr "マジック値が正しくありません"
+

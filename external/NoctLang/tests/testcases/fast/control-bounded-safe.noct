@@ -1,0 +1,38 @@
+__fast func break_bounded(data: rpackeduint32(100)): int {
+    for (i in 0..1000) {
+        if (i >= 100) {
+            break;
+        }
+        data[i] = i;
+    }
+    return data[99];
+}
+
+__fast func continue_bounded(data: rpackeduint32(100)): int {
+    for (i in 0..1000) {
+        if (i >= 100) {
+            continue;
+        }
+        data[i] = i + 1;
+    }
+    return data[99];
+}
+
+__fast func return_bounded(data: rpackeduint32(100)): int {
+    for (i in 0..1000) {
+        if (i >= 100) {
+            return data[99];
+        }
+        data[i] = i + 2;
+    }
+    return data[99];
+}
+
+func main() {
+    var break_data = Packed.uint32(100);
+    var continue_data = Packed.uint32(100);
+    var return_data = Packed.uint32(100);
+    print(break_bounded(break_data));
+    print(continue_bounded(continue_data));
+    print(return_bounded(return_data));
+}

@@ -1,0 +1,8 @@
+__fast func bad(x: int): int {
+    let y = x + 1;
+    return y;
+}
+
+func main() {
+    print(bad(1));
+}

@@ -1,0 +1,37 @@
+graph opset=12 tensors=23 nodes=12 input=t0 output=t22
+tensor t0 storage=0 role=input dtype=float32 name="input" safe=input_t0 shape=[1,3,32,32] stride=[3072,1024,32,1] offset=0 layout=NCHW producer=-1 consumers=[0] use=0:0
+tensor t1 storage=1 role=initializer dtype=float32 name="conv1_w" safe=conv1_w_t1 shape=[6,3,5,5] stride=[75,25,5,1] offset=0 layout=OIHW producer=-1 consumers=[0] use=0:0
+tensor t2 storage=2 role=initializer dtype=float32 name="conv1_b" safe=conv1_b_t2 shape=[6] stride=[1] offset=0 layout=C producer=-1 consumers=[0] use=0:0
+tensor t3 storage=3 role=initializer dtype=float32 name="conv2_w" safe=conv2_w_t3 shape=[16,6,5,5] stride=[150,25,5,1] offset=0 layout=OIHW producer=-1 consumers=[3] use=3:3
+tensor t4 storage=4 role=initializer dtype=float32 name="conv2_b" safe=conv2_b_t4 shape=[16] stride=[1] offset=0 layout=C producer=-1 consumers=[3] use=3:3
+tensor t5 storage=5 role=initializer dtype=float32 name="fc1_w" safe=fc1_w_t5 shape=[120,400] stride=[400,1] offset=0 layout=NC producer=-1 consumers=[7] use=7:7
+tensor t6 storage=6 role=initializer dtype=float32 name="fc1_b" safe=fc1_b_t6 shape=[120] stride=[1] offset=0 layout=C producer=-1 consumers=[7] use=7:7
+tensor t7 storage=7 role=initializer dtype=float32 name="fc2_w" safe=fc2_w_t7 shape=[84,120] stride=[120,1] offset=0 layout=NC producer=-1 consumers=[9] use=9:9
+tensor t8 storage=8 role=initializer dtype=float32 name="fc2_b" safe=fc2_b_t8 shape=[84] stride=[1] offset=0 layout=C producer=-1 consumers=[9] use=9:9
+tensor t9 storage=9 role=initializer dtype=float32 name="fc3_w" safe=fc3_w_t9 shape=[10,84] stride=[84,1] offset=0 layout=NC producer=-1 consumers=[11] use=11:11
+tensor t10 storage=10 role=initializer dtype=float32 name="fc3_b" safe=fc3_b_t10 shape=[10] stride=[1] offset=0 layout=C producer=-1 consumers=[11] use=11:11
+tensor t11 storage=11 role=temporary dtype=float32 name="conv1" safe=conv1_t11 shape=[1,6,28,28] stride=[4704,784,28,1] offset=0 layout=NCHW producer=0 consumers=[1] use=1:1
+tensor t12 storage=12 role=temporary dtype=float32 name="relu1" safe=relu1_t12 shape=[1,6,28,28] stride=[4704,784,28,1] offset=0 layout=NCHW producer=1 consumers=[2] use=2:2
+tensor t13 storage=13 role=temporary dtype=float32 name="pool1" safe=pool1_t13 shape=[1,6,14,14] stride=[1176,196,14,1] offset=0 layout=NCHW producer=2 consumers=[3] use=3:3
+tensor t14 storage=14 role=temporary dtype=float32 name="conv2" safe=conv2_t14 shape=[1,16,10,10] stride=[1600,100,10,1] offset=0 layout=NCHW producer=3 consumers=[4] use=4:4
+tensor t15 storage=15 role=temporary dtype=float32 name="relu2" safe=relu2_t15 shape=[1,16,10,10] stride=[1600,100,10,1] offset=0 layout=NCHW producer=4 consumers=[5] use=5:5
+tensor t16 storage=16 role=temporary dtype=float32 name="pool2" safe=pool2_t16 shape=[1,16,5,5] stride=[400,25,5,1] offset=0 layout=NCHW producer=5 consumers=[6] use=6:6
+tensor t17 storage=16 role=alias dtype=float32 name="flat" safe=flat_t17 shape=[1,400] stride=[400,1] offset=0 layout=NC producer=6 consumers=[7] use=7:7
+tensor t18 storage=17 role=temporary dtype=float32 name="fc1" safe=fc1_t18 shape=[1,120] stride=[120,1] offset=0 layout=NC producer=7 consumers=[8] use=8:8
+tensor t19 storage=18 role=temporary dtype=float32 name="relu3" safe=relu3_t19 shape=[1,120] stride=[120,1] offset=0 layout=NC producer=8 consumers=[9] use=9:9
+tensor t20 storage=19 role=temporary dtype=float32 name="fc2" safe=fc2_t20 shape=[1,84] stride=[84,1] offset=0 layout=NC producer=9 consumers=[10] use=10:10
+tensor t21 storage=20 role=temporary dtype=float32 name="relu4" safe=relu4_t21 shape=[1,84] stride=[84,1] offset=0 layout=NC producer=10 consumers=[11] use=11:11
+tensor t22 storage=21 role=output dtype=float32 name="logits" safe=logits_t22 shape=[1,10] stride=[10,1] offset=0 layout=NC producer=11 consumers=[] use=12:12
+node n0 op=ai.onnx::Conv@11 imported=12 family=conv2d-reference name="conv1" inputs=[0,1,2] outputs=[11] attrs=[auto_pad:string="NOTSET",dilations:ints=[1,1],group:int=1,kernel_shape:ints=[5,5],pads:ints=[0,0,0,0],strides:ints=[1,1]]
+node n1 op=ai.onnx::Relu@6 imported=12 family=pointwise-unary name="relu1" inputs=[11] outputs=[12] attrs=[]
+node n2 op=ai.onnx::MaxPool@12 imported=12 family=max-pool2d name="pool1" inputs=[12] outputs=[13] attrs=[auto_pad:string="NOTSET",ceil_mode:int=0,dilations:ints=[1,1],kernel_shape:ints=[2,2],pads:ints=[0,0,0,0],strides:ints=[2,2]]
+node n3 op=ai.onnx::Conv@11 imported=12 family=conv2d-reference name="conv2" inputs=[13,3,4] outputs=[14] attrs=[auto_pad:string="NOTSET",dilations:ints=[1,1],group:int=1,kernel_shape:ints=[5,5],pads:ints=[0,0,0,0],strides:ints=[1,1]]
+node n4 op=ai.onnx::Relu@6 imported=12 family=pointwise-unary name="relu2" inputs=[14] outputs=[15] attrs=[]
+node n5 op=ai.onnx::MaxPool@12 imported=12 family=max-pool2d name="pool2" inputs=[15] outputs=[16] attrs=[auto_pad:string="NOTSET",ceil_mode:int=0,dilations:ints=[1,1],kernel_shape:ints=[2,2],pads:ints=[0,0,0,0],strides:ints=[2,2]]
+node n6 op=ai.onnx::Flatten@11 imported=12 family=flatten-view name="flatten" inputs=[16] outputs=[17] attrs=[axis:int=1]
+node n7 op=ai.onnx::Gemm@11 imported=12 family=gemm-rank2 name="fc1" inputs=[17,5,6] outputs=[18] attrs=[alpha:float32_bits=1065353216,beta:float32_bits=1065353216,transA:int=0,transB:int=1]
+node n8 op=ai.onnx::Relu@6 imported=12 family=pointwise-unary name="relu3" inputs=[18] outputs=[19] attrs=[]
+node n9 op=ai.onnx::Gemm@11 imported=12 family=gemm-rank2 name="fc2" inputs=[19,7,8] outputs=[20] attrs=[alpha:float32_bits=1065353216,beta:float32_bits=1065353216,transA:int=0,transB:int=1]
+node n10 op=ai.onnx::Relu@6 imported=12 family=pointwise-unary name="relu4" inputs=[20] outputs=[21] attrs=[]
+node n11 op=ai.onnx::Gemm@11 imported=12 family=gemm-rank2 name="fc3" inputs=[21,9,10] outputs=[22] attrs=[alpha:float32_bits=1065353216,beta:float32_bits=1065353216,transA:int=0,transB:int=1]
+

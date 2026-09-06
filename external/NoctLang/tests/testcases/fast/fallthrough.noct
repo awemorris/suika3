@@ -1,0 +1,7 @@
+__fast func missing(x: int): int {
+    var y: int = x + 1;
+}
+
+func main() {
+    print(missing(1));
+}

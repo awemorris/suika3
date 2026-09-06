@@ -1,0 +1,7 @@
+func as_int(value): int {
+    return value;
+}
+
+func main() {
+    print(as_int("wrong"));
+}

@@ -1,0 +1,22 @@
+func worker(storage) {
+    for (i in 0..1000) {
+        Thread.withLock(storage, (o) => {
+            o.n = o.n + 1;
+        });
+    }
+    return 0;
+}
+
+func main() {
+    var storage = Thread.createLocked({n: 0});
+    var ths = [];
+    for (t in 0..4) {
+        ths[t] = Thread.createThread(worker, storage);
+    }
+    for (t in 0..4) {
+        Thread.joinThread(ths[t]);
+    }
+    Thread.withLock(storage, (o) => {
+        print(o.n);
+    });
+}

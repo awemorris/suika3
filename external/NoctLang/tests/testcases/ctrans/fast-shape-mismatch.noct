@@ -1,0 +1,8 @@
+__fast func read_first(data: rpackeduint32(2, 3)): int {
+    return data[0, 0];
+}
+
+func main() {
+    var data = Packed.uint32(7);
+    print(read_first(data));
+}

@@ -1,0 +1,27 @@
+__fast func float_math(x: float): float {
+    let bounded: float = max(0.0f, min(16.0f, x));
+    return sqrt(bounded) + abs(-1.0f);
+}
+
+__fast func integer_math(x: int): int {
+    return max(abs(x), min(7, 9));
+}
+
+__fast func call_forward(x: int): int {
+    return add_one(x);
+}
+
+__fast func add_one(x: int): int {
+    return x + 1;
+}
+
+static __inline __fast func convert_twice(x: int): float {
+    return float(x) * 2.0f;
+}
+
+func main() {
+    print(float_math(9.0f));
+    print(integer_math(-4));
+    print(call_forward(41));
+    print(convert_twice(3));
+}

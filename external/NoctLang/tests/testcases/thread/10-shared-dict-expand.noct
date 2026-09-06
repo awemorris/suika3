@@ -1,0 +1,65 @@
+func dictWorker(param) {
+    var d = param.dict;
+    var base = param.base;
+    for (i in 0..200) {
+        d["k" + (base + i)] = base + i;
+    }
+    return 0;
+}
+
+func arrayWorker(param) {
+    var a = param.arr;
+    var base = param.base;
+    for (i in 0..200) {
+        a[base + i] = base + i;
+    }
+    return 0;
+}
+
+func main() {
+    var d = {};
+    var a = [];
+    var bad = 0;
+
+    // Force sharing before the spawned threads start.
+    d["seed"] = 1;
+    a[0] = 0;
+
+    var ths = [];
+    for (t in 0..4) {
+        ths[t] = Thread.createThread(dictWorker, {dict: d, base: t * 1000});
+    }
+    var ath = [];
+    for (t in 0..4) {
+        ath[t] = Thread.createThread(arrayWorker, {arr: a, base: t * 200});
+    }
+
+    // Write from the main thread too, racing with expansions.
+    for (i in 0..200) {
+        d["m" + i] = i;
+    }
+
+    for (t in 0..4) {
+        Thread.joinThread(ths[t]);
+        Thread.joinThread(ath[t]);
+    }
+
+    for (t in 0..4) {
+        for (i in 0..200) {
+            if (d["k" + (t * 1000 + i)] != t * 1000 + i) {
+                bad = bad + 1;
+            }
+        }
+    }
+    for (i in 0..200) {
+        if (d["m" + i] != i) {
+            bad = bad + 1;
+        }
+    }
+    for (i in 0..800) {
+        if (a[i] != i) {
+            bad = bad + 1;
+        }
+    }
+    print(bad);
+}

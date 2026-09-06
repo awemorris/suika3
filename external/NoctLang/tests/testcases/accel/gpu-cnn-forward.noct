@@ -1,0 +1,283 @@
+// Small CNN forward pass adapted from the flattened CUDA kernel layout in:
+// https://github.com/paramhanji/CUDA-CNN
+//
+// The reference network is conv -> subsampling -> fully connected.  This
+// independent test keeps that topology, reduces the tensor sizes, and uses
+// ReLU plus average pooling so every layer fits the current raw gpu subset.
+
+__accel var cnn_input = Accel.float32(64);
+__accel var cnn_conv_weight = Accel.float32(18);
+__accel var cnn_conv = Accel.float32(72);
+__accel var cnn_relu = Accel.float32(72);
+__accel var cnn_pool = Accel.float32(18);
+__accel var cnn_dense_weight = Accel.float32(54);
+__accel var cnn_dense_bias = Accel.float32(3);
+__accel var cnn_logits = Accel.float32(3);
+
+// Host tensors are shared by the ordinary func reference implementation and
+// by the benchmark harness.  Both paths use identical weights and ordering.
+var cnn_host_input = Packed.float32(64);
+var cnn_host_conv_weight = Packed.float32(18);
+var cnn_host_dense_weight = Packed.float32(54);
+var cnn_host_dense_bias = Packed.float32(3);
+var cnn_host_logits = Packed.float32(3);
+var cnn_cpu_conv = Packed.float32(72);
+var cnn_cpu_relu = Packed.float32(72);
+var cnn_cpu_pool = Packed.float32(18);
+var cnn_cpu_logits = Packed.float32(3);
+
+func cnn_cpu_conv3x3() {
+    for (i in 0..72) {
+        let channel: int = i / 36;
+        let spatial: int = i % 36;
+        let y: int = spatial / 6;
+        let x: int = spatial % 6;
+        let input_base: int = y * 8 + x;
+        let weight_base: int = channel * 9;
+        cnn_cpu_conv[i] =
+            cnn_host_input[input_base] * cnn_host_conv_weight[weight_base] +
+            cnn_host_input[input_base + 1] * cnn_host_conv_weight[weight_base + 1] +
+            cnn_host_input[input_base + 2] * cnn_host_conv_weight[weight_base + 2] +
+            cnn_host_input[input_base + 8] * cnn_host_conv_weight[weight_base + 3] +
+            cnn_host_input[input_base + 9] * cnn_host_conv_weight[weight_base + 4] +
+            cnn_host_input[input_base + 10] * cnn_host_conv_weight[weight_base + 5] +
+            cnn_host_input[input_base + 16] * cnn_host_conv_weight[weight_base + 6] +
+            cnn_host_input[input_base + 17] * cnn_host_conv_weight[weight_base + 7] +
+            cnn_host_input[input_base + 18] * cnn_host_conv_weight[weight_base + 8];
+    }
+}
+
+func cnn_cpu_relu_layer() {
+    for (i in 0..72) {
+        if (cnn_cpu_conv[i] > 0.0) {
+            cnn_cpu_relu[i] = cnn_cpu_conv[i];
+        } else {
+            cnn_cpu_relu[i] = 0.0;
+        }
+    }
+}
+
+func cnn_cpu_average_pool2x2() {
+    for (i in 0..18) {
+        let channel: int = i / 9;
+        let spatial: int = i % 9;
+        let y: int = spatial / 3;
+        let x: int = spatial % 3;
+        let input_base: int = channel * 36 + y * 12 + x * 2;
+        cnn_cpu_pool[i] =
+            (cnn_cpu_relu[input_base] + cnn_cpu_relu[input_base + 1] +
+             cnn_cpu_relu[input_base + 6] + cnn_cpu_relu[input_base + 7]) / 4.0;
+    }
+}
+
+func cnn_cpu_dense3() {
+    for (i in 0..3) {
+        let base: int = i * 18;
+        cnn_cpu_logits[i] = cnn_host_dense_bias[i] +
+            cnn_cpu_pool[0] * cnn_host_dense_weight[base] +
+            cnn_cpu_pool[1] * cnn_host_dense_weight[base + 1] +
+            cnn_cpu_pool[2] * cnn_host_dense_weight[base + 2] +
+            cnn_cpu_pool[3] * cnn_host_dense_weight[base + 3] +
+            cnn_cpu_pool[4] * cnn_host_dense_weight[base + 4] +
+            cnn_cpu_pool[5] * cnn_host_dense_weight[base + 5] +
+            cnn_cpu_pool[6] * cnn_host_dense_weight[base + 6] +
+            cnn_cpu_pool[7] * cnn_host_dense_weight[base + 7] +
+            cnn_cpu_pool[8] * cnn_host_dense_weight[base + 8] +
+            cnn_cpu_pool[9] * cnn_host_dense_weight[base + 9] +
+            cnn_cpu_pool[10] * cnn_host_dense_weight[base + 10] +
+            cnn_cpu_pool[11] * cnn_host_dense_weight[base + 11] +
+            cnn_cpu_pool[12] * cnn_host_dense_weight[base + 12] +
+            cnn_cpu_pool[13] * cnn_host_dense_weight[base + 13] +
+            cnn_cpu_pool[14] * cnn_host_dense_weight[base + 14] +
+            cnn_cpu_pool[15] * cnn_host_dense_weight[base + 15] +
+            cnn_cpu_pool[16] * cnn_host_dense_weight[base + 16] +
+            cnn_cpu_pool[17] * cnn_host_dense_weight[base + 17];
+    }
+}
+
+func cnn_cpu_forward(iterations: int) {
+    for (iteration in 0..iterations) {
+        cnn_cpu_conv3x3();
+        cnn_cpu_relu_layer();
+        cnn_cpu_average_pool2x2();
+        cnn_cpu_dense3();
+    }
+}
+
+// 8x8x1 -> 6x6x2, valid 3x3 cross-correlation.
+__gpu func cnn_conv3x3(
+    input: rpackedfloat_ptr,
+    weight: rpackedfloat_ptr,
+    output: rpackedfloat_ptr,
+    count: int
+): void {
+    let i: int = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < count) {
+        let channel: int = i / 36;
+        let spatial: int = i % 36;
+        let y: int = spatial / 6;
+        let x: int = spatial % 6;
+        let input_base: int = y * 8 + x;
+        let weight_base: int = channel * 9;
+        let sum: float =
+            input[input_base] * weight[weight_base] +
+            input[input_base + 1] * weight[weight_base + 1] +
+            input[input_base + 2] * weight[weight_base + 2] +
+            input[input_base + 8] * weight[weight_base + 3] +
+            input[input_base + 9] * weight[weight_base + 4] +
+            input[input_base + 10] * weight[weight_base + 5] +
+            input[input_base + 16] * weight[weight_base + 6] +
+            input[input_base + 17] * weight[weight_base + 7] +
+            input[input_base + 18] * weight[weight_base + 8];
+        output[i] = sum;
+    }
+}
+
+__gpu func cnn_relu_layer(
+    input: rpackedfloat_ptr,
+    output: rpackedfloat_ptr,
+    count: int
+): void {
+    let i: int = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < count) {
+        let value: float = input[i];
+        if (value > 0.0) {
+            output[i] = value;
+        }
+        if (value <= 0.0) {
+            output[i] = 0.0;
+        }
+    }
+}
+
+// 6x6x2 -> 3x3x2, non-overlapping 2x2 average pooling.
+__gpu func cnn_average_pool2x2(
+    input: rpackedfloat_ptr,
+    output: rpackedfloat_ptr,
+    count: int
+): void {
+    let i: int = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < count) {
+        let channel: int = i / 9;
+        let spatial: int = i % 9;
+        let y: int = spatial / 3;
+        let x: int = spatial % 3;
+        let input_base: int = channel * 36 + y * 12 + x * 2;
+        output[i] = (input[input_base] + input[input_base + 1] +
+                     input[input_base + 6] + input[input_base + 7]) / 4.0;
+    }
+}
+
+// 18 -> 3.  The fixed inner dimension is deliberately unrolled, matching
+// what a small CUDA inference kernel would do after specialization.
+__gpu func cnn_dense3(
+    input: rpackedfloat_ptr,
+    weight: rpackedfloat_ptr,
+    bias: rpackedfloat_ptr,
+    output: rpackedfloat_ptr,
+    count: int
+): void {
+    let i: int = blockIdx.x * blockDim.x + threadIdx.x;
+    if (i < count) {
+        let base: int = i * 18;
+        output[i] = bias[i] +
+            input[0] * weight[base] +
+            input[1] * weight[base + 1] +
+            input[2] * weight[base + 2] +
+            input[3] * weight[base + 3] +
+            input[4] * weight[base + 4] +
+            input[5] * weight[base + 5] +
+            input[6] * weight[base + 6] +
+            input[7] * weight[base + 7] +
+            input[8] * weight[base + 8] +
+            input[9] * weight[base + 9] +
+            input[10] * weight[base + 10] +
+            input[11] * weight[base + 11] +
+            input[12] * weight[base + 12] +
+            input[13] * weight[base + 13] +
+            input[14] * weight[base + 14] +
+            input[15] * weight[base + 15] +
+            input[16] * weight[base + 16] +
+            input[17] * weight[base + 17];
+    }
+}
+
+func cnn_setup() {
+    // A deterministic 8x8 digit-like pattern.
+    cnn_host_input[11] = 1.0;
+    cnn_host_input[19] = 1.0;
+    cnn_host_input[27] = 1.0;
+    cnn_host_input[35] = 1.0;
+    cnn_host_input[43] = 1.0;
+    cnn_host_input[50] = 1.0;
+    cnn_host_input[51] = 1.0;
+    cnn_host_input[52] = 1.0;
+
+    // Channel 0 copies the 3x3 center.  Channel 1 is a horizontal edge.
+    cnn_host_conv_weight[4] = 1.0;
+    cnn_host_conv_weight[12] = -1.0;
+    cnn_host_conv_weight[13] = 1.0;
+
+    // Class 0 sums both channels.  Classes 1 and 2 prefer one channel.
+    for (i in 0..18) {
+        cnn_host_dense_weight[i] = 1.0;
+    }
+    for (i in 0..9) {
+        cnn_host_dense_weight[18 + i] = 2.0;
+        cnn_host_dense_weight[27 + i] = -1.0;
+        cnn_host_dense_weight[36 + i] = -1.0;
+        cnn_host_dense_weight[45 + i] = 2.0;
+    }
+    cnn_host_dense_bias[0] = 0.5;
+    cnn_host_dense_bias[1] = 1.0;
+    cnn_host_dense_bias[2] = -1.0;
+
+    Accel.copyToAccel(cnn_host_input, 0, cnn_input, 0, 256);
+    Accel.copyToAccel(cnn_host_conv_weight, 0, cnn_conv_weight, 0, 72);
+    Accel.copyToAccel(cnn_host_dense_weight, 0, cnn_dense_weight, 0, 216);
+    Accel.copyToAccel(cnn_host_dense_bias, 0, cnn_dense_bias, 0, 12);
+}
+
+func cnn_gpu_forward(iterations: int) {
+    for (iteration in 0..iterations) {
+        cnn_conv3x3<<<2, 64>>>(
+            cnn_input, cnn_conv_weight, cnn_conv, 72);
+        cnn_relu_layer<<<2, 64>>>(cnn_conv, cnn_relu, 72);
+        cnn_average_pool2x2<<<1, 32>>>(cnn_relu, cnn_pool, 18);
+        cnn_dense3<<<1, 4>>>(
+            cnn_pool, cnn_dense_weight, cnn_dense_bias, cnn_logits, 3);
+    }
+}
+
+func cnn_verify_cpu() {
+    if (cnn_cpu_logits[0] == 4.0 &&
+        cnn_cpu_logits[1] == 3.5 &&
+        cnn_cpu_logits[2] == 0.0) {
+        return 1;
+    }
+    return 0;
+}
+
+func cnn_verify_gpu() {
+    Accel.copyFromAccel(cnn_logits, 0, cnn_host_logits, 0, 12);
+    if (cnn_host_logits[0] == 4.0 &&
+        cnn_host_logits[1] == 3.5 &&
+        cnn_host_logits[2] == 0.0) {
+        return 1;
+    }
+    return 0;
+}
+
+func main() {
+    cnn_setup();
+    cnn_cpu_forward(1);
+    cnn_gpu_forward(1);
+    if (cnn_verify_cpu() != 1 || cnn_verify_gpu() != 1) {
+        print("CNN verification failed");
+        return;
+    }
+
+    print(cnn_host_logits[0]);
+    print(cnn_host_logits[1]);
+    print(cnn_host_logits[2]);
+}

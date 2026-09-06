@@ -1,0 +1,11 @@
+__accel var device = Accel.uint32(1);
+
+__accel func combine(a: rpackeduint32_ptr, b: rpackeduint32_ptr, count: int): void {
+    for (i in 0..count) {
+        a[i] = b[i];
+    }
+}
+
+func main() {
+    Accel.call(combine, device, device, 1);
+}

@@ -1,0 +1,3 @@
+func main(args) {
+    Weights.open(args[0], args[1]);
+}

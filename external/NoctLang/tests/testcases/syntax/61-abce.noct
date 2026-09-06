@@ -1,0 +1,35 @@
+func main() {
+    // ABCE: eligible ranged-for loops over Packed.uint8.
+    // At -O2 these run through the bounds-check-free
+    // fast path; the output must be identical at every level.
+    var n = 512;
+    var p = Packed.uint8(n);
+    for (i in 0..n) {
+        p[i] = (i * 31 + 7) % 256;
+    }
+    var sum = 0;
+    var delta = 3;
+    for (i in 0..509) {
+        sum = sum + p[i] + p[i + delta] - p[delta + i] + p[i + 2];
+    }
+    print(sum);
+    // Store loop through the fast path.
+    for (i in 0..n) {
+        p[i] = (p[i] + 1) % 256;
+    }
+    var sum2 = 0;
+    for (i in 0..n) {
+        sum2 = sum2 + p[i];
+    }
+    print(sum2);
+    // Guard-failing shapes stay on the slow path with identical results.
+    var q = Packed.int8(8);
+    for (i in 0..8) {
+        q[i] = i;
+    }
+    var sum3 = 0;
+    for (i in 0..8) {
+        sum3 = sum3 + q[i];
+    }
+    print(sum3);
+}

@@ -1,0 +1,64 @@
+// Keeps several connections open at once and drives them all through a
+// single poller, so readiness really has to be multiplexed.
+//
+// Socket handles are ordinary dictionaries, so the script can tag them
+// to tell the listener apart from a connection.
+
+func client_thread(param) {
+    var conns = [];
+    for (i in 0..param.count) {
+        conns[i] = HttpServer.connect("127.0.0.1", param.port);
+    }
+    // Send in reverse order: the server must not assume arrival order.
+    for (i in 0..param.count) {
+        var idx = param.count - 1 - i;
+        HttpServer.send(conns[idx], "c" + idx);
+    }
+    var ok = 0;
+    for (i in 0..param.count) {
+        if (HttpServer.recv(conns[i], 4096) == "r:c" + i) {
+            ok = ok + 1;
+        }
+        HttpServer.close(conns[i]);
+    }
+    return ok;
+}
+
+func main() {
+    var port = 18103;
+    var count = 8;
+
+    var server = HttpServer.listen("127.0.0.1", port);
+    server.isListener = 1;
+
+    var poller = HttpServer.createPoller();
+    HttpServer.addToPoller(poller, server, HttpServer.READ);
+
+    var th = Thread.createThread(client_thread, {port: port, count: count});
+
+    var accepted = 0;
+    var answered = 0;
+    while (answered < count) {
+        var ready = HttpServer.waitPoller(poller, 5000);
+        for (r in ready) {
+            if (Dict.hasKey(r.socket, "isListener")) {
+                var conn = HttpServer.accept(r.socket);
+                HttpServer.addToPoller(poller, conn, HttpServer.READ);
+                accepted = accepted + 1;
+            } else {
+                var got = HttpServer.recv(r.socket, 4096);
+                HttpServer.send(r.socket, "r:" + got);
+                HttpServer.removeFromPoller(poller, r.socket);
+                HttpServer.close(r.socket);
+                answered = answered + 1;
+            }
+        }
+    }
+    print(accepted);
+    print(answered);
+    print(Thread.joinThread(th));
+    print(HttpServer.countPoller(poller));
+
+    HttpServer.removeFromPoller(poller, server);
+    HttpServer.close(server);
+}

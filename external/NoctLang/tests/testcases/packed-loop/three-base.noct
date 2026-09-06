@@ -1,0 +1,23 @@
+var lhs = Packed.uint32(12);
+var rhs = Packed.uint32(12);
+var dst = Packed.uint32(12);
+
+func kernel3(lhs: rpackeduint32, rhs: rpackeduint32,
+             dst: rpackeduint32, stop: int): void {
+    for (i in 3..stop) {
+        dst[i] = (((lhs[i] + rhs[i]) * 3) ^ 85);
+    }
+}
+
+func main() {
+    for (i in 0..12) {
+        lhs[i] = i + 1;
+        rhs[i] = i * 2 + 3;
+    }
+    kernel3(lhs, rhs, dst, 11);
+    print(dst[0]);
+    print(dst[2]);
+    print(dst[3]);
+    print(dst[10]);
+    print(dst[11]);
+}

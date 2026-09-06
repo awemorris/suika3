@@ -1,0 +1,51 @@
+func sideEffect(d, v) {
+    d.count = d.count + 1;
+    return v;
+}
+
+func main() {
+    var d = {count: 0};
+
+    // || must not evaluate the right side when the left is true.
+    if (1 || sideEffect(d, 1)) {
+        print("or-short");
+    }
+    print(d.count);
+
+    // && must not evaluate the right side when the left is false.
+    if (0 && sideEffect(d, 1)) {
+        print("never");
+    } else {
+        print("and-short");
+    }
+    print(d.count);
+
+    // Both sides evaluated when needed.
+    if (sideEffect(d, 1) && sideEffect(d, 1)) {
+        print("and-both");
+    }
+    print(d.count);
+
+    // Value semantics: result is 1/0.
+    var a = (2 && 3);
+    var b = (0 || 0);
+    var c = (0 || 7);
+    print(a);
+    print(b);
+    print(c);
+
+    // The guard idiom that motivated this.
+    var m = {};
+    if (!Dict.hasKey(m, "x") || m["x"] == 1) {
+        print("guard-ok");
+    }
+    if (Dict.hasKey(m, "x") && m["x"] == 1) {
+        print("never");
+    } else {
+        print("guard2-ok");
+    }
+
+    // Bitwise & and | still eager and numeric.
+    print(6 & 3);
+    print(6 | 3);
+}

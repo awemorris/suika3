@@ -1,0 +1,16 @@
+// Annotations are inert below level 2 (02-typing): calling with a
+// wrong-typed argument succeeds at level 0 and fails the CHECKTYPE
+// entry check at level 2.  This file has different goldens per level
+// (.out and .out2) -- the only case in this suite where behavior
+// differs by design.
+
+func f(a: int) {
+    print("entered");
+    return 0;
+}
+
+func main() {
+    f("not-an-int");
+    print("done");
+    return 0;
+}

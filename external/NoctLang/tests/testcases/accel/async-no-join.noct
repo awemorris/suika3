@@ -1,0 +1,17 @@
+__accel func add_one(
+    input: rpackeduint32_in,
+    output: rpackeduint32_out,
+    count: int
+): void {
+    for (i in 0..count) {
+        output[i] = input[i] + 1;
+    }
+}
+
+func main() {
+    let input = Packed.uint32(130);
+    let output = Packed.uint32(130);
+    input[0] = 41;
+    let event = Accel.callAsync(add_one, input, output, 130);
+    print(event > 0);
+}

@@ -1,0 +1,11 @@
+func main() {
+    var d = { k: 41 };
+    var x = 0;
+    var a = d.k + 1;
+    if (d.k == 0) {
+        x = d.k;
+    } else {
+        print(x + 1);
+    }
+    print(a);
+}

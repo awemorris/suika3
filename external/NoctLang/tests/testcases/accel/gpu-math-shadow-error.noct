@@ -1,0 +1,5 @@
+__gpu func invalid(Accel: float): void {
+}
+
+func main() {
+}

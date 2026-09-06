@@ -1,0 +1,5 @@
+let V = 7;
+func main() {
+    print(V);
+    V = 8;
+}

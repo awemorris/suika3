@@ -1,0 +1,23 @@
+func main() {
+    // Dictionary literal
+    a = {
+        "aaa": "bbb",
+        ccc: "ddd"
+    };
+    print(a.aaa);
+    print(a["ccc"]);
+
+    // Dictionary assignment
+    dict = {};
+    dict["aaa"] = "value1";
+    dict.bbb = 123;
+
+    // Dictionary overwrite
+    for (k, v in dict) {
+    	print("k = " + k + ", v = " + v);
+    }
+    dict.aaa = "AFTER";
+    for (k, v in dict) {
+    	print("k = " + k + ", v = " + v);
+    }
+}

@@ -1,0 +1,3 @@
+func conflict(): int {
+	return 2;
+}

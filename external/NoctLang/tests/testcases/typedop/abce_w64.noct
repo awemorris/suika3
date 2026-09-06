@@ -1,0 +1,22 @@
+// A 64-bit-load ABCE body must NOT be a typed-int region: the
+// accumulator legitimately turns long at runtime (the width64
+// precedent), so typed int ops would misread the union.  The
+// harness asserts zero typed emission for this file.
+
+func main() {
+    var n = 100;
+    var p = Packed.int64(n);
+    var big = 3000000000;
+
+    for (i in 0..n) {
+        p[i] = big;
+    }
+
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + p[i];
+    }
+    print(sum);
+
+    return 0;
+}

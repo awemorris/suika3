@@ -1,0 +1,25 @@
+__accel var device = Accel.uint32(4);
+
+__gpu func last_to_first(data: rpackeduint32_ptr): void {
+    __shared let tile = Accel.uint32(4);
+    let i: int = threadIdx.x;
+    tile[i] = data[i];
+    syncthreads();
+    if (i == 0) {
+        data[0] = tile[3];
+    }
+}
+
+func main() {
+    let source = Packed.uint32(4);
+    let result = Packed.uint32(4);
+    source[0] = 10;
+    source[1] = 20;
+    source[2] = 30;
+    source[3] = 40;
+    Accel.copyToAccel(source, 0, device, 0, 16);
+    last_to_first<<<1, 4>>>(device);
+    Accel.copyFromAccel(device, 0, result, 0, 16);
+    print(result[0]);
+    print(result[3]);
+}

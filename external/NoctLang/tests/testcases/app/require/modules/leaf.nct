@@ -1,0 +1,5 @@
+var order = "L";
+
+func leaf_value(): int {
+	return 1;
+}

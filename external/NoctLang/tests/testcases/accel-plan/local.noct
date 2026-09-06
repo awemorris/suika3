@@ -1,0 +1,9 @@
+__accel func transform(destination: rpackedint32, n: int): void {
+    var temporary: packedint32 = Packed.int32(n);
+    for (i in 0..n) {
+        destination[i] = temporary[i];
+    }
+}
+
+func main() {
+}

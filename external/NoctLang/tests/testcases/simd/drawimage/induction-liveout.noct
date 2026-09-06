@@ -1,0 +1,24 @@
+func induction_liveout(dst: rpackedfloat, n: int,
+                       start: float, step: float): void {
+    var x = start;
+    for (i in 0..n) {
+        dst[i] = x;
+        x = x + step;
+    }
+    dst[n] = x;
+}
+
+func main() {
+    let dst = Packed.float32(17);
+    let neg = Packed.float32(17);
+    let zero = Packed.float32(17);
+    induction_liveout(dst, 16, 0.1, 0.2);
+    induction_liveout(neg, 15, 1.0, -0.2);
+    induction_liveout(zero, 15, 2.0, 0.0);
+    print(dst[0]);
+    print(dst[3]);
+    print(dst[15]);
+    print(dst[16]);
+    print(neg[15]);
+    print(zero[15]);
+}

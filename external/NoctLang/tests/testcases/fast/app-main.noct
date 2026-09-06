@@ -1,0 +1,5 @@
+func main() {
+    var data = Packed.uint32(2);
+    data[0] = 40;
+    print(app_fast_helper(data));
+}

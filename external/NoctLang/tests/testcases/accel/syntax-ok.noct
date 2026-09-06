@@ -1,0 +1,12 @@
+__accel func add_one(
+    input: rpackeduint32_in,
+    output: rpackeduint32_out
+): void {
+    for (i in 0..1) {
+        output[i] = input[i] + 1;
+    }
+}
+
+func main() {
+    print("ok");
+}

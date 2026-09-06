@@ -1,0 +1,12 @@
+__fast func flat(data: rpackeduint32(100)): int {
+    return data[0];
+}
+
+__fast func matrix(data: rpackeduint32(10, 10)): int {
+    return flat(data);
+}
+
+func main() {
+    var data = Packed.uint32(100);
+    print(matrix(data));
+}

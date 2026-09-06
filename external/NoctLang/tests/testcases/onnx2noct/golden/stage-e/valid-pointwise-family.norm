@@ -1,0 +1,23 @@
+graph opset=12 tensors=12 nodes=9 input=t0 output=t11
+tensor t0 storage=0 role=input dtype=float32 name="x" safe=x_t0 shape=[1,2] stride=[2,1] offset=0 layout=NC producer=-1 consumers=[1] use=1:1
+tensor t1 storage=1 role=initializer dtype=float32 name="minimum" safe=minimum_t1 shape=[1] stride=[1] offset=0 layout=C producer=-1 consumers=[8] use=8:8
+tensor t2 storage=2 role=initializer dtype=float32 name="maximum" safe=maximum_t2 shape=[1] stride=[1] offset=0 layout=C producer=-1 consumers=[8] use=8:8
+tensor t3 storage=-1 role=constant dtype=float32 name="w" safe=w_t3 shape=[2] stride=[1] offset=0 layout=C producer=0 consumers=[1,2,3] use=1:3 constant_float32_bits=[1065353216,1073741824]
+tensor t4 storage=3 role=temporary dtype=float32 name="p0" safe=p0_t4 shape=[1,2] stride=[2,1] offset=0 layout=NC producer=1 consumers=[2] use=2:2
+tensor t5 storage=4 role=temporary dtype=float32 name="p1" safe=p1_t5 shape=[1,2] stride=[2,1] offset=0 layout=NC producer=2 consumers=[3] use=3:3
+tensor t6 storage=5 role=temporary dtype=float32 name="p2" safe=p2_t6 shape=[1,2] stride=[2,1] offset=0 layout=NC producer=3 consumers=[4] use=4:4
+tensor t7 storage=6 role=temporary dtype=float32 name="p3" safe=p3_t7 shape=[1,2] stride=[2,1] offset=0 layout=NC producer=4 consumers=[5] use=5:5
+tensor t8 storage=7 role=temporary dtype=float32 name="p4" safe=p4_t8 shape=[1,2] stride=[2,1] offset=0 layout=NC producer=5 consumers=[6] use=6:6
+tensor t9 storage=8 role=temporary dtype=float32 name="p5" safe=p5_t9 shape=[1,2] stride=[2,1] offset=0 layout=NC producer=6 consumers=[7] use=7:7
+tensor t10 storage=9 role=temporary dtype=float32 name="p6" safe=p6_t10 shape=[1,2] stride=[2,1] offset=0 layout=NC producer=7 consumers=[8] use=8:8
+tensor t11 storage=10 role=output dtype=float32 name="y" safe=y_t11 shape=[1,2] stride=[2,1] offset=0 layout=NC producer=8 consumers=[] use=9:9
+node n0 op=ai.onnx::Constant@12 imported=12 family=fold-constant name="" inputs=[] outputs=[3] attrs=[value_floats:float32_bits_list=[1065353216,1073741824]]
+node n1 op=ai.onnx::Sub@7 imported=12 family=pointwise-binary name="" inputs=[0,3] outputs=[4] attrs=[]
+node n2 op=ai.onnx::Div@7 imported=12 family=pointwise-binary name="" inputs=[4,3] outputs=[5] attrs=[]
+node n3 op=ai.onnx::Pow@12 imported=12 family=pointwise-binary name="" inputs=[5,3] outputs=[6] attrs=[]
+node n4 op=ai.onnx::Tanh@6 imported=12 family=pointwise-unary name="" inputs=[6] outputs=[7] attrs=[]
+node n5 op=ai.onnx::Exp@6 imported=12 family=pointwise-unary name="" inputs=[7] outputs=[8] attrs=[]
+node n6 op=ai.onnx::Log@6 imported=12 family=pointwise-unary name="" inputs=[8] outputs=[9] attrs=[]
+node n7 op=ai.onnx::Sqrt@6 imported=12 family=pointwise-unary name="" inputs=[9] outputs=[10] attrs=[]
+node n8 op=ai.onnx::Clip@12 imported=12 family=pointwise-clip name="" inputs=[10,1,2] outputs=[11] attrs=[min:float32_bits=3212836864,max:float32_bits=1065353216]
+

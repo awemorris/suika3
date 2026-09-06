@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Noct</id>
+    <version>2.0.0</version>
+    <authors>Awe Morris</authors>
+    <description>Noct native library for Windows</description>
+  </metadata>
+  <files>
+    <file src="build\native\**" target="build\native" />
+  </files>
+</package>

@@ -1,0 +1,14 @@
+__accel var device = Accel.uint32(1);
+
+func main() {
+    let source = Packed.uint32(1);
+    let destination = Packed.uint32(1);
+    source[0] = 3;
+    destination[0] = 7;
+    let upload = Accel.copyToAccelAsync(source, 4, device, 4, 0);
+    let download = Accel.copyFromAccelAsync(device, 4, destination, 4, 0);
+    Accel.join(download);
+    Accel.join(upload);
+    print(source[0]);
+    print(destination[0]);
+}

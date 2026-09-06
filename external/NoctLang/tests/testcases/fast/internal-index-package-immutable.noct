@@ -1,0 +1,9 @@
+func unchecked_index(i0, d0, i1, d1) {
+    return 0;
+}
+
+func main() {
+    let package = Global.get("$Fast");
+    package.index2 = unchecked_index;
+    print("unreachable");
+}

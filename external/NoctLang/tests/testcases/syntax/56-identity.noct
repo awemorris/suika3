@@ -1,0 +1,18 @@
+// Reference types compare by identity with == and !=.
+func main() {
+    var a = { x: 1 };
+    var b = { x: 1 };
+    var c = a;
+    print(a == c);
+    print(a == b);
+    print(a != c);
+    print(a != b);
+    var arr = [1, 2];
+    var arr2 = arr;
+    var arr3 = [1, 2];
+    print(arr == arr2);
+    print(arr == arr3);
+    print(a == 5);
+    print(a == "s");
+    print(5 == a);
+}

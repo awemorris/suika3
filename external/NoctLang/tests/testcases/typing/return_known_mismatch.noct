@@ -1,0 +1,7 @@
+func bad(): int {
+    return "wrong";
+}
+
+func main() {
+    print(bad());
+}

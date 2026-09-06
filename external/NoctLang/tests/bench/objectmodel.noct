@@ -1,0 +1,41 @@
+// Mutable object-model microbenchmark. The same dual-backend VM binary is
+// used for m0 and m1; only NoctConfig.object_model differs.
+
+var omArray = [];
+var omDict = {};
+var omChecksum = 0;
+
+func om_setup(): void {
+    for (i in 0..256) {
+        Array.push(omArray, i);
+    }
+    omDict.hot = 1;
+    omDict.cold = 7;
+}
+
+func om_run(): void {
+    var sum: int = 0;
+    for (round in 0..4000) {
+        for (i in 0..256) {
+            var value = omArray[i];
+            sum = sum + value;
+            omArray[i] = (value + 1) & 65535;
+        }
+        if (Dict.hasKey(omDict, "hot")) {
+            sum = sum + omDict.hot;
+            omDict.hot = omDict.hot + 1;
+        }
+
+        // Include short-lived allocation, resize/copy and dictionary merge.
+        var scratch = [round, round + 1, round + 2];
+        Array.resize(scratch, 8);
+        var copied = Array.copy(scratch);
+        var merged = Dict.merge({x: round}, {y: round + 1});
+        sum = sum + copied[1] + merged.y;
+    }
+    omChecksum = sum;
+}
+
+func om_verify(): int {
+    return omChecksum != 0;
+}

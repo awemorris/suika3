@@ -1,0 +1,7 @@
+graph opset=12 tensors=4 nodes=1 input=t0 output=t3
+tensor t0 storage=0 role=input dtype=float32 name="x" safe=x_t0 shape=[1,1,4,4] stride=[16,16,4,1] offset=0 layout=NCHW producer=-1 consumers=[0] use=0:0
+tensor t1 storage=1 role=initializer dtype=float32 name="weight" safe=weight_t1 shape=[1,1,3,3] stride=[9,9,3,1] offset=0 layout=OIHW producer=-1 consumers=[0] use=0:0
+tensor t2 storage=2 role=initializer dtype=float32 name="bias" safe=bias_t2 shape=[1] stride=[1] offset=0 layout=C producer=-1 consumers=[0] use=0:0
+tensor t3 storage=3 role=output dtype=float32 name="y" safe=y_t3 shape=[1,1,2,2] stride=[4,4,2,1] offset=0 layout=NCHW producer=0 consumers=[] use=1:1
+node n0 op=ai.onnx::Conv@11 imported=12 family=conv2d-reference name="conv" inputs=[0,1,2] outputs=[3] attrs=[auto_pad:string="NOTSET",dilations:ints=[1,1],group:int=1,kernel_shape:ints=[3,3],pads:ints=[0,0,0,0],strides:ints=[1,1]]
+

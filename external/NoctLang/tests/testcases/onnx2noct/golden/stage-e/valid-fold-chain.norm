@@ -1,0 +1,13 @@
+graph opset=12 tensors=6 nodes=5 input=t0 output=t5
+tensor t0 storage=0 role=input dtype=float32 name="x" safe=x_t0 shape=[1,2,3] stride=[6,3,1] offset=0 layout=C producer=-1 consumers=[0,4] use=0:4
+tensor t1 storage=-1 role=constant dtype=int64 name="shape" safe=shape_t1 shape=[3] stride=[1] offset=0 layout=C producer=0 consumers=[2,4] use=2:4 constant_ints=[1,2,3]
+tensor t2 storage=-1 role=constant dtype=int64 name="index" safe=index_t2 shape=[1] stride=[1] offset=0 layout=C producer=1 consumers=[2] use=2:2 constant_ints=[1]
+tensor t3 storage=-1 role=constant dtype=int64 name="selected" safe=selected_t3 shape=[1] stride=[1] offset=0 layout=C producer=2 consumers=[3] use=3:3 constant_ints=[2]
+tensor t4 storage=-1 role=constant dtype=int64 name="selected64" safe=selected64_t4 shape=[1] stride=[1] offset=0 layout=C producer=3 consumers=[] use=-1:-1 constant_ints=[2]
+tensor t5 storage=0 role=output dtype=float32 name="y" safe=y_t5 shape=[1,2,3] stride=[6,3,1] offset=0 layout=C producer=4 consumers=[] use=5:5
+node n0 op=ai.onnx::Shape@1 imported=12 family=fold-shape name="" inputs=[0] outputs=[1] attrs=[]
+node n1 op=ai.onnx::Constant@12 imported=12 family=fold-constant name="" inputs=[] outputs=[2] attrs=[value:ints=[1]]
+node n2 op=ai.onnx::Gather@11 imported=12 family=fold-gather name="" inputs=[1,2] outputs=[3] attrs=[axis:int=0]
+node n3 op=ai.onnx::Cast@9 imported=12 family=fold-cast name="" inputs=[3] outputs=[4] attrs=[to:int=7]
+node n4 op=ai.onnx::Reshape@5 imported=12 family=reshape-view name="" inputs=[0,1] outputs=[5] attrs=[]
+

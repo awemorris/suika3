@@ -1,0 +1,1041 @@
+require onnx_ir;
+require shape;
+
+let ONNX_MAX_FOLDED_CONSTANT_ELEMENTS = 4096;
+
+func opLabel(node, nodeIndex, opset) {
+    var name = node.name;
+    if (name == "") { name = "<unnamed>"; }
+    return "node[" + nodeIndex + "] '" + name + "' " +
+           node.opType + "@" + opset;
+}
+
+func opTensorDtype(tensor) {
+    if (tensor.dataType == ONNX_DATA_FLOAT) { return "float32"; }
+    if (tensor.dataType == ONNX_DATA_INT32) { return "int32"; }
+    if (tensor.dataType == ONNX_DATA_INT64) { return "int64"; }
+    normFail("tensor has unsupported dtype " + tensor.dataType + ".");
+}
+
+func opFail(node, nodeIndex, opset, message) {
+    normFail(opLabel(node, nodeIndex, opset) + ": " + message);
+}
+
+func opGeneration(op, opset) {
+    if (op == "Identity") { return 1; }
+    if (op == "Dropout") { if (opset == 12) { return 12; } return 7; }
+    if (op == "Reshape") { return 5; }
+    if (op == "Flatten") { if (opset == 12) { return 11; } return 1; }
+    if (op == "Squeeze" || op == "Unsqueeze") {
+        if (opset == 12) { return 11; } return 1;
+    }
+    if (op == "Transpose") { return 1; }
+    if (op == "Conv") { if (opset == 12) { return 11; } return 1; }
+    if (op == "Add" || op == "Sub" || op == "Mul" || op == "Div") {
+        return 7;
+    }
+    if (op == "Relu" || op == "LeakyRelu" || op == "Sigmoid" ||
+        op == "Tanh" || op == "Exp" || op == "Log" || op == "Sqrt") {
+        return 6;
+    }
+    if (op == "Pow") { if (opset == 12) { return 12; } return 7; }
+    if (op == "Clip") { if (opset == 12) { return 12; } return 6; }
+    if (op == "MaxPool") {
+        if (opset == 7) { return 1; }
+        if (opset == 8) { return 8; }
+        return 12;
+    }
+    if (op == "AveragePool") { if (opset == 12) { return 11; } return 7; }
+    if (op == "GlobalAveragePool") { return 1; }
+    if (op == "Gemm") { if (opset == 12) { return 11; } return 7; }
+    if (op == "MatMul") { if (opset == 12) { return 9; } return 1; }
+    if (op == "Concat") { if (opset == 12) { return 11; } return 4; }
+    if (op == "BatchNormalization") { if (opset == 12) { return 9; } return 7; }
+    if (op == "ReduceSum" || op == "ReduceMean") {
+        if (opset == 12) { return 11; } return 1;
+    }
+    if (op == "ReduceMax" || op == "ReduceMin") {
+        if (opset == 12) { return 12; } return 1;
+    }
+    if (op == "Softmax" || op == "LogSoftmax") {
+        if (opset == 12) { return 11; } return 1;
+    }
+    if (op == "Shape") { return 1; }
+    if (op == "Gather") { if (opset == 12) { return 11; } return 1; }
+    if (op == "Cast") { if (opset == 12) { return 9; } return 6; }
+    if (op == "Constant") { if (opset == 12) { return 12; } return 1; }
+    return 0;
+}
+
+func opRequireInputCount(node, nodeIndex, opset, minimum, maximum) {
+    var count = Array.size(node.inputs);
+    if (count < minimum || count > maximum) {
+        opFail(node, nodeIndex, opset, "requires " + minimum + ".." +
+               maximum + " inputs, got " + count + ".");
+    }
+    for (i in 0..minimum) {
+        if (node.inputs[i] == "") {
+            opFail(node, nodeIndex, opset,
+                   "required input position " + i + " is empty.");
+        }
+    }
+}
+
+func opRequireOutputCount(node, nodeIndex, opset, minimum, maximum) {
+    var count = Array.size(node.outputs);
+    if (count < minimum || count > maximum) {
+        opFail(node, nodeIndex, opset, "requires " + minimum + ".." +
+               maximum + " outputs, got " + count + ".");
+    }
+    if (node.outputs[0] == "") {
+        opFail(node, nodeIndex, opset, "primary output is empty.");
+    }
+    for (i in 1..count) {
+        if (node.outputs[i] != "") {
+            opFail(node, nodeIndex, opset,
+                   "optional output position " + i + " is unsupported unless empty.");
+        }
+    }
+}
+
+func opFindAttr(node, name) {
+    for (i in 0..Array.size(node.attributes)) {
+        if (node.attributes[i].name == name) { return node.attributes[i]; }
+    }
+    return 0;
+}
+
+func opMarkAttr(used, name) {
+    used[name] = true;
+}
+
+func opAttrBaseValid(attr) {
+    return attr.hasType && !attr.unsupportedPayload && !attr.hasGraph;
+}
+
+func opAttrInt(node, nodeIndex, opset, used, name, defaultValue, required) {
+    var attr = opFindAttr(node, name);
+    if (attr == 0) {
+        if (required) { opFail(node, nodeIndex, opset, "missing attribute '" + name + "'."); }
+        return defaultValue;
+    }
+    opMarkAttr(used, name);
+    if (!opAttrBaseValid(attr) || attr.type != ONNX_ATTR_INT || !attr.hasI ||
+        attr.hasF || attr.hasS || attr.hasTensor ||
+        Array.size(attr.floats) != 0 || Array.size(attr.ints) != 0 ||
+        Array.size(attr.strings) != 0 || Array.size(attr.tensors) != 0) {
+        opFail(node, nodeIndex, opset, "attribute '" + name + "' must be INT.");
+    }
+    return attr.i;
+}
+
+func opAttrFloat(node, nodeIndex, opset, used, name, defaultBits, required) {
+    var attr = opFindAttr(node, name);
+    if (attr == 0) {
+        if (required) { opFail(node, nodeIndex, opset, "missing attribute '" + name + "'."); }
+        return defaultBits;
+    }
+    opMarkAttr(used, name);
+    if (!opAttrBaseValid(attr) || attr.type != ONNX_ATTR_FLOAT || !attr.hasF ||
+        attr.hasI || attr.hasS || attr.hasTensor ||
+        Array.size(attr.floats) != 0 || Array.size(attr.ints) != 0 ||
+        Array.size(attr.strings) != 0 || Array.size(attr.tensors) != 0) {
+        opFail(node, nodeIndex, opset, "attribute '" + name + "' must be FLOAT.");
+    }
+    return attr.fBits;
+}
+
+func opAttrInts(node, nodeIndex, opset, used, name, defaultValue, required) {
+    var attr = opFindAttr(node, name);
+    if (attr == 0) {
+        if (required) { opFail(node, nodeIndex, opset, "missing attribute '" + name + "'."); }
+        return Array.copy(defaultValue);
+    }
+    opMarkAttr(used, name);
+    if (!opAttrBaseValid(attr) || attr.type != ONNX_ATTR_INTS ||
+        attr.hasF || attr.hasI || attr.hasS || attr.hasTensor ||
+        Array.size(attr.floats) != 0 || Array.size(attr.strings) != 0 ||
+        Array.size(attr.tensors) != 0) {
+        opFail(node, nodeIndex, opset, "attribute '" + name + "' must be INTS.");
+    }
+    return Array.copy(attr.ints);
+}
+
+func opAttrString(node, nodeIndex, opset, used, name, defaultValue, required) {
+    var attr = opFindAttr(node, name);
+    if (attr == 0) {
+        if (required) { opFail(node, nodeIndex, opset, "missing attribute '" + name + "'."); }
+        return defaultValue;
+    }
+    opMarkAttr(used, name);
+    if (!opAttrBaseValid(attr) || attr.type != ONNX_ATTR_STRING || !attr.hasS ||
+        attr.hasF || attr.hasI || attr.hasTensor ||
+        Array.size(attr.floats) != 0 || Array.size(attr.ints) != 0 ||
+        Array.size(attr.strings) != 0 || Array.size(attr.tensors) != 0) {
+        opFail(node, nodeIndex, opset, "attribute '" + name + "' must be STRING.");
+    }
+    if (!pbUtf8Valid(attr.s.bytes, attr.s.offset, attr.s.length)) {
+        opFail(node, nodeIndex, opset, "attribute '" + name + "' is not UTF-8.");
+    }
+    for (i in attr.s.offset..attr.s.offset + attr.s.length) {
+        if (attr.s.bytes[i] == 0) {
+            opFail(node, nodeIndex, opset, "attribute '" + name + "' contains NUL.");
+        }
+    }
+    return Packed.toString(attr.s.bytes, attr.s.offset, attr.s.length);
+}
+
+func opRejectUnusedAttrs(node, nodeIndex, opset, used) {
+    for (i in 0..Array.size(node.attributes)) {
+        var attr = node.attributes[i];
+        if (!Dict.hasKey(used, attr.name)) {
+            opFail(node, nodeIndex, opset,
+                   "unsupported attribute '" + attr.name + "'.");
+        }
+    }
+}
+
+func opCanonInt(result, name, value) {
+    Array.push(result, { name: name, type: "int", value: value });
+}
+
+func opCanonFloat(result, name, bits) {
+    Array.push(result, { name: name, type: "float32_bits", value: bits });
+}
+
+func opCanonInts(result, name, value) {
+    Array.push(result, { name: name, type: "ints", value: Array.copy(value) });
+}
+
+func opCanonString(result, name, value) {
+    Array.push(result, { name: name, type: "string", value: value });
+}
+
+func opCanonFloatList(result, name, value) {
+    Array.push(result, { name: name, type: "float32_bits_list",
+                         value: Array.copy(value) });
+}
+
+func opMaterial(shape, family, generation, attrs) {
+    return { alias: false, folded: false, dtype: "float32",
+             shape: shapeCopy(shape), stride: contiguousStride(shape, family),
+             offset: 0L, layout: defaultLayout(shape), family: family,
+             generation: generation, attrs: attrs };
+}
+
+func opFolded(shape, dtype, ints, sourceTensor, family, generation, attrs) {
+    return { alias: false, folded: true, dtype: dtype,
+             shape: shapeCopy(shape), stride: contiguousStride(shape, family),
+             offset: 0L, layout: defaultLayout(shape), family: family,
+             generation: generation, attrs: attrs,
+             constantInts: Array.copy(ints), constantFloatBits: [],
+             sourceTensor: sourceTensor };
+}
+
+func opAlias(input, shape, stride, layout, family, generation, attrs) {
+    reachableEnd(shape, stride, input.offset, family);
+    return { alias: true, folded: false, dtype: input.dtype,
+             shape: shapeCopy(shape), stride: shapeCopy(stride),
+             offset: input.offset, layout: layout, family: family,
+             generation: generation, attrs: attrs, aliasInput: 0 };
+}
+
+func opUnary(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 1, 1);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    var used = {};
+    var attrs = [];
+    if (node.opType == "LeakyRelu") {
+        opCanonFloat(attrs, "alpha",
+                     opAttrFloat(node, nodeIndex, opset, used, "alpha", 0x3c23d70a, false));
+    }
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    return opMaterial(inputs[0].shape, "pointwise-unary", generation, attrs);
+}
+
+func opClip(node, nodeIndex, opset, inputs, generation) {
+    var maximum = 1;
+    if (opset == 12) { maximum = 3; }
+    opRequireInputCount(node, nodeIndex, opset, 1, maximum);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    var used = {}; var attrs = [];
+    var minBits = 0xff7fffff;
+    var maxBits = 0x7f7fffff;
+    if (opset != 12) {
+        minBits = opAttrFloat(node, nodeIndex, opset, used, "min", minBits, false);
+        maxBits = opAttrFloat(node, nodeIndex, opset, used, "max", maxBits, false);
+    } else {
+        var nextInput = 1;
+        if (Array.size(node.inputs) > 1 && node.inputs[1] != "") {
+            var minimum = inputs[nextInput]; nextInput = nextInput + 1;
+            if (!minimum.isConstant || minimum.dtype != "float32" ||
+                shapeElements(minimum.shape, "Clip min") != 1 ||
+                minimum.sourceTensor == 0) {
+                opFail(node, nodeIndex, opset, "Clip min must be a scalar float initializer.");
+            }
+            minBits = onnxTensorFloatBits(minimum.sourceTensor, 0);
+        }
+        if (Array.size(node.inputs) > 2 && node.inputs[2] != "") {
+            var maximumTensor = inputs[nextInput];
+            if (!maximumTensor.isConstant || maximumTensor.dtype != "float32" ||
+                shapeElements(maximumTensor.shape, "Clip max") != 1 ||
+                maximumTensor.sourceTensor == 0) {
+                opFail(node, nodeIndex, opset, "Clip max must be a scalar float initializer.");
+            }
+            maxBits = onnxTensorFloatBits(maximumTensor.sourceTensor, 0);
+        }
+    }
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    opCanonFloat(attrs, "min", minBits); opCanonFloat(attrs, "max", maxBits);
+    return opMaterial(inputs[0].shape, "pointwise-clip", generation, attrs);
+}
+
+func opBinary(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 2, 2);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    var used = {};
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    var shape = broadcastShape(inputs[0].shape, inputs[1].shape,
+                               opLabel(node, nodeIndex, opset));
+    return opMaterial(shape, "pointwise-binary", generation, []);
+}
+
+func opIdentity(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 1, 1);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    var used = {};
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    return opAlias(inputs[0], inputs[0].shape, inputs[0].stride,
+                   inputs[0].layout, "identity-view", generation, []);
+}
+
+func opDropout(node, nodeIndex, opset, inputs, generation) {
+    var maximum = 1;
+    if (opset == 12) { maximum = 3; }
+    opRequireInputCount(node, nodeIndex, opset, 1, maximum);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 2);
+    for (i in 1..Array.size(node.inputs)) {
+        if (node.inputs[i] != "") {
+            opFail(node, nodeIndex, opset,
+                   "optional Dropout inputs are unsupported; inference must be explicit.");
+        }
+    }
+    var used = {};
+    var attrs = [];
+    if (opset == 7 || opset == 8) {
+        opCanonFloat(attrs, "ratio",
+                     opAttrFloat(node, nodeIndex, opset, used, "ratio", 0x3f000000, false));
+    } else {
+        var seed = opFindAttr(node, "seed");
+        if (seed != 0) {
+            opCanonInt(attrs, "seed",
+                       opAttrInt(node, nodeIndex, opset, used, "seed", 0, false));
+        }
+    }
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    return opAlias(inputs[0], inputs[0].shape, inputs[0].stride,
+                   inputs[0].layout, "dropout-inference-view", generation, attrs);
+}
+
+func opReshape(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 2, 2);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    var used = {};
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    if (!isContiguousView(inputs[0])) {
+        opFail(node, nodeIndex, opset, "Reshape requires a contiguous input view.");
+    }
+    if (!inputs[1].isConstant ||
+        (inputs[1].dtype != "int32" && inputs[1].dtype != "int64")) {
+        opFail(node, nodeIndex, opset, "shape input must be a constant int32/int64 tensor.");
+    }
+    var spec = inputs[1].constantInts;
+    if (Array.size(spec) < 1 || Array.size(spec) > 8) {
+        opFail(node, nodeIndex, opset, "reshape output rank must be from one through eight.");
+    }
+    var shape = [];
+    var inferAt = -1;
+    var known = 1L;
+    for (i in 0..Array.size(spec)) {
+        var dim = spec[i];
+        if (dim == 0L) {
+            if (i >= Array.size(inputs[0].shape)) {
+                opFail(node, nodeIndex, opset, "reshape zero dimension has no input axis.");
+            }
+            dim = inputs[0].shape[i];
+        } else if (dim == -1L) {
+            if (inferAt >= 0) { opFail(node, nodeIndex, opset, "reshape has multiple -1 dimensions."); }
+            inferAt = i;
+            dim = 1;
+        } else if (dim < 1) {
+            opFail(node, nodeIndex, opset, "reshape dimension must be positive, zero, or -1.");
+        }
+        Array.push(shape, dim);
+        known = checkedMulPositive(known, dim, "reshape element count");
+    }
+    var inputElements = shapeElements(inputs[0].shape, "reshape input");
+    if (inferAt >= 0) {
+        if (known == 0 || inputElements % known != 0) {
+            opFail(node, nodeIndex, opset, "reshape -1 dimension is not integral.");
+        }
+        shape[inferAt] = inputElements / known;
+    } else if (known != inputElements) {
+        opFail(node, nodeIndex, opset, "reshape changes element count.");
+    }
+    shapeElements(shape, "reshape output");
+    return opAlias(inputs[0], shape, contiguousStride(shape, "reshape"),
+                   defaultLayout(shape), "reshape-view", generation, []);
+}
+
+func opFlatten(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 1, 1);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    if (!isContiguousView(inputs[0])) {
+        opFail(node, nodeIndex, opset, "Flatten requires a contiguous input view.");
+    }
+    var used = {};
+    var axis = opAttrInt(node, nodeIndex, opset, used, "axis", 1, false);
+    var rank = Array.size(inputs[0].shape);
+    var context = opLabel(node, nodeIndex, opset);
+    axis = normalizeAxis(axis, rank, true, context);
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    var shape = [];
+    var inputShape = inputs[0].shape;
+    var leading = productRange(inputShape, 0, axis,
+                               "flatten leading product");
+    var total = shapeElements(inputShape, "flatten input");
+    var trailing = total / leading;
+    Array.push(shape, leading);
+    Array.push(shape, trailing);
+    var attrs = [];
+    opCanonInt(attrs, "axis", axis);
+    var stride = contiguousStride(shape, "flatten");
+    var result = opAlias(inputs[0], shape, stride, "NC",
+                         "flatten-view", generation, attrs);
+    return result;
+}
+
+func opTranspose(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 1, 1);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    var rank = Array.size(inputs[0].shape);
+    var reverse = [];
+    var ri = rank - 1;
+    while (ri >= 0) { Array.push(reverse, ri); ri = ri - 1; }
+    var used = {};
+    var perm = opAttrInts(node, nodeIndex, opset, used, "perm", reverse, false);
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    if (Array.size(perm) != rank) {
+        opFail(node, nodeIndex, opset, "perm length must equal input rank.");
+    }
+    var seen = {};
+    var shape = [];
+    var stride = [];
+    for (i in 0..rank) {
+        var axis = perm[i];
+        if (axis < 0 || axis >= rank || Dict.hasKey(seen, "a" + axis)) {
+            opFail(node, nodeIndex, opset, "perm is not a full permutation.");
+        }
+        seen["a" + axis] = true;
+        Array.push(shape, inputs[0].shape[axis]);
+        Array.push(stride, inputs[0].stride[axis]);
+    }
+    var attrs = [];
+    opCanonInts(attrs, "perm", perm);
+    return opAlias(inputs[0], shape, stride, "STRIDED",
+                   "transpose-view", generation, attrs);
+}
+
+func opSqueeze(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 1, 1);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    var used = {};
+    var axes = opAttrInts(node, nodeIndex, opset, used, "axes", [], false);
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    var selected = {};
+    if (Array.size(axes) == 0) {
+        for (i in 0..Array.size(inputs[0].shape)) {
+            if (inputs[0].shape[i] == 1) { selected["a" + i] = true; }
+        }
+    } else {
+        axes = normalizeAxes(axes, Array.size(inputs[0].shape),
+                             Array.size(inputs[0].shape), "Squeeze.axes");
+        for (i in 0..Array.size(axes)) {
+            if (inputs[0].shape[axes[i]] != 1) {
+                opFail(node, nodeIndex, opset, "Squeeze axis dimension is not one.");
+            }
+            selected["a" + axes[i]] = true;
+        }
+    }
+    var shape = [];
+    var stride = [];
+    for (i in 0..Array.size(inputs[0].shape)) {
+        if (!Dict.hasKey(selected, "a" + i)) {
+            Array.push(shape, inputs[0].shape[i]);
+            Array.push(stride, inputs[0].stride[i]);
+        }
+    }
+    shapeElements(shape, "Squeeze output");
+    var attrs = [];
+    opCanonInts(attrs, "axes", axes);
+    return opAlias(inputs[0], shape, stride, defaultLayout(shape),
+                   "squeeze-view", generation, attrs);
+}
+
+func opUnsqueeze(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 1, 1);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    if (!isContiguousView(inputs[0])) {
+        opFail(node, nodeIndex, opset, "Unsqueeze requires a contiguous input view.");
+    }
+    var used = {};
+    var axes = opAttrInts(node, nodeIndex, opset, used, "axes", [], true);
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    var outputRank = Array.size(inputs[0].shape) + Array.size(axes);
+    if (outputRank < 1 || outputRank > 8) {
+        opFail(node, nodeIndex, opset, "Unsqueeze output rank is unsupported.");
+    }
+    axes = normalizeAxes(axes, Array.size(inputs[0].shape), outputRank,
+                         "Unsqueeze.axes");
+    var selected = {};
+    for (i in 0..Array.size(axes)) { selected["a" + axes[i]] = true; }
+    var shape = [];
+    var source = 0;
+    for (i in 0..outputRank) {
+        if (Dict.hasKey(selected, "a" + i)) { Array.push(shape, 1L); }
+        else { Array.push(shape, inputs[0].shape[source]); source = source + 1; }
+    }
+    var attrs = [];
+    opCanonInts(attrs, "axes", axes);
+    return opAlias(inputs[0], shape, contiguousStride(shape, "Unsqueeze"),
+                   defaultLayout(shape), "unsqueeze-view", generation, attrs);
+}
+
+func opSpatialPair(values, defaultValue, name, node, nodeIndex, opset) {
+    if (Array.size(values) == 0) { return [defaultValue, defaultValue]; }
+    if (Array.size(values) != 2 || values[0] <= 0 || values[1] <= 0 ||
+        values[0] > ONNX_MAX_NORMALIZED_ELEMENTS ||
+        values[1] > ONNX_MAX_NORMALIZED_ELEMENTS) {
+        opFail(node, nodeIndex, opset, name + " must contain two positive integers.");
+    }
+    return values;
+}
+
+func opResolveSpatial(inputShape, kernel, strides, dilations, pads, autoPad,
+                      node, nodeIndex, opset) {
+    var resolvedPads = pads;
+    if (Array.size(resolvedPads) == 0) { resolvedPads = [0L, 0L, 0L, 0L]; }
+    if (Array.size(resolvedPads) != 4) {
+        opFail(node, nodeIndex, opset, "pads must contain four integers.");
+    }
+    for (i in 0..4) {
+        if (resolvedPads[i] < 0) { opFail(node, nodeIndex, opset, "negative pads are unsupported."); }
+        if (resolvedPads[i] > ONNX_MAX_NORMALIZED_ELEMENTS) {
+            opFail(node, nodeIndex, opset, "pad value exceeds INT_MAX.");
+        }
+    }
+    if (autoPad != "NOTSET" && autoPad != "VALID" &&
+        autoPad != "SAME_UPPER" && autoPad != "SAME_LOWER") {
+        opFail(node, nodeIndex, opset, "invalid auto_pad '" + autoPad + "'.");
+    }
+    if (autoPad != "NOTSET" && Array.size(pads) != 0) {
+        opFail(node, nodeIndex, opset, "auto_pad and explicit pads cannot both be set.");
+    }
+    var output = [];
+    for (i in 0..2) {
+        var effective = checkedAddPositive(
+            checkedMulPositive(kernel[i] - 1, dilations[i], "effective kernel"),
+            1, "effective kernel");
+        var before = resolvedPads[i];
+        var after = resolvedPads[i + 2];
+        var out = 0L;
+        if (autoPad == "VALID") {
+            before = 0; after = 0;
+        }
+        if (autoPad == "SAME_UPPER" || autoPad == "SAME_LOWER") {
+            out = (inputShape[i + 2] + strides[i] - 1) / strides[i];
+            var total = (out - 1) * strides[i] + effective - inputShape[i + 2];
+            if (total < 0) { total = 0; }
+            if (autoPad == "SAME_UPPER") { before = total / 2; }
+            else { before = (total + 1) / 2; }
+            after = total - before;
+        } else {
+            var numerator = inputShape[i + 2] + before + after - effective;
+            if (numerator < 0) { opFail(node, nodeIndex, opset, "kernel exceeds padded input."); }
+            out = numerator / strides[i] + 1;
+        }
+        resolvedPads[i] = before;
+        resolvedPads[i + 2] = after;
+        Array.push(output, out);
+    }
+    return { output: output, pads: resolvedPads };
+}
+
+func opConv(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 2, 3);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    if (Array.size(inputs[0].shape) != 4 || Array.size(inputs[1].shape) != 4) {
+        opFail(node, nodeIndex, opset, "v1 Conv requires rank-4 NCHW/OIHW tensors.");
+    }
+    if (!inputs[1].isConstant) {
+        opFail(node, nodeIndex, opset, "Conv weights must be constant.");
+    }
+    var used = {};
+    var kernel = opAttrInts(node, nodeIndex, opset, used, "kernel_shape",
+                            [inputs[1].shape[2], inputs[1].shape[3]], false);
+    kernel = opSpatialPair(kernel, 1, "kernel_shape", node, nodeIndex, opset);
+    if (kernel[0] != inputs[1].shape[2] || kernel[1] != inputs[1].shape[3]) {
+        opFail(node, nodeIndex, opset, "kernel_shape disagrees with weight shape.");
+    }
+    var strides = opSpatialPair(
+        opAttrInts(node, nodeIndex, opset, used, "strides", [], false), 1,
+        "strides", node, nodeIndex, opset);
+    var dilations = opSpatialPair(
+        opAttrInts(node, nodeIndex, opset, used, "dilations", [], false), 1,
+        "dilations", node, nodeIndex, opset);
+    var pads = opAttrInts(node, nodeIndex, opset, used, "pads", [], false);
+    var autoPad = opAttrString(node, nodeIndex, opset, used, "auto_pad", "NOTSET", false);
+    var group = opAttrInt(node, nodeIndex, opset, used, "group", 1, false);
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    if (group != 1) { opFail(node, nodeIndex, opset, "v1 Conv supports group=1 only."); }
+    if (dilations[0] != 1 || dilations[1] != 1) {
+        opFail(node, nodeIndex, opset, "v1 Conv supports dilation 1 only.");
+    }
+    if (inputs[0].shape[1] != inputs[1].shape[1]) {
+        opFail(node, nodeIndex, opset, "input channels disagree with OIHW weights.");
+    }
+    if (Array.size(inputs) == 3 && node.inputs[2] != "") {
+        if (!inputs[2].isConstant) {
+            opFail(node, nodeIndex, opset, "Conv bias must be constant.");
+        }
+        if (Array.size(inputs[2].shape) != 1 ||
+            inputs[2].shape[0] != inputs[1].shape[0]) {
+            opFail(node, nodeIndex, opset, "Conv bias must have shape [output_channels].");
+        }
+    }
+    inputs[1].layout = "OIHW";
+    var spatial = opResolveSpatial(inputs[0].shape, kernel, strides, dilations,
+                                   pads, autoPad, node, nodeIndex, opset);
+    var shape = [inputs[0].shape[0], inputs[1].shape[0],
+                 spatial.output[0], spatial.output[1]];
+    var attrs = [];
+    opCanonString(attrs, "auto_pad", autoPad);
+    opCanonInts(attrs, "dilations", dilations);
+    opCanonInt(attrs, "group", group);
+    opCanonInts(attrs, "kernel_shape", kernel);
+    opCanonInts(attrs, "pads", spatial.pads);
+    opCanonInts(attrs, "strides", strides);
+    return opMaterial(shape, "conv2d-reference", generation, attrs);
+}
+
+func opPool(node, nodeIndex, opset, inputs, generation, average) {
+    opRequireInputCount(node, nodeIndex, opset, 1, 1);
+    var maxOutputs = 1;
+    if (!average && opset != 7) { maxOutputs = 2; }
+    opRequireOutputCount(node, nodeIndex, opset, 1, maxOutputs);
+    if (Array.size(inputs[0].shape) != 4) {
+        opFail(node, nodeIndex, opset, "v1 pooling requires rank-4 NCHW input.");
+    }
+    var used = {};
+    var kernel = opSpatialPair(
+        opAttrInts(node, nodeIndex, opset, used, "kernel_shape", [], true), 1,
+        "kernel_shape", node, nodeIndex, opset);
+    var strides = opSpatialPair(
+        opAttrInts(node, nodeIndex, opset, used, "strides", [], false), 1,
+        "strides", node, nodeIndex, opset);
+    var pads = opAttrInts(node, nodeIndex, opset, used, "pads", [], false);
+    var autoPad = opAttrString(node, nodeIndex, opset, used, "auto_pad", "NOTSET", false);
+    var dilations = [1L, 1L];
+    if (!average && opset == 12) {
+        dilations = opSpatialPair(
+            opAttrInts(node, nodeIndex, opset, used, "dilations", [], false), 1,
+            "dilations", node, nodeIndex, opset);
+    }
+    var ceilMode = 0L;
+    if (opset == 12) {
+        ceilMode = opAttrInt(node, nodeIndex, opset, used, "ceil_mode", 0, false);
+    }
+    var countIncludePad = 0L;
+    if (average) {
+        countIncludePad = opAttrInt(node, nodeIndex, opset, used,
+                                    "count_include_pad", 0, false);
+    } else if (opset != 7) {
+        var storageOrder = opAttrInt(node, nodeIndex, opset, used,
+                                     "storage_order", 0, false);
+        if (storageOrder != 0) {
+            opFail(node, nodeIndex, opset, "MaxPool storage_order must be zero.");
+        }
+    }
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    if (ceilMode != 0) { opFail(node, nodeIndex, opset, "v1 pooling requires ceil_mode=0."); }
+    if (countIncludePad != 0 && countIncludePad != 1) {
+        opFail(node, nodeIndex, opset, "count_include_pad must be zero or one.");
+    }
+    if (dilations[0] != 1 || dilations[1] != 1) {
+        opFail(node, nodeIndex, opset, "v1 pooling requires dilation 1.");
+    }
+    var spatial = opResolveSpatial(inputs[0].shape, kernel, strides, dilations,
+                                   pads, autoPad, node, nodeIndex, opset);
+    var shape = [inputs[0].shape[0], inputs[0].shape[1],
+                 spatial.output[0], spatial.output[1]];
+    var attrs = [];
+    opCanonString(attrs, "auto_pad", autoPad);
+    if (opset == 12) { opCanonInt(attrs, "ceil_mode", ceilMode); }
+    if (average) { opCanonInt(attrs, "count_include_pad", countIncludePad); }
+    if (!average && opset == 12) { opCanonInts(attrs, "dilations", dilations); }
+    opCanonInts(attrs, "kernel_shape", kernel);
+    opCanonInts(attrs, "pads", spatial.pads);
+    opCanonInts(attrs, "strides", strides);
+    var family = "max-pool2d";
+    if (average) { family = "average-pool2d"; }
+    return opMaterial(shape, family, generation, attrs);
+}
+
+func opGlobalAveragePool(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 1, 1);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    var used = {};
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    if (Array.size(inputs[0].shape) != 4) {
+        opFail(node, nodeIndex, opset, "GlobalAveragePool requires rank-4 NCHW.");
+    }
+    return opMaterial([inputs[0].shape[0], inputs[0].shape[1], 1L, 1L],
+                      "global-average-pool", generation, []);
+}
+
+func opGemm(node, nodeIndex, opset, inputs, generation) {
+    var minimum = 3;
+    if (opset == 12) { minimum = 2; }
+    opRequireInputCount(node, nodeIndex, opset, minimum, 3);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    if (Array.size(inputs[0].shape) != 2 || Array.size(inputs[1].shape) != 2) {
+        opFail(node, nodeIndex, opset, "v1 Gemm requires rank-2 A and B.");
+    }
+    if (!inputs[1].isConstant) {
+        opFail(node, nodeIndex, opset, "Gemm B must be constant in v1.");
+    }
+    var used = {};
+    var alpha = opAttrFloat(node, nodeIndex, opset, used, "alpha", 0x3f800000, false);
+    var beta = opAttrFloat(node, nodeIndex, opset, used, "beta", 0x3f800000, false);
+    var transA = opAttrInt(node, nodeIndex, opset, used, "transA", 0, false);
+    var transB = opAttrInt(node, nodeIndex, opset, used, "transB", 0, false);
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    if ((transA != 0 && transA != 1) || (transB != 0 && transB != 1)) {
+        opFail(node, nodeIndex, opset, "transA/transB must be zero or one.");
+    }
+    var m = inputs[0].shape[0]; var k = inputs[0].shape[1];
+    if (transA == 1) { m = inputs[0].shape[1]; k = inputs[0].shape[0]; }
+    var bk = inputs[1].shape[0]; var n = inputs[1].shape[1];
+    if (transB == 1) { bk = inputs[1].shape[1]; n = inputs[1].shape[0]; }
+    if (k != bk) { opFail(node, nodeIndex, opset, "Gemm contraction dimensions differ."); }
+    var shape = [m, n];
+    if (Array.size(inputs) == 3 && node.inputs[2] != "") {
+        if (!inputs[2].isConstant) {
+            opFail(node, nodeIndex, opset, "Gemm C must be constant in v1.");
+        }
+        var biasShape = broadcastShape(inputs[2].shape, shape, "Gemm C broadcast");
+        if (!shapeEqual(biasShape, shape)) {
+            opFail(node, nodeIndex, opset, "Gemm C does not broadcast to output shape.");
+        }
+    } else if (minimum == 3) {
+        opFail(node, nodeIndex, opset, "Gemm C is required before opset 11.");
+    }
+    var attrs = [];
+    opCanonFloat(attrs, "alpha", alpha); opCanonFloat(attrs, "beta", beta);
+    opCanonInt(attrs, "transA", transA); opCanonInt(attrs, "transB", transB);
+    return opMaterial(shape, "gemm-rank2", generation, attrs);
+}
+
+func opMatMul(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 2, 2);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    var used = {}; opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    if (Array.size(inputs[0].shape) != 2 || Array.size(inputs[1].shape) != 2) {
+        opFail(node, nodeIndex, opset, "v1 MatMul requires rank-2 inputs.");
+    }
+    if (!inputs[1].isConstant) {
+        opFail(node, nodeIndex, opset, "MatMul B must be constant in v1.");
+    }
+    if (inputs[0].shape[1] != inputs[1].shape[0]) {
+        opFail(node, nodeIndex, opset, "MatMul contraction dimensions differ.");
+    }
+    return opMaterial([inputs[0].shape[0], inputs[1].shape[1]],
+                      "matmul-rank2", generation, []);
+}
+
+func opConcat(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 1, 256);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    var used = {};
+    var rank = Array.size(inputs[0].shape);
+    var axis = normalizeAxis(opAttrInt(node, nodeIndex, opset, used, "axis", 0, true),
+                             rank, false, opLabel(node, nodeIndex, opset));
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    var shape = shapeCopy(inputs[0].shape);
+    for (i in 1..Array.size(inputs)) {
+        if (Array.size(inputs[i].shape) != rank) {
+            opFail(node, nodeIndex, opset, "Concat ranks differ.");
+        }
+        for (j in 0..rank) {
+            if (j != axis && inputs[i].shape[j] != shape[j]) {
+                opFail(node, nodeIndex, opset, "Concat non-axis dimensions differ.");
+            }
+        }
+        shape[axis] = checkedAddPositive(shape[axis], inputs[i].shape[axis],
+                                         "Concat axis extent");
+    }
+    shapeElements(shape, "Concat output");
+    var attrs = []; opCanonInt(attrs, "axis", axis);
+    return opMaterial(shape, "concat-static", generation, attrs);
+}
+
+func opBatchNormalization(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 5, 5);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 5);
+    if (Array.size(inputs[0].shape) < 2) {
+        opFail(node, nodeIndex, opset, "BatchNormalization input rank must be at least two.");
+    }
+    var channels = inputs[0].shape[1];
+    for (i in 1..5) {
+        if (!inputs[i].isConstant) {
+            opFail(node, nodeIndex, opset,
+                   "BatchNormalization parameters must be constant.");
+        }
+        if (Array.size(inputs[i].shape) != 1 || inputs[i].shape[0] != channels) {
+            opFail(node, nodeIndex, opset, "BatchNormalization parameters must have shape [C].");
+        }
+    }
+    var used = {}; var attrs = [];
+    opCanonFloat(attrs, "epsilon",
+                 opAttrFloat(node, nodeIndex, opset, used, "epsilon", 0x3727c5ac, false));
+    opCanonFloat(attrs, "momentum",
+                 opAttrFloat(node, nodeIndex, opset, used, "momentum", 0x3f666666, false));
+    if (opset != 12) {
+        var spatial = opAttrInt(node, nodeIndex, opset, used, "spatial", 1, false);
+        if (spatial != 1) { opFail(node, nodeIndex, opset, "v1 requires spatial=1."); }
+        opCanonInt(attrs, "spatial", spatial);
+    }
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    return opMaterial(inputs[0].shape, "batch-normalization-inference", generation, attrs);
+}
+
+func opReduce(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 1, 1);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    var used = {};
+    var axes = opAttrInts(node, nodeIndex, opset, used, "axes", [], false);
+    var keepdims = opAttrInt(node, nodeIndex, opset, used, "keepdims", 1, false);
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    if (keepdims != 0 && keepdims != 1) {
+        opFail(node, nodeIndex, opset, "keepdims must be zero or one.");
+    }
+    var rank = Array.size(inputs[0].shape);
+    if (Array.size(axes) == 0) {
+        for (i in 0..rank) { Array.push(axes, i); }
+    } else {
+        axes = normalizeAxes(axes, rank, rank, node.opType + ".axes");
+    }
+    var selected = {};
+    for (i in 0..Array.size(axes)) { selected["a" + axes[i]] = true; }
+    var shape = [];
+    for (i in 0..rank) {
+        if (Dict.hasKey(selected, "a" + i)) {
+            if (keepdims == 1) { Array.push(shape, 1L); }
+        } else { Array.push(shape, inputs[0].shape[i]); }
+    }
+    shapeElements(shape, node.opType + " output");
+    var attrs = []; opCanonInts(attrs, "axes", axes); opCanonInt(attrs, "keepdims", keepdims);
+    return opMaterial(shape, "reduce-static", generation, attrs);
+}
+
+func opSoftmax(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 1, 1);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    var used = {};
+    var axis = normalizeAxis(opAttrInt(node, nodeIndex, opset, used, "axis", 1, false),
+                             Array.size(inputs[0].shape), false,
+                             opLabel(node, nodeIndex, opset));
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    var attrs = []; opCanonInt(attrs, "axis", axis);
+    var legacy = 0;
+    if (generation == 1) { legacy = 1; }
+    opCanonInt(attrs, "legacy_flatten_semantics", legacy);
+    return opMaterial(inputs[0].shape, "softmax-stable", generation, attrs);
+}
+
+func opShapeFold(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 1, 1);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    var used = {}; opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    return opFolded([Array.size(inputs[0].shape)], "int64",
+                    inputs[0].shape, 0, "fold-shape", generation, []);
+}
+
+func opConstantFold(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 0, 0);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    if (Array.size(node.attributes) != 1) {
+        opFail(node, nodeIndex, opset,
+               "v1 Constant requires exactly one value attribute.");
+    }
+    var attr = node.attributes[0];
+    if (!opAttrBaseValid(attr)) {
+        opFail(node, nodeIndex, opset, "Constant value attribute is malformed.");
+    }
+    if (attr.name == "value" && attr.type == ONNX_ATTR_TENSOR && attr.hasTensor) {
+        var tensor = attr.tensor;
+        if (tensor.elements > ONNX_MAX_FOLDED_CONSTANT_ELEMENTS) {
+            opFail(node, nodeIndex, opset,
+                   "Constant tensor exceeds the 4096-element folding limit.");
+        }
+        var dtype = opTensorDtype(tensor);
+        var ints = [];
+        var floatBits = [];
+        if (dtype == "int32") { ints = tensor.int32Values; }
+        if (dtype == "int64") { ints = tensor.int64Values; }
+        if (dtype == "float32") {
+            for (i in 0..tensor.elements) {
+                Array.push(floatBits, onnxTensorFloatBits(tensor, i));
+            }
+        }
+        var attrs = [];
+        if (dtype == "int32" || dtype == "int64") {
+            opCanonInts(attrs, "value", ints);
+        }
+        if (dtype == "float32") { opCanonFloatList(attrs, "value", floatBits); }
+        var result = opFolded(tensor.dims, dtype, ints, tensor,
+                              "fold-constant", generation, attrs);
+        result.constantFloatBits = floatBits;
+        return result;
+    }
+    if (opset == 12 && attr.name == "value_ints" &&
+        attr.type == ONNX_ATTR_INTS && Array.size(attr.ints) > 0) {
+        var intAttrs = []; opCanonInts(intAttrs, "value_ints", attr.ints);
+        return opFolded([Array.size(attr.ints)], "int64", attr.ints, 0,
+                        "fold-constant", generation, intAttrs);
+    }
+    if (opset == 12 && attr.name == "value_floats" &&
+        attr.type == ONNX_ATTR_FLOATS && Array.size(attr.floats) > 0) {
+        var floatAttrs = []; opCanonFloatList(floatAttrs, "value_floats", attr.floats);
+        var floatResult = opFolded([Array.size(attr.floats)], "float32", [], 0,
+                                   "fold-constant", generation, floatAttrs);
+        floatResult.constantFloatBits = Array.copy(attr.floats);
+        return floatResult;
+    }
+    opFail(node, nodeIndex, opset,
+           "Constant value form is unsupported or does not match this opset.");
+}
+
+func opGatherFold(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 2, 2);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    var used = {};
+    var axis = normalizeAxis(opAttrInt(node, nodeIndex, opset, used, "axis", 0, false),
+                             Array.size(inputs[0].shape), false,
+                             opLabel(node, nodeIndex, opset));
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    if (!inputs[0].isConstant || !inputs[1].isConstant ||
+        (inputs[0].dtype != "int32" && inputs[0].dtype != "int64") ||
+        (inputs[1].dtype != "int32" && inputs[1].dtype != "int64")) {
+        opFail(node, nodeIndex, opset, "Gather folding requires constant integer inputs.");
+    }
+    if (Array.size(inputs[0].shape) != 1 || axis != 0) {
+        opFail(node, nodeIndex, opset, "v1 Gather folding supports rank-1 data on axis zero.");
+    }
+    var values = [];
+    for (i in 0..Array.size(inputs[1].constantInts)) {
+        var index = inputs[1].constantInts[i];
+        if (index < 0) { index = index + inputs[0].shape[0]; }
+        if (index < 0 || index >= inputs[0].shape[0]) {
+            opFail(node, nodeIndex, opset, "Gather index is out of range.");
+        }
+        Array.push(values, inputs[0].constantInts[index]);
+    }
+    var attrs = []; opCanonInt(attrs, "axis", axis);
+    return opFolded(inputs[1].shape, inputs[0].dtype, values, 0,
+                    "fold-gather", generation, attrs);
+}
+
+func opCastFold(node, nodeIndex, opset, inputs, generation) {
+    opRequireInputCount(node, nodeIndex, opset, 1, 1);
+    opRequireOutputCount(node, nodeIndex, opset, 1, 1);
+    var used = {};
+    var to = opAttrInt(node, nodeIndex, opset, used, "to", 0, true);
+    opRejectUnusedAttrs(node, nodeIndex, opset, used);
+    if (!inputs[0].isConstant ||
+        (inputs[0].dtype != "int32" && inputs[0].dtype != "int64")) {
+        opFail(node, nodeIndex, opset, "Cast folding requires a constant integer input.");
+    }
+    var dtype = "";
+    if (to == ONNX_DATA_INT32) { dtype = "int32"; }
+    if (to == ONNX_DATA_INT64) { dtype = "int64"; }
+    if (dtype == "") {
+        opFail(node, nodeIndex, opset, "v1 Cast folding supports only int32/int64.");
+    }
+    if (dtype == "int32") {
+        for (i in 0..Array.size(inputs[0].constantInts)) {
+            var value = inputs[0].constantInts[i];
+            if (value < -2147483648L || value > 2147483647L) {
+                opFail(node, nodeIndex, opset, "Cast to int32 is out of range.");
+            }
+        }
+    }
+    var attrs = []; opCanonInt(attrs, "to", to);
+    return opFolded(inputs[0].shape, dtype, inputs[0].constantInts, 0,
+                    "fold-cast", generation, attrs);
+}
+
+func onnxInferOperator(node, nodeIndex, opset, inputs) {
+    var generation = opGeneration(node.opType, opset);
+    if (generation == 0) {
+        opFail(node, nodeIndex, opset, "no exact opset handler is registered.");
+    }
+    for (i in 0..Array.size(inputs)) {
+        var constantOperator = node.opType == "Gather" || node.opType == "Cast";
+        if (!(node.opType == "Reshape" && i == 1) && !constantOperator &&
+            inputs[i].dtype != "float32") {
+            opFail(node, nodeIndex, opset,
+                   "runtime compute input " + i + " is not float32.");
+        }
+    }
+    if (node.opType == "Identity") { return opIdentity(node, nodeIndex, opset, inputs, generation); }
+    if (node.opType == "Dropout") { return opDropout(node, nodeIndex, opset, inputs, generation); }
+    if (node.opType == "Reshape") { return opReshape(node, nodeIndex, opset, inputs, generation); }
+    if (node.opType == "Flatten") { return opFlatten(node, nodeIndex, opset, inputs, generation); }
+    if (node.opType == "Squeeze") { return opSqueeze(node, nodeIndex, opset, inputs, generation); }
+    if (node.opType == "Unsqueeze") { return opUnsqueeze(node, nodeIndex, opset, inputs, generation); }
+    if (node.opType == "Transpose") { return opTranspose(node, nodeIndex, opset, inputs, generation); }
+    if (node.opType == "Add" || node.opType == "Sub" ||
+        node.opType == "Mul" || node.opType == "Div" || node.opType == "Pow") {
+        return opBinary(node, nodeIndex, opset, inputs, generation);
+    }
+    if (node.opType == "Relu" || node.opType == "LeakyRelu" ||
+        node.opType == "Sigmoid" || node.opType == "Tanh" ||
+        node.opType == "Exp" || node.opType == "Log" || node.opType == "Sqrt") {
+        return opUnary(node, nodeIndex, opset, inputs, generation);
+    }
+    if (node.opType == "Clip") { return opClip(node, nodeIndex, opset, inputs, generation); }
+    if (node.opType == "Conv") { return opConv(node, nodeIndex, opset, inputs, generation); }
+    if (node.opType == "MaxPool") { return opPool(node, nodeIndex, opset, inputs, generation, false); }
+    if (node.opType == "AveragePool") { return opPool(node, nodeIndex, opset, inputs, generation, true); }
+    if (node.opType == "GlobalAveragePool") { return opGlobalAveragePool(node, nodeIndex, opset, inputs, generation); }
+    if (node.opType == "Gemm") { return opGemm(node, nodeIndex, opset, inputs, generation); }
+    if (node.opType == "MatMul") { return opMatMul(node, nodeIndex, opset, inputs, generation); }
+    if (node.opType == "Concat") { return opConcat(node, nodeIndex, opset, inputs, generation); }
+    if (node.opType == "BatchNormalization") {
+        return opBatchNormalization(node, nodeIndex, opset, inputs, generation);
+    }
+    if (node.opType == "ReduceSum" || node.opType == "ReduceMean" ||
+        node.opType == "ReduceMax" || node.opType == "ReduceMin") {
+        return opReduce(node, nodeIndex, opset, inputs, generation);
+    }
+    if (node.opType == "Softmax" || node.opType == "LogSoftmax") {
+        return opSoftmax(node, nodeIndex, opset, inputs, generation);
+    }
+    if (node.opType == "Shape") { return opShapeFold(node, nodeIndex, opset, inputs, generation); }
+    if (node.opType == "Constant") { return opConstantFold(node, nodeIndex, opset, inputs, generation); }
+    if (node.opType == "Gather") { return opGatherFold(node, nodeIndex, opset, inputs, generation); }
+    if (node.opType == "Cast") { return opCastFold(node, nodeIndex, opset, inputs, generation); }
+    opFail(node, nodeIndex, opset,
+           "handler generation " + generation + " is registered but normalization is not implemented.");
+}

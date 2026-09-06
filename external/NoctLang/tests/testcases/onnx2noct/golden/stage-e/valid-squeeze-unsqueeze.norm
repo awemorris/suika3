@@ -1,0 +1,7 @@
+graph opset=12 tensors=3 nodes=2 input=t0 output=t2
+tensor t0 storage=0 role=input dtype=float32 name="x" safe=x_t0 shape=[1,1,3,1] stride=[3,3,1,1] offset=0 layout=NCHW producer=-1 consumers=[0] use=0:0
+tensor t1 storage=0 role=alias dtype=float32 name="s" safe=s_t1 shape=[1,3] stride=[3,1] offset=0 layout=NC producer=0 consumers=[1] use=1:1
+tensor t2 storage=0 role=output dtype=float32 name="y" safe=y_t2 shape=[1,1,3,1] stride=[3,3,1,1] offset=0 layout=NCHW producer=1 consumers=[] use=2:2
+node n0 op=ai.onnx::Squeeze@11 imported=12 family=squeeze-view name="" inputs=[0] outputs=[1] attrs=[axes:ints=[1,3]]
+node n1 op=ai.onnx::Unsqueeze@11 imported=12 family=unsqueeze-view name="" inputs=[1] outputs=[2] attrs=[axes:ints=[1,3]]
+

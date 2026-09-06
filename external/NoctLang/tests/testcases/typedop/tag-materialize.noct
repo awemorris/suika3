@@ -1,0 +1,47 @@
+var saved = 0;
+
+func observe(v) {
+    print(Type.of(v));
+    print(v);
+}
+
+func makeFloat(): float {
+    var x: float = 1.5;
+    x = x + 2.5;
+    return x;
+}
+
+func storeGlobal(v: int) {
+    saved = v;
+}
+
+func main() {
+    var i: int = 3;
+    i = i * 4 + 1;
+    observe(i);
+
+    var f: float = 0.5;
+    if (i > 0) {
+        observe(f);
+    }
+    f = f * 3.0;
+    observe(f);
+    observe(makeFloat());
+
+    var l: long = 7;
+    var d: double = 2.25;
+    l = l + 2;
+    d = d + 0.75;
+    observe(l);
+    observe(d);
+
+    storeGlobal(i);
+    observe(saved);
+    var a = [i, f];
+    var m = {iv: i, fv: f};
+    observe(a[0]);
+    observe(a[1]);
+    observe(m.iv);
+    observe(m.fv);
+    return 0;
+}

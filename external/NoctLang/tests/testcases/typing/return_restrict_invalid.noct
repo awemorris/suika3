@@ -1,0 +1,7 @@
+func bad(value): rpackeduint32 {
+    return value;
+}
+
+func main() {
+    print("unreachable");
+}

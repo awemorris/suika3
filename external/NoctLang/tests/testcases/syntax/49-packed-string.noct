@@ -1,0 +1,26 @@
+func main() {
+    // String <-> Packed byte bridge.
+    var p = Packed.uint8(32);
+    Packed.fill(p, 0, 32, 0);
+    print(Packed.fromString(p, 0, "Hello"));
+    print(Packed.fromString(p, 5, ", 世界"));
+    print(Packed.toString(p, 0, 13));
+    print(Packed.toString(p, 7, 6));
+
+    // Byte lengths.
+    print(String.byteLength(""));
+    print(String.byteLength("abc"));
+    print(String.byteLength("あいう"));
+
+    // Codepoint to string.
+    print(String.chr(65));
+    print(String.chr(0x3042));
+    print(String.chr(0x1F600));
+    print(String.charCount(String.chr(0x1F600)));
+
+    // Round trip.
+    var s = "héllo, 世界";
+    var q = Packed.uint8(String.byteLength(s));
+    Packed.fromString(q, 0, s);
+    print(Packed.toString(q, 0, Packed.size(q)) == s);
+}

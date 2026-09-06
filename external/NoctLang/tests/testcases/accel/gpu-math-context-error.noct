@@ -1,0 +1,7 @@
+func invalid(x) {
+    return Accel.sigmoid(x);
+}
+
+func main() {
+    invalid(0.0);
+}

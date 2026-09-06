@@ -1,0 +1,31 @@
+// Checks that the poller's invariants are actually enforced.
+
+func main() {
+    var server = HttpServer.listen("127.0.0.1", 18104);
+    var poller = HttpServer.createPoller();
+
+    // Empty poller returns immediately rather than sleeping.
+    var ready = HttpServer.waitPoller(poller, 60000);
+    print(Array.size(ready));
+    print(HttpServer.countPoller(poller));
+
+    // Register, then check the count.
+    HttpServer.addToPoller(poller, server, HttpServer.READ);
+    print(HttpServer.countPoller(poller));
+
+    // No connection pending: the wait times out with nothing ready.
+    ready = HttpServer.waitPoller(poller, 100);
+    print(Array.size(ready));
+
+    // Changing the interest set keeps the registration.
+    HttpServer.modifyPoller(poller, server, HttpServer.READ);
+    print(HttpServer.countPoller(poller));
+
+    // Remove, then the poller is empty again.
+    HttpServer.removeFromPoller(poller, server);
+    print(HttpServer.countPoller(poller));
+
+    // Closing after removal is allowed.
+    HttpServer.close(server);
+    print(HttpServer.isClosed(server));
+}

@@ -1,0 +1,2987 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "  --gc-graduate-size=N ... second GC space size in bytes\n"
+msgstr "  --gc-graduate-size=N ... μέγεθος του δεύτερου χώρου GC σε byte\n"
+
+msgid "  --gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n"
+msgstr "  --gc-lop-threshold=N ... μεταφορά αντικειμένων μεγαλύτερων από N byte στον τελικό χώρο GC\n"
+
+msgid "  --gc-nursery-size=N  ... first GC space size in bytes\n"
+msgstr "  --gc-nursery-size=N  ... μέγεθος του πρώτου χώρου GC σε byte\n"
+
+msgid "  --gc-tenure-size=N   ... final GC space size in bytes\n"
+msgstr "  --gc-tenure-size=N   ... μέγεθος του τελικού χώρου GC σε byte\n"
+
+msgid "  --gpu-list           ... list suitable GPU device selectors\n"
+msgstr "  --gpu-list           ... εμφάνιση κατάλληλων επιλογέων συσκευής GPU\n"
+
+msgid "  --gpu[=SELECTOR]     ... use GPU acceleration for source execution\n"
+msgstr "  --gpu[=SELECTOR]     ... χρήση επιτάχυνσης GPU για την εκτέλεση του πηγαίου κώδικα\n"
+
+msgid "  --path=DIR1:DIR2     ... append source-module search paths\n"
+msgstr "  --path=DIR1:DIR2     ... προσθήκη διαδρομών αναζήτησης μονάδων πηγαίου κώδικα\n"
+
+msgid "  --simd-info          ... report successfully vectorized loops\n"
+msgstr "  --simd-info          ... αναφορά των βρόχων που διανυσματοποιήθηκαν επιτυχώς\n"
+
+msgid "  -O, -O0..-O3, -O9    ... optimization preset\n"
+msgstr "  -O, -O0..-O3, -O9    ... προεπιλογή βελτιστοποίησης\n"
+
+msgid "  -j, -j0              ... eager JIT (default), or interpreter only\n"
+msgstr "  -j, -j0              ... άμεση μεταγλώττιση JIT (προεπιλογή) ή μόνο διερμηνευτής\n"
+
+msgid "  noct --ansic <out-file> <in-files>  ... convert to a C source file\n"
+msgstr "  noct --ansic <out-file> <in-files>  ... μετατροπή σε αρχείο πηγαίου κώδικα C\n"
+
+msgid "  noct --compile <in-files>           ... convert to bytecode files\n"
+msgstr "  noct --compile <in-files>           ... μετατροπή σε αρχεία bytecode\n"
+
+msgid "  noct --elisp <out-file> <in-files>  ... convert to an Emacs Lisp source file\n"
+msgstr "  noct --elisp <out-file> <in-files>  ... μετατροπή σε αρχείο πηγαίου κώδικα Emacs Lisp\n"
+
+msgid "  noct --scheme <out-file> <in-files> ... convert to an Scheme source file\n"
+msgstr "  noct --scheme <out-file> <in-files> ... μετατροπή σε αρχείο πηγαίου κώδικα Scheme\n"
+
+msgid "  noct <vm-options> <files>           ... run a program\n"
+msgstr "  noct <vm-options> <files>           ... εκτέλεση προγράμματος\n"
+
+msgid "%s"
+msgstr "%s"
+
+msgid "%s\n"
+msgstr "%s\n"
+
+msgid "%s accelerator %s."
+msgstr "Επιταχυντής %s %s."
+
+msgid "%s accelerator %s: %s"
+msgstr "Επιταχυντής %s %s: %s"
+
+msgid "%s accelerator context is detached."
+msgstr "Το περιβάλλον του επιταχυντή %s έχει αποσυνδεθεί."
+
+msgid "%s accelerator program changed during begin."
+msgstr "Το πρόγραμμα του επιταχυντή %s άλλαξε κατά την έναρξη."
+
+msgid "%s accelerator program is not published."
+msgstr "Το πρόγραμμα του επιταχυντή %s δεν έχει δημοσιευτεί."
+
+msgid "%s accelerator session changed during dispatch."
+msgstr "Η συνεδρία του επιταχυντή %s άλλαξε κατά την αποστολή."
+
+msgid "%s accelerator session changed during finish."
+msgstr "Η συνεδρία του επιταχυντή %s άλλαξε κατά την ολοκλήρωση."
+
+msgid "%s accelerator session changed while publishing results."
+msgstr "Η συνεδρία του επιταχυντή %s άλλαξε κατά τη δημοσίευση των αποτελεσμάτων."
+
+msgid "%s failed."
+msgstr "Το %s απέτυχε."
+
+msgid "%s is unavailable."
+msgstr "Το %s δεν είναι διαθέσιμο."
+
+msgid "%s() is not defined\n"
+msgstr "Η %s() δεν έχει οριστεί\n"
+
+msgid "%s() must have zero or one parameter\n"
+msgstr "Η %s() πρέπει να έχει μηδέν ή μία παράμετρο\n"
+
+msgid "%s(): Function arguments not match."
+msgstr "%s(): Τα ορίσματα της συνάρτησης δεν ταιριάζουν."
+
+msgid "%s(): argument type mismatch (expected %s)."
+msgstr "%s(): ασυμφωνία τύπου ορίσματος (αναμενόταν %s)."
+
+msgid "%s(): local type mismatch (expected %s)."
+msgstr "%s(): ασυμφωνία τύπου τοπικής μεταβλητής (αναμενόταν %s)."
+
+msgid "%s(): return type mismatch (expected %s)."
+msgstr "%s(): ασυμφωνία τύπου επιστροφής (αναμενόταν %s)."
+
+msgid "%s: Out of memory while parsing."
+msgstr "%s: Δεν υπάρχει αρκετή μνήμη κατά την ανάλυση."
+
+msgid "%s:%d: Error: %s\n"
+msgstr "%s:%d: Σφάλμα: %s\n"
+
+msgid "--gpu-list may be specified only once.\n"
+msgstr "Η --gpu-list μπορεί να καθοριστεί μόνο μία φορά.\n"
+
+msgid "--gpu-list must be used by itself.\n"
+msgstr "Η --gpu-list πρέπει να χρησιμοποιείται μόνη της.\n"
+
+msgid "A __fast array index must be int or long."
+msgstr "Ένας δείκτης πίνακα __fast πρέπει να είναι int ή long."
+
+msgid "A __fast assignment requires an exact type match."
+msgstr "Μια ανάθεση __fast απαιτεί ακριβή αντιστοίχιση τύπων."
+
+msgid "A __fast assignment target must be a typed local."
+msgstr "Ο στόχος ανάθεσης __fast πρέπει να είναι τοπική μεταβλητή με τύπο."
+
+msgid "A __fast binary intrinsic requires operands of the same type."
+msgstr "Μια δυαδική ενσωματωμένη συνάρτηση __fast απαιτεί τελεστέους του ίδιου τύπου."
+
+msgid "A __fast binary operation requires equal primitive operand types."
+msgstr "Μια δυαδική πράξη __fast απαιτεί ίδιους πρωτογενείς τύπους τελεστέων."
+
+msgid "A __fast condition must have type int."
+msgstr "Μια συνθήκη __fast πρέπει να έχει τύπο int."
+
+msgid "A __fast expression is too deeply nested."
+msgstr "Μια έκφραση __fast είναι υπερβολικά βαθιά εμφωλευμένη."
+
+msgid "A __fast func may call only a direct __fast function or intrinsic."
+msgstr "Μια func __fast μπορεί να καλεί απευθείας μόνο μια συνάρτηση __fast ή μια ενσωματωμένη συνάρτηση."
+
+msgid "A __fast func must declare its return type."
+msgstr "Μια func __fast πρέπει να δηλώνει τον τύπο επιστροφής της."
+
+msgid "A __fast func parameter must be primitive or shaped rpacked."
+msgstr "Μια παράμετρος func __fast πρέπει να είναι πρωτογενής ή rpacked με σχήμα."
+
+msgid "A __fast func return type must be void, int, long, float, or double."
+msgstr "Ο τύπος επιστροφής μιας func __fast πρέπει να είναι void, int, long, float ή double."
+
+msgid "A __fast func supports only ranged for loops."
+msgstr "Μια func __fast υποστηρίζει μόνο βρόχους for με εύρος."
+
+msgid "A __fast function name conflicts with a compiler intrinsic."
+msgstr "Το όνομα μιας συνάρτησης __fast συγκρούεται με ενσωματωμένη συνάρτηση του μεταγλωττιστή."
+
+msgid "A __fast integer operation requires int or long."
+msgstr "Μια ακέραια πράξη __fast απαιτεί int ή long."
+
+msgid "A __fast intrinsic requires a statically typed numeric argument."
+msgstr "Μια ενσωματωμένη συνάρτηση __fast απαιτεί στατικά τυποποιημένο αριθμητικό όρισμα."
+
+msgid "A __fast logical operand must have type int."
+msgstr "Ένας λογικός τελεστέος __fast πρέπει να έχει τύπο int."
+
+msgid "A __fast numeric intrinsic requires numeric arguments."
+msgstr "Μια αριθμητική ενσωματωμένη συνάρτηση __fast απαιτεί αριθμητικά ορίσματα."
+
+msgid "A __fast packed access is provably out of bounds."
+msgstr "Μια πρόσβαση packed __fast είναι αποδεδειγμένα εκτός ορίων."
+
+msgid "A __fast packed store requires an exact element type match."
+msgstr "Μια αποθήκευση packed __fast απαιτεί ακριβή αντιστοίχιση τύπου στοιχείου."
+
+msgid "A __fast parameter shape has more than 8 dimensions."
+msgstr "Το σχήμα μιας παραμέτρου __fast έχει περισσότερες από 8 διαστάσεις."
+
+msgid "A __fast ranged loop requires matching int or long bounds."
+msgstr "Ένας βρόχος εύρους __fast απαιτεί αντίστοιχα όρια int ή long."
+
+msgid "A __fast return value does not match its declared type."
+msgstr "Μια τιμή επιστροφής __fast δεν αντιστοιχεί στον δηλωμένο τύπο της."
+
+msgid "A __fast shape extent must be int or long."
+msgstr "Η έκταση ενός σχήματος __fast πρέπει να είναι int ή long."
+
+msgid "A __fast shape extent must be positive."
+msgstr "Η έκταση ενός σχήματος __fast πρέπει να είναι θετική."
+
+msgid "A __fast subscript base must be a shaped rpacked parameter."
+msgstr "Η βάση ενός δείκτη __fast πρέπει να είναι παράμετρος rpacked με σχήμα."
+
+msgid "A __fast transcendental intrinsic requires float or double."
+msgstr "Μια υπερβατική ενσωματωμένη συνάρτηση __fast απαιτεί float ή double."
+
+msgid "A __fast unary operand must be primitive."
+msgstr "Ένας μοναδιαίος τελεστέος __fast πρέπει να είναι πρωτογενής."
+
+msgid "A binary __fast intrinsic requires operands of the same type."
+msgstr "Μια δυαδική ενσωματωμένη συνάρτηση __fast απαιτεί τελεστέους του ίδιου τύπου."
+
+msgid "A direct __fast call argument does not match the callee type."
+msgstr "Ένα όρισμα άμεσης κλήσης __fast δεν αντιστοιχεί στον τύπο της καλούμενης συνάρτησης."
+
+msgid "A direct __fast call has the wrong argument count."
+msgstr "Μια άμεση κλήση __fast έχει εσφαλμένο πλήθος ορισμάτων."
+
+msgid "A direct __fast call packed argument has the wrong element type."
+msgstr "Ένα όρισμα packed άμεσης κλήσης __fast έχει εσφαλμένο τύπο στοιχείου."
+
+msgid "A direct __fast call packed argument must be a parameter."
+msgstr "Ένα όρισμα packed άμεσης κλήσης __fast πρέπει να είναι παράμετρος."
+
+msgid "A direct __fast call packed shape does not match the callee view."
+msgstr "Το σχήμα packed μιας άμεσης κλήσης __fast δεν αντιστοιχεί στην προβολή της καλούμενης συνάρτησης."
+
+msgid "A direct __fast call packed shape rank does not match."
+msgstr "Ο αριθμός διαστάσεων του σχήματος packed μιας άμεσης κλήσης __fast δεν αντιστοιχεί."
+
+msgid "A dynamic __fast shape extent must name an int or long parameter."
+msgstr "Μια δυναμική έκταση σχήματος __fast πρέπει να ονομάζει παράμετρο int ή long."
+
+msgid "A function return type cannot have a shape."
+msgstr "Ο τύπος επιστροφής μιας συνάρτησης δεν μπορεί να έχει σχήμα."
+
+msgid "A local used inside __fast func must have an exact primitive type."
+msgstr "Μια τοπική μεταβλητή που χρησιμοποιείται μέσα σε func __fast πρέπει να έχει ακριβή πρωτογενή τύπο."
+
+msgid "A multi-dimensional subscript requires a directly named shaped parameter."
+msgstr "Ένας πολυδιάστατος δείκτης απαιτεί άμεσα κατονομασμένη παράμετρο με σχήμα."
+
+msgid "A non-void __fast func must return a value."
+msgstr "Μια func __fast που δεν είναι void πρέπει να επιστρέφει τιμή."
+
+msgid "A primitive __fast parameter cannot have a shape."
+msgstr "Μια πρωτογενής παράμετρος __fast δεν μπορεί να έχει σχήμα."
+
+msgid "A primitive __fast parameter must use int, long, float, or double exactly."
+msgstr "Μια πρωτογενής παράμετρος __fast πρέπει να χρησιμοποιεί ακριβώς int, long, float ή double."
+
+msgid "A restricted packed __fast parameter requires an exact shape."
+msgstr "Μια περιορισμένη παράμετρος packed __fast απαιτεί ακριβές σχήμα."
+
+msgid "A restricted packed type is only valid for a parameter."
+msgstr "Ένας περιορισμένος τύπος packed είναι έγκυρος μόνο για παράμετρο."
+
+msgid "A shaped __fast parameter must be a Packed type."
+msgstr "Μια παράμετρος __fast με σχήμα πρέπει να είναι τύπου Packed."
+
+msgid "A transcendental __fast intrinsic requires float or double."
+msgstr "Μια υπερβατική ενσωματωμένη συνάρτηση __fast απαιτεί float ή double."
+
+msgid "A typed function must return a value."
+msgstr "Μια συνάρτηση με τύπο πρέπει να επιστρέφει τιμή."
+
+msgid "A void function cannot return a value."
+msgstr "Μια συνάρτηση void δεν μπορεί να επιστρέφει τιμή."
+
+msgid "Accelerator Packed argument is missing."
+msgstr "Λείπει το όρισμα Packed του επιταχυντή."
+
+msgid "Accelerator Packed element type does not match."
+msgstr "Ο τύπος στοιχείου Packed του επιταχυντή δεν αντιστοιχεί."
+
+msgid "Accelerator VM and environment do not match."
+msgstr "Η VM του επιταχυντή και το περιβάλλον δεν αντιστοιχούν."
+
+msgid "Accelerator access has an invalid effect."
+msgstr "Η πρόσβαση του επιταχυντή έχει μη έγκυρη επίδραση."
+
+msgid "Accelerator access has no buffer binding."
+msgstr "Η πρόσβαση του επιταχυντή δεν έχει δέσμευση ενδιάμεσης μνήμης."
+
+msgid "Accelerator access references an unknown buffer."
+msgstr "Η πρόσβαση του επιταχυντή αναφέρεται σε άγνωστη ενδιάμεση μνήμη."
+
+msgid "Accelerator argument count changed."
+msgstr "Το πλήθος ορισμάτων του επιταχυντή άλλαξε."
+
+msgid "Accelerator argument count is too large."
+msgstr "Το πλήθος ορισμάτων του επιταχυντή είναι υπερβολικά μεγάλο."
+
+msgid "Accelerator backend failed to prepare a program."
+msgstr "Το backend του επιταχυντή απέτυχε να προετοιμάσει πρόγραμμα."
+
+msgid "Accelerator backend returned no program."
+msgstr "Το backend του επιταχυντή δεν επέστρεψε πρόγραμμα."
+
+msgid "Accelerator buffer access is out of range."
+msgstr "Η πρόσβαση στην ενδιάμεση μνήμη του επιταχυντή είναι εκτός ορίων."
+
+msgid "Accelerator buffer has no required range."
+msgstr "Η ενδιάμεση μνήμη του επιταχυντή δεν έχει το απαιτούμενο εύρος."
+
+msgid "Accelerator buffer has no runtime argument slot."
+msgstr "Η ενδιάμεση μνήμη του επιταχυντή δεν έχει θέση ορίσματος περιβάλλοντος εκτέλεσης."
+
+msgid "Accelerator buffer range overflowed."
+msgstr "Υπήρξε υπερχείλιση του εύρους της ενδιάμεσης μνήμης του επιταχυντή."
+
+msgid "Accelerator buffer size overflowed."
+msgstr "Υπήρξε υπερχείλιση του μεγέθους της ενδιάμεσης μνήμης του επιταχυντή."
+
+msgid "Accelerator context is unavailable."
+msgstr "Το περιβάλλον του επιταχυντή δεν είναι διαθέσιμο."
+
+msgid "Accelerator context reference limit reached."
+msgstr "Συμπληρώθηκε το όριο αναφορών του περιβάλλοντος του επιταχυντή."
+
+msgid "Accelerator device buffer is read before definition."
+msgstr "Η ενδιάμεση μνήμη συσκευής του επιταχυντή διαβάζεται πριν από τον ορισμό της."
+
+msgid "Accelerator device buffer size is not positive."
+msgstr "Το μέγεθος της ενδιάμεσης μνήμης συσκευής του επιταχυντή δεν είναι θετικό."
+
+msgid "Accelerator device buffer size is too large."
+msgstr "Το μέγεθος της ενδιάμεσης μνήμης συσκευής του επιταχυντή είναι υπερβολικά μεγάλο."
+
+msgid "Accelerator device buffer size overflowed."
+msgstr "Υπήρξε υπερχείλιση του μεγέθους της ενδιάμεσης μνήμης συσκευής του επιταχυντή."
+
+msgid "Accelerator device-list visitor failed."
+msgstr "Ο επισκέπτης λίστας συσκευών του επιταχυντή απέτυχε."
+
+msgid "Accelerator dispatch range is too large."
+msgstr "Το εύρος αποστολής του επιταχυντή είναι υπερβολικά μεγάλο."
+
+msgid "Accelerator function is not registered in the HIR table."
+msgstr "Η συνάρτηση του επιταχυντή δεν είναι καταχωρισμένη στον πίνακα HIR."
+
+msgid "Accelerator load has no buffer binding."
+msgstr "Η φόρτωση του επιταχυντή δεν έχει δέσμευση ενδιάμεσης μνήμης."
+
+msgid "Accelerator local name collision."
+msgstr "Σύγκρουση ονομάτων τοπικών μεταβλητών του επιταχυντή."
+
+msgid "Accelerator local name is too long."
+msgstr "Το όνομα τοπικής μεταβλητής του επιταχυντή είναι υπερβολικά μεγάλο."
+
+msgid "Accelerator loop start overflowed."
+msgstr "Υπήρξε υπερχείλιση της αρχής βρόχου του επιταχυντή."
+
+msgid "Accelerator output argument is missing."
+msgstr "Λείπει το όρισμα εξόδου του επιταχυντή."
+
+msgid "Accelerator output size changed."
+msgstr "Το μέγεθος εξόδου του επιταχυντή άλλαξε."
+
+msgid "Accelerator output snapshot is missing."
+msgstr "Λείπει το στιγμιότυπο εξόδου του επιταχυντή."
+
+msgid "Accelerator output type changed."
+msgstr "Ο τύπος εξόδου του επιταχυντή άλλαξε."
+
+msgid "Accelerator plan does not match live HIR."
+msgstr "Το σχέδιο του επιταχυντή δεν αντιστοιχεί στο ενεργό HIR."
+
+msgid "Accelerator program validation failed."
+msgstr "Η επικύρωση του προγράμματος του επιταχυντή απέτυχε."
+
+msgid "Accelerator reduction has no result entry."
+msgstr "Η αναγωγή του επιταχυντή δεν έχει καταχώριση αποτελέσματος."
+
+msgid "Accelerator scalar argument is missing."
+msgstr "Λείπει το βαθμωτό όρισμα του επιταχυντή."
+
+msgid "Accelerator scalar metadata is too large."
+msgstr "Τα βαθμωτά μεταδεδομένα του επιταχυντή είναι υπερβολικά μεγάλα."
+
+msgid "Accelerator scalar result argument is missing."
+msgstr "Λείπει το όρισμα βαθμωτού αποτελέσματος του επιταχυντή."
+
+msgid "Accelerator scalar result has no local."
+msgstr "Το βαθμωτό αποτέλεσμα του επιταχυντή δεν έχει τοπική μεταβλητή."
+
+msgid "Accelerator scalar result identity changed."
+msgstr "Η ταυτότητα του βαθμωτού αποτελέσματος του επιταχυντή άλλαξε."
+
+msgid "Accelerator scalar result is not available."
+msgstr "Το βαθμωτό αποτέλεσμα του επιταχυντή δεν είναι διαθέσιμο."
+
+msgid "Accelerator scalar result metadata is missing."
+msgstr "Λείπουν τα μεταδεδομένα βαθμωτού αποτελέσματος του επιταχυντή."
+
+msgid "Accelerator scalar result metadata is too large."
+msgstr "Τα μεταδεδομένα βαθμωτού αποτελέσματος του επιταχυντή είναι υπερβολικά μεγάλα."
+
+msgid "Accelerator store has no buffer binding."
+msgstr "Η αποθήκευση του επιταχυντή δεν έχει δέσμευση ενδιάμεσης μνήμης."
+
+msgid "Accelerator trip count overflowed."
+msgstr "Υπήρξε υπερχείλιση του πλήθους επαναλήψεων του επιταχυντή."
+
+msgid "Adding file %s.\n"
+msgstr "Προσθήκη του αρχείου %s.\n"
+
+msgid "An accelerator is already attached to this VM."
+msgstr "Ένας επιταχυντής είναι ήδη συνδεδεμένος σε αυτήν τη VM."
+
+msgid "An active Vulkan buffer has no storage."
+msgstr "Μια ενεργή ενδιάμεση μνήμη Vulkan δεν έχει χώρο αποθήκευσης."
+
+msgid "An inactive Vulkan buffer requested a transfer."
+msgstr "Μια ανενεργή ενδιάμεση μνήμη Vulkan ζήτησε μεταφορά."
+
+msgid "Application container cannot be used as a module: %s"
+msgstr "Ο περιέκτης της εφαρμογής δεν μπορεί να χρησιμοποιηθεί ως μονάδα: %s"
+
+msgid "Application contains an unreachable module."
+msgstr "Η εφαρμογή περιέχει μη προσβάσιμη μονάδα."
+
+msgid "Application output %s collides with input %s.\n"
+msgstr "Η έξοδος %s της εφαρμογής συγκρούεται με την είσοδο %s.\n"
+
+msgid "Argument (%d: %s) is not a dictionary."
+msgstr "Το όρισμα (%d: %s) δεν είναι λεξικό."
+
+msgid "Argument (%d: %s) is not a double."
+msgstr "Το όρισμα (%d: %s) δεν είναι double."
+
+msgid "Argument (%d: %s) is not a float."
+msgstr "Το όρισμα (%d: %s) δεν είναι δεκαδικός αριθμός."
+
+msgid "Argument (%d: %s) is not a function."
+msgstr "Το όρισμα (%d: %s) δεν είναι συνάρτηση."
+
+msgid "Argument (%d: %s) is not a long."
+msgstr "Το όρισμα (%d: %s) δεν είναι long."
+
+msgid "Argument (%d: %s) is not a packed of type %s."
+msgstr "Το όρισμα (%d: %s) δεν είναι packed τύπου %s."
+
+msgid "Argument (%d: %s) is not a packed."
+msgstr "Το όρισμα (%d: %s) δεν είναι packed."
+
+msgid "Argument (%d: %s) is not a string."
+msgstr "Το όρισμα (%d: %s) δεν είναι συμβολοσειρά."
+
+msgid "Argument (%d: %s) is not an array."
+msgstr "Το όρισμα (%d: %s) δεν είναι πίνακας."
+
+msgid "Argument (%d: %s) is not an int."
+msgstr "Το όρισμα (%d: %s) δεν είναι ακέραιος αριθμός."
+
+msgid "Argument (%d: %s) is not an integer."
+msgstr "Το όρισμα (%d: %s) δεν είναι ακέραιος αριθμός."
+
+msgid "Array index %ld is out-of-range."
+msgstr "Ο δείκτης πίνακα %ld είναι εκτός ορίων."
+
+msgid "BeUI is not open."
+msgstr "Το BeUI δεν είναι ανοικτό."
+
+msgid "BeUI.destroyImage received an invalid handle."
+msgstr "Η BeUI.destroyImage έλαβε μη έγκυρο handle."
+
+msgid "BeUI.drawImage failed."
+msgstr "Η BeUI.drawImage απέτυχε."
+
+msgid "BeUI.drawImagePattern failed."
+msgstr "Η BeUI.drawImagePattern απέτυχε."
+
+msgid "BeUI.drawImagePattern received an invalid argument."
+msgstr "Η BeUI.drawImagePattern έλαβε μη έγκυρο όρισμα."
+
+msgid "BeUI.drawImageRegion failed."
+msgstr "Η BeUI.drawImageRegion απέτυχε."
+
+msgid "BeUI.drawText failed."
+msgstr "Η BeUI.drawText απέτυχε."
+
+msgid "BeUI.drawText received an invalid argument."
+msgstr "Η BeUI.drawText έλαβε μη έγκυρο όρισμα."
+
+msgid "BeUI.fill failed."
+msgstr "Η BeUI.fill απέτυχε."
+
+msgid "BeUI.fill received an invalid argument."
+msgstr "Η BeUI.fill έλαβε μη έγκυρο όρισμα."
+
+msgid "BeUI.flush failed."
+msgstr "Η BeUI.flush απέτυχε."
+
+msgid "BeUI.getImageHeight received an invalid handle."
+msgstr "Η BeUI.getImageHeight έλαβε μη έγκυρο handle."
+
+msgid "BeUI.getImageWidth received an invalid handle."
+msgstr "Η BeUI.getImageWidth έλαβε μη έγκυρο handle."
+
+msgid "BeUI.getMilliseconds is unavailable."
+msgstr "Η BeUI.getMilliseconds δεν είναι διαθέσιμη."
+
+msgid "BeUI.initWithHint expects 8 or 24 bits per pixel."
+msgstr "Η BeUI.initWithHint αναμένει 8 ή 24 bit ανά pixel."
+
+msgid "BeUI.isKeyDown received an invalid argument."
+msgstr "Η BeUI.isKeyDown έλαβε μη έγκυρο όρισμα."
+
+msgid "BeUI.line failed."
+msgstr "Η BeUI.line απέτυχε."
+
+msgid "BeUI.line received an invalid argument."
+msgstr "Η BeUI.line έλαβε μη έγκυρο όρισμα."
+
+msgid "BeUI.loadImage expects a byte array."
+msgstr "Η BeUI.loadImage αναμένει πίνακα byte."
+
+msgid "BeUI.loadImage received an unsupported image."
+msgstr "Η BeUI.loadImage έλαβε μη υποστηριζόμενη εικόνα."
+
+msgid "BeUI.patternFill failed."
+msgstr "Η BeUI.patternFill απέτυχε."
+
+msgid "BeUI.patternFill received an invalid argument."
+msgstr "Η BeUI.patternFill έλαβε μη έγκυρο όρισμα."
+
+msgid "BeUI.sleep is unavailable."
+msgstr "Η BeUI.sleep δεν είναι διαθέσιμη."
+
+msgid "BeUI.sleep received an invalid argument."
+msgstr "Η BeUI.sleep έλαβε μη έγκυρο όρισμα."
+
+msgid "Branch target not found."
+msgstr "Δεν βρέθηκε ο στόχος διακλάδωσης."
+
+msgid "Branch target too far."
+msgstr "Ο στόχος διακλάδωσης είναι υπερβολικά μακριά."
+
+msgid "Broken bytecode."
+msgstr "Κατεστραμμένο bytecode."
+
+msgid "Bytecode input is not recompiled: %s"
+msgstr "Η είσοδος bytecode δεν επαναμεταγλωττίζεται: %s"
+
+msgid "Bytecode input is not recompiled: %s\n"
+msgstr "Η είσοδος bytecode δεν επαναμεταγλωττίζεται: %s\n"
+
+msgid "Bytecode is too large."
+msgstr "Το bytecode είναι υπερβολικά μεγάλο."
+
+msgid "Bytecode module is too large: %s"
+msgstr "Η μονάδα bytecode είναι υπερβολικά μεγάλη: %s"
+
+msgid "Bytecode program is too large.\n"
+msgstr "Το πρόγραμμα bytecode είναι υπερβολικά μεγάλο.\n"
+
+msgid "Call to non-fast function '%s' is not allowed inside __fast func."
+msgstr "Η κλήση της συνάρτησης '%s' που δεν είναι __fast δεν επιτρέπεται μέσα σε func __fast."
+
+msgid "Cannot accept a connection."
+msgstr "Δεν είναι δυνατή η αποδοχή σύνδεσης."
+
+msgid "Cannot allocate application output path.\n"
+msgstr "Δεν είναι δυνατή η εκχώρηση της διαδρομής εξόδου της εφαρμογής.\n"
+
+msgid "Cannot allocate bytecode output paths.\n"
+msgstr "Δεν είναι δυνατή η εκχώρηση των διαδρομών εξόδου bytecode.\n"
+
+msgid "Cannot allocate output path for %s.\n"
+msgstr "Δεν είναι δυνατή η εκχώρηση της διαδρομής εξόδου για %s.\n"
+
+msgid "Cannot assign to 'let' variable '%s'."
+msgstr "Δεν είναι δυνατή η ανάθεση στη μεταβλητή 'let' '%s'."
+
+msgid "Cannot assign to constant \"%s\"."
+msgstr "Δεν είναι δυνατή η ανάθεση στη σταθερά \"%s\"."
+
+msgid "Cannot bind to %s:%d. (%s)"
+msgstr "Δεν είναι δυνατή η δέσμευση στο %s:%d. (%s)"
+
+msgid "Cannot change the socket mode."
+msgstr "Δεν είναι δυνατή η αλλαγή της λειτουργίας του socket."
+
+msgid "Cannot close file %s."
+msgstr "Δεν είναι δυνατό το κλείσιμο του αρχείου %s."
+
+msgid "Cannot collect bytecode link names from %s."
+msgstr "Δεν είναι δυνατή η συλλογή των ονομάτων σύνδεσης bytecode από το %s."
+
+msgid "Cannot collect bytecode prototypes from %s."
+msgstr "Δεν είναι δυνατή η συλλογή των πρωτοτύπων bytecode από το %s."
+
+msgid "Cannot connect to %s:%d."
+msgstr "Δεν είναι δυνατή η σύνδεση στο %s:%d."
+
+msgid "Cannot copy this value type."
+msgstr "Δεν είναι δυνατή η αντιγραφή αυτού του τύπου τιμής."
+
+msgid "Cannot create a mutex."
+msgstr "Δεν είναι δυνατή η δημιουργία mutex."
+
+msgid "Cannot create a thread."
+msgstr "Δεν είναι δυνατή η δημιουργία νήματος."
+
+msgid "Cannot create application %s.\n"
+msgstr "Δεν είναι δυνατή η δημιουργία της εφαρμογής %s.\n"
+
+msgid "Cannot create file mapping (Windows error %lu)."
+msgstr "Δεν είναι δυνατή η δημιουργία αντιστοίχισης αρχείου (σφάλμα Windows %lu)."
+
+msgid "Cannot create output directory %s."
+msgstr "Δεν είναι δυνατή η δημιουργία του καταλόγου εξόδου %s."
+
+msgid "Cannot derive a portable source name for %s."
+msgstr "Δεν είναι δυνατή η εξαγωγή φορητού ονόματος πηγής για το %s."
+
+msgid "Cannot determine file size."
+msgstr "Δεν είναι δυνατός ο προσδιορισμός του μεγέθους του αρχείου."
+
+msgid "Cannot determine mapped file size (Windows error %lu)."
+msgstr "Δεν είναι δυνατός ο προσδιορισμός του μεγέθους του αντιστοιχισμένου αρχείου (σφάλμα Windows %lu)."
+
+msgid "Cannot determine mapped file size: %s"
+msgstr "Δεν είναι δυνατός ο προσδιορισμός του μεγέθους του αντιστοιχισμένου αρχείου: %s"
+
+msgid "Cannot determine the file mapping allocation granularity."
+msgstr "Δεν είναι δυνατός ο προσδιορισμός της λεπτομέρειας εκχώρησης της αντιστοίχισης αρχείου."
+
+msgid "Cannot determine the file mapping page size."
+msgstr "Δεν είναι δυνατός ο προσδιορισμός του μεγέθους σελίδας της αντιστοίχισης αρχείου."
+
+msgid "Cannot find %s.\n"
+msgstr "Δεν ήταν δυνατή η εύρεση του %s.\n"
+
+msgid "Cannot find function %s."
+msgstr "Δεν βρέθηκε η συνάρτηση %s."
+
+msgid "Cannot flush file mapping (Windows error %lu)."
+msgstr "Δεν είναι δυνατή η εκκαθάριση της αντιστοίχισης αρχείου (σφάλμα Windows %lu)."
+
+msgid "Cannot flush file mapping: %s"
+msgstr "Δεν είναι δυνατή η εκκαθάριση της αντιστοίχισης αρχείου: %s"
+
+msgid "Cannot flush mapped file (Windows error %lu)."
+msgstr "Δεν είναι δυνατή η εκκαθάριση του αντιστοιχισμένου αρχείου (σφάλμα Windows %lu)."
+
+msgid "Cannot initialize the socket library."
+msgstr "Δεν είναι δυνατή η αρχικοποίηση της βιβλιοθήκης socket."
+
+msgid "Cannot inspect source module %s."
+msgstr "Δεν είναι δυνατή η επιθεώρηση της μονάδας πηγαίου κώδικα %s."
+
+msgid "Cannot install the REPL interrupt handler.\n"
+msgstr "Δεν είναι δυνατή η εγκατάσταση του χειριστή διακοπών REPL.\n"
+
+msgid "Cannot listen on %s:%d."
+msgstr "Δεν είναι δυνατή η ακρόαση στο %s:%d."
+
+msgid "Cannot map file %s: %s"
+msgstr "Δεν είναι δυνατή η αντιστοίχιση του αρχείου %s: %s"
+
+msgid "Cannot map file view (Windows error %lu)."
+msgstr "Δεν είναι δυνατή η αντιστοίχιση της προβολής αρχείου (σφάλμα Windows %lu)."
+
+msgid "Cannot open file %s for mapping: %s"
+msgstr "Δεν είναι δυνατό το άνοιγμα του αρχείου %s για αντιστοίχιση: %s"
+
+msgid "Cannot open file %s."
+msgstr "Δεν είναι δυνατό το άνοιγμα του αρχείου %s."
+
+msgid "Cannot open file %s.\n"
+msgstr "Δεν είναι δυνατό το άνοιγμα του αρχείου %s.\n"
+
+msgid "Cannot open file for mapping (Windows error %lu)."
+msgstr "Δεν είναι δυνατό το άνοιγμα του αρχείου για αντιστοίχιση (σφάλμα Windows %lu)."
+
+msgid "Cannot open module %s."
+msgstr "Δεν είναι δυνατό το άνοιγμα της μονάδας %s."
+
+msgid "Cannot read file %s."
+msgstr "Δεν είναι δυνατή η ανάγνωση του αρχείου %s."
+
+msgid "Cannot read file %s.\n"
+msgstr "Δεν είναι δυνατή η ανάγνωση του αρχείου %s.\n"
+
+msgid "Cannot read module %s."
+msgstr "Δεν είναι δυνατή η ανάγνωση της μονάδας %s."
+
+msgid "Cannot receive from the connection."
+msgstr "Δεν είναι δυνατή η λήψη από τη σύνδεση."
+
+msgid "Cannot resolve required module '%s'."
+msgstr "Δεν είναι δυνατή η επίλυση της απαιτούμενης μονάδας '%s'."
+
+msgid "Cannot resolve the address %s."
+msgstr "Δεν είναι δυνατή η επίλυση της διεύθυνσης %s."
+
+msgid "Cannot send to the connection."
+msgstr "Δεν είναι δυνατή η αποστολή στη σύνδεση."
+
+msgid "Cannot unmap file mapping: %s"
+msgstr "Δεν είναι δυνατή η κατάργηση της αντιστοίχισης αρχείου: %s"
+
+msgid "Cannot unmap file view (Windows error %lu)."
+msgstr "Δεν είναι δυνατή η κατάργηση της αντιστοίχισης προβολής αρχείου (σφάλμα Windows %lu)."
+
+msgid "Cannot wait for socket events."
+msgstr "Δεν είναι δυνατή η αναμονή για συμβάντα socket."
+
+msgid "Cannot write file %s."
+msgstr "Δεν είναι δυνατή η εγγραφή του αρχείου %s."
+
+msgid "Character class too large."
+msgstr "Η κλάση χαρακτήρων είναι υπερβολικά μεγάλη."
+
+msgid "Circular require involving %s."
+msgstr "Κυκλικό require που περιλαμβάνει το %s."
+
+msgid "Code too big."
+msgstr "Ο κώδικας είναι πολύ μεγάλος."
+
+msgid "Condition is not a number."
+msgstr "Η συνθήκη δεν είναι αριθμός."
+
+msgid "CreateProcess() failed."
+msgstr "Η CreateProcess() απέτυχε."
+
+msgid "Decimal integer literal is too large."
+msgstr "Η δεκαδική ακέραια σταθερά είναι υπερβολικά μεγάλη."
+
+msgid "Detached accelerator context."
+msgstr "Αποσυνδεδεμένο περιβάλλον επιταχυντή."
+
+msgid "Dictionary index %ld is out-of-range."
+msgstr "Ο δείκτης λεξικού %ld είναι εκτός ορίων."
+
+msgid "Dictionary is frozen."
+msgstr "Το λεξικό είναι παγωμένο."
+
+msgid "Dictionary key \"%s\" not found."
+msgstr "Το κλειδί \"%s\" δεν βρέθηκε στο λεξικό."
+
+msgid "Direct or mutually recursive __fast calls are not supported."
+msgstr "Δεν υποστηρίζονται άμεσες ή αμοιβαία αναδρομικές κλήσεις __fast."
+
+msgid "Direct3D 12 buffer extent mismatch"
+msgstr "Η έκταση της ενδιάμεσης μνήμης Direct3D 12 δεν αντιστοιχεί"
+
+msgid "Direct3D 12 buffer is not word aligned"
+msgstr "Η ενδιάμεση μνήμη Direct3D 12 δεν είναι ευθυγραμμισμένη σε λέξη"
+
+msgid "Direct3D 12 buffer is too large for one UAV"
+msgstr "Η ενδιάμεση μνήμη Direct3D 12 είναι υπερβολικά μεγάλη για ένα UAV"
+
+msgid "Direct3D 12 buffer metadata changed"
+msgstr "Τα μεταδεδομένα της ενδιάμεσης μνήμης Direct3D 12 άλλαξαν"
+
+msgid "Direct3D 12 buffer metadata does not match the program"
+msgstr "Τα μεταδεδομένα της ενδιάμεσης μνήμης Direct3D 12 δεν αντιστοιχούν στο πρόγραμμα"
+
+msgid "Direct3D 12 buffer size overflow"
+msgstr "Υπερχείλιση μεγέθους ενδιάμεσης μνήμης Direct3D 12"
+
+msgid "Direct3D 12 buffer table mismatch"
+msgstr "Ο πίνακας ενδιάμεσων μνημών Direct3D 12 δεν αντιστοιχεί"
+
+msgid "Direct3D 12 dispatch exceeds 65535 workgroups"
+msgstr "Η αποστολή Direct3D 12 υπερβαίνει τις 65535 ομάδες εργασίας"
+
+msgid "Direct3D 12 execution is not recording"
+msgstr "Η εκτέλεση Direct3D 12 δεν καταγράφει"
+
+msgid "Direct3D 12 fence counter overflowed"
+msgstr "Υπήρξε υπερχείλιση του μετρητή φράκτη Direct3D 12"
+
+msgid "Direct3D 12 output table mismatch"
+msgstr "Ο πίνακας εξόδου Direct3D 12 δεν αντιστοιχεί"
+
+msgid "Direct3D 12 result byte count overflow"
+msgstr "Υπερχείλιση πλήθους byte του αποτελέσματος Direct3D 12"
+
+msgid "Direct3D 12 result table changed"
+msgstr "Ο πίνακας αποτελεσμάτων Direct3D 12 άλλαξε"
+
+msgid "Direct3D 12 result table mismatch"
+msgstr "Ο πίνακας αποτελεσμάτων Direct3D 12 δεν αντιστοιχεί"
+
+msgid "Direct3D 12 scalar byte count overflow"
+msgstr "Υπερχείλιση πλήθους βαθμωτών byte του Direct3D 12"
+
+msgid "Direct3D 12 scalar table mismatch"
+msgstr "Ο πίνακας βαθμωτών Direct3D 12 δεν αντιστοιχεί"
+
+msgid "Direct3D 12 scalar table overflow"
+msgstr "Υπερχείλιση πίνακα βαθμωτών Direct3D 12"
+
+msgid "Direct3D 12 supports only 32-bit buffers"
+msgstr "Το Direct3D 12 υποστηρίζει μόνο ενδιάμεσες μνήμες 32 bit"
+
+msgid "Directory path must not be empty."
+msgstr "Η διαδρομή καταλόγου δεν πρέπει να είναι κενή."
+
+msgid "Division by zero."
+msgstr "Διαίρεση με το μηδέν."
+
+msgid "Duplicate Noct App input: %s"
+msgstr "Διπλότυπη είσοδος Noct App: %s"
+
+msgid "Duplicate accelerator region index."
+msgstr "Διπλότυπος δείκτης περιοχής επιταχυντή."
+
+msgid "Duplicate accelerator scalar result argument."
+msgstr "Διπλότυπο όρισμα βαθμωτού αποτελέσματος επιταχυντή."
+
+msgid "Duplicate input module path: %s"
+msgstr "Διπλότυπη διαδρομή μονάδας εισόδου: %s"
+
+msgid "Duplicate logical source name for %s."
+msgstr "Διπλότυπο λογικό όνομα πηγαίου κώδικα για το %s."
+
+msgid "Duplicate public symbol \"%s\" (Duplicate function in module closure)."
+msgstr "Διπλότυπο δημόσιο σύμβολο \"%s\" (διπλότυπη συνάρτηση στο κλείσιμο μονάδων)."
+
+msgid "Duplicate static declaration '%s'."
+msgstr "Διπλότυπη δήλωση static '%s'."
+
+msgid "Duplicate top-level declaration '%s'."
+msgstr "Διπλότυπη δήλωση ανώτατου επιπέδου '%s'."
+
+msgid "Element %d is not a dictionary."
+msgstr "Το στοιχείο %d δεν είναι λεξικό."
+
+msgid "Element %d is not a double."
+msgstr "Το στοιχείο %d δεν είναι double."
+
+msgid "Element %d is not a float."
+msgstr "Το στοιχείο %d δεν είναι δεκαδικός αριθμός."
+
+msgid "Element %d is not a function."
+msgstr "L'elemento %d non è una funzione."
+
+msgid "Element %d is not a long."
+msgstr "Το στοιχείο %d δεν είναι long."
+
+msgid "Element %d is not a string."
+msgstr "Το στοιχείο %d δεν είναι συμβολοσειρά."
+
+msgid "Element %d is not an array."
+msgstr "Το στοιχείο %d δεν είναι πίνακας."
+
+msgid "Element %d is not an int."
+msgstr "Το στοιχείο %d δεν είναι int."
+
+msgid "Empty accelerator function plan."
+msgstr "Κενό σχέδιο συνάρτησης επιταχυντή."
+
+msgid "Empty accelerator region program."
+msgstr "Κενό πρόγραμμα περιοχής επιταχυντή."
+
+msgid "Empty array."
+msgstr "Κενός πίνακας."
+
+msgid "Entering REPL mode.\n"
+msgstr "Είσοδος σε λειτουργία REPL.\n"
+
+msgid "Error: %s\n"
+msgstr "Σφάλμα: %s\n"
+
+msgid "Error: %s:%d: %s\n"
+msgstr "Σφάλμα: %s:%d: %s\n"
+
+msgid "Error: Cannot assemble application records.\n"
+msgstr "Σφάλμα: Δεν είναι δυνατή η συναρμολόγηση των εγγραφών της εφαρμογής.\n"
+
+msgid "Error: Cannot prepare application module %s.\n"
+msgstr "Σφάλμα: Δεν είναι δυνατή η προετοιμασία της μονάδας εφαρμογής %s.\n"
+
+msgid "Error: Invalid application at byte %lu: %s\n"
+msgstr "Σφάλμα: Μη έγκυρη εφαρμογή στο byte %lu: %s\n"
+
+msgid "Error: Invalid application source name.\n"
+msgstr "Σφάλμα: Μη έγκυρο όνομα πηγής εφαρμογής.\n"
+
+msgid "Error: Invalid bytecode source name.\n"
+msgstr "Σφάλμα: Μη έγκυρο όνομα πηγής bytecode.\n"
+
+msgid "Error: __fast func is not supported by the Emacs Lisp transpiler.\n"
+msgstr "Σφάλμα: Το __fast func δεν υποστηρίζεται από τον transpiler Emacs Lisp.\n"
+
+msgid "Error: __fast func is not supported by the Scheme transpiler.\n"
+msgstr "Σφάλμα: Το __fast func δεν υποστηρίζεται από τον transpiler Scheme.\n"
+
+msgid "Error: require is not supported by the C transpiler.\n"
+msgstr "Σφάλμα: Το require δεν υποστηρίζεται από τον transpiler C.\n"
+
+msgid "Error: require is not supported by the Emacs Lisp transpiler.\n"
+msgstr "Σφάλμα: Το require δεν υποστηρίζεται από τον transpiler Emacs Lisp.\n"
+
+msgid "Error: require is not supported by the Scheme transpiler.\n"
+msgstr "Σφάλμα: Το require δεν υποστηρίζεται από τον transpiler Scheme.\n"
+
+msgid "Every __fast func parameter requires a type annotation."
+msgstr "Κάθε παράμετρος ενός __fast func απαιτεί επισημείωση τύπου."
+
+msgid "Every local in a __fast func requires an exact primitive type annotation."
+msgstr "Κάθε τοπική μεταβλητή ενός __fast func απαιτεί ακριβή επισημείωση πρωτογενούς τύπου."
+
+msgid "Every reachable path of a non-void __fast func must return a value."
+msgstr "Κάθε προσπελάσιμη διαδρομή ενός __fast func που δεν είναι void πρέπει να επιστρέφει τιμή."
+
+msgid "Exact read byte count must be positive."
+msgstr "Το ακριβές πλήθος byte ανάγνωσης πρέπει να είναι θετικό."
+
+msgid "Exceeded the maximum argument count."
+msgstr "Υπέρβαση του μέγιστου αριθμού ορισμάτων."
+
+msgid "Exceeded the maximum parameter count."
+msgstr "Έγινε υπέρβαση του μέγιστου πλήθους παραμέτρων."
+
+msgid "Exception target too far."
+msgstr "Ο στόχος εξαίρεσης είναι πολύ μακριά."
+
+msgid "Executable bytecode wrapper cannot be required: %s"
+msgstr "Το εκτελέσιμο περίβλημα bytecode δεν μπορεί να φορτωθεί με require: %s"
+
+msgid "Failed to acquire the OpenGL ES compiler context."
+msgstr "Αποτυχία απόκτησης του περιβάλλοντος μεταγλωττιστή OpenGL ES."
+
+msgid "Failed to allocate Vulkan descriptor sets."
+msgstr "Αποτυχία εκχώρησης συνόλων περιγραφέων Vulkan."
+
+msgid "Failed to allocate a Vulkan command buffer."
+msgstr "Αποτυχία εκχώρησης ενδιάμεσης μνήμης εντολών Vulkan."
+
+msgid "Failed to allocate an OpenGL ES buffer name."
+msgstr "Αποτυχία εκχώρησης ονόματος ενδιάμεσης μνήμης OpenGL ES."
+
+msgid "Failed to analyze accelerator loop."
+msgstr "Αποτυχία ανάλυσης του βρόχου επιταχυντή."
+
+msgid "Failed to begin a Vulkan command buffer."
+msgstr "Αποτυχία έναρξης ενδιάμεσης μνήμης εντολών Vulkan."
+
+msgid "Failed to classify accelerator loop."
+msgstr "Αποτυχία ταξινόμησης του βρόχου επιταχυντή."
+
+msgid "Failed to classify accelerator reduction."
+msgstr "Αποτυχία ταξινόμησης της αναγωγής επιταχυντή."
+
+msgid "Failed to compile a Direct3D 12 compute shader."
+msgstr "Αποτυχία μεταγλώττισης compute shader Direct3D 12."
+
+msgid "Failed to compile an OpenGL ES compute shader."
+msgstr "Αποτυχία μεταγλώττισης compute shader OpenGL ES."
+
+msgid "Failed to create a Direct3D 12 compute pipeline."
+msgstr "Αποτυχία δημιουργίας pipeline υπολογισμού Direct3D 12."
+
+msgid "Failed to create a Direct3D 12 root signature."
+msgstr "Αποτυχία δημιουργίας ριζικής υπογραφής Direct3D 12."
+
+msgid "Failed to create a Vulkan 1.2 instance."
+msgstr "Αποτυχία δημιουργίας παρουσίας Vulkan 1.2."
+
+msgid "Failed to create a Vulkan command pool."
+msgstr "Αποτυχία δημιουργίας δεξαμενής εντολών Vulkan."
+
+msgid "Failed to create a Vulkan completion fence."
+msgstr "Αποτυχία δημιουργίας φράκτη ολοκλήρωσης Vulkan."
+
+msgid "Failed to create a Vulkan compute pipeline."
+msgstr "Αποτυχία δημιουργίας pipeline υπολογισμού Vulkan."
+
+msgid "Failed to create a Vulkan data buffer."
+msgstr "Αποτυχία δημιουργίας ενδιάμεσης μνήμης δεδομένων Vulkan."
+
+msgid "Failed to create a Vulkan descriptor layout."
+msgstr "Αποτυχία δημιουργίας διάταξης περιγραφέων Vulkan."
+
+msgid "Failed to create a Vulkan pipeline layout."
+msgstr "Αποτυχία δημιουργίας διάταξης pipeline Vulkan."
+
+msgid "Failed to create a Vulkan shader module."
+msgstr "Αποτυχία δημιουργίας μονάδας shader Vulkan."
+
+msgid "Failed to create an OpenGL ES compute program."
+msgstr "Αποτυχία δημιουργίας προγράμματος υπολογισμού OpenGL ES."
+
+msgid "Failed to create an OpenGL ES compute shader."
+msgstr "Αποτυχία δημιουργίας compute shader OpenGL ES."
+
+msgid "Failed to create the Direct3D 12 DXGI factory."
+msgstr "Αποτυχία δημιουργίας του εργοστασίου DXGI Direct3D 12."
+
+msgid "Failed to create the Direct3D 12 compute queue."
+msgstr "Αποτυχία δημιουργίας της ουράς υπολογισμού Direct3D 12."
+
+msgid "Failed to create the Direct3D 12 queue fence."
+msgstr "Αποτυχία δημιουργίας του φράκτη ουράς Direct3D 12."
+
+msgid "Failed to create the Vulkan descriptor pool."
+msgstr "Αποτυχία δημιουργίας της δεξαμενής περιγραφέων Vulkan."
+
+msgid "Failed to create the Vulkan scalar buffer."
+msgstr "Αποτυχία δημιουργίας της βαθμωτής ενδιάμεσης μνήμης Vulkan."
+
+msgid "Failed to create the Vulkan scalar-result buffer."
+msgstr "Αποτυχία δημιουργίας της ενδιάμεσης μνήμης βαθμωτού αποτελέσματος Vulkan."
+
+msgid "Failed to create the selected Direct3D 12 device."
+msgstr "Αποτυχία δημιουργίας της επιλεγμένης συσκευής Direct3D 12."
+
+msgid "Failed to create the selected Vulkan compute device."
+msgstr "Αποτυχία δημιουργίας της επιλεγμένης συσκευής υπολογισμού Vulkan."
+
+msgid "Failed to enumerate Vulkan physical devices."
+msgstr "Αποτυχία απαρίθμησης των φυσικών συσκευών Vulkan."
+
+msgid "Failed to expand the CS segment limit.\n"
+msgstr "Αποτυχία επέκτασης του ορίου τμήματος CS.\n"
+
+msgid "Failed to finish the Vulkan command buffer."
+msgstr "Αποτυχία ολοκλήρωσης της ενδιάμεσης μνήμης εντολών Vulkan."
+
+msgid "Failed to flush Vulkan data-buffer memory."
+msgstr "Αποτυχία εκκαθάρισης της μνήμης ενδιάμεσης αποθήκευσης δεδομένων Vulkan."
+
+msgid "Failed to flush Vulkan scalar memory."
+msgstr "Αποτυχία εκκαθάρισης της βαθμωτής μνήμης Vulkan."
+
+msgid "Failed to flush Vulkan scalar-result memory."
+msgstr "Αποτυχία εκκαθάρισης της μνήμης βαθμωτού αποτελέσματος Vulkan."
+
+msgid "Failed to generate an OpenGL ES compute shader."
+msgstr "Αποτυχία δημιουργίας compute shader OpenGL ES."
+
+msgid "Failed to initialize a headless OpenGL ES 3.1 context."
+msgstr "Αποτυχία αρχικοποίησης περιβάλλοντος OpenGL ES 3.1 χωρίς οθόνη."
+
+msgid "Failed to initialize the Direct3D 12 queue mutex."
+msgstr "Αποτυχία αρχικοποίησης του mutex ουράς Direct3D 12."
+
+msgid "Failed to initialize the OpenGL ES context mutex."
+msgstr "Αποτυχία αρχικοποίησης του mutex περιβάλλοντος OpenGL ES."
+
+msgid "Failed to initialize the Vulkan queue mutex."
+msgstr "Αποτυχία αρχικοποίησης του mutex ουράς Vulkan."
+
+msgid "Failed to invalidate Vulkan output memory."
+msgstr "Αποτυχία ακύρωσης της μνήμης εξόδου Vulkan."
+
+msgid "Failed to invalidate Vulkan scalar-result memory."
+msgstr "Αποτυχία ακύρωσης της μνήμης βαθμωτού αποτελέσματος Vulkan."
+
+msgid "Failed to link an OpenGL ES compute program."
+msgstr "Αποτυχία σύνδεσης προγράμματος υπολογισμού OpenGL ES."
+
+msgid "Failed to lock accelerator rewrite commit."
+msgstr "Αποτυχία κλειδώματος της οριστικοποίησης επανεγγραφής επιταχυντή."
+
+msgid "Failed to make the OpenGL ES context current."
+msgstr "Αποτυχία ορισμού του περιβάλλοντος OpenGL ES ως τρέχοντος."
+
+msgid "Failed to map an OpenGL ES output buffer."
+msgstr "Αποτυχία αντιστοίχισης ενδιάμεσης μνήμης εξόδου OpenGL ES."
+
+msgid "Failed to map the OpenGL ES result buffer."
+msgstr "Αποτυχία αντιστοίχισης της ενδιάμεσης μνήμης αποτελεσμάτων OpenGL ES."
+
+msgid "Failed to normalize accelerator index."
+msgstr "Αποτυχία κανονικοποίησης του δείκτη επιταχυντή."
+
+msgid "Failed to open file \"%s\".\n"
+msgstr "Αποτυχία ανοίγματος του αρχείου \"%s\".\n"
+
+msgid "Failed to query the Vulkan loader version."
+msgstr "Αποτυχία ερωτήματος της έκδοσης του φορτωτή Vulkan."
+
+msgid "Failed to release the OpenGL ES compiler context."
+msgstr "Αποτυχία αποδέσμευσης του περιβάλλοντος μεταγλωττιστή OpenGL ES."
+
+msgid "Failed to release the OpenGL ES context."
+msgstr "Αποτυχία αποδέσμευσης του περιβάλλοντος OpenGL ES."
+
+msgid "Failed to reserve accelerator programs."
+msgstr "Αποτυχία δέσμευσης χώρου για τα προγράμματα επιταχυντή."
+
+msgid "Failed to serialize a Direct3D 12 root signature."
+msgstr "Αποτυχία σειριοποίησης ριζικής υπογραφής Direct3D 12."
+
+msgid "File close error."
+msgstr "Σφάλμα κλεισίματος αρχείου."
+
+msgid "File handle belongs to a different VM."
+msgstr "Ο χειριστής αρχείου ανήκει σε διαφορετική VM."
+
+msgid "File handle is invalid."
+msgstr "Ο χειριστής αρχείου δεν είναι έγκυρος."
+
+msgid "File handle kind mismatch."
+msgstr "Το είδος του χειριστή αρχείου δεν αντιστοιχεί."
+
+msgid "File is closed."
+msgstr "Το αρχείο είναι κλειστό."
+
+msgid "File mapping is not supported on this platform."
+msgstr "Η αντιστοίχιση αρχείου δεν υποστηρίζεται σε αυτήν την πλατφόρμα."
+
+msgid "File mapping must allow reading or writing."
+msgstr "Η αντιστοίχιση αρχείου πρέπει να επιτρέπει ανάγνωση ή εγγραφή."
+
+msgid "File mapping offset and size must be integers."
+msgstr "Η μετατόπιση και το μέγεθος της αντιστοίχισης αρχείου πρέπει να είναι ακέραιοι αριθμοί."
+
+msgid "File mapping offset and size must not be negative."
+msgstr "Η μετατόπιση και το μέγεθος της αντιστοίχισης αρχείου δεν πρέπει να είναι αρνητικά."
+
+msgid "File mapping offset is too large."
+msgstr "Η μετατόπιση της αντιστοίχισης αρχείου είναι πολύ μεγάλη."
+
+msgid "File mapping permissions must be 0 or 1."
+msgstr "Τα δικαιώματα αντιστοίχισης αρχείου πρέπει να είναι 0 ή 1."
+
+msgid "File mapping range exceeds the file size."
+msgstr "Το εύρος αντιστοίχισης αρχείου υπερβαίνει το μέγεθος του αρχείου."
+
+msgid "File mapping range is not aligned to the element size."
+msgstr "Το εύρος αντιστοίχισης αρχείου δεν είναι ευθυγραμμισμένο με το μέγεθος στοιχείου."
+
+msgid "File mapping range is too large."
+msgstr "Το εύρος αντιστοίχισης αρχείου είναι πολύ μεγάλο."
+
+msgid "File mapping size is too large."
+msgstr "Το μέγεθος της αντιστοίχισης αρχείου είναι πολύ μεγάλο."
+
+msgid "File mapping size must be greater than zero."
+msgstr "Το μέγεθος της αντιστοίχισης αρχείου πρέπει να είναι μεγαλύτερο από μηδέν."
+
+msgid "File read error."
+msgstr "Σφάλμα ανάγνωσης αρχείου."
+
+msgid "File seek error."
+msgstr "Σφάλμα αναζήτησης θέσης στο αρχείο."
+
+msgid "File tell error."
+msgstr "Σφάλμα λήψης της θέσης αρχείου."
+
+msgid "File write error."
+msgstr "Σφάλμα εγγραφής αρχείου."
+
+msgid "File.writeAll range is out-of-bounds."
+msgstr "Το εύρος του File.writeAll είναι εκτός ορίων."
+
+msgid "Fill value is not a number."
+msgstr "Η τιμή συμπλήρωσης δεν είναι αριθμός."
+
+msgid "GPU acceleration is available only when running Noct source.\n"
+msgstr "Η επιτάχυνση GPU είναι διαθέσιμη μόνο κατά την εκτέλεση πηγαίου κώδικα Noct.\n"
+
+msgid "GPU acceleration is not available in this build.\n"
+msgstr "Η επιτάχυνση GPU δεν είναι διαθέσιμη σε αυτήν την έκδοση.\n"
+
+msgid "GPU acceleration may be selected only once.\n"
+msgstr "Η επιτάχυνση GPU μπορεί να επιλεγεί μόνο μία φορά.\n"
+
+msgid "GPU device name must not be empty.\n"
+msgstr "Το όνομα της συσκευής GPU δεν πρέπει να είναι κενό.\n"
+
+msgid "GPU enumeration failed.\n"
+msgstr "Η απαρίθμηση GPU απέτυχε.\n"
+
+msgid "GPU enumeration failed: %s\n"
+msgstr "Η απαρίθμηση GPU απέτυχε: %s\n"
+
+msgid "Generated Vulkan SPIR-V is invalid:\x20"
+msgstr "Το παραγόμενο SPIR-V Vulkan δεν είναι έγκυρο:\x20"
+
+msgid "Generated accelerator IR failed validation."
+msgstr "Η επικύρωση του παραγόμενου IR επιταχυντή απέτυχε."
+
+msgid "Global symbol '%s' is not available inside __fast func."
+msgstr "Το καθολικό σύμβολο '%s' δεν είναι διαθέσιμο μέσα σε ένα __fast func."
+
+msgid "Inactive OpenGL ES buffers cannot request host transfers."
+msgstr "Οι ανενεργές ενδιάμεσες μνήμες OpenGL ES δεν μπορούν να ζητήσουν μεταφορές κεντρικού συστήματος."
+
+msgid "Incompatible duplicate __fast prototype '%s'."
+msgstr "Μη συμβατό διπλό πρωτότυπο __fast '%s'."
+
+msgid "Incomplete Vulkan enumeration function table."
+msgstr "Ελλιπής πίνακας συναρτήσεων απαρίθμησης Vulkan."
+
+msgid "Incomplete Vulkan function table."
+msgstr "Ελλιπής πίνακας συναρτήσεων Vulkan."
+
+msgid "Inconsistent optimization levels for one HIR module."
+msgstr "Ασυνεπή επίπεδα βελτιστοποίησης για μία μονάδα HIR."
+
+msgid "Index out of bounds."
+msgstr "Δείκτης εκτός ορίων."
+
+msgid "Input line is too long.\n"
+msgstr "Η γραμμή εισόδου είναι πολύ μεγάλη.\n"
+
+msgid "Inputs %s and %s map to the same output %s.\n"
+msgstr "Οι είσοδοι %s και %s αντιστοιχίζονται στην ίδια έξοδο %s.\n"
+
+msgid "Invalid --path option.\n"
+msgstr "Μη έγκυρη επιλογή --path.\n"
+
+msgid "Invalid Direct3D 12 program preparation request."
+msgstr "Μη έγκυρο αίτημα προετοιμασίας προγράμματος Direct3D 12."
+
+msgid "Invalid GPU device name.\n"
+msgstr "Μη έγκυρο όνομα συσκευής GPU.\n"
+
+msgid "Invalid OpenGL ES device list."
+msgstr "Μη έγκυρη λίστα συσκευών OpenGL ES."
+
+msgid "Invalid OpenGL ES dispatch limit request."
+msgstr "Μη έγκυρο αίτημα ορίου αποστολής OpenGL ES."
+
+msgid "Invalid OpenGL ES execution request."
+msgstr "Μη έγκυρο αίτημα εκτέλεσης OpenGL ES."
+
+msgid "Invalid OpenGL ES execution."
+msgstr "Μη έγκυρη εκτέλεση OpenGL ES."
+
+msgid "Invalid OpenGL ES finish request."
+msgstr "Μη έγκυρο αίτημα ολοκλήρωσης OpenGL ES."
+
+msgid "Invalid OpenGL ES kernel index."
+msgstr "Μη έγκυρος δείκτης πυρήνα OpenGL ES."
+
+msgid "Invalid OpenGL ES program preparation request."
+msgstr "Μη έγκυρο αίτημα προετοιμασίας προγράμματος OpenGL ES."
+
+msgid "Invalid REPL state.\n"
+msgstr "Μη έγκυρη κατάσταση REPL.\n"
+
+msgid "Invalid Vulkan device list."
+msgstr "Μη έγκυρη λίστα συσκευών Vulkan."
+
+msgid "Invalid Vulkan dispatch limit request."
+msgstr "Μη έγκυρο αίτημα ορίου αποστολής Vulkan."
+
+msgid "Invalid Vulkan execution request."
+msgstr "Μη έγκυρο αίτημα εκτέλεσης Vulkan."
+
+msgid "Invalid Vulkan execution."
+msgstr "Μη έγκυρη εκτέλεση Vulkan."
+
+msgid "Invalid Vulkan finish request."
+msgstr "Μη έγκυρο αίτημα ολοκλήρωσης Vulkan."
+
+msgid "Invalid Vulkan kernel index."
+msgstr "Μη έγκυρος δείκτης πυρήνα Vulkan."
+
+msgid "Invalid Vulkan program preparation request."
+msgstr "Μη έγκυρο αίτημα προετοιμασίας προγράμματος Vulkan."
+
+msgid "Invalid Vulkan shader compiler input."
+msgstr "Μη έγκυρη είσοδος μεταγλωττιστή shader Vulkan."
+
+msgid "Invalid __fast function prototype."
+msgstr "Μη έγκυρο πρωτότυπο συνάρτησης __fast."
+
+msgid "Invalid __fast function signature for '%s'."
+msgstr "Μη έγκυρη υπογραφή συνάρτησης __fast για το '%s'."
+
+msgid "Invalid __fast function signature."
+msgstr "Μη έγκυρη υπογραφή συνάρτησης __fast."
+
+msgid "Invalid __fast loop counter."
+msgstr "Μη έγκυρος μετρητής βρόχου __fast."
+
+msgid "Invalid __fast parameter shape."
+msgstr "Μη έγκυρο σχήμα παραμέτρου __fast."
+
+msgid "Invalid __fast parameter type."
+msgstr "Μη έγκυρος τύπος παραμέτρου __fast."
+
+msgid "Invalid __fast shape extent."
+msgstr "Μη έγκυρη έκταση σχήματος __fast."
+
+msgid "Invalid __fast signature metadata."
+msgstr "Μη έγκυρα μεταδεδομένα υπογραφής __fast."
+
+msgid "Invalid accelerator argument slots."
+msgstr "Μη έγκυρες θέσεις ορισμάτων επιταχυντή."
+
+msgid "Invalid accelerator backend status."
+msgstr "Μη έγκυρη κατάσταση backend επιταχυντή."
+
+msgid "Invalid accelerator budget function."
+msgstr "Μη έγκυρη συνάρτηση προϋπολογισμού επιταχυντή."
+
+msgid "Invalid accelerator buffer binding."
+msgstr "Μη έγκυρη δέσμευση ενδιάμεσης μνήμης επιταχυντή."
+
+msgid "Invalid accelerator buffer index type."
+msgstr "Μη έγκυρος τύπος δείκτη ενδιάμεσης μνήμης επιταχυντή."
+
+msgid "Invalid accelerator buffer slot."
+msgstr "Μη έγκυρη θέση ενδιάμεσης μνήμης επιταχυντή."
+
+msgid "Invalid accelerator comparison HIR."
+msgstr "Μη έγκυρο HIR σύγκρισης επιταχυντή."
+
+msgid "Invalid accelerator compiler result."
+msgstr "Μη έγκυρο αποτέλεσμα μεταγλωττιστή επιταχυντή."
+
+msgid "Invalid accelerator decline reason."
+msgstr "Μη έγκυρος λόγος απόρριψης επιταχυντή."
+
+msgid "Invalid accelerator device-list request."
+msgstr "Μη έγκυρο αίτημα λίστας συσκευών επιταχυντή."
+
+msgid "Invalid accelerator device-local buffer."
+msgstr "Μη έγκυρη τοπική ενδιάμεση μνήμη συσκευής επιταχυντή."
+
+msgid "Invalid accelerator device-local declaration."
+msgstr "Μη έγκυρη τοπική δήλωση συσκευής επιταχυντή."
+
+msgid "Invalid accelerator device-local transfer."
+msgstr "Μη έγκυρη τοπική μεταφορά συσκευής επιταχυντή."
+
+msgid "Invalid accelerator function HIR."
+msgstr "Μη έγκυρο HIR συνάρτησης επιταχυντή."
+
+msgid "Invalid accelerator function metadata."
+msgstr "Μη έγκυρα μεταδεδομένα συνάρτησης επιταχυντή."
+
+msgid "Invalid accelerator index arithmetic."
+msgstr "Μη έγκυρη αριθμητική δείκτη επιταχυντή."
+
+msgid "Invalid accelerator kernel buffer type."
+msgstr "Μη έγκυρος τύπος ενδιάμεσης μνήμης πυρήνα επιταχυντή."
+
+msgid "Invalid accelerator kernel index."
+msgstr "Μη έγκυρος δείκτης πυρήνα επιταχυντή."
+
+msgid "Invalid accelerator local count."
+msgstr "Μη έγκυρο πλήθος τοπικών μεταβλητών επιταχυντή."
+
+msgid "Invalid accelerator local list."
+msgstr "Μη έγκυρη λίστα τοπικών μεταβλητών επιταχυντή."
+
+msgid "Invalid accelerator parameter count."
+msgstr "Μη έγκυρο πλήθος παραμέτρων επιταχυντή."
+
+msgid "Invalid accelerator parameter metadata."
+msgstr "Μη έγκυρα μεταδεδομένα παραμέτρων επιταχυντή."
+
+msgid "Invalid accelerator program ID."
+msgstr "Μη έγκυρο ID προγράμματος επιταχυντή."
+
+msgid "Invalid accelerator program identifier."
+msgstr "Μη έγκυρο αναγνωριστικό προγράμματος επιταχυντή."
+
+msgid "Invalid accelerator program reached the Direct3D 12 backend."
+msgstr "Ένα μη έγκυρο πρόγραμμα επιταχυντή έφτασε στο backend Direct3D 12."
+
+msgid "Invalid accelerator program reached the OpenGL ES backend."
+msgstr "Ένα μη έγκυρο πρόγραμμα επιταχυντή έφτασε στο backend OpenGL ES."
+
+msgid "Invalid accelerator program reached the Vulkan backend."
+msgstr "Ένα μη έγκυρο πρόγραμμα επιταχυντή έφτασε στο backend Vulkan."
+
+msgid "Invalid accelerator reduction metadata."
+msgstr "Μη έγκυρα μεταδεδομένα αναγωγής επιταχυντή."
+
+msgid "Invalid accelerator reduction result entry."
+msgstr "Μη έγκυρη καταχώριση αποτελέσματος αναγωγής επιταχυντή."
+
+msgid "Invalid accelerator reduction value type."
+msgstr "Μη έγκυρος τύπος τιμής αναγωγής επιταχυντή."
+
+msgid "Invalid accelerator region plan."
+msgstr "Μη έγκυρο σχέδιο περιοχής επιταχυντή."
+
+msgid "Invalid accelerator rewrite function."
+msgstr "Μη έγκυρη συνάρτηση επανεγγραφής επιταχυντή."
+
+msgid "Invalid accelerator scalar binding."
+msgstr "Μη έγκυρη βαθμωτή δέσμευση επιταχυντή."
+
+msgid "Invalid accelerator scalar result binding."
+msgstr "Μη έγκυρη δέσμευση βαθμωτού αποτελέσματος επιταχυντή."
+
+msgid "Invalid accelerator scalar result metadata."
+msgstr "Μη έγκυρα μεταδεδομένα βαθμωτού αποτελέσματος επιταχυντή."
+
+msgid "Invalid accelerator scalar result."
+msgstr "Μη έγκυρο βαθμωτό αποτέλεσμα επιταχυντή."
+
+msgid "Invalid accelerator scalar type."
+msgstr "Μη έγκυρος βαθμωτός τύπος επιταχυντή."
+
+msgid "Invalid accelerator scalar-result slot."
+msgstr "Μη έγκυρη θέση βαθμωτού αποτελέσματος επιταχυντή."
+
+msgid "Invalid accelerator scratch budget."
+msgstr "Μη έγκυρος προϋπολογισμός προσωρινού χώρου επιταχυντή."
+
+msgid "Invalid accelerator session."
+msgstr "Μη έγκυρη συνεδρία επιταχυντή."
+
+msgid "Invalid application dependency graph."
+msgstr "Μη έγκυρο γράφημα εξαρτήσεων εφαρμογής."
+
+msgid "Invalid bytecode function descriptor."
+msgstr "Μη έγκυρος περιγραφέας συνάρτησης bytecode."
+
+msgid "Invalid character range."
+msgstr "Μη έγκυρο εύρος χαρακτήρων."
+
+msgid "Invalid codepoint."
+msgstr "Μη έγκυρο σημείο κώδικα."
+
+msgid "Invalid constant __fast shape extent."
+msgstr "Μη έγκυρη σταθερή έκταση σχήματος __fast."
+
+msgid "Invalid dynamic __fast shape extent."
+msgstr "Μη έγκυρη δυναμική έκταση σχήματος __fast."
+
+msgid "Invalid empty __fast shape extent."
+msgstr "Μη έγκυρη κενή έκταση σχήματος __fast."
+
+msgid "Invalid event flags."
+msgstr "Μη έγκυρες σημαίες συμβάντος."
+
+msgid "Invalid function parameter metadata."
+msgstr "Μη έγκυρα μεταδεδομένα παραμέτρων συνάρτησης."
+
+msgid "Invalid function prototype."
+msgstr "Μη έγκυρο πρωτότυπο συνάρτησης."
+
+msgid "Invalid handle."
+msgstr "Μη έγκυρος χειριστής."
+
+msgid "Invalid input module path."
+msgstr "Μη έγκυρη διαδρομή μονάδας εισόδου."
+
+msgid "Invalid input module."
+msgstr "Μη έγκυρη μονάδα εισόδου."
+
+msgid "Invalid module path option %s.\n"
+msgstr "Μη έγκυρη επιλογή διαδρομής μονάδας %s.\n"
+
+msgid "Invalid native function parameter name."
+msgstr "Μη έγκυρο όνομα παραμέτρου εγγενούς συνάρτησης."
+
+msgid "Invalid native function registration."
+msgstr "Μη έγκυρη καταχώριση εγγενούς συνάρτησης."
+
+msgid "Invalid optimize-level option %s.\n"
+msgstr "Μη έγκυρη επιλογή επιπέδου βελτιστοποίησης %s.\n"
+
+msgid "Invalid or incomplete %s accelerator finish."
+msgstr "Μη έγκυρη ή ελλιπής ολοκλήρωση επιταχυντή %s."
+
+msgid "Invalid or out-of-order %s accelerator dispatch."
+msgstr "Μη έγκυρη ή εκτός σειράς αποστολή επιταχυντή %s."
+
+msgid "Invalid private accelerator package."
+msgstr "Μη έγκυρο ιδιωτικό πακέτο επιταχυντή."
+
+msgid "Invalid selected Direct3D 12 device."
+msgstr "Μη έγκυρη επιλεγμένη συσκευή Direct3D 12."
+
+msgid "Invalid selected OpenGL ES device."
+msgstr "Μη έγκυρη επιλεγμένη συσκευή OpenGL ES."
+
+msgid "Invalid selected Vulkan device."
+msgstr "Μη έγκυρη επιλεγμένη συσκευή Vulkan."
+
+msgid "Invalid shaped type annotation."
+msgstr "Μη έγκυρη επισημείωση τύπου με σχήμα."
+
+msgid "Invalid shift amount."
+msgstr "Μη έγκυρη ποσότητα ολίσθησης."
+
+msgid "JIT bytecode analysis table is too large."
+msgstr "Ο πίνακας ανάλυσης bytecode JIT είναι πολύ μεγάλος."
+
+msgid "JIT bytecode is too large."
+msgstr "Το bytecode JIT είναι πολύ μεγάλο."
+
+msgid "JIT compilation is enabled. Starting the fast VM...\n"
+msgstr "Η μεταγλώττιση JIT είναι ενεργοποιημένη. Εκκίνηση της γρήγορης εικονικής μηχανής...\n"
+
+msgid "JIT memory protection failed."
+msgstr "Η προστασία μνήμης JIT απέτυχε."
+
+msgid "JIT temporary-variable table is too large."
+msgstr "Ο πίνακας προσωρινών μεταβλητών JIT είναι πολύ μεγάλος."
+
+msgid "LHS is not a symbol or an array element."
+msgstr "Η αριστερή πλευρά δεν είναι ούτε σύμβολο ούτε στοιχείο πίνακα."
+
+msgid "LHS is not a term or an array element."
+msgstr "Η αριστερή πλευρά δεν είναι ούτε όρος ούτε στοιχείο πίνακα."
+
+msgid "LIR: Out of memory error."
+msgstr "LIR: Δεν υπάρχει αρκετή μνήμη."
+
+msgid "Legacy 1.0 bytecode cannot be embedded in an application: %s"
+msgstr "Το παλαιού τύπου bytecode 1.0 δεν μπορεί να ενσωματωθεί σε εφαρμογή: %s"
+
+msgid "Local initializer or assignment does not match its declared type."
+msgstr "Η αρχικοποίηση ή η ανάθεση της τοπικής μεταβλητής δεν αντιστοιχεί στον δηλωμένο τύπο της."
+
+msgid "Malformed accelerator HIR block."
+msgstr "Κακοσχηματισμένο μπλοκ HIR επιταχυντή."
+
+msgid "Malformed accelerator HIR expression."
+msgstr "Κακοσχηματισμένη έκφραση HIR επιταχυντή."
+
+msgid "Malformed accelerator HIR statement."
+msgstr "Κακοσχηματισμένη εντολή HIR επιταχυντή."
+
+msgid "Malformed accelerator HIR term."
+msgstr "Κακοσχηματισμένος όρος HIR επιταχυντή."
+
+msgid "Malformed accelerator array expression."
+msgstr "Κακοσχηματισμένη έκφραση πίνακα επιταχυντή."
+
+msgid "Malformed accelerator assignment target."
+msgstr "Κακοσχηματισμένος στόχος ανάθεσης επιταχυντή."
+
+msgid "Malformed accelerator call expression."
+msgstr "Κακοσχηματισμένη έκφραση κλήσης επιταχυντή."
+
+msgid "Malformed accelerator collection loop."
+msgstr "Κακοσχηματισμένος βρόχος συλλογής επιταχυντή."
+
+msgid "Malformed accelerator dictionary expression."
+msgstr "Κακοσχηματισμένη έκφραση λεξικού επιταχυντή."
+
+msgid "Malformed accelerator expression HIR."
+msgstr "Ακατάλληλα διαμορφωμένο HIR έκφρασης επιταχυντή."
+
+msgid "Malformed accelerator function control flow."
+msgstr "Ακατάλληλα διαμορφωμένη ροή ελέγχου συνάρτησης επιταχυντή."
+
+msgid "Malformed accelerator loop body."
+msgstr "Ακατάλληλα διαμορφωμένο σώμα βρόχου επιταχυντή."
+
+msgid "Malformed accelerator member call."
+msgstr "Ακατάλληλα διαμορφωμένη κλήση μέλους επιταχυντή."
+
+msgid "Malformed accelerator new expression."
+msgstr "Ακατάλληλα διαμορφωμένη έκφραση new επιταχυντή."
+
+msgid "Malformed accelerator ranged loop."
+msgstr "Ακατάλληλα διαμορφωμένος βρόχος εύρους επιταχυντή."
+
+msgid "Malformed accelerator region control flow."
+msgstr "Ακατάλληλα διαμορφωμένη ροή ελέγχου περιοχής επιταχυντή."
+
+msgid "Malformed accelerator string term."
+msgstr "Ακατάλληλα διαμορφωμένος όρος συμβολοσειράς επιταχυντή."
+
+msgid "Malformed accelerator symbol HIR."
+msgstr "Ακατάλληλα διαμορφωμένο HIR συμβόλου επιταχυντή."
+
+msgid "Malformed accelerator symbol term."
+msgstr "Ακατάλληλα διαμορφωμένος όρος συμβόλου επιταχυντή."
+
+msgid "Malformed accelerator term HIR."
+msgstr "Ακατάλληλα διαμορφωμένο HIR όρου επιταχυντή."
+
+msgid "Malformed accelerator type test."
+msgstr "Ακατάλληλα διαμορφωμένος έλεγχος τύπου επιταχυντή."
+
+msgid "Malformed accelerator while loop."
+msgstr "Ακατάλληλα διαμορφωμένος βρόχος while επιταχυντή."
+
+msgid "Malformed application container."
+msgstr "Ακατάλληλα διαμορφωμένο κοντέινερ εφαρμογής."
+
+msgid "Memory mapping failed."
+msgstr "Αποτυχία αντιστοίχισης μνήμης."
+
+msgid "Missing OpenGL ES buffer descriptors."
+msgstr "Λείπουν οι περιγραφείς ενδιάμεσης μνήμης OpenGL ES."
+
+msgid "Missing OpenGL ES download snapshot."
+msgstr "Λείπει το στιγμιότυπο λήψης OpenGL ES."
+
+msgid "Missing OpenGL ES execution output."
+msgstr "Λείπει η έξοδος εκτέλεσης OpenGL ES."
+
+msgid "Missing OpenGL ES finish buffers."
+msgstr "Λείπουν οι ενδιάμεσες μνήμες ολοκλήρωσης OpenGL ES."
+
+msgid "Missing OpenGL ES finish result words."
+msgstr "Λείπουν οι λέξεις αποτελέσματος ολοκλήρωσης OpenGL ES."
+
+msgid "Missing OpenGL ES output snapshot."
+msgstr "Λείπει το στιγμιότυπο εξόδου OpenGL ES."
+
+msgid "Missing OpenGL ES prepared program."
+msgstr "Λείπει το προετοιμασμένο πρόγραμμα OpenGL ES."
+
+msgid "Missing OpenGL ES result buffer."
+msgstr "Λείπει η ενδιάμεση μνήμη αποτελέσματος OpenGL ES."
+
+msgid "Missing OpenGL ES result words."
+msgstr "Λείπουν οι λέξεις αποτελέσματος OpenGL ES."
+
+msgid "Missing OpenGL ES scalar words."
+msgstr "Λείπουν οι βαθμωτές λέξεις OpenGL ES."
+
+msgid "Missing OpenGL ES upload snapshot."
+msgstr "Λείπει το στιγμιότυπο αποστολής OpenGL ES."
+
+msgid "Missing Vulkan buffer descriptors."
+msgstr "Λείπουν οι περιγραφείς ενδιάμεσης μνήμης Vulkan."
+
+msgid "Missing Vulkan buffer snapshot."
+msgstr "Λείπει το στιγμιότυπο ενδιάμεσης μνήμης Vulkan."
+
+msgid "Missing Vulkan execution output."
+msgstr "Λείπει η έξοδος εκτέλεσης Vulkan."
+
+msgid "Missing Vulkan finish buffers."
+msgstr "Λείπουν οι ενδιάμεσες μνήμες ολοκλήρωσης Vulkan."
+
+msgid "Missing Vulkan output snapshot."
+msgstr "Λείπει το στιγμιότυπο εξόδου Vulkan."
+
+msgid "Missing Vulkan prepared program."
+msgstr "Λείπει το προετοιμασμένο πρόγραμμα Vulkan."
+
+msgid "Missing Vulkan scalar words."
+msgstr "Λείπουν οι βαθμωτές λέξεις Vulkan."
+
+msgid "Missing Vulkan scalar-result destination."
+msgstr "Λείπει ο προορισμός βαθμωτού αποτελέσματος Vulkan."
+
+msgid "Missing Vulkan scalar-result identities."
+msgstr "Λείπουν οι ταυτότητες βαθμωτού αποτελέσματος Vulkan."
+
+msgid "Missing accelerator context."
+msgstr "Λείπει το περιβάλλον επιταχυντή."
+
+msgid "Missing accelerator function plan."
+msgstr "Λείπει το πλάνο συνάρτησης επιταχυντή."
+
+msgid "Missing accelerator registry reservation."
+msgstr "Λείπει η κράτηση μητρώου επιταχυντή."
+
+msgid "Multi-dimensional subscripts are valid only inside __fast func."
+msgstr "Οι πολυδιάστατοι δείκτες είναι έγκυροι μόνο μέσα σε __fast func."
+
+msgid "Multiple initializers in module: %s"
+msgstr "Πολλαπλοί αρχικοποιητές στη μονάδα: %s"
+
+msgid "NUL byte in source program.\n"
+msgstr "Byte NUL στο πηγαίο πρόγραμμα.\n"
+
+msgid "NUL in source module: %s"
+msgstr "NUL στη μονάδα πηγαίου κώδικα: %s"
+
+msgid "No Vulkan physical device is available."
+msgstr "Δεν υπάρχει διαθέσιμη φυσική συσκευή Vulkan."
+
+msgid "No accelerator backend could enumerate devices."
+msgstr "Κανένα backend επιταχυντή δεν μπόρεσε να απαριθμήσει συσκευές."
+
+msgid "No input module was specified."
+msgstr "Δεν καθορίστηκε μονάδα εισόδου."
+
+msgid "No resolver is available for required module '%s'."
+msgstr "Δεν υπάρχει διαθέσιμος επιλυτής για την απαιτούμενη μονάδα '%s'."
+
+msgid "No suitable GPU device is available."
+msgstr "Δεν υπάρχει διαθέσιμη κατάλληλη συσκευή GPU."
+
+msgid "No suitable GPU device is available.\n"
+msgstr "Δεν υπάρχει διαθέσιμη κατάλληλη συσκευή GPU.\n"
+
+msgid "No suitable OpenGL ES 3.1 compute device is available."
+msgstr "Δεν υπάρχει διαθέσιμη κατάλληλη συσκευή υπολογισμού OpenGL ES 3.1."
+
+msgid "No suitable Vulkan 1.2 compute device is available."
+msgstr "Δεν υπάρχει διαθέσιμη κατάλληλη συσκευή υπολογισμού Vulkan 1.2."
+
+msgid "Noct Programming Language\n"
+msgstr "Γλώσσα προγραμματισμού Noct\n"
+
+msgid "Nondeterministic accelerator kernel index."
+msgstr "Μη ντετερμινιστικός δείκτης πυρήνα επιταχυντή."
+
+msgid "Nondeterministic accelerator scalar binding."
+msgstr "Μη ντετερμινιστική βαθμωτή δέσμευση επιταχυντή."
+
+msgid "Nondeterministic accelerator scalar result."
+msgstr "Μη ντετερμινιστικό βαθμωτό αποτέλεσμα επιταχυντή."
+
+msgid "Not a dictionary."
+msgstr "Δεν είναι λεξικό."
+
+msgid "Not a function."
+msgstr "Δεν είναι συνάρτηση."
+
+msgid "Not a packed."
+msgstr "Δεν είναι packed."
+
+msgid "Not an array or a dictionary."
+msgstr "Δεν είναι ούτε πίνακας ούτε λεξικό."
+
+msgid "Not an array."
+msgstr "Δεν είναι πίνακας."
+
+msgid "Offset is out-of-range."
+msgstr "Η μετατόπιση είναι εκτός ορίων."
+
+msgid "Only numeric literals are available inside __fast func."
+msgstr "Μόνο αριθμητικά λεκτικά είναι διαθέσιμα μέσα σε __fast func."
+
+msgid "OpenGL ES active dispatch sequence is incomplete."
+msgstr "Η ακολουθία ενεργών αποστολών OpenGL ES είναι ελλιπής."
+
+msgid "OpenGL ES buffer exceeds the device storage-block limit."
+msgstr "Η ενδιάμεση μνήμη OpenGL ES υπερβαίνει το όριο μπλοκ αποθήκευσης της συσκευής."
+
+msgid "OpenGL ES buffer extent metadata is inconsistent."
+msgstr "Τα μεταδεδομένα έκτασης της ενδιάμεσης μνήμης OpenGL ES δεν είναι συνεπή."
+
+msgid "OpenGL ES buffer metadata does not match the prepared program."
+msgstr "Τα μεταδεδομένα της ενδιάμεσης μνήμης OpenGL ES δεν αντιστοιχούν στο προετοιμασμένο πρόγραμμα."
+
+msgid "OpenGL ES buffer size is not representable."
+msgstr "Το μέγεθος της ενδιάμεσης μνήμης OpenGL ES δεν μπορεί να αναπαρασταθεί."
+
+msgid "OpenGL ES buffer table does not match the prepared program."
+msgstr "Ο πίνακας ενδιάμεσων μνημών OpenGL ES δεν αντιστοιχεί στο προετοιμασμένο πρόγραμμα."
+
+msgid "OpenGL ES compute shader source is too large."
+msgstr "Ο πηγαίος κώδικας του compute shader OpenGL ES είναι πολύ μεγάλος."
+
+msgid "OpenGL ES dispatch exceeds the device workgroup-count limit."
+msgstr "Η αποστολή OpenGL ES υπερβαίνει το όριο πλήθους ομάδων εργασίας της συσκευής."
+
+msgid "OpenGL ES dispatch range changed after execution creation."
+msgstr "Το εύρος αποστολής OpenGL ES άλλαξε μετά τη δημιουργία της εκτέλεσης."
+
+msgid "OpenGL ES dispatch range is missing from the scalar block."
+msgstr "Το εύρος αποστολής OpenGL ES λείπει από το βαθμωτό μπλοκ."
+
+msgid "OpenGL ES execution has no active dispatch."
+msgstr "Η εκτέλεση OpenGL ES δεν έχει ενεργή αποστολή."
+
+msgid "OpenGL ES execution was already finished."
+msgstr "Η εκτέλεση OpenGL ES έχει ήδη ολοκληρωθεί."
+
+msgid "OpenGL ES finish buffer table changed."
+msgstr "Ο πίνακας ενδιάμεσων μνημών ολοκλήρωσης OpenGL ES άλλαξε."
+
+msgid "OpenGL ES finish result table changed."
+msgstr "Ο πίνακας αποτελεσμάτων ολοκλήρωσης OpenGL ES άλλαξε."
+
+msgid "OpenGL ES kernels were dispatched out of order."
+msgstr "Οι πυρήνες OpenGL ES απεστάλησαν εκτός σειράς."
+
+msgid "OpenGL ES output buffer activity changed."
+msgstr "Η δραστηριότητα της ενδιάμεσης μνήμης εξόδου OpenGL ES άλλαξε."
+
+msgid "OpenGL ES output buffer became invalid while unmapping."
+msgstr "Η ενδιάμεση μνήμη εξόδου OpenGL ES έγινε μη έγκυρη κατά την κατάργηση αντιστοίχισης."
+
+msgid "OpenGL ES output buffer element type changed."
+msgstr "Ο τύπος στοιχείου της ενδιάμεσης μνήμης εξόδου OpenGL ES άλλαξε."
+
+msgid "OpenGL ES output buffer element width changed."
+msgstr "Το πλάτος στοιχείου της ενδιάμεσης μνήμης εξόδου OpenGL ES άλλαξε."
+
+msgid "OpenGL ES output buffer extent changed."
+msgstr "Η έκταση της ενδιάμεσης μνήμης εξόδου OpenGL ES άλλαξε."
+
+msgid "OpenGL ES output buffer origin changed."
+msgstr "Η αρχή της ενδιάμεσης μνήμης εξόδου OpenGL ES άλλαξε."
+
+msgid "OpenGL ES output buffer size changed."
+msgstr "Το μέγεθος της ενδιάμεσης μνήμης εξόδου OpenGL ES άλλαξε."
+
+msgid "OpenGL ES output buffer slot changed."
+msgstr "Η θέση της ενδιάμεσης μνήμης εξόδου OpenGL ES άλλαξε."
+
+msgid "OpenGL ES output size is not representable."
+msgstr "Το μέγεθος εξόδου OpenGL ES δεν μπορεί να αναπαρασταθεί."
+
+msgid "OpenGL ES output transfer plan changed."
+msgstr "Το πλάνο μεταφοράς εξόδου OpenGL ES άλλαξε."
+
+msgid "OpenGL ES output upload plan changed."
+msgstr "Το πλάνο αποστολής εξόδου OpenGL ES άλλαξε."
+
+msgid "OpenGL ES received an empty active dispatch."
+msgstr "Το OpenGL ES έλαβε κενή ενεργή αποστολή."
+
+msgid "OpenGL ES received too many active dispatches."
+msgstr "Το OpenGL ES έλαβε υπερβολικά πολλές ενεργές αποστολές."
+
+msgid "OpenGL ES reported an error while preparing a compute program."
+msgstr "Το OpenGL ES ανέφερε σφάλμα κατά την προετοιμασία προγράμματος υπολογισμού."
+
+msgid "OpenGL ES result block does not match the prepared program."
+msgstr "Το μπλοκ αποτελεσμάτων OpenGL ES δεν αντιστοιχεί στο προετοιμασμένο πρόγραμμα."
+
+msgid "OpenGL ES result block exceeds the device storage-block limit."
+msgstr "Το μπλοκ αποτελεσμάτων OpenGL ES υπερβαίνει το όριο μπλοκ αποθήκευσης της συσκευής."
+
+msgid "OpenGL ES result block size overflowed."
+msgstr "Το μέγεθος του μπλοκ αποτελεσμάτων OpenGL ES υπερχείλισε."
+
+msgid "OpenGL ES result buffer became invalid while unmapping."
+msgstr "Η ενδιάμεση μνήμη αποτελεσμάτων OpenGL ES έγινε μη έγκυρη κατά την κατάργηση αντιστοίχισης."
+
+msgid "OpenGL ES result size is not representable."
+msgstr "Το μέγεθος αποτελέσματος OpenGL ES δεν μπορεί να αναπαρασταθεί."
+
+msgid "OpenGL ES scalar block does not match the prepared program."
+msgstr "Το βαθμωτό μπλοκ OpenGL ES δεν αντιστοιχεί στο προετοιμασμένο πρόγραμμα."
+
+msgid "OpenGL ES scalar block exceeds the device storage-block limit."
+msgstr "Το βαθμωτό μπλοκ OpenGL ES υπερβαίνει το όριο μπλοκ αποθήκευσης της συσκευής."
+
+msgid "OpenGL ES scalar block size overflowed."
+msgstr "Το μέγεθος του βαθμωτού μπλοκ OpenGL ES υπερχείλισε."
+
+msgid "OpenGL ES supports only 32-bit accelerator buffers."
+msgstr "Το OpenGL ES υποστηρίζει μόνο ενδιάμεσες μνήμες επιταχυντή 32 bit."
+
+msgid "Out of memory building module graph."
+msgstr "Ανεπαρκής μνήμη κατά τη δημιουργία του γράφου μονάδων."
+
+msgid "Out of memory inspecting application."
+msgstr "Ανεπαρκής μνήμη κατά την επιθεώρηση της εφαρμογής."
+
+msgid "Out of memory reading module %s."
+msgstr "Ανεπαρκής μνήμη κατά την ανάγνωση της μονάδας %s."
+
+msgid "Out of memory validating module graph."
+msgstr "Ανεπαρκής μνήμη κατά την επικύρωση του γράφου μονάδων."
+
+msgid "Out of memory while allocating accelerator kernel."
+msgstr "Ανεπαρκής μνήμη κατά την εκχώρηση του πυρήνα επιταχυντή."
+
+msgid "Out of memory while building __fast signature."
+msgstr "Ανεπαρκής μνήμη κατά τη δημιουργία της υπογραφής __fast."
+
+msgid "Out of memory while building accelerator IR."
+msgstr "Ανεπαρκής μνήμη κατά τη δημιουργία του IR επιταχυντή."
+
+msgid "Out of memory while copying OpenGL ES scalar metadata."
+msgstr "Ανεπαρκής μνήμη κατά την αντιγραφή των βαθμωτών μεταδεδομένων OpenGL ES."
+
+msgid "Out of memory while creating OpenGL ES buffers."
+msgstr "Ανεπαρκής μνήμη κατά τη δημιουργία των ενδιάμεσων μνημών OpenGL ES."
+
+msgid "Out of memory while creating Vulkan buffers."
+msgstr "Ανεπαρκής μνήμη κατά τη δημιουργία των ενδιάμεσων μνημών Vulkan."
+
+msgid "Out of memory while creating Vulkan descriptor sets."
+msgstr "Ανεπαρκής μνήμη κατά τη δημιουργία των συνόλων περιγραφέων Vulkan."
+
+msgid "Out of memory while creating a Vulkan execution."
+msgstr "Ανεπαρκής μνήμη κατά τη δημιουργία εκτέλεσης Vulkan."
+
+msgid "Out of memory while creating an OpenGL ES execution."
+msgstr "Ανεπαρκής μνήμη κατά τη δημιουργία εκτέλεσης OpenGL ES."
+
+msgid "Out of memory while enumerating OpenGL ES devices."
+msgstr "Ανεπαρκής μνήμη κατά την απαρίθμηση συσκευών OpenGL ES."
+
+msgid "Out of memory while enumerating Vulkan devices."
+msgstr "Ανεπαρκής μνήμη κατά την απαρίθμηση συσκευών Vulkan."
+
+msgid "Out of memory while planning accelerator function."
+msgstr "Ανεπαρκής μνήμη κατά τον σχεδιασμό της συνάρτησης επιταχυντή."
+
+msgid "Out of memory while planning accelerator region."
+msgstr "Ανεπαρκής μνήμη κατά τον σχεδιασμό της περιοχής επιταχυντή."
+
+msgid "Out of memory while recording accelerator buffer."
+msgstr "Ανεπαρκής μνήμη κατά την καταγραφή της ενδιάμεσης μνήμης επιταχυντή."
+
+msgid "Out of memory while recording accelerator kernel."
+msgstr "Ανεπαρκής μνήμη κατά την καταγραφή του πυρήνα επιταχυντή."
+
+msgid "Out of memory while recording accelerator range."
+msgstr "Ανεπαρκής μνήμη κατά την καταγραφή του εύρους επιταχυντή."
+
+msgid "Out of memory while recording accelerator region."
+msgstr "Ανεπαρκής μνήμη κατά την καταγραφή της περιοχής επιταχυντή."
+
+msgid "Out of memory while recording accelerator scalar result."
+msgstr "Ανεπαρκής μνήμη κατά την καταγραφή του βαθμωτού αποτελέσματος επιταχυντή."
+
+msgid "Out of memory while recording accelerator scalar."
+msgstr "Ανεπαρκής μνήμη κατά την καταγραφή του βαθμωτού επιταχυντή."
+
+msgid "Out of memory while storing Vulkan descriptor sets."
+msgstr "Ανεπαρκής μνήμη κατά την αποθήκευση των συνόλων περιγραφέων Vulkan."
+
+msgid "Out of memory while writing Vulkan descriptors."
+msgstr "Ανεπαρκής μνήμη κατά την εγγραφή των περιγραφέων Vulkan."
+
+msgid "Out of memory."
+msgstr "Δεν υπάρχει αρκετή μνήμη."
+
+msgid "Out of memory.\n"
+msgstr "Δεν υπάρχει αρκετή μνήμη.\n"
+
+msgid "Out-of-memory."
+msgstr "Ανεπαρκής μνήμη."
+
+msgid "Output %s for input %s collides with input %s.\n"
+msgstr "Η έξοδος %s για την είσοδο %s συγκρούεται με την είσοδο %s.\n"
+
+msgid "Output directory already exists."
+msgstr "Ο κατάλογος εξόδου υπάρχει ήδη."
+
+msgid "Packed destination range is out-of-bounds."
+msgstr "Το εύρος προορισμού του Packed είναι εκτός ορίων."
+
+msgid "Packed element type must be a byte."
+msgstr "Ο τύπος στοιχείου του Packed πρέπει να είναι byte."
+
+msgid "Packed element types do not match."
+msgstr "Οι τύποι στοιχείων του Packed δεν αντιστοιχούν."
+
+msgid "Packed index %ld is out-of-range."
+msgstr "Ο δείκτης %ld του Packed είναι εκτός ορίων."
+
+msgid "Packed is not a file mapping."
+msgstr "Το Packed δεν είναι αντιστοίχιση αρχείου."
+
+msgid "Packed is unmapped."
+msgstr "Το Packed δεν είναι αντιστοιχισμένο."
+
+msgid "Packed size is 0."
+msgstr "Το μέγεθος του packed είναι 0."
+
+msgid "Packed size is too large."
+msgstr "Το μέγεθος του packed είναι πολύ μεγάλο."
+
+msgid "Packed source range is out-of-bounds."
+msgstr "Το εύρος προέλευσης του Packed είναι εκτός ορίων."
+
+msgid "Port number is out-of-range."
+msgstr "Ο αριθμός θύρας είναι εκτός ορίων."
+
+msgid "Private accelerator package is detached."
+msgstr "Το ιδιωτικό πακέτο επιταχυντή έχει αποσυνδεθεί."
+
+msgid "REPL input has unmatched delimiters."
+msgstr "Η είσοδος REPL περιέχει μη αντιστοιχισμένους οριοθέτες."
+
+msgid "REPL input is too large."
+msgstr "Η είσοδος REPL είναι πολύ μεγάλη."
+
+msgid "Read length must be greater than zero."
+msgstr "Το μήκος ανάγνωσης πρέπει να είναι μεγαλύτερο από μηδέν."
+
+msgid "Receive size is out-of-range."
+msgstr "Το μέγεθος λήψης είναι εκτός ορίων."
+
+msgid "Regex error: %s"
+msgstr "Σφάλμα κανονικής έκφρασης: %s"
+
+msgid "Regex too complex."
+msgstr "Η κανονική έκφραση είναι υπερβολικά σύνθετη."
+
+msgid "Regex too large."
+msgstr "Η κανονική έκφραση είναι πολύ μεγάλη."
+
+msgid "RelaxedPrecision present"
+msgstr "Υπάρχει RelaxedPrecision"
+
+msgid "Return operand does not match the declared type."
+msgstr "Ο τελεστέος επιστροφής δεν αντιστοιχεί στον δηλωμένο τύπο."
+
+msgid "SIMD FMA: vreg stack overflow."
+msgstr "SIMD FMA: υπερχείλιση στοίβας vreg."
+
+msgid "SIMD: ranked cache dependency plan exceeded vreg budget."
+msgstr "SIMD: το ταξινομημένο πλάνο εξαρτήσεων cache υπερέβη τον προϋπολογισμό vreg."
+
+msgid "SIMD: too many temps."
+msgstr "SIMD: υπερβολικά πολλές προσωρινές τιμές."
+
+msgid "SIMD: unexpected vector expression."
+msgstr "SIMD: μη αναμενόμενη διανυσματική έκφραση."
+
+msgid "SIMD: unplanned term."
+msgstr "SIMD: μη σχεδιασμένος όρος."
+
+msgid "SIMD: vreg budget exceeded."
+msgstr "SIMD: υπέρβαση προϋπολογισμού vreg."
+
+msgid "SIMD: vreg stack overflow."
+msgstr "SIMD: υπερχείλιση στοίβας vreg."
+
+msgid "SUBJNZ operand is not an integer."
+msgstr "Ο τελεστέος SUBJNZ δεν είναι ακέραιος αριθμός."
+
+msgid "Searching directory %s.\n"
+msgstr "Αναζήτηση στον κατάλογο %s.\n"
+
+msgid "Shaped parameter types are valid only on __fast func."
+msgstr "Οι τύποι παραμέτρων με σχήμα είναι έγκυροι μόνο σε __fast func."
+
+msgid "Shared value is nested too deeply."
+msgstr "Η κοινόχρηστη τιμή είναι πολύ βαθιά εμφωλευμένη."
+
+msgid "Skipping empty directory %s.\n"
+msgstr "Παράλειψη του κενoύ καταλόγου %s.\n"
+
+msgid "Socket is already closed."
+msgstr "Το socket είναι ήδη κλειστό."
+
+msgid "Socket is already registered to a poller."
+msgstr "Το socket είναι ήδη καταχωρισμένο σε poller."
+
+msgid "Socket is not registered to this poller."
+msgstr "Το socket δεν είναι καταχωρισμένο σε αυτό το poller."
+
+msgid "Socket is registered to a poller. Remove it first."
+msgstr "Το socket είναι καταχωρισμένο σε poller. Αφαιρέστε το πρώτα."
+
+msgid "Specify a command.\n"
+msgstr "Καθορίστε μια εντολή.\n"
+
+msgid "Stack overflow."
+msgstr "Υπερχείλιση στοίβας."
+
+msgid "Stack underflow."
+msgstr "Υποχείλιση στοίβας."
+
+msgid "String is too long."
+msgstr "Η συμβολοσειρά είναι πολύ μεγάλη."
+
+msgid "Subscript is negative."
+msgstr "Ο δείκτης είναι αρνητικός."
+
+msgid "Subscript not a string."
+msgstr "Ο δείκτης δεν είναι συμβολοσειρά."
+
+msgid "Subscript not an integer."
+msgstr "Ο δείκτης δεν είναι ακέραιος αριθμός."
+
+msgid "Symbol \"%s\" not found."
+msgstr "Το σύμβολο \"%s\" δεν βρέθηκε."
+
+msgid "System.import() accepts source files only."
+msgstr "Το System.import() δέχεται μόνο αρχεία πηγαίου κώδικα."
+
+msgid "The '__noct_nap_' symbol prefix is reserved."
+msgstr "Το πρόθεμα συμβόλου '__noct_nap_' είναι δεσμευμένο."
+
+msgid "The --app option may be specified only once.\n"
+msgstr "Η επιλογή --app μπορεί να καθοριστεί μόνο μία φορά.\n"
+
+msgid "The Vulkan accelerator device is unavailable."
+msgstr "Η συσκευή επιταχυντή Vulkan δεν είναι διαθέσιμη."
+
+msgid "The Vulkan loader did not expose Vulkan 1.2 physical-device properties."
+msgstr "Ο φορτωτής Vulkan δεν εξέθεσε τις ιδιότητες φυσικής συσκευής Vulkan 1.2."
+
+msgid "The number of indices does not match the __fast parameter rank."
+msgstr "Το πλήθος δεικτών δεν αντιστοιχεί στον αριθμό διαστάσεων της παραμέτρου __fast."
+
+msgid "The requested GPU device was not found."
+msgstr "Η ζητούμενη συσκευή GPU δεν βρέθηκε."
+
+msgid "The requested GPU name is ambiguous; use a backend-qualified selector."
+msgstr "Το ζητούμενο όνομα GPU είναι διφορούμενο· χρησιμοποιήστε επιλογέα προσδιορισμένο με backend."
+
+msgid "The selected Direct3D 12 device is unavailable."
+msgstr "Η επιλεγμένη συσκευή Direct3D 12 δεν είναι διαθέσιμη."
+
+msgid "The selected GPU backend is unavailable."
+msgstr "Το επιλεγμένο backend GPU δεν είναι διαθέσιμο."
+
+msgid "The selected OpenGL ES device is no longer available."
+msgstr "Η επιλεγμένη συσκευή OpenGL ES δεν είναι πλέον διαθέσιμη."
+
+msgid "The selected Vulkan compute queue is unavailable."
+msgstr "Η επιλεγμένη ουρά υπολογισμού Vulkan δεν είναι διαθέσιμη."
+
+msgid "This expression is not available inside __fast func."
+msgstr "Αυτή η έκφραση δεν είναι διαθέσιμη μέσα σε __fast func."
+
+msgid "Thread error: %s"
+msgstr "Σφάλμα νήματος: %s"
+
+msgid "Thread is already joined."
+msgstr "Το νήμα έχει ήδη ενωθεί."
+
+msgid "Too big code."
+msgstr "Ο κώδικας είναι πολύ μεγάλος."
+
+msgid "Too many __fast parameters."
+msgstr "Υπερβολικά πολλές παράμετροι __fast."
+
+msgid "Too many accelerator locals."
+msgstr "Υπερβολικά πολλές τοπικές μεταβλητές επιταχυντή."
+
+msgid "Too many anonymous functions."
+msgstr "Πάρα πολλές ανώνυμες συναρτήσεις."
+
+msgid "Too many capture groups."
+msgstr "Υπερβολικά πολλές ομάδες καταγραφής."
+
+msgid "Too many character classes."
+msgstr "Υπερβολικά πολλές κλάσεις χαρακτήρων."
+
+msgid "Too many direct __fast call edges."
+msgstr "Υπερβολικά πολλές ακμές άμεσης κλήσης __fast."
+
+msgid "Too many function parameters."
+msgstr "Υπερβολικά πολλές παράμετροι συνάρτησης."
+
+msgid "Too many function prototypes in the require graph."
+msgstr "Υπερβολικά πολλά πρωτότυπα συναρτήσεων στο γράφημα require."
+
+msgid "Too many functions or function parameters.\n"
+msgstr "Υπερβολικά πολλές συναρτήσεις ή παράμετροι συναρτήσεων.\n"
+
+msgid "Too many functions."
+msgstr "Πάρα πολλές συναρτήσεις."
+
+msgid "Too many jumps."
+msgstr "Πάρα πολλά άλματα."
+
+msgid "Too many local variables."
+msgstr "Πάρα πολλές τοπικές μεταβλητές."
+
+msgid "Too many parameters."
+msgstr "Πάρα πολλές παράμετροι."
+
+msgid "Too many pinned global variables."
+msgstr "Πάρα πολλές καρφιτσωμένες καθολικές μεταβλητές."
+
+msgid "Too many pinned local variables."
+msgstr "Πάρα πολλές καρφιτσωμένες τοπικές μεταβλητές."
+
+msgid "Unexpected OpenGL ES finish result words."
+msgstr "Μη αναμενόμενες λέξεις αποτελέσματος ολοκλήρωσης OpenGL ES."
+
+msgid "Unexpected OpenGL ES result words."
+msgstr "Μη αναμενόμενες λέξεις αποτελέσματος OpenGL ES."
+
+msgid "Unexpected Vulkan scalar-result destination."
+msgstr "Μη αναμενόμενος προορισμός βαθμωτού αποτελέσματος Vulkan."
+
+msgid "Unexpected Vulkan scalar-result identities."
+msgstr "Μη αναμενόμενες ταυτότητες βαθμωτού αποτελέσματος Vulkan."
+
+msgid "Unexpected end of file."
+msgstr "Μη αναμενόμενο τέλος αρχείου."
+
+msgid "Unknown __fast numeric intrinsic."
+msgstr "Άγνωστη αριθμητική ενσωματωμένη συνάρτηση __fast."
+
+msgid "Unknown error."
+msgstr "Άγνωστο σφάλμα."
+
+msgid "Unknown opcode %d at pc=%d."
+msgstr "Άγνωστο opcode %d στο pc=%d."
+
+msgid "Unknown opcode."
+msgstr "Άγνωστο opcode."
+
+msgid "Unknown option %s.\n"
+msgstr "Άγνωστη επιλογή %s.\n"
+
+msgid "Unknown type name '%s'."
+msgstr "Άγνωστο όνομα τύπου '%s'."
+
+msgid "Unmatched parenthesis."
+msgstr "Μη αντιστοιχισμένη παρένθεση."
+
+msgid "Unsupported (?...) construct."
+msgstr "Μη υποστηριζόμενη δομή (?...)."
+
+msgid "Unsupported assignment target inside __fast func."
+msgstr "Μη υποστηριζόμενος στόχος ανάθεσης μέσα σε __fast func."
+
+msgid "Unsupported block in __fast func."
+msgstr "Μη υποστηριζόμενο μπλοκ σε __fast func."
+
+msgid "Unsupported file mode."
+msgstr "Μη υποστηριζόμενη λειτουργία αρχείου."
+
+msgid "Unsupported instruction reached the Vulkan shader generator."
+msgstr "Μη υποστηριζόμενη εντολή έφτασε στη γεννήτρια shader Vulkan."
+
+msgid "Unsupported or malformed application version.\n"
+msgstr "Μη υποστηριζόμενη ή ακατάλληλα διαμορφωμένη έκδοση εφαρμογής.\n"
+
+msgid "Unsupported or malformed application version: %s"
+msgstr "Μη υποστηριζόμενη ή ακατάλληλα διαμορφωμένη έκδοση εφαρμογής: %s"
+
+msgid "Unsupported or malformed bytecode version.\n"
+msgstr "Μη υποστηριζόμενη ή ακατάλληλα διαμορφωμένη έκδοση bytecode.\n"
+
+msgid "Unsupported or malformed bytecode version: %s"
+msgstr "Μη υποστηριζόμενη ή ακατάλληλα διαμορφωμένη έκδοση bytecode: %s"
+
+msgid "Unsupported packed element type in __fast func."
+msgstr "Μη υποστηριζόμενος τύπος στοιχείου packed σε __fast func."
+
+msgid "Unterminated character class."
+msgstr "Μη τερματισμένη κλάση χαρακτήρων."
+
+msgid "Usage\n"
+msgstr "Χρήση\n"
+
+msgid "Value for key %s is not a dictionary."
+msgstr "Η τιμή για το κλειδί %s δεν είναι λεξικό."
+
+msgid "Value for key %s is not a double."
+msgstr "Η τιμή για το κλειδί %s δεν είναι double."
+
+msgid "Value for key %s is not a float."
+msgstr "Η τιμή για το κλειδί %s δεν είναι δεκαδικός αριθμός."
+
+msgid "Value for key %s is not a function."
+msgstr "Η τιμή για το κλειδί %s δεν είναι συνάρτηση."
+
+msgid "Value for key %s is not a long."
+msgstr "Η τιμή για το κλειδί %s δεν είναι long."
+
+msgid "Value for key %s is not a string."
+msgstr "Η τιμή για το κλειδί %s δεν είναι συμβολοσειρά."
+
+msgid "Value for key %s is not an array."
+msgstr "Η τιμή για το κλειδί %s δεν είναι πίνακας."
+
+msgid "Value for key %s is not an int."
+msgstr "Η τιμή για το κλειδί %s δεν είναι int."
+
+msgid "Value is not a float."
+msgstr "Η τιμή δεν είναι δεκαδικός αριθμός."
+
+msgid "Value is not a function."
+msgstr "Η τιμή δεν είναι συνάρτηση."
+
+msgid "Value is not a long."
+msgstr "Η τιμή δεν είναι long."
+
+msgid "Value is not a number or a string."
+msgstr "Η τιμή δεν είναι ούτε αριθμός ούτε συμβολοσειρά."
+
+msgid "Value is not a number."
+msgstr "Η τιμή δεν είναι αριθμός."
+
+msgid "Value is not a packed."
+msgstr "Η τιμή δεν είναι packed."
+
+msgid "Value is not a string, an array, or a dictionary."
+msgstr "Η τιμή δεν είναι ούτε συμβολοσειρά, ούτε πίνακας, ούτε λεξικό."
+
+msgid "Value is not a string."
+msgstr "Η τιμή δεν είναι συμβολοσειρά."
+
+msgid "Value is not an array."
+msgstr "Η τιμή δεν είναι πίνακας."
+
+msgid "Value is not an int."
+msgstr "Η τιμή δεν είναι int."
+
+msgid "Value is not an integer."
+msgstr "Η τιμή δεν είναι ακέραιος αριθμός."
+
+msgid "Value is out of range for int."
+msgstr "Η τιμή είναι εκτός ορίων για int."
+
+msgid "Value is out of range for long."
+msgstr "Η τιμή είναι εκτός ορίων για long."
+
+msgid "Variable '%s' is already declared in this scope."
+msgstr "Η μεταβλητή '%s' έχει ήδη δηλωθεί σε αυτή την εμβέλεια."
+
+msgid "Variable '%s' is used before its declaration."
+msgstr "Η μεταβλητή '%s' χρησιμοποιείται πριν από τη δήλωσή της."
+
+msgid "Version %s\n"
+msgstr "Έκδοση %s\n"
+
+msgid "Vulkan 1.2 is required, but the loader only exposes Vulkan 1.0."
+msgstr "Απαιτείται Vulkan 1.2, αλλά ο φορτωτής εκθέτει μόνο Vulkan 1.0."
+
+msgid "Vulkan 1.2 or newer is required."
+msgstr "Απαιτείται Vulkan 1.2 ή νεότερο."
+
+msgid "Vulkan accelerator submission failed."
+msgstr "Η υποβολή επιταχυντή Vulkan απέτυχε."
+
+msgid "Vulkan active kernel has an inactive data buffer."
+msgstr "Ο ενεργός πυρήνας Vulkan έχει ανενεργή ενδιάμεση μνήμη δεδομένων."
+
+msgid "Vulkan buffer exceeds the device storage-buffer limit."
+msgstr "Η ενδιάμεση μνήμη Vulkan υπερβαίνει το όριο ενδιάμεσων μνημών αποθήκευσης της συσκευής."
+
+msgid "Vulkan buffer extent is inconsistent."
+msgstr "Η έκταση της ενδιάμεσης μνήμης Vulkan δεν είναι συνεπής."
+
+msgid "Vulkan buffer metadata changed after planning."
+msgstr "Τα μεταδεδομένα της ενδιάμεσης μνήμης Vulkan άλλαξαν μετά τον σχεδιασμό."
+
+msgid "Vulkan buffer table does not match the prepared program."
+msgstr "Ο πίνακας ενδιάμεσων μνημών Vulkan δεν αντιστοιχεί στο προετοιμασμένο πρόγραμμα."
+
+msgid "Vulkan device '%s' was not found."
+msgstr "Η συσκευή Vulkan '%s' δεν βρέθηκε."
+
+msgid "Vulkan device name '%s' is ambiguous."
+msgstr "Το όνομα συσκευής Vulkan '%s' είναι διφορούμενο."
+
+msgid "Vulkan dispatch exceeds the device workgroup-count limit."
+msgstr "Η αποστολή Vulkan υπερβαίνει το όριο πλήθους ομάδων εργασίας της συσκευής."
+
+msgid "Vulkan dispatch range changed after execution creation."
+msgstr "Το εύρος αποστολής Vulkan άλλαξε μετά τη δημιουργία της εκτέλεσης."
+
+msgid "Vulkan dispatch range is missing from the scalar block."
+msgstr "Το εύρος αποστολής Vulkan λείπει από το βαθμωτό μπλοκ."
+
+msgid "Vulkan execution has no recording command buffer."
+msgstr "Η εκτέλεση Vulkan δεν έχει ενδιάμεση μνήμη εντολών σε καταγραφή."
+
+msgid "Vulkan execution was already submitted."
+msgstr "Η εκτέλεση Vulkan έχει ήδη υποβληθεί."
+
+msgid "Vulkan finish buffer table changed."
+msgstr "Ο πίνακας ενδιάμεσων μνημών ολοκλήρωσης Vulkan άλλαξε."
+
+msgid "Vulkan kernels were dispatched out of order."
+msgstr "Οι πυρήνες Vulkan απεστάλησαν εκτός σειράς."
+
+msgid "Vulkan output transfer plan changed."
+msgstr "Το σχέδιο μεταφοράς εξόδου Vulkan άλλαξε."
+
+msgid "Vulkan output was requested before completion."
+msgstr "Η έξοδος Vulkan ζητήθηκε πριν από την ολοκλήρωση."
+
+msgid "Vulkan received an empty active dispatch."
+msgstr "Το Vulkan έλαβε μια κενή ενεργή αποστολή."
+
+msgid "Vulkan result block does not match the prepared program."
+msgstr "Το μπλοκ αποτελεσμάτων Vulkan δεν αντιστοιχεί στο προετοιμασμένο πρόγραμμα."
+
+msgid "Vulkan result block exceeds the device storage-buffer limit."
+msgstr "Το μπλοκ αποτελεσμάτων Vulkan υπερβαίνει το όριο της ενδιάμεσης μνήμης αποθήκευσης της συσκευής."
+
+msgid "Vulkan scalar block does not match the prepared program."
+msgstr "Το βαθμωτό μπλοκ Vulkan δεν αντιστοιχεί στο προετοιμασμένο πρόγραμμα."
+
+msgid "Vulkan scalar block exceeds the device storage-buffer limit."
+msgstr "Το βαθμωτό μπλοκ Vulkan υπερβαίνει το όριο της ενδιάμεσης μνήμης αποθήκευσης της συσκευής."
+
+msgid "Vulkan scalar-result identity changed."
+msgstr "Η ταυτότητα του βαθμωτού αποτελέσματος Vulkan άλλαξε."
+
+msgid "Vulkan scalar-result table changed."
+msgstr "Ο πίνακας βαθμωτών αποτελεσμάτων Vulkan άλλαξε."
+
+msgid "Vulkan shader assembler returned malformed SPIR-V."
+msgstr "Ο assembler shader Vulkan επέστρεψε κακοσχηματισμένο SPIR-V."
+
+msgid "Vulkan shader assembler returned no result."
+msgstr "Ο assembler shader Vulkan δεν επέστρεψε αποτέλεσμα."
+
+msgid "Vulkan shader assembly failed:\x20"
+msgstr "Η συναρμολόγηση του shader Vulkan απέτυχε:\x20"
+
+msgid "Vulkan supports only 32-bit accelerator buffers."
+msgstr "Το Vulkan υποστηρίζει μόνο ενδιάμεσες μνήμες επιταχυντή 32 bit."
+
+msgid "Write-only file mappings are not supported."
+msgstr "Οι αντιστοιχίσεις αρχείου μόνο για εγγραφή δεν υποστηρίζονται."
+
+msgid "Wrong number of arguments for __fast intrinsic."
+msgstr "Εσφαλμένος αριθμός ορισμάτων για την ενσωματωμένη συνάρτηση __fast."
+
+msgid "__fast call '%s': argument %u does not match the exact shape."
+msgstr "Κλήση __fast '%s': το όρισμα %u δεν αντιστοιχεί ακριβώς στο σχήμα."
+
+msgid "__fast call '%s': argument %u has the wrong packed element type."
+msgstr "Κλήση __fast '%s': το όρισμα %u έχει εσφαλμένο τύπο στοιχείου packed."
+
+msgid "__fast call '%s': argument %u has the wrong primitive type."
+msgstr "Κλήση __fast '%s': το όρισμα %u έχει εσφαλμένο πρωτογενή τύπο."
+
+msgid "__fast call '%s': shape element count overflow."
+msgstr "Κλήση __fast '%s': υπερχείλιση πλήθους στοιχείων σχήματος."
+
+msgid "__fast call '%s': shape extents must be positive."
+msgstr "Κλήση __fast '%s': οι εκτάσεις σχήματος πρέπει να είναι θετικές."
+
+msgid "__fast call: argument does not match the exact shape."
+msgstr "Κλήση __fast: το όρισμα δεν αντιστοιχεί ακριβώς στο σχήμα."
+
+msgid "__fast call: argument has the wrong packed element type."
+msgstr "Κλήση __fast: το όρισμα έχει εσφαλμένο τύπο στοιχείου packed."
+
+msgid "__fast call: shape element count overflow."
+msgstr "Κλήση __fast: υπερχείλιση πλήθους στοιχείων σχήματος."
+
+msgid "__fast call: shape extents must be positive."
+msgstr "Κλήση __fast: οι εκτάσεις σχήματος πρέπει να είναι θετικές."
+
+msgid "__fast row-major index overflow."
+msgstr "Υπερχείλιση δείκτη διάταξης κατά γραμμές του __fast."
+
+msgid "__fast shape extent is too large."
+msgstr "Η έκταση σχήματος του __fast είναι υπερβολικά μεγάλη."
+
+msgid "__inline functions must also be static."
+msgstr "Οι συναρτήσεις __inline πρέπει επίσης να είναι static."
+
+msgid "argument has two binding types"
+msgstr "το όρισμα έχει δύο τύπους δέσμευσης"
+
+msgid "atan2() requires float or double operands."
+msgstr "Η atan2() απαιτεί τελεστέους float ή double."
+
+msgid "buffer binding limit exceeded"
+msgstr "υπέρβαση ορίου δεσμεύσεων ενδιάμεσης μνήμης"
+
+msgid "chdir() failed.\n"
+msgstr "Η chdir() απέτυχε.\n"
+
+msgid "continue appeared outside loop."
+msgstr "Η εντολή continue εμφανίστηκε εκτός βρόχου."
+
+msgid "device buffer escapes its GPU session"
+msgstr "η ενδιάμεση μνήμη συσκευής διαφεύγει από τη συνεδρία GPU της"
+
+msgid "device buffer has a host argument slot"
+msgstr "η ενδιάμεση μνήμη συσκευής έχει θέση ορίσματος κεντρικού συστήματος"
+
+msgid "device buffer has no later consumer"
+msgstr "η ενδιάμεση μνήμη συσκευής δεν έχει μεταγενέστερο καταναλωτή"
+
+msgid "device buffer has no producer kernel"
+msgstr "η ενδιάμεση μνήμη συσκευής δεν έχει πυρήνα παραγωγό"
+
+msgid "device buffer requires host materialization"
+msgstr "η ενδιάμεση μνήμη συσκευής απαιτεί υλοποίηση στο κεντρικό σύστημα"
+
+msgid "device producer does not cover its extent"
+msgstr "ο παραγωγός συσκευής δεν καλύπτει την έκτασή του"
+
+msgid "device producer does not start at zero"
+msgstr "ο παραγωγός συσκευής δεν ξεκινά από το μηδέν"
+
+msgid "device producer has an invalid trip difference"
+msgstr "ο παραγωγός συσκευής έχει μη έγκυρη διαφορά επανάληψης"
+
+msgid "device producer has an invalid trip expression"
+msgstr "ο παραγωγός συσκευής έχει μη έγκυρη έκφραση επανάληψης"
+
+msgid "device producer has multiple invocation indices"
+msgstr "ο παραγωγός συσκευής έχει πολλούς δείκτες επίκλησης"
+
+msgid "device producer index is not exact"
+msgstr "ο δείκτης παραγωγού συσκευής δεν είναι ακριβής"
+
+msgid "device producer is not a full definition"
+msgstr "ο παραγωγός συσκευής δεν είναι πλήρης ορισμός"
+
+msgid "device producer range is not exact"
+msgstr "το εύρος παραγωγού συσκευής δεν είναι ακριβές"
+
+msgid "device producer reads before definition"
+msgstr "ο παραγωγός συσκευής διαβάζει πριν από τον ορισμό"
+
+msgid "device producer store is not unique"
+msgstr "η αποθήκευση του παραγωγού συσκευής δεν είναι μοναδική"
+
+msgid "device-only Direct3D 12 buffer has a host argument"
+msgstr "η ενδιάμεση μνήμη Direct3D 12 μόνο για συσκευή έχει όρισμα κεντρικού συστήματος"
+
+msgid "duplicate buffer argument slot"
+msgstr "διπλότυπη θέση ορίσματος ενδιάμεσης μνήμης"
+
+msgid "duplicate device binding"
+msgstr "διπλότυπη δέσμευση συσκευής"
+
+msgid "duplicate runtime argument slot"
+msgstr "διπλότυπη θέση ορίσματος περιβάλλοντος εκτέλεσης"
+
+msgid "duplicate scalar argument slot"
+msgstr "διπλότυπη θέση βαθμωτού ορίσματος"
+
+msgid "duplicate scalar result argument slot"
+msgstr "διπλότυπη θέση ορίσματος βαθμωτού αποτελέσματος"
+
+msgid "else appeared after else."
+msgstr "το else χρησιμοποιήθηκε μετά από το else."
+
+msgid "else-if appeared after else."
+msgstr "Το else-if εμφανίστηκε μετά το else."
+
+msgid "else-if block appeared without if block."
+msgstr "Το μπλοκ else-if εμφανίστηκε χωρίς μπλοκ if."
+
+msgid "empty Direct3D 12 dispatch reached the backend"
+msgstr "μια κενή αποστολή Direct3D 12 έφτασε στο backend"
+
+msgid "empty Direct3D 12 execution has an active buffer"
+msgstr "μια κενή εκτέλεση Direct3D 12 έχει ενεργή ενδιάμεση μνήμη"
+
+msgid "empty accelerator region"
+msgstr "κενή περιοχή επιταχυντή"
+
+msgid "execvp() failed for %s.\n"
+msgstr "Η execvp() απέτυχε για %s.\n"
+
+msgid "failed to close a Direct3D 12 command list"
+msgstr "αποτυχία κλεισίματος λίστας εντολών Direct3D 12"
+
+msgid "failed to convert a DXGI adapter name"
+msgstr "αποτυχία μετατροπής ονόματος προσαρμογέα DXGI"
+
+msgid "failed to create a Direct3D 12 buffer"
+msgstr "αποτυχία δημιουργίας ενδιάμεσης μνήμης Direct3D 12"
+
+msgid "failed to create a Direct3D 12 command allocator"
+msgstr "αποτυχία δημιουργίας εκχωρητή εντολών Direct3D 12"
+
+msgid "failed to create a Direct3D 12 command list"
+msgstr "αποτυχία δημιουργίας λίστας εντολών Direct3D 12"
+
+msgid "failed to create a Direct3D 12 descriptor heap"
+msgstr "αποτυχία δημιουργίας σωρού περιγραφέων Direct3D 12"
+
+msgid "failed to create an execution"
+msgstr "αποτυχία δημιουργίας εκτέλεσης"
+
+msgid "failed to create the DXGI factory"
+msgstr "αποτυχία δημιουργίας του εργοστασίου DXGI"
+
+msgid "failed to dispatch a kernel"
+msgstr "αποτυχία αποστολής πυρήνα"
+
+msgid "failed to drain the Direct3D 12 queue submission"
+msgstr "αποτυχία εκκένωσης της υποβολής ουράς Direct3D 12"
+
+msgid "failed to enumerate DXGI adapters"
+msgstr "αποτυχία απαρίθμησης προσαρμογέων DXGI"
+
+msgid "failed to finish an execution"
+msgstr "αποτυχία ολοκλήρωσης εκτέλεσης"
+
+msgid "failed to map a Direct3D 12 readback buffer"
+msgstr "αποτυχία αντιστοίχισης ενδιάμεσης μνήμης ανάγνωσης Direct3D 12"
+
+msgid "failed to map a Direct3D 12 result buffer"
+msgstr "αποτυχία αντιστοίχισης ενδιάμεσης μνήμης αποτελεσμάτων Direct3D 12"
+
+msgid "failed to map a Direct3D 12 upload buffer"
+msgstr "αποτυχία αντιστοίχισης ενδιάμεσης μνήμης μεταφόρτωσης Direct3D 12"
+
+msgid "failed to signal the Direct3D 12 queue fence"
+msgstr "αποτυχία σηματοδότησης του φράκτη ουράς Direct3D 12"
+
+msgid "float contraction is not prohibited"
+msgstr "η συστολή float δεν απαγορεύεται"
+
+msgid "float result exceeds bound"
+msgstr "το αποτέλεσμα float υπερβαίνει το όριο"
+
+msgid "fork() failed."
+msgstr "Η fork() απέτυχε."
+
+msgid "host Direct3D 12 buffer is missing its argument"
+msgstr "λείπει το όρισμα της ενδιάμεσης μνήμης κεντρικού συστήματος Direct3D 12"
+
+msgid "host buffer is not host visible"
+msgstr "η ενδιάμεση μνήμη κεντρικού συστήματος δεν είναι ορατή στο κεντρικό σύστημα"
+
+msgid "inactive Direct3D 12 buffer requests a transfer"
+msgstr "μια ανενεργή ενδιάμεση μνήμη Direct3D 12 ζητά μεταφορά"
+
+msgid "incomplete Direct3D 12 execution objects"
+msgstr "ελλιπή αντικείμενα εκτέλεσης Direct3D 12"
+
+msgid "incomplete Direct3D 12 kernel objects"
+msgstr "ελλιπή αντικείμενα πυρήνα Direct3D 12"
+
+msgid "incomplete Direct3D 12 prepared program"
+msgstr "ελλιπές προετοιμασμένο πρόγραμμα Direct3D 12"
+
+msgid "incorrect value count"
+msgstr "εσφαλμένο πλήθος τιμών"
+
+msgid "instruction limit exceeded"
+msgstr "υπέρβαση ορίου εντολών"
+
+msgid "invalid Direct3D 12 buffer origin"
+msgstr "μη έγκυρη προέλευση ενδιάμεσης μνήμης Direct3D 12"
+
+msgid "invalid Direct3D 12 device list"
+msgstr "μη έγκυρη λίστα συσκευών Direct3D 12"
+
+msgid "invalid Direct3D 12 device-only buffer"
+msgstr "μη έγκυρη ενδιάμεση μνήμη Direct3D 12 μόνο για συσκευή"
+
+msgid "invalid Direct3D 12 execution request"
+msgstr "μη έγκυρο αίτημα εκτέλεσης Direct3D 12"
+
+msgid "invalid Direct3D 12 kernel index"
+msgstr "μη έγκυρος δείκτης πυρήνα Direct3D 12"
+
+msgid "invalid ID bound"
+msgstr "μη έγκυρο όριο ID"
+
+msgid "invalid active Direct3D 12 execution"
+msgstr "μη έγκυρη ενεργή εκτέλεση Direct3D 12"
+
+msgid "invalid backend payload owner"
+msgstr "μη έγκυρος κάτοχος ωφέλιμου φορτίου backend"
+
+msgid "invalid binary size expression"
+msgstr "μη έγκυρη δυαδική έκφραση μεγέθους"
+
+msgid "invalid buffer argument slot"
+msgstr "μη έγκυρη θέση ορίσματος ενδιάμεσης μνήμης"
+
+msgid "invalid buffer byte range"
+msgstr "μη έγκυρο εύρος byte ενδιάμεσης μνήμης"
+
+msgid "invalid buffer element kind"
+msgstr "μη έγκυρο είδος στοιχείου ενδιάμεσης μνήμης"
+
+msgid "invalid buffer element width"
+msgstr "μη έγκυρο πλάτος στοιχείου ενδιάμεσης μνήμης"
+
+msgid "invalid buffer range end"
+msgstr "μη έγκυρο τέλος εύρους ενδιάμεσης μνήμης"
+
+msgid "invalid buffer range start"
+msgstr "μη έγκυρη αρχή εύρους ενδιάμεσης μνήμης"
+
+msgid "invalid buffer value type"
+msgstr "μη έγκυρος τύπος τιμής ενδιάμεσης μνήμης"
+
+msgid "invalid device buffer byte extent"
+msgstr "μη έγκυρη έκταση byte ενδιάμεσης μνήμης συσκευής"
+
+msgid "invalid device buffer extent"
+msgstr "μη έγκυρη έκταση ενδιάμεσης μνήμης συσκευής"
+
+msgid "invalid empty Direct3D 12 execution state"
+msgstr "μη έγκυρη κατάσταση κενής εκτέλεσης Direct3D 12"
+
+msgid "invalid instruction"
+msgstr "μη έγκυρη εντολή"
+
+msgid "invalid instruction length"
+msgstr "μη έγκυρο μήκος εντολής"
+
+msgid "invalid instruction result type"
+msgstr "μη έγκυρος τύπος αποτελέσματος εντολής"
+
+msgid "invalid kernel buffer range end"
+msgstr "μη έγκυρο τέλος εύρους ενδιάμεσης μνήμης πυρήνα"
+
+msgid "invalid kernel buffer range start"
+msgstr "μη έγκυρη αρχή εύρους ενδιάμεσης μνήμης πυρήνα"
+
+msgid "invalid kernel start"
+msgstr "μη έγκυρη αρχή πυρήνα"
+
+msgid "invalid kernel stop"
+msgstr "μη έγκυρο τέλος πυρήνα"
+
+msgid "invalid kernel trip"
+msgstr "μη έγκυρη επανάληψη πυρήνα"
+
+msgid "invalid local buffer argument slot"
+msgstr "μη έγκυρη θέση ορίσματος τοπικής ενδιάμεσης μνήμης"
+
+msgid "invalid loop block id"
+msgstr "μη έγκυρο id μπλοκ βρόχου"
+
+msgid "invalid region block id"
+msgstr "μη έγκυρο id μπλοκ περιοχής"
+
+msgid "invalid scalar argument slot"
+msgstr "μη έγκυρη θέση βαθμωτού ορίσματος"
+
+msgid "invalid scalar result argument slot"
+msgstr "μη έγκυρη θέση ορίσματος βαθμωτού αποτελέσματος"
+
+msgid "invalid scalar result identity"
+msgstr "μη έγκυρη ταυτότητα βαθμωτού αποτελέσματος"
+
+msgid "invalid scalar result producer"
+msgstr "μη έγκυρος παραγωγός βαθμωτού αποτελέσματος"
+
+msgid "invalid scalar result type"
+msgstr "μη έγκυρος τύπος βαθμωτού αποτελέσματος"
+
+msgid "invalid scalar type"
+msgstr "μη έγκυρος βαθμωτός τύπος"
+
+msgid "invalid shader kernel index"
+msgstr "μη έγκυρος δείκτης πυρήνα shader"
+
+msgid "invalid size multiplication"
+msgstr "μη έγκυρος πολλαπλασιασμός μεγέθους"
+
+msgid "invalid size opcode"
+msgstr "μη έγκυρο opcode μεγέθους"
+
+msgid "invalid size scalar reference"
+msgstr "μη έγκυρη βαθμωτή αναφορά μεγέθους"
+
+msgid "invalid zero-clamped size expression"
+msgstr "μη έγκυρη έκφραση μεγέθους περιορισμένη στο μηδέν"
+
+msgid "kernel buffer table mismatch"
+msgstr "ο πίνακας ενδιάμεσων μνημών πυρήνα δεν αντιστοιχεί"
+
+msgid "kernel buffer type mismatch"
+msgstr "ο τύπος ενδιάμεσης μνήμης πυρήνα δεν αντιστοιχεί"
+
+msgid "kernel limit exceeded"
+msgstr "υπέρβαση ορίου πυρήνων"
+
+msgid "kernel scalar table mismatch"
+msgstr "ο πίνακας βαθμωτών τιμών πυρήνα δεν αντιστοιχεί"
+
+msgid "missing Direct3D 12 buffer metadata"
+msgstr "λείπουν μεταδεδομένα ενδιάμεσης μνήμης Direct3D 12"
+
+msgid "missing Direct3D 12 buffer snapshot"
+msgstr "λείπει στιγμιότυπο ενδιάμεσης μνήμης Direct3D 12"
+
+msgid "missing Direct3D 12 buffer table"
+msgstr "λείπει πίνακας ενδιάμεσων μνημών Direct3D 12"
+
+msgid "missing Direct3D 12 download snapshot"
+msgstr "λείπει στιγμιότυπο λήψης Direct3D 12"
+
+msgid "missing Direct3D 12 execution"
+msgstr "λείπει εκτέλεση Direct3D 12"
+
+msgid "missing Direct3D 12 execution output"
+msgstr "λείπει έξοδος εκτέλεσης Direct3D 12"
+
+msgid "missing Direct3D 12 output table"
+msgstr "λείπει πίνακας εξόδου Direct3D 12"
+
+msgid "missing Direct3D 12 program"
+msgstr "λείπει πρόγραμμα Direct3D 12"
+
+msgid "missing Direct3D 12 readback buffer"
+msgstr "λείπει ενδιάμεση μνήμη ανάγνωσης Direct3D 12"
+
+msgid "missing Direct3D 12 result resources"
+msgstr "λείπουν πόροι αποτελεσμάτων Direct3D 12"
+
+msgid "missing Direct3D 12 result words"
+msgstr "λείπουν λέξεις αποτελεσμάτων Direct3D 12"
+
+msgid "missing Direct3D 12 scalar words"
+msgstr "λείπουν βαθμωτές λέξεις Direct3D 12"
+
+msgid "missing Direct3D 12 upload snapshot"
+msgstr "λείπει στιγμιότυπο μεταφόρτωσης Direct3D 12"
+
+msgid "missing accelerator kernel table"
+msgstr "λείπει πίνακας πυρήνων επιταχυντή"
+
+msgid "missing accelerator program"
+msgstr "λείπει πρόγραμμα επιταχυντή"
+
+msgid "missing buffer name"
+msgstr "λείπει όνομα ενδιάμεσης μνήμης"
+
+msgid "missing buffer table"
+msgstr "λείπει πίνακας ενδιάμεσων μνημών"
+
+msgid "missing compute entry contract"
+msgstr "λείπει συμβόλαιο σημείου εισόδου υπολογισμού"
+
+msgid "missing function name"
+msgstr "λείπει όνομα συνάρτησης"
+
+msgid "missing instruction table"
+msgstr "λείπει πίνακας εντολών"
+
+msgid "missing kernel name"
+msgstr "λείπει όνομα πυρήνα"
+
+msgid "missing kernel table"
+msgstr "λείπει πίνακας πυρήνων"
+
+msgid "missing scalar name"
+msgstr "λείπει όνομα βαθμωτού"
+
+msgid "missing scalar result name"
+msgstr "λείπει όνομα βαθμωτού αποτελέσματος"
+
+msgid "missing scalar result table"
+msgstr "λείπει πίνακας βαθμωτών αποτελεσμάτων"
+
+msgid "missing scalar table"
+msgstr "λείπει πίνακας βαθμωτών τιμών"
+
+msgid "missing shader output"
+msgstr "λείπει έξοδος shader"
+
+msgid "missing size expression table"
+msgstr "λείπει πίνακας εκφράσεων μεγέθους"
+
+msgid "missing source name"
+msgstr "λείπει όνομα πηγής"
+
+msgid "missing strict Float32 contract"
+msgstr "λείπει αυστηρό συμβόλαιο Float32"
+
+msgid "missing typed kernel"
+msgstr "λείπει πυρήνας με τύπους"
+
+msgid "missing typed shader kernel"
+msgstr "λείπει πυρήνας shader με τύπους"
+
+msgid "negative size constant"
+msgstr "αρνητική σταθερά μεγέθους"
+
+msgid "nonconstant integer divisor"
+msgstr "μη σταθερός ακέραιος διαιρέτης"
+
+msgid "nonconstant shift count"
+msgstr "μη σταθερό πλήθος μετατόπισης"
+
+msgid "nondeterministic buffer binding"
+msgstr "μη ντετερμινιστική δέσμευση ενδιάμεσης μνήμης"
+
+msgid "nondeterministic kernel index"
+msgstr "μη ντετερμινιστικός δείκτης πυρήνα"
+
+msgid "nondeterministic scalar result entry"
+msgstr "μη ντετερμινιστική καταχώριση βαθμωτού αποτελέσματος"
+
+msgid "nondeterministic shader kernel index"
+msgstr "μη ντετερμινιστικός δείκτης πυρήνα shader"
+
+msgid "noninteger size scalar"
+msgstr "μη ακέραιο βαθμωτό μέγεθος"
+
+msgid "nonpositive device buffer extent"
+msgstr "μη θετική έκταση ενδιάμεσης μνήμης συσκευής"
+
+msgid "nonpositive integer divisor"
+msgstr "μη θετικός ακέραιος διαιρέτης"
+
+msgid "null kernel"
+msgstr "μηδενικός πυρήνας"
+
+msgid "null program"
+msgstr "μηδενικό πρόγραμμα"
+
+msgid "out of memory creating Direct3D 12 buffer metadata"
+msgstr "ανεπαρκής μνήμη κατά τη δημιουργία μεταδεδομένων ενδιάμεσης μνήμης Direct3D 12"
+
+msgid "out of memory creating a Direct3D 12 execution"
+msgstr "ανεπαρκής μνήμη κατά τη δημιουργία εκτέλεσης Direct3D 12"
+
+msgid "out of memory retaining Direct3D 12 kernels"
+msgstr "ανεπαρκής μνήμη κατά τη διατήρηση πυρήνων Direct3D 12"
+
+msgid "out of memory while generating shader source"
+msgstr "ανεπαρκής μνήμη κατά τη δημιουργία πηγαίου κώδικα shader"
+
+msgid "out of memory while recording DXGI adapters"
+msgstr "ανεπαρκής μνήμη κατά την καταγραφή προσαρμογέων DXGI"
+
+msgid "package_init() must have no parameters and declare ': void'."
+msgstr "Η package_init() δεν πρέπει να έχει παραμέτρους και πρέπει να δηλώνει ': void'."
+
+msgid "parameter count limit exceeded"
+msgstr "υπέρβαση ορίου πλήθους παραμέτρων"
+
+msgid "rejected a dispatch range"
+msgstr "απορρίφθηκε εύρος αποστολής"
+
+msgid "scalar binding limit exceeded"
+msgstr "υπέρβαση ορίου βαθμωτών δεσμεύσεων"
+
+msgid "scalar result collides with buffer input"
+msgstr "το βαθμωτό αποτέλεσμα συγκρούεται με την είσοδο ενδιάμεσης μνήμης"
+
+msgid "scalar result collides with scalar input"
+msgstr "το βαθμωτό αποτέλεσμα συγκρούεται με τη βαθμωτή είσοδο"
+
+msgid "scalar result consumer metadata mismatch"
+msgstr "τα μεταδεδομένα καταναλωτή βαθμωτού αποτελέσματος δεν αντιστοιχούν"
+
+msgid "scalar result has a foreign producer"
+msgstr "το βαθμωτό αποτέλεσμα έχει ξένο παραγωγό"
+
+msgid "scalar result limit exceeded"
+msgstr "υπέρβαση ορίου βαθμωτών αποτελεσμάτων"
+
+msgid "scalar result load precedes its producer"
+msgstr "η φόρτωση βαθμωτού αποτελέσματος προηγείται του παραγωγού του"
+
+msgid "scalar result producer is not unique"
+msgstr "ο παραγωγός βαθμωτού αποτελέσματος δεν είναι μοναδικός"
+
+msgid "scalar result reference out of range"
+msgstr "αναφορά βαθμωτού αποτελέσματος εκτός ορίων"
+
+msgid "shader buffer table mismatch"
+msgstr "ο πίνακας ενδιάμεσων μνημών shader δεν αντιστοιχεί"
+
+msgid "shader scalar table mismatch"
+msgstr "ο πίνακας βαθμωτών τιμών shader δεν αντιστοιχεί"
+
+msgid "shader source fragment exceeded its limit"
+msgstr "το τμήμα πηγαίου κώδικα shader υπερέβη το όριό του"
+
+msgid "shift count out of range"
+msgstr "πλήθος μετατόπισης εκτός ορίων"
+
+msgid "short module"
+msgstr "πολύ σύντομη μονάδα"
+
+msgid "size expression limit exceeded"
+msgstr "υπέρβαση ορίου εκφράσεων μεγέθους"
+
+msgid "sparse runtime argument namespace"
+msgstr "αραιός χώρος ονομάτων ορισμάτων περιβάλλοντος εκτέλεσης"
+
+msgid "static declarations require a relative source path."
+msgstr "Οι δηλώσεις static απαιτούν σχετική διαδρομή πηγαίου κώδικα."
+
+msgid "the Direct3D 12 device was removed"
+msgstr "η συσκευή Direct3D 12 αφαιρέθηκε"
+
+msgid "unexpected Direct3D 12 buffer snapshot"
+msgstr "μη αναμενόμενο στιγμιότυπο ενδιάμεσης μνήμης Direct3D 12"
+
+msgid "unexpected Direct3D 12 result words"
+msgstr "μη αναμενόμενες λέξεις αποτελεσμάτων Direct3D 12"
+
+msgid "unimplemented expr: %d\n"
+msgstr "μη υλοποιημένη expr: %d\n"
+
+msgid "unknown assembler failure"
+msgstr "άγνωστη αποτυχία assembler"
+
+msgid "unsupported buffer origin"
+msgstr "μη υποστηριζόμενη προέλευση ενδιάμεσης μνήμης"
+
+msgid "unsupported device buffer extent"
+msgstr "μη υποστηριζόμενη έκταση ενδιάμεσης μνήμης συσκευής"
+
+msgid "unsupported shader source dialect"
+msgstr "μη υποστηριζόμενη διάλεκτος πηγαίου κώδικα shader"
+
+msgid "unsupported typed shader instruction"
+msgstr "μη υποστηριζόμενη εντολή shader με τύπους"
+
+msgid "unused kernel has a buffer range"
+msgstr "ο αχρησιμοποίητος πυρήνας έχει εύρος ενδιάμεσης μνήμης"
+
+msgid "validator allocation failed"
+msgstr "η εκχώρηση του επικυρωτή απέτυχε"
+
+msgid "value limit exceeded"
+msgstr "υπέρβαση ορίου τιμών"
+
+msgid "var is specified without a single symbol."
+msgstr "Το var καθορίστηκε χωρίς ένα μοναδικό σύμβολο."
+
+msgid "vm-options:\n"
+msgstr "επιλογές VM:\n"
+
+msgid "wrong SPIR-V version"
+msgstr "εσφαλμένη έκδοση SPIR-V"
+
+msgid "wrong magic"
+msgstr "εσφαλμένη μαγική τιμή"
+

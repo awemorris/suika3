@@ -1,0 +1,15 @@
+func main() {
+    var k = 100;
+    var acc = 0;
+    for (i in 0 .. 5) {
+        acc = acc + (i + k) * (i + k);
+    }
+    print(acc);
+    var i = 0;
+    var acc2 = 0;
+    while (i < 5) {
+        acc2 = acc2 + (i + k) * (i + k);
+        i = i + 1;
+    }
+    print(acc2);
+}

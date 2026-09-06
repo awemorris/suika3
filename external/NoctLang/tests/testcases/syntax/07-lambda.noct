@@ -1,0 +1,7 @@
+func main() {
+    f = (a) => { return a; };
+    print("f(1) = " + f(1));
+
+    g = (a, b) => { return a + b; };
+    print("g(1, 2) = " + g(1, 2));
+}

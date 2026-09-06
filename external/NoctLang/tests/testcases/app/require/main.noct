@@ -1,0 +1,13 @@
+require middle;
+require leaf;
+
+var root_marker = append_root();
+
+func append_root(): int {
+	order = order + "R";
+	return 0;
+}
+
+func main() {
+	print(order);
+}

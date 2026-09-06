@@ -1,0 +1,19 @@
+func lo() {
+    print("lo");
+    return 0;
+}
+func hi() {
+    print("hi");
+    return 10;
+}
+func main() {
+    var p = Packed.uint8(10);
+    for (i in 0..10) {
+        p[i] = i;
+    }
+    var sum = 0;
+    for (i in lo()..hi()) {
+        sum = sum + p[i];
+    }
+    print(sum);
+}

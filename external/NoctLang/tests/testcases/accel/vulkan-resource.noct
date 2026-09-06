@@ -1,0 +1,28 @@
+__accel var device_input = Accel.uint32(4);
+__accel var device_output = Accel.uint32(4);
+
+__accel func add_one(
+    input: rpackeduint32_ptr,
+    output: rpackeduint32_ptr,
+    count: int
+): void {
+    for (i in 0..count) {
+        output[i] = input[i] + 1;
+    }
+}
+
+func main() {
+    let host_input = Packed.uint32(4);
+    let host_output = Packed.uint32(4);
+    host_input[0] = 100;
+    host_input[1] = 200;
+    host_input[2] = 300;
+    host_input[3] = 400;
+    Accel.copyToAccel(host_input, 0, device_input, 0, 16);
+    Accel.call(add_one, device_input, device_output, 4);
+    Accel.copyFromAccel(device_output, 0, host_output, 0, 16);
+    print(host_output[0]);
+    print(host_output[1]);
+    print(host_output[2]);
+    print(host_output[3]);
+}

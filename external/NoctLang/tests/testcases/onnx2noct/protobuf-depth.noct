@@ -1,0 +1,18 @@
+require protobuf;
+
+func descend(cursor) {
+    if (cursor.pos == cursor.limit) { return; }
+    var key = pbReadKey(cursor);
+    pbExpectWire(cursor, key, 2, "depth probe");
+    var child = pbReadChild(cursor, "depth probe");
+    descend(child);
+    pbFinish(child, "depth probe");
+}
+
+func main(args) {
+    var size = FileUtil.getFileSize(args[0]);
+    var file = File.open(args[0], "rb");
+    var bytes = File.readExact(file, size);
+    File.close(file);
+    descend(pbNewRoot(bytes));
+}

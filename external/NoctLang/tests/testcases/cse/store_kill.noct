@@ -1,0 +1,12 @@
+func main() {
+    var d = { f: 5 };
+    var e = d;
+    var a = d.f + d.f;
+    print(a);
+    d.f = 6;
+    var b = d.f + d.f;
+    print(b);
+    e.f = 7;
+    var c = d.f + d.f;
+    print(c);
+}

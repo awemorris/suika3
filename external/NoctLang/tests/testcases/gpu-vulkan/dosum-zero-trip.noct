@@ -1,0 +1,19 @@
+__accel func reduce(
+    source: rpackedint32,
+    destination: rpackedint32,
+    n: int): void {
+    var sum: int = 0;
+    for (i in 0..n) {
+        sum += source[i];
+    }
+    destination[0] = sum;
+}
+
+func main() {
+    let source = Packed.int32(1);
+    let destination = Packed.int32(1);
+    source[0] = 123;
+    destination[0] = 456;
+    reduce(source, destination, 0);
+    print(destination[0]);
+}

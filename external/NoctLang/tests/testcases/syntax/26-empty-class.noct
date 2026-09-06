@@ -1,0 +1,10 @@
+func main() {
+    Object = class {
+    };
+
+    Tree = extend Object {
+    };
+
+    var myTree = new Tree {
+    };
+}

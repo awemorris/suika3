@@ -1,0 +1,120 @@
+require kernel_contraction;
+
+func kernelPoolAttr(node, name) {
+    for (i in 0..Array.size(node.attrs)) {
+        if (node.attrs[i].name == name) { return node.attrs[i].value; }
+    }
+    planNodeFail(node, "normalized pooling is missing canonical attribute '" +
+                 name + "'.");
+}
+
+func kernelValidatePool(plan, step) {
+    var input = plan.graph.tensors[step.inputs[0]];
+    var output = plan.graph.tensors[step.outputTensor];
+    if (Array.size(input.shape) != 4 || Array.size(output.shape) != 4) {
+        planNodeFail(step.node, "Stage G.3 pooling requires rank-4 NCHW tensors.");
+    }
+    if (!isContiguousView(input) || input.offset != 0 || input.layout != "NCHW") {
+        planNodeFail(step.node,
+                     "Stage G.3 pooling requires contiguous offset-zero NCHW input.");
+    }
+    if (!isContiguousView(output) || output.offset != 0 || output.layout != "NCHW") {
+        planNodeFail(step.node,
+                     "Stage G.3 pooling requires contiguous offset-zero NCHW output.");
+    }
+    var kernel = [input.shape[2], input.shape[3]];
+    var strides = [1L, 1L];
+    var pads = [0L, 0L, 0L, 0L];
+    var includePad = 0;
+    if (step.kind != "global-average-pool") {
+        kernel = kernelPoolAttr(step.node, "kernel_shape");
+        strides = kernelPoolAttr(step.node, "strides");
+        pads = kernelPoolAttr(step.node, "pads");
+        if (step.kind == "average-pool2d") {
+            includePad = kernelPoolAttr(step.node, "count_include_pad");
+        }
+    }
+    return { input: input, output: output, kernel: kernel,
+             strides: strides, pads: pads, includePad: includePad };
+}
+
+func kernelEmitPool(plan, step, name, signature) {
+    var checked = kernelValidatePool(plan, step);
+    var inputParam = kernelInputParam(plan.graph, step.inputs, 0);
+    var lines = [];
+    Array.push(lines, "// signature: " + signature);
+    Array.push(lines, "__gpu func " + name + "(");
+    Array.push(lines, "    p0: rpackedfloat_ptr,");
+    Array.push(lines, "    out: rpackedfloat_ptr");
+    Array.push(lines, "): void {");
+    Array.push(lines, "    let i: int = globalIdx.x;");
+    var count = shapeElements(checked.output.shape, "Stage G.3 pooling output");
+    var outputPlane = checked.output.shape[2] * checked.output.shape[3];
+    var outputBatch = checked.output.shape[1] * outputPlane;
+    var inputPlane = checked.input.shape[2] * checked.input.shape[3];
+    var inputBatch = checked.input.shape[1] * inputPlane;
+    Array.push(lines, "    if (i < " + count + ") {");
+    Array.push(lines, "        let n: int = i / " + outputBatch + ";");
+    Array.push(lines, "        let in_batch: int = i % " + outputBatch + ";");
+    Array.push(lines, "        let c: int = in_batch / " + outputPlane + ";");
+    Array.push(lines, "        let spatial: int = in_batch % " + outputPlane + ";");
+    Array.push(lines, "        let oy: int = spatial / " + checked.output.shape[3] + ";");
+    Array.push(lines, "        let ox: int = spatial % " + checked.output.shape[3] + ";");
+    if (step.kind == "max-pool2d") {
+        Array.push(lines, "        var value: float = 0.0;");
+        Array.push(lines, "        var has_value: int = 0;");
+    } else {
+        Array.push(lines, "        var value: float = 0.0;");
+        Array.push(lines, "        var valid_count: float = 0.0;");
+    }
+    Array.push(lines, "        for (ky in 0.." + checked.kernel[0] + ") {");
+    Array.push(lines, "            for (kx in 0.." + checked.kernel[1] + ") {");
+    Array.push(lines, "                let iy: int = oy * " + checked.strides[0] +
+                      " + ky - " + checked.pads[0] + ";");
+    Array.push(lines, "                let ix: int = ox * " + checked.strides[1] +
+                      " + kx - " + checked.pads[1] + ";");
+    Array.push(lines, "                if (iy >= 0) {");
+    Array.push(lines, "                    if (iy < " + checked.input.shape[2] + ") {");
+    Array.push(lines, "                        if (ix >= 0) {");
+    Array.push(lines, "                            if (ix < " + checked.input.shape[3] + ") {");
+    Array.push(lines, "                                let input_index: int = n * " + inputBatch +
+                      " + c * " + inputPlane + " + iy * " +
+                      checked.input.shape[3] + " + ix;");
+    if (step.kind == "max-pool2d") {
+        Array.push(lines, "                                let candidate: float = " +
+                          inputParam + "[input_index];");
+        Array.push(lines, "                                if (has_value == 0) {");
+        Array.push(lines, "                                    value = candidate;");
+        Array.push(lines, "                                    has_value = 1;");
+        Array.push(lines, "                                } else {");
+        Array.push(lines, "                                    if (candidate != candidate) {");
+        Array.push(lines, "                                        value = candidate;");
+        Array.push(lines, "                                    } else {");
+        Array.push(lines, "                                        if (value == value) {");
+        Array.push(lines, "                                            if (candidate > value) { value = candidate; }");
+        Array.push(lines, "                                        }");
+        Array.push(lines, "                                    }");
+        Array.push(lines, "                                }");
+    } else {
+        Array.push(lines, "                                value = value + " + inputParam +
+                          "[input_index];");
+        Array.push(lines, "                                valid_count = valid_count + 1.0;");
+    }
+    Array.push(lines, "                            }");
+    Array.push(lines, "                        }");
+    Array.push(lines, "                    }");
+    Array.push(lines, "                }");
+    Array.push(lines, "            }");
+    Array.push(lines, "        }");
+    if (step.kind == "max-pool2d") {
+        Array.push(lines, "        out[i] = value;");
+    } else if (checked.includePad == 1) {
+        Array.push(lines, "        out[i] = value / " +
+                          (checked.kernel[0] * checked.kernel[1]) + ".0;");
+    } else {
+        Array.push(lines, "        out[i] = value / valid_count;");
+    }
+    Array.push(lines, "    }");
+    Array.push(lines, "}");
+    return lines;
+}

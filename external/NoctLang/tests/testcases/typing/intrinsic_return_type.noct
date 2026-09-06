@@ -1,0 +1,17 @@
+func to_float(value): float {
+    return Float.from(value);
+}
+
+func to_int(value): int {
+    return Int.from(value);
+}
+
+func wrong(): int {
+    return Float.from(1);
+}
+
+func main() {
+    print(to_float(7));
+    print(to_int(8.75));
+    print(wrong());
+}

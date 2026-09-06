@@ -1,0 +1,37 @@
+func sizes(
+    a: packedint8, b: packeduint8,
+    c: packedint16, d: packeduint16,
+    e: packedint32, f: packeduint32,
+    g: packedint64, h: packeduint64,
+    i: packedfloat, j: packeddouble,
+    ra: rpackedint8, rb: rpackeduint8,
+    rc: rpackedint16, rd: rpackeduint16,
+    re: rpackedint32, rf: rpackeduint32,
+    rg: rpackedint64, rh: rpackeduint64,
+    ri: rpackedfloat, rj: rpackeddouble)
+{
+    return Packed.size(a) + Packed.size(b) +
+           Packed.size(c) + Packed.size(d) +
+           Packed.size(e) + Packed.size(f) +
+           Packed.size(g) + Packed.size(h) +
+           Packed.size(i) + Packed.size(j) +
+           Packed.size(ra) + Packed.size(rb) +
+           Packed.size(rc) + Packed.size(rd) +
+           Packed.size(re) + Packed.size(rf) +
+           Packed.size(rg) + Packed.size(rh) +
+           Packed.size(ri) + Packed.size(rj);
+}
+
+func main() {
+    print(sizes(
+        Packed.int8(1), Packed.uint8(1),
+        Packed.int16(1), Packed.uint16(1),
+        Packed.int32(1), Packed.uint32(1),
+        Packed.int64(1), Packed.uint64(1),
+        Packed.float32(1), Packed.float64(1),
+        Packed.int8(1), Packed.uint8(1),
+        Packed.int16(1), Packed.uint16(1),
+        Packed.int32(1), Packed.uint32(1),
+        Packed.int64(1), Packed.uint64(1),
+        Packed.float32(1), Packed.float64(1)));
+}

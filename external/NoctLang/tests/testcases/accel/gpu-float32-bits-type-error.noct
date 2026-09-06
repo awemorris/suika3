@@ -1,0 +1,5 @@
+__gpu func invalid(output: rpackedfloat_ptr): void {
+    output[0] = Accel.float32FromBits(1.0);
+}
+
+func main() {}

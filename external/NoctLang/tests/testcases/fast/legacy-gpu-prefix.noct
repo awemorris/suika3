@@ -1,0 +1,5 @@
+gpu func legacy(): void {
+}
+
+func main() {
+}

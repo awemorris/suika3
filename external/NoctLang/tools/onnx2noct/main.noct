@@ -1,0 +1,38 @@
+require emit_package;
+
+// Stage H entry point: validated deterministic GPU-only model package.
+func main(args) {
+    var output = "";
+    var modelPath = "";
+    var emitMain = true;
+    var emitMainSeen = false;
+    for (i in 0..Array.size(args)) {
+        var arg = args[i];
+        if (String.indexOf(arg, "--output=") == 0) {
+            if (output != "") { System.error("onnx2noct: duplicate --output option."); }
+            output = String.substring(arg, 9, String.charCount(arg) - 9);
+            if (output == "") { System.error("onnx2noct: --output directory is empty."); }
+        } else if (String.indexOf(arg, "--emit-main=") == 0) {
+            if (emitMainSeen) { System.error("onnx2noct: duplicate --emit-main option."); }
+            emitMainSeen = true;
+            var emitValue = String.substring(arg, 12,
+                                             String.charCount(arg) - 12);
+            if (emitValue == "yes") { emitMain = true; }
+            else if (emitValue == "no") { emitMain = false; }
+            else { System.error("onnx2noct: --emit-main must be yes or no."); }
+        } else if (String.indexOf(arg, "--") == 0) {
+            System.error("onnx2noct: unknown Stage-F option '" + arg + "'.");
+        } else {
+            if (modelPath != "") { System.error("onnx2noct: multiple model paths were provided."); }
+            modelPath = arg;
+        }
+    }
+    if (output == "" || modelPath == "") {
+        System.error("Usage: onnx2noct --output=DIR MODEL.onnx");
+    }
+    var graph = onnxNormalizeModel(onnxReadFile(modelPath));
+    var emitted = emitStageHPackage(output, graph, emitMain);
+    print("Generated Stage-" + emitted.plan.stage + " GPU model: kernels=" +
+          Array.size(emitted.registry.kernels) + " storages=" +
+          Array.size(emitted.plan.storages));
+}

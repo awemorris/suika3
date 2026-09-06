@@ -1,0 +1,11 @@
+func main() {
+    C = class { x: 42 };
+    var junk = [];
+    for (i in 0..2000) {
+        junk = [];
+        Array.push(junk, "gc-pressure-" + i);
+    }
+    GC.compactGC();
+    print(C.x);
+    C.x = 1;
+}

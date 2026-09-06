@@ -1,0 +1,22 @@
+func main() {
+    var n = 500;
+    var p = Packed.int32(n);
+    for (i in 0..n) {
+        p[i] = i * 100003;
+    }
+    var sum = 0;
+    var delta = 7;
+    for (i in 0..493) {
+        sum = sum + p[i + delta] - p[i];
+    }
+    print(sum);
+    var u = Packed.uint32(16);
+    for (i in 0..16) {
+        u[i] = i * 3;
+    }
+    var s2 = 0;
+    for (i in 0..16) {
+        s2 = s2 + u[i];
+    }
+    print(s2);
+}

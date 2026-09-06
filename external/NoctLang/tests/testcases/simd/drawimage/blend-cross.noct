@@ -1,0 +1,38 @@
+// Essence of DRAW_IMAGE_CROSS after clipping makes both sources contiguous.
+// The source-2 weight deliberately uses source-1 alpha, matching the C code.
+func blend_cross(dst: rpackeduint32, src1: rpackeduint32,
+                 src2: rpackeduint32, alpha: int, n: int): void {
+    let alpha_f = Float.from(alpha) / 255.0;
+    for (i in 0..n) {
+        let p1 = src1[i];
+        let p2 = src2[i];
+        let d = dst[i];
+        let source_a = Float.from((p1 >> 24) & 0xff) / 255.0;
+        let a1 = alpha_f * source_a;
+        let a2 = (1.0 - alpha_f) * source_a;
+        let da = 1.0 - (a1 + a2);
+        let r = a1 * Float.from((p1 >> 16) & 0xff) +
+                a2 * Float.from((p2 >> 16) & 0xff) +
+                da * Float.from((d >> 16) & 0xff);
+        let g = a1 * Float.from((p1 >> 8) & 0xff) +
+                a2 * Float.from((p2 >> 8) & 0xff) +
+                da * Float.from((d >> 8) & 0xff);
+        let b = a1 * Float.from(p1 & 0xff) +
+                a2 * Float.from(p2 & 0xff) +
+                da * Float.from(d & 0xff);
+        dst[i] = (255 << 24) | (Int.from(r) << 16) |
+                 (Int.from(g) << 8) | Int.from(b);
+    }
+}
+
+func main() {
+    let src1 = Packed.uint32(16);
+    let src2 = Packed.uint32(16);
+    let dst = Packed.uint32(16);
+    src1[0] = 0xc0f02010;
+    src2[0] = 0x8040e080;
+    dst[0] = 0xff203060;
+    blend_cross(dst, src1, src2, 96, 16);
+    print(dst[0]);
+    print(dst[15]);
+}

@@ -1,0 +1,10 @@
+func base_top_init() {
+	print("base-init");
+	return 0;
+}
+
+var base_marker = base_top_init();
+
+func package_init(): void {
+	print("base-package");
+}

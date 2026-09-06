@@ -1,0 +1,686 @@
+//
+// A small web framework written in Noct.
+//
+// It sits on top of the native HttpServer module and provides the
+// pieces a modern micro-framework is expected to have: routing with
+// path parameters, query strings, a request/response pair, JSON and
+// text helpers, static files, and 404/500 handling.
+//
+// Usage:
+//
+//     var app = new WebApp {};
+//     app.get("/", (req, res) => { res.text("Hello, Noct!"); });
+//     app.get("/user/:id", (req, res) => { res.json({id: req.params.id}); });
+//     app.run("127.0.0.1", 8080);
+//
+// The event loop is single-threaded and poller-driven. Handing an
+// accepted connection to a worker thread instead would not change
+// anything else here: a connection handle carries no thread affinity.
+//
+
+//
+// String helpers
+//
+
+func strTrim(s) {
+    var len = String.charCount(s);
+    var start = 0;
+    while (start < len) {
+        var c = String.charAt(s, start);
+        if (c != " " && c != "\t" && c != "\r" && c != "\n") {
+            break;
+        }
+        start = start + 1;
+    }
+    var end = len;
+    while (end > start) {
+        var c = String.charAt(s, end - 1);
+        if (c != " " && c != "\t" && c != "\r" && c != "\n") {
+            break;
+        }
+        end = end - 1;
+    }
+    return String.substring(s, start, end - start);
+}
+
+func strSplit(s, sep) {
+    var parts = [];
+    var sepLen = String.charCount(sep);
+    var rest = s;
+    while (true) {
+        var at = String.indexOf(rest, sep);
+        if (at < 0) {
+            Array.push(parts, rest);
+            break;
+        }
+        Array.push(parts, String.substring(rest, 0, at));
+        rest = String.substring(rest, at + sepLen, -1);
+    }
+    return parts;
+}
+
+func strStartsWith(s, prefix) {
+    var plen = String.charCount(prefix);
+    if (String.charCount(s) < plen) {
+        return false;
+    }
+    return String.substring(s, 0, plen) == prefix;
+}
+
+func strToLower(s) {
+    var out = "";
+    var len = String.charCount(s);
+    for (i in 0..len) {
+        var c = String.charAt(s, i);
+        if (c >= "A" && c <= "Z") {
+            // Shift by the distance between the two alphabet blocks.
+            var code = 0;
+            var upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+            var lower = "abcdefghijklmnopqrstuvwxyz";
+            var at = String.indexOf(upper, c);
+            out = out + String.charAt(lower, at);
+        } else {
+            out = out + c;
+        }
+    }
+    return out;
+}
+
+//
+// Percent-decoding for paths and query values
+//
+
+func hexValue(c) {
+    var digits = "0123456789";
+    var at = String.indexOf(digits, c);
+    if (at >= 0) {
+        return at;
+    }
+    var lower = "abcdef";
+    at = String.indexOf(lower, c);
+    if (at >= 0) {
+        return 10 + at;
+    }
+    var upper = "ABCDEF";
+    at = String.indexOf(upper, c);
+    if (at >= 0) {
+        return 10 + at;
+    }
+    return -1;
+}
+
+func urlDecode(s) {
+    var out = "";
+    var len = String.charCount(s);
+    var i = 0;
+    while (i < len) {
+        var c = String.charAt(s, i);
+        if (c == "+") {
+            out = out + " ";
+            i = i + 1;
+            continue;
+        }
+        if (c == "%" && i + 2 < len) {
+            var hi = hexValue(String.charAt(s, i + 1));
+            var lo = hexValue(String.charAt(s, i + 2));
+            if (hi >= 0 && lo >= 0) {
+                // Only ASCII is decoded; a multi-byte sequence is
+                // passed through so it is not corrupted.
+                var code = hi * 16 + lo;
+                if (code >= 32 && code < 127) {
+                    var printable = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~";
+                    out = out + String.charAt(printable, code - 32);
+                    i = i + 3;
+                    continue;
+                }
+            }
+        }
+        out = out + c;
+        i = i + 1;
+    }
+    return out;
+}
+
+//
+// HTTP request parsing
+//
+
+// Split a raw request into a request line, headers and a body.
+// Returns a dictionary, or one with "error" set when malformed.
+func parseRequest(raw) {
+    var headerEnd = String.indexOf(raw, "\r\n\r\n");
+    var sepLen = 4;
+    if (headerEnd < 0) {
+        headerEnd = String.indexOf(raw, "\n\n");
+        sepLen = 2;
+    }
+    if (headerEnd < 0) {
+        return {error: "incomplete"};
+    }
+
+    var head = String.substring(raw, 0, headerEnd);
+    var body = String.substring(raw, headerEnd + sepLen, -1);
+
+    var lines = strSplit(head, "\n");
+    if (Array.size(lines) < 1) {
+        return {error: "malformed"};
+    }
+
+    // Request line: METHOD SP TARGET SP VERSION
+    var reqLine = strTrim(lines[0]);
+    var tokens = strSplit(reqLine, " ");
+    if (Array.size(tokens) < 2) {
+        return {error: "malformed"};
+    }
+    var method = tokens[0];
+    var target = tokens[1];
+    var version = "HTTP/1.0";
+    if (Array.size(tokens) >= 3) {
+        version = tokens[2];
+    }
+
+    // Headers. Names are lower-cased so lookups are predictable.
+    var headers = {};
+    for (i in 1..Array.size(lines)) {
+        var line = strTrim(lines[i]);
+        if (line == "") {
+            continue;
+        }
+        var at = String.indexOf(line, ":");
+        if (at < 0) {
+            continue;
+        }
+        var name = strToLower(strTrim(String.substring(line, 0, at)));
+        var value = strTrim(String.substring(line, at + 1, -1));
+        headers[name] = value;
+    }
+
+    // Split the target into a path and a query string.
+    var path = target;
+    var query = {};
+    var qat = String.indexOf(target, "?");
+    if (qat >= 0) {
+        path = String.substring(target, 0, qat);
+        var qs = String.substring(target, qat + 1, -1);
+        var pairs = strSplit(qs, "&");
+        for (p in pairs) {
+            if (p == "") {
+                continue;
+            }
+            var eq = String.indexOf(p, "=");
+            if (eq < 0) {
+                query[urlDecode(p)] = "";
+            } else {
+                var k = urlDecode(String.substring(p, 0, eq));
+                var v = urlDecode(String.substring(p, eq + 1, -1));
+                query[k] = v;
+            }
+        }
+    }
+
+    return {
+        method: method,
+        target: target,
+        path: urlDecode(path),
+        version: version,
+        headers: headers,
+        query: query,
+        body: body,
+        params: {},
+        error: ""
+    };
+}
+
+// Does the raw text hold a complete request?
+// A request with a body is complete once Content-Length bytes arrived.
+func isRequestComplete(raw) {
+    var headerEnd = String.indexOf(raw, "\r\n\r\n");
+    var sepLen = 4;
+    if (headerEnd < 0) {
+        headerEnd = String.indexOf(raw, "\n\n");
+        sepLen = 2;
+    }
+    if (headerEnd < 0) {
+        return false;
+    }
+
+    var req = parseRequest(raw);
+    if (req.error != "") {
+        return false;
+    }
+    if (!Dict.hasKey(req.headers, "content-length")) {
+        return true;
+    }
+    var want = Int.from(req.headers["content-length"]);
+    return String.charCount(req.body) >= want;
+}
+
+func statusText(code) {
+    if (code == 200) { return "OK"; }
+    if (code == 201) { return "Created"; }
+    if (code == 204) { return "No Content"; }
+    if (code == 400) { return "Bad Request"; }
+    if (code == 404) { return "Not Found"; }
+    if (code == 405) { return "Method Not Allowed"; }
+    if (code == 500) { return "Internal Server Error"; }
+    return "OK";
+}
+
+func buildResponse(res, keepAlive) {
+    var out = "HTTP/1.1 " + res.status + " " + statusText(res.status) + "\r\n";
+    out = out + "Content-Length: " + String.charCount(res.body) + "\r\n";
+    if (keepAlive) {
+        out = out + "Connection: keep-alive\r\n";
+    } else {
+        out = out + "Connection: close\r\n";
+    }
+    for (k, v in res.headers) {
+        out = out + k + ": " + v + "\r\n";
+    }
+    out = out + "\r\n" + res.body;
+    return out;
+}
+
+//
+// JSON encoding
+//
+
+func jsonEscape(s) {
+    var out = "";
+    var len = String.charCount(s);
+    for (i in 0..len) {
+        var c = String.charAt(s, i);
+        if (c == "\"") {
+            out = out + "\\\"";
+        } else if (c == "\\") {
+            out = out + "\\\\";
+        } else if (c == "\n") {
+            out = out + "\\n";
+        } else if (c == "\r") {
+            out = out + "\\r";
+        } else if (c == "\t") {
+            out = out + "\\t";
+        } else {
+            out = out + c;
+        }
+    }
+    return out;
+}
+
+func jsonEncode(value) {
+    return jsonEncodeDepth(value, 0);
+}
+
+func jsonEncodeDepth(value, depth) {
+    if (depth > 16) {
+        return "null";
+    }
+
+    var t = Type.of(value);
+    if (t == "dict") {
+        var out = "{";
+        var first = 1;
+        for (k, v in value) {
+            if (first == 0) {
+                out = out + ",";
+            }
+            first = 0;
+            out = out + "\"" + jsonEscape(k) + "\":" + jsonEncodeDepth(v, depth + 1);
+        }
+        return out + "}";
+    }
+    if (t == "array") {
+        var out = "[";
+        for (i in 0..Array.size(value)) {
+            if (i > 0) {
+                out = out + ",";
+            }
+            out = out + jsonEncodeDepth(value[i], depth + 1);
+        }
+        return out + "]";
+    }
+    if (t == "string") {
+        return "\"" + jsonEscape(value) + "\"";
+    }
+    if (t == "func") {
+        return "null";
+    }
+    return String.from(value);
+}
+
+//
+// Routing
+//
+
+// Match a route pattern against a path.
+// Returns a dictionary of path parameters, or 0 when it does not match.
+func matchRoute(pattern, path) {
+    var pparts = strSplit(pattern, "/");
+    var vparts = strSplit(path, "/");
+
+    // A trailing "*" swallows the rest of the path.
+    var wildcard = Array.size(pparts) > 0 &&
+                   pparts[Array.size(pparts) - 1] == "*";
+
+    if (!wildcard && Array.size(pparts) != Array.size(vparts)) {
+        return 0;
+    }
+    if (wildcard && Array.size(vparts) < Array.size(pparts) - 1) {
+        return 0;
+    }
+
+    var params = {};
+    var limit = Array.size(pparts);
+    if (wildcard) {
+        limit = Array.size(pparts) - 1;
+    }
+    for (i in 0..limit) {
+        var p = pparts[i];
+        var v = vparts[i];
+        if (strStartsWith(p, ":")) {
+            params[String.substring(p, 1, -1)] = v;
+            continue;
+        }
+        if (p != v) {
+            return 0;
+        }
+    }
+    if (wildcard) {
+        var rest = "";
+        for (i in limit..Array.size(vparts)) {
+            if (rest != "") {
+                rest = rest + "/";
+            }
+            rest = rest + vparts[i];
+        }
+        params["*"] = rest;
+    }
+    return params;
+}
+
+//
+// Framework classes
+//
+// Class definitions are statements, so they live in an init function.
+// Call webappInit() once before creating an application.
+//
+
+func webappInit() {
+
+Response = class {
+    status: 200,
+    headers: {},
+    body: "",
+    sent: 0,
+
+    setStatus: (this, code) => {
+        this.status = code;
+        return this;
+    },
+
+    setHeader: (this, name, value) => {
+        this.headers[name] = value;
+        return this;
+    },
+
+    text: (this, s) => {
+        this.headers["Content-Type"] = "text/plain; charset=utf-8";
+        this.body = s;
+        this.sent = 1;
+        return this;
+    },
+
+    html: (this, s) => {
+        this.headers["Content-Type"] = "text/html; charset=utf-8";
+        this.body = s;
+        this.sent = 1;
+        return this;
+    },
+
+    json: (this, value) => {
+        this.headers["Content-Type"] = "application/json";
+        this.body = jsonEncode(value);
+        this.sent = 1;
+        return this;
+    }
+};
+
+
+//
+// Application
+//
+
+WebApp = class {
+    routes: [],
+    notFound: 0,
+    errorHandler: 0,
+    staticDir: "",
+    staticPrefix: "",
+    running: 0,
+    requestCount: 0,
+
+    // Register a route for a method.
+    route: (this, method, pattern, handler) => {
+        Array.push(this.routes, {
+            method: method,
+            pattern: pattern,
+            handler: handler
+        });
+        return this;
+    },
+
+    get: (this, pattern, handler) => {
+        return this.route("GET", pattern, handler);
+    },
+
+    post: (this, pattern, handler) => {
+        return this.route("POST", pattern, handler);
+    },
+
+    put: (this, pattern, handler) => {
+        return this.route("PUT", pattern, handler);
+    },
+
+    delete: (this, pattern, handler) => {
+        return this.route("DELETE", pattern, handler);
+    },
+
+    // Serve files under dir for paths starting with prefix.
+    static: (this, prefix, dir) => {
+        this.staticPrefix = prefix;
+        this.staticDir = dir;
+        return this;
+    },
+
+    // Override the 404 handler.
+    setNotFound: (this, handler) => {
+        this.notFound = handler;
+        return this;
+    },
+
+    // Override the 500 handler.
+    setErrorHandler: (this, handler) => {
+        this.errorHandler = handler;
+        return this;
+    },
+
+    // Turn one parsed request into a response.
+    dispatch: (this, req) => {
+        var res = new Response { headers: {}, body: "", status: 200, sent: 0 };
+
+        this.requestCount = this.requestCount + 1;
+
+        // HEAD is served by the GET route, with the body dropped.
+        var wanted = req.method;
+        var headOnly = 0;
+        if (wanted == "HEAD") {
+            wanted = "GET";
+            headOnly = 1;
+        }
+
+        // Routes are tried in registration order.
+        var methodMismatch = 0;
+        for (r in this.routes) {
+            var params = matchRoute(r.pattern, req.path);
+            if (params == 0) {
+                continue;
+            }
+            if (r.method != wanted) {
+                methodMismatch = 1;
+                continue;
+            }
+            req.params = params;
+            r.handler(req, res);
+            if (res.sent == 0) {
+                res.text("");
+            }
+            if (headOnly == 1) {
+                res.body = "";
+            }
+            return res;
+        }
+
+        // Static files.
+        if (this.staticDir != "" && strStartsWith(req.path, this.staticPrefix)) {
+            var rel = String.substring(req.path, String.charCount(this.staticPrefix), -1);
+            if (String.indexOf(rel, "..") < 0) {
+                var path = this.staticDir + "/" + rel;
+                if (FileUtil.checkFileExists(path) == 1) {
+                    res.setHeader("Content-Type", contentTypeOf(rel));
+                    res.body = FileUtil.readText(path);
+                    res.sent = 1;
+                    return res;
+                }
+            }
+        }
+
+        // A path that exists under a different method is a 405.
+        if (methodMismatch == 1) {
+            res.setStatus(405);
+            res.text("405 Method Not Allowed");
+            return res;
+        }
+
+        // Not found.
+        if (this.notFound != 0) {
+            this.notFound(req, res);
+            if (res.sent == 0) {
+                res.text("");
+            }
+            return res;
+        }
+        res.setStatus(404);
+        res.text("404 Not Found");
+        return res;
+    },
+
+    // Serve exactly one request on an accepted connection.
+    // Returns 1 if a response was written, 0 if the peer went away.
+    serve: (this, conn) => {
+        var raw = "";
+        while (true) {
+            var chunk = HttpServer.recv(conn, 4096);
+            if (chunk == "") {
+                // The peer closed before sending a full request.
+                if (raw == "") {
+                    return 0;
+                }
+                break;
+            }
+            raw = raw + chunk;
+            if (isRequestComplete(raw)) {
+                break;
+            }
+        }
+
+        var req = parseRequest(raw);
+        var res = 0;
+        if (req.error != "") {
+            res = new Response { headers: {}, body: "", status: 400, sent: 0 };
+            res.setStatus(400);
+            res.text("400 Bad Request");
+        } else {
+            res = this.dispatch(req);
+        }
+
+        HttpServer.send(conn, buildResponse(res, false));
+        return 1;
+    },
+
+    // Accept and serve until stopped.
+    //
+    // The loop is poller-driven so a future version can watch several
+    // listeners, or keep connections alive across requests, without
+    // changing the shape of the code.
+    run: (this, host, port) => {
+        var server = HttpServer.listen(host, port);
+        var poller = HttpServer.createPoller();
+        HttpServer.addToPoller(poller, server, HttpServer.READ);
+        this.running = 1;
+
+        while (this.running == 1) {
+            var ready = HttpServer.waitPoller(poller, 200);
+            for (r in ready) {
+                var conn = HttpServer.accept(r.socket);
+                this.serve(conn);
+                HttpServer.close(conn);
+            }
+        }
+
+        HttpServer.removeFromPoller(poller, server);
+        HttpServer.close(server);
+        return this;
+    },
+
+    // Serve on a listener the caller already created, stopping after
+    // "limit" requests.
+    //
+    // Taking the listener as an argument lets the caller bind before
+    // starting the serving thread, which removes the start-up race a
+    // client would otherwise hit. The listener is not closed here.
+    serveOn: (this, server, limit) => {
+        var poller = HttpServer.createPoller();
+        HttpServer.addToPoller(poller, server, HttpServer.READ);
+
+        var served = 0;
+        while (served < limit) {
+            var ready = HttpServer.waitPoller(poller, 5000);
+            for (r in ready) {
+                var conn = HttpServer.accept(r.socket);
+                served = served + this.serve(conn);
+                HttpServer.close(conn);
+            }
+        }
+
+        HttpServer.removeFromPoller(poller, server);
+        return served;
+    },
+
+    // Same as run(), but stops after "limit" requests.
+    runLimited: (this, host, port, limit) => {
+        var server = HttpServer.listen(host, port);
+        var served = this.serveOn(server, limit);
+        HttpServer.close(server);
+        return served;
+    }
+};
+
+}
+
+func contentTypeOf(name) {
+    if (endsWith(name, ".html")) { return "text/html; charset=utf-8"; }
+    if (endsWith(name, ".css"))  { return "text/css"; }
+    if (endsWith(name, ".js"))   { return "application/javascript"; }
+    if (endsWith(name, ".json")) { return "application/json"; }
+    if (endsWith(name, ".txt"))  { return "text/plain; charset=utf-8"; }
+    return "application/octet-stream";
+}
+
+func endsWith(s, suffix) {
+    var slen = String.charCount(s);
+    var xlen = String.charCount(suffix);
+    if (slen < xlen) {
+        return false;
+    }
+    return String.substring(s, slen - xlen, xlen) == suffix;
+}

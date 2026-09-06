@@ -1,0 +1,7 @@
+__fast func takes_int(value: int): int {
+    return value;
+}
+
+func main() {
+    print(takes_int(1.0f));
+}

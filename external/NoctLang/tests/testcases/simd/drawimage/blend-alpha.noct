@@ -1,0 +1,47 @@
+// Essence of DRAW_IMAGE_ALPHA.  The count parameter lets this exact source
+// serve both the optimizer regression and the function-call benchmark.
+func blend_alpha(dst: rpackeduint32, src: rpackeduint32,
+                 alpha: int, count: int): void {
+    let alpha_float = alpha / 65025.0;
+
+    for (x in 0..count) {
+        let dst_pix = dst[x];
+        let src_pix = src[x];
+
+        let dst_r = (dst_pix >> 16) & 0xff;
+        let dst_g = (dst_pix >> 8) & 0xff;
+        let dst_b = dst_pix & 0xff;
+
+        let src_a = (src_pix >> 24) & 0xff;
+        let src_r = (src_pix >> 16) & 0xff;
+        let src_g = (src_pix >> 8) & 0xff;
+        let src_b = src_pix & 0xff;
+
+        let pix_a = Float.from(src_a) * alpha_float;
+        let pix_inv_a = 1.0 - pix_a;
+
+        let pix_r = Float.from(src_r) * pix_a +
+            Float.from(dst_r) * pix_inv_a;
+        let pix_g = Float.from(src_g) * pix_a +
+            Float.from(dst_g) * pix_inv_a;
+        let pix_b = Float.from(src_b) * pix_a +
+            Float.from(dst_b) * pix_inv_a;
+
+        dst[x] = (255 << 24) |
+            (Int.from(pix_r) << 16) |
+            (Int.from(pix_g) << 8) |
+            Int.from(pix_b);
+    }
+}
+
+func main() {
+    let count = 16;
+    let dst = Packed.uint32(count);
+    let src = Packed.uint32(count);
+    dst[0] = (255 << 24) | (40 << 16) | (80 << 8) | 120;
+    src[0] = (128 << 24) | (200 << 16) | (100 << 8) | 50;
+    blend_alpha(dst, src, 128, count);
+    print(dst[0]);
+    print(dst[1]);
+    print(dst[count - 1]);
+}

@@ -1,0 +1,25 @@
+func main() {
+    var h = Process.spawn(["/bin/sh", "-c", "echo hello-from-child; read x; echo got-$x; exit 7"]);
+    print("h=" + h);
+    var out = "";
+    for (i in 0..50) {
+        var s = Process.read(h, 100);
+        out = out + s;
+        if (String.indexOf(out, "hello-from-child") >= 0) {
+            break;
+        }
+    }
+    print(String.indexOf(out, "hello-from-child") >= 0);
+    Process.write(h, "ping\n");
+    out = "";
+    for (i in 0..50) {
+        out = out + Process.read(h, 100);
+        if (String.indexOf(out, "got-ping") >= 0) {
+            break;
+        }
+    }
+    print(String.indexOf(out, "got-ping") >= 0);
+    print(Process.wait(h));
+    print(Process.isAlive(h));
+    Process.close(h);
+}

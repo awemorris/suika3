@@ -1,0 +1,19 @@
+__accel func transform(
+    source: rpackedint32,
+    destination: rpackedint32,
+    n: int): void {
+    for (i in 0..n) {
+        destination[i] = source[i] + 1;
+    }
+    var sum: int = 0;
+    for (j in 0..n) {
+        sum += source[j];
+    }
+    for (k in 0..n) {
+        destination[k] = destination[k] + sum;
+    }
+    destination[0] = sum;
+}
+
+func main() {
+}

@@ -1,0 +1,6 @@
+func f(d) {
+    return d.k + d.k;
+}
+func main() {
+    print(f({ k: 21 }));
+}

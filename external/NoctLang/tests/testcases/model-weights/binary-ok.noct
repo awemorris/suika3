@@ -1,0 +1,49 @@
+func main(args) {
+    var bytes = Packed.uint8(24);
+    Packed.fill(bytes, 0, 24, 0);
+
+    bytes[0] = 0xac;
+    bytes[1] = 0x02;
+    print(Binary.readVarintUnsigned(bytes, 0, 2));
+    print(Binary.skipVarint(bytes, 0, 2));
+
+    for (i in 0..9) {
+        bytes[i] = 0xff;
+    }
+    bytes[9] = 0x01;
+    print(Binary.readVarintUnsigned(bytes, 0, 10));
+    print(Binary.readVarintSigned(bytes, 0, 10));
+    print(Binary.skipVarint(bytes, 0, 10));
+
+    Binary.writeU32LE(bytes, 0, 0xfedcba98);
+    print(Binary.readU32LE(bytes, 0));
+    Binary.writeU64LE(bytes, 8, -1);
+    print(Binary.readI64LE(bytes, 8));
+
+    var abc = Packed.uint8(3);
+    Packed.fromString(abc, 0, "abc");
+    print(Hash.sha256(abc));
+    var digest = Hash.sha256Bytes(abc);
+    print(Packed.size(digest));
+    print(digest[0]);
+
+    var floats = Packed.float32(4);
+    floats[0] = 1.0;
+    floats[1] = -2.5;
+    floats[2] = 0.0 / 0.0;
+    floats[3] = 1.0 / 0.0;
+    Binary.writeFloat32LE(args[0], floats);
+    var loaded = Binary.readFloat32LE(args[0], 4);
+    print(loaded[0]);
+    print(loaded[1]);
+    print(loaded[2] != loaded[2]);
+    print(loaded[3] > 1000000.0);
+
+    var file = File.open(args[1], "wb");
+    File.writeAll(file, abc, 0, 3);
+    File.close(file);
+    file = File.open(args[1], "rb");
+    var exact = File.readExact(file, 3);
+    File.close(file);
+    print(Packed.toString(exact, 0, 3));
+}

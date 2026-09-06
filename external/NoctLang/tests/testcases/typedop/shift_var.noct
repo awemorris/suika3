@@ -1,0 +1,13 @@
+// Shifts with a variable count or an out-of-range literal stay
+// generic; the 33 case errors identically at both levels.
+
+func f(a: int, n: int) {
+    print(a << n);       // variable count: generic
+    print(a >> n);
+    print(a << 33);      // out-of-range literal: generic; runtime error
+}
+
+func main() {
+    f(5, 3);
+    return 0;
+}

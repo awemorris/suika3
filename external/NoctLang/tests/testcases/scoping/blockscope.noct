@@ -1,0 +1,19 @@
+func main() {
+    var a = 0;
+    if (a == 0) {
+        var s = 1;
+        a = a + s;
+    }
+    if (a == 1) {
+        var s = 2;
+        a = a + s;
+    }
+    print(a);
+    for (i in 0..3) {
+        a = a + i;
+    }
+    for (i in 0..3) {
+        a = a + i;
+    }
+    print(a);
+}

@@ -1,0 +1,8 @@
+require leaf;
+
+var middle_marker = append_middle();
+
+func append_middle(): int {
+	order = order + "M";
+	return 0;
+}

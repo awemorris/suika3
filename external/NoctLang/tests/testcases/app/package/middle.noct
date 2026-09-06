@@ -1,0 +1,12 @@
+require base;
+
+func middle_top_init() {
+	print("middle-init");
+	return 0;
+}
+
+var middle_marker = middle_top_init();
+
+func package_init(): void {
+	print("middle-package");
+}

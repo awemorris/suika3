@@ -1,0 +1,30 @@
+func main() {
+    // String concatenation used to be formatted through a fixed 1KB
+    // buffer and lost everything past 1023 bytes, without an error.
+    var s = "";
+    for (i in 0..300) { s = s + "0123456789"; }
+    print(String.charCount(s));
+
+    var big = "";
+    for (i in 0..5000) { big = big + "abcdefghij"; }
+    print(String.charCount(big));
+
+    // The tail has to survive, not just the length.
+    print(String.substring(big, String.charCount(big) - 10, -1));
+
+    // Numbers on either side go through the same path.
+    var mixed = "";
+    for (i in 0..400) { mixed = mixed + i + ","; }
+    print(String.charCount(mixed));
+    print(String.substring(mixed, String.charCount(mixed) - 8, -1));
+
+    var lead = "";
+    for (i in 0..400) { lead = lead + 7 + "x"; }
+    print(String.charCount(lead));
+
+    // Multibyte text must not be cut mid-character.
+    var jp = "";
+    for (i in 0..500) { jp = jp + "あいうえお"; }
+    print(String.charCount(jp));
+    print(String.substring(jp, String.charCount(jp) - 5, -1));
+}

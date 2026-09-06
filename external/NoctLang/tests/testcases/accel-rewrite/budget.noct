@@ -1,0 +1,8 @@
+__accel func transform(destination: rpackedint32, n: int): void {
+    for (i in 0..n) {
+        destination[i] = 1;
+    }
+}
+
+func main() {
+}

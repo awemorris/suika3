@@ -1,0 +1,59 @@
+__accel var device_a = Accel.uint32(1);
+__accel var device_b = Accel.uint32(1);
+__accel var device_output = Accel.uint32(1);
+
+__accel func add_one(
+    input: rpackeduint32_in,
+    output: rpackeduint32_out,
+    count: int
+): void {
+    for (i in 0..count) {
+        output[i] = input[i] + 1;
+    }
+}
+
+__accel func add_one_with_gc(
+    input: rpackeduint32_in,
+    output: rpackeduint32_out,
+    count: int
+): void {
+    GC.compactGC();
+    for (i in 0..count) {
+        output[i] = input[i] + 1;
+    }
+}
+
+func main() {
+    let host_a = Packed.uint32(1);
+    let host_b = Packed.uint32(1);
+    let result = Packed.uint32(1);
+    host_a[0] = 1;
+    host_b[0] = 10;
+    Accel.copyToAccel(host_a, 0, device_a, 0, 4);
+    Accel.copyToAccel(host_b, 0, device_b, 0, 4);
+
+    let old_event = Accel.callAsync(
+        add_one, device_a, device_output, 1);
+    let new_event = Accel.callAsync(
+        add_one, device_b, device_output, 1);
+
+    // This event is stale because a later FIFO command reused the output.
+    Accel.join(old_event);
+
+    // Restricted aliasing rejects the GPU path.  CPU fallback must first
+    // download the newest device value (11), then upload its result (12).
+    Accel.call(add_one, device_output, device_output, 1);
+
+    // Joining the older GPU result after the CPU write must not roll it back.
+    Accel.join(new_event);
+    Accel.copyFromAccel(device_output, 0, result, 0, 4);
+    print(result[0]);
+
+    // Resource arguments remain rooted when CPU fallback itself compacts GC.
+    Accel.call(add_one_with_gc, device_output, device_a, 1);
+
+    // A following GPU kernel must observe the CPU fallback's uploaded result.
+    Accel.call(add_one, device_a, device_b, 1);
+    Accel.copyFromAccel(device_b, 0, result, 0, 4);
+    print(result[0]);
+}

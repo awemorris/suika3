@@ -1,0 +1,15 @@
+(defun main ()
+  (let ((a 0))
+    (catch 'early-return
+      (setq a 0)
+      (if (= a 0)
+        (progn
+          (throw 'early-return 123)
+        )
+      )
+      (setq a 1)
+      (throw 'early-return 321)
+      0
+    )
+  )
+)

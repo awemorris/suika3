@@ -1,0 +1,28 @@
+// Single-packed image op: constant-alpha darken over RGBA32 pixels,
+// in place.  One packed + affine index + int-only body = the current
+// machinery's best case for image code: ABCE versions the loop
+// (PLOAD32/PSTORE32, no bounds checks) and design 07 Stage A types
+// every arithmetic op in the fast body.
+func darken(img, n, a) {
+    for (p in 0..n) {
+        var d = img[p];
+        var r = (((d >> 16) & 255) * a) >> 8;
+        var g = (((d >> 8) & 255) * a) >> 8;
+        var b = ((d & 255) * a) >> 8;
+        img[p] = (d & 4278190080) | (r << 16) | (g << 8) | b;
+    }
+}
+
+func main() {
+    var n = 262144;
+    var img = Packed.uint32(n);
+    for (i in 0..n) {
+        img[i] = (i * 2654435761) & 4294967295;
+    }
+    for (frame in 0..8) {
+        darken(img, n, 220);
+    }
+    print(img[0]);
+    print(img[1000]);
+    print(img[262143]);
+}

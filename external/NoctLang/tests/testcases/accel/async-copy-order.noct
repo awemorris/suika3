@@ -1,0 +1,48 @@
+__accel var device_input = Accel.uint32(4);
+__accel var device_output = Accel.uint32(4);
+
+__accel func add_one(
+    input: rpackeduint32_in,
+    output: rpackeduint32_out,
+    count: int
+): void {
+    for (i in 0..count) {
+        output[i] = input[i] + 1;
+    }
+}
+
+func main() {
+    let source = Packed.uint32(4);
+    let destination = Packed.uint32(4);
+    source[0] = 4;
+    source[1] = 8;
+    source[2] = 12;
+    source[3] = 16;
+    destination[0] = 70;
+
+    let upload = Accel.copyToAccelAsync(
+        source, 0, device_input, 0, 16);
+    source[0] = 99;
+    let kernel_a = Accel.callAsync(
+        add_one, device_input, device_output, 4);
+    let kernel_b = Accel.callAsync(
+        add_one, device_output, device_input, 4);
+    let download = Accel.copyFromAccelAsync(
+        device_input, 0, destination, 0, 16);
+
+    // A download is committed only when its event is joined.
+    print(destination[0]);
+    GC.compactGC();
+
+    // Joining the last FIFO event waits for upload and kernel execution too.
+    Accel.join(download);
+    print(destination[0]);
+    print(destination[1]);
+    print(destination[2]);
+    print(destination[3]);
+
+    // Earlier event IDs remain valid after joining the last event first.
+    Accel.join(kernel_b);
+    Accel.join(kernel_a);
+    Accel.join(upload);
+}

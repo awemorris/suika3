@@ -1,0 +1,19 @@
+func main() {
+    var d = { k: 3 };
+    var n = 1;
+    if (n > 100) {
+        var t = d.k * 2 + d.k * 2;
+        print(t);
+    }
+    var u = d.k * 2;
+    print(u);
+    if (n < 100) {
+        var v = d.k * 5 + d.k * 5;
+        print(v);
+    } else {
+        var w = d.k * 7;
+        print(w);
+    }
+    var x = d.k * 5;
+    print(x);
+}

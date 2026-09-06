@@ -1,0 +1,157 @@
+.\" -*- mode: nroff; -*-
+.Dd August 24, 2025
+.Dt NOCT 1
+.Os
+.Sh NAME
+.Nm noct
+.Nd Noct programming language CLI
+.Sh SYNOPSIS
+.Nm
+.Op Ar file
+.br
+.Nm
+.Op Fl Fl gpu Ns Op Cm = Ns Ar selector
+.Ar source-file
+.br
+.Nm
+.Fl Fl gpu-list
+.br
+.Nm
+.Fl Fl compile
+.Ar files ...
+.br
+.Nm
+.Fl Fl ansic
+.Ar out.c
+.Ar in files ...
+.br
+.Nm
+.Fl Fl elisp
+.Ar out.el
+.Ar in files ...
+.Sh DESCRIPTION
+The
+.Nm
+command is the command-line interface for the Noct programming language.
+It can directly run a program, run REPL, compile sources into Noct bytecode,
+or transpile sources to ANSI C or Emacs Lisp.
+.Pp
+If no arguments are provided, runs the REPL.
+.Pp
+If no option is given and a
+.Ar file
+is provided,
+.Nm
+executes the program.
+.Pp
+The
+.Sy __accel
+function annotation is an optimization hint.
+Its checked CPU body remains valid and runs when accelerator optimization is
+unavailable or declined.
+Accelerator-enabled builds choose platform backends automatically: Direct3D
+12 on Windows, Vulkan and OpenGL ES on Linux and
+.Fx ,
+and Metal on macOS.
+The compiler uses a private, backend-specific
+.Sy __Accel
+package; there is no public
+.Sy Accel.*
+API.
+.Pp
+CPU code may divide eligible loops into multiple synchronous GPU regions in
+one function.
+This means successive offload sessions on the selected device, not
+simultaneous use of multiple physical GPUs.
+.Sh OPTIONS
+The following options are supported:
+.Bl -tag -width 14n
+.It Fl Fl compile
+Compile one or more input source files into Noct bytecode files.
+.It Fl Fl gpu Ns Op Cm = Ns Ar selector
+Enable accelerator optimization while running source.
+Without a selector, choose a default suitable device.
+Canonical selectors, as printed by
+.Fl Fl gpu-list ,
+begin with
+.Ql vulkan\&: ,
+.Ql opengles\&: ,
+.Ql d3d12\&: ,
+or
+.Ql metal\&: .
+An exact unqualified device name is accepted only when it is unique across
+the available backends.
+.Pp
+This option applies only to source execution, including source supplied with
+.Fl e .
+It cannot be used with a
+.Pa .nbc
+or
+.Pa .nap
+file,
+.Fl Fl compile ,
+or
+.Fl Fl app .
+.It Fl Fl gpu-list
+List suitable GPU devices and their canonical selectors, then exit.
+This option must be used by itself.
+.It Fl Fl ansic Ar out.c Ar in files ...
+Transpile the specified input source files into a single ANSI C source file
+.Ar out.c .
+The generated C file can be compiled with the Noct runtime.
+.It Fl Fl elisp Ar out.el Ar in files ...
+Transpile the specified input source files into a single Emacs Lisp file
+.Ar out.el .
+The resulting file can be loaded into Emacs to run the program using
+Noct's Emacs integration (if available).
+.El
+.Sh OPERANDS
+.Bl -tag -width 14n
+.It Ar file
+Path to a Noct source file to execute.
+When present without other options,
+.Nm
+runs the program.
+.It Ar files
+One or more input source files.
+.El
+.Sh EXIT STATUS
+.Ex -std
+.Nm
+exits 0 on success and >0 if an error occurs (syntax error, I/O failure,
+code generation error, or runtime failure).
+.Sh EXAMPLES
+Run REPL:
+.Bd -literal -offset indent
+$ noct
+.Ed
+.Pp
+Run a program:
+.Bd -literal -offset indent
+$ noct hello.noct
+.Ed
+.Pp
+Compile multiple sources to bytecode:
+.Bd -literal -offset indent
+$ noct --compile lib.noct main.noct
+.Ed
+.Pp
+Transpile to ANSI C:
+.Bd -literal -offset indent
+$ noct --ansic aot_source.c main.noct lib.noct
+.Ed
+.Pp
+Generate a single Emacs Lisp file:
+.Bd -literal -offset indent
+$ noct --elisp app.el main.noct lib.noct
+.Ed
+.Sh VERSION
+Noct Programming Language
+.Dv 0.1.0
+.Sh AUTHORS
+.An Awe Morris
+and the Noct contributors.
+.Sh BUGS
+Report issues at <awe@noctvm.io> .
+.Pp
+Behavior and options are subject to change while Noct is pre-1.0.

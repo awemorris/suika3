@@ -1,0 +1,21 @@
+__accel func transform(
+    source: rpackedfloat,
+    destination: rpackedfloat,
+    scale: float,
+    n: int): void {
+    for (i in 0..n) {
+        destination[i] = source[i] * scale + 0.5;
+    }
+}
+
+func main() {
+    let source = Packed.float32(4);
+    let destination = Packed.float32(4);
+    for (i in 0..4) {
+        source[i] = i;
+    }
+    transform(source, destination, 2.0, 4);
+    for (i in 0..4) {
+        print(destination[i]);
+    }
+}

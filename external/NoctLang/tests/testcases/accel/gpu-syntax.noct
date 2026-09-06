@@ -1,0 +1,6 @@
+__gpu func empty(): void {
+}
+
+func main() {
+    empty();
+}

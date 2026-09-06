@@ -1,0 +1,11 @@
+func announce_fast_leaf(): int {
+    print("I");
+    return 0;
+}
+
+var fast_leaf_marker = announce_fast_leaf();
+
+__fast func module_add(data: rpackeduint32(4), value: int): int {
+    data[3] = data[0] + value;
+    return data[3];
+}

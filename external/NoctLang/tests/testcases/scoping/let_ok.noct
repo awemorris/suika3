@@ -1,0 +1,10 @@
+func main() {
+    let a = [1, 2, 3];
+    a[0] = 99;
+    print(a[0]);
+    let d = { k: 1 };
+    d.k = 2;
+    print(d.k);
+    let n = 42;
+    print(n);
+}

@@ -1,0 +1,43 @@
+func main() {
+    // A ranged-for ends when the counter reaches the stop value, so a
+    // range whose start is already past its stop used to run away
+    // instead of iterating zero times. "1..n" over an empty collection
+    // is the ordinary way to hit it.
+    var s = "";
+    for (i in 1..0) { s = s + "X"; }
+    print("[" + s + "]");
+
+    for (i in 5..2) { s = s + "Y"; }
+    print("[" + s + "]");
+
+    for (i in 0..0) { s = s + "Z"; }
+    print("[" + s + "]");
+
+    // Non-empty ranges are half-open and unaffected.
+    var t = "";
+    for (i in 1..4) { t = t + i; }
+    print(t);
+
+    var u = "";
+    for (i in 0 - 3..2) { u = u + i + " "; }
+    print(u);
+
+    // An empty range computed from a collection, which is how this
+    // arises in practice.
+    var empty = [];
+    var v = "";
+    for (i in 1..Array.size(empty)) { v = v + "!"; }
+    print("[" + v + "]");
+
+    // The guard must survive being in a function hot enough to JIT.
+    var total = 0;
+    for (i in 0..2000) { total = total + emptyInner(i); }
+    print(total);
+}
+
+func emptyInner(k) {
+    var n = 0;
+    for (i in k..0) { n = n + 1; }
+    for (i in 0..2) { n = n + 1; }
+    return n;
+}

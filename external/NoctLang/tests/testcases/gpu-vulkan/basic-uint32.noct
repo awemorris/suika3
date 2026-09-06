@@ -1,0 +1,18 @@
+__accel func transform(
+    data: rpackeduint32,
+    n: int): void {
+    for (i in 0..n) {
+        data[i] = data[i] + 2;
+    }
+}
+
+func main() {
+    let data = Packed.uint32(4);
+    for (i in 0..4) {
+        data[i] = i - 2;
+    }
+    transform(data, 4);
+    for (i in 0..4) {
+        print(data[i]);
+    }
+}

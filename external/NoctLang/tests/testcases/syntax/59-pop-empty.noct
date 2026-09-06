@@ -1,0 +1,25 @@
+func main() {
+    var a = [1];
+    Array.pop(a);
+    print(Array.size(a));
+    Array.push(a, 9);
+    Array.push(a, 8);
+    print(a[0]);
+    print(a[1]);
+    print(Array.size(a));
+    // Repeatedly empty and refill.
+    var b = [];
+    for (i in 0..5) {
+        Array.push(b, i);
+    }
+    while (Array.size(b) > 0) {
+        Array.pop(b);
+    }
+    print(Array.size(b));
+    Array.push(b, 42);
+    print(b[0]);
+    // Dict analog: build, then reads still work.
+    var d = {};
+    d.x = 1;
+    print(d.x);
+}

@@ -1,0 +1,44 @@
+// One accepting thread hands connections to worker threads. This is the
+// shape a thread pool would take: a connection handle carries no thread
+// affinity, so the accepting thread and the serving thread may differ.
+
+func worker(param) {
+    var got = HttpServer.recv(param.conn, 4096);
+    HttpServer.send(param.conn, "w:" + got);
+    HttpServer.close(param.conn);
+    return 1;
+}
+
+func server_thread(param) {
+    var workers = [];
+    for (i in 0..param.count) {
+        var conn = HttpServer.accept(param.server);
+        workers[i] = Thread.createThread(worker, {conn: conn});
+    }
+    var served = 0;
+    for (i in 0..param.count) {
+        served = served + Thread.joinThread(workers[i]);
+    }
+    return served;
+}
+
+func main() {
+    var port = 18105;
+    var count = 6;
+
+    var server = HttpServer.listen("127.0.0.1", port);
+    var th = Thread.createThread(server_thread, {server: server, count: count});
+
+    var ok = 0;
+    for (i in 0..count) {
+        var conn = HttpServer.connect("127.0.0.1", port);
+        HttpServer.send(conn, "m" + i);
+        if (HttpServer.recv(conn, 4096) == "w:m" + i) {
+            ok = ok + 1;
+        }
+        HttpServer.close(conn);
+    }
+    print(ok);
+    print(Thread.joinThread(th));
+    HttpServer.close(server);
+}

@@ -1,0 +1,11 @@
+require fast_leaf;
+
+__fast func call_required(data: rpackeduint32(4), value: int): int {
+    return module_add(data, value);
+}
+
+func main() {
+    var data = Packed.uint32(4);
+    data[0] = 7;
+    print(call_required(data, 5));
+}
