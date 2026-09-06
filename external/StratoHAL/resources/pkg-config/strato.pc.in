@@ -1,0 +1,32 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+
+Name: StratoHAL core library
+Description: HAL for 2D games
+Version: @PROJECT_VERSION@
+Cflags: -I${includedir}/strato
+Libs: -L${libdir} -lstrato
+
+Requires.private: \
+    zlib \
+    libpng \
+    libjpeg \
+    libwebp \
+    ogg \
+    vorbis \
+    vorbisfile \
+    freetype2 \
+    libbrotlicommon \
+    libbrotlidec \
+    alsa \
+    gstreamer-1.0 \
+    gstreamer-plugins-base-1.0 \
+    x11 \
+    xpm \
+    wayland-client \
+    wayland-protocols \
+    egl \
+    glesv2 \
+    libdecor-0

@@ -1,0 +1,60 @@
+ID:No startup file.
+en:No startup file.
+es:No hay archivo de inicio.
+fr:Aucun fichier de démarrage.
+it:Nessun file di avvio.
+de:Keine Startdatei vorhanden.
+el:Δεν υπάρχει αρχείο εκκίνησης.
+ru:Файл запуска отсутствует.
+zh:没有启动文件。
+tw:沒有啟動檔案。
+ja:スタートアップファイルがありません。
+---
+ID:Failed to initialize the sound.
+en:Failed to initialize the sound.
+es:Error al inicializar el sonido.
+fr:Échec de l'initialisation du son.
+it:Impossibile inizializzare l'audio.
+de:Initialisierung des Sounds fehlgeschlagen.
+el:Αποτυχία αρχικοποίησης του ήχου.
+ru:Не удалось инициализировать звук.
+zh:声音初始化失败。
+tw:聲音初始化失敗。
+ja:サウンドの初期化に失敗しました。
+---
+ID:Failed to initialize the graphics.
+en:Failed to initialize the graphics.
+es:Error al inicializar los gráficos.
+fr:Echec de linitialisation des graphiques.
+it:Impossibile inizializzare la grafica.
+de:Initialisierung der Grafik fehlgeschlagen.
+el:Αποτυχία αρχικοποίησης των γραφικών.
+ru:Не удалось инициализировать графику.
+zh:图形初始化失败。
+tw:圖形初始化失敗。
+ja:グラフィックスの初期化に失敗しました。
+---
+ID:Out of memory.
+en:Out of memory.
+es:Memoria insuficiente.
+fr:Mémoire insuffisante.
+it:Memoria esaurita.
+de:Nicht genügend Speicher.
+el:Εκτός μνήμης.
+ru:Недостаточно памяти.
+zh:内存不足。
+tw:記憶體不足。
+ja:メモリが不足しています。
+---
+ID:The app is crashed.
+en:The app is crashed.
+es:La aplicación se ha bloqueado.
+fr:L'application a planté.
+it:L'applicazione è andata in crash.
+de:Die App ist abgestürzt.
+el:Η εφαρμογή κατέρρευσε.
+ru:Приложение завершилось с ошибкой.
+zh:应用程序已崩溃。
+tw:應用程式已當機。
+ja:アプリケーションがクラッシュしました。
+---

@@ -1,0 +1,20 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "No startup file."
+msgstr "Keine Startdatei vorhanden."
+
+msgid "Failed to initialize the sound."
+msgstr "Initialisierung des Sounds fehlgeschlagen."
+
+msgid "Failed to initialize the graphics."
+msgstr "Initialisierung der Grafik fehlgeschlagen."
+
+msgid "Out of memory."
+msgstr "Nicht genügend Speicher."
+
+msgid "The app is crashed."
+msgstr "Die App ist abgestürzt."
+
