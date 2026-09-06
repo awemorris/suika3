@@ -1,0 +1,20 @@
+// Two packed locals that alias the SAME object with different
+// offsets: statically two bases (runtime disjointness guard), the
+// guard fails at runtime and the scalar fallback runs.  Output must
+// match level 0 exactly.
+func main() {
+    var n = 16;
+    var p = Packed.uint32(32);
+    var q = p;
+    for (i in 0..32) {
+        p[i] = i * 7;
+    }
+    for (i in 0..n) {
+        p[i] = q[i + 1] + 1;
+    }
+    var sum = 0;
+    for (i in 0..32) {
+        sum = sum + p[i];
+    }
+    print(sum);
+}

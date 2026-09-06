@@ -1,0 +1,9 @@
+func as_u32(value): packeduint32 {
+    return value;
+}
+
+func main() {
+    let p = Packed.uint16(1);
+    as_u32(p);
+    print("unchecked");
+}

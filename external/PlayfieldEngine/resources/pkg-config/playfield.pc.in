@@ -1,0 +1,10 @@
+prefix=@CMAKE_INSTALL_PREFIX@
+exec_prefix=${prefix}
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+
+Name: Playfield Engine
+Description: Playfield Engine core library
+Version: @PROJECT_VERSION@
+Cflags: -I${includedir}/playfield
+Libs: -L${libdir} -lplayfield

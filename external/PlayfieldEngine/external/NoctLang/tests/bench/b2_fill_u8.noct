@@ -1,0 +1,8 @@
+func main() {
+    var n = 20000000;
+    var p = Packed.uint8(n);
+    for (i in 0..n) {
+        p[i] = i % 251;
+    }
+    print(p[1234567]);
+}

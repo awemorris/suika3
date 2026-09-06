@@ -1,0 +1,6 @@
+__gpu func invalid(x: float): void {
+    let result: float = Accel.notRegistered(x);
+}
+
+func main() {
+}

@@ -1,0 +1,21 @@
+// Variable int32 division and remainder must use checked typed opcodes at
+// -O1 and above while preserving the generic -O0 semantics exactly.
+
+func checked_div(a: int, b: int) {
+    print(a / b);
+    print(a % b);
+}
+
+func main() {
+    checked_div(100, 7);
+    checked_div(0 - 100, 7);
+    checked_div(100, 0 - 7);
+    checked_div(0 - 100, 0 - 7);
+
+    var min = 0 - 2147483647 - 1;
+    var minus_one = 0 - 1;
+    var one = 1;
+    checked_div(min, minus_one);
+    checked_div(min, one);
+    return 0;
+}

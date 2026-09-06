@@ -1,0 +1,20 @@
+func main() {
+    // Each escape must decode to exactly one character.
+    print(String.charCount("\n"));
+    print(String.charCount("\t"));
+    print(String.charCount("\r"));
+    print(String.charCount("\""));
+    print(String.charCount("\\"));
+
+    // Decoded values.
+    print("a\"b");
+    print("c\\d");
+    print("e" + "\t" + "f");
+
+    // Escapes inside a longer literal.
+    print(String.charCount("a\nb"));
+    print(String.indexOf("x\ty", "\t"));
+
+    // An unknown escape yields the escaped character itself.
+    print("\q");
+}

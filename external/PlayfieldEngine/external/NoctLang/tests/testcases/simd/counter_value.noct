@@ -1,0 +1,13 @@
+// The counter used as a VALUE (not just an index): E5 reject.
+func main() {
+    var n = 12;
+    var p = Packed.uint32(n);
+    for (i in 0..n) {
+        p[i] = i * 2;
+    }
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + p[i];
+    }
+    print(sum);
+}

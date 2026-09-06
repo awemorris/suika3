@@ -1,0 +1,16 @@
+// Typed-op benchmark, integer kernel (design 07 §8): an LCG/checksum
+// loop whose body is pure proven-int arithmetic.  At level 2 every op
+// lowers to OP_I*; at level 0 every op is a generic helper call.
+func kernel(n: int, seed: int) {
+    var x = seed;
+    var acc = 0;
+    for (i in 0..n) {
+        x = (x * 1103515245 + 12345) & 2147483647;
+        acc = (acc ^ (x >> 16)) + (x & 65535);
+    }
+    return acc;
+}
+
+func main() {
+    print(kernel(5000000, 42));
+}

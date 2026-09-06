@@ -1,0 +1,1391 @@
+{
+  "authority": "docs/design/18-onnx-gpu-source-codegen.md Stage A",
+  "generated_by": "tests/testcases/onnx2noct/oracle/build_models_lock.py",
+  "large_external_artifacts_are_not_committed": true,
+  "models": [
+    {
+      "acceptance": {
+        "blockers": [],
+        "fixed_shape_v1": true,
+        "output_meaning": "raw 1x10 logits before softmax"
+      },
+      "artifact": {
+        "byte_size": 26143,
+        "filename": "mnist-12.onnx",
+        "sha256": "5c688690f8bacf667d4c2074af5ad0646ca328d7ab03eccf944a65b320171bdd"
+      },
+      "id": "mnist-12",
+      "inventory": {
+        "checker": "ok",
+        "graph": {
+          "initializer_count": 8,
+          "inputs": [
+            {
+              "dtype": "FLOAT",
+              "name": "Input3",
+              "shape": [
+                1,
+                1,
+                28,
+                28
+              ]
+            }
+          ],
+          "name": "CNTKGraph",
+          "node_count": 12,
+          "operators": [
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [],
+                  "count": 3
+                }
+              ],
+              "count": 3,
+              "domain": "ai.onnx",
+              "op_type": "Add"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [
+                    {
+                      "name": "auto_pad",
+                      "type": "STRING",
+                      "value": {
+                        "utf8_or_hex": "SAME_UPPER"
+                      }
+                    },
+                    {
+                      "name": "dilations",
+                      "type": "INTS",
+                      "value": [
+                        1,
+                        1
+                      ]
+                    },
+                    {
+                      "name": "group",
+                      "type": "INT",
+                      "value": 1
+                    },
+                    {
+                      "name": "kernel_shape",
+                      "type": "INTS",
+                      "value": [
+                        5,
+                        5
+                      ]
+                    },
+                    {
+                      "name": "strides",
+                      "type": "INTS",
+                      "value": [
+                        1,
+                        1
+                      ]
+                    }
+                  ],
+                  "count": 2
+                }
+              ],
+              "count": 2,
+              "domain": "ai.onnx",
+              "op_type": "Conv"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [],
+                  "count": 1
+                }
+              ],
+              "count": 1,
+              "domain": "ai.onnx",
+              "op_type": "MatMul"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [
+                    {
+                      "name": "auto_pad",
+                      "type": "STRING",
+                      "value": {
+                        "utf8_or_hex": "NOTSET"
+                      }
+                    },
+                    {
+                      "name": "kernel_shape",
+                      "type": "INTS",
+                      "value": [
+                        2,
+                        2
+                      ]
+                    },
+                    {
+                      "name": "pads",
+                      "type": "INTS",
+                      "value": [
+                        0,
+                        0,
+                        0,
+                        0
+                      ]
+                    },
+                    {
+                      "name": "strides",
+                      "type": "INTS",
+                      "value": [
+                        2,
+                        2
+                      ]
+                    }
+                  ],
+                  "count": 1
+                },
+                {
+                  "attributes": [
+                    {
+                      "name": "auto_pad",
+                      "type": "STRING",
+                      "value": {
+                        "utf8_or_hex": "NOTSET"
+                      }
+                    },
+                    {
+                      "name": "kernel_shape",
+                      "type": "INTS",
+                      "value": [
+                        3,
+                        3
+                      ]
+                    },
+                    {
+                      "name": "pads",
+                      "type": "INTS",
+                      "value": [
+                        0,
+                        0,
+                        0,
+                        0
+                      ]
+                    },
+                    {
+                      "name": "strides",
+                      "type": "INTS",
+                      "value": [
+                        3,
+                        3
+                      ]
+                    }
+                  ],
+                  "count": 1
+                }
+              ],
+              "count": 2,
+              "domain": "ai.onnx",
+              "op_type": "MaxPool"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [],
+                  "count": 2
+                }
+              ],
+              "count": 2,
+              "domain": "ai.onnx",
+              "op_type": "Relu"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [],
+                  "count": 2
+                }
+              ],
+              "count": 2,
+              "domain": "ai.onnx",
+              "op_type": "Reshape"
+            }
+          ],
+          "outputs": [
+            {
+              "dtype": "FLOAT",
+              "name": "Plus214_Output_0",
+              "shape": [
+                1,
+                10
+              ]
+            }
+          ]
+        },
+        "ir_version": 7,
+        "model_version": 1,
+        "opsets": [
+          {
+            "domain": "ai.onnx",
+            "version": 12
+          }
+        ],
+        "producer_name": "CNTK",
+        "producer_version": "2.5.1"
+      },
+      "oracle": {
+        "input": {
+          "byte_size": 3136,
+          "concrete_shape": [
+            1,
+            1,
+            28,
+            28
+          ],
+          "declared_shape": [
+            1,
+            1,
+            28,
+            28
+          ],
+          "file": "mnist-12.input.f32le",
+          "name": "Input3",
+          "sha256": "e921f99d49d8f5abeb8d3e98d95fd71f2d65db413f7f535084ed4649e9d2e0e8",
+          "stats": {
+            "argmax": 120,
+            "elements": 784,
+            "finite_elements": 784,
+            "first_values": [
+              0.4453125,
+              0.734375,
+              -0.984375,
+              -0.6953125,
+              -0.40625,
+              -0.1171875,
+              0.171875,
+              0.4609375,
+              0.75,
+              -0.96875
+            ],
+            "maximum": 1.0,
+            "mean": -0.002272002551020408,
+            "minimum": -1.0,
+            "nan_elements": 0,
+            "negative_inf_elements": 0,
+            "positive_inf_elements": 0
+          }
+        },
+        "lock": "tests/testcases/onnx2noct/oracle-data/model-oracles.lock",
+        "output": {
+          "byte_size": 40,
+          "concrete_shape": [
+            1,
+            10
+          ],
+          "declared_shape": [
+            1,
+            10
+          ],
+          "file": "mnist-12.output.f32le",
+          "name": "Plus214_Output_0",
+          "sha256": "eea6bec648363683f6507cd19f05bbebf282c618e56903873e0c30af6ee0ab8a",
+          "stats": {
+            "argmax": 4,
+            "elements": 10,
+            "finite_elements": 10,
+            "first_values": [
+              -4.909904956817627,
+              6.436458587646484,
+              -8.64891529083252,
+              -9.632597923278809,
+              12.36581802368164,
+              -3.1818015575408936,
+              5.455126762390137,
+              1.4100831747055054,
+              -2.1699206829071045,
+              -11.29658317565918
+            ],
+            "maximum": 12.36581802368164,
+            "mean": -1.4172237038612365,
+            "minimum": -11.29658317565918,
+            "nan_elements": 0,
+            "negative_inf_elements": 0,
+            "positive_inf_elements": 0
+          }
+        }
+      },
+      "source": {
+        "kind": "external",
+        "license_evidence": [
+          {
+            "claim": "Apache-2.0",
+            "location": "Hugging Face repository metadata"
+          },
+          {
+            "claim": "MIT",
+            "location": "migrated ONNX Model Zoo model-card License section"
+          }
+        ],
+        "notice": "Migrated ONNX Model Zoo artifact; preserve both conflicting published license claims pending owner/legal review.",
+        "page": "https://huggingface.co/onnxmodelzoo/mnist-12",
+        "revision": "1cd752f4a3d818fa215aa621c78b8a10a4a1a3a5",
+        "url": "https://huggingface.co/onnxmodelzoo/mnist-12/resolve/1cd752f4a3d818fa215aa621c78b8a10a4a1a3a5/mnist-12.onnx"
+      }
+    },
+    {
+      "acceptance": {
+        "blockers": [],
+        "fixed_shape_v1": true,
+        "output_meaning": "raw 1x10 synthetic logits"
+      },
+      "artifact": {
+        "byte_size": 248967,
+        "filename": "project-cifar-opset12.onnx",
+        "sha256": "919bf61c686a19c22404636db9003b1cbe651cf1fd01250500a1c2a3a72d64bf"
+      },
+      "id": "project-cifar-opset12",
+      "inventory": {
+        "checker": "ok",
+        "graph": {
+          "initializer_count": 10,
+          "inputs": [
+            {
+              "dtype": "FLOAT",
+              "name": "input",
+              "shape": [
+                1,
+                3,
+                32,
+                32
+              ]
+            }
+          ],
+          "name": "noct-project-cifar-opset12",
+          "node_count": 12,
+          "operators": [
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [
+                    {
+                      "name": "kernel_shape",
+                      "type": "INTS",
+                      "value": [
+                        5,
+                        5
+                      ]
+                    }
+                  ],
+                  "count": 2
+                }
+              ],
+              "count": 2,
+              "domain": "ai.onnx",
+              "op_type": "Conv"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [
+                    {
+                      "name": "axis",
+                      "type": "INT",
+                      "value": 1
+                    }
+                  ],
+                  "count": 1
+                }
+              ],
+              "count": 1,
+              "domain": "ai.onnx",
+              "op_type": "Flatten"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [
+                    {
+                      "name": "transB",
+                      "type": "INT",
+                      "value": 1
+                    }
+                  ],
+                  "count": 3
+                }
+              ],
+              "count": 3,
+              "domain": "ai.onnx",
+              "op_type": "Gemm"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [
+                    {
+                      "name": "kernel_shape",
+                      "type": "INTS",
+                      "value": [
+                        2,
+                        2
+                      ]
+                    },
+                    {
+                      "name": "strides",
+                      "type": "INTS",
+                      "value": [
+                        2,
+                        2
+                      ]
+                    }
+                  ],
+                  "count": 2
+                }
+              ],
+              "count": 2,
+              "domain": "ai.onnx",
+              "op_type": "MaxPool"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [],
+                  "count": 4
+                }
+              ],
+              "count": 4,
+              "domain": "ai.onnx",
+              "op_type": "Relu"
+            }
+          ],
+          "outputs": [
+            {
+              "dtype": "FLOAT",
+              "name": "logits",
+              "shape": [
+                1,
+                10
+              ]
+            }
+          ]
+        },
+        "ir_version": 7,
+        "model_version": 1,
+        "opsets": [
+          {
+            "domain": "ai.onnx",
+            "version": 12
+          }
+        ],
+        "producer_name": "NoctLang Stage A fixture generator",
+        "producer_version": "1"
+      },
+      "oracle": {
+        "input": {
+          "byte_size": 12288,
+          "concrete_shape": [
+            1,
+            3,
+            32,
+            32
+          ],
+          "declared_shape": [
+            1,
+            3,
+            32,
+            32
+          ],
+          "file": "project-cifar-opset12.input.f32le",
+          "name": "input",
+          "sha256": "4f53b88f8425438dbb182d2f1d781124be574554037aced0389440ab7a6b1c43",
+          "stats": {
+            "argmax": 251,
+            "elements": 3072,
+            "finite_elements": 3072,
+            "first_values": [
+              0.7265625,
+              -0.9921875,
+              -0.703125,
+              -0.4140625,
+              -0.125,
+              0.1640625,
+              0.453125,
+              0.7421875,
+              -0.9765625,
+              -0.6875
+            ],
+            "maximum": 1.0,
+            "mean": -7.375081380208333e-05,
+            "minimum": -1.0,
+            "nan_elements": 0,
+            "negative_inf_elements": 0,
+            "positive_inf_elements": 0
+          }
+        },
+        "lock": "tests/testcases/onnx2noct/oracle-data/model-oracles.lock",
+        "output": {
+          "byte_size": 40,
+          "concrete_shape": [
+            1,
+            10
+          ],
+          "declared_shape": [
+            1,
+            10
+          ],
+          "file": "project-cifar-opset12.output.f32le",
+          "name": "logits",
+          "sha256": "e8c083071e1efc863a870af96cba25cdd8880557206f9fad39a51921ed247b73",
+          "stats": {
+            "argmax": 9,
+            "elements": 10,
+            "finite_elements": 10,
+            "first_values": [
+              0.953125,
+              1.953125,
+              2.953125,
+              3.953125,
+              4.953125,
+              5.953125,
+              6.953125,
+              7.953125,
+              8.953125,
+              9.953125
+            ],
+            "maximum": 9.953125,
+            "mean": 5.453125,
+            "minimum": 0.953125,
+            "nan_elements": 0,
+            "negative_inf_elements": 0,
+            "positive_inf_elements": 0
+          }
+        }
+      },
+      "source": {
+        "generator": "tests/testcases/onnx2noct/oracle/generate_fixtures.py",
+        "kind": "repository",
+        "license_evidence": [
+          {
+            "claim": "zlib",
+            "location": "NoctLang repository LICENSE for project-owned fixture"
+          }
+        ],
+        "notice": "Project-owned deterministic sparse-weight export of the existing Noct CIFAR benchmark topology.",
+        "path": "tests/testcases/onnx2noct/fixtures/models/project-cifar-opset12.onnx",
+        "topology_reference": "https://docs.pytorch.org/tutorials/beginner/blitz/cifar10_tutorial.html"
+      }
+    },
+    {
+      "acceptance": {
+        "blockers": [],
+        "fixed_shape_v1": true,
+        "output_meaning": "raw 1x1000 classification scores"
+      },
+      "artifact": {
+        "byte_size": 4956208,
+        "filename": "squeezenet1.1-7.onnx",
+        "sha256": "1eeff551a67ae8d565ca33b572fc4b66e3ef357b0eb2863bb9ff47a918cc4088"
+      },
+      "id": "squeezenet1.1-7",
+      "inventory": {
+        "checker": "ok",
+        "graph": {
+          "initializer_count": 53,
+          "inputs": [
+            {
+              "dtype": "FLOAT",
+              "name": "data",
+              "shape": [
+                1,
+                3,
+                224,
+                224
+              ]
+            }
+          ],
+          "name": "main",
+          "node_count": 66,
+          "operators": [
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [
+                    {
+                      "name": "kernel_shape",
+                      "type": "INTS",
+                      "value": [
+                        13,
+                        13
+                      ]
+                    },
+                    {
+                      "name": "pads",
+                      "type": "INTS",
+                      "value": [
+                        0,
+                        0,
+                        0,
+                        0
+                      ]
+                    },
+                    {
+                      "name": "strides",
+                      "type": "INTS",
+                      "value": [
+                        13,
+                        13
+                      ]
+                    }
+                  ],
+                  "count": 1
+                }
+              ],
+              "count": 1,
+              "domain": "ai.onnx",
+              "op_type": "AveragePool"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [
+                    {
+                      "name": "axis",
+                      "type": "INT",
+                      "value": 1
+                    }
+                  ],
+                  "count": 8
+                }
+              ],
+              "count": 8,
+              "domain": "ai.onnx",
+              "op_type": "Concat"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [
+                    {
+                      "name": "dilations",
+                      "type": "INTS",
+                      "value": [
+                        1,
+                        1
+                      ]
+                    },
+                    {
+                      "name": "group",
+                      "type": "INT",
+                      "value": 1
+                    },
+                    {
+                      "name": "kernel_shape",
+                      "type": "INTS",
+                      "value": [
+                        1,
+                        1
+                      ]
+                    },
+                    {
+                      "name": "pads",
+                      "type": "INTS",
+                      "value": [
+                        0,
+                        0,
+                        0,
+                        0
+                      ]
+                    },
+                    {
+                      "name": "strides",
+                      "type": "INTS",
+                      "value": [
+                        1,
+                        1
+                      ]
+                    }
+                  ],
+                  "count": 17
+                },
+                {
+                  "attributes": [
+                    {
+                      "name": "dilations",
+                      "type": "INTS",
+                      "value": [
+                        1,
+                        1
+                      ]
+                    },
+                    {
+                      "name": "group",
+                      "type": "INT",
+                      "value": 1
+                    },
+                    {
+                      "name": "kernel_shape",
+                      "type": "INTS",
+                      "value": [
+                        3,
+                        3
+                      ]
+                    },
+                    {
+                      "name": "pads",
+                      "type": "INTS",
+                      "value": [
+                        0,
+                        0,
+                        0,
+                        0
+                      ]
+                    },
+                    {
+                      "name": "strides",
+                      "type": "INTS",
+                      "value": [
+                        2,
+                        2
+                      ]
+                    }
+                  ],
+                  "count": 1
+                },
+                {
+                  "attributes": [
+                    {
+                      "name": "dilations",
+                      "type": "INTS",
+                      "value": [
+                        1,
+                        1
+                      ]
+                    },
+                    {
+                      "name": "group",
+                      "type": "INT",
+                      "value": 1
+                    },
+                    {
+                      "name": "kernel_shape",
+                      "type": "INTS",
+                      "value": [
+                        3,
+                        3
+                      ]
+                    },
+                    {
+                      "name": "pads",
+                      "type": "INTS",
+                      "value": [
+                        1,
+                        1,
+                        1,
+                        1
+                      ]
+                    },
+                    {
+                      "name": "strides",
+                      "type": "INTS",
+                      "value": [
+                        1,
+                        1
+                      ]
+                    }
+                  ],
+                  "count": 8
+                }
+              ],
+              "count": 26,
+              "domain": "ai.onnx",
+              "op_type": "Conv"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [
+                    {
+                      "name": "ratio",
+                      "type": "FLOAT",
+                      "value": {
+                        "display": "0.5",
+                        "float32_bits": "0x3f000000"
+                      }
+                    }
+                  ],
+                  "count": 1
+                }
+              ],
+              "count": 1,
+              "domain": "ai.onnx",
+              "op_type": "Dropout"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [
+                    {
+                      "name": "kernel_shape",
+                      "type": "INTS",
+                      "value": [
+                        3,
+                        3
+                      ]
+                    },
+                    {
+                      "name": "pads",
+                      "type": "INTS",
+                      "value": [
+                        0,
+                        0,
+                        0,
+                        0
+                      ]
+                    },
+                    {
+                      "name": "strides",
+                      "type": "INTS",
+                      "value": [
+                        2,
+                        2
+                      ]
+                    }
+                  ],
+                  "count": 3
+                }
+              ],
+              "count": 3,
+              "domain": "ai.onnx",
+              "op_type": "MaxPool"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [],
+                  "count": 26
+                }
+              ],
+              "count": 26,
+              "domain": "ai.onnx",
+              "op_type": "Relu"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [],
+                  "count": 1
+                }
+              ],
+              "count": 1,
+              "domain": "ai.onnx",
+              "op_type": "Reshape"
+            }
+          ],
+          "outputs": [
+            {
+              "dtype": "FLOAT",
+              "name": "squeezenet0_flatten0_reshape0",
+              "shape": [
+                1,
+                1000
+              ]
+            }
+          ]
+        },
+        "ir_version": 3,
+        "model_version": 0,
+        "opsets": [
+          {
+            "domain": "ai.onnx",
+            "version": 7
+          }
+        ],
+        "producer_name": "",
+        "producer_version": ""
+      },
+      "oracle": {
+        "input": {
+          "byte_size": 602112,
+          "concrete_shape": [
+            1,
+            3,
+            224,
+            224
+          ],
+          "declared_shape": [
+            1,
+            3,
+            224,
+            224
+          ],
+          "file": "squeezenet1.1-7.input.f32le",
+          "name": "data",
+          "sha256": "10f2e93bdfc8e0964e39f5eac2a6fa63b448c24174e127e24954b0d816630c8e",
+          "stats": {
+            "argmax": 186,
+            "elements": 150528,
+            "finite_elements": 150528,
+            "first_values": [
+              -0.5625,
+              -0.2734375,
+              0.015625,
+              0.3046875,
+              0.59375,
+              0.8828125,
+              -0.8359375,
+              -0.546875,
+              -0.2578125,
+              0.03125
+            ],
+            "maximum": 1.0,
+            "mean": 1.6608205782312927e-05,
+            "minimum": -1.0,
+            "nan_elements": 0,
+            "negative_inf_elements": 0,
+            "positive_inf_elements": 0
+          }
+        },
+        "lock": "tests/testcases/onnx2noct/oracle-data/model-oracles.lock",
+        "output": {
+          "byte_size": 4000,
+          "concrete_shape": [
+            1,
+            1000
+          ],
+          "declared_shape": [
+            1,
+            1000
+          ],
+          "file": "squeezenet1.1-7.output.f32le",
+          "name": "squeezenet0_flatten0_reshape0",
+          "sha256": "25a681504fb6016ab5f00be508ba39757f7fe907c62d5e573580a3083e83557b",
+          "stats": {
+            "argmax": 904,
+            "elements": 1000,
+            "finite_elements": 1000,
+            "first_values": [
+              2.233436107635498,
+              1.9608880281448364,
+              1.2355611324310303,
+              1.2777000665664673,
+              3.214813709259033,
+              0.9950330257415771,
+              2.6505582332611084,
+              1.777464747428894,
+              0.8509373664855957,
+              2.407573938369751
+            ],
+            "maximum": 10.276206970214844,
+            "mean": 2.424495391378412,
+            "minimum": 0.0,
+            "nan_elements": 0,
+            "negative_inf_elements": 0,
+            "positive_inf_elements": 0
+          }
+        }
+      },
+      "source": {
+        "kind": "external",
+        "license_evidence": [
+          {
+            "claim": "Apache-2.0",
+            "location": "Hugging Face repository metadata and model-card License section"
+          }
+        ],
+        "notice": "Migrated ONNX Model Zoo SqueezeNet 1.1 artifact.",
+        "page": "https://huggingface.co/onnxmodelzoo/squeezenet1.1-7",
+        "paper": "https://arxiv.org/abs/1602.07360",
+        "revision": "61e525224ad479521059f4586bcacf50ad3627ca",
+        "url": "https://huggingface.co/onnxmodelzoo/squeezenet1.1-7/resolve/61e525224ad479521059f4586bcacf50ad3627ca/squeezenet1.1-7.onnx"
+      }
+    },
+    {
+      "acceptance": {
+        "blockers": [
+          "The exact artifact declares symbolic batch dimension 'None' on input and output; design 18 v1 requires static batch 1. Do not silently rewrite it."
+        ],
+        "fixed_shape_v1": false,
+        "output_meaning": "raw batchx125x13x13 YOLO grid tensor; no decode or NMS"
+      },
+      "artifact": {
+        "byte_size": 63480982,
+        "filename": "tinyyolov2-8.onnx",
+        "sha256": "583fb7fdc948435ceac9fa82efc7708701efe8382a859a3dd46526b155f5f2ae"
+      },
+      "id": "tinyyolov2-8",
+      "inventory": {
+        "checker": "ok",
+        "graph": {
+          "initializer_count": 44,
+          "inputs": [
+            {
+              "dtype": "FLOAT",
+              "name": "image",
+              "shape": [
+                "None",
+                3,
+                416,
+                416
+              ]
+            }
+          ],
+          "name": "Example Model",
+          "node_count": 33,
+          "operators": [
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [],
+                  "count": 1
+                }
+              ],
+              "count": 1,
+              "domain": "ai.onnx",
+              "op_type": "Add"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [
+                    {
+                      "name": "epsilon",
+                      "type": "FLOAT",
+                      "value": {
+                        "display": "9.999999747378752e-06",
+                        "float32_bits": "0x3727c5ac"
+                      }
+                    },
+                    {
+                      "name": "momentum",
+                      "type": "FLOAT",
+                      "value": {
+                        "display": "0.0",
+                        "float32_bits": "0x00000000"
+                      }
+                    },
+                    {
+                      "name": "spatial",
+                      "type": "INT",
+                      "value": 1
+                    }
+                  ],
+                  "count": 8
+                }
+              ],
+              "count": 8,
+              "domain": "ai.onnx",
+              "op_type": "BatchNormalization"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [
+                    {
+                      "name": "auto_pad",
+                      "type": "STRING",
+                      "value": {
+                        "utf8_or_hex": "SAME_UPPER"
+                      }
+                    },
+                    {
+                      "name": "dilations",
+                      "type": "INTS",
+                      "value": [
+                        1,
+                        1
+                      ]
+                    },
+                    {
+                      "name": "group",
+                      "type": "INT",
+                      "value": 1
+                    },
+                    {
+                      "name": "kernel_shape",
+                      "type": "INTS",
+                      "value": [
+                        1,
+                        1
+                      ]
+                    },
+                    {
+                      "name": "strides",
+                      "type": "INTS",
+                      "value": [
+                        1,
+                        1
+                      ]
+                    }
+                  ],
+                  "count": 1
+                },
+                {
+                  "attributes": [
+                    {
+                      "name": "auto_pad",
+                      "type": "STRING",
+                      "value": {
+                        "utf8_or_hex": "SAME_UPPER"
+                      }
+                    },
+                    {
+                      "name": "dilations",
+                      "type": "INTS",
+                      "value": [
+                        1,
+                        1
+                      ]
+                    },
+                    {
+                      "name": "group",
+                      "type": "INT",
+                      "value": 1
+                    },
+                    {
+                      "name": "kernel_shape",
+                      "type": "INTS",
+                      "value": [
+                        3,
+                        3
+                      ]
+                    },
+                    {
+                      "name": "strides",
+                      "type": "INTS",
+                      "value": [
+                        1,
+                        1
+                      ]
+                    }
+                  ],
+                  "count": 8
+                }
+              ],
+              "count": 9,
+              "domain": "ai.onnx",
+              "op_type": "Conv"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [
+                    {
+                      "name": "alpha",
+                      "type": "FLOAT",
+                      "value": {
+                        "display": "0.10000000149011612",
+                        "float32_bits": "0x3dcccccd"
+                      }
+                    }
+                  ],
+                  "count": 8
+                }
+              ],
+              "count": 8,
+              "domain": "ai.onnx",
+              "op_type": "LeakyRelu"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [
+                    {
+                      "name": "auto_pad",
+                      "type": "STRING",
+                      "value": {
+                        "utf8_or_hex": "SAME_UPPER"
+                      }
+                    },
+                    {
+                      "name": "kernel_shape",
+                      "type": "INTS",
+                      "value": [
+                        2,
+                        2
+                      ]
+                    },
+                    {
+                      "name": "strides",
+                      "type": "INTS",
+                      "value": [
+                        1,
+                        1
+                      ]
+                    }
+                  ],
+                  "count": 1
+                },
+                {
+                  "attributes": [
+                    {
+                      "name": "auto_pad",
+                      "type": "STRING",
+                      "value": {
+                        "utf8_or_hex": "SAME_UPPER"
+                      }
+                    },
+                    {
+                      "name": "kernel_shape",
+                      "type": "INTS",
+                      "value": [
+                        2,
+                        2
+                      ]
+                    },
+                    {
+                      "name": "strides",
+                      "type": "INTS",
+                      "value": [
+                        2,
+                        2
+                      ]
+                    }
+                  ],
+                  "count": 5
+                }
+              ],
+              "count": 6,
+              "domain": "ai.onnx",
+              "op_type": "MaxPool"
+            },
+            {
+              "attribute_variants": [
+                {
+                  "attributes": [],
+                  "count": 1
+                }
+              ],
+              "count": 1,
+              "domain": "ai.onnx",
+              "op_type": "Mul"
+            }
+          ],
+          "outputs": [
+            {
+              "dtype": "FLOAT",
+              "name": "grid",
+              "shape": [
+                "None",
+                125,
+                13,
+                13
+              ]
+            }
+          ]
+        },
+        "ir_version": 5,
+        "model_version": 0,
+        "opsets": [
+          {
+            "domain": "ai.onnx",
+            "version": 8
+          }
+        ],
+        "producer_name": "OnnxMLTools",
+        "producer_version": "1.5.2"
+      },
+      "oracle": {
+        "input": {
+          "byte_size": 2076672,
+          "concrete_shape": [
+            1,
+            3,
+            416,
+            416
+          ],
+          "declared_shape": [
+            "None",
+            3,
+            416,
+            416
+          ],
+          "file": "tinyyolov2-8.input.f32le",
+          "name": "image",
+          "sha256": "ea38f56df19013b8a946e47f7fdb1af6a952a3d96e2c38a086c7462f7a195cfc",
+          "stats": {
+            "argmax": 135,
+            "elements": 519168,
+            "finite_elements": 519168,
+            "first_values": [
+              0.125,
+              0.4140625,
+              0.703125,
+              0.9921875,
+              -0.7265625,
+              -0.4375,
+              -0.1484375,
+              0.140625,
+              0.4296875,
+              0.71875
+            ],
+            "maximum": 1.0,
+            "mean": -3.23534482094428e-06,
+            "minimum": -1.0,
+            "nan_elements": 0,
+            "negative_inf_elements": 0,
+            "positive_inf_elements": 0
+          }
+        },
+        "lock": "tests/testcases/onnx2noct/oracle-data/model-oracles.lock",
+        "output": {
+          "byte_size": 84500,
+          "concrete_shape": [
+            1,
+            125,
+            13,
+            13
+          ],
+          "declared_shape": [
+            "None",
+            125,
+            13,
+            13
+          ],
+          "file": "tinyyolov2-8.output.f32le",
+          "name": "grid",
+          "sha256": "a350523ead2db4509cef5884e52fb9ebe4c9e928d2c17de6dd92b9697b18e195",
+          "stats": {
+            "argmax": 21068,
+            "elements": 21125,
+            "finite_elements": 21125,
+            "first_values": [
+              -0.0890074223279953,
+              0.17738834023475647,
+              0.12438518553972244,
+              0.12259555608034134,
+              0.06674081832170486,
+              0.06638018786907196,
+              0.06598867475986481,
+              0.06583762913942337,
+              0.10245107859373093,
+              0.08061247318983078
+            ],
+            "maximum": 6.002627849578857,
+            "mean": -0.3018319735904858,
+            "minimum": -13.531195640563965,
+            "nan_elements": 0,
+            "negative_inf_elements": 0,
+            "positive_inf_elements": 0
+          }
+        }
+      },
+      "source": {
+        "kind": "external",
+        "license_evidence": [
+          {
+            "claim": "Apache-2.0",
+            "location": "Hugging Face repository metadata"
+          },
+          {
+            "claim": "MIT",
+            "location": "migrated ONNX Model Zoo model-card License section"
+          }
+        ],
+        "notice": "Migrated ONNX Model Zoo artifact; preserve both conflicting published license claims pending owner/legal review.",
+        "page": "https://huggingface.co/onnxmodelzoo/tinyyolov2-8",
+        "paper": "https://arxiv.org/abs/1612.08242",
+        "revision": "869707e16e57006f97d98af54cfdc8a1d388ae61",
+        "url": "https://huggingface.co/onnxmodelzoo/tinyyolov2-8/resolve/869707e16e57006f97d98af54cfdc8a1d388ae61/tinyyolov2-8.onnx"
+      }
+    }
+  ],
+  "schema": 1
+}

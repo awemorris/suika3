@@ -1,0 +1,10 @@
+prefix=${pcfiledir}/../..
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: StratoHAL packaging library
+Description: Package generation library for StratoHAL
+Version: @PROJECT_VERSION@
+Cflags: -I${includedir}/strato
+Libs: -L${libdir} -lstratopack

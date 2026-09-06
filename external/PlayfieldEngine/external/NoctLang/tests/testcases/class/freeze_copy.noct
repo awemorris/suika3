@@ -1,0 +1,12 @@
+func main() {
+    C = class { x: 1 };
+    var m = Dict.copy(C);
+    m.x = 5;
+    print(m.x);
+    var d = { a: 1 };
+    Dict.freeze(d);
+    var e = Dict.copy(d);
+    e.a = 9;
+    print(e.a);
+    d.a = 2;
+}

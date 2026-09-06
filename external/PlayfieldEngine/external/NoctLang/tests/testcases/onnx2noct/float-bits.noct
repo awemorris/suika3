@@ -1,0 +1,9 @@
+require onnx_ir;
+
+func main(args) {
+    var model = onnxReadFile(args[0]);
+    var tensor = model.graph.initializers[0];
+    for (i in 0..tensor.elements) {
+        print(onnxTensorFloatBits(tensor, i));
+    }
+}

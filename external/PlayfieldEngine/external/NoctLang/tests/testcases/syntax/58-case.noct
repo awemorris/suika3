@@ -1,0 +1,5 @@
+func main() {
+    print(String.toUpperCase("hello World 123 日本"));
+    print(String.toLowerCase("Hello WORLD 123 日本"));
+    print(String.toUpperCase(""));
+}

@@ -1,0 +1,59 @@
+require kernel_batchnorm;
+
+func kernelRegistryNew() {
+    return { kernels: [], bySignature: {} };
+}
+
+func kernelRegistryResolve(registry, plan, step) {
+    var signature = kernelSignature(plan, step);
+    if (Dict.hasKey(registry.bySignature, signature)) {
+        return registry.kernels[registry.bySignature[signature]];
+    }
+    var index = Array.size(registry.kernels);
+    var name = kernelFamilyPrefix(step.kind) + "_" + index;
+    var emittedLines = [];
+    if (step.kind == "conv2d-reference") {
+        emittedLines = kernelEmitConv(plan, step, name, signature);
+    } else if (step.kind == "gemm-rank2" || step.kind == "matmul-rank2") {
+        emittedLines = kernelEmitContraction(plan, step, name, signature);
+    } else if (step.kind == "max-pool2d" || step.kind == "average-pool2d" ||
+               step.kind == "global-average-pool") {
+        emittedLines = kernelEmitPool(plan, step, name, signature);
+    } else if (step.kind == "concat-static") {
+        emittedLines = kernelEmitConcat(plan, step, name, signature);
+    } else if (step.kind == "reduce-static" || step.kind == "softmax-stable") {
+        emittedLines = kernelEmitReduce(plan, step, name, signature);
+    } else if (step.kind == "batch-normalization-inference") {
+        emittedLines = kernelEmitBatchNorm(plan, step, name, signature);
+    } else {
+        emittedLines = kernelEmitPointwise(plan, step, name, signature);
+    }
+    var kernel = {
+        id: index, name: name, family: step.kind, signature: signature,
+        lines: emittedLines,
+        blockSize: ONNX_STAGE_F_BLOCK_SIZE,
+        launchGroups: (shapeElements(step.outputShape,
+                       "Stage H kernel launch") +
+                       ONNX_STAGE_F_BLOCK_SIZE - 1) /
+                      ONNX_STAGE_F_BLOCK_SIZE
+    };
+    registry.bySignature[signature] = index;
+    Array.push(registry.kernels, kernel);
+    return kernel;
+}
+
+func kernelCallLine(plan, step, kernel) {
+    var graph = plan.graph;
+    var storages = kernelUniqueInputStorages(graph, step.inputs);
+    var arguments = "";
+    for (i in 0..Array.size(storages)) {
+        if (i != 0) { arguments = arguments + ", "; }
+        arguments = arguments + plan.storageById["s" + storages[i]].resourceName;
+    }
+    if (arguments != "") { arguments = arguments + ", "; }
+    arguments = arguments + plan.storageById["s" + step.outputStorage].resourceName;
+    var count = shapeElements(step.outputShape, "Stage F launch count");
+    var grid = (count + ONNX_STAGE_F_BLOCK_SIZE - 1) / ONNX_STAGE_F_BLOCK_SIZE;
+    return "    " + kernel.name + "<<<" + grid + ", " +
+           ONNX_STAGE_F_BLOCK_SIZE + ">>>(" + arguments + ");";
+}

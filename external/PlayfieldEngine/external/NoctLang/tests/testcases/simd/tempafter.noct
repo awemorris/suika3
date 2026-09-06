@@ -1,0 +1,21 @@
+// A temp local read after the loop must hold the last iteration's
+// value: lane-3 extraction when the remainder is empty, remainder
+// overwrite otherwise, untouched when the loop never runs.
+func run(n) {
+    var p = Packed.uint32(64);
+    for (i in 0..64) {
+        p[i] = i + 100;
+    }
+    var v = 7777;
+    for (i in 0..n) {
+        v = p[i] * 2;
+        p[i] = v & 1023;
+    }
+    print(v);
+}
+func main() {
+    run(8);      // n%4 == 0: lane-3 extraction path
+    run(10);     // n%4 != 0: remainder overwrites
+    run(3);      // n < 4: strip skipped (lo < mid fails)
+    run(0);      // loop never runs: v keeps 7777
+}

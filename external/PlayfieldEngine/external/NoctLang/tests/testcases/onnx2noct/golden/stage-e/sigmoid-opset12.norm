@@ -1,0 +1,5 @@
+graph opset=12 tensors=2 nodes=1 input=t0 output=t1
+tensor t0 storage=0 role=input dtype=float32 name="x" safe=x_t0 shape=[1,6] stride=[6,1] offset=0 layout=NC producer=-1 consumers=[0] use=0:0
+tensor t1 storage=1 role=output dtype=float32 name="y" safe=y_t1 shape=[1,6] stride=[6,1] offset=0 layout=NC producer=0 consumers=[] use=1:1
+node n0 op=ai.onnx::Sigmoid@6 imported=12 family=pointwise-unary name="sigmoid" inputs=[0] outputs=[1] attrs=[]
+

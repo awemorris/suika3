@@ -1,0 +1,18 @@
+// Multi-packed ABCE (design 06 Part A): src -> dst u8 copy-transform,
+// two packeds in one versioned loop.
+func main() {
+    var n = 300;
+    var src = Packed.uint8(n);
+    var dst = Packed.uint8(n);
+    for (i in 0..n) {
+        src[i] = (i * 7) & 255;
+    }
+    for (i in 0..n) {
+        dst[i] = (src[i] + 1) & 255;
+    }
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + dst[i];
+    }
+    print(sum);
+}

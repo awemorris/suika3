@@ -1,0 +1,33 @@
+// Essence of DRAW_IMAGE_MELT: rule-derived alpha clamped to [0, 1].
+func blend_melt(dst: rpackeduint32, src: rpackeduint32,
+                rule: rpackeduint32, threshold: int, n: int): void {
+    let threshold_f = Float.from(threshold) * (2.0 / 255.0);
+    for (i in 0..n) {
+        let dst_pix = dst[i];
+        let src_pix = src[i];
+        var src_a = threshold_f - Float.from(rule[i] & 0xff) / 255.0;
+        if (src_a < 0.0) { src_a = 0.0; }
+        if (src_a > 1.0) { src_a = 1.0; }
+        let dst_a = 1.0 - src_a;
+        let r = Float.from((src_pix >> 16) & 0xff) * src_a +
+                Float.from((dst_pix >> 16) & 0xff) * dst_a;
+        let g = Float.from((src_pix >> 8) & 0xff) * src_a +
+                Float.from((dst_pix >> 8) & 0xff) * dst_a;
+        let b = Float.from(src_pix & 0xff) * src_a +
+                Float.from(dst_pix & 0xff) * dst_a;
+        dst[i] = (255 << 24) | (Int.from(r) << 16) |
+                 (Int.from(g) << 8) | Int.from(b);
+    }
+}
+
+func main() {
+    let src = Packed.uint32(16);
+    let dst = Packed.uint32(16);
+    let rule = Packed.uint32(16);
+    src[0] = 0xff204080;
+    dst[0] = 0xffc0a080;
+    rule[0] = 96;
+    blend_melt(dst, src, rule, 128, 16);
+    print(dst[0]);
+    print(dst[15]);
+}

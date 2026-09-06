@@ -1,0 +1,59 @@
+// else-if chains nested inside if branches (a compiler-linking case).
+func classify(a, b) {
+    var r = "";
+    if (a == 1) {
+        if (b == 1) { r = "11"; }
+        else if (b == 2) { r = "12"; }
+        else { r = "1x"; }
+    } else {
+        if (b == 1) { r = "x1"; }
+        else if (b == 2) { r = "x2"; }
+        else { r = "xx"; }
+    }
+    return r;
+}
+
+// else-if in a then-branch, with an outer else, followed by more code.
+func f(n) {
+    var acc = 0;
+    if (n > 0) {
+        if (n == 1) { acc = 10; }
+        else if (n == 2) { acc = 20; }
+        else { acc = 30; }
+        acc = acc + 1;
+    } else {
+        acc = 0 - 1;
+    }
+    return acc;
+}
+
+// Triple nesting.
+func g(x) {
+    if (x > 0) {
+        if (x > 10) {
+            if (x > 100) { return "big"; }
+            else if (x > 50) { return "med"; }
+            else { return "small-ish"; }
+        } else {
+            return "small";
+        }
+    }
+    return "nonpos";
+}
+
+func main() {
+    print(classify(1, 1));
+    print(classify(1, 2));
+    print(classify(1, 9));
+    print(classify(2, 1));
+    print(classify(2, 9));
+    print(f(1));
+    print(f(2));
+    print(f(5));
+    print(f(0));
+    print(g(200));
+    print(g(60));
+    print(g(20));
+    print(g(5));
+    print(g(0 - 3));
+}

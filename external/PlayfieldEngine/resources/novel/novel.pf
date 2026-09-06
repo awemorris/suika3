@@ -1,0 +1,648 @@
+func initNovel() {
+    var novel = {
+        //
+        // Current tag function.
+        //
+
+        curTagFunc: 0,
+
+        //
+        // Layer Index
+        //
+        LAYER_BG:           0,
+        LAYER_BG_FI:        1,
+
+        //
+        // Layer Count
+        //
+	STAGE_LAYERS:      74,
+
+        //
+        // Character Layer Count
+        //
+        CH_LAYERS:          8,
+
+        //
+        // Text Layer Count
+        //
+        TEXT_LAYERS:        8,
+
+        //
+        // Effect Layer Count
+        //
+        EF_LAYERS:          8,
+
+        //
+        // Selection Layer Count
+        //
+        SEL_LAYERS:         8,
+        //
+        // Click Animation Frames
+        //
+        CLICK_FRAMES:      16,
+
+        //
+        // Effect Method
+        //
+        FADE_NORMAL:        0,
+        FADE_RULE:          1,
+        FADE_MELT:          2,
+
+        //
+        // Stage Images
+        //
+
+        layerTex:   0,
+        msgboxTex:  0,
+        nameboxTex: 0,
+        clickText:  0,
+
+        //
+        // Layer Properties
+        //
+        layerFile:    0,  // The file names of the layers.
+        layerX:       0,  // The X positions of the layers.
+        layerY:       0,  // The Y positions of the layers.
+        layerAlpha:   0,  // The alpha values of the layers.
+        layerScaleX:  0,  // The X-scale of the layers.
+        layerScaleY:  0,  // The Y-Scale of the layers.
+        layerCenterX: 0,  // The X-center of the layers.
+        layerCenterY: 0,  // The Y-center of the layers.
+        layerRotate:  0,  // The rotation of the layers.
+
+        //
+        // Initialization
+        //
+
+        // Initialize the novel object.
+        init: (this) => {
+            Novel = this;
+
+            this->initStage();
+            this->initAnime();
+        },
+
+        // Initialize the stage.
+        initStage: (this) => {
+            this.layerTex = [];
+            this.layerTex->resize(this.STAGE_LAYERS);
+
+            this.layerFile = [];
+            this.layerFile->resize(this.STAGE_LAYERS);
+
+            this.layerX = [];
+            this.layerX->resize(this.STAGE_LAYERS);
+
+            this.layerY = [];
+            this.layerY->resize(this.STAGE_LAYERS);
+
+            this.layerAlpha = [];
+            this.layerAlpha->resize(this.STAGE_LAYERS);
+            
+            this.layerScaleX = [];
+            this.layerScaleX->resize(this.STAGE_LAYERS);
+
+            this.layerScaleY = [];
+            this.layerScaleY->resize(this.STAGE_LAYERS);
+
+            this.layerCenterX = [];
+            this.layerCenterX->resize(this.STAGE_LAYERS);
+
+            this.layerCenterY = [];
+            this.layerCenterY->resize(this.STAGE_LAYERS);
+
+            this.layerRotate = [];
+            this.layerRotate->resize(this.STAGE_LAYERS);
+
+            this.layerFrame = [];
+            this.layerFrame->resize(this.STAGE_LAYERS);
+
+            // Initial background.
+            //this.layerTex[0] = Engine.createColorTexture({width:1280, height:720, r:0, g:0, b:0, a:255});
+            //this.layerAlpha[0] = 255;
+
+            this.layerTex[0] = Engine.createColorTexture({width:1280, height:720, r:0, g:0, b:0, a:255});
+            this.layerAlpha[0] = 255;
+        },
+
+        loadLayerImage: (this, layer, file) => {
+            this.layerTex[layer] = Engine.loadTexture({file: file});
+        },
+
+        destroyLayerImage: (this, layer) => {
+            Engine.destroyTexture({texture: this.layerTex[layer]});
+            this.layerTex[layer] = 0;
+        },
+
+        swapLayerImage: (this, newLayer, oldLayer) => {
+            if (this.layerTex[oldLayer] != 0) {
+                this->destroyLayerImage(oldLayer);
+            }
+
+            this.layerTex[oldLayer]     = this.layerTex[newLayer];
+            this.layerX[oldLayer]       = this.layerX[newLayer]; 
+            this.layerY[oldLayer]       = this.layerY[newLayer]; 
+            this.layerAlpha[oldLayer]   = this.layerAlpha[newLayer]; 
+            this.layerScaleX[oldLayer]  = this.layerScaleX[newLayer]; 
+            this.layerScaleY[oldLayer]  = this.layerScaleY[newLayer]; 
+            this.layerCenterX[oldLayer] = this.layerCenterX[newLayer]; 
+            this.layerCenterY[oldLayer] = this.layerCenterY[newLayer]; 
+            this.layerRotate[oldLayer]  = this.layerRotate[newLayer]; 
+
+            this.layerTex[newLayer] = 0;
+        },
+
+        setLayerPosition: (this, layer, x, y) => {
+            this.layerX[layer] = x;
+            this.layerY[layer] = y;
+        },
+
+        setLayerAlpha: (this, layer, alpha) => {
+            this.layerAlpha[layer] = alpha;
+        },
+
+        startFade: (this) => {
+            this.fadeStartTime = Engine.millisec;
+        },
+
+        //
+        // Anime
+        //
+
+        SEQUENCE_COUNT: 1024,
+
+        animeSequence: [],
+        animeContext: [],
+
+        initAnime: (this) => {
+            for (i in 0 .. this.STAGE_LAYERS) {
+                this.animeContext[i] = {
+                    isRunning:  0,
+                    isCompleted: 0,
+                    startTime:  0,
+                    curLap:     0
+                };
+                this.animeSequence[i] = [];
+            }
+        },
+
+        // Loads an anime descriptor.
+        startAnime: (this, animeSeq) => {
+            // The result array includes layer indices.
+            var result = [];
+
+            // Initialize the sequence arrays of the specified layers.
+            for (seq in animeSeq) {
+                this.animeSequence[seq.layer] = [];
+                result->push(seq.layer);
+            }
+
+            // Add the sequences to the layer sequence arrays.
+            for (seq in animeSeq) {
+                // Default values.
+                var s = {
+                    startTime: 0,
+                    endTime:   0,
+                    fromX:     0,
+                    fromY:     0,
+                    fromAlpha:  0,
+                    fromScaleX: 1.0,
+                    fromScaleY: 1.0,
+                    fromRotate: 0.0,
+                    toX:        0,
+                    toY:        0,
+                    toAlpha:    0,
+                    toScaleX:   1.0,
+                    toScaleY:   1.0,
+                    toRotate:   0.0,
+                    centerX:    0,
+                    centerY:    0
+                };
+
+                // Copy the sequence parameters.
+                for (k, v in seq) {
+                    if (k != "layer") {
+                        s[k] = v;
+                    }
+                }
+
+                // Add to the layer sequence array.
+                this.animeSequence[seq.layer]->push(s);
+            }
+
+            // Set the layer anime contexts.
+            for (seq in animeSeq) {
+                this.animeContext[seq.layer].isRunning = 1;
+                this.animeContext[seq.layer].isCompleted = 0;
+                this.animeContext[seq.layer].startTime = Engine.millisec;
+                this.animeContext[seq.layer].curLap = 0;
+            }
+
+            return result;
+        },
+
+        // Updates the parameters of stage layers using anime.
+        updateAnime: (this) => {
+            // Detect anime completions.
+            for (i in 0 .. this.STAGE_LAYERS) {
+                // Skip if the layer anime is not running or completed.
+                if (!this.animeContext[i].isRunning ||
+                    this.animeContext[i].isCompleted) {
+                    continue;
+                }
+
+                // Get the lap.
+                this.animeContext[i].curLap = (Engine.millisec - this.animeContext[i].startTime) / 1000.0;
+
+                var lastSeq = this.animeSequence[i].length - 1;
+                if (this.animeContext[i].curLap >= this.animeSequence[i][lastSeq].endTime) {
+                    this.animeContext[i].isRunning = 0;
+                    this.animeContext[i].isCompleted = 1;
+                }
+            }
+
+            // Update the parameters for the stage layers.
+            for (i in 0 .. this.STAGE_LAYERS) {
+                // Skip if the anime sequence for the layer is empty.
+                if (this.animeSequence[i].length == 0) {
+                    continue;
+                }
+
+                // Prepare the parameters.
+                var x = 0;
+                var y = 0;
+                var alpha = 0;
+                var scaleX = 1.0;
+                var scaleY = 1.0;
+                var rotate = 1.0;
+
+                // If already completed.
+                if (this.animeContext[i].isCompleted &&
+                    this.animeSequence[i].length > 0) {
+                    var s = this.animeSequence[i][this.animeSequence[i].length - 1];
+                    this.layerX[i] = s.toX;
+                    this.layerY[i] = s.toY;
+                    this.layerAlpha[i] = s.toAlpha;
+                    this.layerScaleX[i] = s.toScaleX;
+                    this.layerScaleY[i] = s.toScaleY;
+                    this.layerCenterX[i] = s.centerX;
+                    this.layerCenterY[i] = s.centerY;
+                    this.layerRotate[i] = s.toRotate * (3.14159265 / 180.0);
+                    continue;
+                }
+
+                // Interpolate the parameters.
+                for (j in 0 .. this.animeSequence[i].length) {
+                    var s = this.animeSequence[i][j];
+                    if (this.animeContext[i].curLap < s.startTime) {
+                        continue;
+                    }
+                    if (j != this.animeSequence[i].length - 1 &&
+                        this.animeContext[i].curLap > s.endTime) {
+                        continue;
+                    }
+
+                    // Calculate the progress.
+                    var progress = (this.animeContext[i].curLap - s.startTime) / (s.endTime - s.startTime);
+                    if (progress > 1.0) {
+                        progress = 1.0;
+                    }
+
+                    // Calculate the parameters.
+                    this.layerX[i] = s.fromX + (s.toX - s.fromX) * progress;
+                    this.layerY[i] = s.fromY + (s.toY - s.fromY) * progress;
+                    this.layerAlpha[i] = s.fromAlpha + (s.toAlpha - s.fromAlpha) * progress;
+                    this.layerScaleX[i] = s.fromScaleX + (s.toScaleX - s.fromScaleX) * progress;
+                    this.layerScaleY[i] = s.fromScaleY + (s.toScaleY - s.fromScaleY) * progress;
+                    this.layerCenterX[i] = s.centerX;
+                    this.layerCenterY[i] = s.centerY;
+                    this.layerRotate[i] = s.fromRotate + (s.toRotate - s.fromRotate) * progress * (3.14159265 / 180.0);
+                    break;
+                }
+            }
+        },
+
+        isLayerAnimeCompleted: (this, layer) => {
+            return this.animeContext[layer].isCompleted;
+        },
+
+        clearAnimeForLayers: (this, layers) => {
+            for (layer in layers) {
+                this.animeSequence[layer] = [];
+                this.animeContext[layer] = {
+                    isRunning:   0,
+                    isCompleted: 0,
+                    startTime:   0,
+                    curLap:      0
+                };
+            }
+        },
+
+        //
+        // Scene
+        //
+
+        moveToTagFile: (this, file) => {
+            Engine.moveToTagFile({file: file});
+	    return 0;
+        },
+
+        moveToNextTag: (this) => {
+            Engine.moveToNextTag({});
+        },
+
+        //
+        // Rendering
+        //
+
+        // Frame renderer.
+        frame: (this) => {
+            if (this.curTagFunc == 0) {
+                if (!Engine.callTagFunction({})) {
+                    Engine.exitFlag = 1;
+                }
+            } else {
+                this.curTagFunc({});
+            }
+
+            this->renderStage();
+
+	    return 1;
+        },
+
+        // Renders the stage.
+        renderStage: (this) => {
+            // Update the layer parameters using anime.
+            this->updateAnime();
+
+            // Render the stage images.
+            for (i in 0..this.STAGE_LAYERS) {
+                if (this.layerTex[i] != null) {
+                    var x1 = 0;
+                    var y1 = 0;
+                    var x2 = this.layerTex[i].width - 1.0;
+                    var y2 = 0;
+                    var x3 = 0;
+                    var y3 = this.layerTex[i].height - 1.0;
+                    var x4 = this.layerTex[i].width - 1.0;
+                    var y4 = this.layerTex[i].height - 1.0;
+                    var center_x = this.layerCenterX[i];
+                    var center_y = this.layerCenterY[i];
+                    var rad = this.layerRotate[i];
+
+                    // 1. Shift for the centering.
+                    x1 -= center_x;
+                    y1 -= center_y;
+                    x2 -= center_x;
+                    y2 -= center_y;
+                    x3 -= center_x;
+                    y3 -= center_y;
+                    x4 -= center_x;
+                    y4 -= center_y;
+
+                    // 2. Scale.
+                    x1 *= this.layerScaleX[i];
+                    y1 *= this.layerScaleY[i];
+                    x2 *= this.layerScaleX[i];
+                    y2 *= this.layerScaleY[i];
+                    x3 *= this.layerScaleX[i];
+                    y3 *= this.layerScaleY[i];
+                    x4 *= this.layerScaleX[i];
+                    y4 *= this.layerScaleY[i];
+
+                    // 3. Rotate.
+                    // if (rad != 0) {
+                    //     var tmp_x = x1;
+                    //     var tmp_y = y1;
+                    //     x1 = tmp_x * cos(rad) - tmp_y * sin(rad);
+                    //     y1 = tmp_x * sin(rad) + tmp_y * cos(rad);
+
+                    //     tmp_x = x2;
+                    //     tmp_y = y2;
+                    //     x2 = tmp_x * cos(rad) - tmp_y * sin(rad);
+                    //     y2 = tmp_x * sin(rad) + tmp_y * cos(rad);
+
+                    //     tmp_x = x3;
+                    //     tmp_y = y3;
+                    //     x3 = tmp_x * cos(rad) - tmp_y * sin(rad);
+                    //     y3 = tmp_x * sin(rad) + tmp_y * cos(rad);
+
+                    //     tmp_x = x4;
+                    //     tmp_y = y4;
+                    //     x4 = tmp_x * cos(rad) - tmp_y * sin(rad);
+                    //     y4 = tmp_x * sin(rad) + tmp_y * cos(rad);
+                    // }
+
+                    // 4. Shift again for the centering.
+                    x1 += center_x;
+                    y1 += center_y;
+                    x2 += center_x;
+                    y2 += center_y;
+                    x3 += center_x;
+                    y3 += center_y;
+                    x4 += center_x;
+                    y4 += center_y;
+
+                    // 5. Shift for the layer position.
+                    x1 += this.layerX[i];
+                    y1 += this.layerY[i];
+                    x2 += this.layerX[i];
+                    y2 += this.layerY[i];
+                    x3 += this.layerX[i];
+                    y3 += this.layerY[i];
+                    x4 += this.layerX[i];
+                    y4 += this.layerY[i];
+
+                    // Render.
+                    Engine.renderTexture3D({
+                        x1: x1,
+                        y1: y1,
+                        x2: x2,
+                        y2: y2,
+                        x3: x3,
+                        y3: y3,
+                        x4: x4,
+                        y4: y4,
+                        texture: this.layerTex[i],
+                        srcLeft: 0,
+                        srcTop:  0,
+                        srcWidth: this.layerTex[i].width,
+			srcHeight: this.layerTex[i].height,
+			alpha: this.layerAlpha[i]
+                    });
+                }
+            }
+        }
+    };
+
+    novel->init();
+
+    return novel;
+}
+
+func Tag_background(param) {
+    //
+    // Initialize.
+    //
+    if (Novel.curTagFunc == 0) {
+        // Register the frame callback.
+        Novel.curTagFunc = Tag_background;
+
+        // Create a tag workspace.
+        Novel.tagWorkspace = {};
+
+        // Load an image for the BG_FI layer.
+        Novel->loadLayerImage(Novel.LAYER_BG_FI, param.file);
+
+        // Start an anime.
+        Novel.tagWorkspace.animeLayers = Novel->startAnime([
+            {
+                layer:      Novel.LAYER_BG,
+                startTime:  0.0,
+                endTime:    float(param.time),
+                fromScaleX: 1.0,
+                fromScaleY: 1.0,
+                fromAlpha:  255,
+                toScaleX:   1.0,
+                toScaleY:   1.0,
+                toAlpha:    0
+            },
+            {
+                layer:      Novel.LAYER_BG_FI,
+                startTime:  0.0,
+                endTime:    float(param.time),
+                fromScaleX: 1.0,
+                fromScaleY: 1.0,
+                fromAlpha:  0,
+                toScaleX:   1.0,
+                toScaleY:   1.0,
+                toAlpha:    255
+            }
+        ]);
+    }
+
+    //
+    // Rendering.
+    //
+    Novel->renderStage();
+
+    //
+    // Completion.
+    //
+
+    // Check that the layer animes are running.
+    var notCompleted = 0;
+    for (layer in Novel.tagWorkspace.animeLayers) {
+        if (!Novel->isLayerAnimeCompleted(layer)) {
+            notCompleted = 1;
+            break;
+        }
+    }
+
+    // If the layer animes are completed.
+    if (!notCompleted) {
+        // Clear the layer animes.
+        Novel->clearAnimeForLayers(Novel.tagWorkspace.animeLayers);
+
+        // Swap the BG_FI layer to the BG layer.
+        Novel->swapLayerImage(Novel.LAYER_BG_FI, Novel.LAYER_BG);
+
+        // Unregister the frame callback.
+        Novel.curTagFunc = 0;
+
+        // Remove the tag workspace.
+        Novel.tagWorkspace = 0;
+
+        // Move to the next tag.
+        Novel->moveToNextTag();
+    }
+
+    return 1;
+}
+
+func Tag_zoomin(param) {
+    //
+    // Initialize.
+    //
+    if (Novel.curTagFunc == 0) {
+        // Register the frame callback.
+        Novel.curTagFunc = Tag_zoomin;
+
+        // Create a tag workspace.
+        Novel.tagWorkspace = {};
+
+        // Start an anime.
+        Novel.tagWorkspace.animeLayers = Novel->startAnime([
+            {
+                layer:      Novel.LAYER_BG,
+                startTime:  0.0,
+                endTime:    float(param.time),
+                fromScaleX: 1.0,
+                fromScaleY: 1.0,
+                fromAlpha:  255,
+                toScaleX:   2.0,
+                toScaleY:   2.0,
+                toAlpha:    255
+            }
+        ]);
+    }
+
+    //
+    // Rendering.
+    //
+    Novel->renderStage();
+
+    //
+    // Completion.
+    //
+
+    // Check that the layer animes are running.
+    var notCompleted = 0;
+    for (layer in Novel.tagWorkspace.animeLayers) {
+        if (!Novel->isLayerAnimeCompleted(layer)) {
+            notCompleted = 1;
+            break;
+        }
+    }
+
+    // If the layer animes are completed.
+    if (!notCompleted) {
+        // Clear the layer animes.
+        Novel->clearAnimeForLayers(Novel.tagWorkspace.animeLayers);
+
+        // Unregister the frame callback.
+        Novel.curTagFunc = null;
+
+        // Remove the tag workspace.
+        Novel.tagWorkspace = null;
+
+        // Move to the next tag.
+        Novel->moveToNextTag();
+    }
+
+    return 1;
+}
+
+func Tag_click(param) {
+    //
+    // Initialize.
+    //
+    if (Novel.curTagFunc == 0) {
+        Novel.curTagFunc = Tag_click;
+    }
+
+    //
+    // Rendering.
+    //
+    Novel->renderStage();
+
+    //
+    // Completion.
+    //
+    if (Engine.isMouseLeftPressed) {
+        Novel.curTagFunc = 0;
+        Novel->moveToNextTag();
+    }
+        
+    return 1;
+}

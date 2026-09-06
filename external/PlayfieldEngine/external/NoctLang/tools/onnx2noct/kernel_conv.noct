@@ -1,0 +1,125 @@
+require kernel_pointwise;
+
+func kernelConvAttr(node, name) {
+    for (i in 0..Array.size(node.attrs)) {
+        if (node.attrs[i].name == name) { return node.attrs[i].value; }
+    }
+    planNodeFail(node, "normalized Conv is missing canonical attribute '" + name + "'.");
+}
+
+func kernelValidateConv(plan, step) {
+    var graph = plan.graph;
+    var input = graph.tensors[step.inputs[0]];
+    var weight = graph.tensors[step.inputs[1]];
+    var output = graph.tensors[step.outputTensor];
+    if (Array.size(input.shape) != 4 || Array.size(weight.shape) != 4 ||
+        Array.size(output.shape) != 4) {
+        planNodeFail(step.node, "Stage G.1 Conv requires rank-4 NCHW/OIHW tensors.");
+    }
+    if (!isContiguousView(input) || input.offset != 0 || input.layout != "NCHW") {
+        planNodeFail(step.node, "Stage G.1 Conv requires a contiguous offset-zero NCHW input.");
+    }
+    if (!isContiguousView(weight) || weight.offset != 0 || weight.layout != "OIHW") {
+        planNodeFail(step.node, "Stage G.1 Conv requires contiguous offset-zero OIHW weights.");
+    }
+    if (!isContiguousView(output) || output.offset != 0 || output.layout != "NCHW") {
+        planNodeFail(step.node, "Stage G.1 Conv requires a contiguous offset-zero NCHW output.");
+    }
+    if (Array.size(step.inputs) == 3) {
+        var bias = graph.tensors[step.inputs[2]];
+        if (!isContiguousView(bias) || bias.offset != 0) {
+            planNodeFail(step.node, "Stage G.1 Conv requires contiguous offset-zero bias.");
+        }
+    }
+    var strides = kernelConvAttr(step.node, "strides");
+    var pads = kernelConvAttr(step.node, "pads");
+    var dilations = kernelConvAttr(step.node, "dilations");
+    var group = kernelConvAttr(step.node, "group");
+    if (group != 1 || dilations[0] != 1 || dilations[1] != 1) {
+        planNodeFail(step.node, "Stage G.1 Conv supports group=1 and dilation=1 only.");
+    }
+    var maxY = checkedAddPositive(
+        checkedMulPositive(output.shape[2] - 1, strides[0], "Conv Y index"),
+        weight.shape[2] - 1, "Conv Y index");
+    var maxX = checkedAddPositive(
+        checkedMulPositive(output.shape[3] - 1, strides[1], "Conv X index"),
+        weight.shape[3] - 1, "Conv X index");
+    if (maxY > ONNX_MAX_NORMALIZED_ELEMENTS ||
+        maxX > ONNX_MAX_NORMALIZED_ELEMENTS ||
+        pads[0] > ONNX_MAX_NORMALIZED_ELEMENTS ||
+        pads[1] > ONNX_MAX_NORMALIZED_ELEMENTS) {
+        planNodeFail(step.node, "Conv specialized index arithmetic exceeds int32.");
+    }
+    return { input: input, weight: weight, output: output,
+             strides: strides, pads: pads };
+}
+
+func kernelEmitConv(plan, step, name, signature) {
+    var checked = kernelValidateConv(plan, step);
+    var input = checked.input;
+    var weight = checked.weight;
+    var output = checked.output;
+    var inputParam = kernelInputParam(plan.graph, step.inputs, 0);
+    var weightParam = kernelInputParam(plan.graph, step.inputs, 1);
+    var hasBias = Array.size(step.inputs) == 3;
+    var biasParam = "";
+    if (hasBias) { biasParam = kernelInputParam(plan.graph, step.inputs, 2); }
+    var uniqueStorages = kernelUniqueInputStorages(plan.graph, step.inputs);
+    var lines = [];
+    Array.push(lines, "// signature: " + signature);
+    Array.push(lines, "__gpu func " + name + "(");
+    for (i in 0..Array.size(uniqueStorages)) {
+        Array.push(lines, "    p" + i + ": rpackedfloat_ptr,");
+    }
+    Array.push(lines, "    out: rpackedfloat_ptr");
+    Array.push(lines, "): void {");
+    Array.push(lines, "    let i: int = globalIdx.x;");
+    var count = shapeElements(output.shape, "Stage G.1 Conv output");
+    var outputPlane = output.shape[2] * output.shape[3];
+    var outputBatch = output.shape[1] * outputPlane;
+    var inputPlane = input.shape[2] * input.shape[3];
+    var weightChannel = weight.shape[2] * weight.shape[3];
+    var weightOutput = weight.shape[1] * weightChannel;
+    Array.push(lines, "    if (i < " + count + ") {");
+    Array.push(lines, "        let n: int = i / " + outputBatch + ";");
+    Array.push(lines, "        let output_in_batch: int = i % " + outputBatch + ";");
+    Array.push(lines, "        let oc: int = output_in_batch / " + outputPlane + ";");
+    Array.push(lines, "        let output_spatial: int = output_in_batch % " + outputPlane + ";");
+    Array.push(lines, "        let oy: int = output_spatial / " + output.shape[3] + ";");
+    Array.push(lines, "        let ox: int = output_spatial % " + output.shape[3] + ";");
+    if (hasBias) {
+        Array.push(lines, "        var sum: float = " + biasParam + "[oc];");
+    } else {
+        Array.push(lines, "        var sum: float = 0.0;");
+    }
+    Array.push(lines, "        for (ic in 0.." + input.shape[1] + ") {");
+    Array.push(lines, "            for (ky in 0.." + weight.shape[2] + ") {");
+    Array.push(lines, "                for (kx in 0.." + weight.shape[3] + ") {");
+    Array.push(lines, "                    let iy: int = oy * " + checked.strides[0] +
+                      " + ky - " + checked.pads[0] + ";");
+    Array.push(lines, "                    let ix: int = ox * " + checked.strides[1] +
+                      " + kx - " + checked.pads[1] + ";");
+    Array.push(lines, "                    if (iy >= 0) {");
+    Array.push(lines, "                        if (iy < " + input.shape[2] + ") {");
+    Array.push(lines, "                            if (ix >= 0) {");
+    Array.push(lines, "                                if (ix < " + input.shape[3] + ") {");
+    Array.push(lines, "                                    let input_index: int = n * " +
+                      (input.shape[1] * inputPlane) + " + ic * " + inputPlane +
+                      " + iy * " + input.shape[3] + " + ix;");
+    Array.push(lines, "                                    let weight_index: int = oc * " +
+                      weightOutput + " + ic * " + weightChannel +
+                      " + ky * " + weight.shape[3] + " + kx;");
+    Array.push(lines, "                                    sum = sum + " + inputParam +
+                      "[input_index] * " + weightParam + "[weight_index];");
+    Array.push(lines, "                                }");
+    Array.push(lines, "                            }");
+    Array.push(lines, "                        }");
+    Array.push(lines, "                    }");
+    Array.push(lines, "                }");
+    Array.push(lines, "            }");
+    Array.push(lines, "        }");
+    Array.push(lines, "        out[i] = sum;");
+    Array.push(lines, "    }");
+    Array.push(lines, "}");
+    return lines;
+}

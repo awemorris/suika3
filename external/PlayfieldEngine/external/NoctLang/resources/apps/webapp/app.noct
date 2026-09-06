@@ -1,0 +1,76 @@
+//
+// A demo application for the Noct web framework.
+//
+// Run it and browse http://127.0.0.1:8080/.
+//
+
+require framework;
+
+func main() {
+    webappInit();
+
+    var app = new WebApp { routes: [], headers: {} };
+
+    // Plain text.
+    app.get("/", (req, res) => {
+        res.html("<!doctype html><meta charset=\"utf-8\">" +
+                  "<h1>Noct Web Framework</h1>" +
+                  "<ul>" +
+                  "<li><a href=\"/hello\">/hello</a></li>" +
+                  "<li><a href=\"/user/42\">/user/:id</a></li>" +
+                  "<li><a href=\"/search?q=noct&lang=ja\">/search?q=...</a></li>" +
+                  "<li><a href=\"/stats\">/stats</a></li>" +
+                  "</ul>");
+    });
+
+    app.get("/hello", (req, res) => {
+        res.text("Hello, Noct!");
+    });
+
+    // Path parameters.
+    app.get("/user/:id", (req, res) => {
+        res.json({
+            id: req.params.id,
+            path: req.path,
+            method: req.method
+        });
+    });
+
+    app.get("/user/:id/posts/:postId", (req, res) => {
+        res.json({
+            user: req.params.id,
+            post: req.params.postId
+        });
+    });
+
+    // Query strings.
+    app.get("/search", (req, res) => {
+        var q = "";
+        if (Dict.hasKey(req.query, "q")) {
+            q = req.query["q"];
+        }
+        res.json({query: q, all: req.query});
+    });
+
+    // Request bodies.
+    app.post("/echo", (req, res) => {
+        res.setStatus(201);
+        res.json({received: req.body, length: String.charCount(req.body)});
+    });
+
+    // Server statistics. Noct has no closures, so a handler reaches
+    // shared state through a global rather than by capturing a local.
+    theApp = app;
+    app.get("/stats", (req, res) => {
+        res.json({requests: theApp.requestCount});
+    });
+
+    // A custom 404.
+    app.setNotFound((req, res) => {
+        res.setStatus(404);
+        res.json({error: "not found", path: req.path});
+    });
+
+    print("Listening on http://127.0.0.1:8080/");
+    app.run("127.0.0.1", 8080);
+}

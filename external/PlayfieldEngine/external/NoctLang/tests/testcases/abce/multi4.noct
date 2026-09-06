@@ -1,0 +1,19 @@
+// One of two packeds is reassigned inside the body: not invariant,
+// loop must stay unversioned -- output identical either way.
+func main() {
+    var n = 40;
+    var a = Packed.uint8(n);
+    var b = Packed.uint8(n);
+    var c = Packed.uint8(n);
+    for (i in 0..n) {
+        a[i] = i & 255;
+        b[i] = (i * 2) & 255;
+        c[i] = (i * 3) & 255;
+    }
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + a[i] + b[i];
+        b = c;              // b reassigned: kills invariance
+    }
+    print(sum);
+}

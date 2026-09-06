@@ -1,0 +1,46 @@
+require kernel_common;
+
+func kernelPointwiseValue(plan, step) {
+    var graph = plan.graph;
+    var values = [];
+    for (i in 0..Array.size(step.inputs)) {
+        var tensor = graph.tensors[step.inputs[i]];
+        var param = kernelInputParam(graph, step.inputs, i);
+        Array.push(values, param + "[" +
+                   kernelIndexExpression(tensor, step.outputShape, "i") + "]");
+    }
+    if (step.kind == "copy-strided") { return values[0]; }
+    if (step.kind == "pointwise-unary") {
+        if (step.node.opType == "Relu") { return "Accel.relu(" + values[0] + ")"; }
+        if (step.node.opType == "Sigmoid") { return "Accel.sigmoid(" + values[0] + ")"; }
+        planNodeFail(step.node, "GPU MATH operation is not enabled for Stage F/OpenGL.");
+    }
+    if (step.kind == "pointwise-binary") {
+        if (step.node.opType == "Add") { return values[0] + " + " + values[1]; }
+        if (step.node.opType == "Sub") { return values[0] + " - " + values[1]; }
+        if (step.node.opType == "Mul") { return values[0] + " * " + values[1]; }
+        if (step.node.opType == "Div") { return values[0] + " / " + values[1]; }
+        planNodeFail(step.node, "binary operation has no Stage F pointwise lowering.");
+    }
+    normFail("Stage F cannot emit kernel family '" + step.kind + "'.");
+}
+
+func kernelEmitPointwise(plan, step, name, signature) {
+    var graph = plan.graph;
+    var uniqueStorages = kernelUniqueInputStorages(graph, step.inputs);
+    var lines = [];
+    Array.push(lines, "// signature: " + signature);
+    Array.push(lines, "__gpu func " + name + "(");
+    for (i in 0..Array.size(uniqueStorages)) {
+        Array.push(lines, "    p" + i + ": rpackedfloat_ptr,");
+    }
+    Array.push(lines, "    out: rpackedfloat_ptr");
+    Array.push(lines, "): void {");
+    Array.push(lines, "    let i: int = globalIdx.x;");
+    var count = shapeElements(step.outputShape, "Stage F kernel launch");
+    Array.push(lines, "    if (i < " + count + ") {");
+    Array.push(lines, "        out[i] = " + kernelPointwiseValue(plan, step) + ";");
+    Array.push(lines, "    }");
+    Array.push(lines, "}");
+    return lines;
+}

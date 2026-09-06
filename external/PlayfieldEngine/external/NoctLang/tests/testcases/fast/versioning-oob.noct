@@ -1,0 +1,10 @@
+__fast func fill_dynamic(data: rpackeduint32(8), count: int): void {
+    for (i in 0..count) {
+        data[i] = i;
+    }
+}
+
+func main() {
+    var data = Packed.uint32(8);
+    fill_dynamic(data, 9);
+}

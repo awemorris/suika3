@@ -1,0 +1,15 @@
+__accel func read_ahead(
+    input: rpackeduint32_in,
+    output: rpackeduint32_out,
+    count: int
+): void {
+    for (i in 0..count) {
+        output[i] = input[i + 1];
+    }
+}
+
+func main() {
+    let input = Packed.uint32(3);
+    let output = Packed.uint32(3);
+    Accel.call(read_ahead, input, output, 3);
+}

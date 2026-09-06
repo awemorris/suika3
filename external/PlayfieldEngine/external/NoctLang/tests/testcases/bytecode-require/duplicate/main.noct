@@ -1,0 +1,8 @@
+require duplicate;
+
+func conflict(): int {
+	return 1;
+}
+
+func main() {
+}

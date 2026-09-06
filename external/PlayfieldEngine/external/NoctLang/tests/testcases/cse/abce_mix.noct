@@ -1,0 +1,14 @@
+func main() {
+    var n = 100;
+    var p = Packed.uint8(n);
+    var d = { base: 3, mul: 2 };
+    for (i in 0..n) {
+        p[i] = (i * d.mul + d.base) % 256;
+    }
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + p[i] + p[i];
+    }
+    print(sum);
+    print(d.mul + d.base + d.mul + d.base);
+}

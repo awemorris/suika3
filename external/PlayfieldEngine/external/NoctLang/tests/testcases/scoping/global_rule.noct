@@ -1,0 +1,12 @@
+func setup() {
+    Counter = 100;
+}
+func bump() {
+    Counter = Counter + 1;
+}
+func main() {
+    setup();
+    bump();
+    bump();
+    print(Counter);
+}

@@ -1,0 +1,753 @@
+Playfield Engine
+================
+
+[![License: zlib](https://img.shields.io/badge/License-zlib-blue.svg)](LICENSE)
+
+`Playfield Engine` is a 2D game scripting runtime that works
+everywhere. With scripts written in `Ray`, it can render graphics and
+play sounds seamlessly across platforms.
+
+`libplayfield` is designed to be a foundation framework of other 2D
+game engines that are dedicated to game genres. It is already used by
+the `Suika3` project that is dedicated to Visual Novels.
+
+[Getting Started](docs/mkdocs-en/docs/gettingstarted.md)
+ |
+[Official Website](https://noctvm.io/playfield/)
+ | 
+[Japanese Website](https://noctvm.io/playfield-ja/)
+
+---
+
+## Feature Highlights
+
+Built completely from scratch, Playfield Engine features:
+
+- **Comfortable Scripting:**
+    - Powered by `Ray`, a C/JS-like scripting language designed in-house.
+    - Native performance with a built-in JIT compiler.
+    - Write a script and run it instantly — **Jot and Run, Boom!**
+- **Portable Rendering & Audio:**
+    - Powered by StratoHAL, a portable game library also designed in-house.
+    - Runs virtually everywhere: Windows, macOS, Linux, Chromebook, WebAssembly, iOS, Android, and even consoles.
+    - Deploy to platforms you don't even own — **Go Far, Stay Close!**
+- **Minimal Runtime:**
+    - The runtime is only ~1.4 MB on Windows.
+    - Perfect for mobile apps — **Little Core, Big Hits!**
+- **Game Engine Framework:**
+    - Designed to be a foundation of other dedicated 2D game engines, such as `Suika3`.
+
+---
+
+## Why Playfield Engine?
+
+_"If a game engine could run anywhere, how would the world change?"_
+
+Playfield Engine was born from this single question.
+
+Creativity shouldn't depend on the power of your computer, where you
+live, or what tools you have.  Playfield Engine was created with the
+belief that every creator deserves space to explore, no matter their
+surroundings.
+
+It runs smoothly even on older or low-spec machines — if you have a
+computer, there's a place for you to create.  It's a helpful companion
+for creators everywhere — especially in places with fewer resources.
+If you have something to make, Playfield Engine will be here to walk
+with you.
+
+Whether you're using a Raspberry Pi in a classroom, or using a
+UN-issued Chromebook in a temporary shelter, Playfield Engine offers
+gentle tools to help bring your ideas to life — in a way that feels
+simple, thoughtful, and your own.
+
+The goal is simple:
+**To make game development accessible, thoughtful, and within reach
+for everyone.**
+
+**Dreams fuel it — and they're the only requirement.**
+
+---
+
+## Live Web Demo
+
+These are the sample games that work on Web browsers.
+
+[![Small Shoot](https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-4.png)](https://noctvm.io/g/4)
+
+[![Heartbeat Clock](https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-2.png)](https://noctvm.io/g/2)
+
+[![Mini Shoot](https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-3.png)](https://noctvm.io/g/3)
+
+[![DON'T RUSH IN COMIKET](https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-1.png)](https://noctvm.io/g/1)
+
+---
+
+## Gallery
+
+Playfield Engine running on Windows 11:
+
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-win11.png" width="320" alt="Playfield Engine running on Windows 11">
+
+Playfield Engine running on macOS:
+
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-macos.png" width="320" alt="Playfield Engine running on macOS">
+
+Playfield Engine running on Linux:
+
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-linux.png" width="320" alt="Playfield Engine running on Linux">
+
+Playfield Engine running on iOS:
+
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-ios.png" width="320" alt="Playfield Engine running on iOS">
+
+Playfield Engine running on Android:
+
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-android.png" width="320" alt="Playfield Engine running on Android">
+
+Playfield Engine running on HarmonyOS NEXT:
+
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-harmonyosnext.png" width="320" alt="Playfield Engine running on HarmonyOS NEXT">
+
+Playfield Engine running on Windows XP — because why not:
+
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-xp.png" width="320" alt="Playfield Engine running on Windows XP">
+
+Playfield Engine running on Windows 2000:
+
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-win2000.png" width="320" alt="Playfield Engine running on Windows 2000">
+
+Playfield Engine running on NetBSD — Of course it runs!:
+
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-netbsd.png" width="320" alt="Playfield Engine running on NetBSD">
+
+Playfield Engine running on Solaris 11:
+
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-solaris11.png" width="320" alt="Playfield Engine running on Solaris 11">
+
+Playfield Engine running on Haiku OS: — "Be" Portable!
+
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-haiku.png" width="320" alt="Playfield Engine running on Haiku OS">
+
+Playfield Engine running on NP21/W PC-9801 emulator:
+
+<img src="https://github.com/awemorris/PlayfieldEngine/blob/main/docs/img/screenshot-pc98.png" width="320" alt="Playfield Engine running on NP21/W PC-9801 emulator">
+
+---
+
+## Status
+
+**Stable,** 1.0.x was released!
+
+Currently we have many `C APIs` for use with derrived engines, while
+maintaining a small set of `Ray` wrapper APIs.
+
+**The current version work on:**
+
+| Type       | OS              | Status       | Confirm Date | Confirmed On                        |
+|------------|-----------------|--------------|--------------|-------------------------------------|
+| Desktop    | Windows         | ✅ Works     | 1 Mar 2026   | Windows 11 x64                      |
+|            | macOS           | ✅ Works     | 1 Mar 2026   | macOS 26 Arm64                      |
+|            | Linux           | ✅ Works     | 1 Mar 2026   | Ubuntu 24.04 LTS x86_64             |
+| Mobile     | iOS             | ✅ Works     | 1 Mar 2026   | iPhone iOS 26                       |
+|            | Android         | ✅ Works     | 22 Sep 2025  | Android 16                          |
+|            | HarmonyOS NEXT  | ✅ Initial   | 9 Mar 2026   | DevEco Studio 6                     |
+| BSD        | FreeBSD         | ✅ Works     | 22 Sep 2025  | FreeBSD 14.3 amd64                  |
+|            | NetBSD          | ✅ Works     | 22 Sep 2025  | NetBSD 10.1 amd64                   |
+|            | OpenBSD         | ✅ Works     | 22 Sep 2025  | OpenBSD 7.7 amd64                   |
+| UNIX       | Solaris 11      | ✅ Works     | 16 Mar 2026  | Solaris 11.4 SunCC                  |
+| DOS        | NEC PC-9801     | ✅ Works     | 10 May 2026  | DOS4GW, 16-colors, no sound, JIT    |
+| Others     | WebAssembly     | ✅ Works     | 22 Sep 2025  | Chrome                              |
+|            | Chromebook      | ✅ Works     | 22 Sep 2025  | Chrome [Here](https://noctvm.io/w/) |
+|            | Unity           | ✅ Works     | 22 Sep 2025  | Unity 6.2 Windows 11 x86_64         |
+
+---
+
+## Example
+
+Here's a simple example that displays an image following the mouse
+cursor.
+
+This shows the basic lifecycle:
+
+- `setup` (window config),
+- `start` (asset loading),
+- `update` (per-frame logic and texture loading), and
+- `render` (per-frame rendering).
+
+```
+// Called when the window is created.
+func setup() {
+    // Return the window configuration.
+    return {
+        width: 1280,
+        height: 720,
+        title: "My First Game"
+    };
+}
+
+// Called once when the game starts.
+func start() {
+    // Create a white 100x100 texture.
+    tex = Engine.createColorTexture({
+        width: 100,
+        height: 100,
+        r: 255, g: 255, b: 255, a: 255
+    });
+}
+
+// Called every frame before rendering.
+func update() {
+    posX = Engine.mousePosX;
+    posY = Engine.mousePosY;
+}
+
+// Called every frame to render graphics.
+func render() {
+    Engine.draw({ texture: tex, x: posX, y: posY });
+}
+```
+
+---
+
+## Quick Start
+
+Precompiled binaries are available for Windows, macOS, Linux, and Chromebook!
+
+### 1. Download the latest binary:
+
+- Download the "full" zip file at the top of this page.
+- Extract the downloaded file.
+
+### 2. Run a game script
+
+- For Windows:
+    - Double-click the `playfield.exe` file.
+    - The game will be started.
+- For macOS:
+    - Open the `misc` folder.
+    - Open the `macos` folder.
+    - Open the `Playfield.dmg` file.
+    - Copy the application inside the dmg file alongside the `main.pf` file.
+    - Double-click the copied application file.
+    - The game will be started.
+- For Linux:
+    - Open the `misc` folder.
+    - Open the `linux` folder.
+    - Copy the `PlayfieldEngine-x86_64.AppImage` file alongside the `main.pf` file.
+    - Double-click the copied AppImage file.
+    - The game will be started.
+- For Chromebook:
+    - Open [this URL](https://noctvm.io/w/) on the browser.
+    - Press the `Open Folder` button.
+    - Select the folder where the `main.pf` file exists.
+    - The game will be started.
+
+### 3. Edit a game script
+
+- With Playfield Editor (Currently Windows only):
+    - Double-click the `playfield-editor.exe` file to run the editor.
+    - Open the `main.pf` file from the editor.
+    - Edit the file.
+    - Press Ctrl+R to run the game. (Press R key while holding Ctrl key down)
+- With your favorite editor:
+    - Prior to editing, copy the engine alongside the `main.pf` file.
+    - Open your favorite editor and load the `main.pf` file.
+    - Edit the file and save it.
+    - Run the engine.
+
+### 4. Explore more features
+
+- [Getting Started](docs/mkdocs-en/docs/gettingstarted.md)
+- [Ray Syntax](docs/mkdocs-en/docs/syntax.md)
+- [Ray API](docs/mkdocs-en/docs/api.md)
+- [How To Build Playfield Engine](docs/mkdocs-en/docs/build.md)
+
+---
+
+## Technical Overview
+
+Playfield Engine is not merely a wrapper around SDL combined with a
+scripting language. It features its own rendering and audio backends,
+and its own scripting language, positioning it as a fully independent
+game engine.
+
+### Core Architecture
+
+```
++----------------------------------------------------------+
+| User Ray Scripts                                         |
++----------------------------------------------------------+
+| Playfield Ray API                                        |
++--------------------------------+-------------------------+
+| Playfield C API                                          |
++--------------------------------+-------------------------+
+| StratoHAL (Rendering/Audio)    | NoctLang VM (JIT)       |
++--------------------------------+-------------------------+
+```
+
+* **Scripting**:
+  Integrates [NoctLang](https://github.com/awemorris/NoctLang), a
+  tiny yet mighty language designed for game scripting.
+
+* **Rendering**:
+  Supports native DirectX 9/11/12, Metal, OpenGL, OpenGL ES, and WebGL for wide compatibility.
+
+* **Audio**:
+  Provides lightweight audio support through native DirectSound or XAudio2 (Windows),
+  Audio Unit (macOS/iOS), ALSA (Linux), OSS (BSD), and other APIs.
+
+### StratoHAL
+
+StratoHAL originated as the codebase of a 2D game engine developed
+since 2001, and has been open-sourced with a proven record of
+exceptional stability. Evolving over a quarter century from the
+Windows 9x era, StratoHAL has grown to support macOS, Linux, iOS,
+Android, WebAssembly, and Unity. It has been running reliably on
+smartphones for more than a decade. While SDL3 already exists as a
+popular open-source alternative, StratoHAL covers the same major
+platforms as SDL3 — and uniquely provides console support through
+Unity without relying on any NDA-restricted code.
+
+### Platform Support
+
+|Platform Type  |OS / Platform       |Notes                                     |
+|---------------|--------------------|------------------------------------------|
+|Desktop        |Windows             |DirectX 12/11/9, DirectSound, XAudio2     |
+|               |macOS               |Metal, Audio Unit                         |
+|               |ChromeOS            |OpenGL, ALSA                              |
+|               |Linux               |OpenGL, ALSA                              |
+|               |*BSD                |OpenGL, OSS (/dev/dsp)                    |
+|               |Qt                  |Qt OpenGL                                 |
+|Mobile         |iOS                 |Metal, Audio Unit                         |
+|               |Android             |OpenGL, OpenSL ES, NDK                    |
+|               |HarmonyOS NEXT      |OpenGL, OpenSL ES                         |
+|Web            |WebAssembly         |WebGL, OpenAL, via Emscripten             |
+|Console        |Unity               |Unity Plugin                              |
+|               |Xbox Series X\|S    |Xbox GDK Native (DirectX 12 + XAudio2)    |
+
+### Console Unity Plugin Notice
+
+Playfield Engine provides Unity Plugin binaries for platforms
+including Windows 64-bit and game consoles.  These binaries are built
+entirely with the open-source version of LLVM/Clang toolchain (no
+proprietary SDKs).
+
+For Xbox series, you can use the native Microsoft GDK port, not via Unity.
+
+### NoctLang
+
+```
+Ray = NoctLang + Playfield API
+```
+
+**NoctLang** is a lightweight scripting language designed specifically
+for Playfield Engine. With a game-oriented syntax, it emphasizes
+clarity, instant startup, and tight integration with the engine.
+
+The built-in JIT compiler supports a wide range of CPU architectures,
+including both 32-bit and 64-bit of: **Intel, Arm, RISC-V, PowerPC, MIPS.**
+
+For platforms where JIT is restricted (such as mobile or consoles),
+NoctLang can fall back to interpreter mode, and AOT (ahead-of-time)
+compilation using a C source backend — ensuring full compatibility
+even in tightly controlled environments.
+
+### Script Execution Mode
+
+|Platform       |Mode               |
+|---------------|-------------------|
+|Windows x86    |JIT                |
+|Windows x64    |JIT                |
+|Windows arm64  |JIT                |
+|macOS x86_64   |JIT                |
+|macOS arm64    |JIT                |
+|Linux x86      |JIT                |
+|Linux x86_64   |JIT                |
+|Linux armv7    |JIT                |
+|Linux arm64    |JIT                |
+|FreeBSD x86_64 |JIT                |
+|iOS            |Interpreter or AOT |
+|Android        |Interpreter or AOT |
+|HarmonyOS      |Interpreter or AOT |
+|WebAssembly    |Interpreter or AOT |
+|Unity Plugin   |Interpreter or AOT |
+
+### Runtime Footprint
+
+|Platform       |Binary Size    |Memory Usage (GC)                                              |
+|---------------|---------------|---------------------------------------------------------------|
+|All targets    |~2 MB          |Allocates 256 MB at startup for GC; does not exceed that limit |
+
+The garbage collector allocates 256 MB at startup because currently 256 MB is the maximum heap size.
+
+### Garbage Collection
+
+Playfield Engine implements a high-performance garbage collector
+similar to the HotSpot VM in Java, so you generally don’t need to
+worry much about delays caused by garbage collection.
+
+* The garbage collector uses a generational GC, managing objects in young and old generations.
+* Young-generation GC runs extremely fast using a copying algorithm (semi-space copy GC).
+* Old-generation GC uses a mark-and-sweep algorithm and performs compaction when necessary (mark-sweep-compact GC).
+
+---
+
+## Tests
+
+Playfield Engine is tested on the following environments in the
+development.
+
+| Type       | OS              | Version | Architecture    |
+|------------|-----------------|---------|-----------------|
+| Desktop    | Windows         | 11      | x64             |
+|            |                 | 11      | arm64           |
+|            | macOS           | 15      | arm64           |
+|            |                 | 12      | x86_64          |
+|            | Ubuntu          | 24.04   | x86_64          |
+|            |                 |         | arm64           |
+|            | Kubuntu         | 25.04   | x86_64          |
+| Browser    | Chrome          | 139     | WebAssembly     |
+|            | Safari          | 18.6    | WebAssembly     |
+| Smartphone | iOS             | 18      | Simulator       |
+|            | Android         | 16      | Simulator       |
+|            | HarmonyOS NEXT  | 20      | Simulator       |
+| Console    | Unity           | 6.2     | Windows x64     |
+
+---
+
+## CMake Presets
+
+Playfield Engine ships with CMake presets covering various platforms
+and build configurations.
+
+| Preset                         | Platform         | Compiler   | Directory                              | Target           | Type           |
+|--------------------------------|------------------|------------|----------------------------------------|------------------|----------------|
+| windows-vs2022-x86-debug       | Windows          | MSVC       | out/build/windows-vs2022-x86-debug     | playfield.exe    | Executable     |
+| windows-vs2022-x86-release     | Windows          | MSVC       | out/build/windows-vs2022-x86-release   | playfield.exe    | Executable     |
+| windows-vs2022-x64-debug       | Windows          | MSVC       | out/build/windows-vs2022-x64-debug     | playfield.exe    | Executable     |
+| windows-vs2022-x64-release     | Windows          | MSVC       | out/build/windows-vs2022-x64-release   | playfield.exe    | Executable     |
+| windows-vs2022-arm64-debug     | Windows          | MSVC       | out/build/windows-vs2022-arm64-debug   | playfield.exe    | Executable     |
+| windows-vs2022-arm64-release   | Windows          | MSVC       | out/build/windows-vs2022-arm64-release | playfield.exe    | Executable     |
+| windows-vs2022-gdk-desktop     | Windows          | MSVC       | out/build/windows-vs2022-gdk-desktop   | playfield.exe    | Executable     |
+| windows-vs2022-gdk-xbox-xs     | Windows          | MSVC       | out/build/windows-vs2022-gdk-xbox-xs   | playfield.exe    | Executable     |
+| windows-vs2026-x86-debug       | Windows          | MSVC       | out/build/windows-vs2026-x86-debug     | playfield.exe    | Executable     |
+| windows-vs2026-x86-release     | Windows          | MSVC       | out/build/windows-vs2026-x86-release   | playfield.exe    | Executable     |
+| windows-vs2026-x64-debug       | Windows          | MSVC       | out/build/windows-vs2026-x64-debug     | playfield.exe    | Executable     |
+| windows-vs2026-x64-release     | Windows          | MSVC       | out/build/windows-vs2026-x64-release   | playfield.exe    | Executable     |
+| windows-vs2026-arm64-debug     | Windows          | MSVC       | out/build/windows-vs2026-arm64-debug   | playfield.exe    | Executable     |
+| windows-vs2026-arm64-release   | Windows          | MSVC       | out/build/windows-vs2026-arm64-release | playfield.exe    | Executable     |
+| windows-vs2026-gdk-desktop     | Windows          | MSVC       | out/build/windows-vs2026-gdk-desktop   | playfield.exe    | Executable     |
+| windows-vs2026-gdk-xbox-xs     | Windows          | MSVC       | out/build/windows-vs2026-gdk-xbox-xs   | playfield.exe    | Executable     |
+| windows-mingw-x86              | Windows          | MinGW      | build-mingw-x86                        | playfield.exe    | Executable     |
+| windows-mingw-x86_64           | Windows          | MinGW      | build-mingw-x86_64                     | playfield.exe    | Executable     |
+| windows-mingw-arm64            | Windows          | MinGW-LLVM | build-mingw-arm64                      | playfield.exe    | Executable     |
+| macos                          | macOS            | Clang      | build-macos                            | Playfield.app    | App Bundle     |
+| linux-x11                      | Linux            | GCC        | build-linux                            | playfield        | Executable     |
+| linux-wayland                  | Linux            | GCC        | build-linux                            | playfield        | Executable     |
+| linux-gdm                      | Linux            | GCC        | build-linux                            | playfield        | Executable     |
+| linux-gdm-rot90                | Linux            | GCC        | build-linux                            | playfield        | Executable     |
+| freebsd                        | FreeBSD          | Clang      | build-freebsd                          | playfield        | Executable     |
+| netbsd                         | NetBSD           | GCC        | build-netbsd                           | playfield        | Executable     |
+| openbsd                        | OpenBSD          | Clang      | build-openbsd                          | playfield        | Executable     |
+| solaris11                      | Solaris 11       | SunCC      | build-solaris11                        | playfield        | Executable     |
+| wasm                           | WebAssembly      | Emscripten | build-wasm                             | index.html       | HTML + Wasm    |
+| wasm-local                     | Chromebook       | Emscripten | build-wasm-local                       | index.html       | HTML + Wasm    |
+| ios-device                     | iOS Device       | Clang      | build-ios-device                       | libplayfield.a   | Static Library |
+| ios-simulator                  | iOS Simulator    | Clang      | build-ios-simulator                    | libplayfield.a   | Static Library |
+| android-x86                    | Android x86      | Clang      | build-android-x86                      | libplayfield.so  | Shared Library |
+| android-x86_64                 | Android x86_64   | Clang      | build-android-x86_64                   | libplayfield.so  | Shared Library |
+| android-armv7                  | Android armv7    | Clang      | build-android-armv7                    | libplayfield.so  | Shared Library |
+| android-arm64                  | Android arm64    | Clang      | build-android-arm64                    | libplayfield.so  | Shared Library |
+| openharmony-arm64              | HarmonyOS arm64  | Clang      | build-openharmony-arm64                | libplayfield.a   | Static Library |
+| openharmony-armv7              | HarmonyOS armv7  | Clang      | build-openharmony-armv7                | libplayfield.a   | Static Library |
+| openharmony-x86_64             | HarmonyOS x86_64 | Clang      | build-openharmony-x86_64               | libplayfield.a   | Static Library |
+| unity-win64                    | Unity Plugin     | Clang-CL   | build-unity-win64                      | libplayfield.dll | DLL Plugin     |
+| unity-switch                   | Unity Plugin     | Clang      | build-unity-switch                     | libplayfield.a   | Static Library |
+| unity-ps5                      | Unity Plugin     | Clang      | build-unity-ps5                        | libplayfield.a   | Static Library |
+| unity-xbox                     | Unity Plugin     | Clang      | build-unity-xbox                       | libplayfield.a   | Static Library |
+| pc98                           | DOS4GW           | OpenWatcom | build-pc98                             | playfield.exe    | Executable     |
+
+---
+
+## Samples
+
+Samples are added timely.
+
+| Name           | Directory             | Description                      |
+|----------------|-----------------------|----------------------------------|
+| bouncer        | samples/bouncer       | A block bounce demo.             |
+| rush           | samples/rush          | A jumping game demo.             |
+| heartbeatclock | samples/hearbeatclock | A clock.                         |
+| shoot          | samples/shoot         | A mini shooting.                 |
+
+---
+
+## AI Support
+
+To generate game templates with an AI, please let it load the following references:
+
+- [Ray Syntax](docs/mkdocs-en/docs/syntax.md)
+- [Ray API](docs/mkdocs-en/docs/api.md)
+
+AI can then create runnable Playfield Engine games directly.
+
+**Note:** In ChatGPT, you need to click the **"+"** button and enable
+**"Web Search"** so that it can read the above references.
+
+---
+
+## Localization / Internationalization
+
+Playfield Engine supports the following locales for the UI messages.
+
+| Language               | Locale Code | Translation Type         | Scope of Translation             |
+|------------------------|-------------|--------------------------|----------------------------------|
+| English                | `en-US`     | Original                 | UI / Docs / Samples              |
+| Spanish                | `es-ES`     | Machine Translation      | UI                               |
+| French                 | `fr-FR`     | Machine Translation      | UI                               |
+| Italian                | `it-IT`     | Machine Translation      | UI                               |
+| German                 | `de-DE`     | Machine Translation      | UI                               |
+| Greek                  | `el-GR`     | Machine Translation      | UI                               |
+| Russian                | `ru-RU`     | Machine Translation      | UI                               |
+| Simplified Chinese     | `zh-CN`     | Machine Translation      | UI                               |
+| Traditional Chinese    | `zh-TW`     | Machine Translation      | UI                               |
+| Japanese               | `ja-JP`     | Professional Translation | UI / Docs                        |
+
+**How to switch languages**  
+Playfield Engine uses the system locale.
+To switch languages, set your system locale.
+
+**Contributing Translations**  
+Translation files are located under the three `i18n/` directories. (main, HAL and NoctLang)
+To propose a new translation or update an existing one, please open an Issue or submit a Pull Request.
+
+---
+
+## Third-party Libraries
+
+Playfield Engine uses the following libraries.
+The source code tarballs for the libraries are included in this repository.
+
+- zlib
+- libpng
+- libogg
+- libvorbis
+- JPEG9
+- libwebp
+- brotli
+- bzip2
+- FreeType2
+
+---
+
+## Compatibility List
+
+Development of this project spans many years, so this list includes
+older operating systems. Some of them are no longer supported in the
+current codebase, they worked in earlier versions but were removed
+together with the software renderer.
+
+**Windows:**
+
+The official recommended binary is the 64-bit version.
+
+| OS      | Version                     | Patch | CPU    | Runtimes                                        | 64-bit Binary | Direct3D |
+|---------|-----------------------------|-------|--------|-------------------------------------------------|---------------|----------|
+| Windows | 11                          |       | x64    | (None required)                                 | ✅            | 12.0     |
+| Windows | 11                          |       | arm64  | (None required)                                 | ✅            | 12.0     |
+| Windows | 10                          |       | x64    | (None required)                                 | ✅            | 12.0     |
+| Windows | 10                          |       | arm64  | (None required)                                 | ✅            | 12.0     |
+| Windows | 8.1                         |       | x64    | (None required)                                 | ✅            | 11.0     |
+| Windows | 8                           |       | x64    | Microsoft Visual C++ Redistributable 2015       | ✅            | 11.0     |
+| Windows | 7                           |       | x64    | UCRT Update (KB2999226)                         | ✅            | 11.0     |
+|         |                             |       |        | Microsoft Visual C++ Redistributable 2015       |               |          |
+| Windows | 7                           | SP1   | x64    | Microsoft Visual C++ Redistributable 2015       | ✅            | 11.0     |
+| Windows | Vista                       |       | x64    | (No UCRT)                                       | ❌            | -        |
+| Windows | Vista                       | SP1   | x64    | DirectX End-User Runtimes (June 2010)           | ✅            | 9.0      |
+|         |                             |       |        | Microsoft Visual C++ Redistributable 2015       |               |          |
+| Windows | Vista                       | SP2   | x64    | Platform Update for Windows Vista               | ✅            | 11.0     |
+|         |                             |       |        | Microsoft Visual C++ Redistributable 2015       |               |          |
+| Windows | XP Professional x64 Edition |       | x64    | (No UCRT)                                       | ❌            | -        |
+| Windows | XP Professional x64 Edition | SP1   | x64    | (No UCRT)                                       | ❌            | -        |
+| Windows | XP Professional x64 Edition | SP2   | x64    | (No UCRT)                                       | ❌            | -        |
+
+There is a 32-bit version for backward compatibility.
+Note that the 32-bit version cannot handle multi-byte file names.
+
+| OS      | Version                     | Patch | CPU    | Runtimes                               | 32-bit Binary | Direct3D | Special     |
+|---------|-----------------------------|-------|--------|----------------------------------------|---------------|----------|-------------|
+| Windows | 11                          |       | x64    | (None required)                        | ✅            | 12.0     |             |
+| Windows | 11                          |       | arm64  | (None required)                        | ✅            | 12.0     |             |
+| Windows | 10                          |       | x86    | (None required)                        | ✅            | 12.0     |             |
+| Windows | 10                          |       | x64    | (None required)                        | ✅            | 12.0     |             |
+| Windows | 10                          |       | arm64  | (None required)                        | ✅            | 12.0     |             |
+| Windows | 8.1                         |       | x86    | (None required)                        | ✅            | 11.0     |             |
+| Windows | 8.1                         |       | x64    | (None required)                        | ✅            | 11.0     |             |
+| Windows | 8                           |       | x86    | (None required)                        | ✅            | 11.0     |             |
+| Windows | 8                           |       | x64    | (None required)                        | ✅            | 11.0     |             |
+| Windows | 7                           |       | x86    | (None required)                        | ✅            | 11.0     |             |
+| Windows | 7                           |       | x64    | (None required)                        | ✅            | 11.0     |             |
+| Windows | 7                           | SP1   | x86    | (None required)                        | ✅            | 11.0     |             |
+| Windows | 7                           | SP1   | x64    | (None required)                        | ✅            | 11.0     |             |
+| Windows | Vista                       |       | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | Vista                       |       | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | Vista                       | SP1   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | Vista                       | SP1   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | Vista                       | SP2   | x86    | DirectX 11 Platform Update             | ✅            | 11.0     |             |
+| Windows | Vista                       | SP2   | x64    | DirectX 11 Platform Update             | ✅            | 11.0     |             |
+| Windows | XP                          |       | x86    | DirectX 9.0b Runtime                   | ✅            | 9.0      |             |
+| Windows | XP                          | SP1   | x86    | DirectX 9.0b Runtime                   | ✅            | 9.0      |             |
+| Windows | XP                          | SP2   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | XP                          | SP3   | x86    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | XP Professional x64 Edition |       | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | XP Professional x64 Edition | SP1   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | XP Professional x64 Edition | SP2   | x64    | DirectX End-User Runtimes (June 2010)  | ✅            | 9.0      |             |
+| Windows | 2000                        |       | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0      |             |
+| Windows | 2000                        | SP1   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0      |             |
+| Windows | 2000                        | SP2   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0      |             |
+| Windows | 2000                        | SP3   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0      |             |
+| Windows | 2000                        | SP4   | x86    | DirectX End-User Runtimes (Dec 2006)   | ✅            | 9.0      |             |
+| Windows | Me                          |       | x86    | -                                      | Not Checked   | -        | soft render |
+| Windows | 98                          |       | x86    | -                                      | Not Checked   | -        | soft render |
+| Windows | 98                          | SE    | x86    | -                                      | Not Checked   | -        | soft render |
+| Windows | 95                          |       | x86    | -                                      | Not Checked   | -        | soft render |
+| Windows | 95                          | OSR2  | x86    | -                                      | Not Checked   | -        | soft render |
+| Windows | NT 4.0                      |       | x86    |                                        | Not Checked   | -        | soft render |
+| Windows | NT 3.51                     |       | x86    |                                        | ❌            | -        | Insufficient Win32 APIs |
+
+Actually, Playfield Engine implements its own software rendering
+engine, so Direct3D is not required for Windows platforms. (However,
+it is slow.)
+
+**macOS:**
+
+| OS                     | Version | Mac CPU              | Status                       |
+|------------------------|---------|----------------------|------------------------------|
+| macOS Tahoe            | 26.0    | arm64 / x86_64       | ✅ OK                        |
+| macOS Sequoia          | 15.0    | arm64 / x86_64       | ✅ OK                        |
+| macOS Sonoma           | 14.0    | arm64 / x86_64       | ✅ OK                        |
+| macOS Ventura          | 13.0    | arm64 / x86_64       | ✅ OK                        |
+| macOS Monterey         | 12.0    | arm64 / x86_64       | ✅ OK                        |
+| macOS Big Sur          | 11.0    | arm64 / x86_64       | ✅ OK                        |
+| macOS Catalina         | 10.15   | x86_64               | ✅ OK                        |
+| macOS Mojave           | 10.14   | x86_64               | ✅ OK                        |
+| macOS High Sierra      | 10.13   | x86_64               | ✅ OK                        |
+| macOS Sierra           | 10.12   | x86_64               | ✅ OK                        |
+| OS X El Capitan        | 10.11   | x86_64               | ✅ OK                        |
+| OS X Yosemite          | 10.10   | x86_64               | ❌ No Metal                  |
+| OS X Mavericks         | 10.9    | x86_64               | ❌ No Metal                  |
+| OS X Mountain Lion     | 10.8    | x86_64               | ❌ No Metal                  |
+| Mac OS X Lion          | 10.7    | x86_64               | ❌ No Metal                  |
+| Mac OS X Snow Leopard  | 10.6    | i386 / x86_64        | ❌ No Metal, No AVFoundation |
+| Mac OS X Leopard       | 10.5    | ppc / ppc64 / i386   | ❌ No Metal, No AVFoundation |
+| Mac OS X Tiger         | 10.4    | ppc / ppc64 / i386   | ❌ No Metal, No AVFoundation |
+| Mac OS X Panther       | 10.3    | ppc                  | ❌ No Metal, No AVFoundation |
+| Mac OS X Jaguar        | 10.2    | ppc                  | ❌ No Metal, No AVFoundation |
+| Mac OS X Puma          | 10.1    | ppc                  | ❌ No Metal, No AVFoundation |
+| Mac OS X Cheetah       | 10.0    | ppc                  | ❌ No Metal, No AVFoundation |
+
+**Linux:**
+
+| Distribution      | Version               | CPU             | Status | Graphics                      |
+|-------------------|-----------------------|-----------------|--------|-------------------------------|
+| Raspberry Pi OS   | Debian 13             | arm64, armv7    | ✅     | X11, OpenGL ES                |
+| Ubuntu            | 24.04 / 22.04 / 20.04 | x86_64, arm64   | ✅     | X11, OpenGL 3                 |
+| Kubuntu           | 25.04                 | x86_64, arm64   | ✅     | Wayland + OpenGL 3            |
+| Linux Mint        | 22.3                  | x86_64          | ✅     | X11 + OpenGL 3                |
+| Fedora            | 43                    | x86_64          | ✅     | X11 + OpenGL 3                |
+| Odroid            |                       | arm64           | ✅     | GBM + DRM + EGL + OpenGL ES 2 |
+
+**iOS:**
+
+| OS     | Status   |
+|--------|----------|
+| iOS 26 | ✅       |
+| iOS 18 | ✅       |
+| iOS 17 | ✅       |
+| iOS 16 | ✅       |
+| iOS 15 | ✅       |
+| iOS 14 | ✅       |
+| iOS 13 | ✅       |
+| iOS 12 | ✅       |
+| iOS 11 | ✅       |
+| iOS 10 | ?        |
+| iOS 9  | ?        |
+| iOS 8  | ?        |
+| iOS 7  | No Metal |
+
+**Android:**
+
+| OS          | Status | Special                      |
+|-------------|--------|------------------------------|
+| Android 16  | ✅     |                              |
+| Android 15  | ✅     |                              |
+| Android 14  | ✅     |                              |
+| Android 13  | ✅     |                              |
+| Android 12  | ✅     |                              |
+| Android 11  | ✅     |                              |
+| Android 10  | ✅     |                              |
+| Android 9   | ✅     |                              |
+| Android 8   | ✅     |                              |
+| Android 7   | ✅     | Change the build properties. |
+| Android 6   | ✅     | Change the build properties. |
+| Android 5   | ✅     | Change the build properties. |
+| Android 4.4 | ✅     | Change the build properties. |
+
+**OpenHarmony / HarmonyOS NEXT:**
+
+| OS         | Status |
+|------------|--------|
+| API 20     | ✅     |
+| API 12     | ✅     |
+
+---
+
+## NoctVM Ecosystem
+
+Playfield Engine is a part of the [NoctVM](https://noctvm.io/) ecosystem:
+
+- **NoctLang** — portable scripting language (used in this project)
+- **Playfield Engine** — go-anywhere 2D game engine (this project)
+- **Suika3** — Commercial visual novel engine (uses this project)
+- NoctUI — a declarative UI library (not used in this project)
+
+Together, they form the foundation of the Noct ecosystem.
+NoctLang itself is just the core language engine with no complex runtime.
+Playfield Engine is one of the runtimes that embeds and extends the NoctLang core.
+
+---
+
+## License
+
+```
+Playfield Engine
+© 2025 2026 Awe Morris
+```
+
+Playfield is available as free/libre software under the permissive
+**zlib License**. You're free to use, modify, and share it — even in
+commercial projects.
+
+---
+
+## Contact
+
+Email: Awe Morris <awe@noctvm.io>
+Project Page: https://noctvm.io/playfield/
+
+---
+
+## Join Us
+
+Playfield Engine is still in its early stages. We're building the game
+engine with care, hoping it will inspire and empower creators around
+the world.
+
+If you're interested in contributing — whether it's code,
+documentation, testing, or ideas — we'd be happy to have you with us.
+
+Every small step helps shape what Playfield Engine can become. You're
+welcome to join us on this journey.
+
+[Join us on Discord](https://discord.gg/ybHWSqDVEX)

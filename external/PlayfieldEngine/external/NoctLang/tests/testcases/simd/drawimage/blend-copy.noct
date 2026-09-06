@@ -1,0 +1,16 @@
+// Essence of DRAW_IMAGE_COPY: one contiguous restricted source and sink.
+func blend_copy(dst: rpackeduint32, src: rpackeduint32, n: int): void {
+    for (i in 0..n) {
+        dst[i] = src[i];
+    }
+}
+
+func main() {
+    let src = Packed.uint32(16);
+    let dst = Packed.uint32(16);
+    src[0] = 0xff102030;
+    src[15] = 0xffa0b0c0;
+    blend_copy(dst, src, 16);
+    print(dst[0]);
+    print(dst[15]);
+}

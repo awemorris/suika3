@@ -1,0 +1,6 @@
+__accel func bad(input: rpackeduint32_in) {
+    return;
+}
+
+func main() {
+}

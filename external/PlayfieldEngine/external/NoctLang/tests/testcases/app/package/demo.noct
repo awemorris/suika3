@@ -1,0 +1,11 @@
+var package_state = "top";
+
+func package_init(): void {
+	package_state = package_state + "-init";
+	print(package_state);
+}
+
+func demo_main(args) {
+	print(Array.size(args));
+	print(args[0]);
+}

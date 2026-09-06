@@ -1,0 +1,24 @@
+func main() {
+    // A negative literal on the left of || must not swallow the rest.
+    var b = 10;
+    print(b == -1 || b == 10);
+    if (b == -1 || b == 10) { print("or-ok"); }
+    print(b == -1 && b == 10);
+    print(-1 == b || 10 == b);
+
+    // Unary minus binds tighter than binary operators.
+    print(-2 + 3);
+    print(0 - -5);
+    print(-2 * 3);
+    print(-6 / 2);
+    print(1 - -1);
+
+    // In subscripts and calls.
+    var a = [7, 8, 9];
+    print(a[-1 + 2]);
+    print(String.substring("abcde", 1, -1 + 3));
+
+    // Nested negation.
+    print(- -3);
+    print(-(-3));
+}

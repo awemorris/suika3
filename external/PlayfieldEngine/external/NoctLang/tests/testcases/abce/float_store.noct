@@ -1,0 +1,7 @@
+func main() {
+    var p = Packed.uint8(4);
+    for (i in 0..4) {
+        p[i] = 1.5;
+    }
+    print(p[0] + p[1] + p[2] + p[3]);
+}

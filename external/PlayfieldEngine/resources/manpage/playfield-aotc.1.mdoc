@@ -1,0 +1,37 @@
+.\" playfield-aotc.1.mdoc - Playfield AOT compiler manpage
+.Dd May 2026
+.Dt PLAYFIELD-COMPILER 1
+.Os Playfield 1.0
+.Sh NAME
+.Nm playfield-aotc
+.Nd compile Ray scripts into a C source file
+.Sh SYNOPSIS
+.Nm
+.Op Ar sourcefiles ...
+.Sh DESCRIPTION
+The
+.Nm
+translates Ray script files
+.Pa .ray
+into a C source file named
+.Pa library.c
+.Pp
+.Sh EXAMPLES
+Compile a single script:
+.Bd -literal -offset indent
+suika3-aotc main.ray
+.Ed
+.Pp
+Compile multiple scripts:
+.Bd -literal -offset indent
+suika3-aotc main.ray enemy.ray level.ray
+.Ed
+.Sh SEE ALSO
+.Xr playfield 1 ,
+.Xr playfield-bcc 1
+.Xr playfield-pack 1
+.Sh AUTHORS
+.An Awe Morris Aq Mt awe@noctvm.io
+and contributors.
+Project homepage:
+.Lk https://github.com/awemorris/PlayfieldEngine

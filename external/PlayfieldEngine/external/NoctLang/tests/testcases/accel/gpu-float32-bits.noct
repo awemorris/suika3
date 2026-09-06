@@ -1,0 +1,24 @@
+__accel var bits_output = Accel.float32(5);
+
+__gpu func bits_micro(output: rpackedfloat_ptr): void {
+    if (globalIdx.x == 0) {
+        output[0] = Accel.float32FromBits(1056964608);
+        output[1] = Accel.float32FromBits(-1073741824);
+        output[2] = Accel.float32FromBits(2139095040);
+        output[3] = Accel.float32FromBits(-8388607);
+        output[4] = Accel.float32FromBits(-2147483648);
+    }
+}
+
+func main() {
+    let output = Packed.float32(5);
+    bits_micro<<<1, 1>>>(bits_output);
+    Accel.copyFromAccel(bits_output, 0, output, 0, 20);
+    var ok = 1;
+    if (output[0] != 0.5) { ok = 0; }
+    if (output[1] != -2.0) { ok = 0; }
+    if (output[2] != 1.0 / 0.0) { ok = 0; }
+    if (output[3] == output[3]) { ok = 0; }
+    if (1.0 / output[4] > 0.0) { ok = 0; }
+    print(ok);
+}

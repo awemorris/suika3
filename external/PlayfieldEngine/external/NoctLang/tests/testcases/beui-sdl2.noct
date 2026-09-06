@@ -1,0 +1,20 @@
+func main() : int
+{
+	if (!BeUI.init()) {
+		return 1;
+	}
+	if (BeUI.getWidth() != 640 || BeUI.getHeight() != 400) {
+		BeUI.close();
+		return 2;
+	}
+	BeUI.fill(0, 0, 640, 400, 0x102030);
+	BeUI.patternFill(16, 16, 96, 64, 0x406080, 0x55aa55aa);
+	BeUI.line(0, 0, 639, 399, 0xffffff);
+	BeUI.drawText("Noct BeUI SDL2", 24, 96, 0xffffff, 0x102030);
+	if (!BeUI.flush() || !BeUI.poll()) {
+		BeUI.close();
+		return 3;
+	}
+	BeUI.close();
+	return 0;
+}

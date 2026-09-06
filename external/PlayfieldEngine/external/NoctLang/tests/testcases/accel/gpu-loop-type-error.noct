@@ -1,0 +1,7 @@
+__gpu func invalid(): void {
+    var value: int = 0;
+    value = 1.0;
+}
+
+func main() {
+}

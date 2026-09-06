@@ -1,0 +1,27 @@
+__accel func initialize(data: packedint32, count: int): void {
+    for (i in 0..count) {
+        data[i] = i + 1;
+    }
+}
+
+__accel func sum(data: packedint32, count: int): int {
+    var total: int = 0;
+    for (i in 0..count) {
+        total += data[i];
+    }
+    return total;
+}
+
+__accel func choose(value) {
+    if (value > 3) {
+        return value * 2;
+    }
+    return value - 1;
+}
+
+func main() {
+    let data = Packed.int32(4);
+    initialize(data, 4);
+    print(sum(data, 4));
+    print(choose(4));
+}

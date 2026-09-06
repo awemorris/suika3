@@ -1,0 +1,11 @@
+# CMake build directories.
+build/
+build-*/
+out/
+
+# Test scratch output.
+tests/testcases/out
+tests/testcases/webapp/build/
+__pycache__/
+*.pyc
+plan/

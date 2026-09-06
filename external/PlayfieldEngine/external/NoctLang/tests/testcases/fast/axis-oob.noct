@@ -1,0 +1,8 @@
+__fast func bad_axis(data: rpackeduint32(2, 3, 4), column: int): int {
+    return data[1, column, 0];
+}
+
+func main() {
+    var data = Packed.uint32(24);
+    print(bad_axis(data, -1));
+}

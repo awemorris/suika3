@@ -1,0 +1,40 @@
+// Typed int arithmetic on annotated parameters (design 07 Stage
+// emission via rule 5a).  Every op must produce output identical to
+// level 0 / the generic helpers, including wraparound.
+
+func f(a: int, b: int) {
+    print(a + b);
+    print(a - b);
+    print(a * b);
+    print(a / 7);        // literal divisor: typed
+    print(a % 7);        // literal divisor: typed
+    print(a & b);
+    print(a | b);
+    print(a ^ b);
+    print(a << 3);
+    print(a >> 2);
+    print(a < b);
+    print(a <= b);
+    print(a > b);
+    print(a >= b);
+    print(a == b);       // stays generic (OP_EQI is fused-only on JITs)
+    print(a != b);       // stays generic
+}
+
+func main() {
+    f(100, 23);
+    f(0 - 100, 23);
+
+    // Wraparound: literals are proven, so these are typed too.
+    print(2147483647 + 1);
+    print((0 - 2147483647 - 1) - 1);
+    print(65535 * 65535);
+
+    // Logical shift on a negative value (bit 31 set).
+    var m = 0 - 8;
+    print((0 - 8) >> 1);         // literals: typed; logical => large positive
+    print(2147483647 >> 30);
+    print(1 << 31);
+
+    return 0;
+}

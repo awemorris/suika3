@@ -1,0 +1,3 @@
+__fast func cycle_b(value: int): int {
+    return cycle_a(value);
+}

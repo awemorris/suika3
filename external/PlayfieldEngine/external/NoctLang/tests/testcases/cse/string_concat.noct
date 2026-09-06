@@ -1,0 +1,10 @@
+func main() {
+    var s = "foo";
+    var t = "bar";
+    var a = s + t;
+    var b = s + t;
+    print(a);
+    print(b);
+    var c = (s + t) + (s + t);
+    print(c);
+}

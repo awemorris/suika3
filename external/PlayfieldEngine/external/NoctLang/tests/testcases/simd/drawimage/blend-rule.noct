@@ -1,0 +1,21 @@
+// Essence of DRAW_IMAGE_RULE: a per-pixel predicate controls the store.
+func blend_rule(dst: rpackeduint32, src: rpackeduint32,
+                rule: rpackeduint32, threshold: int, n: int): void {
+    for (i in 0..n) {
+        if ((rule[i] & 0xff) <= threshold) {
+            dst[i] = src[i];
+        }
+    }
+}
+
+func main() {
+    let src = Packed.uint32(16);
+    let dst = Packed.uint32(16);
+    let rule = Packed.uint32(16);
+    src[0] = 0xff102030;
+    dst[0] = 0xffa0b0c0;
+    rule[0] = 32;
+    blend_rule(dst, src, rule, 64, 16);
+    print(dst[0]);
+    print(dst[15]);
+}

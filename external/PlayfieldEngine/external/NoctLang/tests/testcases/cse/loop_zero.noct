@@ -1,0 +1,17 @@
+func main() {
+    var d = { k: 11 };
+    var n = 0;
+    while (n > 0) {
+        var t = d.k * 3 + d.k * 3;
+        print(t);
+        n = n - 1;
+    }
+    var u = d.k * 3;
+    print(u);
+    for (i in 0 .. 0) {
+        var v = d.k * 9 + d.k * 9;
+        print(v);
+    }
+    var w = d.k * 9;
+    print(w);
+}

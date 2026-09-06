@@ -1,0 +1,7 @@
+static __accel func twice(value: int): int {
+    return value * 2;
+}
+
+func main() {
+    print(twice(21));
+}

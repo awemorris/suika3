@@ -1,0 +1,23 @@
+__accel func affine(
+    input: rpackedfloat_in,
+    output: rpackedfloat_out,
+    count: int,
+    scale: float,
+    bias: float
+): void {
+    for (i in 0..count) {
+        output[i] = input[i] * scale + bias;
+    }
+}
+
+func main() {
+    let input = Packed.float32(3);
+    let output = Packed.float32(3);
+    input[0] = 1.0;
+    input[1] = 2.0;
+    input[2] = 3.0;
+    Accel.call(affine, input, output, 3, 2.0, 0.5);
+    print(output[0]);
+    print(output[1]);
+    print(output[2]);
+}

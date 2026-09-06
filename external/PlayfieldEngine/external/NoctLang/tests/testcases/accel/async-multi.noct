@@ -1,0 +1,33 @@
+__accel func add_one(
+    input: rpackeduint32_in,
+    output: rpackeduint32_out,
+    count: int
+): void {
+    for (i in 0..count) {
+        output[i] = input[i] + 1;
+    }
+}
+
+func main() {
+    let input_a = Packed.uint32(130);
+    let output_a = Packed.uint32(130);
+    let input_b = Packed.uint32(130);
+    let output_b = Packed.uint32(130);
+    for (i in 0..130) {
+        input_a[i] = i;
+        input_b[i] = i * 10;
+    }
+    let event_a = Accel.callAsync(add_one, input_a, output_a, 130);
+    let event_b = Accel.callAsync(add_one, input_b, output_b, 130);
+    var cpu_sum = 0;
+    for (i in 0..1000) {
+        cpu_sum = cpu_sum + i;
+    }
+    Accel.join(event_b);
+    Accel.join(event_a);
+    print(output_a[0]);
+    print(output_a[129]);
+    print(output_b[0]);
+    print(output_b[129]);
+    print(cpu_sum);
+}

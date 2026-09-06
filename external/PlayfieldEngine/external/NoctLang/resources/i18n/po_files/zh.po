@@ -1,0 +1,2987 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "  --gc-graduate-size=N ... second GC space size in bytes\n"
+msgstr "  --gc-graduate-size=N ... 第二 GC 空间大小（字节）\n"
+
+msgid "  --gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n"
+msgstr "  --gc-lop-threshold=N ... 将大于 N 字节的对象移动到最终 GC 空间\n"
+
+msgid "  --gc-nursery-size=N  ... first GC space size in bytes\n"
+msgstr "  --gc-nursery-size=N  ... 第一 GC 空间大小（字节）\n"
+
+msgid "  --gc-tenure-size=N   ... final GC space size in bytes\n"
+msgstr "  --gc-tenure-size=N   ... 最终 GC 空间大小（字节）\n"
+
+msgid "  --gpu-list           ... list suitable GPU device selectors\n"
+msgstr "  --gpu-list           ... 列出合适的 GPU 设备选择器\n"
+
+msgid "  --gpu[=SELECTOR]     ... use GPU acceleration for source execution\n"
+msgstr "  --gpu[=SELECTOR]     ... 使用 GPU 加速执行源代码\n"
+
+msgid "  --path=DIR1:DIR2     ... append source-module search paths\n"
+msgstr "  --path=DIR1:DIR2     ... 追加源代码模块搜索路径\n"
+
+msgid "  --simd-info          ... report successfully vectorized loops\n"
+msgstr "  --simd-info          ... 报告已成功向量化的循环\n"
+
+msgid "  -O, -O0..-O3, -O9    ... optimization preset\n"
+msgstr "  -O, -O0..-O3, -O9    ... 优化预设\n"
+
+msgid "  -j, -j0              ... eager JIT (default), or interpreter only\n"
+msgstr "  -j, -j0              ... 预先 JIT 编译（默认），或仅使用解释器\n"
+
+msgid "  noct --ansic <out-file> <in-files>  ... convert to a C source file\n"
+msgstr "  noct --ansic <out-file> <in-files>  ... 转换为 C 源代码文件\n"
+
+msgid "  noct --compile <in-files>           ... convert to bytecode files\n"
+msgstr "  noct --compile <in-files>           ... 转换为字节码文件\n"
+
+msgid "  noct --elisp <out-file> <in-files>  ... convert to an Emacs Lisp source file\n"
+msgstr "  noct --elisp <out-file> <in-files>  ... 转换为 Emacs Lisp 源代码文件\n"
+
+msgid "  noct --scheme <out-file> <in-files> ... convert to an Scheme source file\n"
+msgstr "  noct --scheme <out-file> <in-files> ... 转换为 Scheme 源代码文件\n"
+
+msgid "  noct <vm-options> <files>           ... run a program\n"
+msgstr "  noct <vm-options> <files>           ... 运行程序\n"
+
+msgid "%s"
+msgstr "%s"
+
+msgid "%s\n"
+msgstr "%s\n"
+
+msgid "%s accelerator %s."
+msgstr "%s 加速器%s。"
+
+msgid "%s accelerator %s: %s"
+msgstr "%s 加速器%s：%s"
+
+msgid "%s accelerator context is detached."
+msgstr "%s 加速器上下文已分离。"
+
+msgid "%s accelerator program changed during begin."
+msgstr "%s 加速器程序在开始期间发生了变化。"
+
+msgid "%s accelerator program is not published."
+msgstr "%s 加速器程序尚未发布。"
+
+msgid "%s accelerator session changed during dispatch."
+msgstr "%s 加速器会话在调度期间发生了变化。"
+
+msgid "%s accelerator session changed during finish."
+msgstr "%s 加速器会话在完成期间发生了变化。"
+
+msgid "%s accelerator session changed while publishing results."
+msgstr "%s 加速器会话在发布结果时发生了变化。"
+
+msgid "%s failed."
+msgstr "%s 失败。"
+
+msgid "%s is unavailable."
+msgstr "%s 不可用。"
+
+msgid "%s() is not defined\n"
+msgstr "%s() 未定义\n"
+
+msgid "%s() must have zero or one parameter\n"
+msgstr "%s() 必须有零个或一个形参\n"
+
+msgid "%s(): Function arguments not match."
+msgstr "%s(): 函数参数不匹配。"
+
+msgid "%s(): argument type mismatch (expected %s)."
+msgstr "%s()：实参类型不匹配（应为 %s）。"
+
+msgid "%s(): local type mismatch (expected %s)."
+msgstr "%s()：局部变量类型不匹配（应为 %s）。"
+
+msgid "%s(): return type mismatch (expected %s)."
+msgstr "%s()：返回类型不匹配（应为 %s）。"
+
+msgid "%s: Out of memory while parsing."
+msgstr "%s：解析时内存不足。"
+
+msgid "%s:%d: Error: %s\n"
+msgstr "%s:%d: 错误: %s\n"
+
+msgid "--gpu-list may be specified only once.\n"
+msgstr "--gpu-list 只能指定一次。\n"
+
+msgid "--gpu-list must be used by itself.\n"
+msgstr "--gpu-list 必须单独使用。\n"
+
+msgid "A __fast array index must be int or long."
+msgstr "__fast 数组索引必须为 int 或 long。"
+
+msgid "A __fast assignment requires an exact type match."
+msgstr "__fast 赋值要求类型完全匹配。"
+
+msgid "A __fast assignment target must be a typed local."
+msgstr "__fast 赋值目标必须是有类型的局部变量。"
+
+msgid "A __fast binary intrinsic requires operands of the same type."
+msgstr "__fast 二元内置函数要求操作数类型相同。"
+
+msgid "A __fast binary operation requires equal primitive operand types."
+msgstr "__fast 二元运算要求操作数的基本类型相同。"
+
+msgid "A __fast condition must have type int."
+msgstr "__fast 条件的类型必须为 int。"
+
+msgid "A __fast expression is too deeply nested."
+msgstr "__fast 表达式嵌套过深。"
+
+msgid "A __fast func may call only a direct __fast function or intrinsic."
+msgstr "__fast func 只能直接调用 __fast 函数或内置函数。"
+
+msgid "A __fast func must declare its return type."
+msgstr "__fast func 必须声明其返回类型。"
+
+msgid "A __fast func parameter must be primitive or shaped rpacked."
+msgstr "__fast func 形参必须为基本类型或带形状的 rpacked。"
+
+msgid "A __fast func return type must be void, int, long, float, or double."
+msgstr "__fast func 的返回类型必须为 void、int、long、float 或 double。"
+
+msgid "A __fast func supports only ranged for loops."
+msgstr "__fast func 仅支持范围 for 循环。"
+
+msgid "A __fast function name conflicts with a compiler intrinsic."
+msgstr "__fast 函数名称与编译器内置函数冲突。"
+
+msgid "A __fast integer operation requires int or long."
+msgstr "__fast 整数运算要求类型为 int 或 long。"
+
+msgid "A __fast intrinsic requires a statically typed numeric argument."
+msgstr "__fast 内置函数要求实参为静态类型的数值。"
+
+msgid "A __fast logical operand must have type int."
+msgstr "__fast 逻辑操作数的类型必须为 int。"
+
+msgid "A __fast numeric intrinsic requires numeric arguments."
+msgstr "__fast 数值内置函数要求数值实参。"
+
+msgid "A __fast packed access is provably out of bounds."
+msgstr "可证明 __fast packed 访问越界。"
+
+msgid "A __fast packed store requires an exact element type match."
+msgstr "__fast packed 存储要求元素类型完全匹配。"
+
+msgid "A __fast parameter shape has more than 8 dimensions."
+msgstr "__fast 形参的形状超过 8 维。"
+
+msgid "A __fast ranged loop requires matching int or long bounds."
+msgstr "__fast 范围循环要求边界均为相同的 int 或 long 类型。"
+
+msgid "A __fast return value does not match its declared type."
+msgstr "__fast 返回值与其声明的类型不匹配。"
+
+msgid "A __fast shape extent must be int or long."
+msgstr "__fast 形状的维度大小必须为 int 或 long。"
+
+msgid "A __fast shape extent must be positive."
+msgstr "__fast 形状的维度大小必须为正数。"
+
+msgid "A __fast subscript base must be a shaped rpacked parameter."
+msgstr "__fast 下标的基值必须是带形状的 rpacked 形参。"
+
+msgid "A __fast transcendental intrinsic requires float or double."
+msgstr "__fast 超越内置函数要求类型为 float 或 double。"
+
+msgid "A __fast unary operand must be primitive."
+msgstr "__fast 一元操作数必须为基本类型。"
+
+msgid "A binary __fast intrinsic requires operands of the same type."
+msgstr "二元 __fast 内置函数要求操作数类型相同。"
+
+msgid "A direct __fast call argument does not match the callee type."
+msgstr "直接 __fast 调用的实参与被调用方类型不匹配。"
+
+msgid "A direct __fast call has the wrong argument count."
+msgstr "直接 __fast 调用的实参数量错误。"
+
+msgid "A direct __fast call packed argument has the wrong element type."
+msgstr "直接 __fast 调用的 packed 实参元素类型错误。"
+
+msgid "A direct __fast call packed argument must be a parameter."
+msgstr "直接 __fast 调用的 packed 实参必须是形参。"
+
+msgid "A direct __fast call packed shape does not match the callee view."
+msgstr "直接 __fast 调用的 packed 形状与被调用方视图不匹配。"
+
+msgid "A direct __fast call packed shape rank does not match."
+msgstr "直接 __fast 调用的 packed 形状维数不匹配。"
+
+msgid "A dynamic __fast shape extent must name an int or long parameter."
+msgstr "__fast 动态形状的维度大小必须指定一个 int 或 long 形参。"
+
+msgid "A function return type cannot have a shape."
+msgstr "函数返回类型不能带有形状。"
+
+msgid "A local used inside __fast func must have an exact primitive type."
+msgstr "在 __fast func 内使用的局部变量必须具有确切的基本类型。"
+
+msgid "A multi-dimensional subscript requires a directly named shaped parameter."
+msgstr "多维下标要求直接命名的带形状形参。"
+
+msgid "A non-void __fast func must return a value."
+msgstr "非 void 的 __fast func 必须返回值。"
+
+msgid "A primitive __fast parameter cannot have a shape."
+msgstr "基本类型的 __fast 形参不能带有形状。"
+
+msgid "A primitive __fast parameter must use int, long, float, or double exactly."
+msgstr "基本类型的 __fast 形参必须严格使用 int、long、float 或 double。"
+
+msgid "A restricted packed __fast parameter requires an exact shape."
+msgstr "受限的 packed __fast 形参要求确切的形状。"
+
+msgid "A restricted packed type is only valid for a parameter."
+msgstr "受限的 packed 类型仅对形参有效。"
+
+msgid "A shaped __fast parameter must be a Packed type."
+msgstr "带形状的 __fast 形参必须为 Packed 类型。"
+
+msgid "A transcendental __fast intrinsic requires float or double."
+msgstr "超越 __fast 内置函数要求类型为 float 或 double。"
+
+msgid "A typed function must return a value."
+msgstr "有类型的函数必须返回值。"
+
+msgid "A void function cannot return a value."
+msgstr "void 函数不能返回值。"
+
+msgid "Accelerator Packed argument is missing."
+msgstr "缺少加速器的 Packed 实参。"
+
+msgid "Accelerator Packed element type does not match."
+msgstr "加速器的 Packed 元素类型不匹配。"
+
+msgid "Accelerator VM and environment do not match."
+msgstr "加速器 VM 与环境不匹配。"
+
+msgid "Accelerator access has an invalid effect."
+msgstr "加速器访问具有无效效果。"
+
+msgid "Accelerator access has no buffer binding."
+msgstr "加速器访问没有缓冲区绑定。"
+
+msgid "Accelerator access references an unknown buffer."
+msgstr "加速器访问引用了未知缓冲区。"
+
+msgid "Accelerator argument count changed."
+msgstr "加速器实参数量已更改。"
+
+msgid "Accelerator argument count is too large."
+msgstr "加速器实参数量过多。"
+
+msgid "Accelerator backend failed to prepare a program."
+msgstr "加速器后端无法准备程序。"
+
+msgid "Accelerator backend returned no program."
+msgstr "加速器后端未返回程序。"
+
+msgid "Accelerator buffer access is out of range."
+msgstr "加速器缓冲区访问超出范围。"
+
+msgid "Accelerator buffer has no required range."
+msgstr "加速器缓冲区没有所需范围。"
+
+msgid "Accelerator buffer has no runtime argument slot."
+msgstr "加速器缓冲区没有运行时实参槽位。"
+
+msgid "Accelerator buffer range overflowed."
+msgstr "加速器缓冲区范围溢出。"
+
+msgid "Accelerator buffer size overflowed."
+msgstr "加速器缓冲区大小溢出。"
+
+msgid "Accelerator context is unavailable."
+msgstr "加速器上下文不可用。"
+
+msgid "Accelerator context reference limit reached."
+msgstr "已达到加速器上下文引用限制。"
+
+msgid "Accelerator device buffer is read before definition."
+msgstr "加速器设备缓冲区在定义前被读取。"
+
+msgid "Accelerator device buffer size is not positive."
+msgstr "加速器设备缓冲区大小不是正数。"
+
+msgid "Accelerator device buffer size is too large."
+msgstr "加速器设备缓冲区大小过大。"
+
+msgid "Accelerator device buffer size overflowed."
+msgstr "加速器设备缓冲区大小溢出。"
+
+msgid "Accelerator device-list visitor failed."
+msgstr "加速器设备列表访问器失败。"
+
+msgid "Accelerator dispatch range is too large."
+msgstr "加速器调度范围过大。"
+
+msgid "Accelerator function is not registered in the HIR table."
+msgstr "加速器函数未在 HIR 表中注册。"
+
+msgid "Accelerator load has no buffer binding."
+msgstr "加速器加载没有缓冲区绑定。"
+
+msgid "Accelerator local name collision."
+msgstr "加速器局部变量名称冲突。"
+
+msgid "Accelerator local name is too long."
+msgstr "加速器局部变量名称过长。"
+
+msgid "Accelerator loop start overflowed."
+msgstr "加速器循环起始值溢出。"
+
+msgid "Accelerator output argument is missing."
+msgstr "缺少加速器输出实参。"
+
+msgid "Accelerator output size changed."
+msgstr "加速器输出大小已更改。"
+
+msgid "Accelerator output snapshot is missing."
+msgstr "缺少加速器输出快照。"
+
+msgid "Accelerator output type changed."
+msgstr "加速器输出类型已更改。"
+
+msgid "Accelerator plan does not match live HIR."
+msgstr "加速器计划与当前 HIR 不匹配。"
+
+msgid "Accelerator program validation failed."
+msgstr "加速器程序验证失败。"
+
+msgid "Accelerator reduction has no result entry."
+msgstr "加速器归约没有结果条目。"
+
+msgid "Accelerator scalar argument is missing."
+msgstr "缺少加速器标量实参。"
+
+msgid "Accelerator scalar metadata is too large."
+msgstr "加速器标量元数据过大。"
+
+msgid "Accelerator scalar result argument is missing."
+msgstr "缺少加速器标量结果实参。"
+
+msgid "Accelerator scalar result has no local."
+msgstr "加速器标量结果没有局部变量。"
+
+msgid "Accelerator scalar result identity changed."
+msgstr "加速器标量结果标识已更改。"
+
+msgid "Accelerator scalar result is not available."
+msgstr "加速器标量结果不可用。"
+
+msgid "Accelerator scalar result metadata is missing."
+msgstr "缺少加速器标量结果元数据。"
+
+msgid "Accelerator scalar result metadata is too large."
+msgstr "加速器标量结果元数据过大。"
+
+msgid "Accelerator store has no buffer binding."
+msgstr "加速器存储没有缓冲区绑定。"
+
+msgid "Accelerator trip count overflowed."
+msgstr "加速器迭代次数溢出。"
+
+msgid "Adding file %s.\n"
+msgstr "正在添加文件 %s。\n"
+
+msgid "An accelerator is already attached to this VM."
+msgstr "此 VM 已附加加速器。"
+
+msgid "An active Vulkan buffer has no storage."
+msgstr "活动的 Vulkan 缓冲区没有存储。"
+
+msgid "An inactive Vulkan buffer requested a transfer."
+msgstr "非活动的 Vulkan 缓冲区请求了传输。"
+
+msgid "Application container cannot be used as a module: %s"
+msgstr "应用程序容器不能用作模块：%s"
+
+msgid "Application contains an unreachable module."
+msgstr "应用程序包含不可达模块。"
+
+msgid "Application output %s collides with input %s.\n"
+msgstr "应用程序输出 %s 与输入 %s 冲突。\n"
+
+msgid "Argument (%d: %s) is not a dictionary."
+msgstr "参数 (%d: %s) 不是字典。"
+
+msgid "Argument (%d: %s) is not a double."
+msgstr "参数 (%d: %s) 不是 double。"
+
+msgid "Argument (%d: %s) is not a float."
+msgstr "参数 (%d: %s) 不是浮点数。"
+
+msgid "Argument (%d: %s) is not a function."
+msgstr "参数 (%d: %s) 不是函数。"
+
+msgid "Argument (%d: %s) is not a long."
+msgstr "参数 (%d: %s) 不是 long。"
+
+msgid "Argument (%d: %s) is not a packed of type %s."
+msgstr "实参（%d：%s）不是 %s 类型的 packed。"
+
+msgid "Argument (%d: %s) is not a packed."
+msgstr "实参（%d：%s）不是 packed。"
+
+msgid "Argument (%d: %s) is not a string."
+msgstr "实参（%d：%s）不是字符串。"
+
+msgid "Argument (%d: %s) is not an array."
+msgstr "参数 (%d: %s) 不是数组。"
+
+msgid "Argument (%d: %s) is not an int."
+msgstr "参数 (%d: %s) 不是 int。"
+
+msgid "Argument (%d: %s) is not an integer."
+msgstr "参数 (%d: %s) 不是整数。"
+
+msgid "Array index %ld is out-of-range."
+msgstr "数组索引 %ld 超出范围。"
+
+msgid "BeUI is not open."
+msgstr "BeUI 未打开。"
+
+msgid "BeUI.destroyImage received an invalid handle."
+msgstr "BeUI.destroyImage 收到了无效句柄。"
+
+msgid "BeUI.drawImage failed."
+msgstr "BeUI.drawImage 失败。"
+
+msgid "BeUI.drawImagePattern failed."
+msgstr "BeUI.drawImagePattern 失败。"
+
+msgid "BeUI.drawImagePattern received an invalid argument."
+msgstr "BeUI.drawImagePattern 收到了无效实参。"
+
+msgid "BeUI.drawImageRegion failed."
+msgstr "BeUI.drawImageRegion 失败。"
+
+msgid "BeUI.drawText failed."
+msgstr "BeUI.drawText 失败。"
+
+msgid "BeUI.drawText received an invalid argument."
+msgstr "BeUI.drawText 收到了无效实参。"
+
+msgid "BeUI.fill failed."
+msgstr "BeUI.fill 失败。"
+
+msgid "BeUI.fill received an invalid argument."
+msgstr "BeUI.fill 收到了无效实参。"
+
+msgid "BeUI.flush failed."
+msgstr "BeUI.flush 失败。"
+
+msgid "BeUI.getImageHeight received an invalid handle."
+msgstr "BeUI.getImageHeight 收到了无效句柄。"
+
+msgid "BeUI.getImageWidth received an invalid handle."
+msgstr "BeUI.getImageWidth 收到了无效句柄。"
+
+msgid "BeUI.getMilliseconds is unavailable."
+msgstr "BeUI.getMilliseconds 不可用。"
+
+msgid "BeUI.initWithHint expects 8 or 24 bits per pixel."
+msgstr "BeUI.initWithHint 要求每像素 8 或 24 位。"
+
+msgid "BeUI.isKeyDown received an invalid argument."
+msgstr "BeUI.isKeyDown 收到了无效实参。"
+
+msgid "BeUI.line failed."
+msgstr "BeUI.line 失败。"
+
+msgid "BeUI.line received an invalid argument."
+msgstr "BeUI.line 收到了无效实参。"
+
+msgid "BeUI.loadImage expects a byte array."
+msgstr "BeUI.loadImage 要求字节数组。"
+
+msgid "BeUI.loadImage received an unsupported image."
+msgstr "BeUI.loadImage 收到了不支持的图像。"
+
+msgid "BeUI.patternFill failed."
+msgstr "BeUI.patternFill 失败。"
+
+msgid "BeUI.patternFill received an invalid argument."
+msgstr "BeUI.patternFill 收到了无效实参。"
+
+msgid "BeUI.sleep is unavailable."
+msgstr "BeUI.sleep 不可用。"
+
+msgid "BeUI.sleep received an invalid argument."
+msgstr "BeUI.sleep 收到了无效实参。"
+
+msgid "Branch target not found."
+msgstr "未找到分支目标。"
+
+msgid "Branch target too far."
+msgstr "分支目标过远。"
+
+msgid "Broken bytecode."
+msgstr "字节码损坏。"
+
+msgid "Bytecode input is not recompiled: %s"
+msgstr "字节码输入不会重新编译：%s"
+
+msgid "Bytecode input is not recompiled: %s\n"
+msgstr "字节码输入不会重新编译：%s\n"
+
+msgid "Bytecode is too large."
+msgstr "字节码过大。"
+
+msgid "Bytecode module is too large: %s"
+msgstr "字节码模块过大：%s"
+
+msgid "Bytecode program is too large.\n"
+msgstr "字节码程序过大。\n"
+
+msgid "Call to non-fast function '%s' is not allowed inside __fast func."
+msgstr "不允许在 __fast func 内调用非 __fast 函数 '%s'。"
+
+msgid "Cannot accept a connection."
+msgstr "无法接受连接。"
+
+msgid "Cannot allocate application output path.\n"
+msgstr "无法分配应用程序输出路径。\n"
+
+msgid "Cannot allocate bytecode output paths.\n"
+msgstr "无法分配字节码输出路径。\n"
+
+msgid "Cannot allocate output path for %s.\n"
+msgstr "无法为 %s 分配输出路径。\n"
+
+msgid "Cannot assign to 'let' variable '%s'."
+msgstr "无法向 'let' 变量 '%s' 赋值。"
+
+msgid "Cannot assign to constant \"%s\"."
+msgstr "无法向常量 \"%s\" 赋值。"
+
+msgid "Cannot bind to %s:%d. (%s)"
+msgstr "无法绑定到 %s:%d。（%s）"
+
+msgid "Cannot change the socket mode."
+msgstr "无法更改套接字模式。"
+
+msgid "Cannot close file %s."
+msgstr "无法关闭文件 %s。"
+
+msgid "Cannot collect bytecode link names from %s."
+msgstr "无法从 %s 收集字节码链接名称。"
+
+msgid "Cannot collect bytecode prototypes from %s."
+msgstr "无法从 %s 收集字节码原型。"
+
+msgid "Cannot connect to %s:%d."
+msgstr "无法连接到 %s:%d。"
+
+msgid "Cannot copy this value type."
+msgstr "无法复制此值类型。"
+
+msgid "Cannot create a mutex."
+msgstr "无法创建互斥锁。"
+
+msgid "Cannot create a thread."
+msgstr "无法创建线程。"
+
+msgid "Cannot create application %s.\n"
+msgstr "无法创建应用程序 %s。\n"
+
+msgid "Cannot create file mapping (Windows error %lu)."
+msgstr "无法创建文件映射（Windows 错误 %lu）。"
+
+msgid "Cannot create output directory %s."
+msgstr "无法创建输出目录 %s。"
+
+msgid "Cannot derive a portable source name for %s."
+msgstr "无法为 %s 派生可移植的源名称。"
+
+msgid "Cannot determine file size."
+msgstr "无法确定文件大小。"
+
+msgid "Cannot determine mapped file size (Windows error %lu)."
+msgstr "无法确定映射文件大小（Windows 错误 %lu）。"
+
+msgid "Cannot determine mapped file size: %s"
+msgstr "无法确定映射文件大小：%s"
+
+msgid "Cannot determine the file mapping allocation granularity."
+msgstr "无法确定文件映射分配粒度。"
+
+msgid "Cannot determine the file mapping page size."
+msgstr "无法确定文件映射页大小。"
+
+msgid "Cannot find %s.\n"
+msgstr "无法找到 %s。\n"
+
+msgid "Cannot find function %s."
+msgstr "无法找到函数 %s。"
+
+msgid "Cannot flush file mapping (Windows error %lu)."
+msgstr "无法刷新文件映射（Windows 错误 %lu）。"
+
+msgid "Cannot flush file mapping: %s"
+msgstr "无法刷新文件映射：%s"
+
+msgid "Cannot flush mapped file (Windows error %lu)."
+msgstr "无法刷新映射文件（Windows 错误 %lu）。"
+
+msgid "Cannot initialize the socket library."
+msgstr "无法初始化套接字库。"
+
+msgid "Cannot inspect source module %s."
+msgstr "无法检查源代码模块 %s。"
+
+msgid "Cannot install the REPL interrupt handler.\n"
+msgstr "无法安装 REPL 中断处理程序。\n"
+
+msgid "Cannot listen on %s:%d."
+msgstr "无法在 %s:%d 上侦听。"
+
+msgid "Cannot map file %s: %s"
+msgstr "无法映射文件 %s：%s"
+
+msgid "Cannot map file view (Windows error %lu)."
+msgstr "无法映射文件视图（Windows 错误 %lu）。"
+
+msgid "Cannot open file %s for mapping: %s"
+msgstr "无法打开文件 %s 进行映射：%s"
+
+msgid "Cannot open file %s."
+msgstr "无法打开文件 %s。"
+
+msgid "Cannot open file %s.\n"
+msgstr "无法打开文件 %s。\n"
+
+msgid "Cannot open file for mapping (Windows error %lu)."
+msgstr "无法打开文件进行映射（Windows 错误 %lu）。"
+
+msgid "Cannot open module %s."
+msgstr "无法打开模块 %s。"
+
+msgid "Cannot read file %s."
+msgstr "无法读取文件 %s。"
+
+msgid "Cannot read file %s.\n"
+msgstr "无法读取文件 %s。\n"
+
+msgid "Cannot read module %s."
+msgstr "无法读取模块 %s。"
+
+msgid "Cannot receive from the connection."
+msgstr "无法从连接接收数据。"
+
+msgid "Cannot resolve required module '%s'."
+msgstr "无法解析所需模块 '%s'。"
+
+msgid "Cannot resolve the address %s."
+msgstr "无法解析地址 %s。"
+
+msgid "Cannot send to the connection."
+msgstr "无法向连接发送数据。"
+
+msgid "Cannot unmap file mapping: %s"
+msgstr "无法取消文件映射：%s"
+
+msgid "Cannot unmap file view (Windows error %lu)."
+msgstr "无法取消文件视图映射（Windows 错误 %lu）。"
+
+msgid "Cannot wait for socket events."
+msgstr "无法等待套接字事件。"
+
+msgid "Cannot write file %s."
+msgstr "无法写入文件 %s。"
+
+msgid "Character class too large."
+msgstr "字符类过大。"
+
+msgid "Circular require involving %s."
+msgstr "涉及 %s 的循环 require。"
+
+msgid "Code too big."
+msgstr "代码过大。"
+
+msgid "Condition is not a number."
+msgstr "条件不是数字。"
+
+msgid "CreateProcess() failed."
+msgstr "CreateProcess() 失败。"
+
+msgid "Decimal integer literal is too large."
+msgstr "十进制整数字面量过大。"
+
+msgid "Detached accelerator context."
+msgstr "加速器上下文已分离。"
+
+msgid "Dictionary index %ld is out-of-range."
+msgstr "字典索引 %ld 超出范围。"
+
+msgid "Dictionary is frozen."
+msgstr "字典已冻结。"
+
+msgid "Dictionary key \"%s\" not found."
+msgstr "未找到字典键 \"%s\"。"
+
+msgid "Direct or mutually recursive __fast calls are not supported."
+msgstr "不支持直接或相互递归的 __fast 调用。"
+
+msgid "Direct3D 12 buffer extent mismatch"
+msgstr "Direct3D 12 缓冲区维度大小不匹配"
+
+msgid "Direct3D 12 buffer is not word aligned"
+msgstr "Direct3D 12 缓冲区未按字对齐"
+
+msgid "Direct3D 12 buffer is too large for one UAV"
+msgstr "Direct3D 12 缓冲区对于单个 UAV 而言过大"
+
+msgid "Direct3D 12 buffer metadata changed"
+msgstr "Direct3D 12 缓冲区元数据已更改"
+
+msgid "Direct3D 12 buffer metadata does not match the program"
+msgstr "Direct3D 12 缓冲区元数据与程序不匹配"
+
+msgid "Direct3D 12 buffer size overflow"
+msgstr "Direct3D 12 缓冲区大小溢出"
+
+msgid "Direct3D 12 buffer table mismatch"
+msgstr "Direct3D 12 缓冲区表不匹配"
+
+msgid "Direct3D 12 dispatch exceeds 65535 workgroups"
+msgstr "Direct3D 12 调度超过 65535 个工作组"
+
+msgid "Direct3D 12 execution is not recording"
+msgstr "Direct3D 12 执行未在记录"
+
+msgid "Direct3D 12 fence counter overflowed"
+msgstr "Direct3D 12 栅栏计数器溢出"
+
+msgid "Direct3D 12 output table mismatch"
+msgstr "Direct3D 12 输出表不匹配"
+
+msgid "Direct3D 12 result byte count overflow"
+msgstr "Direct3D 12 结果字节数溢出"
+
+msgid "Direct3D 12 result table changed"
+msgstr "Direct3D 12 结果表已更改"
+
+msgid "Direct3D 12 result table mismatch"
+msgstr "Direct3D 12 结果表不匹配"
+
+msgid "Direct3D 12 scalar byte count overflow"
+msgstr "Direct3D 12 标量字节数溢出"
+
+msgid "Direct3D 12 scalar table mismatch"
+msgstr "Direct3D 12 标量表不匹配"
+
+msgid "Direct3D 12 scalar table overflow"
+msgstr "Direct3D 12 标量表溢出"
+
+msgid "Direct3D 12 supports only 32-bit buffers"
+msgstr "Direct3D 12 仅支持 32 位缓冲区"
+
+msgid "Directory path must not be empty."
+msgstr "目录路径不能为空。"
+
+msgid "Division by zero."
+msgstr "被零除。"
+
+msgid "Duplicate Noct App input: %s"
+msgstr "重复的 Noct App 输入：%s"
+
+msgid "Duplicate accelerator region index."
+msgstr "加速器区域索引重复。"
+
+msgid "Duplicate accelerator scalar result argument."
+msgstr "加速器标量结果实参重复。"
+
+msgid "Duplicate input module path: %s"
+msgstr "输入模块路径重复：%s"
+
+msgid "Duplicate logical source name for %s."
+msgstr "%s 的逻辑源名称重复。"
+
+msgid "Duplicate public symbol \"%s\" (Duplicate function in module closure)."
+msgstr "公共符号 \"%s\" 重复（模块闭包中存在重复函数）。"
+
+msgid "Duplicate static declaration '%s'."
+msgstr "static 声明 '%s' 重复。"
+
+msgid "Duplicate top-level declaration '%s'."
+msgstr "顶层声明 '%s' 重复。"
+
+msgid "Element %d is not a dictionary."
+msgstr "第 %d 个元素不是字典。"
+
+msgid "Element %d is not a double."
+msgstr "第 %d 个元素不是 double。"
+
+msgid "Element %d is not a float."
+msgstr "第 %d 个元素不是浮点数。"
+
+msgid "Element %d is not a function."
+msgstr "第 %d 个元素不是函数。"
+
+msgid "Element %d is not a long."
+msgstr "第 %d 个元素不是 long。"
+
+msgid "Element %d is not a string."
+msgstr "第 %d 个元素不是字符串。"
+
+msgid "Element %d is not an array."
+msgstr "第 %d 个元素不是数组。"
+
+msgid "Element %d is not an int."
+msgstr "第 %d 个元素不是 int。"
+
+msgid "Empty accelerator function plan."
+msgstr "加速器函数计划为空。"
+
+msgid "Empty accelerator region program."
+msgstr "加速器区域程序为空。"
+
+msgid "Empty array."
+msgstr "空数组。"
+
+msgid "Entering REPL mode.\n"
+msgstr "进入 REPL 模式。\n"
+
+msgid "Error: %s\n"
+msgstr "错误：%s\n"
+
+msgid "Error: %s:%d: %s\n"
+msgstr "错误: %s:%d: %s\n"
+
+msgid "Error: Cannot assemble application records.\n"
+msgstr "错误：无法汇编应用程序记录。\n"
+
+msgid "Error: Cannot prepare application module %s.\n"
+msgstr "错误：无法准备应用程序模块 %s。\n"
+
+msgid "Error: Invalid application at byte %lu: %s\n"
+msgstr "错误：应用程序在字节 %lu 处无效：%s\n"
+
+msgid "Error: Invalid application source name.\n"
+msgstr "错误：应用程序源名称无效。\n"
+
+msgid "Error: Invalid bytecode source name.\n"
+msgstr "错误：字节码源名称无效。\n"
+
+msgid "Error: __fast func is not supported by the Emacs Lisp transpiler.\n"
+msgstr "错误：Emacs Lisp 转译器不支持 __fast func。\n"
+
+msgid "Error: __fast func is not supported by the Scheme transpiler.\n"
+msgstr "错误：Scheme 转译器不支持 __fast func。\n"
+
+msgid "Error: require is not supported by the C transpiler.\n"
+msgstr "错误：C 转译器不支持 require。\n"
+
+msgid "Error: require is not supported by the Emacs Lisp transpiler.\n"
+msgstr "错误：Emacs Lisp 转译器不支持 require。\n"
+
+msgid "Error: require is not supported by the Scheme transpiler.\n"
+msgstr "错误：Scheme 转译器不支持 require。\n"
+
+msgid "Every __fast func parameter requires a type annotation."
+msgstr "__fast func 的每个形参都需要类型注解。"
+
+msgid "Every local in a __fast func requires an exact primitive type annotation."
+msgstr "__fast func 的每个局部变量都需要精确的基本类型注解。"
+
+msgid "Every reachable path of a non-void __fast func must return a value."
+msgstr "非 void 的 __fast func 的每条可达路径都必须返回值。"
+
+msgid "Exact read byte count must be positive."
+msgstr "精确读取字节数必须为正数。"
+
+msgid "Exceeded the maximum argument count."
+msgstr "超过了最大参数数量。"
+
+msgid "Exceeded the maximum parameter count."
+msgstr "超过最大形参数量。"
+
+msgid "Exception target too far."
+msgstr "异常目标太远。"
+
+msgid "Executable bytecode wrapper cannot be required: %s"
+msgstr "无法通过 require 加载可执行字节码包装器：%s"
+
+msgid "Failed to acquire the OpenGL ES compiler context."
+msgstr "无法获取 OpenGL ES 编译器上下文。"
+
+msgid "Failed to allocate Vulkan descriptor sets."
+msgstr "无法分配 Vulkan 描述符集。"
+
+msgid "Failed to allocate a Vulkan command buffer."
+msgstr "无法分配 Vulkan 命令缓冲区。"
+
+msgid "Failed to allocate an OpenGL ES buffer name."
+msgstr "无法分配 OpenGL ES 缓冲区名称。"
+
+msgid "Failed to analyze accelerator loop."
+msgstr "无法分析加速器循环。"
+
+msgid "Failed to begin a Vulkan command buffer."
+msgstr "无法开始 Vulkan 命令缓冲区。"
+
+msgid "Failed to classify accelerator loop."
+msgstr "无法对加速器循环进行分类。"
+
+msgid "Failed to classify accelerator reduction."
+msgstr "无法对加速器归约进行分类。"
+
+msgid "Failed to compile a Direct3D 12 compute shader."
+msgstr "无法编译 Direct3D 12 计算着色器。"
+
+msgid "Failed to compile an OpenGL ES compute shader."
+msgstr "无法编译 OpenGL ES 计算着色器。"
+
+msgid "Failed to create a Direct3D 12 compute pipeline."
+msgstr "无法创建 Direct3D 12 计算管线。"
+
+msgid "Failed to create a Direct3D 12 root signature."
+msgstr "无法创建 Direct3D 12 根签名。"
+
+msgid "Failed to create a Vulkan 1.2 instance."
+msgstr "无法创建 Vulkan 1.2 实例。"
+
+msgid "Failed to create a Vulkan command pool."
+msgstr "无法创建 Vulkan 命令池。"
+
+msgid "Failed to create a Vulkan completion fence."
+msgstr "无法创建 Vulkan 完成栅栏。"
+
+msgid "Failed to create a Vulkan compute pipeline."
+msgstr "无法创建 Vulkan 计算管线。"
+
+msgid "Failed to create a Vulkan data buffer."
+msgstr "无法创建 Vulkan 数据缓冲区。"
+
+msgid "Failed to create a Vulkan descriptor layout."
+msgstr "无法创建 Vulkan 描述符布局。"
+
+msgid "Failed to create a Vulkan pipeline layout."
+msgstr "无法创建 Vulkan 管线布局。"
+
+msgid "Failed to create a Vulkan shader module."
+msgstr "无法创建 Vulkan 着色器模块。"
+
+msgid "Failed to create an OpenGL ES compute program."
+msgstr "无法创建 OpenGL ES 计算程序。"
+
+msgid "Failed to create an OpenGL ES compute shader."
+msgstr "无法创建 OpenGL ES 计算着色器。"
+
+msgid "Failed to create the Direct3D 12 DXGI factory."
+msgstr "无法创建 Direct3D 12 DXGI 工厂。"
+
+msgid "Failed to create the Direct3D 12 compute queue."
+msgstr "无法创建 Direct3D 12 计算队列。"
+
+msgid "Failed to create the Direct3D 12 queue fence."
+msgstr "无法创建 Direct3D 12 队列栅栏。"
+
+msgid "Failed to create the Vulkan descriptor pool."
+msgstr "无法创建 Vulkan 描述符池。"
+
+msgid "Failed to create the Vulkan scalar buffer."
+msgstr "无法创建 Vulkan 标量缓冲区。"
+
+msgid "Failed to create the Vulkan scalar-result buffer."
+msgstr "无法创建 Vulkan 标量结果缓冲区。"
+
+msgid "Failed to create the selected Direct3D 12 device."
+msgstr "无法创建所选的 Direct3D 12 设备。"
+
+msgid "Failed to create the selected Vulkan compute device."
+msgstr "无法创建所选的 Vulkan 计算设备。"
+
+msgid "Failed to enumerate Vulkan physical devices."
+msgstr "无法枚举 Vulkan 物理设备。"
+
+msgid "Failed to expand the CS segment limit.\n"
+msgstr "无法扩大 CS 段限制。\n"
+
+msgid "Failed to finish the Vulkan command buffer."
+msgstr "无法完成 Vulkan 命令缓冲区。"
+
+msgid "Failed to flush Vulkan data-buffer memory."
+msgstr "无法刷新 Vulkan 数据缓冲区内存。"
+
+msgid "Failed to flush Vulkan scalar memory."
+msgstr "无法刷新 Vulkan 标量内存。"
+
+msgid "Failed to flush Vulkan scalar-result memory."
+msgstr "无法刷新 Vulkan 标量结果内存。"
+
+msgid "Failed to generate an OpenGL ES compute shader."
+msgstr "无法生成 OpenGL ES 计算着色器。"
+
+msgid "Failed to initialize a headless OpenGL ES 3.1 context."
+msgstr "无法初始化无头 OpenGL ES 3.1 上下文。"
+
+msgid "Failed to initialize the Direct3D 12 queue mutex."
+msgstr "无法初始化 Direct3D 12 队列互斥锁。"
+
+msgid "Failed to initialize the OpenGL ES context mutex."
+msgstr "无法初始化 OpenGL ES 上下文互斥锁。"
+
+msgid "Failed to initialize the Vulkan queue mutex."
+msgstr "无法初始化 Vulkan 队列互斥锁。"
+
+msgid "Failed to invalidate Vulkan output memory."
+msgstr "无法使 Vulkan 输出内存失效。"
+
+msgid "Failed to invalidate Vulkan scalar-result memory."
+msgstr "无法使 Vulkan 标量结果内存失效。"
+
+msgid "Failed to link an OpenGL ES compute program."
+msgstr "无法链接 OpenGL ES 计算程序。"
+
+msgid "Failed to lock accelerator rewrite commit."
+msgstr "无法锁定加速器重写提交。"
+
+msgid "Failed to make the OpenGL ES context current."
+msgstr "无法将 OpenGL ES 上下文设为当前上下文。"
+
+msgid "Failed to map an OpenGL ES output buffer."
+msgstr "无法映射 OpenGL ES 输出缓冲区。"
+
+msgid "Failed to map the OpenGL ES result buffer."
+msgstr "无法映射 OpenGL ES 结果缓冲区。"
+
+msgid "Failed to normalize accelerator index."
+msgstr "无法规范化加速器索引。"
+
+msgid "Failed to open file \"%s\".\n"
+msgstr "无法打开文件“%s”。\n"
+
+msgid "Failed to query the Vulkan loader version."
+msgstr "无法查询 Vulkan 加载器版本。"
+
+msgid "Failed to release the OpenGL ES compiler context."
+msgstr "无法释放 OpenGL ES 编译器上下文。"
+
+msgid "Failed to release the OpenGL ES context."
+msgstr "无法释放 OpenGL ES 上下文。"
+
+msgid "Failed to reserve accelerator programs."
+msgstr "无法为加速器程序预留空间。"
+
+msgid "Failed to serialize a Direct3D 12 root signature."
+msgstr "无法序列化 Direct3D 12 根签名。"
+
+msgid "File close error."
+msgstr "文件关闭错误。"
+
+msgid "File handle belongs to a different VM."
+msgstr "文件句柄属于其他 VM。"
+
+msgid "File handle is invalid."
+msgstr "文件句柄无效。"
+
+msgid "File handle kind mismatch."
+msgstr "文件句柄种类不匹配。"
+
+msgid "File is closed."
+msgstr "文件已关闭。"
+
+msgid "File mapping is not supported on this platform."
+msgstr "此平台不支持文件映射。"
+
+msgid "File mapping must allow reading or writing."
+msgstr "文件映射必须允许读取或写入。"
+
+msgid "File mapping offset and size must be integers."
+msgstr "文件映射偏移量和大小必须为整数。"
+
+msgid "File mapping offset and size must not be negative."
+msgstr "文件映射偏移量和大小不得为负数。"
+
+msgid "File mapping offset is too large."
+msgstr "文件映射偏移量过大。"
+
+msgid "File mapping permissions must be 0 or 1."
+msgstr "文件映射权限必须为 0 或 1。"
+
+msgid "File mapping range exceeds the file size."
+msgstr "文件映射范围超过文件大小。"
+
+msgid "File mapping range is not aligned to the element size."
+msgstr "文件映射范围未按元素大小对齐。"
+
+msgid "File mapping range is too large."
+msgstr "文件映射范围过大。"
+
+msgid "File mapping size is too large."
+msgstr "文件映射大小过大。"
+
+msgid "File mapping size must be greater than zero."
+msgstr "文件映射大小必须大于零。"
+
+msgid "File read error."
+msgstr "文件读取错误。"
+
+msgid "File seek error."
+msgstr "文件定位错误。"
+
+msgid "File tell error."
+msgstr "文件位置获取错误。"
+
+msgid "File write error."
+msgstr "文件写入错误。"
+
+msgid "File.writeAll range is out-of-bounds."
+msgstr "File.writeAll 范围越界。"
+
+msgid "Fill value is not a number."
+msgstr "填充值不是数字。"
+
+msgid "GPU acceleration is available only when running Noct source.\n"
+msgstr "GPU 加速仅在运行 Noct 源代码时可用。\n"
+
+msgid "GPU acceleration is not available in this build.\n"
+msgstr "此构建中不提供 GPU 加速。\n"
+
+msgid "GPU acceleration may be selected only once.\n"
+msgstr "GPU 加速只能选择一次。\n"
+
+msgid "GPU device name must not be empty.\n"
+msgstr "GPU 设备名称不得为空。\n"
+
+msgid "GPU enumeration failed.\n"
+msgstr "GPU 枚举失败。\n"
+
+msgid "GPU enumeration failed: %s\n"
+msgstr "GPU 枚举失败：%s\n"
+
+msgid "Generated Vulkan SPIR-V is invalid:\x20"
+msgstr "生成的 Vulkan SPIR-V 无效：\x20"
+
+msgid "Generated accelerator IR failed validation."
+msgstr "生成的加速器 IR 验证失败。"
+
+msgid "Global symbol '%s' is not available inside __fast func."
+msgstr "全局符号 '%s' 在 __fast func 内不可用。"
+
+msgid "Inactive OpenGL ES buffers cannot request host transfers."
+msgstr "非活动 OpenGL ES 缓冲区无法请求主机传输。"
+
+msgid "Incompatible duplicate __fast prototype '%s'."
+msgstr "重复的 __fast 原型 '%s' 不兼容。"
+
+msgid "Incomplete Vulkan enumeration function table."
+msgstr "Vulkan 枚举函数表不完整。"
+
+msgid "Incomplete Vulkan function table."
+msgstr "Vulkan 函数表不完整。"
+
+msgid "Inconsistent optimization levels for one HIR module."
+msgstr "同一 HIR 模块的优化级别不一致。"
+
+msgid "Index out of bounds."
+msgstr "索引越界。"
+
+msgid "Input line is too long.\n"
+msgstr "输入行过长。\n"
+
+msgid "Inputs %s and %s map to the same output %s.\n"
+msgstr "输入 %s 和 %s 映射到同一输出 %s。\n"
+
+msgid "Invalid --path option.\n"
+msgstr "--path 选项无效。\n"
+
+msgid "Invalid Direct3D 12 program preparation request."
+msgstr "Direct3D 12 程序准备请求无效。"
+
+msgid "Invalid GPU device name.\n"
+msgstr "GPU 设备名称无效。\n"
+
+msgid "Invalid OpenGL ES device list."
+msgstr "OpenGL ES 设备列表无效。"
+
+msgid "Invalid OpenGL ES dispatch limit request."
+msgstr "OpenGL ES 调度限制请求无效。"
+
+msgid "Invalid OpenGL ES execution request."
+msgstr "OpenGL ES 执行请求无效。"
+
+msgid "Invalid OpenGL ES execution."
+msgstr "OpenGL ES 执行无效。"
+
+msgid "Invalid OpenGL ES finish request."
+msgstr "OpenGL ES 完成请求无效。"
+
+msgid "Invalid OpenGL ES kernel index."
+msgstr "OpenGL ES 内核索引无效。"
+
+msgid "Invalid OpenGL ES program preparation request."
+msgstr "OpenGL ES 程序准备请求无效。"
+
+msgid "Invalid REPL state.\n"
+msgstr "REPL 状态无效。\n"
+
+msgid "Invalid Vulkan device list."
+msgstr "Vulkan 设备列表无效。"
+
+msgid "Invalid Vulkan dispatch limit request."
+msgstr "Vulkan 调度限制请求无效。"
+
+msgid "Invalid Vulkan execution request."
+msgstr "Vulkan 执行请求无效。"
+
+msgid "Invalid Vulkan execution."
+msgstr "Vulkan 执行无效。"
+
+msgid "Invalid Vulkan finish request."
+msgstr "Vulkan 完成请求无效。"
+
+msgid "Invalid Vulkan kernel index."
+msgstr "Vulkan 内核索引无效。"
+
+msgid "Invalid Vulkan program preparation request."
+msgstr "Vulkan 程序准备请求无效。"
+
+msgid "Invalid Vulkan shader compiler input."
+msgstr "Vulkan 着色器编译器输入无效。"
+
+msgid "Invalid __fast function prototype."
+msgstr "__fast 函数原型无效。"
+
+msgid "Invalid __fast function signature for '%s'."
+msgstr "'%s' 的 __fast 函数签名无效。"
+
+msgid "Invalid __fast function signature."
+msgstr "__fast 函数签名无效。"
+
+msgid "Invalid __fast loop counter."
+msgstr "__fast 循环计数器无效。"
+
+msgid "Invalid __fast parameter shape."
+msgstr "__fast 形参形状无效。"
+
+msgid "Invalid __fast parameter type."
+msgstr "__fast 形参类型无效。"
+
+msgid "Invalid __fast shape extent."
+msgstr "__fast 形状维度大小无效。"
+
+msgid "Invalid __fast signature metadata."
+msgstr "__fast 签名元数据无效。"
+
+msgid "Invalid accelerator argument slots."
+msgstr "加速器实参槽位无效。"
+
+msgid "Invalid accelerator backend status."
+msgstr "加速器后端状态无效。"
+
+msgid "Invalid accelerator budget function."
+msgstr "加速器预算函数无效。"
+
+msgid "Invalid accelerator buffer binding."
+msgstr "加速器缓冲区绑定无效。"
+
+msgid "Invalid accelerator buffer index type."
+msgstr "加速器缓冲区索引类型无效。"
+
+msgid "Invalid accelerator buffer slot."
+msgstr "加速器缓冲区槽位无效。"
+
+msgid "Invalid accelerator comparison HIR."
+msgstr "加速器比较 HIR 无效。"
+
+msgid "Invalid accelerator compiler result."
+msgstr "加速器编译器结果无效。"
+
+msgid "Invalid accelerator decline reason."
+msgstr "加速器拒绝原因无效。"
+
+msgid "Invalid accelerator device-list request."
+msgstr "加速器设备列表请求无效。"
+
+msgid "Invalid accelerator device-local buffer."
+msgstr "加速器设备本地缓冲区无效。"
+
+msgid "Invalid accelerator device-local declaration."
+msgstr "加速器设备本地声明无效。"
+
+msgid "Invalid accelerator device-local transfer."
+msgstr "加速器设备本地传输无效。"
+
+msgid "Invalid accelerator function HIR."
+msgstr "加速器函数 HIR 无效。"
+
+msgid "Invalid accelerator function metadata."
+msgstr "加速器函数元数据无效。"
+
+msgid "Invalid accelerator index arithmetic."
+msgstr "加速器索引运算无效。"
+
+msgid "Invalid accelerator kernel buffer type."
+msgstr "加速器内核缓冲区类型无效。"
+
+msgid "Invalid accelerator kernel index."
+msgstr "加速器内核索引无效。"
+
+msgid "Invalid accelerator local count."
+msgstr "加速器局部变量数量无效。"
+
+msgid "Invalid accelerator local list."
+msgstr "加速器局部变量列表无效。"
+
+msgid "Invalid accelerator parameter count."
+msgstr "加速器形参数量无效。"
+
+msgid "Invalid accelerator parameter metadata."
+msgstr "加速器形参元数据无效。"
+
+msgid "Invalid accelerator program ID."
+msgstr "加速器程序 ID 无效。"
+
+msgid "Invalid accelerator program identifier."
+msgstr "加速器程序标识符无效。"
+
+msgid "Invalid accelerator program reached the Direct3D 12 backend."
+msgstr "无效的加速器程序到达了 Direct3D 12 后端。"
+
+msgid "Invalid accelerator program reached the OpenGL ES backend."
+msgstr "无效的加速器程序到达了 OpenGL ES 后端。"
+
+msgid "Invalid accelerator program reached the Vulkan backend."
+msgstr "无效的加速器程序到达了 Vulkan 后端。"
+
+msgid "Invalid accelerator reduction metadata."
+msgstr "加速器归约元数据无效。"
+
+msgid "Invalid accelerator reduction result entry."
+msgstr "加速器归约结果条目无效。"
+
+msgid "Invalid accelerator reduction value type."
+msgstr "加速器归约值类型无效。"
+
+msgid "Invalid accelerator region plan."
+msgstr "加速器区域计划无效。"
+
+msgid "Invalid accelerator rewrite function."
+msgstr "加速器重写函数无效。"
+
+msgid "Invalid accelerator scalar binding."
+msgstr "加速器标量绑定无效。"
+
+msgid "Invalid accelerator scalar result binding."
+msgstr "加速器标量结果绑定无效。"
+
+msgid "Invalid accelerator scalar result metadata."
+msgstr "加速器标量结果元数据无效。"
+
+msgid "Invalid accelerator scalar result."
+msgstr "加速器标量结果无效。"
+
+msgid "Invalid accelerator scalar type."
+msgstr "加速器标量类型无效。"
+
+msgid "Invalid accelerator scalar-result slot."
+msgstr "加速器标量结果槽位无效。"
+
+msgid "Invalid accelerator scratch budget."
+msgstr "加速器暂存预算无效。"
+
+msgid "Invalid accelerator session."
+msgstr "加速器会话无效。"
+
+msgid "Invalid application dependency graph."
+msgstr "应用程序依赖关系图无效。"
+
+msgid "Invalid bytecode function descriptor."
+msgstr "字节码函数描述符无效。"
+
+msgid "Invalid character range."
+msgstr "字符范围无效。"
+
+msgid "Invalid codepoint."
+msgstr "码点无效。"
+
+msgid "Invalid constant __fast shape extent."
+msgstr "__fast 形状的常量维度大小无效。"
+
+msgid "Invalid dynamic __fast shape extent."
+msgstr "__fast 形状的动态维度大小无效。"
+
+msgid "Invalid empty __fast shape extent."
+msgstr "__fast 形状的空维度大小无效。"
+
+msgid "Invalid event flags."
+msgstr "事件标志无效。"
+
+msgid "Invalid function parameter metadata."
+msgstr "函数形参元数据无效。"
+
+msgid "Invalid function prototype."
+msgstr "函数原型无效。"
+
+msgid "Invalid handle."
+msgstr "句柄无效。"
+
+msgid "Invalid input module path."
+msgstr "输入模块路径无效。"
+
+msgid "Invalid input module."
+msgstr "输入模块无效。"
+
+msgid "Invalid module path option %s.\n"
+msgstr "模块路径选项 %s 无效。\n"
+
+msgid "Invalid native function parameter name."
+msgstr "原生函数形参名称无效。"
+
+msgid "Invalid native function registration."
+msgstr "原生函数注册无效。"
+
+msgid "Invalid optimize-level option %s.\n"
+msgstr "优化级别选项 %s 无效。\n"
+
+msgid "Invalid or incomplete %s accelerator finish."
+msgstr "%s 加速器完成操作无效或不完整。"
+
+msgid "Invalid or out-of-order %s accelerator dispatch."
+msgstr "%s 加速器调度无效或顺序错误。"
+
+msgid "Invalid private accelerator package."
+msgstr "加速器私有包无效。"
+
+msgid "Invalid selected Direct3D 12 device."
+msgstr "所选的 Direct3D 12 设备无效。"
+
+msgid "Invalid selected OpenGL ES device."
+msgstr "所选的 OpenGL ES 设备无效。"
+
+msgid "Invalid selected Vulkan device."
+msgstr "所选的 Vulkan 设备无效。"
+
+msgid "Invalid shaped type annotation."
+msgstr "带形状的类型注解无效。"
+
+msgid "Invalid shift amount."
+msgstr "无效的移位量。"
+
+msgid "JIT bytecode analysis table is too large."
+msgstr "JIT 字节码分析表过大。"
+
+msgid "JIT bytecode is too large."
+msgstr "JIT 字节码过大。"
+
+msgid "JIT compilation is enabled. Starting the fast VM...\n"
+msgstr "触发编译已启用。正在启动快速虚拟机...\n"
+
+msgid "JIT memory protection failed."
+msgstr "JIT 内存保护失败。"
+
+msgid "JIT temporary-variable table is too large."
+msgstr "JIT 临时变量表过大。"
+
+msgid "LHS is not a symbol or an array element."
+msgstr "左侧不是符号或数组元素。"
+
+msgid "LHS is not a term or an array element."
+msgstr "左侧不是项或数组元素。"
+
+msgid "LIR: Out of memory error."
+msgstr "LIR: 内存不足。"
+
+msgid "Legacy 1.0 bytecode cannot be embedded in an application: %s"
+msgstr "无法将旧版 1.0 字节码嵌入应用程序：%s"
+
+msgid "Local initializer or assignment does not match its declared type."
+msgstr "局部变量的初始化表达式或赋值与其声明的类型不匹配。"
+
+msgid "Malformed accelerator HIR block."
+msgstr "加速器 HIR 块格式错误。"
+
+msgid "Malformed accelerator HIR expression."
+msgstr "加速器 HIR 表达式格式错误。"
+
+msgid "Malformed accelerator HIR statement."
+msgstr "加速器 HIR 语句格式错误。"
+
+msgid "Malformed accelerator HIR term."
+msgstr "加速器 HIR 项格式错误。"
+
+msgid "Malformed accelerator array expression."
+msgstr "加速器数组表达式格式错误。"
+
+msgid "Malformed accelerator assignment target."
+msgstr "加速器赋值目标格式错误。"
+
+msgid "Malformed accelerator call expression."
+msgstr "加速器调用表达式格式错误。"
+
+msgid "Malformed accelerator collection loop."
+msgstr "加速器集合循环格式错误。"
+
+msgid "Malformed accelerator dictionary expression."
+msgstr "加速器字典表达式格式错误。"
+
+msgid "Malformed accelerator expression HIR."
+msgstr "加速器表达式 HIR 格式错误。"
+
+msgid "Malformed accelerator function control flow."
+msgstr "加速器函数控制流格式错误。"
+
+msgid "Malformed accelerator loop body."
+msgstr "加速器循环体格式错误。"
+
+msgid "Malformed accelerator member call."
+msgstr "加速器成员调用格式错误。"
+
+msgid "Malformed accelerator new expression."
+msgstr "加速器 new 表达式格式错误。"
+
+msgid "Malformed accelerator ranged loop."
+msgstr "加速器范围循环格式错误。"
+
+msgid "Malformed accelerator region control flow."
+msgstr "加速器区域控制流格式错误。"
+
+msgid "Malformed accelerator string term."
+msgstr "加速器字符串项格式错误。"
+
+msgid "Malformed accelerator symbol HIR."
+msgstr "加速器符号 HIR 格式错误。"
+
+msgid "Malformed accelerator symbol term."
+msgstr "加速器符号项格式错误。"
+
+msgid "Malformed accelerator term HIR."
+msgstr "加速器项 HIR 格式错误。"
+
+msgid "Malformed accelerator type test."
+msgstr "加速器类型测试格式错误。"
+
+msgid "Malformed accelerator while loop."
+msgstr "加速器 while 循环格式错误。"
+
+msgid "Malformed application container."
+msgstr "应用程序容器格式错误。"
+
+msgid "Memory mapping failed."
+msgstr "内存映射失败。"
+
+msgid "Missing OpenGL ES buffer descriptors."
+msgstr "缺少 OpenGL ES 缓冲区描述符。"
+
+msgid "Missing OpenGL ES download snapshot."
+msgstr "缺少 OpenGL ES 下载快照。"
+
+msgid "Missing OpenGL ES execution output."
+msgstr "缺少 OpenGL ES 执行输出。"
+
+msgid "Missing OpenGL ES finish buffers."
+msgstr "缺少 OpenGL ES 完成缓冲区。"
+
+msgid "Missing OpenGL ES finish result words."
+msgstr "缺少 OpenGL ES 完成结果字。"
+
+msgid "Missing OpenGL ES output snapshot."
+msgstr "缺少 OpenGL ES 输出快照。"
+
+msgid "Missing OpenGL ES prepared program."
+msgstr "缺少已准备的 OpenGL ES 程序。"
+
+msgid "Missing OpenGL ES result buffer."
+msgstr "缺少 OpenGL ES 结果缓冲区。"
+
+msgid "Missing OpenGL ES result words."
+msgstr "缺少 OpenGL ES 结果字。"
+
+msgid "Missing OpenGL ES scalar words."
+msgstr "缺少 OpenGL ES 标量字。"
+
+msgid "Missing OpenGL ES upload snapshot."
+msgstr "缺少 OpenGL ES 上传快照。"
+
+msgid "Missing Vulkan buffer descriptors."
+msgstr "缺少 Vulkan 缓冲区描述符。"
+
+msgid "Missing Vulkan buffer snapshot."
+msgstr "缺少 Vulkan 缓冲区快照。"
+
+msgid "Missing Vulkan execution output."
+msgstr "缺少 Vulkan 执行输出。"
+
+msgid "Missing Vulkan finish buffers."
+msgstr "缺少 Vulkan 完成缓冲区。"
+
+msgid "Missing Vulkan output snapshot."
+msgstr "缺少 Vulkan 输出快照。"
+
+msgid "Missing Vulkan prepared program."
+msgstr "缺少已准备的 Vulkan 程序。"
+
+msgid "Missing Vulkan scalar words."
+msgstr "缺少 Vulkan 标量字。"
+
+msgid "Missing Vulkan scalar-result destination."
+msgstr "缺少 Vulkan 标量结果目标。"
+
+msgid "Missing Vulkan scalar-result identities."
+msgstr "缺少 Vulkan 标量结果标识。"
+
+msgid "Missing accelerator context."
+msgstr "缺少加速器上下文。"
+
+msgid "Missing accelerator function plan."
+msgstr "缺少加速器函数计划。"
+
+msgid "Missing accelerator registry reservation."
+msgstr "缺少加速器注册表预留项。"
+
+msgid "Multi-dimensional subscripts are valid only inside __fast func."
+msgstr "多维下标仅在 __fast func 内有效。"
+
+msgid "Multiple initializers in module: %s"
+msgstr "模块中有多个初始化器：%s"
+
+msgid "NUL byte in source program.\n"
+msgstr "源程序中存在 NUL 字节。\n"
+
+msgid "NUL in source module: %s"
+msgstr "源模块中存在 NUL：%s"
+
+msgid "No Vulkan physical device is available."
+msgstr "没有可用的 Vulkan 物理设备。"
+
+msgid "No accelerator backend could enumerate devices."
+msgstr "没有加速器后端能够枚举设备。"
+
+msgid "No input module was specified."
+msgstr "未指定输入模块。"
+
+msgid "No resolver is available for required module '%s'."
+msgstr "所需模块 '%s' 没有可用的解析器。"
+
+msgid "No suitable GPU device is available."
+msgstr "没有可用的合适 GPU 设备。"
+
+msgid "No suitable GPU device is available.\n"
+msgstr "没有可用的合适 GPU 设备。\n"
+
+msgid "No suitable OpenGL ES 3.1 compute device is available."
+msgstr "没有可用的合适 OpenGL ES 3.1 计算设备。"
+
+msgid "No suitable Vulkan 1.2 compute device is available."
+msgstr "没有可用的合适 Vulkan 1.2 计算设备。"
+
+msgid "Noct Programming Language\n"
+msgstr "Noct 编程语言\n"
+
+msgid "Nondeterministic accelerator kernel index."
+msgstr "加速器内核索引不确定。"
+
+msgid "Nondeterministic accelerator scalar binding."
+msgstr "加速器标量绑定不确定。"
+
+msgid "Nondeterministic accelerator scalar result."
+msgstr "加速器标量结果不确定。"
+
+msgid "Not a dictionary."
+msgstr "不是字典。"
+
+msgid "Not a function."
+msgstr "不是函数。"
+
+msgid "Not a packed."
+msgstr "不是 packed。"
+
+msgid "Not an array or a dictionary."
+msgstr "不是数组或字典。"
+
+msgid "Not an array."
+msgstr "不是数组。"
+
+msgid "Offset is out-of-range."
+msgstr "偏移量超出范围。"
+
+msgid "Only numeric literals are available inside __fast func."
+msgstr "__fast func 内仅可使用数值字面量。"
+
+msgid "OpenGL ES active dispatch sequence is incomplete."
+msgstr "OpenGL ES 活动调度序列不完整。"
+
+msgid "OpenGL ES buffer exceeds the device storage-block limit."
+msgstr "OpenGL ES 缓冲区超过设备存储块限制。"
+
+msgid "OpenGL ES buffer extent metadata is inconsistent."
+msgstr "OpenGL ES 缓冲区维度大小元数据不一致。"
+
+msgid "OpenGL ES buffer metadata does not match the prepared program."
+msgstr "OpenGL ES 缓冲区元数据与已准备的程序不匹配。"
+
+msgid "OpenGL ES buffer size is not representable."
+msgstr "OpenGL ES 缓冲区大小无法表示。"
+
+msgid "OpenGL ES buffer table does not match the prepared program."
+msgstr "OpenGL ES 缓冲区表与已准备的程序不匹配。"
+
+msgid "OpenGL ES compute shader source is too large."
+msgstr "OpenGL ES 计算着色器源代码过大。"
+
+msgid "OpenGL ES dispatch exceeds the device workgroup-count limit."
+msgstr "OpenGL ES 调度超过设备工作组数量限制。"
+
+msgid "OpenGL ES dispatch range changed after execution creation."
+msgstr "OpenGL ES 调度范围在创建执行后发生了变化。"
+
+msgid "OpenGL ES dispatch range is missing from the scalar block."
+msgstr "标量块中缺少 OpenGL ES 调度范围。"
+
+msgid "OpenGL ES execution has no active dispatch."
+msgstr "OpenGL ES 执行没有活动调度。"
+
+msgid "OpenGL ES execution was already finished."
+msgstr "OpenGL ES 执行已完成。"
+
+msgid "OpenGL ES finish buffer table changed."
+msgstr "OpenGL ES 完成缓冲区表已更改。"
+
+msgid "OpenGL ES finish result table changed."
+msgstr "OpenGL ES 完成结果表已更改。"
+
+msgid "OpenGL ES kernels were dispatched out of order."
+msgstr "OpenGL ES 内核未按顺序调度。"
+
+msgid "OpenGL ES output buffer activity changed."
+msgstr "OpenGL ES 输出缓冲区活动状态已更改。"
+
+msgid "OpenGL ES output buffer became invalid while unmapping."
+msgstr "OpenGL ES 输出缓冲区在取消映射时失效。"
+
+msgid "OpenGL ES output buffer element type changed."
+msgstr "OpenGL ES 输出缓冲区元素类型已更改。"
+
+msgid "OpenGL ES output buffer element width changed."
+msgstr "OpenGL ES 输出缓冲区元素宽度已更改。"
+
+msgid "OpenGL ES output buffer extent changed."
+msgstr "OpenGL ES 输出缓冲区维度大小已更改。"
+
+msgid "OpenGL ES output buffer origin changed."
+msgstr "OpenGL ES 输出缓冲区起点已更改。"
+
+msgid "OpenGL ES output buffer size changed."
+msgstr "OpenGL ES 输出缓冲区大小已更改。"
+
+msgid "OpenGL ES output buffer slot changed."
+msgstr "OpenGL ES 输出缓冲区槽位已更改。"
+
+msgid "OpenGL ES output size is not representable."
+msgstr "OpenGL ES 输出大小无法表示。"
+
+msgid "OpenGL ES output transfer plan changed."
+msgstr "OpenGL ES 输出传输计划已更改。"
+
+msgid "OpenGL ES output upload plan changed."
+msgstr "OpenGL ES 输出上传计划已更改。"
+
+msgid "OpenGL ES received an empty active dispatch."
+msgstr "OpenGL ES 收到空的活动调度。"
+
+msgid "OpenGL ES received too many active dispatches."
+msgstr "OpenGL ES 收到过多活动调度。"
+
+msgid "OpenGL ES reported an error while preparing a compute program."
+msgstr "OpenGL ES 在准备计算程序时报告错误。"
+
+msgid "OpenGL ES result block does not match the prepared program."
+msgstr "OpenGL ES 结果块与已准备的程序不匹配。"
+
+msgid "OpenGL ES result block exceeds the device storage-block limit."
+msgstr "OpenGL ES 结果块超过设备存储块限制。"
+
+msgid "OpenGL ES result block size overflowed."
+msgstr "OpenGL ES 结果块大小溢出。"
+
+msgid "OpenGL ES result buffer became invalid while unmapping."
+msgstr "OpenGL ES 结果缓冲区在取消映射时失效。"
+
+msgid "OpenGL ES result size is not representable."
+msgstr "OpenGL ES 结果大小无法表示。"
+
+msgid "OpenGL ES scalar block does not match the prepared program."
+msgstr "OpenGL ES 标量块与已准备的程序不匹配。"
+
+msgid "OpenGL ES scalar block exceeds the device storage-block limit."
+msgstr "OpenGL ES 标量块超过设备存储块限制。"
+
+msgid "OpenGL ES scalar block size overflowed."
+msgstr "OpenGL ES 标量块大小溢出。"
+
+msgid "OpenGL ES supports only 32-bit accelerator buffers."
+msgstr "OpenGL ES 仅支持 32 位加速器缓冲区。"
+
+msgid "Out of memory building module graph."
+msgstr "构建模块图时内存不足。"
+
+msgid "Out of memory inspecting application."
+msgstr "检查应用程序时内存不足。"
+
+msgid "Out of memory reading module %s."
+msgstr "读取模块 %s 时内存不足。"
+
+msgid "Out of memory validating module graph."
+msgstr "验证模块图时内存不足。"
+
+msgid "Out of memory while allocating accelerator kernel."
+msgstr "分配加速器内核时内存不足。"
+
+msgid "Out of memory while building __fast signature."
+msgstr "构建 __fast 签名时内存不足。"
+
+msgid "Out of memory while building accelerator IR."
+msgstr "构建加速器 IR 时内存不足。"
+
+msgid "Out of memory while copying OpenGL ES scalar metadata."
+msgstr "复制 OpenGL ES 标量元数据时内存不足。"
+
+msgid "Out of memory while creating OpenGL ES buffers."
+msgstr "创建 OpenGL ES 缓冲区时内存不足。"
+
+msgid "Out of memory while creating Vulkan buffers."
+msgstr "创建 Vulkan 缓冲区时内存不足。"
+
+msgid "Out of memory while creating Vulkan descriptor sets."
+msgstr "创建 Vulkan 描述符集时内存不足。"
+
+msgid "Out of memory while creating a Vulkan execution."
+msgstr "创建 Vulkan 执行时内存不足。"
+
+msgid "Out of memory while creating an OpenGL ES execution."
+msgstr "创建 OpenGL ES 执行时内存不足。"
+
+msgid "Out of memory while enumerating OpenGL ES devices."
+msgstr "枚举 OpenGL ES 设备时内存不足。"
+
+msgid "Out of memory while enumerating Vulkan devices."
+msgstr "枚举 Vulkan 设备时内存不足。"
+
+msgid "Out of memory while planning accelerator function."
+msgstr "规划加速器函数时内存不足。"
+
+msgid "Out of memory while planning accelerator region."
+msgstr "规划加速器区域时内存不足。"
+
+msgid "Out of memory while recording accelerator buffer."
+msgstr "记录加速器缓冲区时内存不足。"
+
+msgid "Out of memory while recording accelerator kernel."
+msgstr "记录加速器内核时内存不足。"
+
+msgid "Out of memory while recording accelerator range."
+msgstr "记录加速器范围时内存不足。"
+
+msgid "Out of memory while recording accelerator region."
+msgstr "记录加速器区域时内存不足。"
+
+msgid "Out of memory while recording accelerator scalar result."
+msgstr "记录加速器标量结果时内存不足。"
+
+msgid "Out of memory while recording accelerator scalar."
+msgstr "记录加速器标量时内存不足。"
+
+msgid "Out of memory while storing Vulkan descriptor sets."
+msgstr "存储 Vulkan 描述符集时内存不足。"
+
+msgid "Out of memory while writing Vulkan descriptors."
+msgstr "写入 Vulkan 描述符时内存不足。"
+
+msgid "Out of memory."
+msgstr "内存不足。"
+
+msgid "Out of memory.\n"
+msgstr "内存不足。\n"
+
+msgid "Out-of-memory."
+msgstr "内存不足。"
+
+msgid "Output %s for input %s collides with input %s.\n"
+msgstr "输入 %s 的输出 %s 与输入 %s 冲突。\n"
+
+msgid "Output directory already exists."
+msgstr "输出目录已存在。"
+
+msgid "Packed destination range is out-of-bounds."
+msgstr "Packed 目标范围越界。"
+
+msgid "Packed element type must be a byte."
+msgstr "Packed 元素类型必须为字节。"
+
+msgid "Packed element types do not match."
+msgstr "Packed 元素类型不匹配。"
+
+msgid "Packed index %ld is out-of-range."
+msgstr "Packed 索引 %ld 超出范围。"
+
+msgid "Packed is not a file mapping."
+msgstr "Packed 不是文件映射。"
+
+msgid "Packed is unmapped."
+msgstr "Packed 未映射。"
+
+msgid "Packed size is 0."
+msgstr "packed 的大小为 0。"
+
+msgid "Packed size is too large."
+msgstr "packed 的大小过大。"
+
+msgid "Packed source range is out-of-bounds."
+msgstr "Packed 源范围越界。"
+
+msgid "Port number is out-of-range."
+msgstr "端口号超出范围。"
+
+msgid "Private accelerator package is detached."
+msgstr "加速器私有包已分离。"
+
+msgid "REPL input has unmatched delimiters."
+msgstr "REPL 输入包含不匹配的分隔符。"
+
+msgid "REPL input is too large."
+msgstr "REPL 输入过大。"
+
+msgid "Read length must be greater than zero."
+msgstr "读取长度必须大于零。"
+
+msgid "Receive size is out-of-range."
+msgstr "接收大小超出范围。"
+
+msgid "Regex error: %s"
+msgstr "正则表达式错误：%s"
+
+msgid "Regex too complex."
+msgstr "正则表达式过于复杂。"
+
+msgid "Regex too large."
+msgstr "正则表达式过大。"
+
+msgid "RelaxedPrecision present"
+msgstr "存在 RelaxedPrecision"
+
+msgid "Return operand does not match the declared type."
+msgstr "返回操作数与声明的类型不匹配。"
+
+msgid "SIMD FMA: vreg stack overflow."
+msgstr "SIMD FMA：vreg 栈溢出。"
+
+msgid "SIMD: ranked cache dependency plan exceeded vreg budget."
+msgstr "SIMD：分级缓存依赖计划超出 vreg 预算。"
+
+msgid "SIMD: too many temps."
+msgstr "SIMD：临时值过多。"
+
+msgid "SIMD: unexpected vector expression."
+msgstr "SIMD：意外的向量表达式。"
+
+msgid "SIMD: unplanned term."
+msgstr "SIMD：未规划的项。"
+
+msgid "SIMD: vreg budget exceeded."
+msgstr "SIMD：超出 vreg 预算。"
+
+msgid "SIMD: vreg stack overflow."
+msgstr "SIMD：vreg 栈溢出。"
+
+msgid "SUBJNZ operand is not an integer."
+msgstr "SUBJNZ 操作数不是整数。"
+
+msgid "Searching directory %s.\n"
+msgstr "正在搜索目录 %s。\n"
+
+msgid "Shaped parameter types are valid only on __fast func."
+msgstr "带形状的形参类型仅对 __fast func 有效。"
+
+msgid "Shared value is nested too deeply."
+msgstr "共享值嵌套过深。"
+
+msgid "Skipping empty directory %s.\n"
+msgstr "跳过空目录 %s。\n"
+
+msgid "Socket is already closed."
+msgstr "套接字已关闭。"
+
+msgid "Socket is already registered to a poller."
+msgstr "套接字已注册到轮询器。"
+
+msgid "Socket is not registered to this poller."
+msgstr "套接字未注册到此轮询器。"
+
+msgid "Socket is registered to a poller. Remove it first."
+msgstr "套接字已注册到轮询器。请先将其移除。"
+
+msgid "Specify a command.\n"
+msgstr "请指定一个命令。\n"
+
+msgid "Stack overflow."
+msgstr "栈溢出。"
+
+msgid "Stack underflow."
+msgstr "栈下溢。"
+
+msgid "String is too long."
+msgstr "字符串过长。"
+
+msgid "Subscript is negative."
+msgstr "下标为负数。"
+
+msgid "Subscript not a string."
+msgstr "下标不是字符串。"
+
+msgid "Subscript not an integer."
+msgstr "下标不是整数"
+
+msgid "Symbol \"%s\" not found."
+msgstr "未找到符号 \"%s\"。"
+
+msgid "System.import() accepts source files only."
+msgstr "System.import() 仅接受源文件。"
+
+msgid "The '__noct_nap_' symbol prefix is reserved."
+msgstr "符号前缀 '__noct_nap_' 已保留。"
+
+msgid "The --app option may be specified only once.\n"
+msgstr "选项 --app 只能指定一次。\n"
+
+msgid "The Vulkan accelerator device is unavailable."
+msgstr "Vulkan 加速器设备不可用。"
+
+msgid "The Vulkan loader did not expose Vulkan 1.2 physical-device properties."
+msgstr "Vulkan 加载器未公开 Vulkan 1.2 物理设备属性。"
+
+msgid "The number of indices does not match the __fast parameter rank."
+msgstr "索引数量与 __fast 形参的维数不匹配。"
+
+msgid "The requested GPU device was not found."
+msgstr "未找到请求的 GPU 设备。"
+
+msgid "The requested GPU name is ambiguous; use a backend-qualified selector."
+msgstr "请求的 GPU 名称有歧义；请使用带后端限定的选择器。"
+
+msgid "The selected Direct3D 12 device is unavailable."
+msgstr "所选 Direct3D 12 设备不可用。"
+
+msgid "The selected GPU backend is unavailable."
+msgstr "所选 GPU 后端不可用。"
+
+msgid "The selected OpenGL ES device is no longer available."
+msgstr "所选 OpenGL ES 设备不再可用。"
+
+msgid "The selected Vulkan compute queue is unavailable."
+msgstr "所选 Vulkan 计算队列不可用。"
+
+msgid "This expression is not available inside __fast func."
+msgstr "此表达式在 __fast func 内不可用。"
+
+msgid "Thread error: %s"
+msgstr "线程错误：%s"
+
+msgid "Thread is already joined."
+msgstr "线程已联结。"
+
+msgid "Too big code."
+msgstr "代码过大。"
+
+msgid "Too many __fast parameters."
+msgstr "__fast 形参过多。"
+
+msgid "Too many accelerator locals."
+msgstr "加速器局部变量过多。"
+
+msgid "Too many anonymous functions."
+msgstr "匿名函数过多。"
+
+msgid "Too many capture groups."
+msgstr "捕获组过多。"
+
+msgid "Too many character classes."
+msgstr "字符类过多。"
+
+msgid "Too many direct __fast call edges."
+msgstr "直接 __fast 调用边过多。"
+
+msgid "Too many function parameters."
+msgstr "函数形参过多。"
+
+msgid "Too many function prototypes in the require graph."
+msgstr "require 图中的函数原型过多。"
+
+msgid "Too many functions or function parameters.\n"
+msgstr "函数或函数形参过多。\n"
+
+msgid "Too many functions."
+msgstr "函数过多。"
+
+msgid "Too many jumps."
+msgstr "跳转过多。"
+
+msgid "Too many local variables."
+msgstr "局部变量过多。"
+
+msgid "Too many parameters."
+msgstr "参数过多。"
+
+msgid "Too many pinned global variables."
+msgstr "固定全局变量过多。"
+
+msgid "Too many pinned local variables."
+msgstr "固定局部变量过多。"
+
+msgid "Unexpected OpenGL ES finish result words."
+msgstr "意外的 OpenGL ES 完成结果字。"
+
+msgid "Unexpected OpenGL ES result words."
+msgstr "意外的 OpenGL ES 结果字。"
+
+msgid "Unexpected Vulkan scalar-result destination."
+msgstr "意外的 Vulkan 标量结果目标。"
+
+msgid "Unexpected Vulkan scalar-result identities."
+msgstr "意外的 Vulkan 标量结果标识。"
+
+msgid "Unexpected end of file."
+msgstr "文件意外结束。"
+
+msgid "Unknown __fast numeric intrinsic."
+msgstr "未知的 __fast 数值内置函数。"
+
+msgid "Unknown error."
+msgstr "未知错误。"
+
+msgid "Unknown opcode %d at pc=%d."
+msgstr "pc=%d 处存在未知操作码 %d。"
+
+msgid "Unknown opcode."
+msgstr "未知操作码。"
+
+msgid "Unknown option %s.\n"
+msgstr "未知选项 %s。\n"
+
+msgid "Unknown type name '%s'."
+msgstr "未知类型名称 '%s'。"
+
+msgid "Unmatched parenthesis."
+msgstr "括号不匹配。"
+
+msgid "Unsupported (?...) construct."
+msgstr "不支持 (?...) 构造。"
+
+msgid "Unsupported assignment target inside __fast func."
+msgstr "__fast func 内存在不支持的赋值目标。"
+
+msgid "Unsupported block in __fast func."
+msgstr "__fast func 中存在不支持的块。"
+
+msgid "Unsupported file mode."
+msgstr "不支持的文件模式。"
+
+msgid "Unsupported instruction reached the Vulkan shader generator."
+msgstr "Vulkan 着色器生成器收到不支持的指令。"
+
+msgid "Unsupported or malformed application version.\n"
+msgstr "应用程序版本不受支持或格式错误。\n"
+
+msgid "Unsupported or malformed application version: %s"
+msgstr "应用程序版本不受支持或格式错误：%s"
+
+msgid "Unsupported or malformed bytecode version.\n"
+msgstr "字节码版本不受支持或格式错误。\n"
+
+msgid "Unsupported or malformed bytecode version: %s"
+msgstr "字节码版本不受支持或格式错误：%s"
+
+msgid "Unsupported packed element type in __fast func."
+msgstr "__fast func 中存在不支持的 packed 元素类型。"
+
+msgid "Unterminated character class."
+msgstr "字符类未终止。"
+
+msgid "Usage\n"
+msgstr "用法\n"
+
+msgid "Value for key %s is not a dictionary."
+msgstr "键 %s 对应的值不是字典。"
+
+msgid "Value for key %s is not a double."
+msgstr "键 %s 对应的值不是 double。"
+
+msgid "Value for key %s is not a float."
+msgstr "键 %s 对应的值不是浮点数。"
+
+msgid "Value for key %s is not a function."
+msgstr "键 %s 对应的值不是函数。"
+
+msgid "Value for key %s is not a long."
+msgstr "键 %s 对应的值不是 long。"
+
+msgid "Value for key %s is not a string."
+msgstr "键 %s 对应的值不是字符串。"
+
+msgid "Value for key %s is not an array."
+msgstr "键 %s 对应的值不是数组。"
+
+msgid "Value for key %s is not an int."
+msgstr "键 %s 对应的值不是 int。"
+
+msgid "Value is not a float."
+msgstr "值不是浮点数。"
+
+msgid "Value is not a function."
+msgstr "值不是函数。"
+
+msgid "Value is not a long."
+msgstr "值不是 long。"
+
+msgid "Value is not a number or a string."
+msgstr "值不是数字或字符串。"
+
+msgid "Value is not a number."
+msgstr "值不是数字。"
+
+msgid "Value is not a packed."
+msgstr "值不是 packed。"
+
+msgid "Value is not a string, an array, or a dictionary."
+msgstr "值不是字符串、数组或字典。"
+
+msgid "Value is not a string."
+msgstr "值不是字符串。"
+
+msgid "Value is not an array."
+msgstr "值不是数组。"
+
+msgid "Value is not an int."
+msgstr "值不是 int。"
+
+msgid "Value is not an integer."
+msgstr "值不是整数。"
+
+msgid "Value is out of range for int."
+msgstr "值超出 int 的范围。"
+
+msgid "Value is out of range for long."
+msgstr "值超出 long 的范围。"
+
+msgid "Variable '%s' is already declared in this scope."
+msgstr "变量 '%s' 已在此作用域中声明。"
+
+msgid "Variable '%s' is used before its declaration."
+msgstr "变量 '%s' 在声明前被使用。"
+
+msgid "Version %s\n"
+msgstr "版本 %s\n"
+
+msgid "Vulkan 1.2 is required, but the loader only exposes Vulkan 1.0."
+msgstr "需要 Vulkan 1.2，但加载器仅公开 Vulkan 1.0。"
+
+msgid "Vulkan 1.2 or newer is required."
+msgstr "需要 Vulkan 1.2 或更高版本。"
+
+msgid "Vulkan accelerator submission failed."
+msgstr "Vulkan 加速器提交失败。"
+
+msgid "Vulkan active kernel has an inactive data buffer."
+msgstr "Vulkan 活动内核包含非活动数据缓冲区。"
+
+msgid "Vulkan buffer exceeds the device storage-buffer limit."
+msgstr "Vulkan 缓冲区超过设备存储缓冲区限制。"
+
+msgid "Vulkan buffer extent is inconsistent."
+msgstr "Vulkan 缓冲区维度大小不一致。"
+
+msgid "Vulkan buffer metadata changed after planning."
+msgstr "Vulkan 缓冲区元数据在规划后发生了变化。"
+
+msgid "Vulkan buffer table does not match the prepared program."
+msgstr "Vulkan 缓冲区表与已准备的程序不匹配。"
+
+msgid "Vulkan device '%s' was not found."
+msgstr "未找到 Vulkan 设备 '%s'。"
+
+msgid "Vulkan device name '%s' is ambiguous."
+msgstr "Vulkan 设备名称 '%s' 有歧义。"
+
+msgid "Vulkan dispatch exceeds the device workgroup-count limit."
+msgstr "Vulkan 调度超过设备工作组数量限制。"
+
+msgid "Vulkan dispatch range changed after execution creation."
+msgstr "Vulkan 调度范围在创建执行后发生了变化。"
+
+msgid "Vulkan dispatch range is missing from the scalar block."
+msgstr "标量块中缺少 Vulkan 调度范围。"
+
+msgid "Vulkan execution has no recording command buffer."
+msgstr "Vulkan 执行没有正在记录的命令缓冲区。"
+
+msgid "Vulkan execution was already submitted."
+msgstr "Vulkan 执行已提交。"
+
+msgid "Vulkan finish buffer table changed."
+msgstr "Vulkan 完成缓冲区表已更改。"
+
+msgid "Vulkan kernels were dispatched out of order."
+msgstr "Vulkan 内核的调度顺序错误。"
+
+msgid "Vulkan output transfer plan changed."
+msgstr "Vulkan 输出传输计划已更改。"
+
+msgid "Vulkan output was requested before completion."
+msgstr "在完成之前请求了 Vulkan 输出。"
+
+msgid "Vulkan received an empty active dispatch."
+msgstr "Vulkan 收到空的活动调度。"
+
+msgid "Vulkan result block does not match the prepared program."
+msgstr "Vulkan 结果块与准备的程序不匹配。"
+
+msgid "Vulkan result block exceeds the device storage-buffer limit."
+msgstr "Vulkan 结果块超出设备存储缓冲区限制。"
+
+msgid "Vulkan scalar block does not match the prepared program."
+msgstr "Vulkan 标量块与准备的程序不匹配。"
+
+msgid "Vulkan scalar block exceeds the device storage-buffer limit."
+msgstr "Vulkan 标量块超出设备存储缓冲区限制。"
+
+msgid "Vulkan scalar-result identity changed."
+msgstr "Vulkan 标量结果标识已更改。"
+
+msgid "Vulkan scalar-result table changed."
+msgstr "Vulkan 标量结果表已更改。"
+
+msgid "Vulkan shader assembler returned malformed SPIR-V."
+msgstr "Vulkan 着色器汇编器返回了格式错误的 SPIR-V。"
+
+msgid "Vulkan shader assembler returned no result."
+msgstr "Vulkan 着色器汇编器未返回结果。"
+
+msgid "Vulkan shader assembly failed:\x20"
+msgstr "Vulkan 着色器汇编失败：\x20"
+
+msgid "Vulkan supports only 32-bit accelerator buffers."
+msgstr "Vulkan 仅支持 32 位加速器缓冲区。"
+
+msgid "Write-only file mappings are not supported."
+msgstr "不支持只写文件映射。"
+
+msgid "Wrong number of arguments for __fast intrinsic."
+msgstr "内置函数 __fast 的实参数量错误。"
+
+msgid "__fast call '%s': argument %u does not match the exact shape."
+msgstr "__fast 调用“%s”：实参 %u 与确切形状不匹配。"
+
+msgid "__fast call '%s': argument %u has the wrong packed element type."
+msgstr "__fast 调用“%s”：实参 %u 的 packed 元素类型错误。"
+
+msgid "__fast call '%s': argument %u has the wrong primitive type."
+msgstr "__fast 调用“%s”：实参 %u 的基本类型错误。"
+
+msgid "__fast call '%s': shape element count overflow."
+msgstr "__fast 调用“%s”：形状元素数量溢出。"
+
+msgid "__fast call '%s': shape extents must be positive."
+msgstr "__fast 调用“%s”：形状的维度大小必须为正数。"
+
+msgid "__fast call: argument does not match the exact shape."
+msgstr "__fast 调用：实参与确切形状不匹配。"
+
+msgid "__fast call: argument has the wrong packed element type."
+msgstr "__fast 调用：实参的 packed 元素类型错误。"
+
+msgid "__fast call: shape element count overflow."
+msgstr "__fast 调用：形状元素数量溢出。"
+
+msgid "__fast call: shape extents must be positive."
+msgstr "__fast 调用：形状的维度大小必须为正数。"
+
+msgid "__fast row-major index overflow."
+msgstr "__fast 行优先索引溢出。"
+
+msgid "__fast shape extent is too large."
+msgstr "__fast 形状的维度大小过大。"
+
+msgid "__inline functions must also be static."
+msgstr "__inline 函数还必须为 static。"
+
+msgid "argument has two binding types"
+msgstr "实参有两种绑定类型"
+
+msgid "atan2() requires float or double operands."
+msgstr "atan2() 需要 float 或 double 操作数。"
+
+msgid "buffer binding limit exceeded"
+msgstr "超出缓冲区绑定限制"
+
+msgid "chdir() failed.\n"
+msgstr "chdir() 失败。\n"
+
+msgid "continue appeared outside loop."
+msgstr "continue 语句出现在循环外部。"
+
+msgid "device buffer escapes its GPU session"
+msgstr "设备缓冲区逸出其 GPU 会话"
+
+msgid "device buffer has a host argument slot"
+msgstr "设备缓冲区具有主机实参槽位"
+
+msgid "device buffer has no later consumer"
+msgstr "设备缓冲区没有后续消费者"
+
+msgid "device buffer has no producer kernel"
+msgstr "设备缓冲区没有生产者内核"
+
+msgid "device buffer requires host materialization"
+msgstr "设备缓冲区需要在主机端实体化"
+
+msgid "device producer does not cover its extent"
+msgstr "设备生产者未覆盖其维度大小"
+
+msgid "device producer does not start at zero"
+msgstr "设备生产者未从零开始"
+
+msgid "device producer has an invalid trip difference"
+msgstr "设备生产者具有无效的迭代差值"
+
+msgid "device producer has an invalid trip expression"
+msgstr "设备生产者具有无效的迭代表达式"
+
+msgid "device producer has multiple invocation indices"
+msgstr "设备生产者具有多个调用索引"
+
+msgid "device producer index is not exact"
+msgstr "设备生产者索引不精确"
+
+msgid "device producer is not a full definition"
+msgstr "设备生产者不是完整定义"
+
+msgid "device producer range is not exact"
+msgstr "设备生产者范围不精确"
+
+msgid "device producer reads before definition"
+msgstr "设备生产者在定义前读取"
+
+msgid "device producer store is not unique"
+msgstr "设备生产者存储操作不唯一"
+
+msgid "device-only Direct3D 12 buffer has a host argument"
+msgstr "仅限设备的 Direct3D 12 缓冲区具有主机实参"
+
+msgid "duplicate buffer argument slot"
+msgstr "重复的缓冲区实参槽位"
+
+msgid "duplicate device binding"
+msgstr "重复的设备绑定"
+
+msgid "duplicate runtime argument slot"
+msgstr "重复的运行时环境实参槽位"
+
+msgid "duplicate scalar argument slot"
+msgstr "重复的标量实参槽位"
+
+msgid "duplicate scalar result argument slot"
+msgstr "重复的标量结果实参槽位"
+
+msgid "else appeared after else."
+msgstr "else 出现在 else 之后。"
+
+msgid "else-if appeared after else."
+msgstr "else 之后出现了 else-if。"
+
+msgid "else-if block appeared without if block."
+msgstr "出现了没有 if 块的 else-if 块。"
+
+msgid "empty Direct3D 12 dispatch reached the backend"
+msgstr "空的 Direct3D 12 调度到达后端"
+
+msgid "empty Direct3D 12 execution has an active buffer"
+msgstr "空的 Direct3D 12 执行具有活动缓冲区"
+
+msgid "empty accelerator region"
+msgstr "空的加速器区域"
+
+msgid "execvp() failed for %s.\n"
+msgstr "对 %s 执行 execvp() 失败。\n"
+
+msgid "failed to close a Direct3D 12 command list"
+msgstr "无法关闭 Direct3D 12 命令列表"
+
+msgid "failed to convert a DXGI adapter name"
+msgstr "无法转换 DXGI 适配器名称"
+
+msgid "failed to create a Direct3D 12 buffer"
+msgstr "无法创建 Direct3D 12 缓冲区"
+
+msgid "failed to create a Direct3D 12 command allocator"
+msgstr "无法创建 Direct3D 12 命令分配器"
+
+msgid "failed to create a Direct3D 12 command list"
+msgstr "无法创建 Direct3D 12 命令列表"
+
+msgid "failed to create a Direct3D 12 descriptor heap"
+msgstr "无法创建 Direct3D 12 描述符堆"
+
+msgid "failed to create an execution"
+msgstr "无法创建执行"
+
+msgid "failed to create the DXGI factory"
+msgstr "无法创建 DXGI 工厂"
+
+msgid "failed to dispatch a kernel"
+msgstr "无法调度内核"
+
+msgid "failed to drain the Direct3D 12 queue submission"
+msgstr "无法排空 Direct3D 12 队列提交"
+
+msgid "failed to enumerate DXGI adapters"
+msgstr "无法枚举 DXGI 适配器"
+
+msgid "failed to finish an execution"
+msgstr "无法完成执行"
+
+msgid "failed to map a Direct3D 12 readback buffer"
+msgstr "无法映射 Direct3D 12 回读缓冲区"
+
+msgid "failed to map a Direct3D 12 result buffer"
+msgstr "无法映射 Direct3D 12 结果缓冲区"
+
+msgid "failed to map a Direct3D 12 upload buffer"
+msgstr "无法映射 Direct3D 12 上传缓冲区"
+
+msgid "failed to signal the Direct3D 12 queue fence"
+msgstr "无法向 Direct3D 12 队列栅栏发出信号"
+
+msgid "float contraction is not prohibited"
+msgstr "未禁止 float 收缩"
+
+msgid "float result exceeds bound"
+msgstr "float 结果超出边界"
+
+msgid "fork() failed."
+msgstr "fork() 失败。"
+
+msgid "host Direct3D 12 buffer is missing its argument"
+msgstr "Direct3D 12 主机缓冲区缺少其实参"
+
+msgid "host buffer is not host visible"
+msgstr "主机缓冲区对主机不可见"
+
+msgid "inactive Direct3D 12 buffer requests a transfer"
+msgstr "非活动 Direct3D 12 缓冲区请求传输"
+
+msgid "incomplete Direct3D 12 execution objects"
+msgstr "Direct3D 12 执行对象不完整"
+
+msgid "incomplete Direct3D 12 kernel objects"
+msgstr "Direct3D 12 内核对象不完整"
+
+msgid "incomplete Direct3D 12 prepared program"
+msgstr "准备的 Direct3D 12 程序不完整"
+
+msgid "incorrect value count"
+msgstr "值数量错误"
+
+msgid "instruction limit exceeded"
+msgstr "超出指令限制"
+
+msgid "invalid Direct3D 12 buffer origin"
+msgstr "无效的 Direct3D 12 缓冲区来源"
+
+msgid "invalid Direct3D 12 device list"
+msgstr "无效的 Direct3D 12 设备列表"
+
+msgid "invalid Direct3D 12 device-only buffer"
+msgstr "无效的仅限设备 Direct3D 12 缓冲区"
+
+msgid "invalid Direct3D 12 execution request"
+msgstr "无效的 Direct3D 12 执行请求"
+
+msgid "invalid Direct3D 12 kernel index"
+msgstr "无效的 Direct3D 12 内核索引"
+
+msgid "invalid ID bound"
+msgstr "无效的 ID 边界"
+
+msgid "invalid active Direct3D 12 execution"
+msgstr "无效的活动 Direct3D 12 执行"
+
+msgid "invalid backend payload owner"
+msgstr "无效的后端有效载荷所有者"
+
+msgid "invalid binary size expression"
+msgstr "无效的二元大小表达式"
+
+msgid "invalid buffer argument slot"
+msgstr "无效的缓冲区实参槽位"
+
+msgid "invalid buffer byte range"
+msgstr "无效的缓冲区字节范围"
+
+msgid "invalid buffer element kind"
+msgstr "无效的缓冲区元素种类"
+
+msgid "invalid buffer element width"
+msgstr "无效的缓冲区元素宽度"
+
+msgid "invalid buffer range end"
+msgstr "无效的缓冲区范围结束位置"
+
+msgid "invalid buffer range start"
+msgstr "无效的缓冲区范围起始位置"
+
+msgid "invalid buffer value type"
+msgstr "无效的缓冲区值类型"
+
+msgid "invalid device buffer byte extent"
+msgstr "无效的设备缓冲区字节大小"
+
+msgid "invalid device buffer extent"
+msgstr "无效的设备缓冲区维度大小"
+
+msgid "invalid empty Direct3D 12 execution state"
+msgstr "无效的空 Direct3D 12 执行状态"
+
+msgid "invalid instruction"
+msgstr "无效指令"
+
+msgid "invalid instruction length"
+msgstr "无效的指令长度"
+
+msgid "invalid instruction result type"
+msgstr "无效的指令结果类型"
+
+msgid "invalid kernel buffer range end"
+msgstr "无效的内核缓冲区范围结束位置"
+
+msgid "invalid kernel buffer range start"
+msgstr "无效的内核缓冲区范围起始位置"
+
+msgid "invalid kernel start"
+msgstr "无效的内核起始位置"
+
+msgid "invalid kernel stop"
+msgstr "无效的内核停止位置"
+
+msgid "invalid kernel trip"
+msgstr "无效的内核迭代"
+
+msgid "invalid local buffer argument slot"
+msgstr "无效的局部缓冲区实参槽位"
+
+msgid "invalid loop block id"
+msgstr "无效的循环块 id"
+
+msgid "invalid region block id"
+msgstr "无效的区域块 id"
+
+msgid "invalid scalar argument slot"
+msgstr "无效的标量实参槽位"
+
+msgid "invalid scalar result argument slot"
+msgstr "无效的标量结果实参槽位"
+
+msgid "invalid scalar result identity"
+msgstr "无效的标量结果标识"
+
+msgid "invalid scalar result producer"
+msgstr "无效的标量结果生产者"
+
+msgid "invalid scalar result type"
+msgstr "无效的标量结果类型"
+
+msgid "invalid scalar type"
+msgstr "无效的标量类型"
+
+msgid "invalid shader kernel index"
+msgstr "无效的着色器内核索引"
+
+msgid "invalid size multiplication"
+msgstr "无效的大小乘法"
+
+msgid "invalid size opcode"
+msgstr "无效的大小操作码"
+
+msgid "invalid size scalar reference"
+msgstr "无效的大小标量引用"
+
+msgid "invalid zero-clamped size expression"
+msgstr "无效的零钳制大小表达式"
+
+msgid "kernel buffer table mismatch"
+msgstr "内核缓冲区表不匹配"
+
+msgid "kernel buffer type mismatch"
+msgstr "内核缓冲区类型不匹配"
+
+msgid "kernel limit exceeded"
+msgstr "超出内核限制"
+
+msgid "kernel scalar table mismatch"
+msgstr "内核标量表不匹配"
+
+msgid "missing Direct3D 12 buffer metadata"
+msgstr "缺少 Direct3D 12 缓冲区元数据"
+
+msgid "missing Direct3D 12 buffer snapshot"
+msgstr "缺少 Direct3D 12 缓冲区快照"
+
+msgid "missing Direct3D 12 buffer table"
+msgstr "缺少 Direct3D 12 缓冲区表"
+
+msgid "missing Direct3D 12 download snapshot"
+msgstr "缺少 Direct3D 12 下载快照"
+
+msgid "missing Direct3D 12 execution"
+msgstr "缺少 Direct3D 12 执行"
+
+msgid "missing Direct3D 12 execution output"
+msgstr "缺少 Direct3D 12 执行输出"
+
+msgid "missing Direct3D 12 output table"
+msgstr "缺少 Direct3D 12 输出表"
+
+msgid "missing Direct3D 12 program"
+msgstr "缺少 Direct3D 12 程序"
+
+msgid "missing Direct3D 12 readback buffer"
+msgstr "缺少 Direct3D 12 回读缓冲区"
+
+msgid "missing Direct3D 12 result resources"
+msgstr "缺少 Direct3D 12 结果资源"
+
+msgid "missing Direct3D 12 result words"
+msgstr "缺少 Direct3D 12 结果字"
+
+msgid "missing Direct3D 12 scalar words"
+msgstr "缺少 Direct3D 12 标量字"
+
+msgid "missing Direct3D 12 upload snapshot"
+msgstr "缺少 Direct3D 12 上传快照"
+
+msgid "missing accelerator kernel table"
+msgstr "缺少加速器内核表"
+
+msgid "missing accelerator program"
+msgstr "缺少加速器程序"
+
+msgid "missing buffer name"
+msgstr "缺少缓冲区名称"
+
+msgid "missing buffer table"
+msgstr "缺少缓冲区表"
+
+msgid "missing compute entry contract"
+msgstr "缺少计算入口协定"
+
+msgid "missing function name"
+msgstr "缺少函数名称"
+
+msgid "missing instruction table"
+msgstr "缺少指令表"
+
+msgid "missing kernel name"
+msgstr "缺少内核名称"
+
+msgid "missing kernel table"
+msgstr "缺少内核表"
+
+msgid "missing scalar name"
+msgstr "缺少标量名称"
+
+msgid "missing scalar result name"
+msgstr "缺少标量结果名称"
+
+msgid "missing scalar result table"
+msgstr "缺少标量结果表"
+
+msgid "missing scalar table"
+msgstr "缺少标量表"
+
+msgid "missing shader output"
+msgstr "缺少着色器输出"
+
+msgid "missing size expression table"
+msgstr "缺少大小表达式表"
+
+msgid "missing source name"
+msgstr "缺少源名称"
+
+msgid "missing strict Float32 contract"
+msgstr "缺少严格的 Float32 协定"
+
+msgid "missing typed kernel"
+msgstr "缺少有类型的内核"
+
+msgid "missing typed shader kernel"
+msgstr "缺少有类型的着色器内核"
+
+msgid "negative size constant"
+msgstr "负大小常量"
+
+msgid "nonconstant integer divisor"
+msgstr "非常量整数除数"
+
+msgid "nonconstant shift count"
+msgstr "非常量移位计数"
+
+msgid "nondeterministic buffer binding"
+msgstr "不确定的缓冲区绑定"
+
+msgid "nondeterministic kernel index"
+msgstr "不确定的内核索引"
+
+msgid "nondeterministic scalar result entry"
+msgstr "不确定的标量结果条目"
+
+msgid "nondeterministic shader kernel index"
+msgstr "不确定的着色器内核索引"
+
+msgid "noninteger size scalar"
+msgstr "非整数大小标量"
+
+msgid "nonpositive device buffer extent"
+msgstr "非正数设备缓冲区维度大小"
+
+msgid "nonpositive integer divisor"
+msgstr "非正数整数除数"
+
+msgid "null kernel"
+msgstr "空内核"
+
+msgid "null program"
+msgstr "空程序"
+
+msgid "out of memory creating Direct3D 12 buffer metadata"
+msgstr "创建 Direct3D 12 缓冲区元数据时内存不足"
+
+msgid "out of memory creating a Direct3D 12 execution"
+msgstr "创建 Direct3D 12 执行时内存不足"
+
+msgid "out of memory retaining Direct3D 12 kernels"
+msgstr "保留 Direct3D 12 内核时内存不足"
+
+msgid "out of memory while generating shader source"
+msgstr "生成着色器源代码时内存不足"
+
+msgid "out of memory while recording DXGI adapters"
+msgstr "记录 DXGI 适配器时内存不足"
+
+msgid "package_init() must have no parameters and declare ': void'."
+msgstr "package_init() 必须没有形参并声明 ': void'。"
+
+msgid "parameter count limit exceeded"
+msgstr "超出形参数量限制"
+
+msgid "rejected a dispatch range"
+msgstr "调度范围被拒绝"
+
+msgid "scalar binding limit exceeded"
+msgstr "超出标量绑定限制"
+
+msgid "scalar result collides with buffer input"
+msgstr "标量结果与缓冲区输入冲突"
+
+msgid "scalar result collides with scalar input"
+msgstr "标量结果与标量输入冲突"
+
+msgid "scalar result consumer metadata mismatch"
+msgstr "标量结果消费者元数据不匹配"
+
+msgid "scalar result has a foreign producer"
+msgstr "标量结果具有外部生产者"
+
+msgid "scalar result limit exceeded"
+msgstr "超出标量结果限制"
+
+msgid "scalar result load precedes its producer"
+msgstr "标量结果加载先于其生产者"
+
+msgid "scalar result producer is not unique"
+msgstr "标量结果生产者不唯一"
+
+msgid "scalar result reference out of range"
+msgstr "标量结果引用超出范围"
+
+msgid "shader buffer table mismatch"
+msgstr "着色器缓冲区表不匹配"
+
+msgid "shader scalar table mismatch"
+msgstr "着色器标量表不匹配"
+
+msgid "shader source fragment exceeded its limit"
+msgstr "着色器源代码片段超出其限制"
+
+msgid "shift count out of range"
+msgstr "移位计数超出范围"
+
+msgid "short module"
+msgstr "模块过短"
+
+msgid "size expression limit exceeded"
+msgstr "超出大小表达式限制"
+
+msgid "sparse runtime argument namespace"
+msgstr "稀疏的运行时环境实参命名空间"
+
+msgid "static declarations require a relative source path."
+msgstr "static 声明需要相对源代码路径。"
+
+msgid "the Direct3D 12 device was removed"
+msgstr "Direct3D 12 设备已移除"
+
+msgid "unexpected Direct3D 12 buffer snapshot"
+msgstr "意外的 Direct3D 12 缓冲区快照"
+
+msgid "unexpected Direct3D 12 result words"
+msgstr "意外的 Direct3D 12 结果字"
+
+msgid "unimplemented expr: %d\n"
+msgstr "未实现的 expr：%d\n"
+
+msgid "unknown assembler failure"
+msgstr "未知汇编器故障"
+
+msgid "unsupported buffer origin"
+msgstr "不支持的缓冲区来源"
+
+msgid "unsupported device buffer extent"
+msgstr "不支持的设备缓冲区维度大小"
+
+msgid "unsupported shader source dialect"
+msgstr "不支持的着色器源代码方言"
+
+msgid "unsupported typed shader instruction"
+msgstr "不支持的有类型着色器指令"
+
+msgid "unused kernel has a buffer range"
+msgstr "未使用的内核具有缓冲区范围"
+
+msgid "validator allocation failed"
+msgstr "验证器分配失败"
+
+msgid "value limit exceeded"
+msgstr "超出值限制"
+
+msgid "var is specified without a single symbol."
+msgstr "var 未指定单个符号。"
+
+msgid "vm-options:\n"
+msgstr "VM 选项：\n"
+
+msgid "wrong SPIR-V version"
+msgstr "SPIR-V 版本错误"
+
+msgid "wrong magic"
+msgstr "魔数错误"
+

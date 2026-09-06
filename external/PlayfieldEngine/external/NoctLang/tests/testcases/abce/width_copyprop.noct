@@ -1,0 +1,27 @@
+func helper() {
+    return Packed.uint16(32);
+}
+func main() {
+    // Copy propagation: q gets p's creation fact.
+    var p = Packed.uint16(64);
+    var q = p;
+    for (i in 0..64) {
+        q[i] = i * 2;
+    }
+    var sum = 0;
+    for (i in 0..64) {
+        sum = sum + q[i];
+    }
+    print(sum);
+    // Creation-invisible: r comes from a call -> u8 default bet ->
+    // guard fails on a u16 packed -> slow path, identical results.
+    var r = helper();
+    for (i in 0..32) {
+        r[i] = i;
+    }
+    var s2 = 0;
+    for (i in 0..32) {
+        s2 = s2 + r[i];
+    }
+    print(s2);
+}

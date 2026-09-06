@@ -1,0 +1,92 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Adding file \"%s\"."
+msgstr "正在新增檔案 \"%s\"。"
+
+msgid "Cannot determine the file type for \"%s\"."
+msgstr "無法判斷檔案 \"%s\" 的類型。"
+
+msgid "Cannot get the size of file \"%s\"."
+msgstr "無法取得檔案 \"%s\" 的大小。"
+
+msgid "Cannot load an image \"%s\"."
+msgstr "無法載入圖片 \"%s\"。"
+
+msgid "Cannot open a save file."
+msgstr "無法開啟存檔檔案。"
+
+msgid "Cannot open file \"%s\"."
+msgstr "無法打開檔案 \"%s\"。"
+
+msgid "Cannot read file \"%s\"."
+msgstr "無法讀取檔案 \"%s\"。"
+
+msgid "Error: %s:%d: %s"
+msgstr "錯誤: %s:%d: %s"
+
+msgid "Too many textures."
+msgstr "材質過多。"
+
+msgid "Invalid font slot index."
+msgstr "無效的字體槽索引。"
+
+msgid "Invalid sound stream index."
+msgstr "無效的音訊串流索引。"
+
+msgid "Cannot make the save directory."
+msgstr "無法建立存檔目錄。"
+
+msgid "Save data key too long."
+msgstr "存檔資料鍵太長。"
+
+msgid "Cannot write to a save file."
+msgstr "無法寫入存檔檔案。"
+
+msgid "Cannot get the size of a save file."
+msgstr "無法取得存檔檔案的大小。"
+
+msgid "Save file too large."
+msgstr "存檔檔案過大。"
+
+msgid "Cannot read a save file."
+msgstr "無法讀取存檔檔案。"
+
+msgid "String too long."
+msgstr "字串太長。"
+
+msgid "Invalid save data."
+msgstr "無效的存檔資料。"
+
+msgid "Searching directory \"%s\"."
+msgstr "正在搜尋目錄 \"%s\"。"
+
+msgid "Skipping empty directory \"%s\"."
+msgstr "跳過空目錄 \"%s\"。"
+
+msgid "Parameter is not set."
+msgstr "未設定參數。"
+
+msgid "Unexpected parameter value for \"%s\"."
+msgstr "參數 \"%s\" 的值異常。"
+
+msgid "Parameter \"%s\" doesn't have the key \"%s\"."
+msgstr "參數 \"%s\" 不包含鍵 \"%s\"。"
+
+msgid "Unexpected parameter value for \"%s.%s\"."
+msgstr "參數 \"%s.%s\" 的值異常。"
+
+msgid "Cannot deserialize function."
+msgstr "無法反序列化函式。"
+
+msgid "Out of memory."
+msgstr "記憶體不足。"
+
+msgid "Parameter \"%s\" is not set."
+msgstr "未設定參數 \"%s\"。"
+
+msgid "Parameter is required to be a dictionary."
+msgstr "參數必須是字典。"
+

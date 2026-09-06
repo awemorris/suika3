@@ -1,0 +1,45 @@
+// Typed float arithmetic on annotated parameters (design 07).
+// Division is IEEE-total (Part 0); comparisons are NaN-safe.
+// inf/NaN are never printed raw (libc spellings differ): classify.
+
+func classify(x) {
+    if (x != x) {
+        return "nan";
+    }
+    if (340000000000000000000000000000000000000.0 < x) {
+        return "+inf";
+    }
+    if (-340000000000000000000000000000000000000.0 > x) {
+        return "-inf";
+    }
+    return "finite";
+}
+
+func g(x: float, y: float) {
+    print(x + y);
+    print(x - y);
+    print(x * y);
+    print(x / y);
+    print(x < y);
+    print(x <= y);
+    print(x > y);
+    print(x >= y);
+}
+
+func h(x: float, y: float) {
+    // y == 0.0 at the call site: totals, not errors.
+    print(classify(x / y));
+    // NaN operand: every ordered comparison must yield 0.
+    var n = y / y;      // 0.0/0.0 = NaN (typed FDIV)
+    print(n < x);
+    print(n <= x);
+    print(n > x);
+    print(n >= x);
+}
+
+func main() {
+    g(1.5, 2.5);
+    g(0.5, 0.25);
+    h(1.0, 0.0);
+    return 0;
+}

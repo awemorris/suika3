@@ -1,0 +1,18 @@
+// Mixed int/float expressions must stay on the generic helpers
+// (promotion semantics preserved bit-for-bit); typed ops require
+// both operands proven and same-typed (D-TOP6).
+
+func m(a: int, x: float) {
+    print(a + x);
+    print(x + a);
+    print(a * x);
+    print(x / a);
+    print(a < x);
+    print(x < a);
+}
+
+func main() {
+    m(3, 0.5);
+    m(0 - 2, 1.25);
+    return 0;
+}

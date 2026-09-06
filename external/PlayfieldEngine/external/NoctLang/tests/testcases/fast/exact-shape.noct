@@ -1,0 +1,16 @@
+__fast func write_last(data: rpackeduint32(2, 3), value: int): int {
+    data[1, 2] = value;
+    return data[1, 2];
+}
+
+__fast func dynamic_shape(data: rpackeduint32(rows, cols), rows: int, cols: long): int {
+    data[0, 0] = rows + 1;
+    return data[0, 0];
+}
+
+func main() {
+    var fixed = Packed.uint32(6);
+    var dynamic = Packed.uint32(6);
+    print(write_last(fixed, 42));
+    print(dynamic_shape(dynamic, 2, 3L));
+}

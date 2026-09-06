@@ -1,0 +1,7 @@
+func f(a) {
+    var a = 2;
+    return a;
+}
+func main() {
+    print(f(1));
+}

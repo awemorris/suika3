@@ -1,0 +1,4 @@
+require fast_cycle_a;
+
+func main() {
+}

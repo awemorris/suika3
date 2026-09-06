@@ -1,0 +1,7 @@
+require normalize;
+
+func main(args) {
+    var model = onnxReadFile(args[0]);
+    var graph = onnxNormalizeModel(model);
+    print(onnxNormalizedDump(graph));
+}

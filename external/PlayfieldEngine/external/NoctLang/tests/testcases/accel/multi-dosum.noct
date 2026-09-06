@@ -1,0 +1,42 @@
+__accel func two_sums(input: rpackeduint32_in,
+                    output: rpackeduint32_out,
+                    first_ptr: rpackeduint32_ptr,
+                    second_ptr: rpackeduint32_ptr,
+                    count: int): void {
+    let squared = Packed.uint32(count);
+    let stage = Packed.uint32(count);
+    for (i in 0..count) {
+        squared[i] = input[i] * input[i];
+    }
+    var first: u32 = 0;
+    for (i in 0..count) {
+        first += input[i];
+    }
+    first_ptr[0] = first;
+    for (i in 0..count) {
+        stage[i] = input[i] + first_ptr[0];
+    }
+    var second: u32 = 0;
+    for (i in 0..count) {
+        second += squared[i];
+    }
+    second_ptr[0] = second;
+    for (i in 0..count) {
+        output[i] = stage[i] + second_ptr[0];
+    }
+}
+
+__accel var first_result = Accel.uint32(1);
+__accel var second_result = Accel.uint32(1);
+
+func main() {
+    let input = Packed.uint32(65);
+    let output = Packed.uint32(65);
+    for (i in 0..65) {
+        input[i] = 1;
+    }
+    Accel.call(two_sums, input, output,
+               first_result, second_result, 65);
+    print(output[0]);
+    print(output[64]);
+}

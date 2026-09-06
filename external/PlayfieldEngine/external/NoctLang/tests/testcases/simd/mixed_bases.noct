@@ -1,0 +1,22 @@
+// Three packeds (two loaded, one stored), an invariant-local offset
+// and a constant offset: adjusted bases + pairwise disjointness.
+func main() {
+    var n = 24;
+    var a = Packed.uint32(40);
+    var b = Packed.uint32(40);
+    var d = Packed.uint32(40);
+    var delta = 4;
+    for (i in 0..40) {
+        a[i] = i * 3;
+        b[i] = i * 5 + 1;
+        d[i] = 0;
+    }
+    for (i in 0..n) {
+        d[i] = a[i + delta] * 2 + b[i + 1] - a[i];
+    }
+    var sum = 0;
+    for (i in 0..40) {
+        sum = sum + d[i];
+    }
+    print(sum);
+}

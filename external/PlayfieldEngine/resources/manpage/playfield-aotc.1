@@ -1,0 +1,37 @@
+.\" playfield-aotc.1 - Playfield AOT compiler manpage
+.TH PLAYFIELD-AOTC 1 "May 2026" "Playfield Engine 1.0" "User Commands"
+.SH NAME
+playfield-aotc \- compile Ray scripts into a C source file
+.SH SYNOPSIS
+.B playfield-aotc
+[\fIsourcefiles...\fR]
+
+.SH DESCRIPTION
+The
+.B playfield-aotc
+translates Ray scripts (\fB.ray\fR) into a C source file named \fBlibrary.c\fR.
+
+.SH EXAMPLES
+Compile a single script:
+.EX
+playfield-aotc main.ray
+.EE
+
+Compile multiple scripts:
+.EX
+playfield-aotc main.ray enemy.ray level.ray
+.EE
+
+The above command produces:
+.EX
+library.c
+.EE
+
+.SH SEE ALSO
+.BR playfield (1),
+.BR playfield-bcc (1),
+.BR playfield-pack (1)
+
+.SH AUTHORS
+Awe Morris <awe@noctvm.io> and contributors.
+Project homepage: <https://github.com/awemorris/PlayfieldEngine>

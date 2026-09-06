@@ -1,0 +1,226 @@
+require normalize;
+
+let ONNX_STAGE_F_PLANNER_VERSION = 1;
+// Portable OpenGL 4.3 minimum: 65,535 work groups * 64 invocations.
+let ONNX_STAGE_F_MAX_OUTPUT_ELEMENTS = 4194240;
+
+func planWeightedFamily(family) {
+    return family == "conv2d-reference" || family == "gemm-rank2" ||
+           family == "matmul-rank2" || family == "batch-normalization-inference" ||
+           family == "pointwise-binary" || family == "reshape-view";
+}
+
+func planNodeFail(node, message) {
+    var name = node.diagnosticName;
+    if (name == "") { name = "<unnamed>"; }
+    normFail("Stage F node[" + node.id + "] '" + name + "' " +
+             node.domain + "::" + node.opType + "@" + node.generation +
+             ": " + message);
+}
+
+func planAddStorage(plan, storageId, elements, role) {
+    if (storageId < 0) { normFail("Stage F received a negative material storage ID."); }
+    if (elements <= 0 || elements > ONNX_MAX_NORMALIZED_ELEMENTS) {
+        normFail("Stage F storage " + storageId + " has an invalid element count.");
+    }
+    var key = "s" + storageId;
+    if (Dict.hasKey(plan.storageById, key)) {
+        if (plan.storageById[key].elements != elements) {
+            normFail("Stage F storage " + storageId + " has conflicting capacities.");
+        }
+        return;
+    }
+    var storage = { id: storageId, elements: elements, role: role,
+                    resourceName: "model_s" + storageId };
+    plan.storageById[key] = storage;
+    Array.push(plan.storages, storage);
+}
+
+func planStageFSupportedNode(node) {
+    if (node.family == "pointwise-unary") {
+        return node.opType == "Relu" || node.opType == "Sigmoid";
+    }
+    if (node.family == "pointwise-binary") {
+        return node.opType == "Add" || node.opType == "Sub" ||
+               node.opType == "Mul" || node.opType == "Div";
+    }
+    return false;
+}
+
+func planNodeCapabilityDetail(graph, node) {
+    var inputs = "[";
+    for (i in 0..Array.size(node.inputs)) {
+        if (i != 0) { inputs = inputs + ","; }
+        inputs = inputs + "t" + node.inputs[i] + ":" +
+                 dumpArray(graph.tensors[node.inputs[i]].shape);
+    }
+    var output = graph.tensors[node.outputs[0]];
+    return " inputs=" + inputs + "] output=t" + output.id + ":" +
+           dumpArray(output.shape) + " attrs=" + dumpAttrs(node.attrs);
+}
+
+// NWT1 orders initializer names by their encoded UTF-8 bytes, not by the
+// implementation's character collation.
+func planUtf8Less(left, right) {
+    var leftLength = String.byteLength(left);
+    var rightLength = String.byteLength(right);
+    var leftBytes = Packed.uint8(leftLength);
+    var rightBytes = Packed.uint8(rightLength);
+    Packed.fromString(leftBytes, 0, left);
+    Packed.fromString(rightBytes, 0, right);
+    var common = leftLength;
+    if (rightLength < common) { common = rightLength; }
+    for (i in 0..common) {
+        if (leftBytes[i] < rightBytes[i]) { return true; }
+        if (leftBytes[i] > rightBytes[i]) { return false; }
+    }
+    return leftLength < rightLength;
+}
+
+func onnxPlanStageF(graph) {
+    var plan = {
+        version: ONNX_STAGE_F_PLANNER_VERSION,
+        stage: "F", stageLevel: 0,
+        graph: graph, storages: [], storageById: {}, steps: [],
+        weights: [],
+        inputStorage: -1, outputStorage: -1,
+        inputElements: 0, outputElements: 0,
+        nextStorage: graph.nextStorage
+    };
+
+    for (i in 0..Array.size(graph.tensors)) {
+        var tensor = graph.tensors[i];
+        if (tensor.role == "initializer" && tensor.dtype == "float32") {
+            if (Array.size(tensor.consumerNodes) == 0) {
+                normFail("Stage F does not emit unused float initializer t" +
+                         tensor.id + "; Stage G accepts reviewed weights only.");
+            }
+            for (j in 0..Array.size(tensor.consumerNodes)) {
+                var consumer = graph.nodes[tensor.consumerNodes[j]];
+                if (!planWeightedFamily(consumer.family)) {
+                    normFail("Stage F does not emit weight storage yet; float initializer t" +
+                             tensor.id + " is consumed by " + consumer.opType +
+                             " rather than a reviewed Stage G weighted family.");
+                }
+            }
+            Array.push(plan.weights, {
+                tensor: tensor, storageId: tensor.storageId, entryIndex: -1
+            });
+        }
+        if (tensor.storageId >= 0) {
+            var key = "s" + tensor.storageId;
+            if (!Dict.hasKey(graph.storageElements, key)) {
+                normFail("Stage F tensor t" + tensor.id +
+                         " refers to an unknown storage.");
+            }
+            planAddStorage(plan, tensor.storageId,
+                           graph.storageElements[key], tensor.role);
+        }
+    }
+
+    // NWT1 directory order is UTF-8 bytewise name order.  Initializer names
+    // are unique, so a small deterministic selection sort is sufficient.
+    for (i in 0..Array.size(plan.weights)) {
+        var smallest = i;
+        for (j in i + 1..Array.size(plan.weights)) {
+            if (planUtf8Less(plan.weights[j].tensor.diagnosticName,
+                             plan.weights[smallest].tensor.diagnosticName)) {
+                smallest = j;
+            }
+        }
+        if (smallest != i) {
+            var swap = plan.weights[i];
+            plan.weights[i] = plan.weights[smallest];
+            plan.weights[smallest] = swap;
+        }
+        plan.weights[i].entryIndex = i;
+    }
+
+    var input = graph.tensors[graph.inputTensor];
+    plan.inputStorage = input.storageId;
+    plan.inputElements = shapeElements(input.shape, "Stage F model input");
+
+    for (i in 0..Array.size(graph.nodes)) {
+        var node = graph.nodes[i];
+        var output = graph.tensors[node.outputs[0]];
+        if (output.alias || output.isConstant) { continue; }
+        var supported = planStageFSupportedNode(node) ||
+                        node.family == "conv2d-reference" ||
+                        node.family == "gemm-rank2" ||
+                        node.family == "matmul-rank2" ||
+                        node.family == "max-pool2d" ||
+                        node.family == "average-pool2d" ||
+                        node.family == "global-average-pool" ||
+                        node.family == "concat-static" ||
+                        node.family == "reduce-static" ||
+                        node.family == "softmax-stable";
+        if (node.family == "batch-normalization-inference") { supported = true; }
+        if (node.family == "gemm-rank2" || node.family == "matmul-rank2") {
+            if (plan.stageLevel < 2) { plan.stage = "G2"; plan.stageLevel = 2; }
+        } else if (node.family == "conv2d-reference") {
+            if (plan.stageLevel < 1) { plan.stage = "G1"; plan.stageLevel = 1; }
+        } else if (node.family == "max-pool2d" ||
+                   node.family == "average-pool2d" ||
+                   node.family == "global-average-pool") {
+            if (plan.stageLevel < 3) { plan.stage = "G3"; plan.stageLevel = 3; }
+        } else if (node.family == "concat-static") {
+            if (plan.stageLevel < 4) { plan.stage = "G4"; plan.stageLevel = 4; }
+        } else if (node.family == "reduce-static" ||
+                   node.family == "softmax-stable") {
+            if (plan.stageLevel < 5) { plan.stage = "G5"; plan.stageLevel = 5; }
+        } else if (node.family == "batch-normalization-inference") {
+            if (plan.stageLevel < 6) { plan.stage = "G6"; plan.stageLevel = 6; }
+        }
+        if (!supported) {
+            planNodeFail(node, "no Stage F COPY/view/pointwise kernel family accepts this normalized node." +
+                         planNodeCapabilityDetail(graph, node));
+        }
+        for (j in 0..Array.size(node.inputs)) {
+            var inputTensor = graph.tensors[node.inputs[j]];
+            if (inputTensor.storageId < 0 || inputTensor.dtype != "float32") {
+                planNodeFail(node, "runtime pointwise input " + j +
+                             " has no float32 material storage.");
+            }
+            if (inputTensor.storageId == output.storageId) {
+                planNodeFail(node, "in-place input/output storage aliasing is unsupported.");
+            }
+        }
+        if (shapeElements(output.shape, "Stage F pointwise output") >
+            ONNX_STAGE_F_MAX_OUTPUT_ELEMENTS) {
+            planNodeFail(node, "output exceeds the portable one-dispatch limit of " +
+                         ONNX_STAGE_F_MAX_OUTPUT_ELEMENTS + " elements.");
+        }
+        Array.push(plan.steps, {
+            id: Array.size(plan.steps), kind: node.family,
+            nodeId: node.id, node: node,
+            inputs: Array.copy(node.inputs), outputTensor: output.id,
+            outputStorage: output.storageId,
+            outputShape: shapeCopy(output.shape)
+        });
+    }
+
+    var graphOutput = graph.tensors[graph.outputTensor];
+    plan.outputElements = shapeElements(graphOutput.shape, "Stage F model output");
+    if (plan.outputElements > ONNX_STAGE_F_MAX_OUTPUT_ELEMENTS &&
+        (!isContiguousView(graphOutput) || graphOutput.offset != 0)) {
+        normFail("Stage F output COPY exceeds the portable one-dispatch limit of " +
+                 ONNX_STAGE_F_MAX_OUTPUT_ELEMENTS + " elements.");
+    }
+    if (graphOutput.storageId < 0 || graphOutput.dtype != "float32") {
+        normFail("Stage F graph output has no float32 material storage.");
+    }
+    plan.outputStorage = graphOutput.storageId;
+    if (!isContiguousView(graphOutput) || graphOutput.offset != 0) {
+        var materialStorage = plan.nextStorage;
+        plan.nextStorage = plan.nextStorage + 1;
+        planAddStorage(plan, materialStorage, plan.outputElements, "output-copy");
+        Array.push(plan.steps, {
+            id: Array.size(plan.steps), kind: "copy-strided",
+            nodeId: -1, node: 0, inputs: [graphOutput.id],
+            outputTensor: -1, outputStorage: materialStorage,
+            outputShape: shapeCopy(graphOutput.shape)
+        });
+        plan.outputStorage = materialStorage;
+    }
+    return plan;
+}

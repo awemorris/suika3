@@ -1,0 +1,24 @@
+// Typed shift edges: counts 0, 1, 8, 24, 31; logical semantics on
+// bit-31 values (design 07 6.1: SHR is LOGICAL -- an arithmetic
+// shift here is a silent miscompile this test exists to catch).
+
+func f(a: int) {
+    print(a << 0);
+    print(a >> 0);
+    print(a << 1);
+    print(a >> 1);
+    print(a << 8);
+    print(a >> 8);
+    print(a << 24);
+    print(a >> 24);
+    print(a << 31);
+    print(a >> 31);
+}
+
+func main() {
+    f(1);
+    f(0 - 1);            // all 32 bits set: >> must NOT sign-extend
+    f(0 - 2147483647 - 1);   // only bit 31 set
+    f(305419896);        // 0x12345678
+    return 0;
+}

@@ -1,0 +1,8 @@
+__gpu func invalid(): void {
+    for (i in 0..2) {
+        syncthreads();
+    }
+}
+
+func main() {
+}

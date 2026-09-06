@@ -1,0 +1,5 @@
+[click]
+[background file="livingroom.png" time="1.0"]
+[click]
+[background file="airport.png" time="1.0"]
+[click]

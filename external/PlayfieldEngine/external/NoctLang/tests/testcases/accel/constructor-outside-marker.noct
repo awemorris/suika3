@@ -1,0 +1,4 @@
+var data = Accel.uint32(4);
+
+func main() {
+}

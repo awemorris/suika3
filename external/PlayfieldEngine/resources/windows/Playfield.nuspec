@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>Playfield</id>
+    <version>1.0.0</version>
+    <authors>Awe Morris</authors>
+    <description>Playfield Engine native library for Windows</description>
+  </metadata>
+  <files>
+    <file src="build\native\**" target="build\native" />
+  </files>
+</package>

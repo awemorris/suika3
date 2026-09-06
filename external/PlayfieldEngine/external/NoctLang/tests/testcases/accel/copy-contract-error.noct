@@ -1,0 +1,13 @@
+__accel var device = Accel.uint32(1);
+
+__accel func copy(input: rpackeduint32_in, output: rpackeduint32_out,
+                count: int): void {
+    for (i in 0..count) {
+        output[i] = input[i];
+    }
+}
+
+func main() {
+    let host = Packed.uint32(1);
+    Accel.call(copy, device, host, 1);
+}

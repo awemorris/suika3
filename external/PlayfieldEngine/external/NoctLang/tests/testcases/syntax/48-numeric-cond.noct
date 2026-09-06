@@ -1,0 +1,24 @@
+func main() {
+    // A long value as a condition.
+    var v = 1000000000000;
+    if (v) { print("long-true"); }
+    if (v - v) { print("never"); } else { print("long-false"); }
+
+    // While over a long counter.
+    var n = 1000000000001 - 1000000000000;
+    var c = 0;
+    while (n) {
+        n = n - 1;
+        c = c + 1;
+    }
+    print(c);
+
+    // Float and double conditions.
+    if (0.5) { print("float-true"); }
+    if (0.0) { print("never"); } else { print("float-false"); }
+    var d = 1.5;
+    if (d) { print("double-true"); }
+
+    // Int conditions beyond 1 remain true.
+    if (42) { print("42-true"); }
+}

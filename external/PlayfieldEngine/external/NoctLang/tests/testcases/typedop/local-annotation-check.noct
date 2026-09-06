@@ -1,0 +1,10 @@
+func take(v) {
+    var x: int = v;
+    print(x);
+}
+
+func main() {
+    take(3);
+    take(1.5);
+    return 0;
+}

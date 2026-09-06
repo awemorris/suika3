@@ -1,0 +1,61 @@
+func bump(p: packeduint32, count: int): void
+{
+    for (i in 0..count)
+        p[i] = p[i] + 1;
+}
+
+func main()
+{
+    let p8 = FileUtil.mmap8("mmap-data.bin", 1, 15, 1, 1);
+    print(Packed.type(p8));
+    print(Packed.size(p8));
+    p8[0] = 17;
+    p8[14] = 31;
+    FileUtil.mflush(p8);
+    FileUtil.munmap(p8);
+
+    let p16 = FileUtil.mmap16("mmap-data.bin", 16, 8, 1, 1);
+    print(Packed.type(p16));
+    print(Packed.size(p16));
+    p16[0] = 1000;
+    p16[3] = 2000;
+    FileUtil.mflush(p16);
+    FileUtil.munmap(p16);
+
+    let p32 = FileUtil.mmap32("mmap-data.bin", 24, 8, 1, 1);
+    print(Packed.type(p32));
+    print(Packed.size(p32));
+    p32[0] = 100;
+    p32[1] = 200;
+    bump(p32, 2);
+    FileUtil.mflush(p32);
+    FileUtil.munmap(p32);
+
+    let p64 = FileUtil.mmap64("mmap-data.bin", 32, 16, 1, 1);
+    print(Packed.type(p64));
+    print(Packed.size(p64));
+    p64[0] = 300L;
+    p64[1] = 400L;
+    FileUtil.mflush(p64);
+    FileUtil.munmap(p64);
+
+    let v8 = FileUtil.mmap8("mmap-data.bin", 1, 15, 1, 0);
+    print(v8[0]);
+    print(v8[14]);
+    FileUtil.munmap(v8);
+
+    let v16 = FileUtil.mmap16("mmap-data.bin", 16, 8, 1, 0);
+    print(v16[0]);
+    print(v16[3]);
+    FileUtil.munmap(v16);
+
+    let v32 = FileUtil.mmap32("mmap-data.bin", 24, 8, 1, 0);
+    print(v32[0]);
+    print(v32[1]);
+    FileUtil.munmap(v32);
+
+    let v64 = FileUtil.mmap64("mmap-data.bin", 32, 16, 1, 0);
+    print(v64[0]);
+    print(v64[1]);
+    FileUtil.munmap(v64);
+}

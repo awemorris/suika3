@@ -1,0 +1,10 @@
+func main() {
+    var d = { c: 0 };
+    for (i in 0 .. 5) {
+        var v = d.c + 1;
+        d.c = v;
+        var w = d.c + 1;
+        print(w);
+    }
+    print(d.c);
+}

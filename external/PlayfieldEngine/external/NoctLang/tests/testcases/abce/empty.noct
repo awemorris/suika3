@@ -1,0 +1,8 @@
+func main() {
+    var p = Packed.uint8(10);
+    var sum = 0;
+    for (i in 5..5) {
+        sum = sum + p[i];
+    }
+    print(sum);
+}

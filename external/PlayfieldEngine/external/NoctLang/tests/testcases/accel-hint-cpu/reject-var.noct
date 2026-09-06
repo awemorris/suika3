@@ -1,0 +1,5 @@
+__accel var state = 1;
+
+func main() {
+    print(state);
+}

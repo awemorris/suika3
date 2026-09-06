@@ -1,0 +1,867 @@
+/* -*- tab-width: 8; indent-tabs-mode: t; -*- */
+
+/*
+ * StratoHAL
+ * Main code for BeOS and Haiku
+ */
+
+/*-
+ * SPDX-License-Identifier: Zlib
+ *
+ * Copyright (c) 2025-2026 Awe Morris
+ * Copyright (c) 1996-2024 Keiichi Tabata
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ * 1. The origin of this software must not be misrepresented; you must not
+ *    claim that you wrote the original software. If you use this software
+ *    in a product, an acknowledgment in the product documentation would be
+ *    appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *    misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ */
+
+#define NO_SOUND
+
+/* HAL */
+extern "C" {
+#include <strato/strato.h>		/* Public Interface */
+#include "stdfile.h"			/* Standard C File Implementation */
+};
+
+/* BeOS */
+#include <Application.h>
+#include <Window.h>
+#include <View.h>
+#include <Rect.h>
+#include <Message.h>
+#include <MessageRunner.h>
+#include <Bitmap.h>
+#include <SoundPlayer.h>
+
+/* POSIX */
+#include <sys/types.h>
+#include <sys/stat.h>	/* stat(), mkdir() */
+#include <sys/time.h>	/* gettimeofday() */
+#include <unistd.h>	/* usleep(), access() */
+
+/* Standard C */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+#include <assert.h>
+
+const uint32 kMsgUpdate = 'updt';
+
+static BBitmap* bitmap;
+static struct hal_image* image;
+static char *window_title;
+static int window_width;
+static int window_height;
+static bool is_started;
+static BSoundPlayer *sound_player[HAL_SOUND_TRACKS];
+static struct hal_wave *wave[HAL_SOUND_TRACKS];
+static bool is_finished[HAL_SOUND_TRACKS];
+
+/* argc/argv */
+int hal_argc;
+char **hal_argv;
+
+/* HAL callback. */
+struct hal_callback hal_callback;
+HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
+
+extern "C" void fill_buffer(void *cookie, void *buffer, size_t size, const media_raw_audio_format& format);
+
+class NoctView : public BView
+{
+private:
+	int last_buttons;
+
+public:
+	NoctView(BRect frame) :
+		BView(frame, "noctview", B_FOLLOW_ALL, B_WILL_DRAW)
+	{
+		SetViewColor(255, 255, 255);
+		last_buttons = 0;
+	}
+
+	void Draw(BRect updateRect) override
+	{
+		if (!is_started)
+			return;
+
+		hal_clear_image(image, 0);
+		if (!hal_callback.on_update())
+			exit(0);
+		hal_callback.on_render();
+			
+		DrawBitmap(bitmap, BPoint(0, 0));
+	}
+
+	void MouseMoved(BPoint where, uint32 transit, const BMessage* dragMessage) override
+	{
+		if (!is_started)
+			return;
+
+		hal_callback.on_mouse_move((int)where.x, (int)where.y);
+	}
+
+	void MouseDown(BPoint where) override
+	{
+		if (!is_started)
+			return;
+
+		hal_callback.on_mouse_move((int)where.x, (int)where.y);
+
+		uint32 buttons = 0;
+		if (Window()->CurrentMessage() &&
+		    Window()->CurrentMessage()->FindInt32("buttons", (int32*)&buttons) == B_OK) {
+			if (buttons & B_PRIMARY_MOUSE_BUTTON) {
+				hal_callback.on_mouse_press(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
+				last_buttons = B_PRIMARY_MOUSE_BUTTON;
+			} else if (buttons & B_SECONDARY_MOUSE_BUTTON) {
+				hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
+				last_buttons = B_SECONDARY_MOUSE_BUTTON;
+			}
+		}
+	}
+
+	void MouseUp(BPoint where) override
+	{
+		if (!is_started)
+			return;
+
+		hal_callback.on_mouse_move((int)where.x, (int)where.y);
+		if (last_buttons & B_PRIMARY_MOUSE_BUTTON)
+			hal_callback.on_mouse_release(HAL_MOUSE_LEFT, (int)where.x, (int)where.y);
+		if (last_buttons & B_SECONDARY_MOUSE_BUTTON)
+			hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, (int)where.x, (int)where.y);
+	}
+
+	void KeyDown(const char* bytes, int32 numBytes) override
+	{
+		if (!is_started)
+			return;
+
+		// TODO
+	}
+
+	void KeyUp(const char* bytes, int32 numBytes) override
+	{
+		if (!is_started)
+			return;
+
+		// TODO
+	}
+
+	void MessageReceived(BMessage* message) override
+	{
+		if (message->what == kMsgUpdate)
+			Invalidate();
+		else
+			BView::MessageReceived(message);
+	}
+};
+		
+class NoctWindow : public BWindow
+{
+	BMessageRunner *runner;
+
+public:
+	NoctWindow(const char *title, int width, int height) :
+		BWindow(BRect(100, 100, width + 100, height + 100),
+			title,
+			B_TITLED_WINDOW,
+			0)
+	{
+		bitmap = new BBitmap(BRect(0, 0, width - 1, height - 1), B_RGBA32);
+		hal_create_image_with_pixels(width, height, (hal_pixel_t*)bitmap->Bits(), &image);
+
+		NoctView* view = new NoctView(Bounds());
+		AddChild(view);
+
+		runner = new BMessageRunner(view, new BMessage(kMsgUpdate), 33000);
+	}
+
+	~NoctWindow()
+	{
+		delete runner;
+	}
+
+	bool QuitRequested() override
+	{
+		be_app->PostMessage(B_QUIT_REQUESTED);
+		return true;
+	}
+};
+
+class NoctApplication : public BApplication
+{
+public:
+	NoctApplication() : BApplication("application/x-vnd.example.noctvm")
+	{
+	}
+
+	void ReadyToRun() override
+	{
+		if (!init_file())
+			exit(1);
+		if (!hal_bootstrap_ptr(&window_title, &window_width, &window_height, &hal_callback))
+			exit(1);
+
+		NoctWindow *window = new NoctWindow(window_title, window_width, window_height);
+		window->Show();
+
+#ifndef NO_SOUND
+		media_raw_audio_format format = {
+			44100.0, 2, media_raw_audio_format::B_AUDIO_SHORT, B_MEDIA_LITTLE_ENDIAN, 4
+		};
+		for (int i = 0; i < HAL_SOUND_TRACKS; i++) {
+			sound_player[i] = new BSoundPlayer(&format, "SoundPlayer", fill_buffer, NULL, (void*)(intptr_t)i);
+			sound_player[i]->Start();
+		}
+#endif
+
+		if (!hal_callback.on_start())
+			exit(1);
+
+		is_started = true;
+	}
+};
+
+extern "C" {
+
+int hal_main(int argc, char *argv[])
+{
+	hal_argc = argc;
+	hal_argv = argv;
+
+	NoctApplication app;
+	app.Run();
+	return 0;
+}
+
+void
+hal_notify_image_update(
+    struct hal_image *img)
+{
+}
+
+void
+hal_notify_image_free(
+    struct hal_image *img)
+{
+}
+
+void
+hal_render_image_normal(
+	int dst_left,			/* The X coordinate of the screen */
+	int dst_top,			/* The Y coordinate of the screen */
+	int dst_width,			/* The width of the destination rectangle */
+	int dst_height,			/* The height of the destination rectangle */
+	struct hal_image *src_image,	/* [IN] The image to be rendered */
+	int src_left,			/* The X coordinate of a source image */
+	int src_top,			/* The Y coordinate of a source image */
+	int src_width,			/* The width of the source rectangle */
+	int src_height,			/* The height of the source rectangle */
+	int alpha)			/* The alpha value (0 to 255) */
+{
+	if (dst_width == -1)
+		dst_width = src_image->width;
+	if (dst_height == -1)
+		dst_height = src_image->height;
+	if (src_width == -1)
+		src_width = src_image->width;
+	if (src_height == -1)
+		src_height = src_image->height;
+
+	if (dst_width != src_width ||
+	    dst_height != src_height) {
+		hal_draw_image_3d_alpha(image,
+					dst_left,
+					dst_top,
+					dst_left + dst_width,
+					dst_top,
+					dst_left,
+					dst_top + dst_height,
+					dst_left + dst_width,
+					dst_top + dst_height,
+					src_image,
+					src_left,
+					src_top,
+					src_width,
+					src_height,
+					alpha);
+	} else {
+		hal_draw_image_alpha(image,
+				     dst_left,
+				     dst_top,
+				     src_image,
+				     src_width,
+				     src_height,
+				     src_left,
+				     src_top,
+				     alpha);
+	}
+}
+
+void
+hal_render_image_add(
+	int dst_left,			/* The X coordinate of the screen */
+	int dst_top,			/* The Y coordinate of the screen */
+	int dst_width,			/* The width of the destination rectangle */
+	int dst_height,			/* The height of the destination rectangle */
+	struct hal_image *src_image,	/* [IN] The image to be rendered */
+	int src_left,			/* The X coordinate of a source image */
+	int src_top,			/* The Y coordinate of a source image */
+	int src_width,			/* The width of the source rectangle */
+	int src_height,			/* The height of the source rectangle */
+	int alpha)			/* The alpha value (0 to 255) */
+{
+	if (dst_width == -1)
+		dst_width = src_image->width;
+	if (dst_height == -1)
+		dst_height = src_image->height;
+	if (src_width == -1)
+		src_width = src_image->width;
+	if (src_height == -1)
+		src_height = src_image->height;
+
+	if (dst_width != src_width ||
+	    dst_height != src_height) {
+		hal_draw_image_3d_add(image,
+				      dst_left,
+				      dst_top,
+				      dst_left + dst_width,
+				      dst_top,
+				      dst_left,
+				      dst_top + dst_height,
+				      dst_left + dst_width,
+				      dst_top + dst_height,
+				      src_image,
+				      src_left,
+				      src_top,
+				      src_width,
+				      src_height,
+				      alpha);
+	} else {
+		hal_draw_image_add(image,
+				   dst_left,
+				   dst_top,
+				   src_image,
+				   src_width,
+				   src_height,
+				   src_left,
+				   src_top,
+				   alpha);
+	}
+}
+
+void
+hal_render_image_sub(
+	int dst_left,			/* The X coordinate of the screen */
+	int dst_top,			/* The Y coordinate of the screen */
+	int dst_width,			/* The width of the destination rectangle */
+	int dst_height,			/* The height of the destination rectangle */
+	struct hal_image *src_image,	/* [IN] The image to be rendered */
+	int src_left,			/* The X coordinate of a source image */
+	int src_top,			/* The Y coordinate of a source image */
+	int src_width,			/* The width of the source rectangle */
+	int src_height,			/* The height of the source rectangle */
+	int alpha)			/* The alpha value (0 to 255) */
+{
+	if (dst_width == -1)
+		dst_width = src_image->width;
+	if (dst_height == -1)
+		dst_height = src_image->height;
+	if (src_width == -1)
+		src_width = src_image->width;
+	if (src_height == -1)
+		src_height = src_image->height;
+
+	if (dst_width != src_width ||
+	    dst_height != src_height) {
+		hal_draw_image_3d_sub(image,
+				      dst_left,
+				      dst_top,
+				      dst_left + dst_width,
+				      dst_top,
+				      dst_left,
+				      dst_top + dst_height,
+				      dst_left + dst_width,
+				      dst_top + dst_height,
+				      src_image,
+				      src_left,
+				      src_top,
+				      src_width,
+				      src_height,
+				      alpha);
+	} else {
+		hal_draw_image_sub(image,
+				   dst_left,
+				   dst_top,
+				   src_image,
+				   src_width,
+				   src_height,
+				   src_left,
+				   src_top,
+				   alpha);
+	}
+}
+
+void
+hal_render_image_dim(
+	int dst_left,			/* The X coordinate of the screen */
+	int dst_top,			/* The Y coordinate of the screen */
+	int dst_width,			/* The width of the destination rectangle */
+	int dst_height,			/* The height of the destination rectangle */
+	struct hal_image *src_image,	/* [IN] The image to be rendered */
+	int src_left,			/* The X coordinate of a source image */
+	int src_top,			/* The Y coordinate of a source image */
+	int src_width,			/* The width of the source rectangle */
+	int src_height,			/* The height of the source rectangle */
+	int alpha)			/* The alpha value (0 to 255) */
+{
+	if (dst_width == -1)
+		dst_width = src_image->width;
+	if (dst_height == -1)
+		dst_height = src_image->height;
+	if (src_width == -1)
+		src_width = src_image->width;
+	if (src_height == -1)
+		src_height = src_image->height;
+
+	if (dst_width != src_width ||
+	    dst_height != src_height) {
+		hal_draw_image_3d_dim(image,
+				      dst_left,
+				      dst_top,
+				      dst_left + dst_width,
+				      dst_top,
+				      dst_left,
+				      dst_top + dst_height,
+				      dst_left + dst_width,
+				      dst_top + dst_height,
+				      src_image,
+				      src_left,
+				      src_top,
+				      src_width,
+				      src_height,
+				      alpha);
+	} else {
+		hal_draw_image_dim(image,
+				   dst_left,
+				   dst_top,
+				   src_image,
+				   src_width,
+				   src_height,
+				   src_left,
+				   src_top,
+				   alpha);
+	}
+}
+
+void
+hal_render_image_rule(
+	struct hal_image *src_img,		/* [IN] The source image */
+	struct hal_image *rule_img,		/* [IN] The rule image */
+	int threshold)			/* The threshold (0 to 255) */
+{
+	hal_draw_image_rule(image,
+			    src_img,
+			    rule_img,
+			    threshold);
+}
+
+void
+hal_render_image_melt(
+	struct hal_image *src_img,		/* [IN] The source image */
+	struct hal_image *rule_img,		/* [IN] The rule image */
+	int progress)			/* The progress (0 to 255) */
+{
+	hal_draw_image_rule(image,
+			    src_img,
+			    rule_img,
+			    progress);
+}
+
+void
+hal_render_image_cross(
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	float src1_left,
+	float src1_top,
+	float src2_left,
+	float src2_top,
+	int alpha)
+{
+	hal_draw_image_cross(image,
+			     src1_img,
+			     src2_img,
+			     src1_left,
+			     src1_top,
+			     src2_left,
+			     src2_top,
+			     alpha);
+}
+
+void
+hal_render_image_3d_normal(
+	float x1,			/* x1 */
+	float y1,			/* y1 */
+	float x2,			/* x2 */
+	float y2,			/* y2 */
+	float x3,			/* x3 */
+	float y3,			/* y3 */
+	float x4,			/* x4 */
+	float y4,			/* y4 */
+	struct hal_image *src_image,	/* [IN] The source image */
+	int src_left,			/* The X coordinate of a source image */
+	int src_top,			/* The Y coordinate of a source image */
+	int src_width,			/* The width of the source rectangle */
+	int src_height,			/* The height of the source rectangle */
+	int alpha)			/* The alpha value (0 to 255) */
+{
+	hal_draw_image_3d_alpha(image,
+				(float)x1,
+				(float)y1,
+				(float)x2,
+				(float)y2,
+				(float)x3,
+				(float)y3,
+				(float)x4,
+				(float)y4,
+				src_image,
+				src_left,
+				src_top,
+				src_width,
+				src_height,
+				alpha);
+}
+
+void
+hal_render_image_3d_add(
+	float x1,			/* x1 */
+	float y1,			/* y1 */
+	float x2,			/* x2 */
+	float y2,			/* y2 */
+	float x3,			/* x3 */
+	float y3,			/* y3 */
+	float x4,			/* x4 */
+	float y4,			/* y4 */
+	struct hal_image *src_image,	/* [IN] The source image */
+	int src_left,			/* The X coordinate of a source image */
+	int src_top,			/* The Y coordinate of a source image */
+	int src_width,			/* The width of the source rectangle */
+	int src_height,			/* The height of the source rectangle */
+	int alpha)			/* The alpha value (0 to 255) */
+{
+	hal_draw_image_3d_add(image,
+			      (float)x1,
+			      (float)y1,
+			      (float)x2,
+			      (float)y2,
+			      (float)x3,
+			      (float)y3,
+			      (float)x4,
+			      (float)y4,
+			      src_image,
+			      src_left,
+			      src_top,
+			      src_width,
+			      src_height,
+			      alpha);
+}
+
+void
+hal_render_image_3d_sub(
+	float x1,			/* x1 */
+	float y1,			/* y1 */
+	float x2,			/* x2 */
+	float y2,			/* y2 */
+	float x3,			/* x3 */
+	float y3,			/* y3 */
+	float x4,			/* x4 */
+	float y4,			/* y4 */
+	struct hal_image *src_image,	/* [IN] The source image */
+	int src_left,			/* The X coordinate of a source image */
+	int src_top,			/* The Y coordinate of a source image */
+	int src_width,			/* The width of the source rectangle */
+	int src_height,			/* The height of the source rectangle */
+	int alpha)			/* The alpha value (0 to 255) */
+{
+	hal_draw_image_3d_sub(image,
+			      (float)x1,
+			      (float)y1,
+			      (float)x2,
+			      (float)y2,
+			      (float)x3,
+			      (float)y3,
+			      (float)x4,
+			      (float)y4,
+			      src_image,
+			      src_left,
+			      src_top,
+			      src_width,
+			      src_height,
+			      alpha);
+}
+
+void
+hal_render_image_3d_dim(
+	float x1,			/* x1 */
+	float y1,			/* y1 */
+	float x2,			/* x2 */
+	float y2,			/* y2 */
+	float x3,			/* x3 */
+	float y3,			/* y3 */
+	float x4,			/* x4 */
+	float y4,			/* y4 */
+	struct hal_image *src_image,	/* [IN] The source image */
+	int src_left,			/* The X coordinate of a source image */
+	int src_top,			/* The Y coordinate of a source image */
+	int src_width,			/* The width of the source rectangle */
+	int src_height,			/* The height of the source rectangle */
+	int alpha)			/* The alpha value (0 to 255) */
+{
+	hal_draw_image_3d_dim(image,
+			      (float)x1,
+			      (float)y1,
+			      (float)x2,
+			      (float)y2,
+			      (float)x3,
+			      (float)y3,
+			      (float)x4,
+			      (float)y4,
+			      src_image,
+			      src_left,
+			      src_top,
+			      src_width,
+			      src_height,
+			      alpha);
+}
+
+void
+hal_render_image_3d_cross(
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	float src1_x1,
+	float src1_y1,
+	float src1_x2,
+	float src1_y2,
+	float src1_x3,
+	float src1_y3,
+	float src1_x4,
+	float src1_y4,
+	float src2_x1,
+	float src2_y1,
+	float src2_x2,
+	float src2_y2,
+	float src2_x3,
+	float src2_y3,
+	float src2_x4,
+	float src2_y4,
+	int alpha)
+{
+	hal_draw_image_3d_cross(image,
+				src1_img,
+				src2_img,
+				src1_x1,
+				src1_y1,
+				src1_x2,
+				src1_y2,
+				src1_x3,
+				src1_y3,
+				src1_x4,
+				src1_y4,
+				src2_x1,
+				src2_y1,
+				src2_x2,
+				src2_y2,
+				src2_x3,
+				src2_y3,
+				src2_x4,
+				src2_y4,
+				alpha);
+}
+
+void
+hal_reset_lap_timer(
+    uint64_t *origin)
+{
+	struct timeval tv;
+
+	gettimeofday(&tv, NULL);
+
+	*origin = (uint64_t)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
+}
+
+uint64_t
+hal_get_lap_timer_millisec(
+    uint64_t *origin)
+{
+	struct timeval tv;
+	uint64_t end;
+	
+	gettimeofday(&tv, NULL);
+
+	end = (uint64_t)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
+
+	return (uint64_t)(end - *origin);
+}
+
+bool
+hal_play_video(
+    const char *fname,	/* file name */
+    bool is_skippable)	/* allow skip for a unseen video */
+{
+	return true;
+}
+
+void
+hal_stop_video(void)
+{
+}
+
+bool
+hal_is_video_playing(void)
+{
+	return false;
+}
+
+bool
+hal_is_full_screen_supported(void){
+	return false;
+}
+
+bool
+hal_is_full_screen_mode(void)
+{
+	return false;
+}
+
+void
+hal_enter_full_screen_mode(void)
+{
+}
+
+void
+hal_leave_full_screen_mode(void)
+{
+}
+
+bool
+make_save_directory(void)
+{
+	return true;
+}
+
+char *
+make_real_path(const char *fname)
+{
+	return strdup(fname);
+}
+
+bool
+hal_log_info(const char *s, ...)
+{
+	return true;
+}
+
+bool
+hal_log_warn(const char *s, ...)
+{
+	return true;
+}
+
+bool
+hal_log_error(const char *s, ...)
+{
+	return true;
+}
+
+bool
+hal_log_out_of_memory(void)
+{
+	return true;
+}
+
+const char *
+hal_get_system_language(void)
+{
+	return "en";
+}
+
+void
+hal_set_continuous_swipe_enabled(
+    bool is_enabled)
+{
+}
+
+/*
+ * Sound
+ */
+
+void
+fill_buffer(
+    void *cookie,
+    void *buffer,
+    size_t size,
+    const media_raw_audio_format& format)
+{
+	int n = (intptr_t)cookie;
+
+	if (wave[n] == NULL)
+		return;
+
+	uint32_t *buf = (uint32_t*)buffer;
+	memset(buffer, 0, size);
+	int rsize = hal_get_wave_samples(wave[n], buf, size / 4);
+	if (hal_is_wave_eos(wave[n])) {
+		wave[n] = NULL;
+		is_finished[n] = true;
+	}
+}
+
+bool
+hal_play_sound(
+    int n,
+    struct hal_wave *w)
+{
+	wave[n] = w;
+	return true;
+}
+
+bool
+hal_stop_sound(
+    int n)
+{
+	wave[n] = NULL;
+	return true;
+}
+
+bool
+hal_set_sound_volume(
+    int n,
+    float vol)
+{
+	return true;
+}
+
+bool
+hal_is_sound_finished(
+    int n)
+{
+	return is_finished[n];
+}
+
+}; /* extern "C" */

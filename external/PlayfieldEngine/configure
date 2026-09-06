@@ -1,0 +1,86 @@
+#!/bin/sh
+
+PREFIX="/usr/local"
+HOST=""
+JIT="OFF"
+
+# Parse options.
+for OPT in "${@}"; do
+    case "$OPT" in
+        -h | --help)
+            echo "Help:"
+            echo "  configure --prefix=[/usr/local]"
+            echo ""
+            echo "[Dear Package Maintainers!]"
+            echo "Thank you for your hardworking."
+            echo "==Build Dep=="
+            echo "  Debian:  apt-get install cmake build-essential libx11-dev libxpm-dev libasound2-dev mesa-common-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev gstreamer1.0-x"
+            echo "  RedHat:  dnf install patch cmake libX11-devel libXpm-devel alsa-lib-devel mesa-libGL-devel gstreamer1.0-devel gstreamer1.0-plugins-base-devel"
+            echo "  Arch:    pacman -S --needed base-devel cmake libx11 libxpm alsa-lib mesa gstreamer gst-plugins-base"
+            echo "  Alpine:  apk add git make cmake gcc musl-dev libx11-dev libxpm-dev alsa-lib-dev mesa-dev gstreamer-dev gst-plugins-base-dev"
+            echo "  SUSE:    zypper install cmake gcc libX11-devel libXpm-devel alsa-devel Mesa-libGL-devel gstreamer-devel gstreamer-plugins-base-devel"
+            echo "  FreeBSD: pkg install cmake xorgproto libX11 libXpm mesa-libs gstreamer1 gstreamer1-plugins"
+            echo "  NetBSD:  pkgin install cmake libX11 libXpm MesaLib gstreamer1 gst-plugins1-base"
+            echo "  OpenBSD: pkg_add cmake libx11 libxpm mesa gstreamer1 gst-plugins-base"
+            echo "==Exec Dep=="
+            echo "  Debian:  apt-get install libx11 libxpm libasound2 mesa-common libgstreamer1.0 libgstreamer-plugins-base1.0 gstreamer1.0-x"
+            echo "  RedHat:  dnf install patch libX11 libXpm alsa-lib mesa-libGL gstreamer1.0 gstreamer1.0-plugins-base"
+            echo "  Arch:    pacman -S --needed libx11 libxpm alsa-lib mesa gstreamer gst-plugins-base"
+            echo "  Alpine:  apk add musl libx11 libxpm alsa-lib mesa gstreamer gst-plugins-base"
+            echo "  SUSE:    zypper install libX11 libXpm alsa Mesa-libGL gstreamer gstreamer-plugins-base"
+            echo "  FreeBSD: pkg install xorgproto libX11 libXpm mesa-libs gstreamer1 gstreamer1-plugins"
+            echo "  NetBSD:  pkgin install libX11 libXpm MesaLib gstreamer1 gst-plugins1-base"
+            echo "  OpenBSD: pkg_add libx11 libxpm mesa gstreamer1 gst-plugins-base"
+            exit 0
+            ;;
+        --prefix=*)
+            PREFIX=${1#--prefix=}
+            ;;
+    esac
+done
+
+# Check if JIT available.
+case "`uname -m`" in
+  x86*)
+    JIT=ON
+    ;;
+  arm*)
+    JIT=ON
+    ;;
+  aarch64*)
+    JIT=ON
+    ;;
+  riscv*)
+    JIT=ON
+    ;;
+  powerpc*)
+    JIT=ON
+    ;;
+  ppc*)
+    JIT=ON
+    ;;
+  mips*)
+    JIT=ON
+    ;;
+  *)
+    ;;
+esac
+
+# OpenBSD prohibits JIT.
+if [ "`uname`" = "OpenBSD" ]; then
+  JIT="OFF";
+fi
+
+# Inform.
+if [ "$JIT" = "ON" ]; then
+  echo "JIT-enabled configuration for arch=`uname -m`.";
+fi
+
+# Run CMake.
+cmake . \
+      -DCMAKE_BUILD_TYPE=Release \
+      -DCMAKE_INSTALL_PREFIX=$PREFIX \
+      -DPLAYFIELD_ENABLE_JIT=$JIT \
+      -DPLAYFIELD_ENABLE_PACK=ON \
+      -DPLAYFIELD_ENABLE_I18N=ON \
+      -DPLAYFIELD_ENABLE_DIST=ON

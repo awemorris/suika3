@@ -1,0 +1,14 @@
+parallel-analysis line=2 status=complete reason=none class=doall class-reason=none accesses=2 scalars=1 calls=0 alias-guards=0
+parallel-analysis line=8 status=complete reason=none class=unknown class-reason=may-alias accesses=2 scalars=1 calls=0 alias-guards=1
+parallel-analysis line=14 status=complete reason=none class=doall class-reason=none accesses=2 scalars=1 calls=0 alias-guards=0
+parallel-analysis line=20 status=complete reason=none class=dependent class-reason=memory-raw accesses=2 scalars=1 calls=0 alias-guards=0
+parallel-analysis line=26 status=complete reason=none class=dependent class-reason=memory-waw accesses=1 scalars=1 calls=0 alias-guards=0
+parallel-analysis line=33 status=complete reason=none class=dependent class-reason=scalar-carried accesses=2 scalars=2 calls=0 alias-guards=0
+parallel-analysis line=41 status=complete reason=none class=doall class-reason=none accesses=3 scalars=1 calls=0 alias-guards=0
+parallel-analysis line=47 status=unknown reason=non-affine-index class=unknown class-reason=non-affine-index accesses=2 scalars=1 calls=0 alias-guards=0
+parallel-analysis line=53 status=complete reason=none class=doall class-reason=none accesses=2 scalars=2 calls=0 alias-guards=0
+parallel-analysis line=60 status=complete reason=none class=dependent class-reason=memory-war accesses=2 scalars=3 calls=0 alias-guards=0
+parallel-analysis line=66 status=unknown reason=unknown-call class=unknown class-reason=unknown-call accesses=1 scalars=2 calls=1 alias-guards=0
+parallel-analysis line=73 status=complete reason=none class=dosum class-reason=none accesses=1 scalars=2 calls=0 alias-guards=0
+parallel-analysis line=81 status=complete reason=none class=dosum class-reason=none accesses=1 scalars=2 calls=0 alias-guards=0
+parallel-analysis line=88 status=unknown reason=non-affine-index class=unknown class-reason=non-affine-index accesses=1 scalars=2 calls=0 alias-guards=0

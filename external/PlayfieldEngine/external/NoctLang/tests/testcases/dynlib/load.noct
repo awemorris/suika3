@@ -1,0 +1,6 @@
+func main() {
+	print(System.tryLoadDLL("does_not_exist"));
+	print(System.loadDLL("good"));
+	print(System.loadDLL("good"));
+	print(dynlib_value());
+}

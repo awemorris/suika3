@@ -1,0 +1,18 @@
+func main() {
+    var x = 1;
+    if (x == 1) {
+        var x = 2;
+        if (x == 2) {
+            var x = 3;
+            print(x);
+        }
+        print(x);
+    }
+    print(x);
+    for (i in 0..2) {
+        var t = 10;
+        print(t + i);
+    }
+    var t = 5;
+    print(t);
+}

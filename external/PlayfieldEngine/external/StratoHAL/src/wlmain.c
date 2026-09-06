@@ -1,0 +1,2022 @@
+/* -*- tab-width: 8; indent-tabs-mode: t; -*- */
+
+/*
+ * StratoHAL
+ * Main code for Linux Wayland OpenGL
+ */
+
+/*-
+ * SPDX-License-Identifier: Zlib
+ *
+ * Copyright (c) 2025-2026 Awe Morris
+ * Copyright (c) 1996-2024 Keiichi Tabata
+ *
+ * This software is provided 'as-is', without any express or implied
+ * warranty. In no event will the authors be held liable for any damages
+ * arising from the use of this software.
+ *
+ * Permission is granted to anyone to use this software for any purpose,
+ * including commercial applications, and to alter it and redistribute it
+ * freely, subject to the following restrictions:
+ *
+ * 1. The origin of this software must not be misrepresented; you must not
+ *      claim that you wrote the original software. If you use this software
+ *      in a product, an acknowledgment in the product documentation would be
+ *      appreciated but is not required.
+ * 2. Altered source versions must be plainly marked as such, and must not be
+ *      misrepresented as being the original software.
+ * 3. This notice may not be removed or altered from any source distribution.
+ */
+
+/* HAL */
+#include <strato/strato.h>		/* Public Interface */
+#include "callback.h"
+#include "stdfile.h"			/* Standard C File Implementation */
+#if defined(HAL_TARGET_LINUX)
+#include "asound.h"			/* ALSA Sound Implemenatation */
+#else
+#include "bsdsound.h"			/* BSD Sound Implementation */
+#endif
+#include "evgamepad.h"			/* evdev Gamepad */
+
+/* OpenGL */
+#include <EGL/egl.h>
+#include <EGL/eglext.h>
+#include <GLES2/gl2.h>
+#include "glrender.h"			/* OpenGL Compatibility Helper */
+
+/* Wayland */
+#include <wayland-client.h>
+#include <wayland-egl.h>
+#include "xdg-shell-client-protocol.h" /* Generated */
+#include <libdecor-0/libdecor.h>
+
+/* POSIX */
+#define _GNU_SOURCE
+#include <sys/types.h>
+#include <sys/stat.h>	/* stat(), mkdir() */
+#include <sys/time.h>	/* gettimeofday() */
+#include <fcntl.h>
+#include <unistd.h>	/* usleep(), access() */
+
+/* Standard C */
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+#include <assert.h>
+#include <locale.h>
+
+/* Gstreamer Video HAL */
+#include "gstplay.h"
+
+/* Color Format */
+#define DEPTH		(24)
+#define BPP		(32)
+
+/* Log File */
+#define LOG_FILE	"log.txt"
+
+/* Save Directory */
+#define SAVE_DIR	"save"
+
+/* Frame Time */
+#define FRAME_MILLI	(16)	/* Millisec of a frame */
+#define SLEEP_MILLI	(5)	/* Millisec to sleep */
+
+/* Virtual Screen Config */
+static char *window_title;
+static int screen_width;
+static int screen_height;
+static int viewport_width;
+static int viewport_height;
+static float mouse_scale = 1.0f;
+static int mouse_ofs_x;
+static int mouse_ofs_y;
+static bool is_full_screen;
+static int last_mouse_x;
+static int last_mouse_y;
+
+/* Wayland */
+static struct wl_display *wl_dpy;
+static struct wl_compositor *wl_compositor;
+static struct wl_surface *wl_surface;
+static struct wl_egl_window *wlegl_win;
+static struct wl_seat *wl_seat;
+static struct wl_pointer *wl_pointer;
+static struct wl_keyboard *wl_keyboard;
+static struct libdecor *decor;
+static struct libdecor_frame *decor_frame;
+
+/* EGL Objects */
+static EGLDisplay egl_dpy;
+static EGLConfig egl_cfg;
+static EGLContext egl_ctx;
+static EGLSurface egl_surf;
+
+/* Frame Start Time */
+static struct timeval tv_start;
+
+/* Log File */
+#define LOG_BUF_SIZE	(4096)
+static FILE *log_fp;
+
+/* Locale */
+static const char *lang_code;
+
+/* Close window flag. */
+static bool is_close_requested;
+
+/* Flag to indicate whether we are playing a video or not */
+static bool is_gst_playing;
+
+/* Flag to indicate whether a video is skippable or not */
+static bool is_gst_skippable;
+
+/* HAL callback. */
+#if defined(HAL_USE_X11_ONLY)
+struct hal_callback hal_callback;
+HAL_DLL bool (*hal_bootstrap_ptr)(char **title, int *width, int *height, struct hal_callback *callback);
+#endif
+
+#if defined(HAL_USE_WAYLAND_ONLY)
+/* argc/argv */
+int hal_argc;
+char **hal_argv;
+#endif
+
+/* forward declaration */
+static bool init_hal(int argc, char *argv[]);
+static void init_locale(void);
+static bool open_log_file(void);
+static void close_log_file(void);
+static bool open_display(void);
+static void close_display(void);
+static void cleanup_hal(void);
+static void run_game_loop(void);
+static bool run_frame(void);
+static void render_video_frame(void);
+static bool wait_for_next_frame(void);
+static void update_viewport_size(int width, int height);
+static void seat_capabilities(void *data, struct wl_seat *seat, uint32_t caps);
+static void seat_name(void *data, struct wl_seat *seat, const char *name);
+static void handle_configure(struct libdecor_frame *frame, struct libdecor_configuration *configuration, void *user_data);
+static void handle_commit(struct libdecor_frame *frame, void *user_data);
+static void handle_dismiss_popup(struct libdecor_frame *frame, const char *seat_name, void *user_data);
+static void handle_decor_error(struct libdecor *context, enum libdecor_error error, const char *message);
+static void handle_close(struct libdecor_frame *frame, void *user_data);
+static void registry_global(void *data, struct wl_registry *reg, uint32_t name, const char *interface, uint32_t version);
+static void registry_remove(void *data, struct wl_registry *reg, uint32_t name);
+static void pointer_enter(void *data, struct wl_pointer *pointer, uint32_t serial, struct wl_surface *surface, wl_fixed_t sx, wl_fixed_t sy);
+static void pointer_leave(void *data, struct wl_pointer *pointer, uint32_t serial, struct wl_surface *surface);
+static void pointer_motion(void *data, struct wl_pointer *pointer, uint32_t time, wl_fixed_t sx, wl_fixed_t sy);
+static void pointer_button(void *data, struct wl_pointer *pointer, uint32_t serial, uint32_t time, uint32_t button, uint32_t state);
+static void pointer_axis(void *data, struct wl_pointer *pointer, uint32_t time, uint32_t axis, wl_fixed_t value);
+static void pointer_frame(void *, struct wl_pointer *) { /* no-op */ }
+static void pointer_axis_source(void *, struct wl_pointer *, uint32_t) { /* no-op */ }
+static void pointer_axis_stop(void *, struct wl_pointer *, uint32_t, uint32_t) { /* no-op */ }
+static void pointer_axis_discrete(void *, struct wl_pointer *, uint32_t, int32_t) { /* no-op */ }
+static void pointer_axis_value120(void *data, struct wl_pointer *wl_pointer, uint32_t axis, int32_t value120);
+static void keyboard_keymap(void *data, struct wl_keyboard *keyboard, uint32_t format, int fd, uint32_t size);
+static void keyboard_enter(void *data, struct wl_keyboard *keyboard, uint32_t serial, struct wl_surface *surface, struct wl_array *keys);
+static void keyboard_leave(void *data, struct wl_keyboard *keyboard, uint32_t serial, struct wl_surface *surface);
+static void keyboard_key(void *data, struct wl_keyboard *keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state);
+static int get_keycode(int kc);
+static void keyboard_modifiers(void *data, struct wl_keyboard *keyboard, uint32_t serial, uint32_t mods_depressed, uint32_t mods_latched, uint32_t mods_locked, uint32_t group);
+static void keyboard_repeat_info(void *data, struct wl_keyboard *keyboard, int32_t rate, int32_t delay);
+
+/* Wayland */
+static const struct wl_registry_listener registry_listener = {
+	.global        = registry_global,
+	.global_remove = registry_remove,
+};
+static const struct wl_pointer_listener pointer_listener = {
+	.enter = pointer_enter,
+	.leave = pointer_leave,
+	.motion = pointer_motion,
+	.button = pointer_button,
+	.axis = pointer_axis,
+	.frame = pointer_frame,
+	.axis_source = pointer_axis_source,
+	.axis_stop = pointer_axis_stop,
+	.axis_discrete = pointer_axis_discrete,
+	.axis_value120 = pointer_axis_value120,
+};
+static const struct wl_keyboard_listener keyboard_listener = {
+	.keymap = keyboard_keymap,
+	.enter = keyboard_enter,
+	.leave = keyboard_leave,
+	.key = keyboard_key,
+	.modifiers = keyboard_modifiers,
+	.repeat_info = keyboard_repeat_info,
+};
+static const struct wl_seat_listener seat_listener = {
+	.capabilities = seat_capabilities,
+	.name = seat_name,
+};
+static struct libdecor_frame_interface decor_frame_iface = {
+	.configure = handle_configure,
+	.close = handle_close,
+	.commit = handle_commit,
+	.dismiss_popup = handle_dismiss_popup,
+
+};
+
+static struct libdecor_interface decor_iface = {
+	.error = handle_decor_error,
+};
+
+/*
+ * Main
+ */
+
+#if defined(HAL_USE_WAYLAND_ONLY)
+HAL_DLL
+int
+hal_main(
+	int argc,
+	char *argv[])
+{
+	hal_argc = argc;
+	hal_argv = argv;
+
+	/* Initialize HAL. */
+	if (!init_hal(argc, argv))
+		return 1;
+
+	/* Do a start callback. */
+	if (!hal_callback.on_start())
+		return 1;
+
+	/* Run game loop. */
+	run_game_loop();
+
+	/* Do a stop callback.. */
+	hal_callback.on_stop();
+
+	/* Cleanup HAL. */
+	cleanup_hal();
+
+	return 0;
+}
+#else
+bool
+main_init_wl(
+	int argc,
+	char *argv[])
+{
+	/* Initialize HAL. */
+	if (!init_hal(argc, argv))
+		return false;
+
+	return true;
+}
+
+bool
+main_run_wl(void)
+{
+	/* Do a start callback. */
+	if (!hal_callback.on_start())
+		return false;
+
+	/* Run game loop. */
+	run_game_loop();
+
+	/* Do a stop callback.. */
+	hal_callback.on_stop();
+
+	/* Cleanup HAL. */
+	cleanup_hal();
+
+	return true;
+}
+#endif
+
+/* Initialize HAL. */
+static bool
+init_hal(
+	int argc,
+	char *argv[])
+{
+#if defined(HAL_USE_LIBINTL)
+	bindtextdomain("libstrato", LOCALEDIR);
+	bind_textdomain_codeset("libstrato", "UTF-8");
+#endif
+
+	/* Initialize the locale. */
+	init_locale();
+
+	/* Initialize the file HAL. */
+	if (!init_file())
+		return false;
+
+	/* Do a boot callback. */
+	if (!hal_bootstrap_ptr(&window_title, &screen_width, &screen_height, &hal_callback))
+		return false;
+
+	/* Initialize the sound HAL. */
+	if (!init_sound()) {
+		/* Ignore a failure. */
+		hal_log_warn("Can't initialize sound.");
+	}
+
+	/* Open an X11 display. */
+	if (!open_display()) {
+		hal_log_error("Can't open display.");
+		return false;
+	}
+
+	/* Initizalize OpenGL. */
+	if (!init_opengl(screen_width, screen_height)) {
+		hal_log_error("Can't initialize OpenGL.");
+	}
+	update_viewport_size(screen_width, screen_height);
+
+	/* Initialize the gamepad. */
+	init_evgamepad();
+
+	/* Initialize the viddeo HAL. */
+	gstplay_init(argc, argv);
+
+	return true;
+}
+
+/* Initialize the locale. */
+static void
+init_locale(void)
+{
+	const char *locale = setlocale(LC_MESSAGES, "");
+        if (locale == NULL || locale[0] == '\0') {
+		locale = getenv("LC_ALL");
+		if (locale == NULL || locale[0] == '\0') {
+			locale = getenv("LC_MESSAGES");
+			if (locale == NULL || locale[0] == '\0')
+				locale = getenv("LANG");
+		}
+	}
+	if (locale == NULL || locale[0] == '\0') {
+		lang_code = "en";
+		return;
+	}
+
+	/* English */
+	if (strncmp(locale, "en_AU", 5) == 0) {
+		lang_code = "en-au";
+		return;
+	}
+	if (strncmp(locale, "en_GB", 5) == 0) {
+		lang_code = "en-gb";
+		return;
+	}
+	if (strncmp(locale, "en_NZ", 5) == 0) {
+		lang_code = "en-nz";
+		return;
+	}
+	if (strncmp(locale, "en_US", 5) == 0) {
+		lang_code = "en-us";
+		return;
+	}
+	if (strncmp(locale, "en", 2) == 0) {
+		lang_code = "en";
+		return;
+	}
+
+	/* French */
+	if (strncmp(locale, "fr_CA", 5) == 0) {
+		lang_code = "fr-ca";
+		return;
+	}
+	if (strncmp(locale, "fr", 2) == 0) {
+		lang_code = "fr";
+		return;
+	}
+
+	/* Spanish */
+	if (strncmp(locale, "es_ES", 5) == 0) {
+		lang_code = "es";
+		return;
+	}
+	if (strncmp(locale, "es", 2) == 0) {
+		lang_code = "es-la";
+		return;
+	}
+
+	/* Chinese */
+	if (strncmp(locale, "zh_TW", 5) == 0 ||
+	    strncmp(locale, "zh_HK", 5) == 0) {
+		lang_code = "zh-tw";
+		return;
+	}
+	if (strncmp(locale, "zh", 2) == 0) {
+		lang_code = "zh-cn";
+		return;
+	}
+
+	/* Others */
+	if (strncmp(locale, "ja", 2) == 0) {
+		lang_code = "ja";
+		return;
+	}
+	if (strncmp(locale, "de", 2) == 0) {
+		lang_code = "de";
+		return;
+	}
+	if (strncmp(locale, "it", 2) == 0){
+		lang_code = "it";
+		return;
+	}
+	if (strncmp(locale, "el", 2) == 0) {
+		lang_code = "el";
+		return;
+	}
+	if (strncmp(locale, "ru", 2) == 0) {
+		lang_code = "ru";
+		return;
+	}
+	if (strncmp(locale, "ko", 2) == 0) {
+		lang_code = "ko";
+		return;
+	}
+
+	/* Fallback */
+	lang_code = "en";
+}
+
+/* Open a display. */
+static bool
+open_display(void)
+{
+	static const EGLint cfg_attr[] = {
+		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+		EGL_RED_SIZE, 8,
+		EGL_GREEN_SIZE, 8,
+		EGL_BLUE_SIZE, 8,
+		EGL_ALPHA_SIZE, 0,
+		EGL_DEPTH_SIZE, 0,
+		EGL_STENCIL_SIZE, 0,
+		EGL_NONE
+	};
+	static const EGLint ctx_attr[] = {
+		EGL_CONTEXT_CLIENT_VERSION, 2,
+		EGL_NONE
+	};
+	PFNEGLGETPLATFORMDISPLAYEXTPROC eglGetPlatformDisplayEXT;
+	struct wl_registry *reg;
+	EGLConfig configs[64];
+	EGLint ncfg;
+	int i;
+
+	/* Connect to Wayland display. */
+	wl_dpy = wl_display_connect(NULL);
+	if (!wl_dpy) {
+		hal_log_error("wl_display_connect failed");
+		return false;
+	}
+
+	/* Get globals. */
+	reg = wl_display_get_registry(wl_dpy);
+	if (!reg) {
+		hal_log_error("wl_display_get_registry failed");
+		return false;
+	}
+	wl_registry_add_listener(reg, &registry_listener, NULL);
+	wl_display_roundtrip(wl_dpy);
+
+	if (!wl_compositor) {
+		hal_log_error("Required globals missing.");
+		return false;
+	}
+
+	/* Create EGL display. Prefer explicit Wayland platform. */
+	eglGetPlatformDisplayEXT =
+		(PFNEGLGETPLATFORMDISPLAYEXTPROC)
+		eglGetProcAddress("eglGetPlatformDisplayEXT");
+
+	if (eglGetPlatformDisplayEXT) {
+		egl_dpy = eglGetPlatformDisplayEXT(
+			EGL_PLATFORM_WAYLAND_EXT,
+			(void *)wl_dpy,
+			NULL);
+	} else {
+		egl_dpy = eglGetDisplay((EGLNativeDisplayType)wl_dpy);
+	}
+
+	if (egl_dpy == EGL_NO_DISPLAY) {
+		hal_log_error("eglGetDisplay failed");
+		return false;
+	}
+
+	if (!eglInitialize(egl_dpy, NULL, NULL)) {
+		hal_log_error("eglInitialize failed: 0x%04x", eglGetError());
+		return false;
+	}
+
+	if (!eglBindAPI(EGL_OPENGL_ES_API)) {
+		hal_log_error("eglBindAPI(EGL_OPENGL_ES_API) failed: 0x%04x", eglGetError());
+		return false;
+	}
+
+	if (!eglChooseConfig(egl_dpy, cfg_attr, configs, 64, &ncfg)) {
+		hal_log_error("eglChooseConfig failed: 0x%04x", eglGetError());
+		return false;
+	}
+	if (ncfg <= 0) {
+		hal_log_error("No suitable EGL config.");
+		return false;
+	}
+
+	/* Pick a suitable RGB888 window config. */
+	egl_cfg = configs[0];
+	for (i = 0; i < ncfg; i++) {
+		EGLint surface_type = 0;
+		EGLint renderable_type = 0;
+		EGLint r = 0, g = 0, b = 0, a = 0;
+
+		eglGetConfigAttrib(egl_dpy, configs[i], EGL_SURFACE_TYPE, &surface_type);
+		eglGetConfigAttrib(egl_dpy, configs[i], EGL_RENDERABLE_TYPE, &renderable_type);
+		eglGetConfigAttrib(egl_dpy, configs[i], EGL_RED_SIZE, &r);
+		eglGetConfigAttrib(egl_dpy, configs[i], EGL_GREEN_SIZE, &g);
+		eglGetConfigAttrib(egl_dpy, configs[i], EGL_BLUE_SIZE, &b);
+		eglGetConfigAttrib(egl_dpy, configs[i], EGL_ALPHA_SIZE, &a);
+
+		if ((surface_type & EGL_WINDOW_BIT) &&
+		    (renderable_type & EGL_OPENGL_ES2_BIT) &&
+		    r == 8 && g == 8 && b == 8 && a == 0) {
+			egl_cfg = configs[i];
+			break;
+		}
+	}
+
+	/* Create GLESv2 context before surface mapping. */
+	egl_ctx = eglCreateContext(
+		egl_dpy,
+		egl_cfg,
+		EGL_NO_CONTEXT,
+		ctx_attr);
+
+	if (egl_ctx == EGL_NO_CONTEXT) {
+		hal_log_error("eglCreateContext failed: 0x%04x", eglGetError());
+		return false;
+	}
+
+	/* Create main Wayland surface. */
+	wl_surface = wl_compositor_create_surface(wl_compositor);
+	if (!wl_surface) {
+		hal_log_error("wl_compositor_create_surface failed");
+		return false;
+	}
+
+	/* Create wl_egl_window before creating EGLSurface. */
+	wlegl_win = wl_egl_window_create(wl_surface, screen_width, screen_height);
+	if (!wlegl_win) {
+		hal_log_error("wl_egl_window_create failed");
+		return false;
+	}
+
+	/* Create EGL window surface. */
+	egl_surf = eglCreateWindowSurface(
+		egl_dpy,
+		egl_cfg,
+		(EGLNativeWindowType)wlegl_win,
+		NULL);
+
+	if (egl_surf == EGL_NO_SURFACE) {
+		hal_log_error("eglCreateWindowSurface failed: 0x%04x", eglGetError());
+		return false;
+	}
+
+	if (!eglMakeCurrent(egl_dpy, egl_surf, egl_surf, egl_ctx)) {
+		hal_log_error("eglMakeCurrent failed: 0x%04x", eglGetError());
+		return false;
+	}
+
+	update_viewport_size(screen_width, screen_height);
+
+	/* Create libdecor context after EGL is ready. */
+	decor = libdecor_new(wl_dpy, &decor_iface);
+	if (!decor) {
+		hal_log_error("libdecor_new failed");
+		return false;
+	}
+
+	wl_display_roundtrip(wl_dpy);
+
+	/* Create libdecor frame. */
+	decor_frame = libdecor_decorate(
+		decor,
+		wl_surface,
+		&decor_frame_iface,
+		NULL);
+
+	if (!decor_frame) {
+		hal_log_error("libdecor_decorate failed");
+		return false;
+	}
+
+	libdecor_frame_set_title(decor_frame, window_title);
+	libdecor_frame_set_app_id(decor_frame, "vn.suika3.engine");
+
+	/* Now map the decorated frame. */
+	libdecor_frame_map(decor_frame);
+	wl_surface_commit(wl_surface);
+	wl_display_roundtrip(wl_dpy);
+
+	return true;
+}
+
+/* Cleanup the subsystems. */
+static void
+cleanup_hal(void)
+{
+	/* Cleanup sound. */
+	cleanup_sound();
+
+	/* Close the display. */
+	close_display();
+
+	/* Close the log file. */
+	close_log_file();
+}
+
+/* Close the display. */
+static void
+close_display(void)
+{
+	eglMakeCurrent(egl_dpy, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+	eglDestroySurface(egl_dpy, egl_surf);
+	eglDestroyContext(egl_dpy, egl_ctx);
+	eglTerminate(egl_dpy);
+    
+	if (decor_frame)
+		libdecor_frame_unref(decor_frame);
+	if (decor)
+		libdecor_unref(decor);
+
+	wl_egl_window_destroy(wlegl_win);
+	wl_surface_destroy(wl_surface);
+	wl_display_disconnect(wl_dpy);
+}
+
+/* Close the log file. */
+static void
+close_log_file(void)
+{
+	if (log_fp != NULL)
+		fclose(log_fp);
+}
+
+/* Run the event loop. */
+static void
+run_game_loop(void)
+{
+	/* Get the frame start time. */
+	gettimeofday(&tv_start, NULL);
+
+	/* Main Loop */
+	while (true) {
+		/* Run a frame. */
+		if (!run_frame())
+			break;
+
+		/* Wait for the next frame timing. */
+		if (!wait_for_next_frame())
+			break;	/* Close button was pressed. */
+
+		/* Get the frame start time. */
+		gettimeofday(&tv_start, NULL);
+	}
+}
+
+/* Run a frame. */
+static bool
+run_frame(void)
+{
+	bool cont;
+
+	/* Sync the decorator. */
+	if (decor != NULL) {
+		if (libdecor_dispatch(decor, 0) < 0)
+			return false;
+	}
+	wl_display_flush(wl_dpy);
+	if (is_close_requested)
+		return false;
+
+	/* Read the gamepad. */
+	update_evgamepad();
+
+	if (!is_gst_playing) {
+		/* Start rendering. */
+		opengl_start_rendering();
+
+		/* Start rendering. */
+		opengl_start_rendering();
+
+		/* Call a frame event. */
+		cont = hal_callback.on_update();
+		if (cont)
+			hal_callback.on_render();
+
+		/* End rendering. */
+		opengl_end_rendering();
+
+		/* Sync. */
+		eglSwapBuffers(egl_dpy, egl_surf);
+		wl_display_flush(egl_dpy);
+	} else {
+		/* Render. */
+		render_video_frame();
+
+		/* Call a frame event. */
+		cont = hal_callback.on_update();
+
+		/* If the playback is finished. */
+		if (!gstplay_is_playing()) {
+			gstplay_stop();
+			is_gst_playing = false;
+		}
+	}
+
+	return cont;
+}
+
+/* Render a video frame. */
+static void
+render_video_frame(void)
+{
+	struct hal_image *image;
+	int dst_width, dst_height, dst_x, dst_y;
+
+	/* Update the playback stauts. */
+	image = gstplay_loop_iteration();
+	if (image == NULL) {
+		/* Rendering is not required for this game frame. */
+		return;
+	}
+
+        /* Fit while preserving aspect ratio. */
+        if (screen_width * image->height <= screen_height * image->width) {
+                dst_width = screen_width;
+                dst_height = screen_width * image->height / image->width;
+        } else {
+                dst_height = screen_height;
+                dst_width = screen_height * image->width / image->height;
+        }
+        dst_x = (screen_width - dst_width) / 2;
+        dst_y = (screen_height - dst_height) / 2;
+
+	/* Render. */
+	opengl_start_rendering();
+        opengl_render_image_normal(
+                dst_x,
+                dst_y,
+                dst_width,
+                dst_height,
+                image,
+                0,
+                0,
+                image->width,
+                image->height,
+                255);
+	opengl_end_rendering();
+
+	/* Sync. */
+	eglSwapBuffers(egl_dpy, egl_surf);
+	wl_display_flush(egl_dpy);
+}
+
+/* Wait for the next frame timing. */
+static bool
+wait_for_next_frame(void)
+{
+	struct timeval tv_end;
+	uint32_t lap, wait, span;
+
+	span = FRAME_MILLI;
+
+	/* Do event processing and sleep until the time of next frame start. */
+	do {
+		/* Get a lap time. */
+		gettimeofday(&tv_end, NULL);
+		lap = (uint32_t)((tv_end.tv_sec - tv_start.tv_sec) * 1000 +
+				 (tv_end.tv_usec - tv_start.tv_usec) / 1000);
+
+		/* Break if the time has come. */
+		if (lap > span) {
+			tv_start = tv_end;
+			break;
+		}
+
+		/* Calc a sleep time. */
+		wait = (span - lap > SLEEP_MILLI) ? SLEEP_MILLI : span - lap;
+
+		/* Do sleep. */
+		usleep(wait * 1000);
+
+	} while(wait > 0);
+
+	return true;
+}
+
+/*
+ * Sets the window size.
+ */
+static void update_viewport_size(int width, int height)
+{
+	float aspect, use_width, use_height;
+	int orig_x, orig_y;
+
+	/* Calc the aspect ratio of the game. */
+	aspect = (float)screen_height / (float)screen_width;
+
+	/* Calc the height. (temporarily with "width-first") */
+	use_width = (float)width;
+	use_height = use_width * aspect;
+	mouse_scale = (float)screen_width / (float)width;
+
+	/* If height is not enough, calc the width. (with "height-first") */
+	if(use_height > (float)height) {
+		use_height = (float)height;
+		use_width = (float)use_height / aspect;
+		mouse_scale = (float)screen_height / (float)height;
+	}
+
+	/* Calc the viewport origin. */
+	orig_x = (int)((((float)width - use_width) / 2.0f) + 0.5);
+	orig_y = (int)((((float)height - use_height) / 2.0f) + 0.5);
+	mouse_ofs_x = orig_x;
+	mouse_ofs_y = orig_y;
+
+	/* Calc the viewport size. */
+	viewport_width = (int)use_width;
+	viewport_height = (int)use_height;
+
+	/* Update the screen offset and scale for drawing subsystem. */
+	opengl_set_screen(orig_x, orig_y, viewport_width, viewport_height);
+}
+
+static void
+seat_capabilities(
+	void *data,
+	struct wl_seat *seat,
+	uint32_t caps)
+{
+	UNUSED_PARAMETER(data);
+
+	if ((caps & WL_SEAT_CAPABILITY_POINTER) && wl_pointer == NULL) {
+		wl_pointer = wl_seat_get_pointer(seat);
+		wl_pointer_add_listener(wl_pointer, &pointer_listener, NULL);
+	} else if (!(caps & WL_SEAT_CAPABILITY_POINTER) && wl_pointer != NULL) {
+		wl_pointer_destroy(wl_pointer);
+		wl_pointer = NULL;
+	}
+
+	if ((caps & WL_SEAT_CAPABILITY_KEYBOARD) && wl_keyboard == NULL) {
+		wl_keyboard = wl_seat_get_keyboard(seat);
+		wl_keyboard_add_listener(wl_keyboard, &keyboard_listener, NULL);
+	} else if (!(caps & WL_SEAT_CAPABILITY_KEYBOARD) && wl_keyboard != NULL) {
+		wl_keyboard_destroy(wl_keyboard);
+		wl_keyboard = NULL;
+	}
+}
+
+static void
+seat_name(
+	void *data,
+	struct wl_seat *seat,
+	const char *name)
+{
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(seat);
+	UNUSED_PARAMETER(name);
+}
+
+static void
+handle_configure(
+	struct libdecor_frame *frame,
+	struct libdecor_configuration *configuration,
+	void *user_data)
+{
+	static int last_width = -1;
+	static int last_height = -1;
+	int width, height;
+	struct libdecor_state *state;
+	enum libdecor_window_state window_state;
+
+	UNUSED_PARAMETER(user_data);
+
+	if (libdecor_configuration_get_window_state(configuration, &window_state)) {
+		/* bool is_maximized = (window_state & LIBDECOR_WINDOW_STATE_MAXIMIZED) != 0; */
+		bool is_now_fullscreen = (window_state & LIBDECOR_WINDOW_STATE_FULLSCREEN) != 0;
+		if (!is_full_screen && is_now_fullscreen)
+			hal_enter_full_screen_mode();
+		else if (is_full_screen && !is_now_fullscreen)
+			hal_leave_full_screen_mode();
+	}
+
+	if (!libdecor_configuration_get_content_size(configuration, frame, &width, &height)) {
+		width = screen_width;
+		height = screen_height;
+	}
+
+	state = libdecor_state_new(width, height);
+	libdecor_frame_commit(frame, state, configuration);
+	libdecor_state_free(state);
+
+	if (width != last_width || height != last_height) {
+		if (wlegl_win != NULL)
+			wl_egl_window_resize(wlegl_win, width, height, 0, 0);
+
+		update_viewport_size(width, height);
+		last_width = width;
+		last_height = height;
+	}
+}
+
+static void
+handle_commit(
+	struct libdecor_frame *frame,
+	void *user_data)
+{
+	UNUSED_PARAMETER(frame);
+	UNUSED_PARAMETER(user_data);
+}
+
+static void
+handle_dismiss_popup(
+	struct libdecor_frame *frame,
+        const char *seat_name,
+        void *user_data)
+{
+	UNUSED_PARAMETER(frame);
+	UNUSED_PARAMETER(seat_name);
+	UNUSED_PARAMETER(user_data);
+}
+
+static void
+handle_decor_error(
+	struct libdecor *context,
+        enum libdecor_error error,
+        const char *message)
+{
+	UNUSED_PARAMETER(context);
+
+	hal_log_error("libdecor error %d: %s", (int)error, message ? message : "(null)");
+}
+
+static void
+handle_close(
+	struct libdecor_frame *frame,
+	void *user_data)
+{
+	UNUSED_PARAMETER(frame);
+	UNUSED_PARAMETER(user_data);
+
+	is_close_requested = true;
+}
+
+static void
+registry_global(
+	void *data,
+	struct wl_registry *reg,
+	uint32_t name,
+	const char *interface,
+	uint32_t version)
+{
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(version);
+
+	if (strcmp(interface, "wl_compositor") == 0) {
+		wl_compositor = wl_registry_bind(reg, name, &wl_compositor_interface, 4);
+	} else if (strcmp(interface, "wl_seat") == 0) {
+		wl_seat = wl_registry_bind(reg, name, &wl_seat_interface, version < 5 ? version : 5);
+		wl_seat_add_listener(wl_seat, &seat_listener, NULL);
+	}
+}
+
+static void
+registry_remove(
+	void *data,
+	struct wl_registry *reg,
+	uint32_t name)
+{
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(reg);
+	UNUSED_PARAMETER(name);
+}
+
+static void
+pointer_enter(
+	void *data,
+	struct wl_pointer *pointer,
+	uint32_t serial,
+	struct wl_surface *surface,
+	wl_fixed_t sx,
+	wl_fixed_t sy)
+{
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(pointer);
+	UNUSED_PARAMETER(serial);
+	UNUSED_PARAMETER(surface);
+	UNUSED_PARAMETER(sx);
+	UNUSED_PARAMETER(sy);
+}
+
+static void
+pointer_leave(
+	void *data,
+	struct wl_pointer *pointer,
+	uint32_t serial,
+	struct wl_surface *surface)
+{
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(pointer);
+	UNUSED_PARAMETER(serial);
+	UNUSED_PARAMETER(surface);
+}
+
+static void
+pointer_motion(
+	void *data,
+	struct wl_pointer *pointer,
+	uint32_t time,
+	wl_fixed_t sx,
+	wl_fixed_t sy)
+{
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(pointer);
+	UNUSED_PARAMETER(time);
+
+	last_mouse_x = (int)((wl_fixed_to_double(sx) - mouse_ofs_x) * mouse_scale);
+	last_mouse_y = (int)((wl_fixed_to_double(sy) - mouse_ofs_y) * mouse_scale);
+
+	if (hal_callback.on_mouse_move != NULL)
+		hal_callback.on_mouse_move(last_mouse_x, last_mouse_y);
+}
+
+static void
+pointer_button(
+	void *data,
+	struct wl_pointer *pointer,
+	uint32_t serial,
+	uint32_t time,
+	uint32_t button,
+	uint32_t state)
+{
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(pointer);
+	UNUSED_PARAMETER(serial);
+	UNUSED_PARAMETER(time);
+
+	if (button == 272) {
+		if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
+			if (hal_callback.on_mouse_press != NULL)
+				hal_callback.on_mouse_press(HAL_MOUSE_LEFT, last_mouse_x, last_mouse_y);
+		} else {
+			if (hal_callback.on_mouse_release != NULL)
+				hal_callback.on_mouse_release(HAL_MOUSE_LEFT, last_mouse_x, last_mouse_y);
+		}
+	} else if (button == 273) {
+		if (state == WL_POINTER_BUTTON_STATE_PRESSED) {
+			if (hal_callback.on_mouse_press != NULL)
+				hal_callback.on_mouse_press(HAL_MOUSE_RIGHT, last_mouse_x, last_mouse_y);
+		} else {
+			if (hal_callback.on_mouse_release != NULL)
+				hal_callback.on_mouse_release(HAL_MOUSE_RIGHT, last_mouse_x, last_mouse_y);
+		}
+	}
+}
+
+static void
+pointer_axis(
+	void *data,
+	struct wl_pointer *pointer,
+	uint32_t time,
+	uint32_t axis,
+	wl_fixed_t value)
+{
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(pointer);
+	UNUSED_PARAMETER(time);
+	UNUSED_PARAMETER(axis);
+	UNUSED_PARAMETER(value);
+}
+
+static void
+pointer_axis_value120(
+	void *data,
+	struct wl_pointer *wl_pointer,
+	uint32_t axis,
+	int32_t value120)
+{
+	float fine_scroll;
+
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(wl_pointer);
+	UNUSED_PARAMETER(axis);
+	UNUSED_PARAMETER(value120);
+
+	fine_scroll = (float)value120 / 120.0f;
+
+	if (axis == WL_POINTER_AXIS_VERTICAL_SCROLL) {
+		if (hal_callback.on_mouse_wheel != NULL)
+			hal_callback.on_mouse_wheel((int)fine_scroll, 0);
+	}
+}
+
+static void
+keyboard_keymap(
+	void *data,
+	struct wl_keyboard *keyboard,
+	uint32_t format,
+	int fd,
+	uint32_t size)
+{
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(keyboard);
+	UNUSED_PARAMETER(format);
+	UNUSED_PARAMETER(size);
+
+	close(fd);
+}
+
+static void
+keyboard_enter(
+	void *data,
+	struct wl_keyboard *keyboard,
+	uint32_t serial,
+	struct wl_surface *surface,
+	struct wl_array *keys)
+{
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(keyboard);
+	UNUSED_PARAMETER(serial);
+	UNUSED_PARAMETER(surface);
+	UNUSED_PARAMETER(keys);
+}
+
+static void
+keyboard_leave(
+	void *data,
+	struct wl_keyboard *keyboard,
+	uint32_t serial,
+	struct wl_surface *surface)
+{
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(keyboard);
+	UNUSED_PARAMETER(serial);
+	UNUSED_PARAMETER(surface);
+}
+
+static void
+keyboard_key(
+	void *data,
+	struct wl_keyboard *keyboard,
+	uint32_t serial,
+	uint32_t time,
+	uint32_t key,
+	uint32_t state)
+{
+	static bool is_alt_pressed;
+	int keycode;
+
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(keyboard);
+	UNUSED_PARAMETER(serial);
+	UNUSED_PARAMETER(time);
+
+	keycode = get_keycode((int)key);
+
+	if (keycode == HAL_KEY_ALT) {
+		if (state == WL_KEYBOARD_KEY_STATE_PRESSED)
+			is_alt_pressed = true;
+		else
+			is_alt_pressed = false;
+	}
+
+	if (keycode == HAL_KEY_RETURN && state == WL_KEYBOARD_KEY_STATE_PRESSED && is_alt_pressed) {
+		if (!is_full_screen)
+			hal_enter_full_screen_mode();
+		else
+			hal_leave_full_screen_mode();
+		return;
+	}
+
+	if (state == WL_KEYBOARD_KEY_STATE_PRESSED) {
+		if (hal_callback.on_key_press != NULL)
+			hal_callback.on_key_press(keycode);
+	} else {
+		if (hal_callback.on_key_release != NULL)
+			hal_callback.on_key_release(keycode);
+	}
+}
+
+static int get_keycode(
+	int kc)
+{
+	switch (kc) {
+	case 1:   return HAL_KEY_ESCAPE;
+	case 28:  return HAL_KEY_RETURN;
+	case 96:  return HAL_KEY_RETURN;
+	case 57:  return HAL_KEY_SPACE;
+	case 15:  return HAL_KEY_TAB;
+	case 14:  return HAL_KEY_BACKSPACE;
+	case 111: return HAL_KEY_DELETE;
+	case 102: return HAL_KEY_HOME;
+	case 107: return HAL_KEY_END;
+	case 104: return HAL_KEY_PAGEUP;
+	case 109: return HAL_KEY_PAGEDOWN;
+	case 42:  return HAL_KEY_SHIFT;
+	case 54:  return HAL_KEY_SHIFT;
+	case 29:  return HAL_KEY_CONTROL;
+	case 97:  return HAL_KEY_CONTROL;
+	case 56:  return HAL_KEY_ALT;
+	case 100: return HAL_KEY_ALT;
+	case 108: return HAL_KEY_DOWN;
+	case 103: return HAL_KEY_UP;
+	case 105: return HAL_KEY_LEFT;
+	case 106: return HAL_KEY_RIGHT;
+
+	/* Letters (A=30 … Z=44) */
+	case 30: return HAL_KEY_A;
+	case 48: return HAL_KEY_B;
+	case 46: return HAL_KEY_C;
+	case 32: return HAL_KEY_D;
+	case 18: return HAL_KEY_E;
+	case 33: return HAL_KEY_F;
+	case 34: return HAL_KEY_G;
+	case 35: return HAL_KEY_H;
+	case 23: return HAL_KEY_I;
+	case 36: return HAL_KEY_J;
+	case 37: return HAL_KEY_K;
+	case 38: return HAL_KEY_L;
+	case 50: return HAL_KEY_M;
+	case 49: return HAL_KEY_N;
+	case 24: return HAL_KEY_O;
+	case 25: return HAL_KEY_P;
+	case 16: return HAL_KEY_Q;
+	case 19: return HAL_KEY_R;
+	case 31: return HAL_KEY_S;
+	case 20: return HAL_KEY_T;
+	case 22: return HAL_KEY_U;
+	case 47: return HAL_KEY_V;
+	case 17: return HAL_KEY_W;
+	case 45: return HAL_KEY_X;
+	case 21: return HAL_KEY_Y;
+	case 44: return HAL_KEY_Z;
+
+	/* Numbers (1=2 … 0=11) */
+	case 2:  return HAL_KEY_1;
+	case 3:  return HAL_KEY_2;
+	case 4:  return HAL_KEY_3;
+	case 5:  return HAL_KEY_4;
+	case 6:  return HAL_KEY_5;
+	case 7:  return HAL_KEY_6;
+	case 8:  return HAL_KEY_7;
+	case 9:  return HAL_KEY_8;
+	case 10: return HAL_KEY_9;
+	case 11: return HAL_KEY_0;
+
+	/* Function keys */
+	case 59: return HAL_KEY_F1;
+	case 60: return HAL_KEY_F2;
+	case 61: return HAL_KEY_F3;
+	case 62: return HAL_KEY_F4;
+	case 63: return HAL_KEY_F5;
+	case 64: return HAL_KEY_F6;
+	case 65: return HAL_KEY_F7;
+	case 66: return HAL_KEY_F8;
+	case 67: return HAL_KEY_F9;
+	case 68: return HAL_KEY_F10;
+	case 87: return HAL_KEY_F11;
+	case 88: return HAL_KEY_F12;
+
+	default:
+		break;
+	}
+	return 0;
+}
+
+static void
+keyboard_modifiers(
+	void *data,
+	struct wl_keyboard *keyboard,
+	uint32_t serial,
+	uint32_t mods_depressed,
+	uint32_t mods_latched,
+	uint32_t mods_locked,
+	uint32_t group)
+{
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(keyboard);
+	UNUSED_PARAMETER(serial);
+	UNUSED_PARAMETER(mods_depressed);
+	UNUSED_PARAMETER(mods_latched);
+	UNUSED_PARAMETER(mods_locked);
+	UNUSED_PARAMETER(group);
+}
+
+static void
+keyboard_repeat_info(
+	void *data,
+	struct wl_keyboard *keyboard,
+	int32_t rate,
+	int32_t delay)
+{
+	UNUSED_PARAMETER(data);
+	UNUSED_PARAMETER(keyboard);
+	UNUSED_PARAMETER(rate);
+	UNUSED_PARAMETER(delay);
+}
+
+/*
+ * HAL
+ */
+
+#if defined(HAL_USE_WAYLAND_ONLY)
+#define EXPORT_IF_WL_ONLY			HAL_DLL
+#define hal_log_info_wl				hal_log_info
+#define hal_log_warn_wl				hal_log_warn
+#define hal_log_error_wl			hal_log_error
+#define hal_log_out_of_memory_wl		hal_log_out_of_memory
+#define make_save_directory_wl		make_save_directory
+#define make_real_path_wl			make_real_path
+#define hal_reset_lap_timer_wl			hal_reset_lap_timer
+#define hal_get_lap_timer_millisec_wl		hal_get_lap_timer_millisec
+#define hal_notify_image_update_wl		hal_notify_image_update
+#define hal_notify_image_free_wl		hal_notify_image_free
+#define hal_render_image_normal_wl		hal_render_image_normal
+#define hal_render_image_add_wl			hal_render_image_add
+#define hal_render_image_sub_wl			hal_render_image_sub
+#define hal_render_image_dim_wl			hal_render_image_dim
+#define hal_render_image_rule_wl		hal_render_image_rule
+#define hal_render_image_melt_wl		hal_render_image_melt
+#define hal_render_image_cross_wl		hal_render_image_cross
+#define hal_render_image_3d_normal_wl		hal_render_image_3d_normal
+#define hal_render_image_3d_add_wl		hal_render_image_3d_add
+#define hal_render_image_3d_sub_wl		hal_render_image_3d_sub
+#define hal_render_image_3d_dim_wl		hal_render_image_3d_dim
+#define hal_render_image_3d_cross_wl		hal_render_image_3d_cross
+#define hal_play_video_wl			hal_play_video
+#define hal_stop_video_wl			hal_stop_video
+#define hal_is_video_playing_wl			hal_is_video_playing
+#define hal_is_full_screen_supported_wl		hal_is_full_screen_supported
+#define hal_is_full_screen_mode_wl		hal_is_full_screen_mode
+#define hal_enter_full_screen_mode_wl		hal_enter_full_screen_mode
+#define hal_leave_full_screen_mode_wl		hal_leave_full_screen_mode
+#define hal_get_system_language_wl		hal_get_system_language
+#define hal_set_continuous_swipe_enabled_wl	hal_set_continuous_swipe_enabled
+#else
+#define EXPORT_IF_WL_ONLY
+#endif
+
+/*
+ * Put an INFO log.
+ */
+EXPORT_IF_WL_ONLY
+bool
+hal_log_info_wl(
+	const char *s,
+	...)
+{
+	char buf[LOG_BUF_SIZE];
+	va_list ap;
+
+	va_start(ap, s);
+	vsnprintf(buf, sizeof(buf), s, ap);
+	va_end(ap);
+
+	printf("%s\n", buf);
+
+#if 0
+	open_log_file();
+	if (log_fp != NULL) {
+		fprintf(log_fp, "%s\n", buf);
+		fflush(log_fp);
+		if (ferror(log_fp))
+			return false;
+	}
+#endif
+
+	return true;
+}
+
+/*
+ * Put a WARN log.
+ */
+EXPORT_IF_WL_ONLY
+bool
+hal_log_warn_wl(
+	const char *s,
+	...)
+{
+	char buf[LOG_BUF_SIZE];
+	va_list ap;
+
+	va_start(ap, s);
+	vsnprintf(buf, sizeof(buf), s, ap);
+	va_end(ap);
+
+	printf("%s\n", buf);
+
+	open_log_file();
+	if (log_fp != NULL) {
+		fprintf(log_fp, "%s\n", buf);
+		fflush(log_fp);
+		if (ferror(log_fp))
+			return false;
+	}
+
+	return true;
+}
+
+/*
+ * Put an ERROR log.
+ */
+EXPORT_IF_WL_ONLY
+bool
+hal_log_error_wl(
+	const char *s,
+	...)
+{
+	char buf[LOG_BUF_SIZE];
+	va_list ap;
+
+	va_start(ap, s);
+	vsnprintf(buf, sizeof(buf), s, ap);
+	va_end(ap);
+
+	printf("%s\n", buf);
+
+	open_log_file();
+	if (log_fp != NULL) {
+		fprintf(log_fp, "%s\n", buf);
+		fflush(log_fp);
+		if (ferror(log_fp))
+			return false;
+	}
+	
+	return true;
+}
+
+/*
+ * Put an out-of-memory error.
+ */
+EXPORT_IF_WL_ONLY
+bool
+hal_log_out_of_memory_wl(void)
+{
+	hal_log_error(HAL_TR("Out of memory."));
+	return true;
+}
+
+/* Open the log file. */
+EXPORT_IF_WL_ONLY
+static bool
+open_log_file(void)
+{
+	if (log_fp == NULL) {
+		log_fp = fopen(LOG_FILE, "w");
+		if (log_fp == NULL) {
+			printf("Can't open log file.\n");
+			return false;
+		}
+	}
+	return true;
+}
+
+/*
+ * Reset a timer.
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_reset_lap_timer_wl(
+	uint64_t *t)
+{
+	struct timeval tv;
+
+	gettimeofday(&tv, NULL);
+
+	*t = (uint64_t)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
+}
+
+/*
+ * Get a timer lap.
+ */
+EXPORT_IF_WL_ONLY
+uint64_t
+hal_get_lap_timer_millisec_wl(
+	uint64_t *t)
+{
+	struct timeval tv;
+	uint64_t end;
+	
+	gettimeofday(&tv, NULL);
+
+	end = (uint64_t)(tv.tv_sec * 1000 + tv.tv_usec / 1000);
+
+	return (uint64_t)(end - *t);
+}
+
+/*
+ * Notify an image update.
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_notify_image_update_wl(
+	struct hal_image *img)
+{
+	opengl_notify_image_update(img);
+}
+
+/*
+ * Notify an image free.
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_notify_image_free_wl(
+	struct hal_image *img)
+{
+	opengl_notify_image_free(img);
+}
+
+/*
+ * Render an image. (alpha blend)
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_render_image_normal_wl(
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_normal(
+		dst_left,
+		dst_top,
+		dst_width,
+		dst_height,
+		src_image,
+		src_left,
+		src_top,
+		src_width,
+		src_height,
+		alpha
+	);
+}
+
+/*
+ * Render an image. (add blend)
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_render_image_add_wl(
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_add(
+		dst_left,
+		dst_top,
+		dst_width,
+		dst_height,
+		src_image,
+		src_left,
+		src_top,
+		src_width,
+		src_height,
+		alpha
+	);
+}
+
+/*
+ * Render an image. (sub blend)
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_render_image_sub_wl(
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_sub(
+		dst_left,
+		dst_top,
+		dst_width,
+		dst_height,
+		src_image,
+		src_left,
+		src_top,
+		src_width,
+		src_height,
+		alpha
+	);
+}
+
+/*
+ * Render an image. (dim blend)
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_render_image_dim_wl(
+	int dst_left,
+	int dst_top,
+	int dst_width,
+	int dst_height,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_dim(
+		dst_left,
+		dst_top,
+		dst_width,
+		dst_height,
+		src_image,
+		src_left,
+		src_top,
+		src_width,
+		src_height,
+		alpha
+	);
+}
+
+/*
+ * Render an image. (rule universal transition)
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_render_image_rule_wl(
+	struct hal_image *src_img,
+	struct hal_image *rule_img,
+	int threshold)
+{
+	opengl_render_image_rule(src_img, rule_img, threshold);
+}
+
+/*
+ * Render an image. (melt universal transition)
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_render_image_melt_wl(
+	struct hal_image *src_img,
+	struct hal_image *rule_img,
+	int progress)
+{
+	opengl_render_image_melt(src_img, rule_img, progress);
+}
+
+/*
+ * Render two images for a cross fading.
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_render_image_cross_wl(
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	float src1_left,
+	float src1_top,
+	float src2_left,
+	float src2_top,
+	int alpha)
+{
+	opengl_render_image_cross(src1_img,
+				  src2_img,
+				  (int)src1_left,
+				  (int)src1_top,
+				  (int)src2_left,
+				  (int)src2_top,
+				  alpha);
+}
+
+/*
+ * Render an image. (3d transform, alpha blending)
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_render_image_3d_normal_wl(
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_3d_normal(
+		x1, y1, x2, y2, x3, y3, x4, y4,
+		src_image, src_left, src_top, src_width, src_height,
+		alpha);
+}
+
+/*
+ * Render an image. (3d transform, alpha blending)
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_render_image_3d_add_wl(
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_3d_add(
+		x1, y1, x2, y2, x3, y3, x4, y4,
+		src_image, src_left, src_top, src_width, src_height,
+		alpha);
+}
+
+/*
+ * Render an image. (3d transform, sub blending)
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_render_image_3d_sub_wl(
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_3d_sub(
+		x1, y1, x2, y2, x3, y3, x4, y4,
+		src_image, src_left, src_top, src_width, src_height,
+		alpha);
+}
+
+/*
+ * Render an image. (3d transform, dim blending)
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_render_image_3d_dim_wl(
+	float x1,
+	float y1,
+	float x2,
+	float y2,
+	float x3,
+	float y3,
+	float x4,
+	float y4,
+	struct hal_image *src_image,
+	int src_left,
+	int src_top,
+	int src_width,
+	int src_height,
+	int alpha)
+{
+	opengl_render_image_3d_dim(
+		x1, y1, x2, y2, x3, y3, x4, y4,
+		src_image, src_left, src_top, src_width, src_height,
+		alpha);
+}
+
+/*
+ * Render two images for a cross fading.
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_render_image_3d_cross_wl(
+	struct hal_image *src1_img,
+	struct hal_image *src2_img,
+	float src1_x1,
+	float src1_y1,
+	float src1_x2,
+	float src1_y2,
+	float src1_x3,
+	float src1_y3,
+	float src1_x4,
+	float src1_y4,
+	float src2_x1,
+	float src2_y1,
+	float src2_x2,
+	float src2_y2,
+	float src2_x3,
+	float src2_y3,
+	float src2_x4,
+	float src2_y4,
+	int alpha)
+{
+	opengl_render_image_cross_3d(src1_img,
+				     src2_img,
+				     src1_x1,
+				     src1_y1,
+				     src1_x2,
+				     src1_y2,
+				     src1_x3,
+				     src1_y3,
+				     src1_x4,
+				     src1_y4,
+				     src2_x1,
+				     src2_y1,
+				     src2_x2,
+				     src2_y2,
+				     src2_x3,
+				     src2_y3,
+				     src2_x4,
+				     src2_y4,
+				     alpha);
+}
+
+/*
+ * Play a video.
+ */
+EXPORT_IF_WL_ONLY
+bool
+hal_play_video_wl(
+	const char *fname,
+	bool is_skippable)
+{
+	char *path;
+
+	path = make_real_path(fname);
+
+	is_gst_playing = true;
+	is_gst_skippable = is_skippable;
+
+	gstplay_play(path);
+
+	free(path);
+
+	return true;
+}
+
+/*
+ * Stop the video.
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_stop_video_wl(void)
+{
+	gstplay_stop();
+
+	is_gst_playing = false;
+}
+
+/*
+ * Check whether a video is playing.
+ */
+EXPORT_IF_WL_ONLY
+bool
+hal_is_video_playing_wl(void)
+{
+	return is_gst_playing;
+}
+
+/*
+ * Check whether full screen mode is supported.
+ */
+EXPORT_IF_WL_ONLY
+bool
+hal_is_full_screen_supported_wl(void)
+{
+	return false;
+}
+
+/*
+ * Check whether we are in full screen mode.
+ */
+EXPORT_IF_WL_ONLY
+bool
+hal_is_full_screen_mode_wl(void)
+{
+	return false;
+}
+
+/*
+ * Enter full screen mode.
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_enter_full_screen_mode_wl(void)
+{
+	if (is_full_screen)
+		return;
+
+	libdecor_frame_set_fullscreen(decor_frame, NULL);
+	is_full_screen = true;
+}
+
+/*
+ * Leave full screen mode.
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_leave_full_screen_mode_wl(void)
+{
+	if (!is_full_screen)
+		return;
+
+	libdecor_frame_unset_fullscreen(decor_frame);
+	is_full_screen = false;
+}
+
+/*
+ * Get the system locale.
+ */
+EXPORT_IF_WL_ONLY
+const char *
+hal_get_system_language_wl(void)
+{
+	return lang_code;
+}
+
+/*
+ * Enable/disable message skip by touch move.
+ */
+EXPORT_IF_WL_ONLY
+void
+hal_set_continuous_swipe_enabled_wl(
+	bool is_enabled)
+{
+	UNUSED_PARAMETER(is_enabled);
+}
+
+/*
+ * Make a save directory.
+ */
+bool
+make_save_directory_wl(void)
+{
+	struct stat st = {0};
+
+	if (stat(SAVE_DIR, &st) == -1)
+		mkdir(SAVE_DIR, 0700);
+
+	return true;
+}
+
+/*
+ * Make an effective path from a directory name and a file name.
+ */
+char *
+make_real_path_wl(
+	const char *fname)
+{
+	char *buf;
+	size_t len;
+
+	/* Allocate a path buffer. */
+	len = strlen(fname) + 1;
+	buf = malloc(len);
+	if (buf == NULL) {
+		hal_log_out_of_memory();
+		return NULL;
+	}
+
+	/* Copy as is. */
+	snprintf(buf, len, "%s", fname);
+
+	return buf;
+}

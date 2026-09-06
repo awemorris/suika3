@@ -1,0 +1,28 @@
+func main() {
+    var n = 100;
+    var p = Packed.uint8(n);
+    for (i in 0..n) {
+        p[i] = (i * 3 + 1) % 256;
+    }
+    var delta = 5;
+    var a = 0;
+    for (i in 0..95) {
+        a = a + p[i + delta];
+    }
+    var b = 0;
+    for (i in 5..100) {
+        b = b + p[i - delta];
+    }
+    var c = 0;
+    for (i in 0..95) {
+        c = c + p[delta + i];
+    }
+    var d = 0;
+    for (i in 0..98) {
+        d = d + p[i + 2] - p[i];
+    }
+    print(a);
+    print(b);
+    print(c);
+    print(d);
+}

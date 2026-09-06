@@ -1,0 +1,57 @@
+__accel var math_input = Accel.float32(9);
+__accel var math_output = Accel.float32(27);
+
+__gpu func math_micro(
+    input: rpackedfloat_ptr,
+    output: rpackedfloat_ptr
+): void {
+    let i: int = globalIdx.x;
+    if (i < 9) {
+        let x: float = input[i];
+        output[i] = Accel.sigmoid(x);
+        output[i + 9] = Accel.relu(x);
+        output[i + 18] = Accel.relu(Accel.sigmoid(x) * 2.0 - 1.0);
+    }
+}
+
+func main() {
+    let input = Packed.float32(9);
+    let output = Packed.float32(27);
+    let positive_inf = 1.0 / 0.0;
+    let negative_inf = -1.0 / 0.0;
+    let nan = 0.0 / 0.0;
+    input[0] = negative_inf;
+    input[1] = -100.0;
+    input[2] = -2.0;
+    input[3] = -0.0;
+    input[4] = 0.0;
+    input[5] = 2.0;
+    input[6] = 100.0;
+    input[7] = positive_inf;
+    input[8] = nan;
+    Accel.copyToAccel(input, 0, math_input, 0, 36);
+    math_micro<<<1, 9>>>(math_input, math_output);
+    Accel.copyFromAccel(math_output, 0, output, 0, 108);
+
+    var ok = 1;
+    if (output[0] != 0.0) { ok = 0; }
+    if (Math.abs(output[2] - 0.11920292) > 0.00001) { ok = 0; }
+    if (output[3] != 0.5) { ok = 0; }
+    if (output[4] != 0.5) { ok = 0; }
+    if (Math.abs(output[5] - 0.88079708) > 0.00001) { ok = 0; }
+    if (output[7] != 1.0) { ok = 0; }
+    if (output[8] == output[8]) { ok = 0; }
+
+    if (output[9] != 0.0) { ok = 0; }
+    if (output[11] != 0.0) { ok = 0; }
+    if (1.0 / output[12] < 0.0) { ok = 0; }
+    if (1.0 / output[13] < 0.0) { ok = 0; }
+    if (output[14] != 2.0) { ok = 0; }
+    if (output[16] != positive_inf) { ok = 0; }
+    if (output[17] == output[17]) { ok = 0; }
+
+    if (output[20] != 0.0) { ok = 0; }
+    if (Math.abs(output[23] - 0.76159416) > 0.00002) { ok = 0; }
+    if (output[26] == output[26]) { ok = 0; }
+    print(ok);
+}

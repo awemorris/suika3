@@ -1,0 +1,275 @@
+require operators;
+
+func normSafeName(name, tensorId) {
+    var result = "";
+    var count = String.charCount(name);
+    for (i in 0..count) {
+        var code = String.charCodeAt(name, i);
+        var allowed = (code >= 65 && code <= 90) ||
+                      (code >= 97 && code <= 122) ||
+                      (code >= 48 && code <= 57) || code == 95;
+        if (allowed) { result = result + String.substring(name, i, 1); }
+        else { result = result + "_"; }
+    }
+    if (result == "") { result = "tensor"; }
+    var first = String.charCodeAt(result, 0);
+    if (first >= 48 && first <= 57) { result = "_" + result; }
+    return result + "_t" + tensorId;
+}
+
+func normTensor(id, name, role, dtype, shape, storageId, sourceTensor) {
+    var stride = contiguousStride(shape, "tensor '" + name + "'");
+    var constantInts = [];
+    var isConstant = role == "initializer";
+    if (isConstant && (dtype == "int32" || dtype == "int64")) {
+        if (dtype == "int32") { constantInts = Array.copy(sourceTensor.int32Values); }
+        else { constantInts = Array.copy(sourceTensor.int64Values); }
+    }
+    return {
+        id: id, diagnosticName: name, safeName: normSafeName(name, id),
+        storageId: storageId, role: role, dtype: dtype,
+        rank: Array.size(shape), shape: shapeCopy(shape), stride: stride,
+        offset: 0L, layout: defaultLayout(shape), producerNode: -1,
+        consumerNodes: [], firstUse: -1, lastUse: -1,
+        isConstant: isConstant, constantInts: constantInts,
+        constantFloatBits: [],
+        sourceTensor: sourceTensor, alias: false
+    };
+}
+
+func normInitializerDtype(tensor) {
+    return opTensorDtype(tensor);
+}
+
+func normDeclaredShape(value) {
+    var result = [];
+    var shape = value.type.tensor.shape;
+    for (i in 0..Array.size(shape)) { Array.push(result, shape[i].value); }
+    return result;
+}
+
+func normCheckDeclared(model, tensorByName) {
+    for (i in 0..Array.size(model.graph.valueInfo)) {
+        var info = model.graph.valueInfo[i];
+        if (!Dict.hasKey(tensorByName, info.name)) {
+            normFail("value_info '" + info.name + "' has no normalized tensor.");
+        }
+        var tensor = tensorByName[info.name];
+        var declared = normDeclaredShape(info);
+        if (!shapeEqual(tensor.shape, declared)) {
+            normFail("value_info '" + info.name +
+                     "' inferred shape differs from its declaration.");
+        }
+    }
+    var outputInfo = model.graph.outputs[0];
+    var outputTensor = tensorByName[outputInfo.name];
+    if (!shapeEqual(outputTensor.shape, normDeclaredShape(outputInfo))) {
+        normFail("graph output '" + outputInfo.name +
+                 "' inferred shape differs from its declaration.");
+    }
+}
+
+func onnxNormalizeModel(model) {
+    var graph = {
+        opset: model.defaultOpset, tensors: [], nodes: [],
+        tensorByName: {}, storageElements: {}, nextStorage: 0,
+        inputTensor: -1, outputTensor: -1,
+        irVersion: model.irVersion, sourceBytes: model.sourceBytes,
+        sourceSha256: Hash.sha256(model.sourceBytes)
+    };
+
+    var input = normTensor(0, model.input.name, "input", "float32",
+                           model.input.shape, graph.nextStorage, 0);
+    graph.nextStorage = graph.nextStorage + 1;
+    Array.push(graph.tensors, input);
+    graph.tensorByName[input.diagnosticName] = input;
+    graph.storageElements["s" + input.storageId] = model.input.elements;
+    graph.inputTensor = input.id;
+
+    for (i in 0..Array.size(model.graph.initializers)) {
+        var source = model.graph.initializers[i];
+        var dtype = normInitializerDtype(source);
+        var storage = -1;
+        if (dtype == "float32") {
+            storage = graph.nextStorage;
+            graph.nextStorage = graph.nextStorage + 1;
+        }
+        var tensor = normTensor(Array.size(graph.tensors), source.name,
+                                "initializer", dtype, source.dims,
+                                storage, source);
+        Array.push(graph.tensors, tensor);
+        graph.tensorByName[source.name] = tensor;
+        if (storage >= 0) {
+            graph.storageElements["s" + storage] = source.elements;
+        }
+    }
+
+    for (i in 0..Array.size(model.graph.nodes)) {
+        var sourceNode = model.graph.nodes[i];
+        var inputTensors = [];
+        var inputIds = [];
+        for (j in 0..Array.size(sourceNode.inputs)) {
+            var inputName = sourceNode.inputs[j];
+            if (inputName != "") {
+                var inputTensor = graph.tensorByName[inputName];
+                Array.push(inputTensors, inputTensor);
+                Array.push(inputIds, inputTensor.id);
+            }
+        }
+        var inferred = onnxInferOperator(sourceNode, i, model.defaultOpset,
+                                         inputTensors);
+        var outputName = sourceNode.outputs[0];
+        var storageId = -1;
+        var role = "temporary";
+        if (inferred.alias) {
+            storageId = inputTensors[inferred.aliasInput].storageId;
+            role = "alias";
+        } else if (inferred.folded) {
+            role = "constant";
+        } else {
+            storageId = graph.nextStorage;
+            graph.nextStorage = graph.nextStorage + 1;
+        }
+        var output = {
+            id: Array.size(graph.tensors), diagnosticName: outputName,
+            safeName: normSafeName(outputName, Array.size(graph.tensors)),
+            storageId: storageId, role: role, dtype: inferred.dtype,
+            rank: Array.size(inferred.shape), shape: shapeCopy(inferred.shape),
+            stride: shapeCopy(inferred.stride), offset: inferred.offset,
+            layout: inferred.layout, producerNode: i, consumerNodes: [],
+            firstUse: -1, lastUse: -1, isConstant: inferred.folded,
+            constantInts: [], constantFloatBits: [],
+            sourceTensor: 0, alias: inferred.alias
+        };
+        if (inferred.alias) {
+            var aliasSource = inputTensors[inferred.aliasInput];
+            output.isConstant = aliasSource.isConstant;
+            output.constantInts = Array.copy(aliasSource.constantInts);
+            output.constantFloatBits = Array.copy(aliasSource.constantFloatBits);
+            output.sourceTensor = aliasSource.sourceTensor;
+        }
+        if (inferred.folded) {
+            output.constantInts = Array.copy(inferred.constantInts);
+            output.constantFloatBits = Array.copy(inferred.constantFloatBits);
+            output.sourceTensor = inferred.sourceTensor;
+        }
+        if (inferred.alias) {
+            if (storageId >= 0) {
+                var capacity = graph.storageElements["s" + storageId];
+                if (reachableEnd(output.shape, output.stride, output.offset,
+                                 "alias '" + outputName + "'") > capacity) {
+                    opFail(sourceNode, i, model.defaultOpset,
+                           "alias view exceeds underlying storage.");
+                }
+            }
+        } else if (!inferred.folded) {
+            graph.storageElements["s" + storageId] =
+                shapeElements(output.shape, "output '" + outputName + "'");
+        }
+        Array.push(graph.tensors, output);
+        graph.tensorByName[outputName] = output;
+        var normalizedNode = {
+            id: i, diagnosticName: sourceNode.name,
+            opType: sourceNode.opType, domain: "ai.onnx",
+            opset: model.defaultOpset, generation: inferred.generation,
+            family: inferred.family, inputs: inputIds, outputs: [output.id],
+            attrs: inferred.attrs
+        };
+        Array.push(graph.nodes, normalizedNode);
+        for (j in 0..Array.size(inputTensors)) {
+            Array.push(inputTensors[j].consumerNodes, i);
+        }
+    }
+
+    normCheckDeclared(model, graph.tensorByName);
+    var graphOutput = graph.tensorByName[model.output.name];
+    graphOutput.role = "output";
+    graph.outputTensor = graphOutput.id;
+
+    for (i in 0..Array.size(graph.tensors)) {
+        var tensor = graph.tensors[i];
+        if (Array.size(tensor.consumerNodes) > 0) {
+            tensor.firstUse = tensor.consumerNodes[0];
+            tensor.lastUse = tensor.consumerNodes[Array.size(tensor.consumerNodes) - 1];
+        }
+        if (tensor.id == graph.outputTensor) {
+            if (tensor.firstUse < 0) { tensor.firstUse = Array.size(graph.nodes); }
+            tensor.lastUse = Array.size(graph.nodes);
+        }
+    }
+    return graph;
+}
+
+func dumpEscape(value) {
+    var result = "\"";
+    var count = String.charCount(value);
+    for (i in 0..count) {
+        var code = String.charCodeAt(value, i);
+        if (code == 34) { result = result + "\\\""; }
+        else if (code == 92) { result = result + "\\\\"; }
+        else if (code == 10) { result = result + "\\n"; }
+        else if (code == 13) { result = result + "\\r"; }
+        else if (code == 9) { result = result + "\\t"; }
+        else if (code < 32) { result = result + "?"; }
+        else { result = result + String.substring(value, i, 1); }
+    }
+    return result + "\"";
+}
+
+func dumpArray(values) {
+    var result = "[";
+    for (i in 0..Array.size(values)) {
+        if (i != 0) { result = result + ","; }
+        result = result + values[i];
+    }
+    return result + "]";
+}
+
+func dumpAttrs(attrs) {
+    var result = "[";
+    for (i in 0..Array.size(attrs)) {
+        if (i != 0) { result = result + ","; }
+        var attr = attrs[i];
+        result = result + attr.name + ":" + attr.type + "=";
+        if (attr.type == "ints" || attr.type == "float32_bits_list") {
+            result = result + dumpArray(attr.value);
+        }
+        else if (attr.type == "string") { result = result + dumpEscape(attr.value); }
+        else { result = result + attr.value; }
+    }
+    return result + "]";
+}
+
+func onnxNormalizedDump(graph) {
+    var result = "graph opset=" + graph.opset + " tensors=" +
+                 Array.size(graph.tensors) + " nodes=" + Array.size(graph.nodes) +
+                 " input=t" + graph.inputTensor + " output=t" + graph.outputTensor + "\n";
+    for (i in 0..Array.size(graph.tensors)) {
+        var tensor = graph.tensors[i];
+        result = result + "tensor t" + tensor.id + " storage=" + tensor.storageId +
+                 " role=" + tensor.role + " dtype=" + tensor.dtype +
+                 " name=" + dumpEscape(tensor.diagnosticName) +
+                 " safe=" + tensor.safeName + " shape=" + dumpArray(tensor.shape) +
+                 " stride=" + dumpArray(tensor.stride) + " offset=" + tensor.offset +
+                 " layout=" + tensor.layout + " producer=" + tensor.producerNode +
+                 " consumers=" + dumpArray(tensor.consumerNodes) +
+                 " use=" + tensor.firstUse + ":" + tensor.lastUse;
+        if (tensor.isConstant && Array.size(tensor.constantInts) > 0) {
+            result = result + " constant_ints=" + dumpArray(tensor.constantInts);
+        }
+        if (tensor.isConstant && Array.size(tensor.constantFloatBits) > 0) {
+            result = result + " constant_float32_bits=" +
+                     dumpArray(tensor.constantFloatBits);
+        }
+        result = result + "\n";
+    }
+    for (i in 0..Array.size(graph.nodes)) {
+        var node = graph.nodes[i];
+        result = result + "node n" + node.id + " op=" + node.domain + "::" +
+                 node.opType + "@" + node.generation + " imported=" + node.opset +
+                 " family=" + node.family + " name=" + dumpEscape(node.diagnosticName) +
+                 " inputs=" + dumpArray(node.inputs) + " outputs=" +
+                 dumpArray(node.outputs) + " attrs=" + dumpAttrs(node.attrs) + "\n";
+    }
+    return result;
+}

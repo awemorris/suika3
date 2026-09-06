@@ -1,0 +1,1357 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3, "minor": 22, "patch": 0
+    },
+    "configurePresets": [
+        {
+            "name":           "windows-vs2022-x86",
+            "displayName":    "VS2022 MSVC x86",
+            "generator":      "Visual Studio 17 2022",
+            "architecture":   "Win32",
+            "toolset":        "v143",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON",
+                "PLAYFIELD_ENABLE_WEBSERVER": "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name":           "windows-vs2022-x64",
+            "displayName":    "VS2022 MSVC x64",
+            "generator":      "Visual Studio 17 2022",
+            "architecture":   "x64",
+            "toolset":        "v143",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON",
+                "PLAYFIELD_ENABLE_WEBSERVER": "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name":           "windows-vs2022-arm64",
+            "displayName":    "VS2022 MSVC arm64",
+            "generator":      "Visual Studio 17 2022",
+            "architecture":   "arm64",
+            "toolset":        "v143",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON",
+                "PLAYFIELD_ENABLE_WEBSERVER": "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name":           "windows-vs2022-gdk-desktop",
+            "displayName":    "VS2022 GDK Windows",
+            "generator":      "Visual Studio 17 2022",
+            "architecture":   "Gaming.Desktop.x64",
+            "toolset":        "v143",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "PLAYFIELD_TARGET_GDK_WINDOWS": "ON",
+                "PLAYFIELD_ENABLE_JIT":         "OFF",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
+                "PLAYFIELD_ENABLE_I18N":        "OFF",
+                "PLAYFIELD_ENABLE_PACK":        "OFF",
+                "PLAYFIELD_ENABLE_BCC":         "OFF",
+                "PLAYFIELD_ENABLE_AOTC":        "OFF"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name":           "windows-vs2022-gdk-xbox-xs",
+            "displayName":    "VS2022 GDK Xbox Series X|S",
+            "generator":      "Visual Studio 17 2022",
+            "architecture":   "Gaming.Xbox.Scarlett",
+            "toolset":        "v143",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "PLAYFIELD_TARGET_GDK_WINDOWS": "ON",
+                "PLAYFIELD_ENABLE_JIT":         "OFF",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
+                "PLAYFIELD_ENABLE_I18N":        "OFF",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
+                "PLAYFIELD_ENABLE_PACK":        "OFF",
+                "PLAYFIELD_ENABLE_BCC":         "OFF",
+                "PLAYFIELD_ENABLE_AOTC":        "OFF"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name":           "windows-vs2022-uwp",
+            "displayName":    "VS2022 UWP x64",
+            "generator":      "Visual Studio 17 2022",
+            "architecture":   "x64",
+            "toolset":        "v143",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_SYSTEM_NAME":                        "WindowsStore",
+                "CMAKE_SYSTEM_VERSION":                     "10.0",
+                "CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION": "10.0",
+                "PLAYFIELD_TARGET_UWP":                     "ON",
+                "PLAYFIELD_ENABLE_JIT":                     "OFF",
+                "PLAYFIELD_ENABLE_OPTIMIZER":               "ON",
+                "PLAYFIELD_ENABLE_I18N":                    "OFF",
+                "PLAYFIELD_ENABLE_BIN":                     "ON",
+                "PLAYFIELD_ENABLE_PACK":                    "OFF",
+                "PLAYFIELD_ENABLE_BCC":                     "OFF",
+                "PLAYFIELD_ENABLE_AOTC":                    "OFF"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name":           "windows-vs2026-x86",
+            "displayName":    "VS2026 MSVC x86",
+            "generator":      "Visual Studio 18 2026",
+            "architecture":   "Win32",
+            "toolset":        "v145",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "PLAYFIELD_ENABLE_JIT":         "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
+                "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
+                "PLAYFIELD_ENABLE_PACK":        "ON",
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON",
+                "PLAYFIELD_ENABLE_WEBSERVER":   "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name":           "windows-vs2026-x64",
+            "displayName":    "VS2026 MSVC x64",
+            "generator":      "Visual Studio 18 2026",
+            "architecture":   "x64",
+            "toolset":        "v145",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "PLAYFIELD_ENABLE_JIT":         "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
+                "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
+                "PLAYFIELD_ENABLE_PACK":        "ON",
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON",
+                "PLAYFIELD_ENABLE_WEBSERVER":   "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name":           "windows-vs2026-arm64",
+            "displayName":    "VS2026 MSVC arm64",
+            "generator":      "Visual Studio 18 2026",
+            "architecture":   "arm64",
+            "toolset":        "v145",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "PLAYFIELD_ENABLE_JIT":         "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
+                "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
+                "PLAYFIELD_ENABLE_PACK":        "ON",
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON",
+                "PLAYFIELD_ENABLE_WEBSERVER":   "ON"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name":           "windows-vs2026-uwp",
+            "displayName":    "VS2026 UWP x64",
+            "generator":      "Visual Studio 18 2026",
+            "architecture":   "x64",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_SYSTEM_NAME":                        "WindowsStore",
+                "CMAKE_SYSTEM_VERSION":                     "10.0",
+                "CMAKE_VS_WINDOWS_TARGET_PLATFORM_VERSION": "10.0",
+                "PLAYFIELD_TARGET_UWP":                     "ON",
+                "PLAYFIELD_ENABLE_JIT":                     "OFF",
+                "PLAYFIELD_ENABLE_OPTIMIZER":               "ON",
+                "PLAYFIELD_ENABLE_I18N":                    "OFF",
+                "PLAYFIELD_ENABLE_BIN":                     "ON",
+                "PLAYFIELD_ENABLE_PACK":                    "OFF",
+                "PLAYFIELD_ENABLE_BCC":                     "OFF",
+                "PLAYFIELD_ENABLE_AOTC":                    "OFF"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name":           "windows-vs2026-gdk-desktop",
+            "displayName":    "VS2026 GDK Windows",
+            "generator":      "Visual Studio 18 2026",
+            "architecture":   "Gaming.Desktop.x64",
+            "toolset":        "v145",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "PLAYFIELD_TARGET_GDK_WINDOWS": "ON",
+                "PLAYFIELD_ENABLE_JIT":         "OFF",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
+                "PLAYFIELD_ENABLE_I18N":        "OFF",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
+                "PLAYFIELD_ENABLE_PACK":        "OFF",
+                "PLAYFIELD_ENABLE_BCC":         "OFF",
+                "PLAYFIELD_ENABLE_AOTC":        "OFF"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name":           "windows-vs2026-gdk-xbox-xs",
+            "displayName":    "VS2026 GDK Xbox Series X|S",
+            "generator":      "Visual Studio 18 2026",
+            "architecture":   "Gaming.Xbox.Scarlett",
+            "toolset":        "v145",
+            "binaryDir":      "${sourceDir}/out/build/${presetName}",
+            "cacheVariables": {
+                "PLAYFIELD_TARGET_GDK_XBOX_XS": "ON",
+                "PLAYFIELD_ENABLE_JIT":         "OFF",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
+                "PLAYFIELD_ENABLE_I18N":        "OFF",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
+                "PLAYFIELD_ENABLE_PACK":        "OFF",
+                "PLAYFIELD_ENABLE_BCC":         "OFF",
+                "PLAYFIELD_ENABLE_AOTC":        "OFF"
+            },
+            "condition": {
+                "type": "equals",
+                "lhs": "${hostSystemName}",
+                "rhs": "Windows"
+            }
+        },
+        {
+            "name":           "windows-mingw-x86",
+            "displayName":    "MinGW x86",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-mingw-x86",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-x86.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
+                "PLAYFIELD_TARGET_WINDOWS":    "ON",
+                "PLAYFIELD_ENABLE_INSTALL":    "ON",
+                "PLAYFIELD_ENABLE_JIT":        "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON",
+                "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
+                "PLAYFIELD_ENABLE_PACK":       "ON",
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON",
+                "PLAYFIELD_ENABLE_WEBSERVER":  "ON"
+            }
+        },
+        {
+            "name":           "windows-mingw-x86_64",
+            "displayName":    "MinGW x86_64",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-mingw-x86_64",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-x86_64.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
+                "PLAYFIELD_TARGET_WINDOWS":    "ON",
+                "PLAYFIELD_ENABLE_INSTALL":    "ON",
+                "PLAYFIELD_ENABLE_JIT":        "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON",
+                "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
+                "PLAYFIELD_ENABLE_PACK":       "ON",
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON",
+                "PLAYFIELD_ENABLE_WEBSERVER":  "ON"
+            }
+        },
+        {
+            "name":           "windows-mingw-win95",
+            "displayName":    "MinGW Windows 95",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-mingw-win95",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-win95.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
+                "PLAYFIELD_TARGET_WINDOWS95":  "ON",
+                "PLAYFIELD_ENABLE_JIT":        "OFF",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON",
+                "PLAYFIELD_ENABLE_I18N":       "OFF",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
+                "PLAYFIELD_ENABLE_PACK":       "ON",
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON",
+                "PLAYFIELD_ENABLE_WEBSERVER":  "OFF"
+            }
+        },
+        {
+            "name":           "windows-mingw-arm64",
+            "displayName":    "MinGW Arm64",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-mingw-arm64",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/mingw-arm64.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
+                "PLAYFIELD_TARGET_WINDOWS":    "ON",
+                "PLAYFIELD_ENABLE_INSTALL":    "ON",
+                "PLAYFIELD_ENABLE_JIT":        "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON",
+                "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
+                "PLAYFIELD_ENABLE_PACK":       "ON",
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON",
+                "PLAYFIELD_ENABLE_WEBSERVER":  "ON"
+            }
+        },
+        {
+            "name":           "macos",
+            "displayName":    "macOS",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-macos",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/macos.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
+                "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
+                "CMAKE_OSX_ARCHITECTURES":     "x86_64;arm64",
+                "PLAYFIELD_TARGET_MACOS":      "ON",
+                "PLAYFIELD_ENABLE_JIT":        "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON",
+                "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
+                "PLAYFIELD_ENABLE_PACK":       "ON",
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
+            }
+        },
+        {
+            "name":           "macos-cli",
+            "displayName":    "macOS",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-macos-cli",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/macos.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
+                "CMAKE_OSX_DEPLOYMENT_TARGET": "10.11",
+                "CMAKE_OSX_ARCHITECTURES":     "x86_64;arm64",
+                "PLAYFIELD_TARGET_MACOS_CLI":  "ON",
+                "PLAYFIELD_ENABLE_INSTALL":    "ON",
+                "PLAYFIELD_ENABLE_JIT":        "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON",
+                "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
+                "PLAYFIELD_ENABLE_CONSOLE":    "ON",
+                "PLAYFIELD_ENABLE_PACK":       "ON",
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
+            }
+        },
+        {
+            "name":           "linux",
+            "displayName":    "Linux Wayland/X11 Dual OpenGL",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-linux",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_LINUX":     "ON",
+                "PLAYFIELD_ENABLE_INSTALL":   "ON",
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON"
+            }
+        },
+        {
+            "name":           "linux-debug",
+            "displayName":    "Linux Wayland/X11 Dual OpenGL",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-linux-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Debug",
+                "PLAYFIELD_TARGET_LINUX":     "ON",
+                "PLAYFIELD_ENABLE_INSTALL":   "ON",
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON"
+            }
+        },
+        {
+            "name":           "linux-debian",
+            "displayName":    "Linux Wayland/X11 Dual OpenGL",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-linux-debian",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":              "Release",
+                "PLAYFIELD_TARGET_LINUX":        "ON",
+                "PLAYFIELD_ENABLE_SHARED":       "ON",
+                "PLAYFIELD_ENABLE_DIST":         "ON",
+                "PLAYFIELD_ENABLE_INSTALL":      "ON",
+                "PLAYFIELD_ENABLE_JIT":          "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":    "ON",
+                "PLAYFIELD_ENABLE_BIN":          "ON",
+                "PLAYFIELD_ENABLE_I18N":         "ON",
+                "PLAYFIELD_ENABLE_I18N_LIBINTL": "ON",
+                "PLAYFIELD_ENABLE_PACK":         "ON",
+                "PLAYFIELD_ENABLE_BCC":          "ON",
+                "PLAYFIELD_ENABLE_AOTC":         "ON",
+                "PLAYFIELD_ENABLE_UNSAFE":       "ON"
+            }
+        },
+        {
+            "name":           "linux-x11",
+            "displayName":    "Linux X11-only OpenGL",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-linux-x11",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_LINUX":     "ON",
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON"
+            }
+        },
+        {
+            "name":           "linux-wayland",
+            "displayName":    "Linux Wayland-only OpenGL",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-linux-wayland",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":               "Release",
+                "PLAYFIELD_TARGET_LINUX_WAYLAND": "ON",
+                "PLAYFIELD_ENABLE_JIT":           "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":     "ON",
+                "PLAYFIELD_ENABLE_I18N":          "ON",
+                "PLAYFIELD_ENABLE_BIN":           "ON",
+                "PLAYFIELD_ENABLE_PACK":          "ON",
+                "PLAYFIELD_ENABLE_BCC":           "ON",
+                "PLAYFIELD_ENABLE_AOTC":          "ON"
+            }
+        },
+        {
+            "name":           "linux-dri",
+            "displayName":    "Linux DRI OpenGL ES",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-linux-dri",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_LINUX_GBM": "ON",
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON"
+            }
+        },
+        {
+            "name":           "linux-dri-rot90",
+            "displayName":    "Linux DRI OpenGL ES Rotate",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-linux-dri-rot90",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_LINUX_GBM": "ON",
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON"
+            }
+        },
+        {
+            "name":           "linux-fbdev",
+            "displayName":    "Linux fbdev Soft3D",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-linux-fbdev",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":             "Release",
+                "PLAYFIELD_TARGET_LINUX_FBDEV": "ON",
+                "PLAYFIELD_ENABLE_JIT":         "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
+                "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
+                "PLAYFIELD_ENABLE_PACK":        "ON",
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON"
+            }
+        },
+        {
+            "name":           "linux-x11soft",
+            "displayName":    "Linux X11 Soft3D",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-linux-x11soft",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":               "Release",
+                "PLAYFIELD_TARGET_LINUX_X11SOFT": "ON",
+                "PLAYFIELD_ENABLE_JIT":           "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":     "ON",
+                "PLAYFIELD_ENABLE_I18N":          "ON",
+                "PLAYFIELD_ENABLE_BIN":           "ON",
+                "PLAYFIELD_ENABLE_PACK":          "ON",
+                "PLAYFIELD_ENABLE_BCC":           "ON",
+                "PLAYFIELD_ENABLE_AOTC":          "ON"
+            }
+        },
+        {
+            "name":           "ios-device",
+            "displayName":    "iOS Device",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-ios-device",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/ios-device.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_IOS":       "ON",
+                "PLAYFIELD_ENABLE_STATIC":    "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
+            }
+        },
+        {
+            "name":           "ios-simulator",
+            "displayName":    "iOS Simulator",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-ios-simulator",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/ios-simulator.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_IOS":       "ON",
+                "PLAYFIELD_ENABLE_STATIC":    "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
+            }
+        },
+        {
+            "name":           "android-x86",
+            "displayName":    "Android x86",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-android-x86",
+            "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "CMAKE_SHARED_LINKER_FLAGS":  "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
+                "ANDROID_PLATFORM":           "30",
+                "ANDROID_ABI":                "x86",
+                "PLAYFIELD_TARGET_ANDROID":   "ON",
+                "PLAYFIELD_ENABLE_STATIC":    "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
+            }
+        },
+        {
+            "name":           "android-x86_64",
+            "displayName":    "Android x86_64",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-android-x86_64",
+            "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "CMAKE_SHARED_LINKER_FLAGS":  "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
+                "ANDROID_PLATFORM":           "30",
+                "ANDROID_ABI":                "x86_64",
+                "PLAYFIELD_TARGET_ANDROID":   "ON",
+                "PLAYFIELD_ENABLE_STATIC":    "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
+            }
+        },
+        {
+            "name":           "android-armv7",
+            "displayName":    "Android ARMv7",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-android-armv7",
+            "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "CMAKE_SHARED_LINKER_FLAGS":  "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
+                "ANDROID_PLATFORM":           "30",
+                "ANDROID_ABI":                "armeabi-v7a",
+                "PLAYFIELD_TARGET_ANDROID":   "ON",
+                "PLAYFIELD_ENABLE_STATIC":    "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
+            }
+        },
+        {
+            "name":           "android-arm64",
+            "displayName":    "Android Arm64",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-android-arm64",
+            "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "CMAKE_SHARED_LINKER_FLAGS":  "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
+                "ANDROID_PLATFORM":           "30",
+                "ANDROID_ABI":                "arm64-v8a",
+                "PLAYFIELD_TARGET_ANDROID":   "ON",
+                "PLAYFIELD_ENABLE_STATIC":    "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
+            }
+        },
+        {
+            "name":           "android-riscv64",
+            "displayName":    "Android RISC-V 64",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-android-riscv64",
+            "toolchainFile":  "$env{ANDROID_NDK_ROOT}/build/cmake/android.toolchain.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "CMAKE_SHARED_LINKER_FLAGS":  "-Wl,--hash-style=both -Wl,-z,max-page-size=16384",
+                "ANDROID_PLATFORM":           "30",
+                "ANDROID_ABI":                "riscv64",
+                "PLAYFIELD_TARGET_ANDROID":   "ON",
+                "PLAYFIELD_ENABLE_STATIC":    "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
+            }
+        },
+        {
+            "name":           "openharmony-x86_64",
+            "displayName":    "OpenHarmony x86_64",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-openharmony-x86_64",
+            "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":             "Release",
+                "OHOS_PLATFORM_LEVEL":          "12",
+                "OHOS_ARCH":                    "x86_64",
+                "PLAYFIELD_TARGET_OPENHARMONY": "ON",
+                "PLAYFIELD_ENABLE_STATIC":      "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":     "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON"
+            }
+        },
+        {
+            "name":           "openharmony-arm64",
+            "displayName":    "OpenHarmony Arm64",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-openharmony-arm64",
+            "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":             "Release",
+                "OHOS_PLATFORM_LEVEL":          "12",
+                "OHOS_ARCH":                    "arm64-v8a",
+                "PLAYFIELD_TARGET_OPENHARMONY": "ON",
+                "PLAYFIELD_ENABLE_STATIC":      "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":     "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON"
+            }
+        },
+        {
+            "name":           "openharmony-armv7",
+            "displayName":    "OpenHarmony ARMv7",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-openharmony-armv7",
+            "toolchainFile":  "$env{OH_NATIVE_SDK_ROOT}/build/cmake/ohos.toolchain.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":             "Release",
+                "OHOS_PLATFORM_LEVEL":          "12",
+                "OHOS_ARCH":                    "armeabi-v7a",
+                "PLAYFIELD_TARGET_OPENHARMONY": "ON",
+                "PLAYFIELD_ENABLE_STATIC":      "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":     "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON"
+            }
+        },
+        {
+            "name":           "wasm",
+            "displayName":    "Wasm",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-wasm",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/wasm.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_WASM":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
+            }
+        },
+        {
+            "name":           "wasm-local",
+            "displayName":    "Wasm Local File",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-wasm-local",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/wasm.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
+                "PLAYFIELD_TARGET_WASM_LOCAL": "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON"
+            }
+        },
+        {
+            "name":           "unity-win64",
+            "displayName":    "Unity Win64",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-unity-win64",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-win64.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_UNITY":     "ON",
+                "PLAYFIELD_ENABLE_SHARED":    "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
+            }
+        },
+        {
+            "name":           "unity-winarm64",
+            "displayName":    "Unity Win Arm64",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-unity-winarm64",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-winarm64.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_UNITY":     "ON",
+                "PLAYFIELD_ENABLE_SHARED":    "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
+            }
+        },
+        {
+            "name":           "unity-switch",
+            "displayName":    "Unity Switch",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-unity-switch",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-switch.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":              "Release",
+                "PLAYFIELD_TARGET_UNITY":        "ON",
+                "PLAYFIELD_TARGET_UNITY_SWITCH": "ON",
+                "PLAYFIELD_ENABLE_STATIC":       "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":      "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":    "ON"
+            }
+        },
+        {
+            "name":           "unity-ps5",
+            "displayName":    "Unity PS5",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-unity-ps5",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-ps5.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_UNITY":     "ON",
+                "PLAYFIELD_TARGET_UNITY_PS5": "ON",
+                "PLAYFIELD_ENABLE_STATIC":    "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
+            }
+        },
+        {
+            "name":           "unity-xbox",
+            "displayName":    "Unity Xbox X|S",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-unity-xbox",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/unity-xbox.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
+                "PLAYFIELD_TARGET_UNITY":      "ON",
+                "PLAYFIELD_TARGET_UNITY_XBOX": "ON",
+                "PLAYFIELD_ENABLE_STATIC":     "ON",
+                "PLAYFIELD_ENABLE_APPMAIN":    "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON"
+            }
+        },
+        {
+            "name":           "freebsd",
+            "displayName":    "FreeBSD Wayland/X11 Dual OpenGL",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-freebsd",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_FREEBSD":   "ON",
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON"
+            }
+        },
+        {
+            "name":           "freebsd-x11",
+            "displayName":    "FreeBSD X11-only OpenGL",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-freebsd-x11",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":             "Release",
+                "PLAYFIELD_TARGET_FREEBSD_X11": "ON",
+                "PLAYFIELD_ENABLE_JIT":         "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
+                "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
+                "PLAYFIELD_ENABLE_PACK":        "ON",
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON"
+            }
+        },
+        {
+            "name":           "freebsd-wayland",
+            "displayName":    "FreeBSD Wayland",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-freebsd-wayland",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":                  "Release",
+                "PLAYFIELD_TARGET_FREEBSD_WALYLAND": "ON",
+                "PLAYFIELD_ENABLE_JIT":              "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":        "ON",
+                "PLAYFIELD_ENABLE_I18N":             "ON",
+                "PLAYFIELD_ENABLE_BIN":              "ON",
+                "PLAYFIELD_ENABLE_PACK":             "ON",
+                "PLAYFIELD_ENABLE_BCC":              "ON",
+                "PLAYFIELD_ENABLE_AOTC":             "ON"
+            }
+        },
+        {
+            "name":           "freebsd-x11soft",
+            "displayName":    "FreeBSD X11 Soft3D",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-freebsd-x11soft",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":                  "Release",
+                "PLAYFIELD_TARGET_FREEBSD_X11SOFT":  "ON",
+                "PLAYFIELD_ENABLE_JIT":              "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":        "ON",
+                "PLAYFIELD_ENABLE_I18N":             "ON",
+                "PLAYFIELD_ENABLE_BIN":              "ON",
+                "PLAYFIELD_ENABLE_PACK":             "ON",
+                "PLAYFIELD_ENABLE_BCC":              "ON",
+                "PLAYFIELD_ENABLE_AOTC":             "ON"
+            }
+        },
+        {
+            "name":           "netbsd",
+            "displayName":    "NetBSD",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-netbsd",
+            "cacheVariables": {
+                "PLAYFIELD_TARGET_NETBSD": "ON",
+                "PLAYFIELD_ENABLE_JIT":    "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":        "ON",
+                "PLAYFIELD_ENABLE_I18N":   "ON",
+                "PLAYFIELD_ENABLE_BIN":    "ON",
+                "PLAYFIELD_ENABLE_PACK":   "ON",
+                "PLAYFIELD_ENABLE_BCC":    "ON",
+                "PLAYFIELD_ENABLE_AOTC":   "ON"
+            }
+        },
+        {
+            "name":           "netbsd-x11soft",
+            "displayName":    "NetBSD",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-netbsd-x11soft",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":                 "Release",
+                "PLAYFIELD_TARGET_NETBSD_X11SOFT":  "ON",
+                "PLAYFIELD_ENABLE_JIT":             "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":       "ON",
+                "PLAYFIELD_ENABLE_I18N":            "ON",
+                "PLAYFIELD_ENABLE_BIN":             "ON",
+                "PLAYFIELD_ENABLE_PACK":            "ON",
+                "PLAYFIELD_ENABLE_BCC":             "ON",
+                "PLAYFIELD_ENABLE_AOTC":            "ON"
+            }
+        },
+        {
+            "name":           "openbsd",
+            "displayName":    "OpenBSD X11 OpenGL",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-openbsd",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_OPENBSD":   "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON"
+            }
+        },
+        {
+            "name":           "openbsd-x11soft",
+            "displayName":    "OpenBSD X11 Soft3D",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-openbsd-x11soft",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":                 "Release",
+                "PLAYFIELD_TARGET_OPENBSD_X11SOFT": "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":       "ON",
+                "PLAYFIELD_ENABLE_I18N":            "ON",
+                "PLAYFIELD_ENABLE_BIN":             "ON",
+                "PLAYFIELD_ENABLE_PACK":            "ON",
+                "PLAYFIELD_ENABLE_BCC":             "ON",
+                "PLAYFIELD_ENABLE_AOTC":            "ON"
+            }
+        },
+        {
+            "name":           "solaris11",
+            "displayName":    "Solaris 11 X11 Soft3D",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-solaris11",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":            "Release",
+                "CMAKE_C_COMPILER":            "cc",
+                "CMAKE_CXX_COMPILER":          "CC",
+                "PLAYFIELD_TARGET_SOLARIS11":  "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":  "ON",
+                "PLAYFIELD_ENABLE_I18N":       "ON",
+                "PLAYFIELD_ENABLE_BIN":        "ON",
+                "PLAYFIELD_ENABLE_PACK":       "ON",
+                "PLAYFIELD_ENABLE_BCC":        "ON",
+                "PLAYFIELD_ENABLE_AOTC":       "ON"
+            }
+        },
+        {
+            "name":           "solaris10",
+            "displayName":    "Solaris 10 X11 Soft3D",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-solaris10",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "CMAKE_C_COMPILER":           "cc",
+                "CMAKE_CXX_COMPILER":         "CC",
+                "PLAYFIELD_TARGET_SOLARIS11": "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON"
+            }
+        },
+        {
+            "name":           "aix",
+            "displayName":    "AIX",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-aix",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":             "Release",
+                "CMAKE_C_COMPILER":             "xlc",
+                "CMAKE_CXX_COMPILER":           "xlc++",
+                "PLAYFIELD_TARGET_GENERICUNIX": "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
+                "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
+                "PLAYFIELD_ENABLE_PACK":        "ON",
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON"
+            }
+        },
+        {
+            "name":           "hpux",
+            "displayName":    "HP-UX",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-hpux",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":             "Release",
+                "CMAKE_C_COMPILER":             "cc",
+                "CMAKE_CXX_COMPILER":           "aCC",
+                "PLAYFIELD_TARGET_GENERICUNIX": "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
+                "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
+                "PLAYFIELD_ENABLE_PACK":        "ON",
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON"
+            }
+        },
+        {
+            "name":           "unix",
+            "displayName":    "Generic Unknown UNIX",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-unix",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":             "Release",
+                "CMAKE_C_COMPILER":             "cc",
+                "CMAKE_CXX_COMPILER":           "c++",
+                "PLAYFIELD_TARGET_GENERICUNIX": "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER":   "ON",
+                "PLAYFIELD_ENABLE_I18N":        "ON",
+                "PLAYFIELD_ENABLE_BIN":         "ON",
+                "PLAYFIELD_ENABLE_PACK":        "ON",
+                "PLAYFIELD_ENABLE_BCC":         "ON",
+                "PLAYFIELD_ENABLE_AOTC":        "ON"
+            }
+        },
+        {
+            "name":           "haiku",
+            "displayName":    "Haiku",
+            "generator":      "Unix Makefiles",
+            "binaryDir":      "${sourceDir}/build-haiku",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "CMAKE_C_COMPILER":           "gcc",
+                "CMAKE_CXX_COMPILER":         "g++",
+                "PLAYFIELD_TARGET_HAIKU":     "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_I18N":      "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON",
+                "PLAYFIELD_ENABLE_PACK":      "ON",
+                "PLAYFIELD_ENABLE_BCC":       "ON",
+                "PLAYFIELD_ENABLE_AOTC":      "ON"
+            }
+        },
+        {
+            "name":           "pc98",
+            "displayName":    "NEC PC-9800 Series DOS/4G OpenWatcom V2",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-pc98",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/openwatcom-dos4gw.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_PC98":      "ON",
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON"
+	    }
+        },
+        {
+            "name":           "pcat",
+            "displayName":    "IBM PC/AT Compatible DOS/4G OpenWatcom V2",
+            "generator":      "Ninja",
+            "binaryDir":      "${sourceDir}/build-pcat",
+            "toolchainFile":  "${sourceDir}/cmake/toolchains/openwatcom-dos4gw.cmake",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE":           "Release",
+                "PLAYFIELD_TARGET_PCAT":      "ON",
+                "PLAYFIELD_ENABLE_JIT":       "ON",
+                "PLAYFIELD_ENABLE_OPTIMIZER": "ON",
+                "PLAYFIELD_ENABLE_BIN":       "ON"
+	    }
+        }
+    ],
+
+    "buildPresets": [
+        {
+            "name": "windows-vs2022-x86",
+            "configurePreset": "windows-vs2022-x86",
+	    "configuration":   "Release"
+        },
+        {
+            "name": "windows-vs2022-x64",
+            "configurePreset": "windows-vs2022-x64",
+	    "configuration":   "Release"
+        },
+        {
+            "name": "windows-vs2022-arm64",
+            "configurePreset": "windows-vs2022-arm64",
+	    "configuration":   "Release"
+        },
+        {
+            "name": "windows-vs2022-gdk-desktop",
+            "configurePreset": "windows-vs2022-gdk-desktop",
+	    "configuration":   "Release"
+        },
+        {
+            "name": "windows-vs2022-gdk-xbox-xs",
+            "configurePreset": "windows-vs2022-gdk-xbox-xs",
+	    "configuration":   "Release"
+        },
+        {
+            "name": "windows-vs2022-uwp",
+            "configurePreset": "windows-vs2022-uwp",
+	    "configuration":   "Release"
+        },
+        {
+            "name": "windows-vs2026-x86",
+            "configurePreset": "windows-vs2026-x86",
+	    "configuration":   "Release"
+        },
+        {
+            "name": "windows-vs2026-x86-debug",
+            "configurePreset": "windows-vs2026-x86",
+	    "configuration":   "Debug"
+        },
+        {
+            "name":            "windows-vs2026-x64",
+            "configurePreset": "windows-vs2026-x64",
+	    "configuration":   "Release"
+        },
+        {
+            "name":            "windows-vs2026-x64-debug",
+            "configurePreset": "windows-vs2026-x64",
+	    "configuration":   "Debug"
+        },
+        {
+            "name": "windows-vs2026-arm64",
+            "configurePreset": "windows-vs2026-arm64",
+	    "configuration":   "Release"
+        },
+        {
+            "name": "windows-vs2026-arm64-debug",
+            "configurePreset": "windows-vs2026-arm64",
+	    "configuration":   "Debug"
+        },
+        {
+            "name": "windows-vs2026-gdk-desktop",
+            "configurePreset": "windows-vs2026-gdk-desktop",
+	    "configuration":   "Release"
+        },
+        {
+            "name": "windows-vs2026-gdk-xbox-xs",
+            "configurePreset": "windows-vs2026-gdk-xbox-xs",
+	    "configuration":   "Release"
+        },
+        {
+            "name": "windows-mingw-x86",
+            "configurePreset": "windows-mingw-x86"
+        },
+        {
+            "name": "windows-mingw-x86_64",
+            "configurePreset": "windows-mingw-x86_64"
+        },
+        {
+            "name": "windows-mingw-arm64",
+            "configurePreset": "windows-mingw-arm64"
+        },
+        {
+            "name": "windows-mingw-win95",
+            "configurePreset": "windows-mingw-win95"
+        },
+        {
+            "name": "macos",
+            "configurePreset": "macos"
+        },
+        {
+            "name": "macos-cli",
+            "configurePreset": "macos-cli"
+        },
+        {
+            "name": "macos-cli-debug",
+            "configurePreset": "macos-cli"
+        },
+        {
+            "name": "linux",
+            "configurePreset": "linux"
+        },
+        {
+            "name": "linux-debian",
+            "configurePreset": "linux-debian"
+        },
+        {
+            "name": "linux-debug",
+            "configurePreset": "linux-debug"
+        },
+        {
+            "name": "linux-x11",
+            "configurePreset": "linux-x11",
+	    "configuration":   "Release"
+        },
+        {
+            "name": "linux-wayland",
+            "configurePreset": "linux-wayland"
+        },
+        {
+            "name": "linux-dri",
+            "configurePreset": "linux-dri"
+        },
+        {
+            "name": "linux-dri-rot90",
+            "configurePreset": "linux-dri-rot90"
+        },
+        {
+            "name": "linux-x11soft",
+            "configurePreset": "linux-x11soft"
+        },
+        {
+            "name": "ios-device",
+            "configurePreset": "ios-device"
+        },
+        {
+            "name": "ios-simulator",
+            "configurePreset": "ios-simulator"
+        },
+        {
+            "name": "android-x86",
+            "configurePreset": "android-x86"
+        },
+        {
+            "name": "android-x86_64",
+            "configurePreset": "android-x86_64"
+        },
+        {
+            "name": "android-armv7",
+            "configurePreset": "android-armv7"
+        },
+        {
+            "name": "android-arm64",
+            "configurePreset": "android-arm64"
+        },
+        {
+            "name": "android-riscv64",
+            "configurePreset": "android-riscv64"
+        },
+        {
+            "name": "openharmony-x86_64",
+            "configurePreset": "openharmony-x86_64"
+        },
+        {
+            "name": "openharmony-arm64",
+            "configurePreset": "openharmony-arm64"
+        },
+        {
+            "name": "openharmony-armv7",
+            "configurePreset": "openharmony-armv7"
+        },
+        {
+            "name": "wasm",
+            "configurePreset": "wasm"
+        },
+        {
+            "name": "wasm-local",
+            "configurePreset": "wasm-local"
+        },
+        {
+            "name": "unity-win64",
+            "configurePreset": "unity-win64"
+        },
+        {
+            "name": "unity-switch",
+            "configurePreset": "unity-switch"
+        },
+        {
+            "name": "unity-ps5",
+            "configurePreset": "unity-ps5"
+        },
+        {
+            "name": "unity-xbox",
+            "configurePreset": "unity-xbox"
+        },
+        {
+            "name": "freebsd",
+            "configurePreset": "freebsd"
+        },
+        {
+            "name": "freebsd-x11",
+            "configurePreset": "freebsd-x11"
+        },
+        {
+            "name": "freebsd-wayland",
+            "configurePreset": "freebsd-wayland"
+        },
+        {
+            "name": "freebsd-x11soft",
+            "configurePreset": "freebsd-x11soft"
+        },
+        {
+            "name": "netbsd",
+            "configurePreset": "netbsd"
+        },
+        {
+            "name": "netbsd-x11soft",
+            "configurePreset": "netbsd-x11soft"
+        },
+        {
+            "name": "openbsd",
+            "configurePreset": "openbsd"
+        },
+        {
+            "name": "openbsd-x11soft",
+            "configurePreset": "openbsd-x11soft"
+        },
+        {
+            "name": "solaris11",
+            "configurePreset": "solaris11"
+        },
+        {
+            "name": "solaris10",
+            "configurePreset": "solaris10"
+        },
+        {
+            "name": "aix",
+            "configurePreset": "aix"
+        },
+        {
+            "name": "hpux",
+            "configurePreset": "hpux"
+        },
+        {
+            "name": "unix",
+            "configurePreset": "unix"
+        },
+        {
+            "name": "haiku",
+            "configurePreset": "haiku"
+        },
+        {
+            "name": "pc98",
+            "configurePreset": "pc98"
+        },
+        {
+            "name": "pcat",
+            "configurePreset": "pcat"
+        }
+    ]
+}

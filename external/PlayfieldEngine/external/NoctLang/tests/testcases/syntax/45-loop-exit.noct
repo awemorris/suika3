@@ -1,0 +1,91 @@
+// A break or a return as the last statement of a loop body must leave
+// the loop, not fall through to the next iteration.
+
+func retInFor(list) {
+    for (r in list) {
+        return "for:" + r;
+    }
+    return "for:miss";
+}
+
+func retInWhile() {
+    var i = 0;
+    while (i < 3) {
+        return "while:" + i;
+    }
+    return "while:miss";
+}
+
+func retInRange() {
+    for (i in 0..5) {
+        return "range:" + i;
+    }
+    return "range:miss";
+}
+
+func breakInFor(list) {
+    var n = 0;
+    for (r in list) {
+        n = n + 1;
+        break;
+    }
+    return n;
+}
+
+func breakInWhile() {
+    var n = 0;
+    while (n < 100) {
+        n = n + 1;
+        break;
+    }
+    return n;
+}
+
+// A return reached after a continue must still return.
+func mixed(list, want) {
+    var seen = 0;
+    for (r in list) {
+        if (r != want) {
+            seen = seen + 1;
+            continue;
+        }
+        return "hit:" + r + ":" + seen;
+    }
+    return "miss:" + seen;
+}
+
+// A return from an inner loop leaves the whole function.
+func nested() {
+    for (i in 0..3) {
+        for (j in 0..3) {
+            return "nested:" + i + j;
+        }
+    }
+    return "nested:miss";
+}
+
+// A break in an inner loop leaves only the inner loop.
+func nestedBreak() {
+    var n = 0;
+    for (i in 0..3) {
+        for (j in 0..3) {
+            n = n + 1;
+            break;
+        }
+    }
+    return n;
+}
+
+func main() {
+    print(retInFor(["a", "b"]));
+    print(retInWhile());
+    print(retInRange());
+    print(breakInFor(["a", "b", "c"]));
+    print(breakInWhile());
+    print(mixed(["a", "b", "c"], "b"));
+    print(mixed(["a", "b", "c"], "z"));
+    // Calling twice must not leave stale state behind.
+    print(mixed(["a", "b", "c"], "a"));
+    print(nested());
+    print(nestedBreak());
+}

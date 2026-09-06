@@ -1,0 +1,19 @@
+// Vector shifts: counts 0 (VMOV lowering), 1, 8, 31; logical >> on
+// values with bit 31 set.
+func main() {
+    var n = 16;
+    var p = Packed.uint32(n);
+    var q = Packed.uint32(n);
+    for (i in 0..n) {
+        p[i] = (i * 268435457) ^ 2147483647;
+    }
+    for (i in 0..n) {
+        q[i] = (p[i] << 0) ^ (p[i] >> 0) ^ (p[i] << 1) ^ (p[i] >> 1)
+             ^ (p[i] << 8) ^ (p[i] >> 8) ^ (p[i] << 31) ^ (p[i] >> 31);
+    }
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + (q[i] & 65535);
+    }
+    print(sum);
+}

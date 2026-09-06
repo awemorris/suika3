@@ -1,0 +1,7 @@
+__gpu func valid(): void {
+    syncthreads();
+    return;
+}
+
+func main() {
+}

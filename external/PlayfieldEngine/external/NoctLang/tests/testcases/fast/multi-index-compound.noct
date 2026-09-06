@@ -1,0 +1,10 @@
+__fast func update(data: rpackeduint32(2, 2)): int {
+    data[1, 1] += 1;
+    data[0, 0]++;
+    return data[1, 1] + data[0, 0];
+}
+
+func main() {
+    var data = Packed.uint32(4);
+    print(update(data));
+}

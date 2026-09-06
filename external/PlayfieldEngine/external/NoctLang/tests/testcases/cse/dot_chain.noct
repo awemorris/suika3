@@ -1,0 +1,8 @@
+func main() {
+    var o = { a: { b: { c: 7 } } };
+    var s = o.a.b.c + o.a.b.c;
+    print(s);
+    var t = o.a.b;
+    var u = o.a.b.c + t.c;
+    print(u);
+}

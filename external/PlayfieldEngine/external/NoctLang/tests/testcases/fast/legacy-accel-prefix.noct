@@ -1,0 +1,5 @@
+accel func legacy(): void {
+}
+
+func main() {
+}

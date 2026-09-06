@@ -1,0 +1,15 @@
+func main() {
+    var p = Packed.uint8(10);
+    var q = Packed.uint8(10);
+    for (i in 0..10) {
+        p[i] = i;
+        q[i] = i * 2;
+    }
+    var r = p;
+    var sum = 0;
+    for (i in 0..10) {
+        sum = sum + r[0];
+        r = q;
+    }
+    print(sum);
+}

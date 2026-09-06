@@ -1,0 +1,27 @@
+func worker(param) {
+    var c = param.counter;
+    var sum = 0;
+    for (i in 0..200) {
+        var arr = [];
+        for (j in 0..50) {
+            arr[j] = {v: j, s: "str" + j};
+        }
+        sum = sum + arr[25].v;
+        Thread.incrementCounter(c);
+    }
+    return sum;
+}
+
+func main() {
+    var c = Thread.createCounter();
+    var ths = [];
+    for (t in 0..4) {
+        ths[t] = Thread.createThread(worker, {counter: c});
+    }
+    var total = 0;
+    for (t in 0..4) {
+        total = total + Thread.joinThread(ths[t]);
+    }
+    print(total);
+    print(Thread.getCounter(c));
+}

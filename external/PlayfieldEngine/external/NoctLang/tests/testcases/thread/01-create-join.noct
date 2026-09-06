@@ -1,0 +1,10 @@
+func worker(param) {
+    return param.x + param.y;
+}
+
+func main() {
+    var th1 = Thread.createThread(worker, {x: 1, y: 2});
+    var th2 = Thread.createThread(worker, {x: 10, y: 20});
+    print(Thread.joinThread(th1));
+    print(Thread.joinThread(th2));
+}

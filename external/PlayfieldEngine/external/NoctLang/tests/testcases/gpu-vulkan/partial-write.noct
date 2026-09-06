@@ -1,0 +1,19 @@
+__accel func transform(
+    destination: rpackedint32,
+    first: int,
+    stop: int): void {
+    for (i in first..stop) {
+        destination[i] = destination[i] + 10;
+    }
+}
+
+func main() {
+    let destination = Packed.int32(6);
+    for (i in 0..6) {
+        destination[i] = i;
+    }
+    transform(destination, 2, 5);
+    for (i in 0..6) {
+        print(destination[i]);
+    }
+}

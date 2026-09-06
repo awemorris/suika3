@@ -1,0 +1,11 @@
+__fast func even(n: int): int {
+    return odd(n - 1);
+}
+
+__fast func odd(n: int): int {
+    return even(n - 1);
+}
+
+func main() {
+    print(even(2));
+}

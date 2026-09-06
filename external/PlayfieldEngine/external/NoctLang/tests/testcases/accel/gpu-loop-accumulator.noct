@@ -1,0 +1,43 @@
+__accel var loop_input = Accel.float32(6);
+__accel var loop_output = Accel.float32(2);
+
+__gpu func nested_sum(
+    input: rpackedfloat_ptr,
+    output: rpackedfloat_ptr
+): void {
+    if (globalIdx.x == 0) {
+        var total: float = 0.0;
+        for (row in 0..2) {
+            var row_sum: float = 0.0;
+            for (column in 0..3) {
+                row_sum = row_sum + input[row * 3 + column];
+            }
+            if (row == 0) {
+                let total: float = input[0];
+                row_sum = row_sum + total - input[0];
+            }
+            total = total + row_sum;
+        }
+        output[0] = total;
+        if (total < 21.0) {
+            output[1] = -1.0;
+        } else if (total == 21.0) {
+            output[1] = 42.0;
+        } else {
+            output[1] = -2.0;
+        }
+    }
+}
+
+func main() {
+    let input = Packed.float32(6);
+    let output = Packed.float32(2);
+    for (i in 0..6) {
+        input[i] = Float.from(i + 1);
+    }
+    Accel.copyToAccel(input, 0, loop_input, 0, 24);
+    nested_sum<<<1, 1>>>(loop_input, loop_output);
+    Accel.copyFromAccel(loop_output, 0, output, 0, 8);
+    print(output[0]);
+    print(output[1]);
+}

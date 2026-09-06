@@ -1,0 +1,20 @@
+func main() {
+    var n = 8000000;
+    var p = Packed.uint8(n);
+    for (i in 0..n) {
+        p[i] = (i * 37) % 256;
+    }
+    var count = 0;
+    var lead = 0;
+    for (i in 0..n) {
+        lead = p[i];
+        if (lead < 128) {
+            count = count + 1;
+        } else if (lead < 224) {
+            count = count + 2;
+        } else {
+            count = count + 3;
+        }
+    }
+    print(count);
+}

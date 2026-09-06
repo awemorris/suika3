@@ -1,0 +1,46 @@
+.\" playfield-bcc.1 - Playfield bytecode compiler manpage
+.TH PLAYFIELD-BCC 1 "May 2026" "Playfield Engine 1.0" "User Commands"
+.SH NAME
+playfield-bcc \- compile Ray scripts into bytecode files
+.SH SYNOPSIS
+.B playfield-bcc
+[\fIsourcefiles...\fR]
+
+.SH DESCRIPTION
+The
+.B playfield-bcc
+translates Ray scripts (\fB.ray\fR) into bytecode files
+with the extension \fB.raybc\fR.
+
+Each input file is compiled independently. The output file has the same
+basename as the input, with its extension replaced by \fB.raybc\fR.
+For example, compiling
+.I main.ray
+produces
+.I main.raybc
+in the same directory.
+
+.SH EXAMPLES
+Compile a single script:
+.EX
+playfield-bcc main.ray
+.EE
+
+Compile multiple scripts:
+.EX
+playfield-bcc main.ray enemy.ray level.ray
+.EE
+
+The above command produces:
+.EX
+main.raybc enemy.raybc level.raybc
+.EE
+
+.SH SEE ALSO
+.BR playfield (1),
+.BR playfield-aotc (1),
+.BR playfield-pack (1)
+
+.SH AUTHORS
+Awe Morris <awe@noctvm.io> and contributors.
+Project homepage: <https://github.com/awemorris/PlayfieldEngine>

@@ -1,0 +1,4 @@
+accel var device = Accel.uint32(1);
+
+func main() {
+}

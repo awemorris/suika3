@@ -1,0 +1,2987 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "  --gc-graduate-size=N ... second GC space size in bytes\n"
+msgstr "  --gc-graduate-size=N ... Größe des zweiten GC-Speicherbereichs in Byte\n"
+
+msgid "  --gc-lop-threshold=N ... move objects larger than N-bytes to final GC space\n"
+msgstr "  --gc-lop-threshold=N ... Objekte groser als N Byte in den finalen GC-Speicherbereich verschieben\n"
+
+msgid "  --gc-nursery-size=N  ... first GC space size in bytes\n"
+msgstr "  --gc-nursery-size=N  ... Größe des ersten GC-Speicherbereichs in Byte\n"
+
+msgid "  --gc-tenure-size=N   ... final GC space size in bytes\n"
+msgstr "  --gc-tenure-size=N   ... Größe des finalen GC-Speicherbereichs in Byte\n"
+
+msgid "  --gpu-list           ... list suitable GPU device selectors\n"
+msgstr "  --gpu-list           ... geeignete GPU-Geräteselektoren auflisten\n"
+
+msgid "  --gpu[=SELECTOR]     ... use GPU acceleration for source execution\n"
+msgstr "  --gpu[=SELECTOR]     ... GPU-Beschleunigung zur Ausführung des Quellcodes verwenden\n"
+
+msgid "  --path=DIR1:DIR2     ... append source-module search paths\n"
+msgstr "  --path=DIR1:DIR2     ... Suchpfade für Quellmodule anhängen\n"
+
+msgid "  --simd-info          ... report successfully vectorized loops\n"
+msgstr "  --simd-info          ... erfolgreich vektorisierte Schleifen melden\n"
+
+msgid "  -O, -O0..-O3, -O9    ... optimization preset\n"
+msgstr "  -O, -O0..-O3, -O9    ... Optimierungsvoreinstellung\n"
+
+msgid "  -j, -j0              ... eager JIT (default), or interpreter only\n"
+msgstr "  -j, -j0              ... sofortige JIT-Kompilierung (Standard) oder nur Interpreter\n"
+
+msgid "  noct --ansic <out-file> <in-files>  ... convert to a C source file\n"
+msgstr "  noct --ansic <out-file> <in-files>  ... in eine C-Quelldatei umwandeln\n"
+
+msgid "  noct --compile <in-files>           ... convert to bytecode files\n"
+msgstr "  noct --compile <in-files>           ... in Bytecode-Dateien umwandeln\n"
+
+msgid "  noct --elisp <out-file> <in-files>  ... convert to an Emacs Lisp source file\n"
+msgstr "  noct --elisp <out-file> <in-files>  ... in eine Emacs-Lisp-Quelldatei umwandeln\n"
+
+msgid "  noct --scheme <out-file> <in-files> ... convert to an Scheme source file\n"
+msgstr "  noct --scheme <out-file> <in-files> ... in eine Scheme-Quelldatei umwandeln\n"
+
+msgid "  noct <vm-options> <files>           ... run a program\n"
+msgstr "  noct <vm-options> <files>           ... ein Programm ausführen\n"
+
+msgid "%s"
+msgstr "%s"
+
+msgid "%s\n"
+msgstr "%s\n"
+
+msgid "%s accelerator %s."
+msgstr "%s-Beschleuniger %s."
+
+msgid "%s accelerator %s: %s"
+msgstr "%s-Beschleuniger %s: %s"
+
+msgid "%s accelerator context is detached."
+msgstr "Der Kontext des %s-Beschleunigers ist getrennt."
+
+msgid "%s accelerator program changed during begin."
+msgstr "Das Programm des %s-Beschleunigers wurde während des Starts geändert."
+
+msgid "%s accelerator program is not published."
+msgstr "Das Programm des %s-Beschleunigers ist nicht veröffentlicht."
+
+msgid "%s accelerator session changed during dispatch."
+msgstr "Die Sitzung des %s-Beschleunigers wurde während des Dispatch geändert."
+
+msgid "%s accelerator session changed during finish."
+msgstr "Die Sitzung des %s-Beschleunigers wurde während des Abschlusses geändert."
+
+msgid "%s accelerator session changed while publishing results."
+msgstr "Die Sitzung des %s-Beschleunigers wurde während der Veröffentlichung der Ergebnisse geändert."
+
+msgid "%s failed."
+msgstr "%s ist fehlgeschlagen."
+
+msgid "%s is unavailable."
+msgstr "%s ist nicht verfügbar."
+
+msgid "%s() is not defined\n"
+msgstr "%s() ist nicht definiert\n"
+
+msgid "%s() must have zero or one parameter\n"
+msgstr "%s() muss null oder einen Parameter haben\n"
+
+msgid "%s(): Function arguments not match."
+msgstr "%s(): Die Funktionsargumente stimmen nicht überein."
+
+msgid "%s(): argument type mismatch (expected %s)."
+msgstr "%s(): Argumenttyp stimmt nicht überein (%s erwartet)."
+
+msgid "%s(): local type mismatch (expected %s)."
+msgstr "%s(): Typ der lokalen Variable stimmt nicht überein (%s erwartet)."
+
+msgid "%s(): return type mismatch (expected %s)."
+msgstr "%s(): Rückgabetyp stimmt nicht überein (%s erwartet)."
+
+msgid "%s: Out of memory while parsing."
+msgstr "%s: Nicht genügend Speicher beim Parsen."
+
+msgid "%s:%d: Error: %s\n"
+msgstr "%s:%d: Fehler: %s\n"
+
+msgid "--gpu-list may be specified only once.\n"
+msgstr "--gpu-list darf nur einmal angegeben werden.\n"
+
+msgid "--gpu-list must be used by itself.\n"
+msgstr "--gpu-list muss allein verwendet werden.\n"
+
+msgid "A __fast array index must be int or long."
+msgstr "Ein __fast-Array-Index muss int oder long sein."
+
+msgid "A __fast assignment requires an exact type match."
+msgstr "Eine __fast-Zuweisung erfordert eine exakte Typübereinstimmung."
+
+msgid "A __fast assignment target must be a typed local."
+msgstr "Das Ziel einer __fast-Zuweisung muss eine typisierte lokale Variable sein."
+
+msgid "A __fast binary intrinsic requires operands of the same type."
+msgstr "Eine binäre intrinsische __fast-Funktion erfordert Operanden desselben Typs."
+
+msgid "A __fast binary operation requires equal primitive operand types."
+msgstr "Eine binäre __fast-Operation erfordert identische primitive Operandentypen."
+
+msgid "A __fast condition must have type int."
+msgstr "Eine __fast-Bedingung muss den Typ int haben."
+
+msgid "A __fast expression is too deeply nested."
+msgstr "Ein __fast-Ausdruck ist zu tief verschachtelt."
+
+msgid "A __fast func may call only a direct __fast function or intrinsic."
+msgstr "Eine __fast-func darf nur eine direkte __fast-Funktion oder eine intrinsische Funktion aufrufen."
+
+msgid "A __fast func must declare its return type."
+msgstr "Eine __fast-func muss ihren Rückgabetyp deklarieren."
+
+msgid "A __fast func parameter must be primitive or shaped rpacked."
+msgstr "Ein Parameter einer __fast-func muss primitiv oder ein rpacked mit Form sein."
+
+msgid "A __fast func return type must be void, int, long, float, or double."
+msgstr "Der Rückgabetyp einer __fast-func muss void, int, long, float oder double sein."
+
+msgid "A __fast func supports only ranged for loops."
+msgstr "Eine __fast-func unterstützt nur bereichsgebundene for-Schleifen."
+
+msgid "A __fast function name conflicts with a compiler intrinsic."
+msgstr "Der Name einer __fast-Funktion steht im Konflikt mit einer intrinsischen Compiler-Funktion."
+
+msgid "A __fast integer operation requires int or long."
+msgstr "Eine ganzzahlige __fast-Operation erfordert int oder long."
+
+msgid "A __fast intrinsic requires a statically typed numeric argument."
+msgstr "Eine intrinsische __fast-Funktion erfordert ein statisch typisiertes numerisches Argument."
+
+msgid "A __fast logical operand must have type int."
+msgstr "Ein logischer __fast-Operand muss den Typ int haben."
+
+msgid "A __fast numeric intrinsic requires numeric arguments."
+msgstr "Eine numerische intrinsische __fast-Funktion erfordert numerische Argumente."
+
+msgid "A __fast packed access is provably out of bounds."
+msgstr "Ein packed-Zugriff in __fast liegt nachweislich außerhalb der Grenzen."
+
+msgid "A __fast packed store requires an exact element type match."
+msgstr "Ein packed-Speichervorgang in __fast erfordert eine exakte Übereinstimmung des Elementtyps."
+
+msgid "A __fast parameter shape has more than 8 dimensions."
+msgstr "Die Form eines __fast-Parameters hat mehr als 8 Dimensionen."
+
+msgid "A __fast ranged loop requires matching int or long bounds."
+msgstr "Eine bereichsgebundene __fast-Schleife erfordert übereinstimmende Grenzen vom Typ int oder long."
+
+msgid "A __fast return value does not match its declared type."
+msgstr "Ein __fast-Rückgabewert entspricht nicht seinem deklarierten Typ."
+
+msgid "A __fast shape extent must be int or long."
+msgstr "Die Ausdehnung einer __fast-Form muss int oder long sein."
+
+msgid "A __fast shape extent must be positive."
+msgstr "Die Ausdehnung einer __fast-Form muss positiv sein."
+
+msgid "A __fast subscript base must be a shaped rpacked parameter."
+msgstr "Die Basis eines __fast-Indexausdrucks muss ein rpacked-Parameter mit Form sein."
+
+msgid "A __fast transcendental intrinsic requires float or double."
+msgstr "Eine transzendente intrinsische __fast-Funktion erfordert float oder double."
+
+msgid "A __fast unary operand must be primitive."
+msgstr "Ein unärer __fast-Operand muss primitiv sein."
+
+msgid "A binary __fast intrinsic requires operands of the same type."
+msgstr "Eine binäre intrinsische __fast-Funktion erfordert Operanden desselben Typs."
+
+msgid "A direct __fast call argument does not match the callee type."
+msgstr "Ein Argument eines direkten __fast-Aufrufs entspricht nicht dem Typ der aufgerufenen Funktion."
+
+msgid "A direct __fast call has the wrong argument count."
+msgstr "Ein direkter __fast-Aufruf hat die falsche Anzahl von Argumenten."
+
+msgid "A direct __fast call packed argument has the wrong element type."
+msgstr "Ein packed-Argument eines direkten __fast-Aufrufs hat den falschen Elementtyp."
+
+msgid "A direct __fast call packed argument must be a parameter."
+msgstr "Ein packed-Argument eines direkten __fast-Aufrufs muss ein Parameter sein."
+
+msgid "A direct __fast call packed shape does not match the callee view."
+msgstr "Die packed-Form eines direkten __fast-Aufrufs entspricht nicht der Ansicht der aufgerufenen Funktion."
+
+msgid "A direct __fast call packed shape rank does not match."
+msgstr "Die Dimensionsanzahl der packed-Form eines direkten __fast-Aufrufs stimmt nicht überein."
+
+msgid "A dynamic __fast shape extent must name an int or long parameter."
+msgstr "Eine dynamische Ausdehnung einer __fast-Form muss einen int- oder long-Parameter benennen."
+
+msgid "A function return type cannot have a shape."
+msgstr "Der Rückgabetyp einer Funktion darf keine Form haben."
+
+msgid "A local used inside __fast func must have an exact primitive type."
+msgstr "Eine in einer __fast-func verwendete lokale Variable muss einen exakten primitiven Typ haben."
+
+msgid "A multi-dimensional subscript requires a directly named shaped parameter."
+msgstr "Ein mehrdimensionaler Indexausdruck erfordert einen direkt benannten Parameter mit Form."
+
+msgid "A non-void __fast func must return a value."
+msgstr "Eine __fast-func mit einem anderen Rückgabetyp als void muss einen Wert zurückgeben."
+
+msgid "A primitive __fast parameter cannot have a shape."
+msgstr "Ein primitiver __fast-Parameter darf keine Form haben."
+
+msgid "A primitive __fast parameter must use int, long, float, or double exactly."
+msgstr "Ein primitiver __fast-Parameter muss exakt int, long, float oder double verwenden."
+
+msgid "A restricted packed __fast parameter requires an exact shape."
+msgstr "Ein eingeschränkter packed-Parameter in __fast erfordert eine exakte Form."
+
+msgid "A restricted packed type is only valid for a parameter."
+msgstr "Ein eingeschränkter packed-Typ ist nur für einen Parameter gültig."
+
+msgid "A shaped __fast parameter must be a Packed type."
+msgstr "Ein __fast-Parameter mit Form muss ein Packed-Typ sein."
+
+msgid "A transcendental __fast intrinsic requires float or double."
+msgstr "Eine transzendente intrinsische __fast-Funktion erfordert float oder double."
+
+msgid "A typed function must return a value."
+msgstr "Eine typisierte Funktion muss einen Wert zurückgeben."
+
+msgid "A void function cannot return a value."
+msgstr "Eine void-Funktion darf keinen Wert zurückgeben."
+
+msgid "Accelerator Packed argument is missing."
+msgstr "Das Packed-Argument des Beschleunigers fehlt."
+
+msgid "Accelerator Packed element type does not match."
+msgstr "Der Packed-Elementtyp des Beschleunigers stimmt nicht überein."
+
+msgid "Accelerator VM and environment do not match."
+msgstr "Beschleuniger-VM und Umgebung stimmen nicht überein."
+
+msgid "Accelerator access has an invalid effect."
+msgstr "Der Beschleunigerzugriff hat einen ungültigen Effekt."
+
+msgid "Accelerator access has no buffer binding."
+msgstr "Der Beschleunigerzugriff hat keine Pufferbindung."
+
+msgid "Accelerator access references an unknown buffer."
+msgstr "Der Beschleunigerzugriff verweist auf einen unbekannten Puffer."
+
+msgid "Accelerator argument count changed."
+msgstr "Die Anzahl der Beschleunigerargumente hat sich geändert."
+
+msgid "Accelerator argument count is too large."
+msgstr "Die Anzahl der Beschleunigerargumente ist zu groß."
+
+msgid "Accelerator backend failed to prepare a program."
+msgstr "Das Beschleuniger-Backend konnte kein Programm vorbereiten."
+
+msgid "Accelerator backend returned no program."
+msgstr "Das Beschleuniger-Backend hat kein Programm zurückgegeben."
+
+msgid "Accelerator buffer access is out of range."
+msgstr "Der Zugriff auf den Beschleunigerpuffer liegt außerhalb des Bereichs."
+
+msgid "Accelerator buffer has no required range."
+msgstr "Der Beschleunigerpuffer hat nicht den erforderlichen Bereich."
+
+msgid "Accelerator buffer has no runtime argument slot."
+msgstr "Der Beschleunigerpuffer hat keinen Laufzeitargument-Slot."
+
+msgid "Accelerator buffer range overflowed."
+msgstr "Der Bereich des Beschleunigerpuffers ist übergelaufen."
+
+msgid "Accelerator buffer size overflowed."
+msgstr "Die Größe des Beschleunigerpuffers ist übergelaufen."
+
+msgid "Accelerator context is unavailable."
+msgstr "Der Beschleunigerkontext ist nicht verfügbar."
+
+msgid "Accelerator context reference limit reached."
+msgstr "Die Referenzgrenze des Beschleunigerkontexts wurde erreicht."
+
+msgid "Accelerator device buffer is read before definition."
+msgstr "Der Gerätepuffer des Beschleunigers wird vor seiner Definition gelesen."
+
+msgid "Accelerator device buffer size is not positive."
+msgstr "Die Größe des Gerätepuffers des Beschleunigers ist nicht positiv."
+
+msgid "Accelerator device buffer size is too large."
+msgstr "Die Größe des Gerätepuffers des Beschleunigers ist zu groß."
+
+msgid "Accelerator device buffer size overflowed."
+msgstr "Die Größe des Gerätepuffers des Beschleunigers ist übergelaufen."
+
+msgid "Accelerator device-list visitor failed."
+msgstr "Der Besucher der Beschleuniger-Geräteliste ist fehlgeschlagen."
+
+msgid "Accelerator dispatch range is too large."
+msgstr "Der Dispatch-Bereich des Beschleunigers ist zu groß."
+
+msgid "Accelerator function is not registered in the HIR table."
+msgstr "Die Beschleunigerfunktion ist nicht in der HIR-Tabelle registriert."
+
+msgid "Accelerator load has no buffer binding."
+msgstr "Der Ladevorgang des Beschleunigers hat keine Pufferbindung."
+
+msgid "Accelerator local name collision."
+msgstr "Namenskollision bei lokalen Variablen des Beschleunigers."
+
+msgid "Accelerator local name is too long."
+msgstr "Der Name der lokalen Beschleunigervariable ist zu lang."
+
+msgid "Accelerator loop start overflowed."
+msgstr "Der Schleifenanfang des Beschleunigers ist übergelaufen."
+
+msgid "Accelerator output argument is missing."
+msgstr "Das Ausgabeargument des Beschleunigers fehlt."
+
+msgid "Accelerator output size changed."
+msgstr "Die Größe der Beschleunigerausgabe hat sich geändert."
+
+msgid "Accelerator output snapshot is missing."
+msgstr "Die Ausgabemomentaufnahme des Beschleunigers fehlt."
+
+msgid "Accelerator output type changed."
+msgstr "Der Typ der Beschleunigerausgabe hat sich geändert."
+
+msgid "Accelerator plan does not match live HIR."
+msgstr "Der Beschleunigerplan stimmt nicht mit dem aktiven HIR überein."
+
+msgid "Accelerator program validation failed."
+msgstr "Die Validierung des Beschleunigerprogramms ist fehlgeschlagen."
+
+msgid "Accelerator reduction has no result entry."
+msgstr "Die Reduktion des Beschleunigers hat keinen Ergebniseintrag."
+
+msgid "Accelerator scalar argument is missing."
+msgstr "Das Skalarargument des Beschleunigers fehlt."
+
+msgid "Accelerator scalar metadata is too large."
+msgstr "Die Skalarmetadaten des Beschleunigers sind zu groß."
+
+msgid "Accelerator scalar result argument is missing."
+msgstr "Das Argument für das skalare Ergebnis des Beschleunigers fehlt."
+
+msgid "Accelerator scalar result has no local."
+msgstr "Das skalare Ergebnis des Beschleunigers hat keine lokale Variable."
+
+msgid "Accelerator scalar result identity changed."
+msgstr "Die Identität des skalaren Ergebnisses des Beschleunigers hat sich geändert."
+
+msgid "Accelerator scalar result is not available."
+msgstr "Das skalare Ergebnis des Beschleunigers ist nicht verfügbar."
+
+msgid "Accelerator scalar result metadata is missing."
+msgstr "Die Metadaten des skalaren Ergebnisses des Beschleunigers fehlen."
+
+msgid "Accelerator scalar result metadata is too large."
+msgstr "Die Metadaten des skalaren Ergebnisses des Beschleunigers sind zu groß."
+
+msgid "Accelerator store has no buffer binding."
+msgstr "Der Speichervorgang des Beschleunigers hat keine Pufferbindung."
+
+msgid "Accelerator trip count overflowed."
+msgstr "Die Iterationsanzahl des Beschleunigers ist übergelaufen."
+
+msgid "Adding file %s.\n"
+msgstr "Datei %s wird hinzugefügt.\n"
+
+msgid "An accelerator is already attached to this VM."
+msgstr "An diese VM ist bereits ein Beschleuniger angefügt."
+
+msgid "An active Vulkan buffer has no storage."
+msgstr "Ein aktiver Vulkan-Puffer hat keinen Speicher."
+
+msgid "An inactive Vulkan buffer requested a transfer."
+msgstr "Ein inaktiver Vulkan-Puffer hat eine Übertragung angefordert."
+
+msgid "Application container cannot be used as a module: %s"
+msgstr "Der Anwendungscontainer kann nicht als Modul verwendet werden: %s"
+
+msgid "Application contains an unreachable module."
+msgstr "Die Anwendung enthält ein nicht erreichbares Modul."
+
+msgid "Application output %s collides with input %s.\n"
+msgstr "Die Anwendungsausgabe %s steht im Konflikt mit der Eingabe %s.\n"
+
+msgid "Argument (%d: %s) is not a dictionary."
+msgstr "Argument (%d: %s) ist kein Dictionary."
+
+msgid "Argument (%d: %s) is not a double."
+msgstr "Argument (%d: %s) ist kein Double."
+
+msgid "Argument (%d: %s) is not a float."
+msgstr "Argument (%d: %s) ist keine Gleitkommazahl."
+
+msgid "Argument (%d: %s) is not a function."
+msgstr "Argument (%d: %s) ist keine Funktion."
+
+msgid "Argument (%d: %s) is not a long."
+msgstr "Argument (%d: %s) ist kein Long."
+
+msgid "Argument (%d: %s) is not a packed of type %s."
+msgstr "Das Argument (%d: %s) ist kein packed vom Typ %s."
+
+msgid "Argument (%d: %s) is not a packed."
+msgstr "Das Argument (%d: %s) ist kein packed."
+
+msgid "Argument (%d: %s) is not a string."
+msgstr "Das Argument (%d: %s) ist keine Zeichenkette."
+
+msgid "Argument (%d: %s) is not an array."
+msgstr "Argument (%d: %s) ist kein Array."
+
+msgid "Argument (%d: %s) is not an int."
+msgstr "Argument (%d: %s) ist keine ganze int."
+
+msgid "Argument (%d: %s) is not an integer."
+msgstr "Argument (%d: %s) ist keine ganze Zahl."
+
+msgid "Array index %ld is out-of-range."
+msgstr "Array-Index %ld ist außerhalb des Bereichs."
+
+msgid "BeUI is not open."
+msgstr "BeUI ist nicht geöffnet."
+
+msgid "BeUI.destroyImage received an invalid handle."
+msgstr "BeUI.destroyImage hat ein ungültiges Handle erhalten."
+
+msgid "BeUI.drawImage failed."
+msgstr "BeUI.drawImage ist fehlgeschlagen."
+
+msgid "BeUI.drawImagePattern failed."
+msgstr "BeUI.drawImagePattern ist fehlgeschlagen."
+
+msgid "BeUI.drawImagePattern received an invalid argument."
+msgstr "BeUI.drawImagePattern hat ein ungültiges Argument erhalten."
+
+msgid "BeUI.drawImageRegion failed."
+msgstr "BeUI.drawImageRegion ist fehlgeschlagen."
+
+msgid "BeUI.drawText failed."
+msgstr "BeUI.drawText ist fehlgeschlagen."
+
+msgid "BeUI.drawText received an invalid argument."
+msgstr "BeUI.drawText hat ein ungültiges Argument erhalten."
+
+msgid "BeUI.fill failed."
+msgstr "BeUI.fill ist fehlgeschlagen."
+
+msgid "BeUI.fill received an invalid argument."
+msgstr "BeUI.fill hat ein ungültiges Argument erhalten."
+
+msgid "BeUI.flush failed."
+msgstr "BeUI.flush ist fehlgeschlagen."
+
+msgid "BeUI.getImageHeight received an invalid handle."
+msgstr "BeUI.getImageHeight hat ein ungültiges Handle erhalten."
+
+msgid "BeUI.getImageWidth received an invalid handle."
+msgstr "BeUI.getImageWidth hat ein ungültiges Handle erhalten."
+
+msgid "BeUI.getMilliseconds is unavailable."
+msgstr "BeUI.getMilliseconds ist nicht verfügbar."
+
+msgid "BeUI.initWithHint expects 8 or 24 bits per pixel."
+msgstr "BeUI.initWithHint erwartet 8 oder 24 Bit pro Pixel."
+
+msgid "BeUI.isKeyDown received an invalid argument."
+msgstr "BeUI.isKeyDown hat ein ungültiges Argument erhalten."
+
+msgid "BeUI.line failed."
+msgstr "BeUI.line ist fehlgeschlagen."
+
+msgid "BeUI.line received an invalid argument."
+msgstr "BeUI.line hat ein ungültiges Argument erhalten."
+
+msgid "BeUI.loadImage expects a byte array."
+msgstr "BeUI.loadImage erwartet ein Byte-Array."
+
+msgid "BeUI.loadImage received an unsupported image."
+msgstr "BeUI.loadImage hat ein nicht unterstütztes Bild erhalten."
+
+msgid "BeUI.patternFill failed."
+msgstr "BeUI.patternFill ist fehlgeschlagen."
+
+msgid "BeUI.patternFill received an invalid argument."
+msgstr "BeUI.patternFill hat ein ungültiges Argument erhalten."
+
+msgid "BeUI.sleep is unavailable."
+msgstr "BeUI.sleep ist nicht verfügbar."
+
+msgid "BeUI.sleep received an invalid argument."
+msgstr "BeUI.sleep hat ein ungültiges Argument erhalten."
+
+msgid "Branch target not found."
+msgstr "Sprungziel nicht gefunden."
+
+msgid "Branch target too far."
+msgstr "Das Sprungziel ist zu weit entfernt."
+
+msgid "Broken bytecode."
+msgstr "Beschädigter Bytecode."
+
+msgid "Bytecode input is not recompiled: %s"
+msgstr "Die Bytecode-Eingabe wird nicht neu kompiliert: %s"
+
+msgid "Bytecode input is not recompiled: %s\n"
+msgstr "Die Bytecode-Eingabe wird nicht neu kompiliert: %s\n"
+
+msgid "Bytecode is too large."
+msgstr "Der Bytecode ist zu groß."
+
+msgid "Bytecode module is too large: %s"
+msgstr "Das Bytecode-Modul ist zu groß: %s"
+
+msgid "Bytecode program is too large.\n"
+msgstr "Das Bytecode-Programm ist zu groß.\n"
+
+msgid "Call to non-fast function '%s' is not allowed inside __fast func."
+msgstr "Der Aufruf der Nicht-__fast-Funktion '%s' ist innerhalb einer __fast-func nicht zulässig."
+
+msgid "Cannot accept a connection."
+msgstr "Eine Verbindung kann nicht angenommen werden."
+
+msgid "Cannot allocate application output path.\n"
+msgstr "Der Ausgabepfad der Anwendung kann nicht reserviert werden.\n"
+
+msgid "Cannot allocate bytecode output paths.\n"
+msgstr "Die Bytecode-Ausgabepfade können nicht reserviert werden.\n"
+
+msgid "Cannot allocate output path for %s.\n"
+msgstr "Der Ausgabepfad für %s kann nicht reserviert werden.\n"
+
+msgid "Cannot assign to 'let' variable '%s'."
+msgstr "Der 'let'-Variable '%s' kann kein Wert zugewiesen werden."
+
+msgid "Cannot assign to constant \"%s\"."
+msgstr "Der Konstante \"%s\" kann kein Wert zugewiesen werden."
+
+msgid "Cannot bind to %s:%d. (%s)"
+msgstr "Bindung an %s:%d nicht möglich. (%s)"
+
+msgid "Cannot change the socket mode."
+msgstr "Der Socketmodus kann nicht geändert werden."
+
+msgid "Cannot close file %s."
+msgstr "Die Datei %s kann nicht geschlossen werden."
+
+msgid "Cannot collect bytecode link names from %s."
+msgstr "Die Bytecode-Linknamen aus %s können nicht erfasst werden."
+
+msgid "Cannot collect bytecode prototypes from %s."
+msgstr "Die Bytecode-Prototypen aus %s können nicht erfasst werden."
+
+msgid "Cannot connect to %s:%d."
+msgstr "Verbindung mit %s:%d nicht möglich."
+
+msgid "Cannot copy this value type."
+msgstr "Dieser Werttyp kann nicht kopiert werden."
+
+msgid "Cannot create a mutex."
+msgstr "Ein Mutex kann nicht erstellt werden."
+
+msgid "Cannot create a thread."
+msgstr "Ein Thread kann nicht erstellt werden."
+
+msgid "Cannot create application %s.\n"
+msgstr "Die Anwendung %s kann nicht erstellt werden.\n"
+
+msgid "Cannot create file mapping (Windows error %lu)."
+msgstr "Die Dateizuordnung kann nicht erstellt werden (Windows-Fehler %lu)."
+
+msgid "Cannot create output directory %s."
+msgstr "Das Ausgabeverzeichnis %s kann nicht erstellt werden."
+
+msgid "Cannot derive a portable source name for %s."
+msgstr "Für %s kann kein portabler Quellname abgeleitet werden."
+
+msgid "Cannot determine file size."
+msgstr "Die Dateigröße kann nicht bestimmt werden."
+
+msgid "Cannot determine mapped file size (Windows error %lu)."
+msgstr "Die Größe der zugeordneten Datei kann nicht bestimmt werden (Windows-Fehler %lu)."
+
+msgid "Cannot determine mapped file size: %s"
+msgstr "Die Größe der zugeordneten Datei kann nicht bestimmt werden: %s"
+
+msgid "Cannot determine the file mapping allocation granularity."
+msgstr "Die Allokationsgranularität der Dateizuordnung kann nicht bestimmt werden."
+
+msgid "Cannot determine the file mapping page size."
+msgstr "Die Seitengröße der Dateizuordnung kann nicht bestimmt werden."
+
+msgid "Cannot find %s.\n"
+msgstr "%s konnte nicht gefunden werden.\n"
+
+msgid "Cannot find function %s."
+msgstr "Funktion %s nicht gefunden."
+
+msgid "Cannot flush file mapping (Windows error %lu)."
+msgstr "Die Dateizuordnung kann nicht geschrieben werden (Windows-Fehler %lu)."
+
+msgid "Cannot flush file mapping: %s"
+msgstr "Die Dateizuordnung kann nicht geschrieben werden: %s"
+
+msgid "Cannot flush mapped file (Windows error %lu)."
+msgstr "Die zugeordnete Datei kann nicht geschrieben werden (Windows-Fehler %lu)."
+
+msgid "Cannot initialize the socket library."
+msgstr "Die Socketbibliothek kann nicht initialisiert werden."
+
+msgid "Cannot inspect source module %s."
+msgstr "Das Quellcode-Modul %s kann nicht untersucht werden."
+
+msgid "Cannot install the REPL interrupt handler.\n"
+msgstr "Der REPL-Unterbrechungshandler kann nicht installiert werden.\n"
+
+msgid "Cannot listen on %s:%d."
+msgstr "Auf %s:%d kann nicht gelauscht werden."
+
+msgid "Cannot map file %s: %s"
+msgstr "Die Datei %s kann nicht zugeordnet werden: %s"
+
+msgid "Cannot map file view (Windows error %lu)."
+msgstr "Die Dateiansicht kann nicht zugeordnet werden (Windows-Fehler %lu)."
+
+msgid "Cannot open file %s for mapping: %s"
+msgstr "Die Datei %s kann nicht zur Zuordnung geöffnet werden: %s"
+
+msgid "Cannot open file %s."
+msgstr "Datei %s kann nicht geöffnet werden."
+
+msgid "Cannot open file %s.\n"
+msgstr "Datei %s kann nicht geöffnet werden.\n"
+
+msgid "Cannot open file for mapping (Windows error %lu)."
+msgstr "Die Datei kann nicht zur Zuordnung geöffnet werden (Windows-Fehler %lu)."
+
+msgid "Cannot open module %s."
+msgstr "Das Modul %s kann nicht geöffnet werden."
+
+msgid "Cannot read file %s."
+msgstr "Die Datei %s kann nicht gelesen werden."
+
+msgid "Cannot read file %s.\n"
+msgstr "Datei %s kann nicht gelesen werden.\n"
+
+msgid "Cannot read module %s."
+msgstr "Das Modul %s kann nicht gelesen werden."
+
+msgid "Cannot receive from the connection."
+msgstr "Von der Verbindung können keine Daten empfangen werden."
+
+msgid "Cannot resolve required module '%s'."
+msgstr "Das erforderliche Modul '%s' kann nicht aufgelöst werden."
+
+msgid "Cannot resolve the address %s."
+msgstr "Die Adresse %s kann nicht aufgelöst werden."
+
+msgid "Cannot send to the connection."
+msgstr "An die Verbindung können keine Daten gesendet werden."
+
+msgid "Cannot unmap file mapping: %s"
+msgstr "Die Dateizuordnung kann nicht aufgehoben werden: %s"
+
+msgid "Cannot unmap file view (Windows error %lu)."
+msgstr "Die Zuordnung der Dateiansicht kann nicht aufgehoben werden (Windows-Fehler %lu)."
+
+msgid "Cannot wait for socket events."
+msgstr "Auf Socketereignisse kann nicht gewartet werden."
+
+msgid "Cannot write file %s."
+msgstr "Die Datei %s kann nicht geschrieben werden."
+
+msgid "Character class too large."
+msgstr "Die Zeichenklasse ist zu groß."
+
+msgid "Circular require involving %s."
+msgstr "Zirkuläres require unter Beteiligung von %s."
+
+msgid "Code too big."
+msgstr "Der Code ist zu groß."
+
+msgid "Condition is not a number."
+msgstr "Die Bedingung ist keine Zahl."
+
+msgid "CreateProcess() failed."
+msgstr "CreateProcess() ist fehlgeschlagen."
+
+msgid "Decimal integer literal is too large."
+msgstr "Das dezimale Ganzzahlliteral ist zu groß."
+
+msgid "Detached accelerator context."
+msgstr "Beschleunigerkontext wurde getrennt."
+
+msgid "Dictionary index %ld is out-of-range."
+msgstr "Wörterbuch-Index %ld ist außerhalb des Bereichs."
+
+msgid "Dictionary is frozen."
+msgstr "Das Dictionary ist eingefroren."
+
+msgid "Dictionary key \"%s\" not found."
+msgstr "Schlüssel \"%s\" im Dictionary nicht gefunden."
+
+msgid "Direct or mutually recursive __fast calls are not supported."
+msgstr "Direkte oder gegenseitig rekursive __fast-Aufrufe werden nicht unterstützt."
+
+msgid "Direct3D 12 buffer extent mismatch"
+msgstr "Die Ausdehnung des Direct3D 12-Puffers stimmt nicht überein"
+
+msgid "Direct3D 12 buffer is not word aligned"
+msgstr "Der Direct3D 12-Puffer ist nicht wortausgerichtet"
+
+msgid "Direct3D 12 buffer is too large for one UAV"
+msgstr "Der Direct3D 12-Puffer ist zu groß für eine einzelne UAV"
+
+msgid "Direct3D 12 buffer metadata changed"
+msgstr "Die Metadaten des Direct3D 12-Puffers haben sich geändert"
+
+msgid "Direct3D 12 buffer metadata does not match the program"
+msgstr "Die Metadaten des Direct3D 12-Puffers stimmen nicht mit dem Programm überein"
+
+msgid "Direct3D 12 buffer size overflow"
+msgstr "Überlauf der Größe des Direct3D 12-Puffers"
+
+msgid "Direct3D 12 buffer table mismatch"
+msgstr "Die Direct3D 12-Puffertabelle stimmt nicht überein"
+
+msgid "Direct3D 12 dispatch exceeds 65535 workgroups"
+msgstr "Der Direct3D 12-Dispatch überschreitet 65535 Arbeitsgruppen"
+
+msgid "Direct3D 12 execution is not recording"
+msgstr "Die Direct3D 12-Ausführung zeichnet nicht auf"
+
+msgid "Direct3D 12 fence counter overflowed"
+msgstr "Der Fence-Zähler von Direct3D 12 ist übergelaufen"
+
+msgid "Direct3D 12 output table mismatch"
+msgstr "Die Direct3D 12-Ausgabetabelle stimmt nicht überein"
+
+msgid "Direct3D 12 result byte count overflow"
+msgstr "Überlauf der Byteanzahl des Direct3D 12-Ergebnisses"
+
+msgid "Direct3D 12 result table changed"
+msgstr "Die Direct3D 12-Ergebnistabelle hat sich geändert"
+
+msgid "Direct3D 12 result table mismatch"
+msgstr "Die Direct3D 12-Ergebnistabelle stimmt nicht überein"
+
+msgid "Direct3D 12 scalar byte count overflow"
+msgstr "Überlauf der skalaren Byteanzahl von Direct3D 12"
+
+msgid "Direct3D 12 scalar table mismatch"
+msgstr "Die Direct3D 12-Skalartabelle stimmt nicht überein"
+
+msgid "Direct3D 12 scalar table overflow"
+msgstr "Überlauf der Direct3D 12-Skalartabelle"
+
+msgid "Direct3D 12 supports only 32-bit buffers"
+msgstr "Direct3D 12 unterstützt nur 32-Bit-Puffer"
+
+msgid "Directory path must not be empty."
+msgstr "Der Verzeichnispfad darf nicht leer sein."
+
+msgid "Division by zero."
+msgstr "Division durch Null."
+
+msgid "Duplicate Noct App input: %s"
+msgstr "Doppelte Noct App-Eingabe: %s"
+
+msgid "Duplicate accelerator region index."
+msgstr "Doppelter Regionsindex des Beschleunigers."
+
+msgid "Duplicate accelerator scalar result argument."
+msgstr "Doppeltes Argument für das skalare Ergebnis des Beschleunigers."
+
+msgid "Duplicate input module path: %s"
+msgstr "Doppelter Pfad des Eingabemoduls: %s"
+
+msgid "Duplicate logical source name for %s."
+msgstr "Doppelter logischer Quellname für %s."
+
+msgid "Duplicate public symbol \"%s\" (Duplicate function in module closure)."
+msgstr "Doppeltes öffentliches Symbol \"%s\" (doppelte Funktion im Modulabschluss)."
+
+msgid "Duplicate static declaration '%s'."
+msgstr "Doppelte static-Deklaration '%s'."
+
+msgid "Duplicate top-level declaration '%s'."
+msgstr "Doppelte Deklaration auf oberster Ebene '%s'."
+
+msgid "Element %d is not a dictionary."
+msgstr "Element %d ist kein Dictionary."
+
+msgid "Element %d is not a double."
+msgstr "Element %d ist kein Double."
+
+msgid "Element %d is not a float."
+msgstr "Element %d ist keine Gleitkommazahl."
+
+msgid "Element %d is not a function."
+msgstr "Element %d ist keine Funktion."
+
+msgid "Element %d is not a long."
+msgstr "Element %d ist kein Long."
+
+msgid "Element %d is not a string."
+msgstr "Element %d ist keine Zeichenkette."
+
+msgid "Element %d is not an array."
+msgstr "Element %d ist kein Array."
+
+msgid "Element %d is not an int."
+msgstr "Element %d ist kein Int."
+
+msgid "Empty accelerator function plan."
+msgstr "Leerer Beschleuniger-Funktionsplan."
+
+msgid "Empty accelerator region program."
+msgstr "Leeres Beschleuniger-Regionsprogramm."
+
+msgid "Empty array."
+msgstr "Leeres Array."
+
+msgid "Entering REPL mode.\n"
+msgstr "REPL-Modus wird gestartet.\n"
+
+msgid "Error: %s\n"
+msgstr "Fehler: %s\n"
+
+msgid "Error: %s:%d: %s\n"
+msgstr "Fehler: %s:%d: %s\n"
+
+msgid "Error: Cannot assemble application records.\n"
+msgstr "Fehler: Anwendungsdatensätze können nicht assembliert werden.\n"
+
+msgid "Error: Cannot prepare application module %s.\n"
+msgstr "Fehler: Anwendungsmodul %s kann nicht vorbereitet werden.\n"
+
+msgid "Error: Invalid application at byte %lu: %s\n"
+msgstr "Fehler: Ungültige Anwendung bei Byte %lu: %s\n"
+
+msgid "Error: Invalid application source name.\n"
+msgstr "Fehler: Ungültiger Anwendungsquellname.\n"
+
+msgid "Error: Invalid bytecode source name.\n"
+msgstr "Fehler: Ungültiger Bytecode-Quellname.\n"
+
+msgid "Error: __fast func is not supported by the Emacs Lisp transpiler.\n"
+msgstr "Fehler: __fast func wird vom Emacs Lisp-Transpiler nicht unterstützt.\n"
+
+msgid "Error: __fast func is not supported by the Scheme transpiler.\n"
+msgstr "Fehler: __fast func wird vom Scheme-Transpiler nicht unterstützt.\n"
+
+msgid "Error: require is not supported by the C transpiler.\n"
+msgstr "Fehler: require wird vom C-Transpiler nicht unterstützt.\n"
+
+msgid "Error: require is not supported by the Emacs Lisp transpiler.\n"
+msgstr "Fehler: require wird vom Emacs Lisp-Transpiler nicht unterstützt.\n"
+
+msgid "Error: require is not supported by the Scheme transpiler.\n"
+msgstr "Fehler: require wird vom Scheme-Transpiler nicht unterstützt.\n"
+
+msgid "Every __fast func parameter requires a type annotation."
+msgstr "Jeder Parameter einer __fast func erfordert eine Typanmerkung."
+
+msgid "Every local in a __fast func requires an exact primitive type annotation."
+msgstr "Jede lokale Variable einer __fast func erfordert eine exakte Anmerkung eines primitiven Typs."
+
+msgid "Every reachable path of a non-void __fast func must return a value."
+msgstr "Jeder erreichbare Pfad einer __fast func mit einem anderen Rückgabetyp als void muss einen Wert zurückgeben."
+
+msgid "Exact read byte count must be positive."
+msgstr "Die exakte Anzahl der zu lesenden Bytes muss positiv sein."
+
+msgid "Exceeded the maximum argument count."
+msgstr "Die maximale Anzahl von Argumenten wurde überschritten."
+
+msgid "Exceeded the maximum parameter count."
+msgstr "Die maximale Parameteranzahl wurde überschritten."
+
+msgid "Exception target too far."
+msgstr "Das Ausnahmeziel ist zu weit entfernt."
+
+msgid "Executable bytecode wrapper cannot be required: %s"
+msgstr "Der ausführbare Bytecode-Wrapper kann nicht mit require geladen werden: %s"
+
+msgid "Failed to acquire the OpenGL ES compiler context."
+msgstr "Der OpenGL ES-Compilerkontext konnte nicht abgerufen werden."
+
+msgid "Failed to allocate Vulkan descriptor sets."
+msgstr "Vulkan-Deskriptorsätze konnten nicht zugewiesen werden."
+
+msgid "Failed to allocate a Vulkan command buffer."
+msgstr "Ein Vulkan-Befehlspuffer konnte nicht zugewiesen werden."
+
+msgid "Failed to allocate an OpenGL ES buffer name."
+msgstr "Ein OpenGL ES-Puffername konnte nicht zugewiesen werden."
+
+msgid "Failed to analyze accelerator loop."
+msgstr "Die Beschleunigerschleife konnte nicht analysiert werden."
+
+msgid "Failed to begin a Vulkan command buffer."
+msgstr "Ein Vulkan-Befehlspuffer konnte nicht begonnen werden."
+
+msgid "Failed to classify accelerator loop."
+msgstr "Die Beschleunigerschleife konnte nicht klassifiziert werden."
+
+msgid "Failed to classify accelerator reduction."
+msgstr "Die Beschleunigerreduktion konnte nicht klassifiziert werden."
+
+msgid "Failed to compile a Direct3D 12 compute shader."
+msgstr "Ein Direct3D 12-Compute-Shader konnte nicht kompiliert werden."
+
+msgid "Failed to compile an OpenGL ES compute shader."
+msgstr "Ein OpenGL ES-Compute-Shader konnte nicht kompiliert werden."
+
+msgid "Failed to create a Direct3D 12 compute pipeline."
+msgstr "Eine Direct3D 12-Compute-Pipeline konnte nicht erstellt werden."
+
+msgid "Failed to create a Direct3D 12 root signature."
+msgstr "Eine Direct3D 12-Root-Signatur konnte nicht erstellt werden."
+
+msgid "Failed to create a Vulkan 1.2 instance."
+msgstr "Eine Vulkan 1.2-Instanz konnte nicht erstellt werden."
+
+msgid "Failed to create a Vulkan command pool."
+msgstr "Ein Vulkan-Befehlspool konnte nicht erstellt werden."
+
+msgid "Failed to create a Vulkan completion fence."
+msgstr "Eine Vulkan-Abschluss-Fence konnte nicht erstellt werden."
+
+msgid "Failed to create a Vulkan compute pipeline."
+msgstr "Eine Vulkan-Compute-Pipeline konnte nicht erstellt werden."
+
+msgid "Failed to create a Vulkan data buffer."
+msgstr "Ein Vulkan-Datenpuffer konnte nicht erstellt werden."
+
+msgid "Failed to create a Vulkan descriptor layout."
+msgstr "Ein Vulkan-Deskriptorlayout konnte nicht erstellt werden."
+
+msgid "Failed to create a Vulkan pipeline layout."
+msgstr "Ein Vulkan-Pipeline-Layout konnte nicht erstellt werden."
+
+msgid "Failed to create a Vulkan shader module."
+msgstr "Ein Vulkan-Shader-Modul konnte nicht erstellt werden."
+
+msgid "Failed to create an OpenGL ES compute program."
+msgstr "Ein OpenGL ES-Compute-Programm konnte nicht erstellt werden."
+
+msgid "Failed to create an OpenGL ES compute shader."
+msgstr "Ein OpenGL ES-Compute-Shader konnte nicht erstellt werden."
+
+msgid "Failed to create the Direct3D 12 DXGI factory."
+msgstr "Die Direct3D 12-DXGI-Factory konnte nicht erstellt werden."
+
+msgid "Failed to create the Direct3D 12 compute queue."
+msgstr "Die Direct3D 12-Compute-Warteschlange konnte nicht erstellt werden."
+
+msgid "Failed to create the Direct3D 12 queue fence."
+msgstr "Die Direct3D 12-Warteschlangen-Fence konnte nicht erstellt werden."
+
+msgid "Failed to create the Vulkan descriptor pool."
+msgstr "Der Vulkan-Deskriptorpool konnte nicht erstellt werden."
+
+msgid "Failed to create the Vulkan scalar buffer."
+msgstr "Der Vulkan-Skalarpuffer konnte nicht erstellt werden."
+
+msgid "Failed to create the Vulkan scalar-result buffer."
+msgstr "Der Vulkan-Puffer für skalare Ergebnisse konnte nicht erstellt werden."
+
+msgid "Failed to create the selected Direct3D 12 device."
+msgstr "Das ausgewählte Direct3D 12-Gerät konnte nicht erstellt werden."
+
+msgid "Failed to create the selected Vulkan compute device."
+msgstr "Das ausgewählte Vulkan-Compute-Gerät konnte nicht erstellt werden."
+
+msgid "Failed to enumerate Vulkan physical devices."
+msgstr "Die physischen Vulkan-Geräte konnten nicht aufgelistet werden."
+
+msgid "Failed to expand the CS segment limit.\n"
+msgstr "Die CS-Segmentgrenze konnte nicht erweitert werden.\n"
+
+msgid "Failed to finish the Vulkan command buffer."
+msgstr "Der Vulkan-Befehlspuffer konnte nicht abgeschlossen werden."
+
+msgid "Failed to flush Vulkan data-buffer memory."
+msgstr "Der Speicher des Vulkan-Datenpuffers konnte nicht geschrieben werden."
+
+msgid "Failed to flush Vulkan scalar memory."
+msgstr "Der Vulkan-Skalarspeicher konnte nicht geschrieben werden."
+
+msgid "Failed to flush Vulkan scalar-result memory."
+msgstr "Der Vulkan-Speicher für skalare Ergebnisse konnte nicht geschrieben werden."
+
+msgid "Failed to generate an OpenGL ES compute shader."
+msgstr "Ein OpenGL ES-Compute-Shader konnte nicht generiert werden."
+
+msgid "Failed to initialize a headless OpenGL ES 3.1 context."
+msgstr "Ein monitorloser OpenGL ES 3.1-Kontext konnte nicht initialisiert werden."
+
+msgid "Failed to initialize the Direct3D 12 queue mutex."
+msgstr "Der Mutex der Direct3D 12-Warteschlange konnte nicht initialisiert werden."
+
+msgid "Failed to initialize the OpenGL ES context mutex."
+msgstr "Der Mutex des OpenGL ES-Kontexts konnte nicht initialisiert werden."
+
+msgid "Failed to initialize the Vulkan queue mutex."
+msgstr "Der Mutex der Vulkan-Warteschlange konnte nicht initialisiert werden."
+
+msgid "Failed to invalidate Vulkan output memory."
+msgstr "Der Vulkan-Ausgabespeicher konnte nicht invalidiert werden."
+
+msgid "Failed to invalidate Vulkan scalar-result memory."
+msgstr "Der Vulkan-Speicher für skalare Ergebnisse konnte nicht invalidiert werden."
+
+msgid "Failed to link an OpenGL ES compute program."
+msgstr "Ein OpenGL ES-Compute-Programm konnte nicht gelinkt werden."
+
+msgid "Failed to lock accelerator rewrite commit."
+msgstr "Der Commit der Beschleunigerumschreibung konnte nicht gesperrt werden."
+
+msgid "Failed to make the OpenGL ES context current."
+msgstr "Der OpenGL ES-Kontext konnte nicht zum aktuellen Kontext gemacht werden."
+
+msgid "Failed to map an OpenGL ES output buffer."
+msgstr "Ein OpenGL ES-Ausgabepuffer konnte nicht abgebildet werden."
+
+msgid "Failed to map the OpenGL ES result buffer."
+msgstr "Der OpenGL ES-Ergebnispuffer konnte nicht abgebildet werden."
+
+msgid "Failed to normalize accelerator index."
+msgstr "Der Beschleunigerindex konnte nicht normalisiert werden."
+
+msgid "Failed to open file \"%s\".\n"
+msgstr "Datei „%s“ konnte nicht geöffnet werden.\n"
+
+msgid "Failed to query the Vulkan loader version."
+msgstr "Die Version des Vulkan-Laders konnte nicht abgefragt werden."
+
+msgid "Failed to release the OpenGL ES compiler context."
+msgstr "Der OpenGL ES-Compilerkontext konnte nicht freigegeben werden."
+
+msgid "Failed to release the OpenGL ES context."
+msgstr "Der OpenGL ES-Kontext konnte nicht freigegeben werden."
+
+msgid "Failed to reserve accelerator programs."
+msgstr "Für Beschleunigerprogramme konnte kein Speicher reserviert werden."
+
+msgid "Failed to serialize a Direct3D 12 root signature."
+msgstr "Eine Direct3D 12-Root-Signatur konnte nicht serialisiert werden."
+
+msgid "File close error."
+msgstr "Fehler beim Schließen der Datei."
+
+msgid "File handle belongs to a different VM."
+msgstr "Das Datei-Handle gehört zu einer anderen VM."
+
+msgid "File handle is invalid."
+msgstr "Das Datei-Handle ist ungültig."
+
+msgid "File handle kind mismatch."
+msgstr "Die Art des Datei-Handles stimmt nicht überein."
+
+msgid "File is closed."
+msgstr "Die Datei ist geschlossen."
+
+msgid "File mapping is not supported on this platform."
+msgstr "Die Dateizuordnung wird auf dieser Plattform nicht unterstützt."
+
+msgid "File mapping must allow reading or writing."
+msgstr "Die Dateizuordnung muss Lesen oder Schreiben zulassen."
+
+msgid "File mapping offset and size must be integers."
+msgstr "Versatz und Größe der Dateizuordnung müssen ganze Zahlen sein."
+
+msgid "File mapping offset and size must not be negative."
+msgstr "Versatz und Größe der Dateizuordnung dürfen nicht negativ sein."
+
+msgid "File mapping offset is too large."
+msgstr "Der Versatz der Dateizuordnung ist zu groß."
+
+msgid "File mapping permissions must be 0 or 1."
+msgstr "Die Berechtigungen der Dateizuordnung müssen 0 oder 1 sein."
+
+msgid "File mapping range exceeds the file size."
+msgstr "Der Bereich der Dateizuordnung überschreitet die Dateigröße."
+
+msgid "File mapping range is not aligned to the element size."
+msgstr "Der Bereich der Dateizuordnung ist nicht an der Elementgröße ausgerichtet."
+
+msgid "File mapping range is too large."
+msgstr "Der Bereich der Dateizuordnung ist zu groß."
+
+msgid "File mapping size is too large."
+msgstr "Die Größe der Dateizuordnung ist zu groß."
+
+msgid "File mapping size must be greater than zero."
+msgstr "Die Größe der Dateizuordnung muss größer als null sein."
+
+msgid "File read error."
+msgstr "Fehler beim Lesen der Datei."
+
+msgid "File seek error."
+msgstr "Fehler beim Positionieren in der Datei."
+
+msgid "File tell error."
+msgstr "Fehler beim Ermitteln der Dateiposition."
+
+msgid "File write error."
+msgstr "Fehler beim Schreiben der Datei."
+
+msgid "File.writeAll range is out-of-bounds."
+msgstr "Der Bereich von File.writeAll liegt außerhalb der Grenzen."
+
+msgid "Fill value is not a number."
+msgstr "Der Füllwert ist keine Zahl."
+
+msgid "GPU acceleration is available only when running Noct source.\n"
+msgstr "GPU-Beschleunigung ist nur beim Ausführen von Noct-Quellcode verfügbar.\n"
+
+msgid "GPU acceleration is not available in this build.\n"
+msgstr "GPU-Beschleunigung ist in diesem Build nicht verfügbar.\n"
+
+msgid "GPU acceleration may be selected only once.\n"
+msgstr "GPU-Beschleunigung kann nur einmal ausgewählt werden.\n"
+
+msgid "GPU device name must not be empty.\n"
+msgstr "Der Name des GPU-Geräts darf nicht leer sein.\n"
+
+msgid "GPU enumeration failed.\n"
+msgstr "GPU-Auflistung fehlgeschlagen.\n"
+
+msgid "GPU enumeration failed: %s\n"
+msgstr "GPU-Auflistung fehlgeschlagen: %s\n"
+
+msgid "Generated Vulkan SPIR-V is invalid:\x20"
+msgstr "Das generierte Vulkan-SPIR-V ist ungültig:\x20"
+
+msgid "Generated accelerator IR failed validation."
+msgstr "Die Validierung der generierten Beschleuniger-IR ist fehlgeschlagen."
+
+msgid "Global symbol '%s' is not available inside __fast func."
+msgstr "Das globale Symbol '%s' ist innerhalb einer __fast func nicht verfügbar."
+
+msgid "Inactive OpenGL ES buffers cannot request host transfers."
+msgstr "Inaktive OpenGL ES-Puffer können keine Host-Übertragungen anfordern."
+
+msgid "Incompatible duplicate __fast prototype '%s'."
+msgstr "Inkompatibler doppelter __fast-Prototyp '%s'."
+
+msgid "Incomplete Vulkan enumeration function table."
+msgstr "Unvollständige Vulkan-Auflistungsfunktionstabelle."
+
+msgid "Incomplete Vulkan function table."
+msgstr "Unvollständige Vulkan-Funktionstabelle."
+
+msgid "Inconsistent optimization levels for one HIR module."
+msgstr "Inkonsistente Optimierungsstufen für ein HIR-Modul."
+
+msgid "Index out of bounds."
+msgstr "Index außerhalb der Grenzen."
+
+msgid "Input line is too long.\n"
+msgstr "Die Eingabezeile ist zu lang.\n"
+
+msgid "Inputs %s and %s map to the same output %s.\n"
+msgstr "Die Eingaben %s und %s werden derselben Ausgabe %s zugeordnet.\n"
+
+msgid "Invalid --path option.\n"
+msgstr "Ungültige Option --path.\n"
+
+msgid "Invalid Direct3D 12 program preparation request."
+msgstr "Ungültige Anfrage zur Vorbereitung eines Direct3D 12-Programms."
+
+msgid "Invalid GPU device name.\n"
+msgstr "Ungültiger GPU-Gerätename.\n"
+
+msgid "Invalid OpenGL ES device list."
+msgstr "Ungültige OpenGL ES-Geräteliste."
+
+msgid "Invalid OpenGL ES dispatch limit request."
+msgstr "Ungültige Anfrage für die OpenGL ES-Dispatch-Grenze."
+
+msgid "Invalid OpenGL ES execution request."
+msgstr "Ungültige OpenGL ES-Ausführungsanfrage."
+
+msgid "Invalid OpenGL ES execution."
+msgstr "Ungültige OpenGL ES-Ausführung."
+
+msgid "Invalid OpenGL ES finish request."
+msgstr "Ungültige OpenGL ES-Abschlussanfrage."
+
+msgid "Invalid OpenGL ES kernel index."
+msgstr "Ungültiger OpenGL ES-Kernelindex."
+
+msgid "Invalid OpenGL ES program preparation request."
+msgstr "Ungültige Anfrage zur Vorbereitung eines OpenGL ES-Programms."
+
+msgid "Invalid REPL state.\n"
+msgstr "Ungültiger REPL-Zustand.\n"
+
+msgid "Invalid Vulkan device list."
+msgstr "Ungültige Vulkan-Geräteliste."
+
+msgid "Invalid Vulkan dispatch limit request."
+msgstr "Ungültige Anfrage für die Vulkan-Dispatch-Grenze."
+
+msgid "Invalid Vulkan execution request."
+msgstr "Ungültige Vulkan-Ausführungsanfrage."
+
+msgid "Invalid Vulkan execution."
+msgstr "Ungültige Vulkan-Ausführung."
+
+msgid "Invalid Vulkan finish request."
+msgstr "Ungültige Vulkan-Abschlussanfrage."
+
+msgid "Invalid Vulkan kernel index."
+msgstr "Ungültiger Vulkan-Kernelindex."
+
+msgid "Invalid Vulkan program preparation request."
+msgstr "Ungültige Anfrage zur Vorbereitung eines Vulkan-Programms."
+
+msgid "Invalid Vulkan shader compiler input."
+msgstr "Ungültige Eingabe für den Vulkan-Shader-Compiler."
+
+msgid "Invalid __fast function prototype."
+msgstr "Ungültiger __fast-Funktionsprototyp."
+
+msgid "Invalid __fast function signature for '%s'."
+msgstr "Ungültige __fast-Funktionssignatur für '%s'."
+
+msgid "Invalid __fast function signature."
+msgstr "Ungültige __fast-Funktionssignatur."
+
+msgid "Invalid __fast loop counter."
+msgstr "Ungültiger __fast-Schleifenzähler."
+
+msgid "Invalid __fast parameter shape."
+msgstr "Ungültige Form des __fast-Parameters."
+
+msgid "Invalid __fast parameter type."
+msgstr "Ungültiger Typ des __fast-Parameters."
+
+msgid "Invalid __fast shape extent."
+msgstr "Ungültige Ausdehnung der __fast-Form."
+
+msgid "Invalid __fast signature metadata."
+msgstr "Ungültige Metadaten der __fast-Signatur."
+
+msgid "Invalid accelerator argument slots."
+msgstr "Ungültige Argument-Slots des Beschleunigers."
+
+msgid "Invalid accelerator backend status."
+msgstr "Ungültiger Status des Beschleuniger-Backends."
+
+msgid "Invalid accelerator budget function."
+msgstr "Ungültige Budgetfunktion des Beschleunigers."
+
+msgid "Invalid accelerator buffer binding."
+msgstr "Ungültige Pufferbindung des Beschleunigers."
+
+msgid "Invalid accelerator buffer index type."
+msgstr "Ungültiger Pufferindextyp des Beschleunigers."
+
+msgid "Invalid accelerator buffer slot."
+msgstr "Ungültiger Puffer-Slot des Beschleunigers."
+
+msgid "Invalid accelerator comparison HIR."
+msgstr "Ungültige Vergleichs-HIR des Beschleunigers."
+
+msgid "Invalid accelerator compiler result."
+msgstr "Ungültiges Ergebnis des Beschleuniger-Compilers."
+
+msgid "Invalid accelerator decline reason."
+msgstr "Ungültiger Ablehnungsgrund des Beschleunigers."
+
+msgid "Invalid accelerator device-list request."
+msgstr "Ungültige Gerätelistenanfrage des Beschleunigers."
+
+msgid "Invalid accelerator device-local buffer."
+msgstr "Ungültiger gerätelokaler Puffer des Beschleunigers."
+
+msgid "Invalid accelerator device-local declaration."
+msgstr "Ungültige gerätelokale Deklaration des Beschleunigers."
+
+msgid "Invalid accelerator device-local transfer."
+msgstr "Ungültige gerätelokale Übertragung des Beschleunigers."
+
+msgid "Invalid accelerator function HIR."
+msgstr "Ungültige Funktions-HIR des Beschleunigers."
+
+msgid "Invalid accelerator function metadata."
+msgstr "Ungültige Funktionsmetadaten des Beschleunigers."
+
+msgid "Invalid accelerator index arithmetic."
+msgstr "Ungültige Indexarithmetik des Beschleunigers."
+
+msgid "Invalid accelerator kernel buffer type."
+msgstr "Ungültiger Kernelpuffertyp des Beschleunigers."
+
+msgid "Invalid accelerator kernel index."
+msgstr "Ungültiger Kernelindex des Beschleunigers."
+
+msgid "Invalid accelerator local count."
+msgstr "Ungültige Anzahl lokaler Variablen des Beschleunigers."
+
+msgid "Invalid accelerator local list."
+msgstr "Ungültige Liste lokaler Variablen des Beschleunigers."
+
+msgid "Invalid accelerator parameter count."
+msgstr "Ungültige Parameteranzahl des Beschleunigers."
+
+msgid "Invalid accelerator parameter metadata."
+msgstr "Ungültige Parametermetadaten des Beschleunigers."
+
+msgid "Invalid accelerator program ID."
+msgstr "Ungültige Programm-ID des Beschleunigers."
+
+msgid "Invalid accelerator program identifier."
+msgstr "Ungültiger Programmbezeichner des Beschleunigers."
+
+msgid "Invalid accelerator program reached the Direct3D 12 backend."
+msgstr "Ein ungültiges Beschleunigerprogramm hat das Direct3D 12-Backend erreicht."
+
+msgid "Invalid accelerator program reached the OpenGL ES backend."
+msgstr "Ein ungültiges Beschleunigerprogramm hat das OpenGL ES-Backend erreicht."
+
+msgid "Invalid accelerator program reached the Vulkan backend."
+msgstr "Ein ungültiges Beschleunigerprogramm hat das Vulkan-Backend erreicht."
+
+msgid "Invalid accelerator reduction metadata."
+msgstr "Ungültige Reduktionsmetadaten des Beschleunigers."
+
+msgid "Invalid accelerator reduction result entry."
+msgstr "Ungültiger Reduktionsergebniseintrag des Beschleunigers."
+
+msgid "Invalid accelerator reduction value type."
+msgstr "Ungültiger Reduktionswerttyp des Beschleunigers."
+
+msgid "Invalid accelerator region plan."
+msgstr "Ungültiger Regionsplan des Beschleunigers."
+
+msgid "Invalid accelerator rewrite function."
+msgstr "Ungültige Umschreibungsfunktion des Beschleunigers."
+
+msgid "Invalid accelerator scalar binding."
+msgstr "Ungültige Skalarbindung des Beschleunigers."
+
+msgid "Invalid accelerator scalar result binding."
+msgstr "Ungültige Bindung des skalaren Ergebnisses des Beschleunigers."
+
+msgid "Invalid accelerator scalar result metadata."
+msgstr "Ungültige Metadaten des skalaren Ergebnisses des Beschleunigers."
+
+msgid "Invalid accelerator scalar result."
+msgstr "Ungültiges skalares Ergebnis des Beschleunigers."
+
+msgid "Invalid accelerator scalar type."
+msgstr "Ungültiger Skalartyp des Beschleunigers."
+
+msgid "Invalid accelerator scalar-result slot."
+msgstr "Ungültiger Slot für skalare Ergebnisse des Beschleunigers."
+
+msgid "Invalid accelerator scratch budget."
+msgstr "Ungültiges Scratch-Budget des Beschleunigers."
+
+msgid "Invalid accelerator session."
+msgstr "Ungültige Beschleunigersitzung."
+
+msgid "Invalid application dependency graph."
+msgstr "Ungültiger Abhängigkeitsgraph der Anwendung."
+
+msgid "Invalid bytecode function descriptor."
+msgstr "Ungültiger Bytecode-Funktionsdeskriptor."
+
+msgid "Invalid character range."
+msgstr "Ungültiger Zeichenbereich."
+
+msgid "Invalid codepoint."
+msgstr "Ungültiger Codepunkt."
+
+msgid "Invalid constant __fast shape extent."
+msgstr "Ungültige konstante Ausdehnung der __fast-Form."
+
+msgid "Invalid dynamic __fast shape extent."
+msgstr "Ungültige dynamische Ausdehnung der __fast-Form."
+
+msgid "Invalid empty __fast shape extent."
+msgstr "Ungültige leere Ausdehnung der __fast-Form."
+
+msgid "Invalid event flags."
+msgstr "Ungültige Ereignisflags."
+
+msgid "Invalid function parameter metadata."
+msgstr "Ungültige Funktionsparametermetadaten."
+
+msgid "Invalid function prototype."
+msgstr "Ungültiger Funktionsprototyp."
+
+msgid "Invalid handle."
+msgstr "Ungültiges Handle."
+
+msgid "Invalid input module path."
+msgstr "Ungültiger Pfad des Eingabemoduls."
+
+msgid "Invalid input module."
+msgstr "Ungültiges Eingabemodul."
+
+msgid "Invalid module path option %s.\n"
+msgstr "Ungültige Modulpfadoption %s.\n"
+
+msgid "Invalid native function parameter name."
+msgstr "Ungültiger Parametername einer nativen Funktion."
+
+msgid "Invalid native function registration."
+msgstr "Ungültige Registrierung einer nativen Funktion."
+
+msgid "Invalid optimize-level option %s.\n"
+msgstr "Ungültige Optimierungsstufenoption %s.\n"
+
+msgid "Invalid or incomplete %s accelerator finish."
+msgstr "Ungültiger oder unvollständiger Abschluss des %s-Beschleunigers."
+
+msgid "Invalid or out-of-order %s accelerator dispatch."
+msgstr "Ungültiger oder falsch angeordneter Dispatch des %s-Beschleunigers."
+
+msgid "Invalid private accelerator package."
+msgstr "Ungültiges privates Beschleunigerpaket."
+
+msgid "Invalid selected Direct3D 12 device."
+msgstr "Ungültiges ausgewähltes Direct3D 12-Gerät."
+
+msgid "Invalid selected OpenGL ES device."
+msgstr "Ungültiges ausgewähltes OpenGL ES-Gerät."
+
+msgid "Invalid selected Vulkan device."
+msgstr "Ungültiges ausgewähltes Vulkan-Gerät."
+
+msgid "Invalid shaped type annotation."
+msgstr "Ungültige Typanmerkung mit Form."
+
+msgid "Invalid shift amount."
+msgstr "Ungültige Verschiebungsmenge."
+
+msgid "JIT bytecode analysis table is too large."
+msgstr "Die JIT-Bytecode-Analysetabelle ist zu groß."
+
+msgid "JIT bytecode is too large."
+msgstr "Der JIT-Bytecode ist zu groß."
+
+msgid "JIT compilation is enabled. Starting the fast VM...\n"
+msgstr "JIT-Kompilierung ist aktiviert. Starte die schnelle VM...\n"
+
+msgid "JIT memory protection failed."
+msgstr "JIT-Speicherschutz fehlgeschlagen."
+
+msgid "JIT temporary-variable table is too large."
+msgstr "Die JIT-Tabelle für temporäre Variablen ist zu groß."
+
+msgid "LHS is not a symbol or an array element."
+msgstr "LHS ist weder ein Symbol noch ein Array-Element."
+
+msgid "LHS is not a term or an array element."
+msgstr "LHS ist weder ein Term noch ein Array-Element."
+
+msgid "LIR: Out of memory error."
+msgstr "LIR: Nicht genügend Speicher."
+
+msgid "Legacy 1.0 bytecode cannot be embedded in an application: %s"
+msgstr "Veralteter 1.0-Bytecode kann nicht in eine Anwendung eingebettet werden: %s"
+
+msgid "Local initializer or assignment does not match its declared type."
+msgstr "Der Initialisierer oder die Zuweisung der lokalen Variable stimmt nicht mit ihrem deklarierten Typ überein."
+
+msgid "Malformed accelerator HIR block."
+msgstr "Fehlerhaft aufgebauter HIR-Block des Beschleunigers."
+
+msgid "Malformed accelerator HIR expression."
+msgstr "Fehlerhaft aufgebauter HIR-Ausdruck des Beschleunigers."
+
+msgid "Malformed accelerator HIR statement."
+msgstr "Fehlerhaft aufgebaute HIR-Anweisung des Beschleunigers."
+
+msgid "Malformed accelerator HIR term."
+msgstr "Fehlerhaft aufgebauter HIR-Term des Beschleunigers."
+
+msgid "Malformed accelerator array expression."
+msgstr "Fehlerhaft aufgebauter Array-Ausdruck des Beschleunigers."
+
+msgid "Malformed accelerator assignment target."
+msgstr "Fehlerhaft aufgebautes Zuweisungsziel des Beschleunigers."
+
+msgid "Malformed accelerator call expression."
+msgstr "Fehlerhaft aufgebauter Aufrufausdruck des Beschleunigers."
+
+msgid "Malformed accelerator collection loop."
+msgstr "Fehlerhaft aufgebaute Sammlungsschleife des Beschleunigers."
+
+msgid "Malformed accelerator dictionary expression."
+msgstr "Fehlerhaft aufgebauter Dictionary-Ausdruck des Beschleunigers."
+
+msgid "Malformed accelerator expression HIR."
+msgstr "Fehlerhafter HIR eines Beschleunigerausdrucks."
+
+msgid "Malformed accelerator function control flow."
+msgstr "Fehlerhafter Kontrollfluss einer Beschleunigerfunktion."
+
+msgid "Malformed accelerator loop body."
+msgstr "Fehlerhafter Schleifenkörper des Beschleunigers."
+
+msgid "Malformed accelerator member call."
+msgstr "Fehlerhafter Memberaufruf des Beschleunigers."
+
+msgid "Malformed accelerator new expression."
+msgstr "Fehlerhafter new-Ausdruck des Beschleunigers."
+
+msgid "Malformed accelerator ranged loop."
+msgstr "Fehlerhafte Bereichsschleife des Beschleunigers."
+
+msgid "Malformed accelerator region control flow."
+msgstr "Fehlerhafter Kontrollfluss einer Beschleunigerregion."
+
+msgid "Malformed accelerator string term."
+msgstr "Fehlerhafter Zeichenkettenterm des Beschleunigers."
+
+msgid "Malformed accelerator symbol HIR."
+msgstr "Fehlerhafter HIR eines Beschleunigersymbols."
+
+msgid "Malformed accelerator symbol term."
+msgstr "Fehlerhafter Symbolterm des Beschleunigers."
+
+msgid "Malformed accelerator term HIR."
+msgstr "Fehlerhafter HIR eines Beschleunigerterms."
+
+msgid "Malformed accelerator type test."
+msgstr "Fehlerhafter Typtest des Beschleunigers."
+
+msgid "Malformed accelerator while loop."
+msgstr "Fehlerhafte while-Schleife des Beschleunigers."
+
+msgid "Malformed application container."
+msgstr "Fehlerhafter Anwendungscontainer."
+
+msgid "Memory mapping failed."
+msgstr "Speicherabbildung fehlgeschlagen."
+
+msgid "Missing OpenGL ES buffer descriptors."
+msgstr "OpenGL ES-Pufferdeskriptoren fehlen."
+
+msgid "Missing OpenGL ES download snapshot."
+msgstr "OpenGL ES-Download-Momentaufnahme fehlt."
+
+msgid "Missing OpenGL ES execution output."
+msgstr "OpenGL ES-Ausführungsausgabe fehlt."
+
+msgid "Missing OpenGL ES finish buffers."
+msgstr "OpenGL ES-Abschlusspuffer fehlen."
+
+msgid "Missing OpenGL ES finish result words."
+msgstr "OpenGL ES-Abschlussergebniswörter fehlen."
+
+msgid "Missing OpenGL ES output snapshot."
+msgstr "OpenGL ES-Ausgabemomentaufnahme fehlt."
+
+msgid "Missing OpenGL ES prepared program."
+msgstr "Vorbereitetes OpenGL ES-Programm fehlt."
+
+msgid "Missing OpenGL ES result buffer."
+msgstr "OpenGL ES-Ergebnispuffer fehlt."
+
+msgid "Missing OpenGL ES result words."
+msgstr "OpenGL ES-Ergebniswörter fehlen."
+
+msgid "Missing OpenGL ES scalar words."
+msgstr "OpenGL ES-Skalarwörter fehlen."
+
+msgid "Missing OpenGL ES upload snapshot."
+msgstr "OpenGL ES-Upload-Momentaufnahme fehlt."
+
+msgid "Missing Vulkan buffer descriptors."
+msgstr "Vulkan-Pufferdeskriptoren fehlen."
+
+msgid "Missing Vulkan buffer snapshot."
+msgstr "Vulkan-Puffermomentaufnahme fehlt."
+
+msgid "Missing Vulkan execution output."
+msgstr "Vulkan-Ausführungsausgabe fehlt."
+
+msgid "Missing Vulkan finish buffers."
+msgstr "Vulkan-Abschlusspuffer fehlen."
+
+msgid "Missing Vulkan output snapshot."
+msgstr "Vulkan-Ausgabemomentaufnahme fehlt."
+
+msgid "Missing Vulkan prepared program."
+msgstr "Vorbereitetes Vulkan-Programm fehlt."
+
+msgid "Missing Vulkan scalar words."
+msgstr "Vulkan-Skalarwörter fehlen."
+
+msgid "Missing Vulkan scalar-result destination."
+msgstr "Ziel des skalaren Vulkan-Ergebnisses fehlt."
+
+msgid "Missing Vulkan scalar-result identities."
+msgstr "Identitäten des skalaren Vulkan-Ergebnisses fehlen."
+
+msgid "Missing accelerator context."
+msgstr "Beschleunigerkontext fehlt."
+
+msgid "Missing accelerator function plan."
+msgstr "Funktionsplan des Beschleunigers fehlt."
+
+msgid "Missing accelerator registry reservation."
+msgstr "Reservierung der Beschleunigerregistrierung fehlt."
+
+msgid "Multi-dimensional subscripts are valid only inside __fast func."
+msgstr "Mehrdimensionale Indexausdrücke sind nur innerhalb von __fast func gültig."
+
+msgid "Multiple initializers in module: %s"
+msgstr "Mehrere Initialisierer im Modul: %s"
+
+msgid "NUL byte in source program.\n"
+msgstr "NUL-Byte im Quellprogramm.\n"
+
+msgid "NUL in source module: %s"
+msgstr "NUL im Quellmodul: %s"
+
+msgid "No Vulkan physical device is available."
+msgstr "Kein physisches Vulkan-Gerät ist verfügbar."
+
+msgid "No accelerator backend could enumerate devices."
+msgstr "Kein Beschleuniger-Backend konnte Geräte aufzählen."
+
+msgid "No input module was specified."
+msgstr "Es wurde kein Eingabemodul angegeben."
+
+msgid "No resolver is available for required module '%s'."
+msgstr "Für das erforderliche Modul '%s' ist kein Resolver verfügbar."
+
+msgid "No suitable GPU device is available."
+msgstr "Kein geeignetes GPU-Gerät ist verfügbar."
+
+msgid "No suitable GPU device is available.\n"
+msgstr "Kein geeignetes GPU-Gerät ist verfügbar.\n"
+
+msgid "No suitable OpenGL ES 3.1 compute device is available."
+msgstr "Kein geeignetes OpenGL ES 3.1-Compute-Gerät ist verfügbar."
+
+msgid "No suitable Vulkan 1.2 compute device is available."
+msgstr "Kein geeignetes Vulkan 1.2-Compute-Gerät ist verfügbar."
+
+msgid "Noct Programming Language\n"
+msgstr "Programmiersprache Noct\n"
+
+msgid "Nondeterministic accelerator kernel index."
+msgstr "Nicht deterministischer Index des Beschleuniger-Kernels."
+
+msgid "Nondeterministic accelerator scalar binding."
+msgstr "Nicht deterministische Skalarbindung des Beschleunigers."
+
+msgid "Nondeterministic accelerator scalar result."
+msgstr "Nicht deterministisches skalares Ergebnis des Beschleunigers."
+
+msgid "Not a dictionary."
+msgstr "Kein Dictionary."
+
+msgid "Not a function."
+msgstr "Keine Funktion."
+
+msgid "Not a packed."
+msgstr "Kein Packed."
+
+msgid "Not an array or a dictionary."
+msgstr "Weder ein Array noch ein Dictionary."
+
+msgid "Not an array."
+msgstr "Kein Array."
+
+msgid "Offset is out-of-range."
+msgstr "Der Versatz liegt außerhalb des Bereichs."
+
+msgid "Only numeric literals are available inside __fast func."
+msgstr "Innerhalb von __fast func sind nur numerische Literale verfügbar."
+
+msgid "OpenGL ES active dispatch sequence is incomplete."
+msgstr "Die aktive OpenGL ES-Dispatchsequenz ist unvollständig."
+
+msgid "OpenGL ES buffer exceeds the device storage-block limit."
+msgstr "Der OpenGL ES-Puffer überschreitet die Speicherblockgrenze des Geräts."
+
+msgid "OpenGL ES buffer extent metadata is inconsistent."
+msgstr "Die Ausdehnungsmetadaten des OpenGL ES-Puffers sind inkonsistent."
+
+msgid "OpenGL ES buffer metadata does not match the prepared program."
+msgstr "Die Metadaten des OpenGL ES-Puffers stimmen nicht mit dem vorbereiteten Programm überein."
+
+msgid "OpenGL ES buffer size is not representable."
+msgstr "Die Größe des OpenGL ES-Puffers ist nicht darstellbar."
+
+msgid "OpenGL ES buffer table does not match the prepared program."
+msgstr "Die OpenGL ES-Puffertabelle stimmt nicht mit dem vorbereiteten Programm überein."
+
+msgid "OpenGL ES compute shader source is too large."
+msgstr "Der Quellcode des OpenGL ES-Compute-Shaders ist zu groß."
+
+msgid "OpenGL ES dispatch exceeds the device workgroup-count limit."
+msgstr "Der OpenGL ES-Dispatch überschreitet die Arbeitsgruppenanzahlgrenze des Geräts."
+
+msgid "OpenGL ES dispatch range changed after execution creation."
+msgstr "Der OpenGL ES-Dispatchbereich wurde nach Erstellung der Ausführung geändert."
+
+msgid "OpenGL ES dispatch range is missing from the scalar block."
+msgstr "Der OpenGL ES-Dispatchbereich fehlt im Skalarblock."
+
+msgid "OpenGL ES execution has no active dispatch."
+msgstr "Die OpenGL ES-Ausführung hat keinen aktiven Dispatch."
+
+msgid "OpenGL ES execution was already finished."
+msgstr "Die OpenGL ES-Ausführung wurde bereits abgeschlossen."
+
+msgid "OpenGL ES finish buffer table changed."
+msgstr "Die OpenGL ES-Abschlusspuffertabelle wurde geändert."
+
+msgid "OpenGL ES finish result table changed."
+msgstr "Die OpenGL ES-Abschlussergebnistabelle wurde geändert."
+
+msgid "OpenGL ES kernels were dispatched out of order."
+msgstr "Die OpenGL ES-Kernel wurden in falscher Reihenfolge dispatched."
+
+msgid "OpenGL ES output buffer activity changed."
+msgstr "Die Aktivität des OpenGL ES-Ausgabepuffers wurde geändert."
+
+msgid "OpenGL ES output buffer became invalid while unmapping."
+msgstr "Der OpenGL ES-Ausgabepuffer wurde beim Aufheben der Zuordnung ungültig."
+
+msgid "OpenGL ES output buffer element type changed."
+msgstr "Der Elementtyp des OpenGL ES-Ausgabepuffers wurde geändert."
+
+msgid "OpenGL ES output buffer element width changed."
+msgstr "Die Elementbreite des OpenGL ES-Ausgabepuffers wurde geändert."
+
+msgid "OpenGL ES output buffer extent changed."
+msgstr "Die Ausdehnung des OpenGL ES-Ausgabepuffers wurde geändert."
+
+msgid "OpenGL ES output buffer origin changed."
+msgstr "Der Ursprung des OpenGL ES-Ausgabepuffers wurde geändert."
+
+msgid "OpenGL ES output buffer size changed."
+msgstr "Die Größe des OpenGL ES-Ausgabepuffers wurde geändert."
+
+msgid "OpenGL ES output buffer slot changed."
+msgstr "Der Slot des OpenGL ES-Ausgabepuffers wurde geändert."
+
+msgid "OpenGL ES output size is not representable."
+msgstr "Die OpenGL ES-Ausgabegröße ist nicht darstellbar."
+
+msgid "OpenGL ES output transfer plan changed."
+msgstr "Der OpenGL ES-Ausgabeübertragungsplan wurde geändert."
+
+msgid "OpenGL ES output upload plan changed."
+msgstr "Der OpenGL ES-Ausgabeuploadplan wurde geändert."
+
+msgid "OpenGL ES received an empty active dispatch."
+msgstr "OpenGL ES hat einen leeren aktiven Dispatch empfangen."
+
+msgid "OpenGL ES received too many active dispatches."
+msgstr "OpenGL ES hat zu viele aktive Dispatches empfangen."
+
+msgid "OpenGL ES reported an error while preparing a compute program."
+msgstr "OpenGL ES hat beim Vorbereiten eines Compute-Programms einen Fehler gemeldet."
+
+msgid "OpenGL ES result block does not match the prepared program."
+msgstr "Der OpenGL ES-Ergebnisblock stimmt nicht mit dem vorbereiteten Programm überein."
+
+msgid "OpenGL ES result block exceeds the device storage-block limit."
+msgstr "Der OpenGL ES-Ergebnisblock überschreitet die Speicherblockgrenze des Geräts."
+
+msgid "OpenGL ES result block size overflowed."
+msgstr "Bei der Größe des OpenGL ES-Ergebnisblocks ist ein Überlauf aufgetreten."
+
+msgid "OpenGL ES result buffer became invalid while unmapping."
+msgstr "Der OpenGL ES-Ergebnispuffer wurde beim Aufheben der Zuordnung ungültig."
+
+msgid "OpenGL ES result size is not representable."
+msgstr "Die OpenGL ES-Ergebnisgröße ist nicht darstellbar."
+
+msgid "OpenGL ES scalar block does not match the prepared program."
+msgstr "Der OpenGL ES-Skalarblock stimmt nicht mit dem vorbereiteten Programm überein."
+
+msgid "OpenGL ES scalar block exceeds the device storage-block limit."
+msgstr "Der OpenGL ES-Skalarblock überschreitet die Speicherblockgrenze des Geräts."
+
+msgid "OpenGL ES scalar block size overflowed."
+msgstr "Bei der Größe des OpenGL ES-Skalarblocks ist ein Überlauf aufgetreten."
+
+msgid "OpenGL ES supports only 32-bit accelerator buffers."
+msgstr "OpenGL ES unterstützt nur 32-Bit-Beschleunigerpuffer."
+
+msgid "Out of memory building module graph."
+msgstr "Nicht genügend Speicher beim Erstellen des Modulgraphen."
+
+msgid "Out of memory inspecting application."
+msgstr "Nicht genügend Speicher beim Untersuchen der Anwendung."
+
+msgid "Out of memory reading module %s."
+msgstr "Nicht genügend Speicher beim Lesen des Moduls %s."
+
+msgid "Out of memory validating module graph."
+msgstr "Nicht genügend Speicher beim Validieren des Modulgraphen."
+
+msgid "Out of memory while allocating accelerator kernel."
+msgstr "Nicht genügend Speicher beim Zuweisen des Beschleuniger-Kernels."
+
+msgid "Out of memory while building __fast signature."
+msgstr "Nicht genügend Speicher beim Erstellen der __fast-Signatur."
+
+msgid "Out of memory while building accelerator IR."
+msgstr "Nicht genügend Speicher beim Erstellen der Beschleuniger-IR."
+
+msgid "Out of memory while copying OpenGL ES scalar metadata."
+msgstr "Nicht genügend Speicher beim Kopieren der OpenGL ES-Skalarmetadaten."
+
+msgid "Out of memory while creating OpenGL ES buffers."
+msgstr "Nicht genügend Speicher beim Erstellen der OpenGL ES-Puffer."
+
+msgid "Out of memory while creating Vulkan buffers."
+msgstr "Nicht genügend Speicher beim Erstellen der Vulkan-Puffer."
+
+msgid "Out of memory while creating Vulkan descriptor sets."
+msgstr "Nicht genügend Speicher beim Erstellen der Vulkan-Deskriptorsätze."
+
+msgid "Out of memory while creating a Vulkan execution."
+msgstr "Nicht genügend Speicher beim Erstellen einer Vulkan-Ausführung."
+
+msgid "Out of memory while creating an OpenGL ES execution."
+msgstr "Nicht genügend Speicher beim Erstellen einer OpenGL ES-Ausführung."
+
+msgid "Out of memory while enumerating OpenGL ES devices."
+msgstr "Nicht genügend Speicher beim Aufzählen der OpenGL ES-Geräte."
+
+msgid "Out of memory while enumerating Vulkan devices."
+msgstr "Nicht genügend Speicher beim Aufzählen der Vulkan-Geräte."
+
+msgid "Out of memory while planning accelerator function."
+msgstr "Nicht genügend Speicher beim Planen der Beschleunigerfunktion."
+
+msgid "Out of memory while planning accelerator region."
+msgstr "Nicht genügend Speicher beim Planen der Beschleunigerregion."
+
+msgid "Out of memory while recording accelerator buffer."
+msgstr "Nicht genügend Speicher beim Aufzeichnen des Beschleunigerpuffers."
+
+msgid "Out of memory while recording accelerator kernel."
+msgstr "Nicht genügend Speicher beim Aufzeichnen des Beschleuniger-Kernels."
+
+msgid "Out of memory while recording accelerator range."
+msgstr "Nicht genügend Speicher beim Aufzeichnen des Beschleunigerbereichs."
+
+msgid "Out of memory while recording accelerator region."
+msgstr "Nicht genügend Speicher beim Aufzeichnen der Beschleunigerregion."
+
+msgid "Out of memory while recording accelerator scalar result."
+msgstr "Nicht genügend Speicher beim Aufzeichnen des skalaren Beschleunigerergebnisses."
+
+msgid "Out of memory while recording accelerator scalar."
+msgstr "Nicht genügend Speicher beim Aufzeichnen des Beschleunigerskalars."
+
+msgid "Out of memory while storing Vulkan descriptor sets."
+msgstr "Nicht genügend Speicher beim Speichern der Vulkan-Deskriptorsätze."
+
+msgid "Out of memory while writing Vulkan descriptors."
+msgstr "Nicht genügend Speicher beim Schreiben der Vulkan-Deskriptoren."
+
+msgid "Out of memory."
+msgstr "Nicht genügend Speicher."
+
+msgid "Out of memory.\n"
+msgstr "Nicht genügend Speicher.\n"
+
+msgid "Out-of-memory."
+msgstr "Nicht genügend Speicher."
+
+msgid "Output %s for input %s collides with input %s.\n"
+msgstr "Die Ausgabe %s für die Eingabe %s kollidiert mit der Eingabe %s.\n"
+
+msgid "Output directory already exists."
+msgstr "Das Ausgabeverzeichnis ist bereits vorhanden."
+
+msgid "Packed destination range is out-of-bounds."
+msgstr "Der Zielbereich von Packed liegt außerhalb der Grenzen."
+
+msgid "Packed element type must be a byte."
+msgstr "Der Elementtyp von Packed muss ein Byte sein."
+
+msgid "Packed element types do not match."
+msgstr "Die Elementtypen von Packed stimmen nicht überein."
+
+msgid "Packed index %ld is out-of-range."
+msgstr "Der Index %ld von Packed liegt außerhalb des Bereichs."
+
+msgid "Packed is not a file mapping."
+msgstr "Packed ist keine Dateizuordnung."
+
+msgid "Packed is unmapped."
+msgstr "Packed ist nicht zugeordnet."
+
+msgid "Packed size is 0."
+msgstr "Packed-Größe ist 0."
+
+msgid "Packed size is too large."
+msgstr "Packed-Größe ist zu groß."
+
+msgid "Packed source range is out-of-bounds."
+msgstr "Der Quellbereich von Packed liegt außerhalb der Grenzen."
+
+msgid "Port number is out-of-range."
+msgstr "Die Portnummer liegt außerhalb des Bereichs."
+
+msgid "Private accelerator package is detached."
+msgstr "Das private Beschleunigerpaket ist getrennt."
+
+msgid "REPL input has unmatched delimiters."
+msgstr "Die REPL-Eingabe enthält nicht übereinstimmende Begrenzungszeichen."
+
+msgid "REPL input is too large."
+msgstr "Die REPL-Eingabe ist zu groß."
+
+msgid "Read length must be greater than zero."
+msgstr "Die Leselänge muss größer als null sein."
+
+msgid "Receive size is out-of-range."
+msgstr "Die Empfangsgröße liegt außerhalb des Bereichs."
+
+msgid "Regex error: %s"
+msgstr "Fehler im regulären Ausdruck: %s"
+
+msgid "Regex too complex."
+msgstr "Der reguläre Ausdruck ist zu komplex."
+
+msgid "Regex too large."
+msgstr "Der reguläre Ausdruck ist zu groß."
+
+msgid "RelaxedPrecision present"
+msgstr "RelaxedPrecision vorhanden"
+
+msgid "Return operand does not match the declared type."
+msgstr "Der Rückgabeoperand stimmt nicht mit dem deklarierten Typ überein."
+
+msgid "SIMD FMA: vreg stack overflow."
+msgstr "SIMD FMA: Überlauf des vreg-Stacks."
+
+msgid "SIMD: ranked cache dependency plan exceeded vreg budget."
+msgstr "SIMD: Der geordnete Cacheabhängigkeitsplan hat das vreg-Budget überschritten."
+
+msgid "SIMD: too many temps."
+msgstr "SIMD: Zu viele temporäre Werte."
+
+msgid "SIMD: unexpected vector expression."
+msgstr "SIMD: Unerwarteter Vektorausdruck."
+
+msgid "SIMD: unplanned term."
+msgstr "SIMD: Nicht geplanter Term."
+
+msgid "SIMD: vreg budget exceeded."
+msgstr "SIMD: vreg-Budget überschritten."
+
+msgid "SIMD: vreg stack overflow."
+msgstr "SIMD: Überlauf des vreg-Stacks."
+
+msgid "SUBJNZ operand is not an integer."
+msgstr "Der SUBJNZ-Operand ist keine ganze Zahl."
+
+msgid "Searching directory %s.\n"
+msgstr "Durchsuche Verzeichnis %s.\n"
+
+msgid "Shaped parameter types are valid only on __fast func."
+msgstr "Parametertypen mit Form sind nur bei __fast func gültig."
+
+msgid "Shared value is nested too deeply."
+msgstr "Der gemeinsame Wert ist zu tief verschachtelt."
+
+msgid "Skipping empty directory %s.\n"
+msgstr "Leeres Verzeichnis %s wird übersprungen.\n"
+
+msgid "Socket is already closed."
+msgstr "Der Socket ist bereits geschlossen."
+
+msgid "Socket is already registered to a poller."
+msgstr "Der Socket ist bereits bei einem Poller registriert."
+
+msgid "Socket is not registered to this poller."
+msgstr "Der Socket ist nicht bei diesem Poller registriert."
+
+msgid "Socket is registered to a poller. Remove it first."
+msgstr "Der Socket ist bei einem Poller registriert. Entfernen Sie ihn zuerst."
+
+msgid "Specify a command.\n"
+msgstr "Bitte einen Befehl angeben.\n"
+
+msgid "Stack overflow."
+msgstr "Stapelüberlauf."
+
+msgid "Stack underflow."
+msgstr "Stapelunterlauf."
+
+msgid "String is too long."
+msgstr "Die Zeichenkette ist zu lang."
+
+msgid "Subscript is negative."
+msgstr "Der Index ist negativ."
+
+msgid "Subscript not a string."
+msgstr "Der Index ist kein String."
+
+msgid "Subscript not an integer."
+msgstr "Der Index ist keine ganze Zahl."
+
+msgid "Symbol \"%s\" not found."
+msgstr "Symbol \"%s\" nicht gefunden."
+
+msgid "System.import() accepts source files only."
+msgstr "System.import() akzeptiert nur Quelldateien."
+
+msgid "The '__noct_nap_' symbol prefix is reserved."
+msgstr "Das Symbolpräfix '__noct_nap_' ist reserviert."
+
+msgid "The --app option may be specified only once.\n"
+msgstr "Die Option --app darf nur einmal angegeben werden.\n"
+
+msgid "The Vulkan accelerator device is unavailable."
+msgstr "Das Vulkan-Beschleunigergerät ist nicht verfügbar."
+
+msgid "The Vulkan loader did not expose Vulkan 1.2 physical-device properties."
+msgstr "Der Vulkan-Loader hat die Eigenschaften physischer Vulkan 1.2-Geräte nicht bereitgestellt."
+
+msgid "The number of indices does not match the __fast parameter rank."
+msgstr "Die Anzahl der Indizes stimmt nicht mit der Dimensionsanzahl des __fast-Parameters überein."
+
+msgid "The requested GPU device was not found."
+msgstr "Das angeforderte GPU-Gerät wurde nicht gefunden."
+
+msgid "The requested GPU name is ambiguous; use a backend-qualified selector."
+msgstr "Der angeforderte GPU-Name ist mehrdeutig; verwenden Sie einen Backend-qualifizierten Selektor."
+
+msgid "The selected Direct3D 12 device is unavailable."
+msgstr "Das ausgewählte Direct3D 12-Gerät ist nicht verfügbar."
+
+msgid "The selected GPU backend is unavailable."
+msgstr "Das ausgewählte GPU-Backend ist nicht verfügbar."
+
+msgid "The selected OpenGL ES device is no longer available."
+msgstr "Das ausgewählte OpenGL ES-Gerät ist nicht mehr verfügbar."
+
+msgid "The selected Vulkan compute queue is unavailable."
+msgstr "Die ausgewählte Vulkan-Compute-Warteschlange ist nicht verfügbar."
+
+msgid "This expression is not available inside __fast func."
+msgstr "Dieser Ausdruck ist innerhalb von __fast func nicht verfügbar."
+
+msgid "Thread error: %s"
+msgstr "Threadfehler: %s"
+
+msgid "Thread is already joined."
+msgstr "Der Thread wurde bereits zusammengeführt."
+
+msgid "Too big code."
+msgstr "Der Code ist zu groß."
+
+msgid "Too many __fast parameters."
+msgstr "Zu viele __fast-Parameter."
+
+msgid "Too many accelerator locals."
+msgstr "Zu viele lokale Beschleunigervariablen."
+
+msgid "Too many anonymous functions."
+msgstr "Zu viele anonyme Funktionen."
+
+msgid "Too many capture groups."
+msgstr "Zu viele Erfassungsgruppen."
+
+msgid "Too many character classes."
+msgstr "Zu viele Zeichenklassen."
+
+msgid "Too many direct __fast call edges."
+msgstr "Zu viele direkte __fast-Aufrufkanten."
+
+msgid "Too many function parameters."
+msgstr "Zu viele Funktionsparameter."
+
+msgid "Too many function prototypes in the require graph."
+msgstr "Zu viele Funktionsprototypen im require-Graphen."
+
+msgid "Too many functions or function parameters.\n"
+msgstr "Zu viele Funktionen oder Funktionsparameter.\n"
+
+msgid "Too many functions."
+msgstr "Zu viele Funktionen."
+
+msgid "Too many jumps."
+msgstr "Zu viele Sprünge."
+
+msgid "Too many local variables."
+msgstr "Zu viele lokale Variablen."
+
+msgid "Too many parameters."
+msgstr "Zu viele Parameter."
+
+msgid "Too many pinned global variables."
+msgstr "Zu viele angepinnte globale Variablen."
+
+msgid "Too many pinned local variables."
+msgstr "Zu viele angepinnte lokale Variablen."
+
+msgid "Unexpected OpenGL ES finish result words."
+msgstr "Unerwartete OpenGL ES-Abschlussergebniswörter."
+
+msgid "Unexpected OpenGL ES result words."
+msgstr "Unerwartete OpenGL ES-Ergebniswörter."
+
+msgid "Unexpected Vulkan scalar-result destination."
+msgstr "Unerwartetes Ziel des skalaren Vulkan-Ergebnisses."
+
+msgid "Unexpected Vulkan scalar-result identities."
+msgstr "Unerwartete Identitäten des skalaren Vulkan-Ergebnisses."
+
+msgid "Unexpected end of file."
+msgstr "Unerwartetes Dateiende."
+
+msgid "Unknown __fast numeric intrinsic."
+msgstr "Unbekannte numerische intrinsische __fast-Funktion."
+
+msgid "Unknown error."
+msgstr "Unbekannter Fehler."
+
+msgid "Unknown opcode %d at pc=%d."
+msgstr "Unbekannter Opcode %d bei pc=%d."
+
+msgid "Unknown opcode."
+msgstr "Unbekannter Opcode."
+
+msgid "Unknown option %s.\n"
+msgstr "Unbekannte Option %s.\n"
+
+msgid "Unknown type name '%s'."
+msgstr "Unbekannter Typname '%s'."
+
+msgid "Unmatched parenthesis."
+msgstr "Nicht übereinstimmende Klammer."
+
+msgid "Unsupported (?...) construct."
+msgstr "Nicht unterstütztes (?...)-Konstrukt."
+
+msgid "Unsupported assignment target inside __fast func."
+msgstr "Nicht unterstütztes Zuweisungsziel innerhalb von __fast func."
+
+msgid "Unsupported block in __fast func."
+msgstr "Nicht unterstützter Block in __fast func."
+
+msgid "Unsupported file mode."
+msgstr "Nicht unterstützter Dateimodus."
+
+msgid "Unsupported instruction reached the Vulkan shader generator."
+msgstr "Eine nicht unterstützte Anweisung hat den Vulkan-Shadergenerator erreicht."
+
+msgid "Unsupported or malformed application version.\n"
+msgstr "Nicht unterstützte oder fehlerhafte Anwendungsversion.\n"
+
+msgid "Unsupported or malformed application version: %s"
+msgstr "Nicht unterstützte oder fehlerhafte Anwendungsversion: %s"
+
+msgid "Unsupported or malformed bytecode version.\n"
+msgstr "Nicht unterstützte oder fehlerhafte Bytecodeversion.\n"
+
+msgid "Unsupported or malformed bytecode version: %s"
+msgstr "Nicht unterstützte oder fehlerhafte Bytecodeversion: %s"
+
+msgid "Unsupported packed element type in __fast func."
+msgstr "Nicht unterstützter packed-Elementtyp in __fast func."
+
+msgid "Unterminated character class."
+msgstr "Nicht abgeschlossene Zeichenklasse."
+
+msgid "Usage\n"
+msgstr "Verwendung\n"
+
+msgid "Value for key %s is not a dictionary."
+msgstr "Der Wert für den Schlüssel %s ist kein Dictionary."
+
+msgid "Value for key %s is not a double."
+msgstr "Der Wert für den Schlüssel %s ist kein Double."
+
+msgid "Value for key %s is not a float."
+msgstr "Der Wert für den Schlüssel %s ist keine Gleitkommazahl."
+
+msgid "Value for key %s is not a function."
+msgstr "Der Wert für den Schlüssel %s ist keine Funktion."
+
+msgid "Value for key %s is not a long."
+msgstr "Der Wert für den Schlüssel %s ist kein Long."
+
+msgid "Value for key %s is not a string."
+msgstr "Der Wert für den Schlüssel %s ist keine Zeichenkette."
+
+msgid "Value for key %s is not an array."
+msgstr "Der Wert für den Schlüssel %s ist kein Array."
+
+msgid "Value for key %s is not an int."
+msgstr "Der Wert für den Schlüssel %s ist kein Int."
+
+msgid "Value is not a float."
+msgstr "Wert ist keine Gleitkommazahl."
+
+msgid "Value is not a function."
+msgstr "Wert ist keine Funktion."
+
+msgid "Value is not a long."
+msgstr "Wert ist kein Long."
+
+msgid "Value is not a number or a string."
+msgstr "Wert ist weder eine Zahl noch ein String."
+
+msgid "Value is not a number."
+msgstr "Wert ist keine Zahl."
+
+msgid "Value is not a packed."
+msgstr "Der Wert ist kein packed."
+
+msgid "Value is not a string, an array, or a dictionary."
+msgstr "Wert ist weder ein String, noch ein Array noch ein Dictionary."
+
+msgid "Value is not a string."
+msgstr "Wert ist kein String."
+
+msgid "Value is not an array."
+msgstr "Wert ist kein Array."
+
+msgid "Value is not an int."
+msgstr "Wert ist kein Int."
+
+msgid "Value is not an integer."
+msgstr "Wert ist keine ganze Zahl."
+
+msgid "Value is out of range for int."
+msgstr "Der Wert liegt außerhalb des Bereichs für int."
+
+msgid "Value is out of range for long."
+msgstr "Der Wert liegt außerhalb des Bereichs für long."
+
+msgid "Variable '%s' is already declared in this scope."
+msgstr "Die Variable '%s' ist in diesem Gültigkeitsbereich bereits deklariert."
+
+msgid "Variable '%s' is used before its declaration."
+msgstr "Die Variable '%s' wird vor ihrer Deklaration verwendet."
+
+msgid "Version %s\n"
+msgstr "Version %s\n"
+
+msgid "Vulkan 1.2 is required, but the loader only exposes Vulkan 1.0."
+msgstr "Vulkan 1.2 ist erforderlich, aber der Loader stellt nur Vulkan 1.0 bereit."
+
+msgid "Vulkan 1.2 or newer is required."
+msgstr "Vulkan 1.2 oder neuer ist erforderlich."
+
+msgid "Vulkan accelerator submission failed."
+msgstr "Übermittlung an den Vulkan-Beschleuniger fehlgeschlagen."
+
+msgid "Vulkan active kernel has an inactive data buffer."
+msgstr "Der aktive Vulkan-Kernel hat einen inaktiven Datenpuffer."
+
+msgid "Vulkan buffer exceeds the device storage-buffer limit."
+msgstr "Der Vulkan-Puffer überschreitet die Speicherpuffergrenze des Geräts."
+
+msgid "Vulkan buffer extent is inconsistent."
+msgstr "Die Ausdehnung des Vulkan-Puffers ist inkonsistent."
+
+msgid "Vulkan buffer metadata changed after planning."
+msgstr "Die Metadaten des Vulkan-Puffers wurden nach der Planung geändert."
+
+msgid "Vulkan buffer table does not match the prepared program."
+msgstr "Die Vulkan-Puffertabelle stimmt nicht mit dem vorbereiteten Programm überein."
+
+msgid "Vulkan device '%s' was not found."
+msgstr "Das Vulkan-Gerät '%s' wurde nicht gefunden."
+
+msgid "Vulkan device name '%s' is ambiguous."
+msgstr "Der Name des Vulkan-Geräts '%s' ist mehrdeutig."
+
+msgid "Vulkan dispatch exceeds the device workgroup-count limit."
+msgstr "Der Vulkan-Dispatch überschreitet die Arbeitsgruppenanzahlgrenze des Geräts."
+
+msgid "Vulkan dispatch range changed after execution creation."
+msgstr "Der Vulkan-Dispatchbereich wurde nach Erstellung der Ausführung geändert."
+
+msgid "Vulkan dispatch range is missing from the scalar block."
+msgstr "Der Vulkan-Dispatchbereich fehlt im Skalarblock."
+
+msgid "Vulkan execution has no recording command buffer."
+msgstr "Die Vulkan-Ausführung hat keinen Befehlspuffer im Aufzeichnungszustand."
+
+msgid "Vulkan execution was already submitted."
+msgstr "Die Vulkan-Ausführung wurde bereits übermittelt."
+
+msgid "Vulkan finish buffer table changed."
+msgstr "Die Vulkan-Abschlusspuffertabelle wurde geändert."
+
+msgid "Vulkan kernels were dispatched out of order."
+msgstr "Vulkan-Kernel wurden in falscher Reihenfolge ausgeführt."
+
+msgid "Vulkan output transfer plan changed."
+msgstr "Der Vulkan-Ausgabeübertragungsplan wurde geändert."
+
+msgid "Vulkan output was requested before completion."
+msgstr "Die Vulkan-Ausgabe wurde vor Abschluss angefordert."
+
+msgid "Vulkan received an empty active dispatch."
+msgstr "Vulkan hat einen leeren aktiven Dispatch erhalten."
+
+msgid "Vulkan result block does not match the prepared program."
+msgstr "Der Vulkan-Ergebnisblock stimmt nicht mit dem vorbereiteten Programm überein."
+
+msgid "Vulkan result block exceeds the device storage-buffer limit."
+msgstr "Der Vulkan-Ergebnisblock überschreitet die Grenze des Gerätespeicherpuffers."
+
+msgid "Vulkan scalar block does not match the prepared program."
+msgstr "Der Vulkan-Skalarblock stimmt nicht mit dem vorbereiteten Programm überein."
+
+msgid "Vulkan scalar block exceeds the device storage-buffer limit."
+msgstr "Der Vulkan-Skalarblock überschreitet die Grenze des Gerätespeicherpuffers."
+
+msgid "Vulkan scalar-result identity changed."
+msgstr "Die Identität des skalaren Vulkan-Ergebnisses wurde geändert."
+
+msgid "Vulkan scalar-result table changed."
+msgstr "Die Tabelle der skalaren Vulkan-Ergebnisse wurde geändert."
+
+msgid "Vulkan shader assembler returned malformed SPIR-V."
+msgstr "Der Vulkan-Shader-Assembler hat fehlerhaftes SPIR-V zurückgegeben."
+
+msgid "Vulkan shader assembler returned no result."
+msgstr "Der Vulkan-Shader-Assembler hat kein Ergebnis zurückgegeben."
+
+msgid "Vulkan shader assembly failed:\x20"
+msgstr "Vulkan-Shader-Assemblierung fehlgeschlagen:\x20"
+
+msgid "Vulkan supports only 32-bit accelerator buffers."
+msgstr "Vulkan unterstützt nur 32-Bit-Beschleunigerpuffer."
+
+msgid "Write-only file mappings are not supported."
+msgstr "Dateizuordnungen mit ausschließlichem Schreibzugriff werden nicht unterstützt."
+
+msgid "Wrong number of arguments for __fast intrinsic."
+msgstr "Falsche Anzahl von Argumenten für die intrinsische Funktion __fast."
+
+msgid "__fast call '%s': argument %u does not match the exact shape."
+msgstr "__fast-Aufruf „%s“: Argument %u stimmt nicht exakt mit der Form überein."
+
+msgid "__fast call '%s': argument %u has the wrong packed element type."
+msgstr "__fast-Aufruf „%s“: Argument %u hat den falschen packed-Elementtyp."
+
+msgid "__fast call '%s': argument %u has the wrong primitive type."
+msgstr "__fast-Aufruf „%s“: Argument %u hat den falschen primitiven Typ."
+
+msgid "__fast call '%s': shape element count overflow."
+msgstr "__fast-Aufruf „%s“: Überlauf der Formelementanzahl."
+
+msgid "__fast call '%s': shape extents must be positive."
+msgstr "__fast-Aufruf „%s“: Formausdehnungen müssen positiv sein."
+
+msgid "__fast call: argument does not match the exact shape."
+msgstr "__fast-Aufruf: Das Argument stimmt nicht exakt mit der Form überein."
+
+msgid "__fast call: argument has the wrong packed element type."
+msgstr "__fast-Aufruf: Das Argument hat den falschen packed-Elementtyp."
+
+msgid "__fast call: shape element count overflow."
+msgstr "__fast-Aufruf: Überlauf der Formelementanzahl."
+
+msgid "__fast call: shape extents must be positive."
+msgstr "__fast-Aufruf: Formausdehnungen müssen positiv sein."
+
+msgid "__fast row-major index overflow."
+msgstr "Überlauf des zeilenorientierten __fast-Index."
+
+msgid "__fast shape extent is too large."
+msgstr "Die Formausdehnung von __fast ist zu groß."
+
+msgid "__inline functions must also be static."
+msgstr "__inline-Funktionen müssen auch static sein."
+
+msgid "argument has two binding types"
+msgstr "Argument hat zwei Bindungstypen"
+
+msgid "atan2() requires float or double operands."
+msgstr "atan2() erfordert Operanden vom Typ float oder double."
+
+msgid "buffer binding limit exceeded"
+msgstr "Grenze für Pufferbindungen überschritten"
+
+msgid "chdir() failed.\n"
+msgstr "chdir() fehlgeschlagen.\n"
+
+msgid "continue appeared outside loop."
+msgstr "continue wurde außerhalb einer Schleife verwendet."
+
+msgid "device buffer escapes its GPU session"
+msgstr "Gerätepuffer entkommt seiner GPU-Sitzung"
+
+msgid "device buffer has a host argument slot"
+msgstr "Gerätepuffer hat einen Host-Argumentslot"
+
+msgid "device buffer has no later consumer"
+msgstr "Gerätepuffer hat keinen späteren Verbraucher"
+
+msgid "device buffer has no producer kernel"
+msgstr "Gerätepuffer hat keinen Erzeuger-Kernel"
+
+msgid "device buffer requires host materialization"
+msgstr "Gerätepuffer erfordert Host-Materialisierung"
+
+msgid "device producer does not cover its extent"
+msgstr "Geräteerzeuger deckt seine Ausdehnung nicht ab"
+
+msgid "device producer does not start at zero"
+msgstr "Geräteerzeuger beginnt nicht bei null"
+
+msgid "device producer has an invalid trip difference"
+msgstr "Geräteerzeuger hat eine ungültige Iterationsdifferenz"
+
+msgid "device producer has an invalid trip expression"
+msgstr "Geräteerzeuger hat einen ungültigen Iterationsausdruck"
+
+msgid "device producer has multiple invocation indices"
+msgstr "Geräteerzeuger hat mehrere Aufrufindizes"
+
+msgid "device producer index is not exact"
+msgstr "Index des Geräteerzeugers ist nicht exakt"
+
+msgid "device producer is not a full definition"
+msgstr "Geräteerzeuger ist keine vollständige Definition"
+
+msgid "device producer range is not exact"
+msgstr "Bereich des Geräteerzeugers ist nicht exakt"
+
+msgid "device producer reads before definition"
+msgstr "Geräteerzeuger liest vor der Definition"
+
+msgid "device producer store is not unique"
+msgstr "Speichervorgang des Geräteerzeugers ist nicht eindeutig"
+
+msgid "device-only Direct3D 12 buffer has a host argument"
+msgstr "Reiner Direct3D 12-Gerätepuffer hat ein Host-Argument"
+
+msgid "duplicate buffer argument slot"
+msgstr "doppelter Puffer-Argumentslot"
+
+msgid "duplicate device binding"
+msgstr "doppelte Gerätebindung"
+
+msgid "duplicate runtime argument slot"
+msgstr "doppelter Laufzeitargument-Slot"
+
+msgid "duplicate scalar argument slot"
+msgstr "doppelter Skalar-Argumentslot"
+
+msgid "duplicate scalar result argument slot"
+msgstr "doppelter Argumentslot für skalares Ergebnis"
+
+msgid "else appeared after else."
+msgstr "else wurde nach else verwendet."
+
+msgid "else-if appeared after else."
+msgstr "else-if wurde nach else verwendet."
+
+msgid "else-if block appeared without if block."
+msgstr "else-if-Block wurde ohne zugehörigen if-Block verwendet."
+
+msgid "empty Direct3D 12 dispatch reached the backend"
+msgstr "leerer Direct3D 12-Dispatch hat das Backend erreicht"
+
+msgid "empty Direct3D 12 execution has an active buffer"
+msgstr "leere Direct3D 12-Ausführung hat einen aktiven Puffer"
+
+msgid "empty accelerator region"
+msgstr "leere Beschleunigerregion"
+
+msgid "execvp() failed for %s.\n"
+msgstr "execvp() für %s fehlgeschlagen.\n"
+
+msgid "failed to close a Direct3D 12 command list"
+msgstr "Direct3D 12-Befehlsliste konnte nicht geschlossen werden"
+
+msgid "failed to convert a DXGI adapter name"
+msgstr "DXGI-Adaptername konnte nicht konvertiert werden"
+
+msgid "failed to create a Direct3D 12 buffer"
+msgstr "Direct3D 12-Puffer konnte nicht erstellt werden"
+
+msgid "failed to create a Direct3D 12 command allocator"
+msgstr "Direct3D 12-Befehlszuordner konnte nicht erstellt werden"
+
+msgid "failed to create a Direct3D 12 command list"
+msgstr "Direct3D 12-Befehlsliste konnte nicht erstellt werden"
+
+msgid "failed to create a Direct3D 12 descriptor heap"
+msgstr "Direct3D 12-Deskriptorheap konnte nicht erstellt werden"
+
+msgid "failed to create an execution"
+msgstr "Ausführung konnte nicht erstellt werden"
+
+msgid "failed to create the DXGI factory"
+msgstr "DXGI-Factory konnte nicht erstellt werden"
+
+msgid "failed to dispatch a kernel"
+msgstr "Kernel konnte nicht ausgeführt werden"
+
+msgid "failed to drain the Direct3D 12 queue submission"
+msgstr "Direct3D 12-Warteschlangenübermittlung konnte nicht geleert werden"
+
+msgid "failed to enumerate DXGI adapters"
+msgstr "DXGI-Adapter konnten nicht aufgelistet werden"
+
+msgid "failed to finish an execution"
+msgstr "Ausführung konnte nicht abgeschlossen werden"
+
+msgid "failed to map a Direct3D 12 readback buffer"
+msgstr "Direct3D 12-Rücklesepuffer konnte nicht zugeordnet werden"
+
+msgid "failed to map a Direct3D 12 result buffer"
+msgstr "Direct3D 12-Ergebnispuffer konnte nicht zugeordnet werden"
+
+msgid "failed to map a Direct3D 12 upload buffer"
+msgstr "Direct3D 12-Upload-Puffer konnte nicht zugeordnet werden"
+
+msgid "failed to signal the Direct3D 12 queue fence"
+msgstr "Direct3D 12-Warteschlangen-Fence konnte nicht signalisiert werden"
+
+msgid "float contraction is not prohibited"
+msgstr "float-Kontraktion ist nicht verboten"
+
+msgid "float result exceeds bound"
+msgstr "float-Ergebnis überschreitet die Grenze"
+
+msgid "fork() failed."
+msgstr "fork() fehlgeschlagen."
+
+msgid "host Direct3D 12 buffer is missing its argument"
+msgstr "Host-Puffer von Direct3D 12 fehlt sein Argument"
+
+msgid "host buffer is not host visible"
+msgstr "Host-Puffer ist für den Host nicht sichtbar"
+
+msgid "inactive Direct3D 12 buffer requests a transfer"
+msgstr "inaktiver Direct3D 12-Puffer fordert eine Übertragung an"
+
+msgid "incomplete Direct3D 12 execution objects"
+msgstr "unvollständige Direct3D 12-Ausführungsobjekte"
+
+msgid "incomplete Direct3D 12 kernel objects"
+msgstr "unvollständige Direct3D 12-Kernelobjekte"
+
+msgid "incomplete Direct3D 12 prepared program"
+msgstr "unvollständiges vorbereitetes Direct3D 12-Programm"
+
+msgid "incorrect value count"
+msgstr "falsche Wertanzahl"
+
+msgid "instruction limit exceeded"
+msgstr "Anweisungsgrenze überschritten"
+
+msgid "invalid Direct3D 12 buffer origin"
+msgstr "ungültiger Ursprung des Direct3D 12-Puffers"
+
+msgid "invalid Direct3D 12 device list"
+msgstr "ungültige Direct3D 12-Geräteliste"
+
+msgid "invalid Direct3D 12 device-only buffer"
+msgstr "ungültiger reiner Direct3D 12-Gerätepuffer"
+
+msgid "invalid Direct3D 12 execution request"
+msgstr "ungültige Direct3D 12-Ausführungsanforderung"
+
+msgid "invalid Direct3D 12 kernel index"
+msgstr "ungültiger Direct3D 12-Kernelindex"
+
+msgid "invalid ID bound"
+msgstr "ungültige ID-Grenze"
+
+msgid "invalid active Direct3D 12 execution"
+msgstr "ungültige aktive Direct3D 12-Ausführung"
+
+msgid "invalid backend payload owner"
+msgstr "ungültiger Eigentümer der Backend-Nutzlast"
+
+msgid "invalid binary size expression"
+msgstr "ungültiger binärer Größenausdruck"
+
+msgid "invalid buffer argument slot"
+msgstr "ungültiger Puffer-Argumentslot"
+
+msgid "invalid buffer byte range"
+msgstr "ungültiger Bytebereich des Puffers"
+
+msgid "invalid buffer element kind"
+msgstr "ungültige Art des Pufferelements"
+
+msgid "invalid buffer element width"
+msgstr "ungültige Breite des Pufferelements"
+
+msgid "invalid buffer range end"
+msgstr "ungültiges Ende des Pufferbereichs"
+
+msgid "invalid buffer range start"
+msgstr "ungültiger Anfang des Pufferbereichs"
+
+msgid "invalid buffer value type"
+msgstr "ungültiger Pufferwerttyp"
+
+msgid "invalid device buffer byte extent"
+msgstr "ungültige Byteausdehnung des Gerätepuffers"
+
+msgid "invalid device buffer extent"
+msgstr "ungültige Ausdehnung des Gerätepuffers"
+
+msgid "invalid empty Direct3D 12 execution state"
+msgstr "ungültiger leerer Direct3D 12-Ausführungszustand"
+
+msgid "invalid instruction"
+msgstr "ungültige Anweisung"
+
+msgid "invalid instruction length"
+msgstr "ungültige Anweisungslänge"
+
+msgid "invalid instruction result type"
+msgstr "ungültiger Ergebnistyp der Anweisung"
+
+msgid "invalid kernel buffer range end"
+msgstr "ungültiges Ende des Kernelpufferbereichs"
+
+msgid "invalid kernel buffer range start"
+msgstr "ungültiger Anfang des Kernelpufferbereichs"
+
+msgid "invalid kernel start"
+msgstr "ungültiger Kernelanfang"
+
+msgid "invalid kernel stop"
+msgstr "ungültiges Kernelende"
+
+msgid "invalid kernel trip"
+msgstr "ungültige Kerneliteration"
+
+msgid "invalid local buffer argument slot"
+msgstr "ungültiger lokaler Puffer-Argumentslot"
+
+msgid "invalid loop block id"
+msgstr "ungültige Schleifenblock-ID"
+
+msgid "invalid region block id"
+msgstr "ungültige Regionsblock-ID"
+
+msgid "invalid scalar argument slot"
+msgstr "ungültiger Skalar-Argumentslot"
+
+msgid "invalid scalar result argument slot"
+msgstr "ungültiger Argumentslot für skalares Ergebnis"
+
+msgid "invalid scalar result identity"
+msgstr "ungültige Identität des skalaren Ergebnisses"
+
+msgid "invalid scalar result producer"
+msgstr "ungültiger Erzeuger des skalaren Ergebnisses"
+
+msgid "invalid scalar result type"
+msgstr "ungültiger Typ des skalaren Ergebnisses"
+
+msgid "invalid scalar type"
+msgstr "ungültiger Skalartyp"
+
+msgid "invalid shader kernel index"
+msgstr "ungültiger Shader-Kernelindex"
+
+msgid "invalid size multiplication"
+msgstr "ungültige Größenmultiplikation"
+
+msgid "invalid size opcode"
+msgstr "ungültiger Größen-Opcode"
+
+msgid "invalid size scalar reference"
+msgstr "ungültiger skalarer Größenverweis"
+
+msgid "invalid zero-clamped size expression"
+msgstr "ungültiger auf null begrenzter Größenausdruck"
+
+msgid "kernel buffer table mismatch"
+msgstr "Kernelpuffertabelle stimmt nicht überein"
+
+msgid "kernel buffer type mismatch"
+msgstr "Kernelpuffertyp stimmt nicht überein"
+
+msgid "kernel limit exceeded"
+msgstr "Kernelgrenze überschritten"
+
+msgid "kernel scalar table mismatch"
+msgstr "Kernelskalartabelle stimmt nicht überein"
+
+msgid "missing Direct3D 12 buffer metadata"
+msgstr "fehlende Metadaten des Direct3D 12-Puffers"
+
+msgid "missing Direct3D 12 buffer snapshot"
+msgstr "fehlende Momentaufnahme des Direct3D 12-Puffers"
+
+msgid "missing Direct3D 12 buffer table"
+msgstr "fehlende Direct3D 12-Puffertabelle"
+
+msgid "missing Direct3D 12 download snapshot"
+msgstr "fehlende Direct3D 12-Download-Momentaufnahme"
+
+msgid "missing Direct3D 12 execution"
+msgstr "fehlende Direct3D 12-Ausführung"
+
+msgid "missing Direct3D 12 execution output"
+msgstr "fehlende Ausgabe der Direct3D 12-Ausführung"
+
+msgid "missing Direct3D 12 output table"
+msgstr "fehlende Direct3D 12-Ausgabetabelle"
+
+msgid "missing Direct3D 12 program"
+msgstr "fehlendes Direct3D 12-Programm"
+
+msgid "missing Direct3D 12 readback buffer"
+msgstr "fehlender Direct3D 12-Rücklesepuffer"
+
+msgid "missing Direct3D 12 result resources"
+msgstr "fehlende Direct3D 12-Ergebnisressourcen"
+
+msgid "missing Direct3D 12 result words"
+msgstr "fehlende Direct3D 12-Ergebniswörter"
+
+msgid "missing Direct3D 12 scalar words"
+msgstr "fehlende Direct3D 12-Skalarwörter"
+
+msgid "missing Direct3D 12 upload snapshot"
+msgstr "fehlende Direct3D 12-Upload-Momentaufnahme"
+
+msgid "missing accelerator kernel table"
+msgstr "fehlende Beschleuniger-Kerneltabelle"
+
+msgid "missing accelerator program"
+msgstr "fehlendes Beschleunigerprogramm"
+
+msgid "missing buffer name"
+msgstr "fehlender Puffername"
+
+msgid "missing buffer table"
+msgstr "fehlende Puffertabelle"
+
+msgid "missing compute entry contract"
+msgstr "fehlender Vertrag des Compute-Einstiegspunkts"
+
+msgid "missing function name"
+msgstr "fehlender Funktionsname"
+
+msgid "missing instruction table"
+msgstr "fehlende Anweisungstabelle"
+
+msgid "missing kernel name"
+msgstr "fehlender Kernelname"
+
+msgid "missing kernel table"
+msgstr "fehlende Kerneltabelle"
+
+msgid "missing scalar name"
+msgstr "fehlender Skalarname"
+
+msgid "missing scalar result name"
+msgstr "fehlender Name des skalaren Ergebnisses"
+
+msgid "missing scalar result table"
+msgstr "fehlende Tabelle der skalaren Ergebnisse"
+
+msgid "missing scalar table"
+msgstr "fehlende Skalartabelle"
+
+msgid "missing shader output"
+msgstr "fehlende Shader-Ausgabe"
+
+msgid "missing size expression table"
+msgstr "fehlende Tabelle der Größenausdrücke"
+
+msgid "missing source name"
+msgstr "fehlender Quellname"
+
+msgid "missing strict Float32 contract"
+msgstr "fehlender strenger Float32-Vertrag"
+
+msgid "missing typed kernel"
+msgstr "fehlender typisierter Kernel"
+
+msgid "missing typed shader kernel"
+msgstr "fehlender typisierter Shader-Kernel"
+
+msgid "negative size constant"
+msgstr "negative Größenkonstante"
+
+msgid "nonconstant integer divisor"
+msgstr "nicht konstanter ganzzahliger Divisor"
+
+msgid "nonconstant shift count"
+msgstr "nicht konstante Verschiebungsanzahl"
+
+msgid "nondeterministic buffer binding"
+msgstr "nicht deterministische Pufferbindung"
+
+msgid "nondeterministic kernel index"
+msgstr "nicht deterministischer Kernelindex"
+
+msgid "nondeterministic scalar result entry"
+msgstr "nicht deterministischer Eintrag des skalaren Ergebnisses"
+
+msgid "nondeterministic shader kernel index"
+msgstr "nicht deterministischer Shader-Kernelindex"
+
+msgid "noninteger size scalar"
+msgstr "nicht ganzzahliger Größenskalar"
+
+msgid "nonpositive device buffer extent"
+msgstr "nicht positive Ausdehnung des Gerätepuffers"
+
+msgid "nonpositive integer divisor"
+msgstr "nicht positiver ganzzahliger Divisor"
+
+msgid "null kernel"
+msgstr "Null-Kernel"
+
+msgid "null program"
+msgstr "Null-Programm"
+
+msgid "out of memory creating Direct3D 12 buffer metadata"
+msgstr "nicht genügend Speicher beim Erstellen der Metadaten des Direct3D 12-Puffers"
+
+msgid "out of memory creating a Direct3D 12 execution"
+msgstr "nicht genügend Speicher beim Erstellen einer Direct3D 12-Ausführung"
+
+msgid "out of memory retaining Direct3D 12 kernels"
+msgstr "nicht genügend Speicher beim Beibehalten von Direct3D 12-Kerneln"
+
+msgid "out of memory while generating shader source"
+msgstr "nicht genügend Speicher beim Erzeugen des Shader-Quellcodes"
+
+msgid "out of memory while recording DXGI adapters"
+msgstr "nicht genügend Speicher beim Aufzeichnen der DXGI-Adapter"
+
+msgid "package_init() must have no parameters and declare ': void'."
+msgstr "package_init() darf keine Parameter haben und muss ': void' deklarieren."
+
+msgid "parameter count limit exceeded"
+msgstr "Parameteranzahlgrenze überschritten"
+
+msgid "rejected a dispatch range"
+msgstr "ein Dispatch-Bereich wurde abgelehnt"
+
+msgid "scalar binding limit exceeded"
+msgstr "Grenze für Skalarbindungen überschritten"
+
+msgid "scalar result collides with buffer input"
+msgstr "skalares Ergebnis kollidiert mit der Puffereingabe"
+
+msgid "scalar result collides with scalar input"
+msgstr "skalares Ergebnis kollidiert mit der Skalareingabe"
+
+msgid "scalar result consumer metadata mismatch"
+msgstr "Metadaten des Verbrauchers des skalaren Ergebnisses stimmen nicht überein"
+
+msgid "scalar result has a foreign producer"
+msgstr "skalares Ergebnis hat einen fremden Erzeuger"
+
+msgid "scalar result limit exceeded"
+msgstr "Grenze für skalare Ergebnisse überschritten"
+
+msgid "scalar result load precedes its producer"
+msgstr "Laden des skalaren Ergebnisses erfolgt vor seinem Erzeuger"
+
+msgid "scalar result producer is not unique"
+msgstr "Erzeuger des skalaren Ergebnisses ist nicht eindeutig"
+
+msgid "scalar result reference out of range"
+msgstr "Verweis auf skalares Ergebnis außerhalb des Bereichs"
+
+msgid "shader buffer table mismatch"
+msgstr "Shader-Puffertabelle stimmt nicht überein"
+
+msgid "shader scalar table mismatch"
+msgstr "Shader-Skalartabelle stimmt nicht überein"
+
+msgid "shader source fragment exceeded its limit"
+msgstr "Shader-Quellcodefragment hat seine Grenze überschritten"
+
+msgid "shift count out of range"
+msgstr "Verschiebungsanzahl außerhalb des Bereichs"
+
+msgid "short module"
+msgstr "zu kurzes Modul"
+
+msgid "size expression limit exceeded"
+msgstr "Grenze für Größenausdrücke überschritten"
+
+msgid "sparse runtime argument namespace"
+msgstr "lückenhafter Namensraum für Laufzeitargumente"
+
+msgid "static declarations require a relative source path."
+msgstr "static-Deklarationen erfordern einen relativen Quellcodepfad."
+
+msgid "the Direct3D 12 device was removed"
+msgstr "das Direct3D 12-Gerät wurde entfernt"
+
+msgid "unexpected Direct3D 12 buffer snapshot"
+msgstr "unerwartete Momentaufnahme des Direct3D 12-Puffers"
+
+msgid "unexpected Direct3D 12 result words"
+msgstr "unerwartete Direct3D 12-Ergebniswörter"
+
+msgid "unimplemented expr: %d\n"
+msgstr "nicht implementierte expr: %d\n"
+
+msgid "unknown assembler failure"
+msgstr "unbekannter Assemblerfehler"
+
+msgid "unsupported buffer origin"
+msgstr "nicht unterstützter Pufferursprung"
+
+msgid "unsupported device buffer extent"
+msgstr "nicht unterstützte Ausdehnung des Gerätepuffers"
+
+msgid "unsupported shader source dialect"
+msgstr "nicht unterstützter Shader-Quellcodedialekt"
+
+msgid "unsupported typed shader instruction"
+msgstr "nicht unterstützte typisierte Shader-Anweisung"
+
+msgid "unused kernel has a buffer range"
+msgstr "nicht verwendeter Kernel hat einen Pufferbereich"
+
+msgid "validator allocation failed"
+msgstr "Zuordnung für den Validator fehlgeschlagen"
+
+msgid "value limit exceeded"
+msgstr "Wertgrenze überschritten"
+
+msgid "var is specified without a single symbol."
+msgstr "var wird ohne ein einzelnes Symbol angegeben."
+
+msgid "vm-options:\n"
+msgstr "VM-Optionen:\n"
+
+msgid "wrong SPIR-V version"
+msgstr "falsche SPIR-V-Version"
+
+msgid "wrong magic"
+msgstr "falscher Magic-Wert"
+

@@ -1,0 +1,30 @@
+func main(args) {
+    let path = args[0];
+    let hash = args[1];
+    let mode = args[2];
+    if (mode == "wrong-weight-kind") {
+        let file = File.open(path, "rb");
+        Weights.close(file);
+    } else if (mode == "wrong-file-kind") {
+        let handle = Weights.open(path, hash);
+        File.close(handle);
+    } else if (mode == "closed") {
+        let handle = Weights.open(path, hash);
+        Weights.close(handle);
+        Weights.loadFloat32(handle, 0, "a", [2]);
+    } else if (mode == "index") {
+        let handle = Weights.open(path, hash);
+        Weights.loadFloat32(handle, 1, "a", [2]);
+    } else if (mode == "name") {
+        let handle = Weights.open(path, hash);
+        Weights.loadFloat32(handle, 0, "b", [2]);
+    } else if (mode == "shape") {
+        let handle = Weights.open(path, hash);
+        Weights.loadFloat32(handle, 0, "a", [1, 2]);
+    } else if (mode == "handle-frozen") {
+        let handle = Weights.open(path, hash);
+        handle.x = 1;
+    } else if (mode == "namespace-frozen") {
+        Weights.open = 1;
+    }
+}

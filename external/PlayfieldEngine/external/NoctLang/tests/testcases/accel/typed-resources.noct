@@ -1,0 +1,33 @@
+let LENGTH = 2;
+
+__accel var i8 = Accel.int8(LENGTH);
+__accel var i16 = Accel.int16(LENGTH);
+__accel var i32 = Accel.int32(LENGTH);
+__accel var i64 = Accel.int64(LENGTH);
+__accel var u8 = Accel.uint8(LENGTH);
+__accel var u16 = Accel.uint16(LENGTH);
+__accel var u32 = Accel.uint32(LENGTH);
+__accel var u64 = Accel.uint64(LENGTH);
+__accel var f32 = Accel.float32(LENGTH);
+__accel let f64 = Accel.float64(LENGTH);
+
+func main() {
+    let host = Packed.uint8(16);
+    let roundtrip = Packed.uint8(16);
+    for (i in 0..16) {
+        host[i] = i;
+    }
+    Accel.copyToAccel(host, 0, i8, 0, 2);
+    Accel.copyToAccel(host, 0, i16, 0, 4);
+    Accel.copyToAccel(host, 0, i32, 0, 8);
+    Accel.copyToAccel(host, 0, i64, 0, 16);
+    Accel.copyToAccel(host, 0, u8, 0, 2);
+    Accel.copyToAccel(host, 0, u16, 0, 4);
+    Accel.copyToAccel(host, 0, u32, 0, 8);
+    Accel.copyToAccel(host, 0, u64, 0, 16);
+    Accel.copyToAccel(host, 0, f32, 0, 8);
+    Accel.copyToAccel(host, 0, f64, 0, 16);
+    Accel.copyFromAccel(f64, 0, roundtrip, 0, 16);
+    print("typed accelerator resources ok");
+    print(roundtrip[15]);
+}

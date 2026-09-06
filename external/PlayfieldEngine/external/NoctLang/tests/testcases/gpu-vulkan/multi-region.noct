@@ -1,0 +1,24 @@
+__accel func transform(
+    source: rpackedint32,
+    destination: rpackedint32,
+    n: int): void {
+    for (i in 0..n) {
+        destination[i] = source[i] + 1;
+    }
+    destination[0] = destination[0] + 10;
+    for (j in 0..n) {
+        destination[j] = destination[j] + 2;
+    }
+}
+
+func main() {
+    let source = Packed.int32(5);
+    let destination = Packed.int32(5);
+    for (i in 0..5) {
+        source[i] = i;
+    }
+    transform(source, destination, 5);
+    for (i in 0..5) {
+        print(destination[i]);
+    }
+}

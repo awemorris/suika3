@@ -1,0 +1,15 @@
+func main() {
+    var n = 300;
+    var p = Packed.uint8(n);
+    for (i in 0..n) {
+        p[i] = 255 - (i % 256);
+    }
+    for (i in 0..n) {
+        p[i] = (p[i] + i) % 256;
+    }
+    var sum = 0;
+    for (i in 0..n) {
+        sum = sum + p[i];
+    }
+    print(sum);
+}

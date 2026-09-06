@@ -1,0 +1,18 @@
+func side() {
+    print("side");
+    return 1;
+}
+func main() {
+    var d = { k: 4 };
+    var n = 1;
+    var a = (n > 100) && (d.k * 6 + d.k * 6 > 0);
+    print(a);
+    var b = d.k * 6;
+    print(b);
+    var c = (n < 100) || (side() == 1);
+    print(c);
+    var e = (n > 100) || (d.k * 8 + d.k * 8);
+    print(e);
+    var f = d.k * 8;
+    print(f);
+}

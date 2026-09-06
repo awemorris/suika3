@@ -1,0 +1,4 @@
+__accel var data = Accel.data(4);
+
+func main() {
+}

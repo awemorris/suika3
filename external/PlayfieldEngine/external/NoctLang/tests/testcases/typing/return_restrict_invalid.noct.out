@@ -1,0 +1,1 @@
+typing/return_restrict_invalid.noct:0: Error: A restricted packed type is only valid for a parameter.

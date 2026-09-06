@@ -1,0 +1,92 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+msgid "Adding file \"%s\"."
+msgstr "Añadiendo archivo \"%s\"."
+
+msgid "Cannot determine the file type for \"%s\"."
+msgstr "No se puede determinar el tipo de archivo de \"%s\"."
+
+msgid "Cannot get the size of file \"%s\"."
+msgstr "No se puede obtener el tamaño del archivo \"%s\"."
+
+msgid "Cannot load an image \"%s\"."
+msgstr "No se puede cargar la imagen \"%s\"."
+
+msgid "Cannot open a save file."
+msgstr "No se puede abrir un archivo de guardado."
+
+msgid "Cannot open file \"%s\"."
+msgstr "No se puede abrir el archivo \"%s\"."
+
+msgid "Cannot read file \"%s\"."
+msgstr "No se puede leer el archivo \"%s\"."
+
+msgid "Error: %s:%d: %s"
+msgstr "Error: %s:%d: %s"
+
+msgid "Too many textures."
+msgstr "Demasiadas texturas."
+
+msgid "Invalid font slot index."
+msgstr "Índice de ranura de fuente no válido."
+
+msgid "Invalid sound stream index."
+msgstr "Índice de flujo de sonido no válido."
+
+msgid "Cannot make the save directory."
+msgstr "No se puede crear el directorio de guardado."
+
+msgid "Save data key too long."
+msgstr "La clave de los datos guardados es demasiado larga."
+
+msgid "Cannot write to a save file."
+msgstr "No se puede escribir en un archivo de guardado."
+
+msgid "Cannot get the size of a save file."
+msgstr "No se puede obtener el tamaño de un archivo de guardado."
+
+msgid "Save file too large."
+msgstr "El archivo de guardado es demasiado grande."
+
+msgid "Cannot read a save file."
+msgstr "No se puede leer un archivo de guardado."
+
+msgid "String too long."
+msgstr "Cadena demasiado larga."
+
+msgid "Invalid save data."
+msgstr "Datos de guardado no validos."
+
+msgid "Searching directory \"%s\"."
+msgstr "Buscando en el directorio \"%s\"."
+
+msgid "Skipping empty directory \"%s\"."
+msgstr "Omitiendo el directorio vacío \"%s\"."
+
+msgid "Parameter is not set."
+msgstr "El parámetro no está configurado."
+
+msgid "Unexpected parameter value for \"%s\"."
+msgstr "Valor de parámetro inesperado para \"%s\"."
+
+msgid "Parameter \"%s\" doesn't have the key \"%s\"."
+msgstr "El parámetro \"%s\" no tiene la clave \"%s\"."
+
+msgid "Unexpected parameter value for \"%s.%s\"."
+msgstr "Valor de parámetro  inesperado para \"%s.%s\"."
+
+msgid "Cannot deserialize function."
+msgstr "No se puede deserializar la función."
+
+msgid "Out of memory."
+msgstr "Memoria insuficiente."
+
+msgid "Parameter \"%s\" is not set."
+msgstr "El parámetro \"%s\" no está configurado."
+
+msgid "Parameter is required to be a dictionary."
+msgstr "El parámetro debe ser un diccionario."
+

@@ -1,0 +1,12 @@
+func reset() {
+    W = 500;
+    return 0;
+}
+func main() {
+    W = 7;
+    var a = W * 2 + W * 2;
+    print(a);
+    reset();
+    var b = W * 2;
+    print(b);
+}

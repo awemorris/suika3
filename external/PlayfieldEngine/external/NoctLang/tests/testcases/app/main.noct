@@ -1,0 +1,11 @@
+static let value = 1;
+var order = "A";
+
+static func local(): int { return value; }
+func from_a(): int { return local(); }
+
+func main() {
+    print(order);
+    print(from_a());
+    print(from_b());
+}

@@ -1,0 +1,16 @@
+func add(a: int, b: int) {
+    return a + b;
+}
+func greet(name: string) {
+    print("Hi " + name);
+}
+func main() {
+    var n: int = 3;
+    var s: string;
+    var w: u8 = 200;
+    let z: i64 = 5;
+    print(add(n, w));
+    greet("noct");
+    print(s);
+    print(z);
+}

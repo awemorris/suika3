@@ -1,0 +1,22 @@
+// Strip/remainder split across every n mod 4 shape incl. n < 4 and
+// n == 0.
+func main() {
+    var sizes = [0, 1, 2, 3, 4, 5, 7, 8, 9, 16, 17];
+    for (s in sizes) {
+        var n = s;
+        var p = Packed.uint32(32);
+        var q = Packed.uint32(32);
+        for (i in 0..32) {
+            p[i] = i * 3 + 1;
+            q[i] = 0;
+        }
+        for (i in 0..n) {
+            q[i] = (p[i] * 5) ^ (p[i] >> 2);
+        }
+        var sum = 0;
+        for (i in 0..32) {
+            sum = sum + q[i];
+        }
+        print(sum);
+    }
+}

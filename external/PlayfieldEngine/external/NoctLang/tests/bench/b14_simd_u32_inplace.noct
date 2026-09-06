@@ -1,0 +1,21 @@
+// Synthetic in-place RGBA32 byte attenuation and bias.
+func transform(img: rpackeduint32, n: int) {
+    for (i in 0..n) {
+        var d = img[i];
+        img[i] = ((d >> 1) & 2139062143) ^ 16843009;
+    }
+}
+
+func main() {
+    var n = 1048576;
+    var img = Packed.uint32(n);
+    for (i in 0..n) {
+        img[i] = (i * 2654435761) & 4294967295;
+    }
+    for (frame in 0..16) {
+        transform(img, n);
+    }
+    print(img[0]);
+    print(img[12345]);
+    print(img[1048575]);
+}
