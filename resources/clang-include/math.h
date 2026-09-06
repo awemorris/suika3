@@ -75,7 +75,8 @@ long double tanl(long double x);
  */
 
 #define atan(x)		__builtin_atan(x)
-#define atan2f(x)	__builtin_atan2f(x)
+#define atan2(y, x)	__builtin_atan2(y, x)
+#define atan2f(y, x)	__builtin_atan2f(y, x)
 #define atanf(x)	__builtin_atanf(x)
 
 /*
@@ -84,6 +85,9 @@ float atan2f(float y, float x);
 float atanf(float x);
  */
 long double atanl(long double x);
+
+#define asin(x)		__builtin_asin(x)
+#define asinf(x)	__builtin_asinf(x)
 
 #define acos(x)		__builtin_acos(x)
 #define acosf(x)	__builtin_acosf(x)
