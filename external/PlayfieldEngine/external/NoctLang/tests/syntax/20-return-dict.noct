@@ -1,7 +1,0 @@
-func main() {
-    return {
-        title: "Sample Window",
-        width: 640,
-        height: 480
-    };
-}
