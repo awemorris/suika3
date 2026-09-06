@@ -488,6 +488,9 @@ if(   NOT SUIKA_ENABLE_DIST
     set(PLAYFIELD_ENABLE_JIT OFF)
   endif()
 
+  # Optimizer
+  set(PLAYFIELD_ENABLE_OPTIMIZER OFF)
+
   # Use I18N
   if(SUIKA_ENABLE_I18N)
     set(PLAYFIELD_ENABLE_I18N ON)
@@ -1117,8 +1120,8 @@ if(SUIKA_ENABLE_BCC)
     external/PlayfieldEngine/include
     external/PlayfieldEngine/external/StratoHAL/include
     external/PlayfieldEngine/external/NoctLang/include
+    external/PlayfieldEngine/external/NoctLang/src
     external/PlayfieldEngine/external/NoctLang/src/core
-    external/PlayfieldEngine/external/NoctLang/src/backend
   )
 
   if(NOT SUIKA_ENABLE_DIST)
@@ -1156,6 +1159,7 @@ if(SUIKA_ENABLE_AOTC)
     external/PlayfieldEngine/include
     external/PlayfieldEngine/external/StratoHAL/include
     external/PlayfieldEngine/external/NoctLang/include
+    external/PlayfieldEngine/external/NoctLang/src
   )
 
   if(NOT SUIKA_ENABLE_DIST)

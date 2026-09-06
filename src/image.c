@@ -505,8 +505,9 @@ s3_write_image_hcg(
 	struct s3_image *image,
 	const char *file)
 {
+#if 0
 	if (!pf_write_texture_hcg(image->tex_id, file))
 		return false;
-
+#endif
 	return true;
 }

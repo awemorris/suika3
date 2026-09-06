@@ -39,7 +39,10 @@
 #include <string.h>
 #include <assert.h>
 
-#define NEVER_COME_HERE 0
+#define NEVER_COME_HERE		0
+
+#define BYTECODE_1_0_MAGIC	"Noct Bytecode 1.0\n"
+#define BYTECODE_1_1_MAGIC	"Noct Bytecode 1.1\n"
 
 /* Skeleton */
 static bool Suika_start(void *p);
@@ -1184,7 +1187,8 @@ Suika_loadPlugin(
 		return false;
 
 	/* Check for the bytecode header. */
-	if (strncmp(data, NOCT_BYTECODE_HEADER, strlen(NOCT_BYTECODE_HEADER)) != 0) {
+	if (strncmp(data, BYTECODE_1_0_MAGIC, strlen(BYTECODE_1_0_MAGIC)) != 0 &&
+	    strncmp(data, BYTECODE_1_1_MAGIC, strlen(BYTECODE_1_1_MAGIC)) != 0) {
 		/* It's a source file. */
 		if (!noct_register_source(env, path, data)) {
 			free(data);
@@ -3071,7 +3075,9 @@ Suika_getImagePixels(void *p)
 				      NOCT_PACKED_UINT32,
 				      img->width * img->height * 4,
 				      img->width * img->height,
-				      s3_get_image_pixels(img)))
+				      s3_get_image_pixels(img),
+				      NULL,
+				      NULL))
 			return false;
 
 		/* Set the return value. */

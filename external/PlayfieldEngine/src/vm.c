@@ -246,14 +246,6 @@ parse_cli_options(void)
 			config.jit_enable = false;
 			continue;
 		}
-		if (strcmp(hal_argv[i], "--force-jit") == 0) {
-			config.jit_threshold = 0;
-			continue;
-		}
-		if (strncmp(hal_argv[i], "--jit-threshold=", 16) == 0) {
-			config.jit_threshold = atoi(hal_argv[i] + 16);
-			continue;
-		}
 		if (strncmp(hal_argv[i], "--optimize-level=", 17) == 0) {
 			config.optimize_level = atoi(hal_argv[i] + 17);
 			continue;
