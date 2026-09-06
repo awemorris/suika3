@@ -17,9 +17,45 @@ feature requests, testing, and discussions for this release:
 * @antonialoytorrens ... QA
 * @2439905184 ... reporting critical bugs
 * @jhq223 ... reporting critical bugs
-* @Kotsuider ... reporting critical bugs
+* @Kotsuider ... reporting and fixing critical bugs
 
 ## Notes
+
+### Suika3 26.07.12 LTS: September 7, 2026
+
+Thank you @Kotsuider for many contribution!
+
+Changes:
+- [update] [noct] Update to Noct 2.0.2
+- [fix] Global vars save/load fix #84
+- [fix] Cyrillic wrap fix and s3i_cleanup_gui fix #83
+- [fix] Update gui.h #82
+- [fix] Fix system GUI detection during text display to prevent text skipping #81
+- [fix] [BUG] Skipping script actions when opening history with the mouse wheel #80
+
+Noct 2.0 updates:
+- Added the optimizations: up to 300x faster! (when loops are auto-vectorized for SIMD)
+- Added type annotations, `let`, global variables outside function, static and inline functions, etc.
+- Removed `->()` notation.
+
+```
+let animal = class {
+    cry: () => { }
+};
+
+let cat = extend animal {
+    cry: () => {
+        print("Meow");
+    }
+};
+
+static func foo() {
+}
+
+static __inline func calc(a: int, b: int) : int {
+    return a + b;
+}
+```
 
 ### Suika3 26.07.10 LTS: July 23, 2026
 

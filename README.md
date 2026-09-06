@@ -857,9 +857,10 @@ Compilation stages are as below.
  +-----+     +-----+     +-----+     +-----+
  | SRC | --> | AST | --> | HIR | --> | LIR | -----> [Interpreter Backend]
  +-----+     +-----+     +-----+     +-----+   |
-                                               +--> [JIT Backend]
-                                               |
-                                               +--> [C Backend]
+                           |                   +--> [JIT Backend]
+                           +-->[Optimizer]     |
+                           |                   +--> [C Backend]
+                           +-->[GPU Backend]
 ```
 
 The separation of HIR and LIR enables:
