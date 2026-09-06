@@ -11,32 +11,6 @@ The `noct` CLI command includes the standard APIs.
 
 ---
 
-## Regex
-
-`Regex.*` is a standard API provided by `libnoctapi`; it is not a core
-intrinsic. An embedding host installs it explicitly with
-`noct_register_api_regex()`.
-
-All positions are zero-based Unicode codepoint indices. Match end positions
-are exclusive.
-
-### Regex.search(pat, s, from)
-
-Searches `s` at or after `from`. It returns zero when no match exists, or a
-dictionary containing `start`, `end`, and a `groups` array. Each capture group
-has `start` and `end` fields; an unmatched group uses `-1` for both.
-
-### Regex.matches(pat, s)
-
-Returns one when the entire string matches `pat`, otherwise zero.
-
-### Regex.replaceAll(pat, s, repl)
-
-Replaces every non-overlapping match. `$0` through `$9` insert capture groups,
-and `$$` inserts a literal dollar sign.
-
----
-
 ## File
 
 `File.*` is a standard API and not included in the intrinsics.
@@ -489,3 +463,28 @@ Hash.sha256Bytes(bytes)
 ```
 
 All offsets, sizes, ranges, endianness, and hashes are checked.
+
+
+## Regex
+
+`Regex.*` is a standard API provided by `libnoctapi`; it is not a core
+intrinsic. An embedding host installs it explicitly with
+`noct_register_api_regex()`.
+
+All positions are zero-based Unicode codepoint indices. Match end positions
+are exclusive.
+
+### Regex.search(pat, s, from)
+
+Searches `s` at or after `from`. It returns zero when no match exists, or a
+dictionary containing `start`, `end`, and a `groups` array. Each capture group
+has `start` and `end` fields; an unmatched group uses `-1` for both.
+
+### Regex.matches(pat, s)
+
+Returns one when the entire string matches `pat`, otherwise zero.
+
+### Regex.replaceAll(pat, s, repl)
+
+Replaces every non-overlapping match. `$0` through `$9` insert capture groups,
+and `$$` inserts a literal dollar sign.

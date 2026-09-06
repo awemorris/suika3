@@ -1462,20 +1462,3 @@ extern size_t noct_conf_gc_lop_threshold = 32 * 1024;
 ```
 size_t noct_conf_gc_promotion_threshold = 2;
 ```
-
-## Accelerator Integration
-
-The public Native API has no accelerator enable flag, backend selector, GPU
-resource type, or public `Accel.*` package.  `__accel` is an ordinary
-CPU-executable source function with an optimization hint; registering source
-through the public API therefore preserves its checked CPU behavior.
-
-The optional CLI accelerator is a private integration owned by the executable.
-It attaches a source-time optimizer and its matching private runtime helpers
-only for an explicit source-only `--gpu` run.  Compiler-generated accelerator
-calls use a backend-specific private `__Accel` package; it is not a public
-source or Native API package.  Accelerator IR, shader objects, device
-selection, and device-local storage are not part of `NoctConfig`, `.nbc`,
-`.nap`, or the public NAPI contract.  `--compile` and `--app` likewise produce
-CPU-only artifacts.  On Linux and FreeBSD, `libnoctaccel.so` is a private CLI
-component and does not establish a public Native API or accelerator ABI.

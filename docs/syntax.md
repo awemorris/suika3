@@ -16,7 +16,7 @@ func main() {
     var a = 123;
     print(a);
 
-    var b = 1.0;
+    let b = 1.0;   // let is also okay!
     print(b);
 
     var c = "string";
@@ -26,19 +26,19 @@ func main() {
 
 ## Global Variables
 
-Global variables can be defined in functions, and cannot be defined
-outside functions.
+Global variables can be defined outside functions.
 
 ```
+var globalVariable = 123;
+
 func main() {
-    globalVariable = 123;
     print(globalVariable);
 }
 ```
 
 ## Local Variables
 
-Using the `var` keyword allows you to declare a variable as
+Using the `var` or `let` keywords allows you to declare a variable as
 local. Without `var` declaration, assigning to a variable may create a
 global variable.
 
@@ -64,11 +64,12 @@ func copy_words(dst: rpackeduint32, src: rpackeduint32, count: int): long {
 
 The recognized scalar and object annotations are:
 
-- `int`, `long`, `float`, and `double` for the four numeric runtime types;
-- `string`, `array`, `dict`, `packed`, and `func` for the corresponding
-  runtime value types; and
-- `i8`, `i16`, `i32`, `u8`, `u16`, and `u32` as `int` annotations, plus
-  `i64` and `u64` as `long` annotations.
+- `int`, `long`, `float`, and `double` for the four numeric runtime
+  types,
+- `string`, `array`, `dict`, `packed`, and `func` for the
+  corresponding runtime value types, and
+- `i8`, `i16`, `i32`, `u8`, `u16`, and `u32` as `int` annotations,
+  plus `i64` and `u64` as `long` annotations.
 
 The sized integer spellings do not create narrow runtime integer
 values and do not perform range checks; they are aliases for the
@@ -84,18 +85,18 @@ with `r` produces a restricted parameter annotation, for example
 
 In an ordinary function, annotations have the following behavior:
 
-- At optimization level 0, annotation names and placement are validated, but
-  values retain ordinary dynamic behavior.
-- At level 1 and above, every annotated parameter is checked on function
-  entry.  An element-specific Packed parameter must have exactly that element
-  type.
-- At level 1 and above, a local declared as `int`, `long`, `float`, or `double`
-  is checked at its initializer and every reassignment.  The other local
-  annotations remain optimization metadata and do not impose this reassignment
-  check.
-- At level 2 and above, an annotated return value is checked exactly.  A
-  restricted Packed annotation is not valid as a return type; `void` is used
-  for a function that returns no value.
+- At optimization level 0, annotation names and placement are
+  validated, but values retain ordinary dynamic behavior.
+- At level 1 and above, every annotated parameter is checked on
+  function entry.  An element-specific Packed parameter must have
+  exactly that element type.
+- At level 1 and above, a local declared as `int`, `long`, `float`, or
+  `double` is checked at its initializer and every reassignment.  The
+  other local annotations remain optimization metadata and do not
+  impose this reassignment check.
+- At level 2 and above, an annotated return value is checked exactly.
+  A restricted Packed annotation is not valid as a return type; `void`
+  is used for a function that returns no value.
 
 Parameter and local checks permit `int` where `long` is requested and
 `float` where `double` is requested, converting the value to the wider
@@ -342,6 +343,106 @@ func main() {
     myCat->cry();
 }
 ```
+
+
+## `__fast func`
+
+`__fast` is an opt-in contract for statically typed CPU optimization,
+inspired by Fortran 77.
+
+The two accepted declaration forms are:
+
+```noct
+__fast func calculate(value: int): int {
+    return value * 2;
+}
+
+static __inline __fast func convert(value: int): float {
+    return float(value);
+}
+```
+
+The `static __inline` form is file-local.  It is accepted as an
+optimization declaration, but current fast-to-fast calls are not
+source-inlined merely because `__inline` is present.
+
+At optimization level 1 and above in a build with optimizer support, a
+fast function must satisfy all of these signature rules:
+
+- every parameter has an exact annotation;
+- scalar parameters use exactly `int`, `long`, `float`, or `double`;
+- every explicit `var` or `let` local uses exactly one of those four
+  scalar annotations;
+- the return annotation is exactly one of those four types or `void`;
+  and
+- a Packed parameter uses an element-specific `rpacked*` annotation
+  with an exact shape.
+
+The sized integer aliases are not exact fast scalar spellings.  Fast
+arithmetic does not implicitly widen or otherwise mix scalar types;
+use the `int`, `long`, `float`, and `double` conversion intrinsics
+where a conversion is required.
+
+Packed parameters support all element-specific restricted types
+described above.  A shape has 1 through 8 dimensions, and every extent
+is either a positive decimal integer literal or the name of an
+`int`/`long` parameter:
+
+```noct
+__fast func scale(
+    image: rpackedfloat(channels, 224, 224),
+    channels: int,
+    factor: float): void
+{
+    for (c in 0..channels) {
+        for (y in 0..224) {
+            for (x in 0..224) {
+                image[c, y, x] = image[c, y, x] * factor;
+            }
+        }
+    }
+}
+```
+
+The shape is exact: `rpackedfloat(3, 224, 224)` requires exactly `3 *
+224 * 224` elements.  Multi-dimensional indices are zero-based and use
+C row-major order, with the last axis contiguous.  Calls check
+annotated primitive runtime types, Packed element types, positive
+dynamic extents, shape-product overflow, and the exact element count.
+The checked CPU path uses the ordinary `int`-to-`long` and
+`float`-to-`double` widening rules.  Each index is bounds-checked on
+that path.  These checks also apply at optimization level 0 and in
+builds without the optimizer.  The `rpacked` non-aliasing promise
+remains a caller contract and is not checked at runtime.
+
+When the optimizer commits the fast contract at level 1 or above, the
+function body is limited to statically typed numeric operations:
+
+- numeric literals, typed parameters, typed locals, and shaped Packed
+  parameter access,
+- `if`/`else if`/`else`, `while`, and ranged `for` control flow,
+- `int` conditions, matching `int` or `long` ranged-loop bounds, and
+  `int` or `long` Packed indices,
+- direct calls to other fast functions, and
+- `min`, `max`, `abs`, `sqrt`, `sin`, `cos`, `tan`, `asin`, `acos`,
+  `atan`, `atan2`, `exp`, `ln`, `log2`, `log10`, `int`, `long`,
+  `float`, and `double` intrinsics.
+
+Globals, closures, methods, ordinary function calls, and for-each
+loops are not part of the optimized subset.  Operands and assignment
+values must match their exact scalar or Packed element type.  Every
+reachable path of a non-`void` function must return a value, and
+direct or mutual recursion between fast functions is rejected.
+
+At level 0, or in a build without optimizer support, `__fast` uses the
+ordinary checked CPU lowering.  Annotated argument, Packed element,
+and exact shape checks remain active, but the optimizer-only body
+validation and fast bytecode metadata are not committed.  At level 1
+and above, a provably safe multi-dimensional access may be flattened
+to unchecked row-major arithmetic, a provably out-of-range access is a
+compile error, and an unproven access remains checked.  Exact shape
+and non-aliasing facts are then available to later ABCE and SIMD
+passes.
 
 ## Intrinsics
 
@@ -784,169 +885,3 @@ Executes a compact GC.
 ```
 GC.compactGC();
 ```
-
-## `__accel func`
-
-`__accel` marks an ordinary function as a candidate for synchronous GPU
-optimization.  It is a hint, not a separate function kind: the function is
-called by its normal name and always has a complete CPU implementation.  If
-GPU optimization is unavailable or declines the function, the CPU body keeps
-its ordinary semantics.
-
-The modifier is accepted in exactly these positions:
-
-```noct
-__accel func transform(data: rpackedint32, count: int): void {
-    for (i in 0..count) {
-        data[i] = data[i] * 2;
-    }
-}
-
-static __accel func clear(data: rpackedint32, count: int): void {
-    for (i in 0..count) {
-        data[i] = 0;
-    }
-}
-```
-
-Thus the two forms are `__accel func` and `static __accel func`.  The modifier
-applies only to functions and cannot be combined with `__fast` or `__inline`.
-The function body otherwise uses ordinary Noct syntax, annotations, calls, and
-return rules.
-
-GPU rewriting is attempted only in an accelerator-enabled build, at
-optimization level 1 or above, while source is run with `--gpu`.  An offloaded
-function must return `void`.  Its GPU-visible buffer parameters use exact
-`rpackedint32`, `rpackeduint32`, or `rpackedfloat` annotations, and its scalar
-parameters use the `int` or `float` runtime type.  Other legal signatures keep
-the CPU implementation.
-
-The current GPU subset recognizes suitable top-level, one-dimensional ranged
-loops.  Independent loops become DOALL kernels.  Straight-line numeric
-arithmetic, comparisons, and Packed loads and stores inside those loops can be
-moved to the selected backend.  Adjacent eligible loops may share one
-synchronous GPU session.  Ordinary CPU statements separate sessions: one GPU
-region completes before the CPU statements run, and a later region starts for
-the next eligible group.  Regions are source-ordered parts of one function,
-not different physical GPUs.
-
-Code outside the subset remains valid CPU code.  Unsupported control flow,
-calls, types, or dependence patterns cause GPU optimization to decline rather
-than making the source invalid.  A DOSUM reduction may be offloaded when its
-accumulator is `int`/`i32` or `u32`, starts at additive zero, and is updated by
-addition.  Floating-point, minimum, maximum, and product reductions currently
-remain on the CPU.
-
-Local Packed buffers use ordinary declarations and constructors, for example
-`let temporary: packedfloat = Packed.float32(count)`.  Normally the object is
-CPU-owned and whole-buffer transfers surround the GPU region.  The optimizer
-may omit the host object when it proves a conservative device-only local: the
-matching constructor immediately precedes one region, the local does not
-escape or participate in CPU code, and the first kernel completely initializes
-it before any read.  Otherwise the CPU-backed representation is retained or
-the region is declined.  Asynchronous execution and persistence across regions
-or calls are not part of the source contract.
-
-Compiled `.nbc` and `.nap` files, `--compile`, `--app`, and the source
-transpilers preserve only the ordinary CPU body.  Once a source run has
-committed an eligible region and GPU execution has started, a GPU failure ends
-that invocation; the replaced CPU loop is not replayed.
-
-`--gpu-list` reports selectable devices.  Canonical selectors have the forms
-`vulkan:NAME`, `opengles:NAME`, `d3d12:NAME`, and `metal:NAME`; an unqualified
-exact name is accepted only when it is unique.  `--gpu` chooses a default
-suitable device, while `--gpu=SELECTOR` requests one explicitly.
-
-## `__fast func`
-
-`__fast` is an opt-in contract for statically typed CPU optimization.  The two
-accepted declaration forms are:
-
-```noct
-__fast func calculate(value: int): int {
-    return value * 2;
-}
-
-static __inline __fast func convert(value: int): float {
-    return float(value);
-}
-```
-
-The `static __inline` form is file-local.  It is accepted as an optimization
-declaration, but current fast-to-fast calls are not source-inlined merely
-because `__inline` is present.
-
-At optimization level 1 and above in a build with optimizer support, a fast
-function must satisfy all of these signature rules:
-
-- every parameter has an exact annotation;
-- scalar parameters use exactly `int`, `long`, `float`, or `double`;
-- every explicit `var` or `let` local uses exactly one of those four scalar
-  annotations;
-- the return annotation is exactly one of those four types or `void`; and
-- a Packed parameter uses an element-specific `rpacked*` annotation with an
-  exact shape.
-
-The sized integer aliases are not exact fast scalar spellings.  Fast arithmetic
-does not implicitly widen or otherwise mix scalar types; use the `int`, `long`,
-`float`, and `double` conversion intrinsics where a conversion is required.
-
-Packed parameters support all element-specific restricted types described
-above.  A shape has 1 through 8 dimensions, and every extent is either a
-positive decimal integer literal or the name of an `int`/`long` parameter:
-
-```noct
-__fast func scale(
-    image: rpackedfloat(channels, 224, 224),
-    channels: int,
-    factor: float): void
-{
-    for (c in 0..channels) {
-        for (y in 0..224) {
-            for (x in 0..224) {
-                image[c, y, x] = image[c, y, x] * factor;
-            }
-        }
-    }
-}
-```
-
-The shape is exact: `rpackedfloat(3, 224, 224)` requires exactly `3 *
-224 * 224` elements.  Multi-dimensional indices are zero-based and use
-C row-major order, with the last axis contiguous.  Calls check
-annotated primitive runtime types, Packed element types, positive
-dynamic extents, shape-product overflow, and the exact element count.
-The checked CPU path uses the ordinary `int`-to-`long` and
-`float`-to-`double` widening rules.  Each index is bounds-checked on
-that path.  These checks also apply at optimization level 0 and in
-builds without the optimizer.  The `rpacked` non-aliasing promise
-remains a caller contract and is not checked at runtime.
-
-When the optimizer commits the fast contract at level 1 or above, the function
-body is limited to statically typed numeric operations:
-
-- numeric literals, typed parameters, typed locals, and shaped Packed
-  parameter access;
-- `if`/`else if`/`else`, `while`, and ranged `for` control flow;
-- `int` conditions, matching `int` or `long` ranged-loop bounds, and `int` or
-  `long` Packed indices;
-- direct calls to other fast functions; and
-- `min`, `max`, `abs`, `sqrt`, `sin`, `cos`, `tan`, `asin`, `acos`, `atan`,
-  `atan2`, `exp`, `ln`, `log2`, `log10`, `int`, `long`, `float`, and `double`
-  intrinsics.
-
-Globals, closures, methods, ordinary function calls, and for-each
-loops are not part of the optimized subset.  Operands and assignment
-values must match their exact scalar or Packed element type.  Every
-reachable path of a non-`void` function must return a value, and
-direct or mutual recursion between fast functions is rejected.
-
-At level 0, or in a build without optimizer support, `__fast` uses the
-ordinary checked CPU lowering.  Annotated argument, Packed element,
-and exact shape checks remain active, but the optimizer-only body
-validation and fast bytecode metadata are not committed.  At level 1
-and above, a provably safe multi-dimensional access may be flattened
-to unchecked row-major arithmetic, a provably out-of-range access is a
-compile error, and an unproven access remains checked.  Exact shape
-and non-aliasing facts are then available to later ABCE and SIMD
-passes.
