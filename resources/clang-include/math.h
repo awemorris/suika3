@@ -24,6 +24,7 @@ typedef double double_t;
 #define FP_NORMAL      4
 
 #define fpclassify(x)  __builtin_fpclassify(FP_NAN, FP_INFINITE, FP_NORMAL, FP_SUBNORMAL, FP_ZERO, x)
+#define signbit(x)     __builtin_signbit(x)
 
 /*
 #define fpclassify(x)				\
