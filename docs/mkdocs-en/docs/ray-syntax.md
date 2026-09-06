@@ -18,7 +18,7 @@ func main() {
     var a = 123;
     print(a);
 
-    var b = 1.0;
+    let b = 1.0;   // let is also okay!
     print(b);
 
     var c = "string";
@@ -28,19 +28,19 @@ func main() {
 
 ## Global Variables
 
-Global variables can be defined in functions, and cannot be defined
-outside functions.
+Global variables can be defined outside functions.
 
 ```
+var globalVariable = 123;
+
 func main() {
-    globalVariable = 123;
     print(globalVariable);
 }
 ```
 
 ## Local Variables
 
-Using the `var` keyword allows you to declare a variable as
+Using the `var` or `let` keywords allows you to declare a variable as
 local. Without `var` declaration, assigning to a variable may create a
 global variable.
 
@@ -50,6 +50,71 @@ func main() {
     print(a);
 }
 ```
+
+## Type Annotations
+
+Noct remains dynamically typed, but function parameters, local
+`var`/`let` declarations, and function returns may carry
+optimization-oriented type annotations:
+
+```noct
+func copy_words(dst: rpackeduint32, src: rpackeduint32, count: int): long {
+    var copied: long = count;
+    return copied;
+}
+```
+
+The recognized scalar and object annotations are:
+
+- `int`, `long`, `float`, and `double` for the four numeric runtime
+  types,
+- `string`, `array`, `dict`, `packed`, and `func` for the
+  corresponding runtime value types, and
+- `i8`, `i16`, `i32`, `u8`, `u16`, and `u32` as `int` annotations,
+  plus `i64` and `u64` as `long` annotations.
+
+The sized integer spellings do not create narrow runtime integer
+values and do not perform range checks; they are aliases for the
+corresponding `int` or `long` runtime type check.
+
+Element-specific Packed annotations are `packedint8`, `packeduint8`,
+`packedint16`, `packeduint16`, `packedint32`, `packeduint32`,
+`packedint64`, `packeduint64`, `packedfloat` (float32 elements), and
+`packeddouble` (float64 elements).  The plain `packed` annotation
+accepts any Packed element type.  Prefixing an element-specific name
+with `r` produces a restricted parameter annotation, for example
+`rpackeduint8` or `rpackedfloat`.
+
+In an ordinary function, annotations have the following behavior:
+
+- At optimization level 0, annotation names and placement are
+  validated, but values retain ordinary dynamic behavior.
+- At level 1 and above, every annotated parameter is checked on
+  function entry.  An element-specific Packed parameter must have
+  exactly that element type.
+- At level 1 and above, a local declared as `int`, `long`, `float`, or
+  `double` is checked at its initializer and every reassignment.  The
+  other local annotations remain optimization metadata and do not
+  impose this reassignment check.
+- At level 2 and above, an annotated return value is checked exactly.
+  A restricted Packed annotation is not valid as a return type; `void`
+  is used for a function that returns no value.
+
+Parameter and local checks permit `int` where `long` is requested and
+`float` where `double` is requested, converting the value to the wider
+runtime type.  Return checks do not perform these conversions.
+
+The `r` prefix is a non-aliasing contract supplied by the caller.
+While the call is active, storage accessed through one restricted
+parameter must not overlap storage accessed through another parameter.
+The runtime does not compare backing ranges, and the optimizer may
+rely on the contract without proving it.  Violating the contract has
+unspecified results.
+
+Shape syntax such as `rpackedfloat(rows, columns)` is reserved for
+`__fast` parameters and is described below.  Unknown annotation names
+and shaped types in other contexts are compile errors at every
+optimization level.
 
 ## Array
 
@@ -254,23 +319,23 @@ The object-oriented model in Noct is a lightweight variation of prototype-based 
 This design treats dictionaries as first-class objects, and the author refers to it as Dictionary-based OOP (D-OOP).
 
 ```
+// The base class definition. (A class is just a dictionary.)
+let Animal = class {
+    name: "Animal",
+    cry: (this) => {
+    }
+};
+
+// The subclass definition. (Just a dictionary merging.)
+let Cat = extend Animal {
+    name: "Cat",
+    voice: "meow",
+    cry: (this) => {
+        print(this.name + " cries like " + this.voice);
+    }
+};
+
 func main() {
-    // The base class definition. (A class is just a dictionary.)
-    Animal = class {
-        name: "Animal",
-        cry: (this) => {
-        }
-    };
-
-    // The subclass definition. (Just a dictionary merging.)
-    Cat = extend Animal {
-        name: "Cat",
-        voice: "meow",
-        cry: (this) => {
-            print(this.name + " cries like " + this.voice);
-        }
-    };
-
     // Instantiation. (Just a dictionary merging.)
     var myCat = new Cat {
         voice: "neee"
@@ -280,6 +345,106 @@ func main() {
     myCat->cry();
 }
 ```
+
+
+## `__fast func`
+
+`__fast` is an opt-in contract for statically typed CPU optimization,
+inspired by Fortran 77.
+
+The two accepted declaration forms are:
+
+```noct
+__fast func calculate(value: int): int {
+    return value * 2;
+}
+
+static __inline __fast func convert(value: int): float {
+    return float(value);
+}
+```
+
+The `static __inline` form is file-local.  It is accepted as an
+optimization declaration, but current fast-to-fast calls are not
+source-inlined merely because `__inline` is present.
+
+At optimization level 1 and above in a build with optimizer support, a
+fast function must satisfy all of these signature rules:
+
+- every parameter has an exact annotation;
+- scalar parameters use exactly `int`, `long`, `float`, or `double`;
+- every explicit `var` or `let` local uses exactly one of those four
+  scalar annotations;
+- the return annotation is exactly one of those four types or `void`;
+  and
+- a Packed parameter uses an element-specific `rpacked*` annotation
+  with an exact shape.
+
+The sized integer aliases are not exact fast scalar spellings.  Fast
+arithmetic does not implicitly widen or otherwise mix scalar types;
+use the `int`, `long`, `float`, and `double` conversion intrinsics
+where a conversion is required.
+
+Packed parameters support all element-specific restricted types
+described above.  A shape has 1 through 8 dimensions, and every extent
+is either a positive decimal integer literal or the name of an
+`int`/`long` parameter:
+
+```noct
+__fast func scale(
+    image: rpackedfloat(channels, 224, 224),
+    channels: int,
+    factor: float): void
+{
+    for (c in 0..channels) {
+        for (y in 0..224) {
+            for (x in 0..224) {
+                image[c, y, x] = image[c, y, x] * factor;
+            }
+        }
+    }
+}
+```
+
+The shape is exact: `rpackedfloat(3, 224, 224)` requires exactly `3 *
+224 * 224` elements.  Multi-dimensional indices are zero-based and use
+C row-major order, with the last axis contiguous.  Calls check
+annotated primitive runtime types, Packed element types, positive
+dynamic extents, shape-product overflow, and the exact element count.
+The checked CPU path uses the ordinary `int`-to-`long` and
+`float`-to-`double` widening rules.  Each index is bounds-checked on
+that path.  These checks also apply at optimization level 0 and in
+builds without the optimizer.  The `rpacked` non-aliasing promise
+remains a caller contract and is not checked at runtime.
+
+When the optimizer commits the fast contract at level 1 or above, the
+function body is limited to statically typed numeric operations:
+
+- numeric literals, typed parameters, typed locals, and shaped Packed
+  parameter access,
+- `if`/`else if`/`else`, `while`, and ranged `for` control flow,
+- `int` conditions, matching `int` or `long` ranged-loop bounds, and
+  `int` or `long` Packed indices,
+- direct calls to other fast functions, and
+- `min`, `max`, `abs`, `sqrt`, `sin`, `cos`, `tan`, `asin`, `acos`,
+  `atan`, `atan2`, `exp`, `ln`, `log2`, `log10`, `int`, `long`,
+  `float`, and `double` intrinsics.
+
+Globals, closures, methods, ordinary function calls, and for-each
+loops are not part of the optimized subset.  Operands and assignment
+values must match their exact scalar or Packed element type.  Every
+reachable path of a non-`void` function must return a value, and
+direct or mutual recursion between fast functions is rejected.
+
+At level 0, or in a build without optimizer support, `__fast` uses the
+ordinary checked CPU lowering.  Annotated argument, Packed element,
+and exact shape checks remain active, but the optimizer-only body
+validation and fast bytecode metadata are not committed.  At level 1
+and above, a provably safe multi-dimensional access may be flattened
+to unchecked row-major arithmetic, a provably out-of-range access is a
+compile error, and an unproven access remains checked.  Exact shape
+and non-aliasing facts are then available to later ABCE and SIMD
+passes.
 
 ## Intrinsics
 
@@ -364,7 +529,10 @@ print(s2); // => "BC"
 
 ### String.indexOf(s1, s2)
 
-Search a substring.
+Searches for a substring and returns the **character index** of the
+first match, or -1 if there is none. The index is in characters, the
+same unit `String.charAt()` and `String.substring()` use, so the three
+combine correctly on multibyte text.
 
 ```
 var index1 = String.indexOf("ABCDEF", "CD");
@@ -372,6 +540,10 @@ print(index1); // => 2
 
 var index2 = String.indexOf("ABCDEF", "DC");
 print(index2); // => -1
+
+var s = "あいu";
+print(String.indexOf(s, "u"));              // => 2, not the byte offset 6
+print(String.substring(s, String.indexOf(s, "い"), 1)); // => "い"
 ```
 
 ### Array.make(size)
@@ -599,6 +771,35 @@ var pi8 = Packed.int8(128);
 print(Packed.type(pi8)); // => "int8"
 ```
 
+### Packed.copy(dst, dstIndex, src, srcIndex, count)
+
+Copies `count` elements from `src` to `dst` and returns `count`.
+Indices and the count are in elements, the same unit `Packed.size()`
+and the `[]` notation use.
+
+Both arrays must hold the same element type. The two regions may
+overlap, so this also serves to move a block inside one array, as a
+gap buffer does.
+
+```
+var src = Packed.uint8(8);
+var dst = Packed.uint8(8);
+Packed.copy(dst, 2, src, 0, 4);
+
+// Slide a block down by two, over itself.
+Packed.copy(src, 0, src, 2, 6);
+```
+
+### Packed.fill(dst, index, count, value)
+
+Sets `count` elements of `dst` to `value`, starting at `index`, and
+returns `count`. The value is converted to the array's element type.
+
+```
+var buf = Packed.uint8(1024);
+Packed.fill(buf, 0, 1024, 0);
+```
+
 ### Math.abs(x)
 
 Gets an absolute value.
@@ -638,6 +839,19 @@ Gets a tan(x) value.
 
 ```
 var y = tan(x);
+```
+
+### Type.of(value)
+
+Gets the type of a value as a string. The result is one of `"int"`,
+`"long"`, `"float"`, `"double"`, `"string"`, `"array"`, `"dict"`,
+`"packed"` or `"func"`.
+
+```
+print(Type.of(1));         // int
+print(Type.of("s"));       // string
+print(Type.of([1, 2]));    // array
+print(Type.of({a: 1}));    // dict
 ```
 
 ### Global.hasVariable(name)
