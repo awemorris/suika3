@@ -41,32 +41,76 @@ struct cli_module_binding {
 	uint32_t artifact_index;
 };
 
-void cli_module_reset(void);
-bool cli_module_add_path(const char *path_list);
-char *cli_module_resolve(const char *module_name);
-bool cli_module_build_graph(
+void
+cli_module_reset(void);
+
+/*
+ * Optional host file I/O. Set after reset and before resolving/building a graph.
+ * NULL callbacks individually use standard file I/O. Reset clears both callbacks;
+ * graph builds preserve them. Like the graph itself, these are process-global.
+ * read_file returns a malloc-owned, size+1 buffer with a trailing NUL (also for
+ * empty files). The graph frees it. On failure leave *data NULL and *size zero.
+ * A callback failure never falls back to host filesystem access.
+ */
+void
+cli_module_set_file_io(
+	bool (*file_exists)(const char *path),
+	bool (*read_file)(const char *path, uint8_t **data, size_t *size));
+
+bool
+cli_module_add_path(
+	const char *path_list);
+
+char *
+cli_module_resolve(
+	const char *module_name);
+
+bool
+cli_module_build_graph(
 	enum cli_module_graph_mode mode,
 	uint32_t root_count,
 	const char *const root_path[],
 	char *(*require_resolver)(const char *module_name));
-bool cli_module_build_input_graph(
+
+bool
+cli_module_build_input_graph(
 	const char *root_path,
 	const uint8_t *data,
 	size_t size,
 	char *(*require_resolver)(const char *module_name));
-bool cli_module_register_graph(struct rt_env *env);
-uint32_t cli_module_get_artifact_count(void);
-const struct cli_module_artifact *cli_module_get_artifact(
+
+bool
+cli_module_register_graph(struct rt_env *env);
+
+uint32_t
+cli_module_get_artifact_count(void);
+
+const struct cli_module_artifact *
+cli_module_get_artifact(
 	uint32_t index);
-uint32_t cli_module_get_postorder_count(void);
-uint32_t cli_module_get_postorder_artifact(
+
+uint32_t
+cli_module_get_postorder_count(void);
+
+uint32_t
+cli_module_get_postorder_artifact(
 	uint32_t index);
-uint32_t cli_module_get_binding_count(void);
-const struct cli_module_binding *cli_module_get_binding(
+
+uint32_t
+cli_module_get_binding_count(void);
+
+const struct cli_module_binding *
+cli_module_get_binding(
 	uint32_t index);
-uint32_t cli_module_get_root_count(void);
-uint32_t cli_module_get_root_artifact(
+
+uint32_t
+cli_module_get_root_count(void);
+
+uint32_t
+cli_module_get_root_artifact(
 	uint32_t index);
-const char *cli_module_get_error(void);
+
+const char *
+cli_module_get_error(void);
 
 #endif

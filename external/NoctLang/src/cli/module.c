@@ -72,6 +72,8 @@ static struct bytecode_file_app cli_module_app;
 static uint32_t *cli_module_app_order;
 static uint32_t cli_module_app_order_count;
 static char *(*cli_module_require_resolver)(const char *module_name);
+static bool (*cli_module_file_exists)(const char *path);
+static bool (*cli_module_file_reader)(const char *path, uint8_t **data, size_t *size);
 static enum cli_module_graph_mode cli_module_mode;
 static bool cli_module_has_app;
 static char cli_module_error[CLI_MODULE_ERROR_SIZE];
@@ -126,10 +128,21 @@ cli_module_reset(
 {
 	cli_module_clear_graph();
 	cli_module_path_count = 0;
+	cli_module_file_exists = NULL;
+	cli_module_file_reader = NULL;
 	cli_module_error[0] = '\0';
 #if defined(NOCT_USE_OPTIMIZER)
 	hir_fast_checked_reset_prototypes();
 #endif
+}
+
+void
+cli_module_set_file_io(
+	bool (*file_exists)(const char *path),
+	bool (*read_file)(const char *path, uint8_t **data, size_t *size))
+{
+	cli_module_file_exists = file_exists;
+	cli_module_file_reader = read_file;
 }
 
 /*
@@ -794,6 +807,15 @@ cli_module_try_suffix(
 	output += module_length;
 	memcpy(output, suffix, suffix_length + 1);
 
+	if (cli_module_file_exists != NULL) {
+		if (!cli_module_file_exists(candidate)) {
+			free(candidate);
+			return false;
+		}
+		*resolved_path = candidate;
+		return true;
+	}
+
 	stream = fopen(candidate, "rb");
 	if (stream == NULL) {
 		free(candidate);
@@ -824,6 +846,17 @@ cli_module_read_file(
 	*storage = NULL;
 	*size = 0;
 	succeeded = false;
+
+	if (cli_module_file_reader != NULL) {
+		if (cli_module_file_reader(path, storage, size) &&
+		    *storage != NULL && *size != SIZE_MAX)
+			return true;
+		free(*storage);
+		*storage = NULL;
+		*size = 0;
+		cli_module_set_error(N_TR("Cannot read module %s."), path);
+		return false;
+	}
 
 	stream = fopen(path, "rb");
 	if (stream == NULL) {

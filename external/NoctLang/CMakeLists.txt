@@ -46,7 +46,6 @@ option(NOCT_ENABLE_API_HTTPSERVER "Enable the HttpServer standard API"    OFF)
 option(NOCT_ENABLE_API_TERM       "Enable the Term non-standard API"      OFF)
 option(NOCT_ENABLE_API_BEUI       "Enable the BeUI non-standard API"      OFF)
 option(NOCT_ENABLE_API_PROCESS    "Enable the Process non-standard API"   OFF)
-option(NOCT_ENABLE_API_NWT1       "Enable immutable NWT1 model weights"   OFF)
 
 #
 # Manual target options.

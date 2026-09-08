@@ -200,7 +200,7 @@ pfi_destroy_vm(void)
 	noct_destroy_vm(vm);
 }
 
-/* Resolve a loose Ray module relative to the game working directory. */
+/* Resolve a Ray module in the game's virtual filesystem. */
 static char *
 resolve_ray_module(
 	const char *module_name)
@@ -210,8 +210,8 @@ resolve_ray_module(
 
 	/*
 	 * Noct validates require names as identifiers and owns the
-	 * returned path.  This source-file resolver does not expose
-	 * assets inside a package.
+	 * returned path. Module contents use the host file I/O callbacks,
+	 * including assets inside a package.
 	 */
 	len = strlen(module_name);
 	path = malloc(len + sizeof(".noct"));
@@ -222,6 +222,24 @@ resolve_ray_module(
 	memcpy(path + len, ".noct", sizeof(".noct"));
 
 	return path;
+}
+
+/* Adapt the engine's virtual file loader without incompatible pointer casts. */
+static bool
+read_ray_module(const char *path, uint8_t **data, size_t *size)
+{
+	char *buf;
+
+	*data = NULL;
+	*size = 0;
+	buf = NULL;
+
+	if (!pfi_load_file(path, &buf, size))
+		return false;
+
+	*data = (uint8_t *)buf;
+
+	return true;
 }
 
 /* Load the startup file. */
@@ -242,6 +260,7 @@ load_startup_file(void)
 	 */
 	registered = false;
 	cli_module_reset();
+	cli_module_set_file_io(hal_check_file_exist, read_ray_module);
 	if (!cli_module_build_input_graph(startup_file,
 					  (const uint8_t *)buf,
 					  size,
