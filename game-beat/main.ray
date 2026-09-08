@@ -1,0 +1,334 @@
+// Suika Beat: a portrait Ray 2D sample. No Suika.* calls.
+// Source-only PoC. Authored music/notes and editable visual assets; see README.md.
+require chart;
+require visuals;
+
+// Noct 2.0: declare shared state at module scope. Engine resources are loaded in start().
+// Keep the layout in design units; rendering and input share the same scale.
+let uiScale = 1.6;
+let songLength = musicDuration;
+let approach = 1.65;
+let hitWindow = 0.145;
+let perfectWindow = 0.065;
+
+// Positive offset delays both notes and judgment relative to audio start.
+var timingOffset = 0.0;
+var timingOffsetMs = 0;
+var sections = [];
+var sectionIndex = 0;
+var chart = [];
+var noteCount = 0;
+var screen = "title";
+var screenTime = 0;
+var lastTime = 0;
+var worldTime = 0.0;
+var musicStart = 0;
+var songTime = 0.0;
+var volume = 0.7;
+var best = 0;
+var lift = 0.0;
+var liftVelocity = 0.0;
+var angle = 0.0;
+var angularVelocity = 0.0;
+var pulse = 0.0;
+var pulseVelocity = 0.0;
+var flashes = [0.0, 0.0, 0.0];
+var practiced = [false, false, false];
+var textCache = {};
+var logo = {};
+var paper = {};
+var ink = {};
+var faint = {};
+var coral = {};
+var mint = {};
+var white = {};
+var score = 0;
+var combo = 0;
+var maxCombo = 0;
+var perfect = 0;
+var good = 0;
+var misses = 0;
+var resolved = 0;
+var nextMiss = 0;
+var judged = [];
+var feedback = "";
+var feedbackUntil = 0;
+
+func setup() {
+    return {width: 720, height: 1280, title: "Suika Beat", fullscreen: false};
+}
+
+func start() {
+    chart = loadChart();
+    sections = loadSections();
+    noteCount = Array.size(chart);
+    screenTime = Engine.millisec;
+    lastTime = Engine.millisec;
+    Engine.loadFont({slot: 0, file: "assets/font.ttc"});
+    Engine.loadFont({slot: 1, file: "assets/display.ttf"});
+    initVisuals();
+    logo = Engine.loadTexture({file: "assets/icon.png"});
+    paper = color(250, 248, 240);
+    ink = color(35, 43, 48);
+    faint = color(221, 225, 220);
+    coral = color(249, 112, 106);
+    mint = color(97, 201, 151);
+    white = color(255, 255, 255);
+    Engine.setSoundVolume({stream: 0, volume: volume});
+    resetRun();
+}
+
+func color(r, g, b) {
+    return Engine.createColorTexture({width: 1, height: 1, r: r, g: g, b: b, a: 255});
+}
+
+func rect(texture, x, y, w, h, alpha) {
+    if (w <= 0 || h <= 0) return;
+    Engine.renderTexture({texture: texture, dstLeft: x * uiScale, dstTop: y * uiScale,
+        dstWidth: w * uiScale, dstHeight: h * uiScale, srcLeft: 0, srcTop: 0,
+        srcWidth: texture.width, srcHeight: texture.height, alpha: alpha});
+}
+
+func label(message, size, x, y, centered) {
+    var key = "" + size + ":" + message;
+    if (!Dict.hasKey(textCache, key)) {
+        textCache[key] = Engine.createTextTexture({slot: 1, text: message,
+            size: size * uiScale, r: 28, g: 44, b: 82, a: 255});
+    }
+    var texture = textCache[key];
+    x = x * uiScale;
+    y = y * uiScale;
+    if (centered) x = x - texture.width / 2;
+    Engine.draw({texture: texture, x: x, y: y});
+}
+
+// Use ten cached digit textures, rather than allocating a new score every frame.
+func number(value, size, x, y, centered) {
+    var digits = "" + value;
+    var width = String.charCount(digits) * size * 0.65;
+    if (centered) x = x - width / 2;
+    for (i in 0..String.charCount(digits)) {
+        label(String.charAt(digits, i), size, x + i * size * 0.65, y, false);
+    }
+}
+
+func button(message, y, primary) {
+    var texture = faint;
+    if (primary) texture = mint;
+    var asset = ui["button-light"];
+    if (primary) asset = ui.button;
+    rect(asset, 45, y - 2, 360, 64, 255);
+    label(message, 23, 225, y + 13, true);
+}
+
+func clicked(x, y, w, h) {
+    var px = Engine.mousePosX / uiScale;
+    var py = Engine.mousePosY / uiScale;
+    return Engine.isMouseLeftPressed && px >= x && px < x + w && py >= y && py < y + h;
+}
+
+func clamp(value, lo, hi) {
+    if (value < lo) return lo;
+    if (value > hi) return hi;
+    return value;
+}
+
+func resetRun() {
+    score = 0;
+    combo = 0;
+    maxCombo = 0;
+    perfect = 0;
+    good = 0;
+    misses = 0;
+    resolved = 0;
+    nextMiss = 0;
+    judged = [];
+    for (i in 0..noteCount) judged[i] = false;
+    feedback = "";
+    feedbackUntil = 0;
+    songTime = 0.0;
+    sectionIndex = 0;
+    clearParticles();
+    flashes = [0.0, 0.0, 0.0];
+}
+
+func changeScreen(next) {
+    screen = next;
+    screenTime = Engine.millisec;
+}
+
+func countdown() {
+    Engine.stopSound({stream: 0});
+    resetRun();
+    changeScreen("countdown");
+}
+
+func toTitle() {
+    Engine.stopSound({stream: 0});
+    changeScreen("title");
+}
+
+// Add bounded momentum; never restart the background float's phase.
+func kick(lane, milestone) {
+    var power = 100.0;
+    if (milestone) power = 230.0;
+    liftVelocity = clamp(liftVelocity - power, -340.0, 200.0);
+    var direction = 1.0;
+    if (lane == 0) direction = -1.0;
+    angularVelocity = clamp(angularVelocity + direction * power * 0.018, -6.0, 6.0);
+    pulseVelocity = clamp(pulseVelocity + power * 0.005, -1.0, 2.0);
+    spawnBurst(lane, milestone);
+}
+
+func updateMotion(dt) {
+    // Substeps keep the damped spring stable after a slow frame.
+    var remaining = clamp(dt, 0.0, 0.12);
+    while (remaining > 0.0) {
+        var step = clamp(remaining, 0.0, 0.008);
+        liftVelocity = liftVelocity + (-70.0 * lift - 9.0 * liftVelocity) * step;
+        lift = lift + liftVelocity * step;
+        angularVelocity = angularVelocity + (-38.0 * angle - 6.0 * angularVelocity) * step;
+        angle = angle + angularVelocity * step;
+        pulseVelocity = pulseVelocity + (-75.0 * pulse - 10.0 * pulseVelocity) * step;
+        pulse = pulse + pulseVelocity * step;
+        remaining = remaining - step;
+    }
+    for (i in 0..3) flashes[i] = clamp(flashes[i] - dt * 4.0, 0.0, 1.0);
+}
+
+func tap(lane) {
+    flashes[lane] = 1.0;
+    if (screen == "tutorial") {
+        practiced[lane] = true;
+        kick(lane, false);
+        return;
+    }
+    // Resolve only one nearest pending note in this lane.
+    var candidate = -1;
+    var distance = hitWindow + 0.001;
+    for (i in nextMiss..noteCount) {
+        if (chart[i].time - songTime > hitWindow) break;
+        if (!judged[i] && chart[i].lane == lane) {
+            var delta = Math.abs(chart[i].time - songTime);
+            if (delta <= hitWindow && delta < distance) {
+                candidate = i;
+                distance = delta;
+            }
+        }
+    }
+    // Empty taps do not score or animate the mascot.
+    if (candidate < 0) return;
+    judged[candidate] = true;
+    resolved = resolved + 1;
+    combo = combo + 1;
+    if (combo > maxCombo) maxCombo = combo;
+    if (distance <= perfectWindow) {
+        score = score + 1000;
+        perfect = perfect + 1;
+        feedback = "PERFECT";
+    } else {
+        score = score + 500;
+        good = good + 1;
+        feedback = "GOOD";
+    }
+    if (combo % 10 == 0) feedback = "COMBO!";
+    feedbackUntil = Engine.millisec + 480;
+    kick(lane, combo % 10 == 0 || candidate == noteCount - 1);
+}
+
+func update() {
+    var now = Engine.millisec;
+    var dt = (now - lastTime) * 0.001;
+    lastTime = now;
+    worldTime = worldTime + dt;
+    updateMotion(dt);
+    updateParticles(dt);
+    if (screen == "title") {
+        if (clicked(45, 520, 360, 58) || Engine.isReturnKeyPressed) {
+            practiced = [false, false, false];
+            changeScreen("tutorial");
+        } else if (clicked(45, 610, 170, 50)) {
+            volume = clamp(volume - 0.1, 0.0, 1.0);
+            Engine.setSoundVolume({stream: 0, volume: volume});
+        } else if (clicked(235, 610, 170, 50)) {
+            volume = clamp(volume + 0.1, 0.0, 1.0);
+            Engine.setSoundVolume({stream: 0, volume: volume});
+        } else if (clicked(80, 680, 65, 42)) {
+            timingOffsetMs = clamp(timingOffsetMs - 10, -200, 200);
+            timingOffset = timingOffsetMs * 0.001;
+        } else if (clicked(305, 680, 65, 42)) {
+            timingOffsetMs = clamp(timingOffsetMs + 10, -200, 200);
+            timingOffset = timingOffsetMs * 0.001;
+        }
+        return;
+    }
+    // Explicit abandon-to-title, not a fake pause that loses audio position.
+    var titleY = 20;
+    if (screen == "playing" || screen == "countdown" || screen == "finish") titleY = 54;
+    if (Engine.isEscapeKeyPressed || clicked(347, titleY, 83, 36)) {
+        toTitle();
+        return;
+    }
+    if (screen == "results") {
+        if (clicked(45, 620, 360, 58) || Engine.isReturnKeyPressed) countdown();
+        else if (clicked(45, 694, 360, 58)) toTitle();
+        return;
+    }
+    if (screen == "finish") {
+        if (now - screenTime >= 1500) {
+            if (score > best) best = score;
+            changeScreen("results");
+        }
+        return;
+    }
+    if (screen == "countdown") {
+        if (now - screenTime >= 3000) {
+            Engine.playSound({stream: 0, file: "assets/start-pop.ogg"});
+            // Anchor after the file has been opened; no accumulated frame dt drift.
+            musicStart = Engine.millisec;
+            changeScreen("playing");
+        }
+        return;
+    }
+    if (screen == "playing") {
+        songTime = (now - musicStart) * 0.001 - timingOffset;
+        while (sectionIndex + 1 < Array.size(sections) && songTime >= sections[sectionIndex + 1].time) {
+            sectionIndex = sectionIndex + 1;
+        }
+        while (nextMiss < noteCount) {
+            if (judged[nextMiss]) {
+                nextMiss = nextMiss + 1;
+            } else if (songTime - chart[nextMiss].time > hitWindow) {
+                judged[nextMiss] = true;
+                resolved = resolved + 1;
+                misses = misses + 1;
+                combo = 0;
+                feedback = "MISS";
+                feedbackUntil = now + 360;
+                nextMiss = nextMiss + 1;
+            } else break;
+        }
+    }
+    // The current Engine API provides per-frame press events. Do not edge-filter them again.
+    for (lane in 0..3) {
+        var pressed = clicked(24 + lane * 134, 682, 126, 94);
+        if (lane == 0 && Engine.isDKeyPressed) pressed = true;
+        if (lane == 1 && Engine.isFKeyPressed) pressed = true;
+        if (lane == 2 && Engine.isJKeyPressed) pressed = true;
+        if (pressed) tap(lane);
+    }
+    if (screen == "tutorial") {
+        if (clicked(45, 560, 360, 58) || Engine.isReturnKeyPressed) countdown();
+    } else if (screen == "playing") {
+        // Check EOF as well as duration: ALSA may finish decoding before its buffer drains.
+        if (resolved == noteCount && songTime >= songLength) {
+            var finished = Engine.isSoundFinished({stream: 0});
+            // A missing audio device must not leave this sample stuck forever.
+            if (finished || songTime >= songLength + 2.0) {
+                Engine.stopSound({stream: 0});
+                kick(1, true);
+                changeScreen("finish");
+            }
+        }
+    }
+}

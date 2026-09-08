@@ -21,6 +21,12 @@ feature requests, testing, and discussions for this release:
 
 ## Notes
 
+### Suika3 26.07.13 LTS: September 9, 2026
+
+Changes:
+- Add "Suika Beat" sample.
+- Add missing "require" syntax.
+
 ### Suika3 26.07.12 LTS: September 7, 2026
 
 Thank you @Kotsuider for many contribution!
@@ -39,6 +45,8 @@ Noct 2.0 updates:
 - Removed `->()` notation.
 
 ```
+require mylib;
+
 let animal = class {
     cry: () => { }
 };

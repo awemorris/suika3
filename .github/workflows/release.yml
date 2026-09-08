@@ -728,6 +728,8 @@ jobs:
           cp -R game/sound dist/
           cp -R game/system dist/
 
+          cp -R game-beat/ dist/suika-beat
+
       - name: Download Windows artifacts
         uses: actions/download-artifact@v4
         with:
