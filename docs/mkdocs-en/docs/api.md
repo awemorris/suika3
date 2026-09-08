@@ -15,36 +15,24 @@ key-and-value pairs.
 ## Project Skelton
 
 ```
-// Do not define variables outside functions because it's a syntax error.
+// Noct 2.0 supports global declarations outside functions.
+var posX = 0;
+var posY = 0;
+var tex = {};
 
-//
-// [Boot Sequence #1]
-//  - "setup()" is called when the window is created.
-//
+// Called when the window is created.
 func setup() {
-    // You have to return the window configuration.
+    // Return the window configuration.
     return {
-        width:      1280,
-        height:     720,
-        title:      "My First Game",
-        fullscreen: false
+        width: 1280,
+        height: 720,
+        title: "My First Game"
     };
 }
 
-//
-// [Boot Sequence #2]
-//  - "pf_init_hook()" in the native code is called.
-//  - This function is empty if you use a prebuilt "playfield" executable.
-//  - If you build a custom executable using libplayfield, you can freely
-//    implement "pf_init_hook()" by C, C++, or other languages you like.
-//
-
-//
-// [Boot Sequecen #3]
-//  - Called once when the game starts.
-//
+// Called once when the game starts.
 func start() {
-    // Global variables should be defined here.
+    // Initialize runtime resources here, after Engine has been installed.
     posX = 0;
     posY = 0;
 
@@ -55,10 +43,6 @@ func start() {
         r: 255, g: 255, b: 255, a: 255
     });
 }
-
-//
-// After Boot:
-//
 
 // Called every frame before rendering.
 func update() {
@@ -72,12 +56,33 @@ func render() {
 }
 ```
 
+## Source modules (Noct 2.0)
+
+For loose-file runtime execution, `require chart;` loads `chart.noct` from the
+game working directory. The host reuses Noct's dependency-graph loader so a
+shared dependency is initialized once. The entrypoint remains `main.ray`.
+Module names are identifiers, not paths. This initial runtime resolver does
+not resolve assets inside game packages or configure the standalone bytecode
+and AOT compilers.
+
+```
+require chart;
+var notes = [];
+
+func start() {
+    notes = loadChart(); // Defined in chart.noct.
+}
+```
+
+Declare global state using top-level `var` or `let`; create textures, fonts
+and other `Engine.*` resources inside `start()`.
+
 ## Debug
 
 ### print()
 
 This API prints a string or dumps an object.
-Only this API takes a non-dictionary argument.
+Only takes a non-dictionary argument.
 
 ```
 func dumpEnemies() {
@@ -323,7 +328,7 @@ func renderPlayer() {
 
 ### Engine.draw()
 
-This API renders a texture to the screen, a simple version of `Engine.renderTexture()`.
+This API renders a texture to the screen (a simpler version of `Engine.renderTexture()`.)
 
 |Argument Name       |Description                                                   |
 |--------------------|--------------------------------------------------------------|
@@ -474,8 +479,11 @@ This API sets a sound volume on a specified sound track.
 
 |Argument Name       |Description                                                   |
 |--------------------|--------------------------------------------------------------|
-|stream              |Track index. (0-3, -1 for master)                             |
-|volume              |Volume value. (0-1.0)                                         |
+|stream              |Track index. (0-4; master index -1 is not supported)           |
+|volume              |Integer or float in the range 0-1.0.                          |
+
+Changing volume does not stop or restart playback. A volume of zero mutes
+the track while its playback continues. Invalid volumes are rejected.
 
 ```
 func playJumpSound() {
@@ -483,6 +491,24 @@ func playJumpSound() {
         stream: 0,
         volume: 1.0
     });
+}
+```
+
+### Engine.isSoundFinished()
+
+Checks the existing sound backend's completion state for a track.
+Returns `1` when playback has finished, otherwise `0`.
+
+|Argument Name       |Description                                                   |
+|--------------------|--------------------------------------------------------------|
+|stream              |Track index. (0-4)                                            |
+
+Call this after starting a sound. This is an end-of-stream flag, not a
+playback-position clock: buffered audio may still be reaching the device.
+
+```
+if (Engine.isSoundFinished({stream: 0})) {
+    // Proceed after playback.
 }
 ```
 
@@ -510,7 +536,7 @@ This API will fail when the specified key is not available.
 
 ### Engine.checkSaveData()
 
-This API checks whether the save data exist for a key string or not.
+This API checks whether the save data exists for a key string or not.
 The return value is a boolean.
 
 |Argument Name       |Description                                                   |

@@ -491,7 +491,16 @@ set(PLAYFIELD_BASE_SOURCES
   src/common.c
   src/mainloop.c
   src/vm.c
+  external/NoctLang/src/cli/module.c
+  external/NoctLang/src/cli/bytecode_file.c
 )
+
+# Reuse Noct's existing dependency-graph loader without changing Noct itself.
+if(TARGET noct)
+  set_source_files_properties(external/NoctLang/src/cli/module.c PROPERTIES
+    COMPILE_DEFINITIONS "$<TARGET_PROPERTY:noct,COMPILE_DEFINITIONS>"
+  )
+endif()
 
 # I18N Source
 if(PLAYFIELD_ENABLE_I18N)
@@ -604,9 +613,15 @@ endif()
 
 target_include_directories(
   playfield
+
   PUBLIC
   ${CMAKE_CURRENT_SOURCE_DIR}/include
   ${NOCT_INCLUDE_DIR}
+
+  PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/external/NoctLang/src/cli
+  ${CMAKE_CURRENT_SOURCE_DIR}/external/NoctLang/src/backend
+  ${CMAKE_CURRENT_SOURCE_DIR}/external/NoctLang/src/optimizer
 )
 
 # DLL

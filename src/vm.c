@@ -38,6 +38,7 @@
 
 /* NoctLang */
 #include <noct/noct.h>
+#include "module.h"
 
 /* StratoHAL */
 #include <strato/strato.h>
@@ -68,6 +69,7 @@ static int arg_start;
 #endif
 
 /* Forward Declaration */
+static char *resolve_ray_module(const char *module_name);
 static bool load_startup_file(void);
 static bool call_setup(char **title, int *width, int *height, bool *fullscreen);
 static bool serialize_printer(NoctEnv *env, char *buf, size_t size, NoctValue *value, bool is_inside_obj);
@@ -112,8 +114,10 @@ pfi_create_vm(
 		return false;
 #endif
 
-	/* Create a language runtime. */
 	noct_set_default_config(&config);
+	config.require_resolver = resolve_ray_module;
+
+	/* Create a language runtime. */
 	if (!noct_create_vm(&vm, &env, &config))
 		return false;
 
@@ -196,18 +200,70 @@ pfi_destroy_vm(void)
 	noct_destroy_vm(vm);
 }
 
+/* Resolve a loose Ray module relative to the game working directory. */
+static char *
+resolve_ray_module(
+	const char *module_name)
+{
+	char *path;
+	size_t len;
+
+	/*
+	 * Noct validates require names as identifiers and owns the
+	 * returned path.  This source-file resolver does not expose
+	 * assets inside a package.
+	 */
+	len = strlen(module_name);
+	path = malloc(len + sizeof(".noct"));
+	if (path == NULL)
+		return NULL;
+
+	memcpy(path, module_name, len);
+	memcpy(path + len, ".noct", sizeof(".noct"));
+
+	return path;
+}
+
 /* Load the startup file. */
 static bool
 load_startup_file(void)
 {
 	char *buf;
+	size_t size;
+	bool registered;
 
 	/* Load a file content, i.e., a script text. */
-	if (!pfi_load_file(startup_file, &buf, NULL))
+	if (!pfi_load_file(startup_file, &buf, &size))
 		return false;
 
-	/* Register the script text to the language runtime. */
-	if (!noct_register_source(env, STARTUP_FILE, buf)) {
+	/*
+	 * Register the startup file, then Noct resolves the module
+	 * graph.
+	 */
+	registered = false;
+	cli_module_reset();
+	if (!cli_module_build_input_graph(startup_file,
+					  (const uint8_t *)buf,
+					  size,
+					  resolve_ray_module)) {
+		const char *file;
+		int line;
+		const char *msg;
+		noct_get_error_file(env, &file);
+		noct_get_error_line(env, &line);
+		msg = cli_module_get_error();
+		hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
+		cli_module_reset();
+		free(buf);
+		return false;
+	}
+	if (cli_module_register_graph(env))
+		registered = true;
+	cli_module_reset();
+	free(buf);
+
+	/* Report source locations supplied by the runtime. */
+	if (!registered) {
 		const char *file;
 		int line;
 		const char *msg;
@@ -217,8 +273,6 @@ load_startup_file(void)
 		hal_log_error(PF_TR("Error: %s:%d: %s"), file, line, msg);
 		return false;
 	}
-
-	free(buf);
 
 	return true;
 }
@@ -244,14 +298,6 @@ parse_cli_options(void)
 		}
 		if (strcmp(hal_argv[i], "--disable-jit") == 0) {
 			config.jit_enable = false;
-			continue;
-		}
-		if (strcmp(hal_argv[i], "--force-jit") == 0) {
-			config.jit_threshold = 0;
-			continue;
-		}
-		if (strncmp(hal_argv[i], "--jit-threshold=", 16) == 0) {
-			config.jit_threshold = atoi(hal_argv[i] + 16);
 			continue;
 		}
 		if (strncmp(hal_argv[i], "--optimize-level=", 17) == 0) {
@@ -972,14 +1018,47 @@ static bool Engine_stopSound(NoctEnv *env)
 static bool Engine_setSoundVolume(NoctEnv *env)
 {
 	int stream;
+	float volume;
+	NoctValue value;
 
 	if (!get_int_param(env, "stream", &stream))
 		return false;
+	if (!get_value_param(env, "volume", &value))
+		return false;
+	if (value.type == NOCT_VALUE_INT) {
+		volume = (float)value.val.i;
+	} else if (value.type == NOCT_VALUE_FLOAT) {
+		if (!noct_get_float(env, &value, &volume))
+			return false;
+	} else {
+		noct_error(env, "Sound volume must be a number between 0 and 1.");
+		return false;
+	}
+	if (!(volume >= 0.0f && volume <= 1.0f)) {
+		noct_error(env, "Sound volume must be a number between 0 and 1.");
+		return false;
+	}
 
-	if (!pf_stop_sound(stream))
+	if (!pf_set_sound_volume(stream, volume))
 		return false;
 
 	return true;
+}
+
+/* Engine.isSoundFinished() */
+static bool Engine_isSoundFinished(NoctEnv *env)
+{
+	int stream;
+	NoctValue value;
+
+	if (!get_int_param(env, "stream", &stream))
+		return false;
+	if (stream < 0 || stream >= HAL_SOUND_TRACKS) {
+		noct_error(env, "Invalid sound stream index.");
+		return false;
+	}
+	return noct_set_return_make_int(env, &value,
+		pf_is_sound_finished(stream) ? 1 : 0);
 }
 
 /* Engine.playVideo() */
@@ -1341,6 +1420,7 @@ install_api(
 		RTFUNC(playSoundLoop),
 		RTFUNC(stopSound),
 		RTFUNC(setSoundVolume),
+		RTFUNC(isSoundFinished),
 		RTFUNC(playVideo),
 		RTFUNC(stopVideo),
 		RTFUNC(isVideoPlaying),
